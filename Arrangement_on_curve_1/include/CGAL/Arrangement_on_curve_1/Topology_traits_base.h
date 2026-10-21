@@ -12,9 +12,10 @@
 /*! \file
  * Base class shared by all topology traits in Arrangement_on_curve_1.
  *
- * Topology_traits_base factors out everything that the three concrete topology
- * traits — Unbounded_topology_traits, Closed_topology_traits, and
- * Identified_topology_traits — have in common:
+ * Topology_traits_base factors out everything that the five concrete topology
+ * traits, `Open_topology_traits`, `Closed_topology_traits`,
+ * `Left_closed_topology_traits`, `Right_closed_topology_traits`, and
+ * `Identified_topology_traits`, have in common:
  *
  *   • Data_container and its void-specialization (empty-base optimization)
  *   • Map helper traits (reference, const_reference, parameter)
@@ -29,9 +30,11 @@
  *   • Allocator access
  *
  * Each derived class adds only its topology-specific state and logic:
- *   • Unbounded_topology_traits — two sentinel (unbounded) edge descriptors
- *   • Closed_topology_traits    — up to two boundary vertex descriptors
- *   • Identified_topology_traits — a single self-loop edge descriptor
+ * - `Open_topology_traits`---two sentinel edge descriptors
+ * - `Closed_topology_traits`---two boundary vertex descriptors
+ * - `Left_topology_traits`---one boundary vertex descriptors
+ * - `Right_closed_topology_traits`---one boundary vertex descriptors
+ * - `Identified_topology_traits`---a single self-loop edge descriptor
  */
 
 #include <list>
@@ -91,11 +94,16 @@ template <typename Point_1_,
           typename VertexData = void,
           typename EdgeData = void,
           bool UseVector = false,
-          typename Allocator = std::allocator<char>>
+          typename Allocator_ = std::allocator<char>>
 class Topology_traits_base {
 public:
   using Point_1 = Point_1_;
-  using Allocator_type = Allocator;
+  using Vertex_data = VertexData;
+  using Edge_data = EdgeData;
+  using Allocator = Allocator_;
+
+  //! The standard stl type.
+  using allocator_type = Allocator;
 
   static constexpr bool use_vector = UseVector;
 
@@ -139,7 +147,7 @@ public:
   // --------------------------------------------------------------------------
   // Vertex node
   // --------------------------------------------------------------------------
-  struct Vertex : public Data_container<VertexData> {
+  struct Vertex : public Data_container<Vertex_data> {
     Vertex() = default;
     Vertex(const Point_1& p) : m_point(p) {}
     const Point_1& point() const { return m_point; }
@@ -155,7 +163,7 @@ public:
   // --------------------------------------------------------------------------
   // Edge node
   // --------------------------------------------------------------------------
-  struct Edge : public Data_container<EdgeData> {
+  struct Edge : public Data_container<Edge_data> {
     Vertex_descriptor left() const { return m_left; }
     Vertex_descriptor right() const { return m_right; }
     bool has_left() const { return m_has_left;  }
@@ -262,22 +270,22 @@ public:
   public:
     using key_type = Vertex_descriptor;
     using key_const_type  = Vertex_const_descriptor;
-    using value_type = VertexData;
-    using reference = typename Map_reference_traits<VertexData>::type;
-    using const_reference = typename Map_const_reference_traits<VertexData>::type;
+    using value_type = Vertex_data;
+    using reference = typename Map_reference_traits<Vertex_data>::type;
+    using const_reference = typename Map_const_reference_traits<Vertex_data>::type;
     using category = boost::lvalue_property_map_tag;
 
     explicit Vertex_data_map(Vertex_container* verts) : m_verts(verts) {}
 
     template <typename Key>
     friend decltype(auto) get(const Vertex_data_map& m, Key k) {
-      if constexpr (std::is_void_v<VertexData>) return;
+      if constexpr (std::is_void_v<Vertex_data>) return;
       else if constexpr (UseVector) return (*m.m_verts)[k].data();
       else return k->data();
     }
     friend void put(const Vertex_data_map& m, key_type k,
-                    typename Map_param_traits<VertexData>::type val) {
-      if constexpr (!std::is_void_v<VertexData>) {
+                    typename Map_param_traits<Vertex_data>::type val) {
+      if constexpr (!std::is_void_v<Vertex_data>) {
         if constexpr (UseVector) (*m.m_verts)[k].set_data(val);
         else k->set_data(val);
       }
@@ -292,22 +300,22 @@ public:
   public:
     using key_type = Edge_descriptor;
     using key_const_type  = Edge_const_descriptor;
-    using value_type = EdgeData;
-    using reference = typename Map_reference_traits<EdgeData>::type;
-    using const_reference = typename Map_const_reference_traits<EdgeData>::type;
+    using value_type = Edge_data;
+    using reference = typename Map_reference_traits<Edge_data>::type;
+    using const_reference = typename Map_const_reference_traits<Edge_data>::type;
     using category = boost::lvalue_property_map_tag;
 
     explicit Edge_data_map(Edge_container* edges) : m_edges(edges) {}
 
     template <typename Key>
     friend decltype(auto) get(const Edge_data_map& m, Key k) {
-      if constexpr (std::is_void_v<EdgeData>) return;
+      if constexpr (std::is_void_v<Edge_data>) return;
       else if constexpr (UseVector) return (*m.m_edges)[k].data();
       else return k->data();
     }
     friend void put(const Edge_data_map& m, key_type k,
-                    typename Map_param_traits<EdgeData>::type val) {
-      if constexpr (!std::is_void_v<EdgeData>) {
+                    typename Map_param_traits<Edge_data>::type val) {
+      if constexpr (!std::is_void_v<Edge_data>) {
         if constexpr (UseVector) (*m.m_edges)[k].set_data(val);
         else k->set_data(val);
       }
@@ -320,7 +328,7 @@ public:
   // --------------------------------------------------------------------------
   // Allocator access
   // --------------------------------------------------------------------------
-  Allocator_type get_allocator() const noexcept { return Allocator_type(m_vertices.get_allocator()); }
+  Allocator get_allocator() const noexcept { return Allocator(m_vertices.allocator()); }
 
 protected:
   // --------------------------------------------------------------------------
@@ -358,7 +366,7 @@ public:
   // --------------------------------------------------------------------------
   Topology_traits_base() = default;
 
-  explicit Topology_traits_base(const Allocator_type& alloc) :
+  explicit Topology_traits_base(const Allocator& alloc) :
     m_vertices(Vertex_allocator(alloc)),
     m_edges(Edge_allocator(alloc))
   {}

@@ -1,3 +1,11 @@
+// Copyright (c) 2026 Tel-Aviv University (Israel).
+// All rights reserved.
+// This file is part of CGAL (www.cgal.org).
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// Author(s): Efi Fogel         <efifogel@gmail.com>
+
 namespace AocTraits {
 
 /*! \ingroup PkgArrangementOnCurve1ConceptsFunctionObjects
@@ -17,11 +25,11 @@ public:
 
   /*! determines whether the point `p` coincides with the identification point.
    */
-  bool operator()(AosTraits::Point& point) const;
+  bool operator()(AocTraits::Point& point) const;
 
   /*! determines whether the point `p` coincides with the identification curvepoint.
    */
-  bool operator()(AosTraits::const Point_1& p) const;
+  bool operator()(AocTraits::const Point_1& p) const;
 
   /// @}
 }; /* end AosTraits::IsOnXIdentification_1 */

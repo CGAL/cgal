@@ -12,7 +12,7 @@
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
-#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Open_topology_traits.h>
 #include <CGAL/Arrangement_on_curve_1/insert.h>
 #include <CGAL/Arrangement_on_curve_1/Geom_traits_2_adaptor_1.h>
 
@@ -29,7 +29,7 @@ using X_monotone_curve_2 = Geom_traits_2::X_monotone_curve_2;
 // Wrap into our 1D arrangement architecture
 using Geom_traits_1 = CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Geom_traits_2>;
 using Point_1 = Geom_traits_1::Point_1; // Maps to Geom_traits_2::Point_2
-using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Geom_traits_1, std::string, void>;
+using Topo_traits = CGAL::Arrangement_on_curve_1::Open_topology_traits<Geom_traits_1, std::string, void>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topo_traits>;
 
 int main() {
@@ -116,13 +116,13 @@ int main() {
 
   // --------------------------------------------------------------------------
   // 4. Traverse the arrangement and print the resulting sorted sequence,
-  //    together with the bounded/unbounded structure of the edges.
+  //    together with the edges.
   //
   //    Note: vertices are NOT stored in a randomly-ordered container, but the
   //    public vertices()/edges() ranges make no ordering guarantee either.
   //    To traverse the arrangement in sorted (left-to-right) order, we walk
   //    the topological linked structure explicitly, starting from the
-  //    leftmost (unbounded) edge.
+  //    leftmost edge.
   // --------------------------------------------------------------------------
   std::cout << "Resulting arrangement:\n";
   std::cout << "  Number of vertices: " << arr.number_of_vertices() << "\n";

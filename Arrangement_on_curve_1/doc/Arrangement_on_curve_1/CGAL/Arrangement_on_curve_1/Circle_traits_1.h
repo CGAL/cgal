@@ -11,8 +11,9 @@ namespace Arrangement_on_curve_1 {
 
 /** \ingroup PkgArrangementOnCurve1TraitsClasses
  *
- * \brief `Circle_traits_1` is a geometry traits model of `AocTraits_1` for
- * 1D arrangements of points on the unit circle \f$\mathbb{S}_1\f$.
+ * \brief `Circle_traits_1` is a geometry traits model of the
+ * `AocIdentifiedBoundaryTraits_1` concept for 1D arrangements of points on the
+ * unit circle \f$\mathbb{S}_1\f$.
  *
  * Points are represented as `Kernel::Direction_2` objects.  Using
  * `Direction_2` rather than a floating-point angle gives exact arithmetic when
@@ -60,10 +61,10 @@ public:
 
   typedef typename Kernel::Direction_2 Point_1;
 
-  //! Both sides of the circle's parameter space are identified.
+  //! The left side of the parameter space is identified.
   typedef Identified_side_tag Left_side_category;
 
-  //! Both sides of the circle's parameter space are identified.
+  //! The right side of the parameter space is identified.
   typedef Identified_side_tag Right_side_category;
 
   //! @}

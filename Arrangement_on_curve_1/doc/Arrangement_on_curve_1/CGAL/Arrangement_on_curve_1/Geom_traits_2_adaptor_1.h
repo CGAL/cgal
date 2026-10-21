@@ -18,12 +18,11 @@ namespace Arrangement_on_curve_1 {
  * traits, all assumed to lie on a single master arc which is either an
  * x-monotone curve or a single vertical segment.
  *
- * The adaptor models an open (unbounded) parameter space — both ends of the
- * master arc extend to infinity — and should therefore be paired with
- * `Unbounded_topology_traits`.  Subclasses may override the side categories to
- * handle bounded arcs.
+ * The adaptor models an open parameter space, both ends of the master curve are
+ * open, and should therefore be paired with `Open_topology_traits`.
+ * Subclasses may override the side categories to handle closed curves.
  *
- * \tparam GeomTraits_2 a model of `ArrangementTraits_2` (or a refinement).
+ * \tparam GeomTraits_2 a model of `ArrangementTraits_2`.
  *
  * \cgalModels{AocTraits_1}
  */
@@ -48,10 +47,10 @@ public:
   //! Shared-ownership pointer to the 2D traits (allows sharing a single instance).
   typedef std::shared_ptr<const Geom_traits_2> Shared_geom_traits_2;
 
-  //! Both sides of the arc are open (unbounded).
+  //! The left sides of the parameter space is open.
   typedef Open_side_tag Left_side_category;
 
-  //! Both sides of the arc are open (unbounded).
+  //! The right side of the parameter space is open.
   typedef Open_side_tag Right_side_category;
 
   //! @}

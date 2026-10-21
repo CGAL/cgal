@@ -19,21 +19,26 @@ namespace Arrangement_on_curve_1 {
  *
  * \tparam Kernel must be a standard \cgal `Kernel` model (e.g., `Exact_predicates_exact_constructions_kernel`).
  *
+ * \cgalRefines{DefaultConstructible}
+
  * \cgalModels{AocTraits_1}
  */
 template <typename Kernel>
 class Line_traits_1 {
 public:
-  /// \name Types
-  /// @{
+  //! \name Types
+  //! @{
 
-  /// The left side of the interval parameter space is open (unbounded).
+  //! The 1D arrangement point type.
+  using Point_1 = typename Kernel::FT;
+
+  //! The left side of the parameter space is open.
   typedef Open_side_tag Left_side_category;
 
-  /// The right side of the interval parameter space are is (unbounded).
+  //! The right side of the parameter space is open.
   typedef Open_side_tag Right_side_category;
 
-  /// @}
+  //! @}
 };
 
 } // namespace Arrangement_on_curve_1

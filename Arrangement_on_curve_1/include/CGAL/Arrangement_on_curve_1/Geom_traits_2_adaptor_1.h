@@ -28,12 +28,12 @@ namespace Arrangement_on_curve_1 {
 //
 // Boundary categories
 // -------------------
-// The adaptor models an open (unbounded) parameter space: the master arc
-// is an unbounded `x`-monotone curve or a vertical line, so neither endpoint
-// is stored.  If you are adapting a bounded curve, subclass and override
-// `Left_side_category` / `Right_side_category` accordingly.
-//
-// Pair with `Unbounded_topology_traits` for the default open/open case.
+
+// The adaptor models an open parameter space: the master curve is an open (or
+// unbounded `x`-monotone curve or a vertical line, so neither endpoint is
+// stored.  If you are adapting a closed curve, subclass and override
+// `Left_side_category` / `Right_side_category` accordingly.  Pair with
+// `Open_topology_traits` for the default open/open case.
 template <typename GeomTraits_2>
 class Geom_traits_2_adaptor_1 {
 public:
@@ -47,8 +47,7 @@ public:
   // Boundary-category tags (geometry traits owns these, following the
   // convention of `Arrangement_on_surface_2`).
   //
-  // The underlying curve is assumed to be an open (unbounded) arc; both
-  // ends extend to infinity with no stored boundary vertex.
+  // The underlying curve is assumed to be open (or unbounded).
   using Left_side_category = Open_side_tag;
   using Right_side_category = Open_side_tag;
 

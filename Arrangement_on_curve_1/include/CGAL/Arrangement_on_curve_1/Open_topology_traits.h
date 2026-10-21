@@ -6,11 +6,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef CGAL_ARRANGEMENT_ON_CURVE_1_UNBOUNDED_TOPOLOGY_TRAITS_H
-#define CGAL_ARRANGEMENT_ON_CURVE_1_UNBOUNDED_TOPOLOGY_TRAITS_H
+#ifndef CGAL_ARRANGEMENT_ON_CURVE_1_OPEN_TOPOLOGY_TRAITS_H
+#define CGAL_ARRANGEMENT_ON_CURVE_1_OPEN_TOPOLOGY_TRAITS_H
 
 /*! \file
- * Topology traits for a 1D arrangement on an unbounded master curve: (−∞, +∞).
+ * Topology traits for a 1D arrangement on an open master curve: (−∞, +∞).
  * Both boundaries are open; no boundary vertices are ever registered.
  */
 
@@ -21,7 +21,7 @@ namespace Arrangement_on_curve_1 {
 
 /*! \ingroup PkgArrangementOnCurve1TopologyTraitsClasses
  *
- * \brief Topology traits for an arrangement on an unbounded master curve \f$(−\infty, +\infty)\f$.
+ * \brief Topology traits for an arrangement on an open master curve \f$(−\infty, +\infty)\f$.
  *
  * Both boundaries of the parameter space are open: neither endpoint of the
  * master curve is in the domain.  No boundary vertices are ever registered.
@@ -44,10 +44,25 @@ template <typename GeometryTraits_1,
           typename VertexData = void,
           typename EdgeData = void,
           bool UseVector = false,
-          typename Allocator = std::allocator<char>>
-class Unbounded_topology_traits :
-  public Topology_traits<GeometryTraits_1, Open_side_tag, Open_side_tag, VertexData, EdgeData, UseVector, Allocator>
-{};
+          typename Allocator_ = std::allocator<char>>
+class Open_topology_traits :
+  public Topology_traits<GeometryTraits_1, Open_side_tag, Open_side_tag, VertexData, EdgeData, UseVector, Allocator_> {
+public:
+  using Geometry_traits_1 = GeometryTraits_1;
+  using Vertex_data = VertexData;
+  using Edge_data = EdgeData;
+  using Allocator = Allocator_;
+
+  //! The standard stl type.
+  using allocator_type = Allocator;
+
+private:
+  using Base =
+    Topology_traits<Geometry_traits_1, Open_side_tag, Open_side_tag, Vertex_data, Edge_data, UseVector, Allocator>;
+
+public:
+  using Base::Base;
+};
 
 } // namespace Arrangement_on_curve_1
 } // namespace CGAL

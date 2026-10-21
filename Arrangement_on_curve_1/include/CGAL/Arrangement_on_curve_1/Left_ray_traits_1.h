@@ -17,7 +17,7 @@ namespace Arrangement_on_curve_1 {
 
 // Geometry traits for a 1D arrangement on a left-closed ray \f$[a, +\infty)\f$.
 // The left side is closed; the right side is open.  Points are represented as
-// `Kernel::FT`.  Pair with `Left_bounded_topology_traits`.
+// `Kernel::FT`.  Pair with `Left_closed_topology_traits`.
 template <typename Kernel_>
 class Left_ray_traits_1 : public Ft_traits_1<Kernel_> {
   using Kernel = Kernel_;

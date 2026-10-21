@@ -1,10 +1,10 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
-#include <CGAL/Arrangement_on_curve_1/Ft_traits_1.h>
+#include <CGAL/Arrangement_on_curve_1/Line_traits_1.h>
 #include <CGAL/Arrangement_on_curve_1/insert.h>
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
-using Geom_traits = CGAL::Arrangement_on_curve_1::Ft_traits_1<Kernel>;
+using Geom_traits = CGAL::Arrangement_on_curve_1::Line_traits_1<Kernel>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits>;
 
 int main() {

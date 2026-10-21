@@ -8,13 +8,13 @@
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
 #include <CGAL/Arrangement_on_curve_1/insert.h>
 #include <CGAL/Arrangement_on_curve_1/overlay.h>
-#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Open_topology_traits.h>
 #include <CGAL/Arrangement_on_curve_1/Line_3_traits_1.h>
 #include <CGAL/Arrangement_on_curve_1/Copy_overlay_visitor.h>
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using Traits = CGAL::Arrangement_on_curve_1::Line_3_traits_1<Kernel>;
-using Topo = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Traits, std::string, void>;
+using Topo = CGAL::Arrangement_on_curve_1::Open_topology_traits<Traits, std::string, void>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Traits, Topo>;
 using Visitor = CGAL::Arrangement_on_curve_1::Copy_overlay_visitor<Arrangement, Arrangement, Arrangement>;
 

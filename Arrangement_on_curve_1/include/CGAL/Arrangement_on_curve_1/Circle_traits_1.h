@@ -30,16 +30,16 @@
  *   Right_side_category = Identified_side_tag
  *
  * A "reference direction" `d_ref` (default: positive `x`-axis) defines the
- * position of the identification seam.  The total order on directions is
+ * position of the identification point.  The total order on directions is
  * the counter-clockwise order starting strictly after `d_ref` and wrapping
  * around back to `d_ref`:
  *
  *   \f$d_ref < d_1 < d_2 < \ldots < d_n < d_ref\f$
  *
  * The identification point is `d_ref`: a direction equal to `d_ref` lies
- * exactly on the seam.  `Is_on_x_identification_1` returns `true` for such a
- * direction.  `Compare_x_1` must not be called with `d_ref` as an argument;
- * guard first with `Is_on_x_identification_1`.
+ * exactly on the identification point.  `Is_on_x_identification_1` returns
+ * `true` for such a direction.  `Compare_x_1` must not be called with `d_ref`
+ * as an argument; guard first with `Is_on_x_identification_1`.
  *
  * Angular total order
  * -------------------
@@ -159,7 +159,7 @@ public:
   Compare_x_1 compare_x_1_object() const { return Compare_x_1(*this); }
 
 private:
-  Direction_2 m_ref;  // the identification-seam direction
+  Direction_2 m_ref;  // the identification-point direction
 };
 
 } // namespace Arrangement_on_curve_1

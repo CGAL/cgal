@@ -22,7 +22,7 @@ namespace Arrangement_on_curve_1 {
  * coincides exactly with the query point `q`, or otherwise an
  * `Const_edge_desriptor`, such that the geometric embedding of the identified
  * edge contains `q` in its interior. The search is implemented via a linear
- * topological walk from left to right starting at `unbounded_left_edge()`,
+ * topological walk from left to right starting at `left_boundary_edge()`,
  * using the geometry traits functor to locate the precise cell containing the
  * query point parameter.
  */
@@ -44,7 +44,7 @@ locate(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr
  * query point `q`, or otherwise an `Edge_desriptor`, such that the geometric
  * embedding of the identified edge contains `q` in its interior. The search
  * is implemented via a linear topological walk from left to right starting at
- * `unbounded_left_edge()`, using the geometry traits functor to locate the
+ * `left_boundary_edge()`, using the geometry traits functor to locate the
  * precise cell containing the query point parameter.
  */
 template <typename GeometryTraits, typename TopologyTraits, bool BinarySearch>

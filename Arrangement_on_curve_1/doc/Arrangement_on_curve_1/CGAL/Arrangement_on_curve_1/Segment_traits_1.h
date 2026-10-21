@@ -38,10 +38,10 @@ public:
   /// \name Types
   /// @{
 
-  /// The left side of the interval parameter space is closed (bounded).
+  /// The left side of the interval parameter space is closed.
   typedef Closed_side_tag Left_side_category;
 
-  /// The right side of the interval parameter space is closed (bounded).
+  /// The right side of the interval parameter space is closed.
   typedef Closed_side_tag Right_side_category;
 
   /// @}

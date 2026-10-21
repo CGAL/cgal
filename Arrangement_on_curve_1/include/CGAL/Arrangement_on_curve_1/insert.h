@@ -25,9 +25,9 @@ template <typename GeometryTraits, typename TopologyTraits, bool BinarySearch>
 typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>::Vertex_descriptor
 insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr,
        const typename GeometryTraits::Point_1& p) {
-  using Arr = Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>;
-  using Vertex_descriptor = typename Arr::Vertex_descriptor;
-  using Edge_descriptor = typename Arr::Edge_descriptor;
+  using Aoc = Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>;
+  using Vertex_descriptor = typename Aoc::Vertex_descriptor;
+  using Edge_descriptor = typename Aoc::Edge_descriptor;
 
   auto loc = locate(arr, p);
 
@@ -49,7 +49,7 @@ insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr
 
   if (! has_left && ! has_right) return arr.insert_empty(p);
 
-  if constexpr (Arr::is_identified) {
+  if constexpr (Aoc::is_identified) {
     if (arr.geometry_traits_1().is_on_x_identification_1_object()(p)) return arr.insert_identification_vertex(p);
     return arr.split_edge(e, p);
   }
@@ -57,16 +57,16 @@ insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr
   // Edge has no left vertex: p is to the left of all existing vertices.
   if (! has_left) {
     // For closed left boundary: install p as the (unique) left boundary vertex.
-    // For open left side: split the unbounded left arc at p.
-    if constexpr (Arr::left_is_closed) return arr.insert_left_boundary_vertex(p);
+    // For open left side: split the left edge at p.
+    if constexpr (Aoc::left_is_closed) return arr.insert_left_boundary_vertex(p);
     else return arr.split_edge(e, p);
   }
 
   // Edge has no right vertex: p is to the right of all existing vertices.
   if (! has_right) {
     // For closed right boundary: append p after the current rightmost vertex.
-    // For open right side: split the unbounded right arc at p.
-    if constexpr (Arr::right_is_closed) return arr.insert_after(arr.left_vertex(e), p);
+    // For open right side: split the right edge at p.
+    if constexpr (Aoc::right_is_closed) return arr.insert_after(arr.left_vertex(e), p);
     else return arr.split_edge(e, p);
   }
 

@@ -14,7 +14,7 @@
 #include <CGAL/draw_arrangement_2.h>
 
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
-#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Open_topology_traits.h>
 #include <CGAL/Arrangement_on_curve_1/insert.h>
 #include <CGAL/Arrangement_on_curve_1/locate.h>
 #include <CGAL/Arrangement_on_curve_1/Geom_traits_2_adaptor_1.h>
@@ -39,7 +39,7 @@ using Arrangement_2 = CGAL::Arrangement_2<Geom_traits_2>;
 // 1D arrangement on the upper semicircular arc.
 using Geom_traits_1 = CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Geom_traits_2>;
 using Point_1 = Geom_traits_1::Point_1;   // same as Point_2 above
-using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Geom_traits_1, std::string, void>;
+using Topo_traits = CGAL::Arrangement_on_curve_1::Open_topology_traits<Geom_traits_1, std::string, void>;
 using Arrangement_1 = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topo_traits>;
 
 /*! Helper: print a Point_2 using double approximations of its CoordNT coords.

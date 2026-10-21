@@ -26,15 +26,15 @@ template <typename GeometryTraits_1, typename TopologyTraits, bool BinarySearch>
 typename Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>::Location_result
 locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>& arr,
             const typename GeometryTraits_1::Point_1& p) {
-  using Arr = Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>;
-  using Result = typename Arr::Location_result;
+  using Aoc = Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>;
+  using Result = typename Aoc::Location_result;
 
   auto cmp = arr.geometry_traits_1().compare_x_1_object();
 
   // --------------------------------------------------------------------------
   // 1. FAST PATH: Binary Search (O(log n))
   // --------------------------------------------------------------------------
-  if constexpr (Arr::binary_search_enabled) {
+  if constexpr (Aoc::binary_search_enabled) {
     auto& topo = arr.topology_traits();
     if (arr.empty()) return Result{std::in_place_index<1>, topo.left_boundary_edge()};
 
@@ -57,7 +57,7 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearc
   // 2. LINEAR PATH: Sequential / Cyclic Topological Walk (O(n))
   //
   // left_boundary_edge() is the uniform entry point for all topology types:
-  //   - open/bounded: the leftmost edge in the linear arrangement.
+  //   - open: the leftmost edge in the linear arrangement.
   //   - identified:   the edge whose left end is at the identification point.
   // has_right_vertex() returns false on the spanning edge (empty arrangement).
   // For identified topologies the walk also stops when the next right vertex
@@ -70,7 +70,7 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearc
     // Predicate: is a point the identification point?
     // Compiled away entirely for non-identified arrangements.
     auto is_on_id = [&](const auto& pt) -> bool {
-      if constexpr (Arr::is_identified) return arr.geometry_traits_1().is_on_x_identification_1_object()(pt);
+      if constexpr (Aoc::is_identified) return arr.geometry_traits_1().is_on_x_identification_1_object()(pt);
       else return false;
     };
 
@@ -79,7 +79,8 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearc
       auto curr_pnt = get(v_pnt_map, curr_v);
 
       // For identified topologies: the identification vertex terminates the
-      // cyclic walk — p lies in the edge that wraps back to the seam.
+      // cyclic walk; `p` lies in the edge that wraps back to the identification
+      // point.
       if (is_on_id(curr_pnt)) break;
 
       auto res = cmp(p, curr_pnt);
@@ -116,12 +117,12 @@ locate(const Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySear
   using Geometry_traits_1 = GeometryTraits_1;
   using Topology_traits = TopologyTraits;
 
-  using Arr = Arrangement_on_curve_1<Geometry_traits_1, Topology_traits, BinarySearch>;
-  using Vertex_const_descriptor = typename Arr::Vertex_const_descriptor;
-  using Edge_const_descriptor = typename Arr::Edge_const_descriptor;
-  using Result = typename Arr::Const_location_result;
+  using Aoc = Arrangement_on_curve_1<Geometry_traits_1, Topology_traits, BinarySearch>;
+  using Vertex_const_descriptor = typename Aoc::Vertex_const_descriptor;
+  using Edge_const_descriptor = typename Aoc::Edge_const_descriptor;
+  using Result = typename Aoc::Const_location_result;
 
-  auto mutable_result = locate_impl(const_cast<Arr&>(arr), p);
+  auto mutable_result = locate_impl(const_cast<Aoc&>(arr), p);
 
   if (mutable_result.index() == 0) {
     auto v = std::get<0>(mutable_result);

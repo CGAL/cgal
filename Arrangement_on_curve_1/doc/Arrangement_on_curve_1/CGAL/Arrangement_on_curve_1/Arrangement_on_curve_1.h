@@ -38,15 +38,14 @@ namespace Arrangement_on_curve_1 {
  * The static data member, for example, `is_identified` is `true` if and only if
  * both categories are `Identified_side_tag`; that is, the curve is a closed
  * loop such as \f$\mathbb{S}^1\f$. When `TopologyTraits` is omitted, it
- * defaults to `Unbounded_topology_traits<GeometryTraits_1::Point_1>`, which is
+ * defaults to `Open_topology_traits<GeometryTraits_1::Point_1>`, which is
  * correct for any geometry traits with `Left_side_category =
  * Right_side_category = Open_side_tag`.  For other combinations supply the
  * matching traits explicitly, e.g.:
  *
  * \code
- * using Arr = Arrangement_on_curve_1<
- *   Circle_traits_1<K>,
- *   Identified_topology_traits<Circle_traits_1<K>>;
+ * using Arr = Arrangement_on_curve_1<Circle_traits_1<Kernel>>,
+ *   Identified_topology_traits<Circle_traits_1<Kernel>>;
  * \endcode
  *
  * ### Traits Object Storing
@@ -64,14 +63,14 @@ namespace Arrangement_on_curve_1 {
  * \tparam GeometryTraits_1 a model of `AocTraits_1` and optionally
  *   `AocClosedBoundaryTraits_1` or `AocIdentifiedBoundaryTraits_1`.
  * \tparam TopologyTraits a model of `AocTopologyTraits`; defaults to
- *   `Unbounded_topology_traits<GeometryTraits_1::Point_1>`.
+ *   `Open_topology_traits<GeometryTraits_1::Point_1>`.
  * \tparam BinarySearch enable O(log n) binary-search locate
  *   (requires `TopologyTraits::UseVector = true`; default: `false`).
  *
  * \cgalModels{ArrangementOnCurve_1}
  */
 template <typename GeometryTraits_1,
-          typename TopologyTraits = Unbounded_topology_traits<typename GeometryTraits_1::Point_1>,
+          typename TopologyTraits = Open_topology_traits<GeometryTraits_1>,
           bool BinarySearch = false>
 class Arrangement_on_curve_1 {
 public:
@@ -119,9 +118,9 @@ public:
   /// @{
 
   /*! is `true` if both `Left_side_category` and `Right_side_category` are
-   * `Identified_side_tag` (closed-loop curve, e.g., S¹).
+   * `Identified_side_tag`.
    */
-  static constexpr bool is_identified_curve;
+  static constexpr bool is_identified;
 
   /// @}
 

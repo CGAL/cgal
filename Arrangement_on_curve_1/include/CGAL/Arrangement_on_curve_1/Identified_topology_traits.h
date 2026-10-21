@@ -19,9 +19,7 @@
  * Structure:
  *
  *   • An empty arrangement contains one edge that spans the entire parameter
- *     space and no vertices.  This is the same invariant as the unbounded and
- *     bounded topology types; the difference is that on a closed loop the two
- *     ends of that edge are identified (they represent the same point).
+ *     space and no vertices.
  *
  *   • Vertices and edges together form a single doubly-linked cyclic list:
  *       …  ←e₀→ v₀ ←e₁→ v₁ ←e₂→ v₂ ←e₀→ …
@@ -60,16 +58,26 @@ template <typename GeometryTraits_1,
           typename VertexData = void,
           typename EdgeData = void,
           bool UseVector = false,
-          typename Allocator = std::allocator<char>>
+          typename Allocator_ = std::allocator<char>>
 class Identified_topology_traits :
-    public Topology_traits_base<typename GeometryTraits_1::Point_1, VertexData, EdgeData, UseVector, Allocator> {
+  public Topology_traits_base<typename GeometryTraits_1::Point_1, VertexData, EdgeData, UseVector, Allocator_> {
+public:
+  using Geometry_traits_1 = GeometryTraits_1;
+  using Vertex_data = VertexData;
+  using Edge_data = EdgeData;
+  using Allocator = Allocator_;
+
+  //! The standard stl type.
+  using allocator_type = Allocator;
+
+private:
   using Base = Topology_traits_base<typename GeometryTraits_1::Point_1, VertexData, EdgeData, UseVector, Allocator>;
 
 public:
-  using Geometry_traits_1 = GeometryTraits_1;
   using Point_1 = typename Geometry_traits_1::Point_1;
 
-  using typename Base::Allocator_type;
+  using Base::Base;
+
   using typename Base::Vertex_container;
   using typename Base::Edge_container;
   using typename Base::Vertex_descriptor;
@@ -96,8 +104,7 @@ public:
   // --------------------------------------------------------------------------
   Identified_topology_traits() { init_spanning_edge(); }
 
-  explicit Identified_topology_traits(const Allocator_type& alloc) :
-    Base(alloc) { init_spanning_edge(); }
+  explicit Identified_topology_traits(const Allocator& alloc) : Base(alloc) { init_spanning_edge(); }
 
   Identified_topology_traits(Identified_topology_traits&&) noexcept = default;
   Identified_topology_traits& operator=(Identified_topology_traits&&) noexcept = default;

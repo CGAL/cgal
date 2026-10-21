@@ -14,13 +14,11 @@
  * in such a way that the boundary of the parameter space, the circle is the
  * mapping of which, is identified on the left and right sides.
  *
- * \cgalRefines{AosTraits_2}
+ * \cgalRefines{AosTraits_1}
  *
  * When both categories are `Identified_side_tag`, the traits must also provide
  * the functor type `Is_on_x_identification_1` (and its accessor), which tests
- * whether a point lies on the seam that identifies the two sides.
- *
- * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
+ * whether a point lies on the identification point.
  *
  * \cgalHasModelsBegin
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Circle_traits_1<Kernel>}
@@ -31,9 +29,12 @@ public:
   //! \name Functor Types
   //! @{
 
-  /*! Functor that tests whether a point lies exactly on the seam that
-   *! identifies the left and right boundaries of the parameter space.
-   *! \pre `Left_side_category` and `Right_side_category` are both `Identified_side_tag`.
+  /*! Functor that tests whether a point lies exactly on the identification
+   * point (which identifies the left and right boundaries of the parameter
+   * space.
+   *
+   * \pre `Left_side_category` and `Right_side_category` are both
+   *      `Identified_side_tag`.
    */
   typedef unspecified_type Is_on_x_identification_1;
 
@@ -43,7 +44,6 @@ public:
   //! @{
 
   /*! returns the `Is_on_x_identification_1` functor.
-   *! \pre `Left_side_category` and `Right_side_category` are both `Identified_side_tag`.
    */
   Is_on_x_identification_1 is_on_x_identification_1_object() const;
 

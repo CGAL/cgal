@@ -15,7 +15,7 @@
 #include <memory>
 
 #include <CGAL/Arrangement_on_curve_1/Side_tags.h>
-#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Open_topology_traits.h>
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
@@ -30,7 +30,7 @@ namespace Arrangement_on_curve_1 {
  *                      vertex vector, reducing locate from \f$O(n)\f$ to \f$O(log n)\f$.
  */
 template <typename GeometryTraits_1,
-          typename TopologyTraits = Unbounded_topology_traits<typename GeometryTraits_1::Point_1>,
+          typename TopologyTraits = Open_topology_traits<GeometryTraits_1>,
           bool BinarySearch = false>
 class Arrangement_on_curve_1 {
   static_assert(! BinarySearch || TopologyTraits::use_vector,
@@ -46,11 +46,11 @@ public:
   using Left_side_category = typename Geometry_traits_1::Left_side_category;
   using Right_side_category = typename Geometry_traits_1::Right_side_category;
 
-  // True when both sides are identified (curve is a closed loop / circle).
+  // True when both sides of the parameter space are identified.
   static constexpr bool is_identified =
     Side_is_identified<Left_side_category>::value && Side_is_identified<Right_side_category>::value;
 
-  // True when the left/right boundary is a proper closed boundary vertex.
+  // True when the left/right side is closed.
   static constexpr bool left_is_closed = Side_is_closed<Left_side_category>::value;
   static constexpr bool right_is_closed = Side_is_closed<Right_side_category>::value;
 
@@ -58,8 +58,11 @@ public:
   using Shared_geometry_traits = std::shared_ptr<const Geometry_traits_1>;
 
   // Expose the allocator type from the topology traits so that callers can
-  // query it via get_allocator() and use it with compatible containers.
-  using Allocator_type = typename Topology_traits::Allocator_type;
+  // query it via allocator() and use it with compatible containers.
+  using Allocator = typename Topology_traits::Allocator;
+
+  //! The standard stl type.
+  using allocator_type = Allocator;
 
   using Point_1 = typename Geometry_traits_1::Point_1;
 
@@ -122,8 +125,8 @@ public:
   // 4. Allocator-aware constructor.
   // Constructs an empty arrangement whose internal topology traits (and
   // therefore its vertex/edge lists) use the supplied allocator.
-  // Requires that TopologyTraits is constructible from an Allocator_type.
-  Arrangement_on_curve_1(Shared_geometry_traits shared_geom_tr, const Allocator_type& alloc) :
+  // Requires that TopologyTraits is constructible from an Allocator.
+  Arrangement_on_curve_1(Shared_geometry_traits shared_geom_tr, const Allocator& alloc) :
     m_geometry_traits(std::move(shared_geom_tr)),
     m_topology_traits(alloc)
   { CGAL_assertion(m_geometry_traits != nullptr); }
@@ -217,7 +220,7 @@ public:
   bool has_right_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
 
   // obtains the allocator used by the internal topology traits.
-  Allocator_type get_allocator() const noexcept { return m_topology_traits.get_allocator(); }
+  Allocator get_allocator() const noexcept { return m_topology_traits.allocator(); }
 
   // ============================================================================
   // HIGH-LEVEL TOPOLOGICAL OPERATIONS
@@ -242,12 +245,12 @@ public:
     topo.set_left_edge(v, e_left_boundary);
 
     if constexpr (is_identified) {
-      // Identified (cyclic) topology: one vertex, one edge. No new edge is created.
+      // Identified parameter space: one vertex, one edge. No new edge is created.
       topo.set_left_vertex(e_left_boundary, v);
       topo.set_right_edge(v, e_left_boundary);
     }
     else {
-      // Open / closed topology: create the right sub-edge (v, \f$+\infty\f$ or boundary-right).
+      // Open / closed parameter space: create the right sub-edge.
       Edge_descriptor e_right = topo.create_edge();
       topo.set_left_vertex(e_right, v);
       topo.set_right_edge(v, e_right);
@@ -256,7 +259,7 @@ public:
     return v;
   }
 
-  /*! inserts a vertex at the left boundary of a left-bounded arrangement.  Sets
+  /*! inserts a vertex at the left boundary of a left-closed arrangement.  Sets
    * `p` as the left vertex of left_boundary_edge(); no new edge is created.
    */
   Vertex_descriptor insert_left_boundary_vertex(const Point_1& p) {
@@ -271,7 +274,7 @@ public:
     return v;
   }
 
-  /*! inserts a vertex at the identification point of an identified (cyclic)
+  /*! inserts a vertex at the identification point of an identified
    * arrangement.  Sets `p` as the left vertex of left_boundary_edge();
    * no new edge is created.
    *
@@ -375,7 +378,7 @@ public:
 
     if constexpr (binary_search_enabled) {
       CGAL_assertion_msg(! m_topology_traits.has_right_vertex(e),
-                         "When BinarySearch = true, split_edge() can only be called on the rightmost unbounded edge.");
+                         "When BinarySearch = true, split_edge() can only be called on the rightmost edge.");
       CGAL_assertion_msg(! m_topology_traits.has_left_vertex(e) ||
                          m_topology_traits.left_vertex(e) == m_topology_traits.number_of_vertices() - 1,
                          "When BinarySearch = true, the edge being split must originate from the rightmost vertex.");

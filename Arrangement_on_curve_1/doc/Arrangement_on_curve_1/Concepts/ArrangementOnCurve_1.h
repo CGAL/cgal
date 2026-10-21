@@ -1,12 +1,16 @@
 // Copyright (c) 2026 Tel-Aviv University (Israel). All rights reserved.
+// This file is part of CGAL (www.cgal.org).
+// $URL$
+// $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! \ingroup PkgArrangementOnCurve1Concepts
  * \cgalConcept
  *
- * \cgalHasModelsBegin
  * \cgalRefines{DefaultConstructible}
+ *
+ * \cgalHasModelsBegin
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>}
  * \cgalHasModelsEnd
  *
@@ -15,12 +19,11 @@
  * space) into alternating vertices and edges, collectively referred to as cells.
  *
  * The geometry is governed by the `GeometryTraits_1` template parameter, which
- * must model the concept `AocTraits_1`.  In particular, any model of the concep
+ * must model the concept `AocTraits_1`.  In particular, any model of the concept
  * `GeometryTraits_1` must define the `Left_side_category` and
  * `Right_side_category` categories to describe whether the parameter space is
  * open, closed, or identified at each end.  When both categories are
- * `Identified_side_tag`, the arrangement represents a closed loop; in that case
- * there are no unbounded edges.
+ * `Identified_side_tag`, the arrangement represents a closed loop.
  */
 class ArrangementOnCurve_1 {
 public:
@@ -47,8 +50,7 @@ public:
 
   /*! Represents a point localization result within the 1D curve structure.
    * A coordinate query point matches a `Vertex_descriptor` if it rests on an
-   * arrangement vertex, or an `Edge_descriptor` if it falls inside an edge
-   * (bounded or unbounded).
+   * arrangement vertex, or an `Edge_descriptor` if it falls inside an edge.
    */
   typedef std::variant<Vertex_descriptor, Edge_descriptor> Location_result;
   typedef std::variant<Vertex_const_descriptor, Edge_const_descriptor> Const_location_result;
@@ -73,10 +75,9 @@ public:
 
   /*! returns `true` if the arrangement is a closed loop (both
    * `Left_side_category` and `Right_side_category` are `Identified_side_tag`).
-   * When this returns `true`, `unbounded_left_edge()` and
-   * `unbounded_right_edge()` are not available.
+   * When this returns `true`, `left_boundary_edge()` is not available.
    */
-  static constexpr bool is_identified_curve();
+  static constexpr bool is_identified();
 
   /*! returns `true` if the arrangement does not contain any vertices.
    */
@@ -86,7 +87,7 @@ public:
    */
   Size number_of_vertices() const;
 
-  /*! obtains the total number of bounded and unbounded edges.
+  /*! obtains the total number of edges.
    */
   Size number_of_edges() const;
 
@@ -183,9 +184,10 @@ public:
   void destroy_edge(Edge_descriptor e);
 
   /*! inserts the very first point into an empty arrangement.  For an
-   * open/closed arrangement the single unbounded edge is split into
-   * (\f$(-\infty\f$, `v`) and (`v`, \f$(+\infty\f$). For an identified
-   * arrangement a degenerate self-loop edge is created.
+   * open/closed arrangement the single edge is split into (\f$(-\infty\f$, `v`)
+   * and (`v`, \f$(+\infty\f$). For an identified arrangement a degenerate
+   * self-loop edge is created.
+   *
    * \param p the point to insert.
    */
   Vertex_descriptor insert_empty(const Point_1& p);

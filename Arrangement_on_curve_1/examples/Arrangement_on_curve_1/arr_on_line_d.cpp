@@ -6,14 +6,14 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
 #include <CGAL/Arrangement_on_curve_1/insert.h>
-#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Open_topology_traits.h>
 #include <CGAL/Arrangement_on_curve_1/Line_d_traits_1.h>
 
 using NT = CGAL::Quotient<CGAL::MP_Float>;
 using Kernel = CGAL::Cartesian_d<NT>;
 using FT = typename Kernel::FT;
 using Traits = CGAL::Arrangement_on_curve_1::Line_d_traits_1<Kernel>;
-using Topo = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Traits, int, void>;
+using Topo = CGAL::Arrangement_on_curve_1::Open_topology_traits<Traits, int, void>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Traits, Topo>;
 
 int main() {

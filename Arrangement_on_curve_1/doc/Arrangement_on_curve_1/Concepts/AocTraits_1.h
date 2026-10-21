@@ -14,16 +14,10 @@
  * `CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1`, as well as performing
  * simple queries (such as point-location queries) on such arrangements.
  *
- * Every model must declare two nested type aliases that describe the topology of
- * the parameter space:
- *   - `Left_side_category` is one of `Open_side_tag`, `Closed_side_tag`, or
- *     `Identified_side_tag`.
- *   - `Right_side_category` has the same tag vocabulary.
- *
- * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
+ * \cgalRefines{CopyConstructible, Assignable}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{CGAL::Arrangement_on_curve_1::Ft_traits_1<Kernel>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Line_traits_1<Kernel>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Line_2_traits_1<Kernel>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Line_3_traits_1<Kernel>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Line_d_traits_1<Kernel>}

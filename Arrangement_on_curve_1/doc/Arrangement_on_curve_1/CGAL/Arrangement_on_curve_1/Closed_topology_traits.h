@@ -22,7 +22,7 @@ namespace Arrangement_on_curve_1 {
  *
  * A *closed* boundary side means the carrier curve has a known, finite
  * endpoint on that side.  The arrangement stores a *boundary vertex* at each
- * closed end rather than an unbounded sentinel edge.
+ * closed end rather than a sentinel edge.
  *
  * \tparam GeometryTraits_1 a model of `AocTraits_1` with
  *         `Left_side_category = Closed_side_tag` and `Right_side_category = Closed_side_tag`.
@@ -48,23 +48,8 @@ public:
   //! \name Creation
   //! @{
 
-  //! constructs an empty topology traits initialized with a single unbounded edge.
-  Closed_topology_traits();
-
   //! constructs an empty topology traits with an explicit allocator object.
-  explicit Closed_topology_traits(const Allocator_type& alloc);
-
-  //! copy constructor.
-  Closed_topology_traits(const Closed_topology_traits& other);
-
-  //! copy assignment.
-  Closed_topology_traits& operator=(const Closed_topology_traits& other);
-
-  //! move constructor.
-  Closed_topology_traits(Closed_topology_traits&& other) noexcept;
-
-  //! move assignment.
-  Closed_topology_traits& operator=(Closed_topology_traits&& other) noexcept;
+  explicit Closed_topology_traits(const Allocator& alloc);
 
   //! @}
 };

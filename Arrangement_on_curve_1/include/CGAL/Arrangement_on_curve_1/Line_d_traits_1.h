@@ -21,7 +21,7 @@ namespace Arrangement_on_curve_1 {
 // Geometry traits for a 1D arrangement of points on a line in
 // \f$\mathbb{R}_d\f$. Points are ordered by their signed arc-length parameter
 // along the master line.  The line extends to \f$\pm\infty\f$, so both sides
-// are open.  Pair with `Unbounded_topology_traits`.
+// are open.  Pair with `Open_topology_traits`.
 template <typename Kernel_>
 class Line_d_traits_1 {
 public:

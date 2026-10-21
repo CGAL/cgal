@@ -18,7 +18,7 @@ namespace Arrangement_on_curve_1 {
  * Points are represented using standard 2D Cartesian coordinates, and their
  * ordering is determined by projecting them onto the direction vector of the
  * master line.  Both sides of the parameter space are open, so `Line_2_traits_1`
- * should be paired with `Unbounded_topology_traits`.
+ * should be paired with `Open_topology_traits`.
  *
  * \tparam Kernel must be a standard \cgal `Kernel` model.
  *
@@ -30,7 +30,7 @@ public:
   /// \name Types
   /// @{
 
-  /// The 1D arrangement point type — a 2D coordinate on the supporting line.
+  /// The 1D arrangement point type; a 2D coordinate on the supporting line.
   typedef typename Kernel::Point_2 Point_1;
 
   /// The 2D master line supporting the topology.
@@ -39,10 +39,10 @@ public:
   /// A 2D direction vector along the master line.
   typedef typename Kernel::Vector_2 Vector_2;
 
-  /// Both sides of the infinite line are open (unbounded).
+  /// The left side of the parameter space is open.
   typedef Open_side_tag Left_side_category;
 
-  /// Both sides of the infinite line are open (unbounded).
+  /// Both sides of the parameter space is open.
   typedef Open_side_tag Right_side_category;
 
   /// @}

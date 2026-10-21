@@ -17,14 +17,9 @@
  * combinations of `Open_side_tag` and `Closed_side_tag` on the two sides of
  * the parameter space.  `Identified_side_tag` is not supported; use
  * `Identified_topology_traits` for closed-loop curves.
- *
- * Named aliases in their own headers:
- *   Unbounded_topology_traits      — Open  / Open  : (−∞, +∞)
- *   Bounded_topology_traits        — Closed/ Closed: [a, b]
- *   Left_bounded_topology_traits   — Closed/ Open  : [a, +∞)
- *   Right_bounded_topology_traits  — Open  / Closed: (−∞, b]
  */
 
+#include <CGAL/assertions.h>
 #include <CGAL/Arrangement_on_curve_1/Topology_traits_base.h>
 #include <CGAL/Arrangement_on_curve_1/Side_tags.h>
 
@@ -37,20 +32,28 @@ template <typename GeometryTraits_1,
           typename VertexData = void,
           typename EdgeData = void,
           bool UseVector = false,
-          typename Allocator = std::allocator<char>>
+          typename Allocator_ = std::allocator<char>>
 class Topology_traits :
-  public Topology_traits_base<typename GeometryTraits_1::Point_1, VertexData, EdgeData, UseVector, Allocator> {
+  public Topology_traits_base<typename GeometryTraits_1::Point_1, VertexData, EdgeData, UseVector, Allocator_> {
   static_assert(! Side_is_identified<LeftTag>::value && ! Side_is_identified<RightTag>::value,
                 "Topology_traits does not support Identified_side_tag. "
                 "Use Identified_topology_traits for closed-loop (identified) curves.");
-
-  using Base = Topology_traits_base<typename GeometryTraits_1::Point_1, VertexData, EdgeData, UseVector, Allocator>;
-
 public:
   using Geometry_traits_1 = GeometryTraits_1;
+  using Vertex_data = VertexData;
+  using Edge_data = EdgeData;
+  using Allocator = Allocator_;
+
+  //! The standard stl type.
+  using allocator_type = Allocator;
+
+private:
+  using Base = Topology_traits_base<typename Geometry_traits_1::Point_1, Vertex_data, Edge_data, UseVector, Allocator>;
+
+public:
+  using Base::Base;
 
   using typename Base::Point_1;
-  using typename Base::Allocator_type;
   using typename Base::Vertex_container;
   using typename Base::Edge_container;
   using typename Base::Vertex_descriptor;
@@ -82,7 +85,7 @@ public:
   Topology_traits() { init_spanning_edge(); }
 
   // Allocator-aware default constructor.
-  explicit Topology_traits(const Allocator_type& alloc) : Base(alloc) { init_spanning_edge(); }
+  explicit Topology_traits(const Allocator& alloc) : Base(alloc) { init_spanning_edge(); }
 
   // --------------------------------------------------------------------------
   // Move constructor / assignment
@@ -120,8 +123,8 @@ public:
   //
   // The base implementation (open/open topology) ignores the geometry traits
   // entirely: no boundary registration is possible when both sides are open.
-  // Derived classes (Bounded_topology_traits, Left_bounded_topology_traits,
-  // Right_bounded_topology_traits) override this to register the vertex as the
+  // Derived classes (Closed_topology_traits, Left_closed_topology_traits,
+  // Right_closed_topology_traits) override this to register the vertex as the
   // left or right boundary vertex when the point lies on a closed boundary.
   // --------------------------------------------------------------------------
   Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& /*gt*/) { return Base::create_vertex(p); }

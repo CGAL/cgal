@@ -38,6 +38,9 @@ namespace AocTraits {}
 /// \defgroup PkgArrangementOnCurve1TopologyTraitsClasses Topology Traits Classes
 /// \ingroup PkgArrangementOnCurve1Ref
 
+/// \defgroup PkgArrangementOnCurve1Tags Tags
+/// \ingroup PkgArrangementOnCurve1Ref
+
 /*!
 \addtogroup PkgArrangementOnCurve1Ref
 \cgalPkgDescriptionBegin{1D Arrangements,PkgArrangementOnCurve1}
@@ -71,6 +74,10 @@ as free (global) functions.
 
 \cgalCRPSection{Tags}
 
+- `Open_side_tag`
+- `Closed_side_tag`
+- `Identified_side_tag`
+
 \cgalCRPSection{Concepts}
 
 - `ArrangementOnCurve_1`
@@ -92,9 +99,9 @@ as free (global) functions.
 \cgalCRPSection{Classes}
 
 - `CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>`
-- `CGAL::Arrangement_on_curve_1::Right_bounded_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
-- `CGAL::Arrangement_on_curve_1::Left_bounded_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
-- `CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Right_closed_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Left_closed_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Open_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
 - `CGAL::Arrangement_on_curve_1::Closed_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
 - `CGAL::Arrangement_on_curve_1::Identified_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
 - `CGAL::Arrangement_on_curve_1::Line_traits_1<Kernel>`

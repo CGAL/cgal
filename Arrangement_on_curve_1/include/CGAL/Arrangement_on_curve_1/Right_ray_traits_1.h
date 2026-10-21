@@ -17,7 +17,7 @@ namespace Arrangement_on_curve_1 {
 
 // Geometry traits for a 1D arrangement on a riht-closed ray \f$(-\infty, b]\f$
 // The right side is closed; the left side is open.  Points are represented as
-// `Kernel::FT`.  Pair with `Right_bounded_topology_traits`.
+// `Kernel::FT`.  Pair with `Right_closed_topology_traits`.
 template <typename Kernel_>
 class Right_ray_traits_1 : public Ft_traits_1<Kernel_> {
   using Kernel = Kernel_;
@@ -35,7 +35,7 @@ public:
 
   // Parameter_space_in_x_ — returns ARR_RIGHT_BOUNDARY at the right endpoint;
   // ARR_INTERIOR for all other points.
-  class Parameter_space_in_x_ {
+  class Parameter_space_in_x_1 {
     const Right_ray_traits_1& m_tr;
 
   public:

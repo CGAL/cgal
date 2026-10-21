@@ -18,17 +18,16 @@ namespace Arrangement_on_curve_1 {
  * `Identified_side_tag`), the curve is a closed loop — for example a circle,
  * a direction-space S¹, or any periodic 1D domain.
  *
- * Key topological differences from `Unbounded_topology_traits`:
+ * Key topological differences from `Open_topology_traits`:
  *
- * - There is **no** sentinel "unbounded" edge.  An empty arrangement contains
- *   no edges and no vertices.
+ * - There is **no** sentinel edge.  An empty arrangement does not contain vertices.
  *
  * - Vertices and edges form a cyclic sequence:
  *   \f$\ldots \leftarrow e_0 \rightarrow v_0 \leftarrow e_1 \rightarrow v_1 \ldots\f$
  *   where the last edge wraps back to the first vertex.
  *
- * - A *start edge* (`start_edge()`) provides the canonical entry point for
- *   cyclic traversal (locate, overlay).
+ * - A edge incident on the left to a vertex that maps to the identification point
+ *   provides the canonical entry point for cyclic traversal (locate, overlay).
  *
  * - `insert_empty(p)` creates the very first vertex and a single loop edge
  *   (left and right both pointing to that vertex).
@@ -48,7 +47,7 @@ namespace Arrangement_on_curve_1 {
  * \cgalModels{AocTopologyTraits}
  *
  * \sa `Topology_traits_base`
- * \sa `Unbounded_topology_traits`
+ * \sa `Open_topology_traits`
  * \sa `Closed_topology_traits`
  */
 template <typename GeometryTraits_1,
@@ -61,23 +60,8 @@ public:
   /// \name Creation
   /// @{
 
-  //! constructs an empty topology traits initialized with a single edge.
-  Identified_topology_traits();
-
   //! constructs an empty topology traits with an explicit allocator object.
-  explicit Identified_topology_traits(const Allocator_type& alloc);
-
-  //! copy constructor.
-  Identified_topology_traits(const Identified_topology_traits& other);
-
-  //! copy assignment.
-  Identified_topology_traits& operator=(const Identified_topology_traits& other);
-
-  //! move constructor.
-  Identified_topology_traits(Identified_topology_traits&& other) noexcept;
-
-  //! move assignment.
-  Identified_topology_traits& operator=(Identified_topology_traits&& other) noexcept;
+  explicit Identified_topology_traits(const Allocator& alloc);
 
   /// @}
 };

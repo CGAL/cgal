@@ -13,7 +13,7 @@
  * Boundary-category tags for the 1D Arrangement on Curves package.
  *
  * Open_side_tag---the boundary extends to \f$\pm\infty\f$; no finite endpoint
- * exists.  The arrangement stores an "unbounded" sentinel edge on that side.
+ * exists.  The arrangement stores an sentinel edge on that side.
  *
  * Closed_side_tag---the boundary is a finite, well-defined endpoint of the
  * curve (e.g., the left or right endpoint of a closed arc).
@@ -67,7 +67,7 @@ namespace Arrangement_on_curve_1 {
 // Tag types
 // ---------------------------------------------------------------------------
 
-/// The curve's parameter space is unbounded on this side (open end).
+/// The curve's parameter space is open on this side (open end).
 struct Open_side_tag {};
 
 /// The curve has a well-defined finite endpoint on this side (closed end).
@@ -99,7 +99,7 @@ struct Side_is_identified<Identified_side_tag> : std::true_type {};
 // Helper: true when both sides are identified (curve is a closed loop).
 // GeometryTraits must expose Left_side_category and Right_side_category.
 template <typename GeometryTraits>
-inline constexpr bool Is_identified_curve_v =
+inline constexpr bool Is_identified_v =
   Side_is_identified<typename GeometryTraits::Left_side_category>::value &&
   Side_is_identified<typename GeometryTraits::Right_side_category>::value;
 

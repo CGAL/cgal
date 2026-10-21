@@ -26,31 +26,31 @@
 class OverlayVisitor {
 public:
   //! a constant descriptor of a vertex in the first input arrangement.
-  typedef Vertex_const_descriptor_a;
+  typedef unspecified_type Vertex_const_descriptor_a;
 
   //! a constant descriptor of a vertex in the second input arrangement.
-  typedef Vertex_const_descriptor_b;
+  typedef unspecified_type Vertex_const_descriptor_b;
 
   //! a descriptor of a vertex in the output arrangement.
-  typedef Vertex_descriptor_r;
+  typedef unspecified_type Vertex_descriptor_r;
 
   //! a constant descriptor of an edge in the first input arrangement.
-  typedef Edge_const_descriptor_a;
+  typedef unspecified_type Edge_const_descriptor_a;
 
   //! a constant descriptor of an edge in the second input arrangement.
-  typedef Edge_const_descriptor_b;
+  typedef unspecified_type Edge_const_descriptor_b;
 
   //! a descriptor of an edge in the output arrangement.
-  typedef Edge_descriptor_r;
+  typedef unspecified_type Edge_descriptor_r;
 
   /*! updates the vertex identified by the descriptor `v_res`, which is induced
    * by the vertices of the two input arrangements identified by the descriptors
-   * `v_a` and `v_b`, repsectively.
+   * `v_a` and `v_b`, respectively.
    */
   void create_vertex(Vertex_const_descriptor_a v_a, Vertex_const_descriptor_b v_b, Vertex_descriptor_r v_res);
 
   /*! updates the vertex identified by the descriptor `v_res`, which is induced
-   * by tyhe vertex of the first input arrangements and the edge of the second
+   * by the vertex of the first input arrangements and the edge of the second
    * input arrangement, identified by the descriptors `v_a` and `e_b`,
    * repsectively.
    */
@@ -63,9 +63,9 @@ public:
    */
   void create_vertex(Edge_const_descriptor_a e_a, Vertex_const_descriptor_b v_b, Vertex_descriptor_r v_res);
 
-  /*! updates the vertex identified by the descriptor `v_res`, which is induced
+  /*! updates the edge identified by the descriptor `e_res`, which is induced
    * by the edges of the two input arrangements identified by the descriptors
    * `e_a` and `e_b`, repsectively.
    */
   void create_edge(Edge_const_descriptor_a e_a, Edge_const_descriptor_b e_b, Edge_descriptor_r e_res);
-}
+};
