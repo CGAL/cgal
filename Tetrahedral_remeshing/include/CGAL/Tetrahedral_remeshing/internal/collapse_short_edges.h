@@ -393,7 +393,7 @@ Collapse_type get_collapse_type(const typename C3t3::Edge& edge,
 
 
 template <typename Triangulation>
-bool is_link_condition_valid(const typename Triangulation::Edge& edge,
+bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
                              const Triangulation& tr)
 {
   using Vertex_handle = typename Triangulation::Vertex_handle;
@@ -548,7 +548,7 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
     }
   }
 
-  return is_link_condition_valid(edge, c3t3.triangulation());
+  return does_satisfy_link_condition(edge, c3t3.triangulation());
 }
 
 template<typename Facet, typename Vh>
