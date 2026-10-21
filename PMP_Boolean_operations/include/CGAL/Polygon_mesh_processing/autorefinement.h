@@ -62,11 +62,7 @@
 //#define CGAL_AUTOREFINE_DEBUG_COUNTERS
 //#define CGAL_AUTOREF_DEBUG_DEPTH
 
-#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-#include <CGAL/Real_timer.h>
-#endif
-
-#if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS)
+#if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS) || defined(CGAL_BO3_AABB_TIMERS)
 #include <CGAL/Real_timer.h>
 #endif
 
@@ -986,6 +982,130 @@ void generate_subtriangles(std::size_t ti,
 #endif
 
 namespace autorefine_impl{
+
+//
+template <typename Kernel, typename Concurrency_tag, typename PointRange, typename PolygonRange, typename Pair_of_triangle_ids, typename PointMap>
+void compute_intersecting_pairs(const PointRange& points, const PolygonRange& triangles,
+                                std::size_t split_id, std::vector<Pair_of_triangle_ids>& si_pairs,
+                                const PointMap& pm)
+{
+#ifdef CGAL_BO3_AABB_TIMERS
+  Real_timer t;
+  t.start();
+#endif
+  using Point = typename PointMap::value_type;
+  using VPM = internal::Property_map_for_soup<PointRange, PointMap>;
+  using AABB_tree_helper = CGAL::Polygon_mesh_processing::internal::AABB_tree_soup_helper<PointRange, PolygonRange, Kernel, VPM>;
+  using Tree = typename AABB_tree_helper::Tree;
+  AABB_tree_helper helper;
+
+  using Bbox_map      = Pointer_property_map<Bbox_3>::type;
+  using Ref_point_map = Pointer_property_map<Epick::Point_3>::type;
+  using Compute_bbox = typename AABB_tree_helper::Compute_bbox<Bbox_map>;
+  using Split_primitives = typename AABB_tree_helper::Split_primitives<Ref_point_map>;
+
+  CGAL::Cartesian_converter<Kernel, Epick> to_input;
+
+  std::vector<Bbox_3> bb_vector(triangles.size());
+  std::vector<Epick::Point_3> rp_vector(triangles.size());
+  Bbox_map bb_map = make_property_map(bb_vector);
+  Ref_point_map rp_map = make_property_map(rp_vector);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  {
+    tbb::parallel_for(std::size_t(0), triangles.size(), [&](std::size_t i){
+      put(bb_map, i, get(pm, points[triangles[i][0]]).bbox() +
+                     get(pm, points[triangles[i][1]]).bbox() +
+                     get(pm, points[triangles[i][2]]).bbox());
+      put(rp_map, i, to_input(get(pm, points[triangles[i][0]])) );
+    });
+  }
+  else
+#endif
+  {
+    for(std::size_t i=0; i<triangles.size(); ++i){
+      put(bb_map, i, get(pm, points[triangles[i][0]]).bbox() +
+                     get(pm, points[triangles[i][1]]).bbox() +
+                     get(pm, points[triangles[i][2]]).bbox());
+      put(rp_map, i, to_input(get(pm, point(triangles[i][0]))) );
+    }
+  }
+  Compute_bbox compute_bbox(bb_map);
+  Split_primitives split_primitives(rp_map);
+
+#ifdef CGAL_BO3_AABB_TIMERS
+  std::cout << t.time() << " sec. to prepare bbox and reference point\n";
+#endif
+
+  Bbox_3 b1 = bbox_3(bb_vector.begin(), bb_vector.begin()+split_id);
+  Bbox_3 b2 = bbox_3(bb_vector.begin()+split_id, bb_vector.end());
+  Bbox_3 bb12((std::max)(b1.xmin(), b2.xmin()), (std::max)(b1.ymin(), b2.ymin()), (std::max)(b1.zmin(), b2.zmin()),
+              (std::min)(b1.xmax(), b2.xmax()), (std::min)(b1.ymax(), b2.ymax()), (std::min)(b1.zmax(), b2.zmax()));
+
+  std::vector<std::size_t> tm1_faces_intersecting_bb;
+  std::vector<std::size_t> tm2_faces_intersecting_bb;
+  tm1_faces_intersecting_bb.reserve(split_id);
+  tm2_faces_intersecting_bb.reserve(triangles.size()-split_id);
+
+  for(std::size_t i=0; i<split_id; ++i)
+    if(do_overlap(bb_vector[i], bb12))
+      tm1_faces_intersecting_bb.push_back(i);
+  for(std::size_t i=split_id; i<triangles.size(); ++i)
+    if(do_overlap(bb_vector[i], bb12))
+      tm2_faces_intersecting_bb.push_back(i);
+
+#ifdef CGAL_BO3_AABB_TIMERS
+  std::cout << t.time() << " sec. to select faces in the bbox\n";
+#endif
+
+  // If one set is empty, no intersection
+  if(tm1_faces_intersecting_bb.empty() || tm2_faces_intersecting_bb.empty())
+    return;
+
+  Tree tree1(tm1_faces_intersecting_bb.begin(), tm1_faces_intersecting_bb.end(), points, triangles, pm);
+  Tree tree2(tm2_faces_intersecting_bb.begin(), tm2_faces_intersecting_bb.end(), points, triangles, pm);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  {
+    tbb::task_group task_group;
+    task_group.run([&]() {
+      tree1.template custom_build<Concurrency_tag>(compute_bbox, split_primitives);
+    });
+    tree2.template custom_build<Concurrency_tag>(compute_bbox, split_primitives);
+    task_group.wait();
+  }
+  else
+#endif
+  {
+    tree1.template custom_build(compute_bbox, split_primitives);
+    tree2.template custom_build(compute_bbox, split_primitives);
+  }
+
+#ifdef CGAL_BO3_AABB_TIMERS
+  std::cout << t.time() << " sec. to build trees\n";
+#endif
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  {
+    tbb::concurrent_vector<Pair_of_triangle_ids> inter;
+    CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), parameters::concurrency_tag(Concurrency_tag()));
+    si_pairs.insert(si_pairs.end(), inter.begin(), inter.end());
+  }
+  else
+#endif
+  {
+    CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(si_pairs));
+  }
+#ifdef CGAL_BO3_AABB_TIMERS
+  std::cout << t.time() << " sec. traversal time\n";
+#endif
+
+}
+
+
 // Forward declaration
 struct Wrap_snap_visitor;
 
@@ -1001,6 +1121,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::is_default_parameter;
 
   typedef typename GetPolygonSoupGeomTraits<PointRange, NamedParameters>::type GT;
   typedef typename GetPointMap<PointRange, NamedParameters>::const_type    Point_map;
@@ -1036,17 +1157,27 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
   // collect intersecting pairs of triangles
   CGAL_PMP_AUTOREFINE_VERBOSE("collect intersecting pairs");
-#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  Real_timer t;
-  t.start();
-#endif
-  triangle_soup_self_intersections<Concurrency_tag>(soup_points, soup_triangles, std::back_inserter(si_pairs), np);
-#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
+
+#if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS)
   std::string mode = parallel_execution ? "parallel" : "sequential";
-  t.stop();
-  std::cout << t.time() << " sec. for #0 (" << mode << ")" << std::endl;
-  t.reset();
+  CGAL::Real_timer timer;
+  timer.start();
 #endif
+
+  if constexpr(!parameters::is_default_parameter<NamedParameters, internal_np::split_triangle_range_at_t>::value)
+  {
+    std::size_t split_id=get_parameter(np, internal_np::split_triangle_range_at);
+    compute_intersecting_pairs<GT, Concurrency_tag>(soup_points, soup_triangles, split_id, si_pairs, pm);
+  }
+  else
+    triangle_soup_self_intersections<Concurrency_tag>(soup_points, soup_triangles, std::back_inserter(si_pairs), np);
+
+#if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS)
+  timer.stop();
+  std::cout << "collecting intersecting pairs took (" << mode << ") " << timer.time() << "\n";
+  timer.reset();
+#endif
+
   if (si_pairs.empty())
   {
     if constexpr (!std::is_same_v<Autorefinement::Default_visitor, Visitor>)
@@ -1112,7 +1243,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
   CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections ("+std::to_string(si_pairs.size())+")");
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.start();
+  timer.start();
 #endif
   std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles;
   std::set<std::pair<std::size_t, std::size_t> > coplanar_triangles;
@@ -1201,13 +1332,13 @@ bool autorefine_triangle_soup(PointRange& soup_points,
     }
   }
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.stop();
-  std::cout << t.time() << " sec. for #2" << std::endl;
-  t.reset();
+  timer.stop();
+  std::cout << timer.time() << " sec. for #2" << std::endl;
+  timer.reset();
 #endif
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.start();
+  timer.start();
 #endif
 
   // deduplicate inserted segments
@@ -1313,9 +1444,9 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   }
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.stop();
-  std::cout << t.time() << " sec. for #3" << std::endl;
-  t.reset();
+  timer.stop();
+  std::cout << timer.time() << " sec. for #3" << std::endl;
+  timer.reset();
 #endif
 
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces ("+std::to_string(triangles.size())+")");
@@ -1364,7 +1495,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   };
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.start();
+  timer.start();
 #endif
 #ifdef CGAL_LINKED_WITH_TBB
   if (parallel_execution)
@@ -1383,9 +1514,10 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   }
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.stop();
-  std::cout << t.time() << " sec. for #1" << std::endl;
-  t.reset();
+  timer.stop();
+  std::cout << timer.time() << " sec. for #1" << std::endl;
+  timer.reset();
+  timer.start();
 #endif
 
   // brute force output: create a soup, orient and to-mesh
@@ -1403,22 +1535,54 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   Point_id_map point_id_map;
 
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-  std::vector<EK::Point_3> exact_soup_points;
+#ifdef CGAL_LINKED_WITH_TBB
+  typedef std::conditional_t<parallel_execution,
+                             tbb::concurrent_vector<EK::Point_3>,
+                             std::vector<EK::Point_3>> Exact_point_range;
+#else
+  typedef std::vector<EK::Point_3> Exact_point_range;
+#endif
+  Exact_point_range exact_soup_points;
 #endif
 
-  // TODO: parallel_for?
+
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+    exact_soup_points.resize(soup_points.size());
+#endif
+
   // for input points, we on purpose keep duplicated points and isolated points
-  for (std::size_t pid = 0; pid<soup_points.size(); ++pid)
+  const auto insert_point_id = [&](std::size_t pid)
   {
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
     auto insert_res =
 #endif
-    point_id_map.insert(
-      std::make_pair(to_exact(get(pm,soup_points[pid])), pid));
+    point_id_map.insert(std::make_pair(to_exact(get(pm,soup_points[pid])), pid));
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-      exact_soup_points.push_back(insert_res.first->first);
+    exact_soup_points[pid]=insert_res.first->first;
 #endif
+  };
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr (parallel_execution)
+  {
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, soup_points.size()),
+                      [&](const tbb::blocked_range<std::size_t>& r) {
+                        for (std::size_t pid = r.begin(); pid != r.end(); ++pid)
+                          insert_point_id(pid);
+                      });
   }
+  else
+#endif
+  for (std::size_t pid = 0; pid<soup_points.size(); ++pid)
+  {
+    insert_point_id(pid);
+  }
+
+#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
+  timer.stop();
+  std::cout << timer.time() << " sec. to fill point id map" << std::endl;
+  timer.reset();
+  timer.start();
+#endif
 
   TriangleRange soup_triangles_out;
   soup_triangles_out.reserve(soup_triangles.size());
@@ -1456,6 +1620,12 @@ bool autorefine_triangle_soup(PointRange& soup_points,
     }
   }
 
+#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
+  timer.stop();
+  std::cout << timer.time() << " sec. to build the output" << std::endl;
+  timer.reset();
+#endif
+
   // import refined triangles
 
   // Lambda to retrieve the id of intersection points
@@ -1473,7 +1643,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   };
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.start();
+  timer.start();
 #endif
 
   std::size_t offset = soup_triangles_out.size();
@@ -1578,14 +1748,17 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.stop();
-  std::cout << t.time() << " sec. for #4 (" << mode << ")" << std::endl;
-  t.reset();
+  timer.stop();
+  std::cout << timer.time() << " sec. for #4 (" << mode << ")" << std::endl;
+  timer.reset();
 #endif
 
 #ifndef CGAL_NDEBUG
   CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
-  CGAL_assertion( !does_triangle_soup_self_intersect<Concurrency_tag>(exact_soup_points, soup_triangles_out) );
+  // If split_triangle_range is defined, intersection can still be present inside one of the range
+  if constexpr(parameters::is_default_parameter<NamedParameters, internal_np::split_triangle_range_at_t>::value){
+    CGAL_assertion( !does_triangle_soup_self_intersect<Concurrency_tag>(exact_soup_points, soup_triangles_out) );
+  }
 #else
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
   CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
@@ -1701,10 +1874,12 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
 /**
  * \ingroup PMP_corefinement_grp
- * refines a triangle mesh so that no triangles intersects in their interior.
+ * refines a triangle mesh to ensure no pair of triangles intersects, except at a shared edge or vertex.
+ * If the input does self-intersect, then the intersection will be resolved in the output but the
+ * mesh will still be self-intersecting.
  *
  * Note that this function is only provided as a shortcut for calling `autorefine_triangle_soup()`
- * with a mesh. For any advance usage the aforementioned function should be called directly.
+ * with a mesh. For any advanced usage the aforementioned function should be called directly.
  *
  * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -1716,7 +1891,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{concurrency_tag}
- *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
  *     \cgalParamDefault{`CGAL::Sequential_tag`}
  *   \cgalParamNEnd

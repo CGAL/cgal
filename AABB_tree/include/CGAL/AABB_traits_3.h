@@ -761,7 +761,7 @@ private:
   }
 
   /// Comparison functions
-  static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
+  static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits_3<GeomTraits, AABBPrimitive, BboxMap>& traits)
   {
     return GeomTraits().less_x_3_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
                                            internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
