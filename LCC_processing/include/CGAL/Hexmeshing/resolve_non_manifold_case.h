@@ -125,7 +125,7 @@ namespace CGAL::internal::Hexmeshing
       int inner_signal = __get_signal(lcc, vertex, inner_mark);
       if(temp != inner_signal) continue;
 
-      int id = lcc.attribute<0>(vertex)->id;
+      auto id = lcc.attribute<0>(vertex)->id;
       CGAL_assertion(counter[id] < NUMBER_OF_EPSILONS);
       double eps = epsilons[counter[id]++];
       std::array<Dart_descriptor, 8> volumes = volumes_around_node(lcc, vertex);

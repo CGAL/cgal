@@ -41,7 +41,7 @@ namespace CGAL::internal::Hexmeshing {
         for(auto vertex = lcc.one_dart_per_incident_cell<0, 2>(it).begin(),
                   end = lcc.one_dart_per_incident_cell<0, 2>(it).end();
                 vertex != end; vertex++) {
-          int id = lcc.attribute<0>(vertex)->id;
+          auto id = lcc.attribute<0>(vertex)->id;
           Vector P_new_add = ((lcc.point(vertex) - CGAL::ORIGIN) - (face_attr.normal * (lcc.point(vertex) - face_attr.intersection))*face_attr.normal);
           P_news[id] += P_new_add;
 
@@ -61,7 +61,7 @@ namespace CGAL::internal::Hexmeshing {
     auto vertices = lcc.one_dart_per_cell<0>();
     for(auto it = vertices.begin(); it != vertices.end(); it++) {
       if(lcc.is_marked(it, move_mark)) {
-        int id = lcc.attribute<0>(it)->id;
+        auto id = lcc.attribute<0>(it)->id;
         P_news[id] /= count_intersect[id];
         lcc.point(it) = CGAL::ORIGIN + P_news[id];
 

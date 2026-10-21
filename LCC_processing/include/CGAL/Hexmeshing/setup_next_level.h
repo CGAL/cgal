@@ -157,7 +157,7 @@ namespace CGAL::internal::Hexmeshing
    * @param edge_mark Mark used to track visited edges
    * @param face_mark Mark used to track visited faces
    */
-  template <typename HexData>
+  template <typename HexData, typename EdgeMark, typename FaceMark>
   void setup_next_level_face(HexData& hdata,
                             std::unordered_map<LCC::Attribute_descriptor<2>::type,
                                                Union_find<Dart_descriptor>::handle>& odd_face_to_handle,
@@ -168,8 +168,8 @@ namespace CGAL::internal::Hexmeshing
                             Union_find<Dart_descriptor>& even_union_find,
                             Dart_descriptor face,
                             PlaneNormal planeIteration,
-                            size_t /* plane_id */,
-                            int edge_mark, int face_mark){
+                            std::size_t /* plane_id */,
+                            EdgeMark edge_mark, FaceMark face_mark){
     LCC& lcc = hdata.lcc;
     auto vol_handle = lcc.attribute<3>(face);
     auto beta3_vol_handle = lcc.attribute<3>(lcc.beta<3>(face));
@@ -349,11 +349,11 @@ namespace CGAL::internal::Hexmeshing
       return {};
     };
 */
-    const auto create_plane = [&](char plane_normal, size_t plane_id, const UF_Partition& partition,
+    const auto create_plane = [&](char plane_normal, std::size_t plane_id, const UF_Partition& partition,
         const Union_find& uf, const FaceToHandle& face_to_handle) -> std::vector<Dart_descriptor>
     {
       std::vector<Dart_descriptor> plane_cc;
-      std::unordered_map<Union_find::pointer, size_t> ptr_to_id;
+      std::unordered_map<Union_find::pointer, std::size_t> ptr_to_id;
 
       for (std::size_t i = 0; i < partition.size(); i++){
         ptr_to_id[partition[i].ptr()] = i;
@@ -433,7 +433,7 @@ namespace CGAL::internal::Hexmeshing
         auto odd_partitions = get_partitions(odd_union_find);
         auto even_partitions = get_partitions(even_union_find);
 
-        int plane_id = pid * 2;
+        auto plane_id = pid * 2;
 
         new_plane_set.push_back(create_plane(p, plane_id, odd_partitions,
                                              odd_union_find, odd_face_to_handle));
