@@ -145,7 +145,7 @@ public:
   using Size = std::size_t;
 
   // --------------------------------------------------------------------------
-  // Vertex node
+  // Vertex
   // --------------------------------------------------------------------------
   struct Vertex : public Data_container<Vertex_data> {
     Vertex() = default;
@@ -161,7 +161,7 @@ public:
   };
 
   // --------------------------------------------------------------------------
-  // Edge node
+  // Edge
   // --------------------------------------------------------------------------
   struct Edge : public Data_container<Edge_data> {
     Vertex_descriptor left() const { return m_left; }

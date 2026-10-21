@@ -267,10 +267,28 @@ public:
                   "insert_left_boundary_vertex() is only valid for arrangements with a closed left boundary.");
     auto& topo = m_topology_traits;
     auto e_lb = topo.left_boundary_edge();
+    CGAL_precondition(! topo.has_left_vertex(e_lb));
     Vertex_descriptor v = create_vertex(p);
     topo.set_left_vertex(e_lb, v);
     topo.set_left_edge(v, e_lb);
     topo.set_right_edge(v, e_lb);
+    return v;
+  }
+
+  /*! inserts a vertex at the right boundary of a right-bounded arrangement.
+   * Sets `p` as the right vertex of `e`, the rightmost edge; no new edge is
+   * created.
+   * \pre `e` has no right vertex.
+   */
+  Vertex_descriptor insert_right_boundary_vertex(Edge_descriptor e, const Point_1& p) {
+    static_assert(right_is_closed,
+                  "insert_right_boundary_vertex() is only valid for arrangements with a closed right boundary.");
+    auto& topo = m_topology_traits;
+    CGAL_precondition(! topo.has_right_vertex(e));
+    Vertex_descriptor v = create_vertex(p);
+    topo.set_right_vertex(e, v);
+    topo.set_left_edge(v, e);
+    topo.set_right_edge(v, e);
     return v;
   }
 

@@ -112,7 +112,11 @@ as free (global) functions.
 - `CGAL::Arrangement_on_curve_1::Line_3_traits_1<Kernel>`
 - `CGAL::Arrangement_on_curve_1::Line_d_traits_1<Kernel>`
 - `CGAL::Arrangement_on_curve_1::Circle_traits_1<Kernel>`
-- `CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<GeomTraits_2>`
+- `CGAL::Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<GeomTraits_2>`
+- `CGAL::Arrangement_on_curve_1::Closed_geom_traits_2_adaptor_1<GeomTraits_2>`
+- `CGAL::Arrangement_on_curve_1::Closed_left_geom_traits_2_adaptor_1<GeomTraits_2>`
+- `CGAL::Arrangement_on_curve_1::Closed_right_geom_traits_2_adaptor_1<GeomTraits_2>`
+- `CGAL::Arrangement_on_curve_1::Identified_geom_traits_2_adaptor_1<GeomTraits_2>`
 
 \cgalCRPSection{Functions}
 

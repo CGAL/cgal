@@ -127,7 +127,7 @@ public:
   // Right_closed_topology_traits) override this to register the vertex as the
   // left or right boundary vertex when the point lies on a closed boundary.
   // --------------------------------------------------------------------------
-  Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& /*gt*/) { return Base::create_vertex(p); }
+  Vertex_descriptor create_vertex(const Point_1& p) { return Base::create_vertex(p); }
 
   // --------------------------------------------------------------------------
   // Left edge accessor

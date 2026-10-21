@@ -14,10 +14,11 @@
 #include <CGAL/draw_arrangement_2.h>
 
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
-#include <CGAL/Arrangement_on_curve_1/Open_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Closed_topology_traits.h>
 #include <CGAL/Arrangement_on_curve_1/insert.h>
 #include <CGAL/Arrangement_on_curve_1/locate.h>
-#include <CGAL/Arrangement_on_curve_1/Geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Closed_geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Side_tags.h>
 
 // Kernel: Arr_circle_segment_traits_2 requires the kernel's FT to be an
 // exact rational type so that circle centers and squared radii are exact.
@@ -37,10 +38,12 @@ using Circle_2 = Geom_traits_2::Rational_circle_2;
 using Arrangement_2 = CGAL::Arrangement_2<Geom_traits_2>;
 
 // 1D arrangement on the upper semicircular arc.
-using Geom_traits_1 = CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Geom_traits_2>;
+namespace Aoc = CGAL::Arrangement_on_curve_1;
+
+using Geom_traits_1 = Aoc::Closed_geom_traits_2_adaptor_1<Geom_traits_2>;
 using Point_1 = Geom_traits_1::Point_1;   // same as Point_2 above
-using Topo_traits = CGAL::Arrangement_on_curve_1::Open_topology_traits<Geom_traits_1, std::string, void>;
-using Arrangement_1 = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topo_traits>;
+using Topo_traits = Aoc::Closed_topology_traits<Geom_traits_1, std::string, void>;
+using Arrangement_1 = Aoc::Arrangement_on_curve_1<Geom_traits_1, Topo_traits>;
 
 /*! Helper: print a Point_2 using double approximations of its CoordNT coords.
  */
@@ -91,7 +94,7 @@ int main() {
   CGAL::insert(arr_2d, upper_arc);
 
   // Build the 1D arrangement on the upper semicircular arc.
-  Geom_traits_1 geom_traits_1(traits_2_ptr);
+  Geom_traits_1 geom_traits_1(traits_2_ptr, pt_left, pt_right);
   Arrangement_1 arr_1d(std::make_shared<const Geom_traits_1>(geom_traits_1));
 
   /* Construct several points on the upper semicircle and insert them into the 1D arrangement.
@@ -113,8 +116,8 @@ int main() {
   struct Named_point { int x; bool endpoint; const char* label; };
   std::vector<Named_point> samples = {
     {  3, false, "P(x=3)"  },
-    { -5, true,  "P(x=-5)" }, // left  endpoint of the upper arc, y = 0
     {  0, false, "P(x=0)"  }, // apex  of the upper arc, y = 5
+    { -5, true,  "P(x=-5)" }, // left  endpoint of the upper arc, y = 0
     { -3, false, "P(x=-3)" },
     {  5, true,  "P(x=5)"  }, // right endpoint of the upper arc, y = 0
     {  4, false, "P(x=4)"  },
@@ -144,12 +147,23 @@ int main() {
   auto v_pnt_map = arr_1d.vertex_point_map();
 
   std::cout << "Sorted vertex sequence (left to right by x-coordinate):\n";
-  auto e = arr_1d.left_boundary_edge();
-  while (arr_1d.has_right_vertex(e)) {
-    auto v = arr_1d.right_vertex(e);
+  // The right boundary vertex has no edge on its right; the walks below stop there.
+  auto ps_in_x = arr_1d.geometry_traits_1().parameter_space_in_x_1_object();
+  auto is_right_boundary = [&](Arrangement_1::Vertex_const_descriptor v)
+  { return ps_in_x(get(v_pnt_map, v)) == Aoc::RIGHT_BOUNDARY; };
+
+  auto print_vertex = [&](Arrangement_1::Vertex_const_descriptor v) {
     std::cout << "  " << get(v_data_map, v) << "  ~  ";
     print_point(get(v_pnt_map, v));
     std::cout << "\n";
+  };
+
+  auto e = arr_1d.left_boundary_edge();
+  if (arr_1d.has_left_vertex(e)) print_vertex(arr_1d.left_vertex(e));
+  while (arr_1d.has_right_vertex(e)) {
+    auto v = arr_1d.right_vertex(e);
+    print_vertex(v);
+    if (is_right_boundary(v)) break;
     e = arr_1d.right_edge(v);
   }
 
@@ -165,7 +179,7 @@ int main() {
     if (arr_1d.has_right_vertex(e)) std::cout << "[" << get(v_data_map, arr_1d.right_vertex(e)) << "]";
     else std::cout << "(arc end)";
     std::cout << "\n";
-    if (! arr_1d.has_right_vertex(e)) break;
+    if (! arr_1d.has_right_vertex(e) || is_right_boundary(arr_1d.right_vertex(e))) break;
     e = arr_1d.right_edge(arr_1d.right_vertex(e));
   }
 

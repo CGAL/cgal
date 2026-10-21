@@ -34,9 +34,9 @@ the closed upper semicircle.  It has seven vertices
 Following standard \cgal architectural practices, this package
 strictly isolates the topological framework from the underlying geometry.
 - **Topology** describes the incidence relations (left or right)
-  between vertices and edges without considering their structural positions.
+  between vertices and edges and the topology of the master curve.
 - **Geometry** encapsulates geometric predicates and geometric object
-  constructions required to compute relative ordering along a trajectory curve.
+  constructions required to compute relative ordering along a master curve.
 
 The core arrangement structure handles its geometry traits via a
 shared smart pointer (`std::shared_ptr<const Geometry_traits_1>`) to

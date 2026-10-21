@@ -74,6 +74,14 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearc
       else return false;
     };
 
+    // For a closed left side: the left boundary vertex if exists is the left vertex of the left boundary edge.
+    if constexpr (Aoc::left_is_closed) {
+      if (arr.has_left_vertex(curr_e)) {
+        auto v = arr.left_vertex(curr_e);
+        if (cmp(p, get(v_pnt_map, v)) == CGAL::EQUAL) return Result{std::in_place_index<0>, v};
+      }
+    }
+
     while (arr.has_right_vertex(curr_e)) {
       auto curr_v = arr.right_vertex(curr_e);
       auto curr_pnt = get(v_pnt_map, curr_v);

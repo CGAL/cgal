@@ -44,30 +44,24 @@ insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr
 
   auto e = std::get<1>(loc);
 
-  bool has_left = arr.has_left_vertex(e);
-  bool has_right = arr.has_right_vertex(e);
+  // A point on a closed boundary becomes the boundary vertex: it bounds the
+  // edge that contains it, and no new edge is created.  This also covers an
+  // empty arrangement.
+  if constexpr (Aoc::left_is_closed || Aoc::right_is_closed) {
+    auto ps = arr.geometry_traits_1().parameter_space_in_x_1_object()(p);
+    if constexpr (Aoc::left_is_closed) {
+      if (ps == LEFT_BOUNDARY) return arr.insert_left_boundary_vertex(p);
+    }
+    if constexpr (Aoc::right_is_closed) {
+      if (ps == RIGHT_BOUNDARY) return arr.insert_right_boundary_vertex(e, p);
+    }
+  }
 
-  if (! has_left && ! has_right) return arr.insert_empty(p);
+  if (! arr.has_left_vertex(e) && ! arr.has_right_vertex(e)) return arr.insert_empty(p);
 
   if constexpr (Aoc::is_identified) {
     if (arr.geometry_traits_1().is_on_x_identification_1_object()(p)) return arr.insert_identification_vertex(p);
     return arr.split_edge(e, p);
-  }
-
-  // Edge has no left vertex: p is to the left of all existing vertices.
-  if (! has_left) {
-    // For closed left boundary: install p as the (unique) left boundary vertex.
-    // For open left side: split the left edge at p.
-    if constexpr (Aoc::left_is_closed) return arr.insert_left_boundary_vertex(p);
-    else return arr.split_edge(e, p);
-  }
-
-  // Edge has no right vertex: p is to the right of all existing vertices.
-  if (! has_right) {
-    // For closed right boundary: append p after the current rightmost vertex.
-    // For open right side: split the right edge at p.
-    if constexpr (Aoc::right_is_closed) return arr.insert_after(arr.left_vertex(e), p);
-    else return arr.split_edge(e, p);
   }
 
   // Interior edge (v_left, v_right): split it.

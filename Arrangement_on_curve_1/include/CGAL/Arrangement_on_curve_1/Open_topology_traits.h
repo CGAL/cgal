@@ -62,6 +62,11 @@ private:
 
 public:
   using Base::Base;
+  using typename Base::Point_1;
+  using typename Base::Vertex_descriptor;
+
+  Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& /* gt */) { return Base::create_vertex(p); }
+
 };
 
 } // namespace Arrangement_on_curve_1
