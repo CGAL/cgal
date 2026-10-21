@@ -574,7 +574,7 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
     // (Proof idea: Otherwise, consider the intersection of the cutting plane with the segment connecting the old vertex to the new one.)
     // Updating the bbox complexity is proportional to the size of the border (O(sqrt(n)) under the appropriate assumptions)
     // ** Remark ** The computation are done using the approximation of the vertices that may changed in further computations
-    CGAL_assertion(bbox_pointer!=nullptr && bbox_pointer_vertices!=nullptr);
+    CGAL_assertion(bbox_pointer!=nullptr && bbox_vertices_pointer!=nullptr);
     auto &bbox = *bbox_pointer;
     auto &bbox_vertices = *bbox_vertices_pointer;
     struct Bbox_entry {
