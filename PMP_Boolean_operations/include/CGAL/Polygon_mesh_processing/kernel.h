@@ -230,7 +230,6 @@ kernel(const FaceRange& face_range,
     // Get the centroid
     using AK = typename EK::Approximate_kernel;
     using APoint_3 = typename AK::Point_3;
-    using A2E = Cartesian_converter<AK, EK>;
 
     auto to_approx = [&kernel, &kvpm](vertex_descriptor v) { return approx(get(kvpm, v)); };
     const auto& vrange = vertices(kernel);
@@ -241,8 +240,9 @@ kernel(const FaceRange& face_range,
       approx_centroid = CGAL::centroid(boost::make_transform_iterator(vrange.begin(), to_approx),
                                        boost::make_transform_iterator(vrange.end(), to_approx));
     }
-    A2E to_exact;
-    EPoint_3 double_centroid = to_exact(approx_centroid);
+    EPoint_3 double_centroid(to_double(approx_centroid.x()),
+                             to_double(approx_centroid.y()),
+                             to_double(approx_centroid.z()));
 
     // Check if the approximate_centroid is inside the kernel
     auto is_inside_kernel = [&](const EPoint_3& p) {
@@ -266,24 +266,15 @@ kernel(const FaceRange& face_range,
     }
 
     // If not, refine the centroid position
-    // Sum the vectors with a balanced reduction (to limit the depth of the lazy
-    // expression tree), and divide only once.
-    auto to_vector = [&kernel, &kvpm](vertex_descriptor v) { return EVector_3(ORIGIN, get(kvpm, v)); };
-    const EVector_3 sum = CGAL::divide_and_conquer_reduce<2>(boost::make_transform_iterator(vrange.begin(), to_vector),
-                                                             boost::make_transform_iterator(vrange.end(), to_vector),
-                                                             EVector_3(NULL_VECTOR), std::plus<EVector_3>());
-    EPoint_3 centroid = ORIGIN + sum / vrange.size();
+    using ExactK = typename EK::Exact_kernel;
+    using ExactPoint_3 = typename ExactK::Point_3;
 
-    double_centroid = EPoint_3(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
-
-    if(is_inside_kernel(double_centroid)){
-      *p = from_exact(double_centroid);
-      return;
-    }
-
-    // Refine the centroid and the intervals
-    centroid.exact();
-    double_centroid = EPoint_3(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
+    auto to_exact = [&](vertex_descriptor v) { return exact(get(kvpm, v)); };
+    ExactPoint_3 ecentroid = CGAL::centroid(boost::make_transform_iterator(vrange.begin(), to_exact),
+                                            boost::make_transform_iterator(vrange.end(), to_exact));
+    double_centroid = EPoint_3(to_double(ecentroid.x()),
+                               to_double(ecentroid.y()),
+                               to_double(ecentroid.z()));
 
     if(is_inside_kernel(double_centroid)){
       *p = from_exact(double_centroid);
@@ -291,7 +282,7 @@ kernel(const FaceRange& face_range,
     }
 
     // Not inside if the GT kernel is not EPECK
-    *p = from_exact(centroid);
+    *p = from_exact(EPoint_3(ecentroid));
     return;
   }
 
