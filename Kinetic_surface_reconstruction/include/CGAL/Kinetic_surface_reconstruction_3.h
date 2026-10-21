@@ -34,7 +34,9 @@
 
 #include <CGAL/boost/graph/helpers.h>
 
+#include <array>
 #include <filesystem>
+#include <map>
 
 namespace CGAL {
 template<class F>
@@ -570,8 +572,6 @@ public:
     }
 
     m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices, np);
-    merge_regions_like_partition();
-
     FT partition_time, finalization_time, conformal_time;
     m_kinetic_partition.template init_and_partition<ConcurrencyTag>(k, partition_time, finalization_time, conformal_time, np);
 
@@ -835,6 +835,7 @@ private:
 
   // Face indices are now of type Indices and are not in a range 0 to n
   std::vector<Indices> m_face_inliers;
+  std::vector<std::size_t> m_input_plane_group; // Group of coplanar input polygons for each input polygon of the kinetic partition.
   std::vector<FT> m_face_area, m_face_area_lcc;
   std::vector<std::pair<std::size_t, std::size_t> > m_face_neighbors_lcc;
   std::map<std::pair<std::size_t, std::size_t>, std::size_t> m_neighbors2index_lcc;
@@ -1298,34 +1299,6 @@ private:
         *polyit++ = std::move(indices);
       }
     }
-  }
-
-  // The kinetic space partition merges coplanar input polygons. The regions are merged accordingly,
-  // so that the index of a region equals the index of the input polygon in the kinetic partition.
-  void merge_regions_like_partition() {
-    const std::vector<std::vector<std::size_t> >& mapping = m_kinetic_partition.input_mapping();
-    if (mapping.size() == m_regions.size())
-      return;
-
-    std::vector<typename Region_growing::Primitive_and_region> merged(mapping.size());
-    std::vector<std::size_t> region2merged(m_regions.size(), std::size_t(-1));
-    for (std::size_t i = 0; i < mapping.size(); i++) {
-      CGAL_assertion(!mapping[i].empty());
-      merged[i].first = m_regions[mapping[i][0]].first;
-      for (std::size_t j : mapping[i]) {
-        CGAL_assertion(j < m_regions.size());
-        region2merged[j] = i;
-        std::move(m_regions[j].second.begin(), m_regions[j].second.end(), std::back_inserter(merged[i].second));
-      }
-    }
-
-    if (m_ground_polygon_index != std::size_t(-1))
-      m_ground_polygon_index = region2merged[m_ground_polygon_index];
-
-    if (m_verbose)
-      std::cout << m_regions.size() << " planar shapes merged into " << merged.size() << " coplanar shapes by the kinetic partition" << std::endl;
-
-    m_regions = std::move(merged);
   }
 
   template<typename Region>
@@ -1923,6 +1896,18 @@ private:
   }
 
   void collect_points_for_faces_lcc() {
+    // Coplanar input polygons share the same plane in the kinetic partition, i.e., the same plane object up to
+    // the representation. Their planes are identified via the approximation of the coefficients.
+    {
+      const auto& planes = m_kinetic_partition.input_planes();
+      std::map<std::array<double, 4>, std::size_t> plane2group;
+      m_input_plane_group.resize(planes.size());
+      for (std::size_t i = 0; i < planes.size(); i++) {
+        const std::array<double, 4> key = { CGAL::to_double(planes[i].a()), CGAL::to_double(planes[i].b()), CGAL::to_double(planes[i].c()), CGAL::to_double(planes[i].d()) };
+        m_input_plane_group[i] = plane2group.emplace(key, plane2group.size()).first->second;
+      }
+    }
+
     FT total_area = 0;
     m_total_inliers = 0;
     From_exact from_exact;
@@ -1951,10 +1936,11 @@ private:
       map_points_to_faces(i, pts, mapping);
 
       // Remap from mapping to m_face_inliers
+      // A face may receive points of several coplanar regions.
       for (auto p : mapping) {
-        m_face_inliers[m_attrib2index_lcc[lcc.template attribute<2>(p.first)]].resize(p.second.size());
+        std::vector<std::size_t>& inliers = m_face_inliers[m_attrib2index_lcc[lcc.template attribute<2>(p.first)]];
         for (std::size_t k = 0; k < p.second.size(); k++)
-          m_face_inliers[m_attrib2index_lcc[lcc.template attribute<2>(p.first)]][k] = m_regions[i].second[p.second[k]];
+          inliers.push_back(m_regions[i].second[p.second[k]]);
 
         m_total_inliers += p.second.size();
       }
@@ -2258,6 +2244,12 @@ private:
     const LCC& lcc = m_lcc;
 
     const Plane_3& pl = m_regions[polygon_index].first;
+
+    // Faces originating from a coplanar input polygon may also contain points of this polygon.
+    auto on_polygon_plane = [&](int ip) {
+      return ip >= 0 && m_input_plane_group[ip] == m_input_plane_group[polygon_index];
+    };
+
     std::vector<Point_2> pts2d;
     pts2d.reserve(pts.size());
 
@@ -2267,7 +2259,7 @@ private:
     // Iterate over all faces of the lcc
     for (const Dart& d : lcc.template one_dart_per_cell<2>()) {
       Dart_descriptor dd = lcc.dart_descriptor(d);
-      if (lcc.template info<2>(lcc.dart_descriptor(d)).input_polygon_index != static_cast<int>(polygon_index) || !lcc.template info<2>(lcc.dart_descriptor(d)).part_of_initial_polygon)
+      if (!on_polygon_plane(lcc.template info<2>(lcc.dart_descriptor(d)).input_polygon_index) || !lcc.template info<2>(lcc.dart_descriptor(d)).part_of_initial_polygon)
         continue;
 
       // No filtering of points per partition

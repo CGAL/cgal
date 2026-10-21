@@ -139,6 +139,14 @@ public:
     int queued_events;
   };
 
+  // A polygon expanding with a homothety about its centroid, i.e., the vertex p moves with the velocity p - centroid.
+  struct Input_polygon {
+    std::vector<typename Intersection_kernel::Point_2> vertices; // Counterclockwise around the centroid.
+    std::vector<typename Intersection_kernel::Vector_2> velocities;
+    typename Intersection_kernel::Point_2 centroid;
+    std::size_t input; // Index of the input polygon. For merged polygons, the index of one of the merged input polygons.
+  };
+
   struct Data {
     Data(std::vector<Vertex> &vertices)
       : mesh(),
@@ -181,6 +189,10 @@ public:
     std::vector<typename Intersection_kernel::Direction_2> exact_directions;
     std::vector<typename Intersection_kernel::Ray_2> original_rays;
     std::map<IFace, std::list<std::size_t> > polygons;
+    // Input polygons of the support plane. Coplanar input polygons are propagated separately. Polygons sharing an iface
+    // at t = 0 are merged within the iface into the convex hull of their pieces, which is added as an additional polygon.
+    std::vector<Input_polygon> input_polygons;
+    std::map<IFace, std::size_t> piece_polygon; // Index into input_polygons of the polygon each piece in polygons originates from.
     std::unordered_map<IFace, Face_index> iface2pface;
     std::unordered_map<IFace, std::list<IEdge>> borders;
     std::vector<Vertex> &vertices;
@@ -463,8 +475,61 @@ public:
     return vertices;
   }
 
+  // Adds an input polygon to the support plane and returns its index in input_polygons().
+  // The first input polygon also defines the polygon data of the support plane (exact_vertices, original_rays, centroid, ...).
   template<typename Pair>
-  void add_input_polygon(
+  std::size_t add_input_polygon(
+    const std::vector<Pair>& points, std::size_t input) {
+
+    std::vector<typename Intersection_kernel::Point_2> pts;
+    pts.reserve(points.size());
+    for (const auto& pair : points)
+      pts.push_back(pair.first);
+    const std::size_t idx = add_polygon(pts, input);
+    if (idx == 0)
+      set_polygon_data(points);
+    return idx;
+  }
+
+  // Adds a polygon expanding with a homothety about the centroid of its vertices and returns its index in input_polygons().
+  // The polygon has to be convex.
+  std::size_t add_polygon(const std::vector<typename Intersection_kernel::Point_2>& points, std::size_t input) {
+    using IkVector_2 = typename Intersection_kernel::Vector_2;
+    CGAL_assertion(points.size() >= 3);
+    Input_polygon poly;
+    poly.input = input;
+    poly.centroid = CGAL::centroid(points.begin(), points.end(), CGAL::Dimension_tag<0>());
+
+    std::vector<std::pair<std::size_t, typename Intersection_kernel::Direction_2> > dir_vec;
+    dir_vec.reserve(points.size());
+    for (std::size_t i = 0; i < points.size(); i++)
+      dir_vec.push_back(std::make_pair(i, typename Intersection_kernel::Direction_2(IkVector_2(poly.centroid, points[i]))));
+
+    std::sort(dir_vec.begin(), dir_vec.end(), [](const auto& a, const auto& b) { return a.second < b.second; });
+
+    for (const auto& d : dir_vec) {
+      poly.vertices.push_back(points[d.first]);
+      poly.velocities.push_back(IkVector_2(poly.centroid, points[d.first]));
+    }
+
+    m_data->input_polygons.push_back(std::move(poly));
+    return m_data->input_polygons.size() - 1;
+  }
+
+  std::size_t number_of_input_polygons() const { return m_data->input_polygons.size(); }
+  const Input_polygon& input_polygon(std::size_t idx) const { return m_data->input_polygons[idx]; }
+
+  // Index of the input polygon the piece in the iface originates from.
+  std::size_t piece_polygon(IFace face) const {
+    auto it = m_data->piece_polygon.find(face);
+    CGAL_assertion(it != m_data->piece_polygon.end());
+    return (it == m_data->piece_polygon.end()) ? 0 : it->second;
+  }
+
+  void set_piece_polygon(IFace face, std::size_t polygon) { m_data->piece_polygon[face] = polygon; }
+
+  template<typename Pair>
+  void set_polygon_data(
     const std::vector<Pair>& points) {
 
     CGAL_assertion(is_simple_polygon(points));
@@ -881,9 +946,8 @@ bool operator==(const Support_plane<GeomTraits, IntersectionKernel>& a, const Su
     return false;
   }
 
-  if (a.exact_plane() == b.exact_plane())
-    return true;
-  else return false;
+  // Coplanar input polygons share a support plane, independent of the orientation of their planes.
+  return (a.exact_plane() == b.exact_plane() || a.exact_plane() == b.exact_plane().opposite());
 }
 
 #endif //DOXYGEN_RUNNING

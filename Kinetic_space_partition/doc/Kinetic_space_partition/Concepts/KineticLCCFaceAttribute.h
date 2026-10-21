@@ -29,11 +29,11 @@ struct KineticLCCFaceAttribute {
 /// @{
   /// 3D plane type compatible with `Kinetic_space_partition_3::Intersection_kernel`
   typedef unspecified_type Plane_3;
-  /// Stores the index of the input polygon the provided that support plane of this face. Negative numbers correspond to the values defined in the enum `Kinetic_space_partition_3::Face_support`.
+  /// Stores the index of the input polygon this face originates from. If the face originates from several coplanar input polygons, the index of one of them is stored. Negative numbers correspond to the values defined in the enum `Kinetic_space_partition_3::Face_support`.
   int input_polygon_index;
   /// Support plane of the face derived from the corresponding input polygon or from octree nodes used for subdivision.
   Plane_3 plane;
-  /// Does this face overlap with the corresponding input polygon.
+  /// Does this face overlap with an input polygon at the beginning of the propagation.
   bool part_of_initial_polygon;
 /// @}
 };

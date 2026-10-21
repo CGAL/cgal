@@ -112,6 +112,8 @@ public:
     CGAL_assertion(m_data.check_vertices());
     CGAL_assertion(m_data.check_edges());
 
+    set_input_polygons_of_pfaces();
+
     merge_facets_connected_components();
 
     create_volumes();
@@ -240,8 +242,16 @@ private:
     }
 
     m_data.face_is_part_of_input_polygon().resize(num_faces);
-    for (const auto& p : face2index)
+    m_data.face_to_input_polygon().resize(num_faces, std::size_t(-1));
+    for (const auto& p : face2index) {
       m_data.face_is_part_of_input_polygon()[p.second] = m_data.support_plane(p.first.first).is_initial(p.first.second);
+      // A face may originate from several coplanar input polygons. Only the first one is reported.
+      for (std::size_t i : m_data.support_plane(p.first.first).input(p.first.second))
+        if (i != std::size_t(-1)) {
+          m_data.face_to_input_polygon()[p.second] = i;
+          break;
+        }
+    }
 
     m_data.face_to_vertices().resize(num_faces);
     m_data.face_to_support_plane().resize(num_faces);
@@ -546,6 +556,22 @@ private:
     return CGAL::ON_ORIENTED_BOUNDARY;
   }
 
+  // Stores the input polygon each pface originates from in its f:input property.
+  void set_input_polygons_of_pfaces() {
+    for (std::size_t sp_idx = 6; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
+      Support_plane& sp = m_data.support_plane(sp_idx);
+      for (const auto& [iface, polygon] : sp.data().piece_polygon) {
+        if (sp.data().polygons.find(iface) == sp.data().polygons.end())
+          continue;
+        auto it = sp.data().iface2pface.find(iface);
+        if (it == sp.data().iface2pface.end())
+          continue;
+        std::vector<std::size_t>& input = sp.input(it->second);
+        input.assign(1, sp.input_polygon(polygon).input);
+      }
+    }
+  }
+
   void merge_facets_connected_components() {
     // Purpose: merge facets between the same volumes. Every pair of volumes can have at most one contact polygon (which also has to be convex)
     // Precondition: all volumes are convex, the contact area between each pair of volumes is empty or convex
@@ -586,10 +612,15 @@ private:
       num_components = (std::max<std::size_t>)(num_components, fcm[f]);
 
     initial_component.resize(num_components + 1, false);
+    // Input polygons of the faces of each component.
+    std::vector<std::set<std::size_t> > component_input(num_components + 1);
     Support_plane& sp = m_data.support_plane(sp_idx);
     for (const auto& f : mesh.faces()) {
       if (sp.is_initial(f))
         initial_component[fcm[f]] = true;
+      for (std::size_t i : sp.input(f))
+        if (i != std::size_t(-1))
+          component_input[fcm[f]].insert(i);
     }
 
     //std::vector<Halfedge> remove_edges;
@@ -627,6 +658,8 @@ private:
       remove_faces[f0] = false;
       if (initial_component[c0])
         sp.set_initial(f0);
+      if (!component_input[c0].empty())
+        sp.input(f0).assign(component_input[c0].begin(), component_input[c0].end());
 
       // Find halfedge loop around component.
       std::vector<Halfedge> loop;

@@ -236,6 +236,7 @@ private:
     std::vector<Point_3> vertices;
     std::vector<IkPoint_3> exact_vertices;
     std::vector<std::size_t> face2sp; // Support plane index for each face.
+    std::vector<std::size_t> face_input; // Index into input_polygons for each face, std::size_t(-1) if none.
     std::vector<bool> face_part_of_input_polygon;
     std::vector<typename Intersection_kernel::Plane_3> sp_exact_planes; // Exact plane for each support plane.
     std::vector<std::size_t> sp_input_polygon; // Index into input_polygons for each support plane, std::size_t(-1) if none.
@@ -254,6 +255,14 @@ private:
   std::vector<std::vector<Point_3> > m_input_polygons;
   std::vector<typename Intersection_kernel::Plane_3> m_input_planes;
   std::vector<Point_2> m_input_centroids;
+
+  // Polygons that are coplanar up to a tolerance share a plane.
+  struct Coplanar_group {
+    std::vector<Point_3> points; // Vertices of the first polygon of the group.
+    Plane_3 first_plane; // Plane fitted to the first polygon of the group.
+    Plane_3 plane; // Plane fitted to the vertices of the polygons inserted together with the first polygon of the group.
+  };
+  std::vector<Coplanar_group> m_coplanar_groups;
   std::vector<std::size_t> m_input2regularized; // Mapping from actual input planes to regularized input planes.
   std::vector<std::vector<std::size_t> > m_regularized2input; // Mapping from partitioning planes to original input polygons.
   std::unique_ptr<Octree> m_octree;
@@ -316,7 +325,7 @@ public:
   an instance of `PointRange` with 3D points and corresponding 3D normal vectors
 
   \param polygons
-  a range of non-coplanar polygons defined by a range of indices into `points`
+  a range of polygons defined by a range of indices into `points`
 
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -379,10 +388,15 @@ public:
   }
 
   /*!
-  \brief inserts non-coplanar polygons, requires `initialize()` afterwards to have effect.
+  \brief inserts polygons, requires `initialize()` afterwards to have effect.
 
-  Coplanar input polygons are not supported. Polygons that are exactly coplanar to an already inserted polygon are merged into a single input polygon,
-  i.e., the convex hull of both. The mapping from the input polygons of the partition to the inserted polygons is provided by `input_mapping()`.
+  A plane is fitted to the vertices of each polygon and the polygon is replaced by the convex hull of its vertices projected onto the plane.
+  Polygons that are coplanar up to a small tolerance relative to their extent get the same plane, which is fitted to the vertices of all of them.
+  This avoids very thin volumes between nearly coplanar polygons.
+
+  Coplanar polygons share a support plane in the partition and expand separately. Pieces of several coplanar polygons that lie in the same face of
+  the arrangement of the intersection lines within the support plane at the beginning are merged into their convex hull. A face of the partition
+  originating from several coplanar polygons refers to one of them as its input polygon, see `get_linear_cell_complex()`.
 
   \tparam PointRange
   must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is `GeomTraits::Point_3`.
@@ -397,7 +411,7 @@ public:
   an instance of `PointRange` with 3D points
 
   \param polygons
-  a range of non-coplanar polygons defined by a range of indices into `points`
+  a range of polygons defined by a range of indices into `points`
 
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -421,55 +435,65 @@ public:
 
     static_assert(std::is_same_v<typename NP_helper::Geom_traits, Kernel>);
 
-    bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), m_parameters.verbose);
-
     PointMap point_map = NP_helper::get_point_map(np);
 
-    To_exact to_exact;
     std::size_t offset = m_input2regularized.size();
 
-    for (std::size_t p = 0; p < polygons.size();p++) {
-      auto& poly = polygons[p];
+    std::vector<std::vector<Point_3> > polygon_points(polygons.size());
+    for (std::size_t p = 0; p < polygons.size(); p++) {
+      polygon_points[p].reserve(polygons[p].size());
+      for (auto it : polygons[p])
+        polygon_points[p].push_back(get(point_map, *(points.begin() + it)));
+    }
 
-      std::vector<Point_3> pts;
-      pts.reserve(poly.size());
-      for (auto it : poly)
-        pts.push_back(get(point_map, *(points.begin() + it)));
-      Plane_3 pl;
-      Point_2 c;
-      std::vector<Point_2> ch;
-      process_input_polygon(pts, pl, c, ch);
-      typename Intersection_kernel::Plane_3 exact_pl = to_exact(pl);
-
-      // Coplanar input polygons are not supported. Polygons that are exactly coplanar to an already inserted polygon
-      // are merged with it into the convex hull of both. Nearly coplanar polygons are handled by the kinetic partition.
-      bool merged = false;
-      for (std::size_t i = 0; i < m_input_planes.size(); i++) {
-        if (m_input_planes[i] == exact_pl || m_input_planes[i] == exact_pl.opposite()) {
-          if (verbose)
-            std::cout << (p + offset) << ". input polygon is coplanar to " << i << ". partitioning polygon and is merged with it" << std::endl;
-
-          std::copy(m_input_polygons[i].begin(), m_input_polygons[i].end(), std::back_inserter(pts));
-          process_input_polygon(pts, pl, m_input_centroids[i], ch);
-          m_input_planes[i] = to_exact(pl);
-          m_input_polygons[i].resize(ch.size());
-          for (std::size_t j = 0; j < ch.size(); j++)
-            m_input_polygons[i][j] = pl.to_3d(ch[j]);
-
-          m_input2regularized.push_back(i);
-          m_regularized2input[i].push_back(p + offset);
-          merged = true;
-          break;
-        }
-      }
-
-      if (merged)
+    // Polygons that are coplanar up to a tolerance are grouped. The polygons of a group share the plane fitted to the vertices
+    // of all of them. Nearly coplanar polygons would otherwise create very thin volumes.
+    // A polygon that is coplanar to a group of a former call of insert() uses the plane of that group.
+    const std::size_t first_new_group = m_coplanar_groups.size();
+    std::vector<std::size_t> group(polygons.size(), std::size_t(-1));
+    for (std::size_t p = 0; p < polygons.size(); p++) {
+      std::array<IkPoint_3, 3> span;
+      if (!spanning_points(polygon_points[p], span))
         continue;
 
+      Plane_3 pl;
+      CGAL::linear_least_squares_fitting_3(polygon_points[p].begin(), polygon_points[p].end(), pl, CGAL::Dimension_tag<0>());
+
+      for (std::size_t g = 0; g < m_coplanar_groups.size() && group[p] == std::size_t(-1); g++)
+        if (nearly_coplanar(polygon_points[p], pl, m_coplanar_groups[g].points, m_coplanar_groups[g].first_plane))
+          group[p] = g;
+
+      if (group[p] == std::size_t(-1)) {
+        group[p] = m_coplanar_groups.size();
+        m_coplanar_groups.push_back(Coplanar_group{ polygon_points[p], pl, pl });
+      }
+    }
+
+    std::vector<std::vector<Point_3> > group_points(m_coplanar_groups.size() - first_new_group);
+    for (std::size_t p = 0; p < polygons.size(); p++)
+      if (group[p] != std::size_t(-1) && group[p] >= first_new_group)
+        std::copy(polygon_points[p].begin(), polygon_points[p].end(), std::back_inserter(group_points[group[p] - first_new_group]));
+
+    for (std::size_t g = 0; g < group_points.size(); g++)
+      CGAL::linear_least_squares_fitting_3(group_points[g].begin(), group_points[g].end(), m_coplanar_groups[first_new_group + g].plane, CGAL::Dimension_tag<0>());
+
+    To_exact to_exact;
+    for (std::size_t p = 0; p < polygons.size(); p++) {
+      Plane_3 pl;
+      if (group[p] != std::size_t(-1))
+        pl = m_coplanar_groups[group[p]].plane;
+      else
+        CGAL::linear_least_squares_fitting_3(polygon_points[p].begin(), polygon_points[p].end(), pl, CGAL::Dimension_tag<0>());
+
+      Point_2 c;
+      std::vector<Point_2> ch;
+      process_input_polygon(polygon_points[p], pl, c, ch);
+
+      // Coplanar input polygons are inserted separately. They share a support plane in the kinetic partition.
       m_input2regularized.push_back(m_input_planes.size());
       m_regularized2input.push_back(std::vector<std::size_t>());
       m_regularized2input.back().push_back(p + offset);
-      m_input_planes.push_back(exact_pl);
+      m_input_planes.push_back(to_exact(pl));
       m_input_centroids.push_back(c);
       m_input_polygons.push_back(std::vector<Point_3>(ch.size()));
 
@@ -678,13 +702,26 @@ public:
       return;
 
     FT initialization_time = 0;
+    CGAL::Real_timer t1;
+    t1.start();
     if (!compute_subpartitions<ConcurrencyTag>(k, true, initialization_time, partition_time, finalization_time))
       return;
+    t1.stop();
+    std::cout << "p: " << t1.time() << "\n";
+    if (m_parameters.verbose) {
+      std::cout << "* initialization time of kinetic data structures: " << initialization_time << "\n";
+      std::cout << "* partition time: " << partition_time << "\n";
+      std::cout << "* finalization time: " << finalization_time << "\n";
+    }
+
+    t1.reset();
+    t1.start();
+    merge_subpartitions(conformal_time);
+    t1.stop();
+    std::cout << "c: " << t1.time() << std::endl;
 
     if (m_parameters.verbose)
-      std::cout << "* initialization time of kinetic data structures: " << initialization_time << std::endl;
-
-    merge_subpartitions(conformal_time);
+      std::cout << "* conformal time: " << conformal_time << std::endl;
   }
 #endif
   /// @}
@@ -706,10 +743,10 @@ public:
   }
 
   /*!
-  \brief provides the support planes of the partition derived from the input polygons
+  \brief provides the planes of the input polygons.
 
   @return
-   vector of planes.
+   vector of planes, one for each inserted polygon. Polygons that are coplanar up to a small tolerance have the same plane.
 
   \pre inserted polygons
   */
@@ -718,24 +755,10 @@ public:
   }
 
   /*!
-  \brief provides the mapping from the input polygons of the partition to the inserted polygons.
-
-  Exactly coplanar polygons are merged into a single input polygon of the partition when inserted.
-  The input polygon index stored in the face attributes of the linear cell complex, see `get_linear_cell_complex()`, refers to the input polygons of the partition.
-
-  @return
-   for each input polygon of the partition, the indices of the inserted polygons that have been merged into it.
-
-  \pre inserted polygons
-  */
-  const std::vector<std::vector<std::size_t> >& input_mapping() const {
-    return m_regularized2input;
-  }
-
-  /*!
    \brief exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Kinetic_linear_cell_complex_min_items`.
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
+   The input polygon index of a face refers to the input polygon the face originates from. If the face originates from several coplanar input polygons, one of them is provided.
 
    \tparam LCC must be a model of `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems`.
 
@@ -1106,9 +1129,8 @@ private:
     }
   }
 
-  void process_input_polygon(const std::vector<Point_3> poly, Plane_3& pl, Point_2& c, std::vector<Point_2>& ch) const {
-    CGAL::linear_least_squares_fitting_3(poly.begin(), poly.end(), pl, CGAL::Dimension_tag<0>());
-
+  // Computes the convex hull of the polygon projected onto the plane pl and its centroid.
+  void process_input_polygon(const std::vector<Point_3>& poly, const Plane_3& pl, Point_2& c, std::vector<Point_2>& ch) const {
     std::vector<Point_2> pts2d(poly.size());
     for (std::size_t i = 0; i < poly.size(); i++)
       pts2d[i] = pl.to_2d(poly[i]);
@@ -1127,6 +1149,71 @@ private:
     }
 
     c = Point_2(x / w, y / w);
+  }
+
+  // Provides three points of the polygon that are not collinear. The points are chosen to span a large triangle.
+  bool spanning_points(const std::vector<Point_3>& poly, std::array<IkPoint_3, 3>& span) const {
+    if (poly.size() < 3)
+      return false;
+
+    std::size_t a = 0, b = 0, c = 0;
+    FT max_dist = -1, max_area = -1;
+    for (std::size_t i = 1; i < poly.size(); i++) {
+      const FT d = CGAL::squared_distance(poly[a], poly[i]);
+      if (d > max_dist) {
+        max_dist = d;
+        b = i;
+      }
+    }
+    for (std::size_t i = 0; i < poly.size(); i++) {
+      const FT area = CGAL::cross_product(poly[b] - poly[a], poly[i] - poly[a]).squared_length();
+      if (area > max_area) {
+        max_area = area;
+        c = i;
+      }
+    }
+
+    To_exact to_exact;
+    span = { to_exact(poly[a]), to_exact(poly[b]), to_exact(poly[c]) };
+    return !CGAL::collinear(span[0], span[1], span[2]);
+  }
+
+  // Checks whether two polygons are coplanar up to a tolerance relative to their extent, i.e.,
+  // whether each vertex of a polygon is close to the plane fitted to the other polygon.
+  bool nearly_coplanar(const std::vector<Point_3>& a, const Plane_3& plane_a, const std::vector<Point_3>& b, const Plane_3& plane_b) const {
+    // Relative tolerance. Smaller deviations lead to very thin volumes in the kinetic partition.
+    const FT tolerance = FT(1e-6);
+
+    FT min[3], max[3];
+    for (std::size_t d = 0; d < 3; d++) {
+      min[d] = max[d] = a[0][d];
+      for (const Point_3& p : a) {
+        min[d] = (std::min)(min[d], p[d]);
+        max[d] = (std::max)(max[d], p[d]);
+      }
+      for (const Point_3& p : b) {
+        min[d] = (std::min)(min[d], p[d]);
+        max[d] = (std::max)(max[d], p[d]);
+      }
+    }
+    const FT sq_extent = CGAL::square(max[0] - min[0]) + CGAL::square(max[1] - min[1]) + CGAL::square(max[2] - min[2]);
+    const FT sq_tolerance = CGAL::square(tolerance) * sq_extent;
+
+    // Squared distance of p to the plane without requiring a distance functor of the traits.
+    auto sq_distance = [](const Point_3& p, const Plane_3& pl) {
+      const FT v = pl.a() * p.x() + pl.b() * p.y() + pl.c() * p.z() + pl.d();
+      return CGAL::square(v) / (CGAL::square(pl.a()) + CGAL::square(pl.b()) + CGAL::square(pl.c()));
+    };
+
+    for (const Point_3& p : a)
+      if (sq_distance(p, plane_b) > sq_tolerance)
+        return false;
+
+    for (const Point_3& p : b)
+      if (sq_distance(p, plane_a) > sq_tolerance)
+        return false;
+
+    return true;
   }
 
   std::pair<int, int> make_canonical_pair(int i, int j) {
@@ -1633,6 +1720,11 @@ private:
 
     std::cout.precision(17);
 
+    if (std::is_same<ConcurrencyTag, Sequential_tag>::value)
+      std::cout << "sequential" << std::endl;
+    if (std::is_same<ConcurrencyTag, Parallel_tag>::value)
+      std::cout << "parallel" << std::endl;
+
     CGAL::for_each<ConcurrencyTag>(positions, [&](const std::size_t i) -> bool {
       if (failed)
         return false;
@@ -1787,6 +1879,7 @@ private:
 
     partition.face2sp = std::move(data.face_to_support_plane());
     partition.face_part_of_input_polygon = std::move(data.face_is_part_of_input_polygon());
+    partition.face_input = std::move(data.face_to_input_polygon());
 
     // Support planes
     partition.sp_exact_planes.resize(data.number_of_support_planes());
@@ -2116,7 +2209,11 @@ private:
       // 1. face belongs to a plane from an input polygon
       // 2. face originates from octree splitting (and does not have an input plane)
       // 3. face lies on the bbox
-      int ip = static_cast<int>(m_partition_nodes[face.first].sp_input_polygon[sp]);
+      // Faces on a support plane of several coplanar input polygons refer to the input polygon they originate from.
+      // Faces on the bbox may coincide with an input polygon of the support plane.
+      int ip = static_cast<int>(m_partition_nodes[face.first].face_input[face.second]);
+      if (ip == -1)
+        ip = static_cast<int>(m_partition_nodes[face.first].sp_input_polygon[sp]);
 
       if (ip != -1)
         lcc.template info<2>(face_dart).input_polygon_index = static_cast<Face_support>(m_partition_nodes[face.first].input_polygons[ip]);
@@ -2210,6 +2307,7 @@ private:
       // Copy neighbor from already existing face
       m_partition_nodes[f.first].face_neighbors.push_back(m_partition_nodes[f.first].face_neighbors[f.second]);
       m_partition_nodes[f.first].face2sp.push_back(m_partition_nodes[f.first].face2sp[f.second]);
+      m_partition_nodes[f.first].face_input.push_back(m_partition_nodes[f.first].face_input[f.second]);
     }
     else {
       idx = f.second;

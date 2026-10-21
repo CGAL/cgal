@@ -255,10 +255,11 @@ void run_all_tests() {
   results[2] = { 290, 570, 151 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/real-data-test/test-15-polygons.off", { 0, 1, 2 }, results);
 
-  results[0] = { 370, 660, 160 };
-  results[1] = { 441, 847, 217 };
-  results[2] = { 445, 861, 222 };
-  results[3] = { 446, 864, 223 };
+  // test-20 contains nearly coplanar polygons, which share a plane when inserted.
+  results[0] = { 358, 641, 156 };
+  results[1] = { 423, 818, 211 };
+  results[2] = { 426, 829, 215 };
+  results[3] = { 427, 832, 216 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/real-data-test/test-20-polygons.off", { 0, 1, 2, 3 }, results);
 
   results[0] = { 738, 1339, 327 };

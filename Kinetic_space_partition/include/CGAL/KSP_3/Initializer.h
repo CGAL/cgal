@@ -476,108 +476,225 @@ private:
     out.close();
   }
 
-  void initial_polygon_splitting() {
+  // A piece of an input polygon within an iface at t = 0+.
+  struct Piece {
+    std::list<std::size_t> poly;
+    bool zero_area;
+    IFace face;
+    std::size_t polygon; // Index of the input polygon of the support plane.
+  };
+
+  // Creates the kinetic vertices of an input polygon of the support plane, clips it to the bbox and splits it along all lines
+  // of the support plane. The pieces are located in the ifaces at t = 0+.
+  void split_input_polygon(std::size_t sp_idx, std::size_t polygon_idx, std::vector<Piece>& pieces) {
     using Vertex = typename Support_plane::Vertex;
     using Polygon = std::list<std::size_t>;
     using Polygons = std::vector<Polygon>;
     std::vector<Vertex> &vts = m_data.kinetic_vertices();
 
-    bool plot = false;
+    Support_plane& sp = m_data.support_plane(sp_idx);
+    const auto& input = sp.input_polygon(polygon_idx);
+    Polygons polygons(1);
+    polygons[0].resize(input.vertices.size());
+    std::iota(polygons[0].begin(), polygons[0].end(), vts.size());
+
+    vts.reserve(vts.size() + input.vertices.size());
+
+    for (std::size_t v = 0; v < input.vertices.size(); v++)
+      vts.emplace_back(sp_idx, input.vertices[v], input.velocities[v]);
+
+    // Clip the polygon to the bbox. The sides are decided at t = 0+: a vertex on a bbox line that moves outwards
+    // is replaced by vertices sliding on the bbox line where its edges cross it. Crossings on edges that lie on
+    // another bbox line are fixed at the corner.
+    for (auto [line_idx, line] : sp.data().bbox_lines) {
+      CGAL_assertion(m_data.igraph().line_is_on_bbox(line_idx));
+      const CGAL::Oriented_side inside = line.oriented_side(input.centroid);
+      CGAL_assertion(inside != CGAL::ON_ORIENTED_BOUNDARY);
+
+      std::list<std::size_t> pos_side;
+      if (!m_data.split_polygon(polygons[0], line_idx, pos_side)) {
+        CGAL_assertion_code(for (std::size_t v : polygons[0]))
+          CGAL_assertion(Data_structure::side_0plus(line, vts[v].p0, vts[v].v) != CGAL::opposite(inside));
+        continue;
+      }
+
+      if (inside == CGAL::ON_POSITIVE_SIDE)
+        std::swap(polygons[0], pos_side);
+
+      // The twins of the kept vertices are discarded.
+      std::set<std::size_t> removed(pos_side.begin(), pos_side.end());
+      for (std::size_t v : polygons[0])
+        if (removed.count(vts[v].other))
+          vts[v].other = std::size_t(-1);
+    }
+
+    std::vector<bool> zero_area_polygons(polygons.size(), false);
+    for (auto [line_idx, line] : sp.data().lines) {
+      // Skip lines on the bounding box, they won't split the polygon.
+      if (m_data.igraph().line_is_on_bbox(line_idx))
+        continue;
+
+      std::size_t num_polys = polygons.size();
+      for (std::size_t i = 0; i < num_polys; i++) {
+        Polygon& poly = polygons[i];
+        std::list<std::size_t> pos_side;
+        std::pair<bool, bool> zero_area;
+        if (m_data.split_polygon(poly, line_idx, pos_side, &zero_area)) {
+          // A part without a vertex strictly on its side at t = 0 has zero area (polygon touching the line).
+          polygons.emplace_back(std::move(pos_side));
+          zero_area_polygons.push_back(zero_area_polygons[i] || zero_area.second);
+          zero_area_polygons[i] = zero_area_polygons[i] || zero_area.first;
+        }
+      }
+    }
+
+    // A fixed vertex may lie on more than two lines if several lines intersect in the same point.
+    // Only the two lines carrying its polygon edges are kept as constraints.
+    for (Polygon& poly : polygons)
+      for (auto it = poly.begin(); it != poly.end(); ++it) {
+        Vertex& v = vts[*it];
+        if (v.moving || v.constraints.size() <= 2)
+          continue;
+        const Vertex& prev = vts[it == poly.begin() ? poly.back() : *std::prev(it)];
+        const Vertex& next = vts[std::next(it) == poly.end() ? poly.front() : *std::next(it)];
+        std::set<std::size_t> kept;
+        for (std::size_t l : v.constraints)
+          if (prev.constraints.count(l) || next.constraints.count(l))
+            kept.insert(l);
+        CGAL_assertion(kept.size() == 2);
+        if (kept.size() == 2)
+          v.constraints = kept;
+      }
+
+    for (std::size_t poly_idx = 0; poly_idx < polygons.size(); poly_idx++) {
+      Polygon& poly = polygons[poly_idx];
+
+      // The face is located with the centroid of the polygon at t = 0+, as the polygon may have zero area at t = 0
+      // (e.g., if it touches a line in a vertex).
+      IkVector_2 c0 = CGAL::NULL_VECTOR, cv = CGAL::NULL_VECTOR;
+      for (std::size_t idx : poly) {
+        c0 = c0 + (vts[idx].p0 - CGAL::ORIGIN);
+        cv = cv + vts[idx].v;
+      }
+      c0 = c0 / IkFT(static_cast<unsigned int>(poly.size()));
+      cv = cv / IkFT(static_cast<unsigned int>(poly.size()));
+      IFace face = m_data.locate_iface_0plus(sp_idx, CGAL::ORIGIN + c0, cv);
+      CGAL_assertion(face != IFace(-1));
+
+      pieces.push_back(Piece{ std::move(poly), zero_area_polygons[poly_idx], face, polygon_idx });
+    }
+  }
+
+  // Coplanar input polygons may have pieces in the same iface. Pieces with an area in the same iface are merged into
+  // the convex hull of these pieces, which expands like an input polygon. A zero-area piece is removed if its iface
+  // contains another piece with an area. Of several zero-area pieces in an iface, only the first one is kept.
+  void merge_coplanar_pieces(std::size_t sp_idx, std::vector<Piece>& pieces) {
+    std::vector<typename Support_plane::Vertex>& vts = m_data.kinetic_vertices();
+    Support_plane& sp = m_data.support_plane(sp_idx);
+    std::vector<bool> removed(pieces.size(), false);
+
+    auto pieces_per_face = [&]() {
+      std::map<IFace, std::vector<std::size_t> > per_face;
+      for (std::size_t i = 0; i < pieces.size(); i++)
+        if (!removed[i])
+          per_face[pieces[i].face].push_back(i);
+      return per_face;
+    };
+
+    for (const auto& [face, indices] : pieces_per_face()) {
+      std::vector<std::size_t> with_area;
+      for (std::size_t i : indices)
+        if (!pieces[i].zero_area)
+          with_area.push_back(i);
+
+      if (with_area.size() < 2)
+        continue;
+
+      std::vector<IkPoint_2> pts, hull;
+      std::size_t input = std::size_t(-1);
+      for (std::size_t i : with_area) {
+        for (std::size_t v : pieces[i].poly)
+          pts.push_back(vts[v].p0);
+        input = (std::min)(input, sp.input_polygon(pieces[i].polygon).input);
+        removed[i] = true;
+      }
+      CGAL::convex_hull_2(pts.begin(), pts.end(), std::back_inserter(hull));
+      CGAL_assertion(hull.size() >= 3);
+
+      if (m_parameters.verbose)
+        KSP::internal::Log_line(m_data.log_prefix()) << "* merging " << with_area.size() << " pieces of coplanar input polygons in support plane " << sp_idx;
+
+      const std::size_t merged = sp.add_polygon(hull, input);
+      std::vector<Piece> merged_pieces;
+      split_input_polygon(sp_idx, merged, merged_pieces);
+      for (Piece& p : merged_pieces) {
+        // The convex hull is contained in the closure of the iface. Pieces beyond the lines bounding the iface have zero area.
+        CGAL_assertion(p.zero_area != (p.face == face));
+        pieces.push_back(std::move(p));
+        removed.push_back(false);
+      }
+    }
+
+    for (const auto& [face, indices] : pieces_per_face()) {
+      if (indices.size() < 2)
+        continue;
+      std::size_t keep = indices.front();
+      for (std::size_t i : indices)
+        if (!pieces[i].zero_area) {
+          keep = i;
+          break;
+        }
+      for (std::size_t i : indices) {
+        CGAL_assertion(i == keep || pieces[i].zero_area);
+        if (i != keep)
+          removed[i] = true;
+      }
+    }
+
+    // The vertices of the removed pieces are discarded.
+    std::set<std::size_t> removed_vertices;
+    for (std::size_t i = 0; i < pieces.size(); i++)
+      if (removed[i])
+        removed_vertices.insert(pieces[i].poly.begin(), pieces[i].poly.end());
+
+    for (std::size_t v : removed_vertices) {
+      if (vts[v].other != std::size_t(-1) && !removed_vertices.count(vts[v].other))
+        vts[vts[v].other].other = std::size_t(-1);
+      vts[v].other = std::size_t(-1);
+      vts[v].moving = false;
+    }
+
+    std::size_t write = 0;
+    for (std::size_t i = 0; i < pieces.size(); i++)
+      if (!removed[i]) {
+        if (i != write)
+          pieces[write] = std::move(pieces[i]);
+        write++;
+      }
+    pieces.resize(write);
+  }
+
+  void initial_polygon_splitting() {
+    using Vertex = typename Support_plane::Vertex;
+    std::vector<Vertex> &vts = m_data.kinetic_vertices();
+
     for (std::size_t sp_idx = 6; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
       Support_plane& sp = m_data.support_plane(sp_idx);
-      Polygons polygons(1);
-      polygons[0].resize(sp.data().exact_vertices.size());
-      std::iota(polygons[0].begin(), polygons[0].end(), vts.size());
 
-      vts.reserve(vts.size() + sp.data().exact_vertices.size());
+      std::vector<Piece> pieces;
+      const std::size_t num_input_polygons = sp.number_of_input_polygons();
+      for (std::size_t i = 0; i < num_input_polygons; i++)
+        split_input_polygon(sp_idx, i, pieces);
 
-      // get initial polygon for support plane
-      for (std::size_t v = 0; v < sp.data().exact_vertices.size(); v++)
-        vts.emplace_back(sp_idx, sp.data().exact_vertices[v], sp.data().original_rays[v].to_vector());
-
-      if (plot)
-        export_poly(polygons[0], m_data.prefix() + std::to_string(sp_idx) + "_initial_polygon.polylines.txt");
-
-      // Clip the polygon to the bbox. The sides are decided at t = 0+: a vertex on a bbox line that moves outwards
-      // is replaced by vertices sliding on the bbox line where its edges cross it. Crossings on edges that lie on
-      // another bbox line are fixed at the corner.
-      for (auto [line_idx, line] : sp.data().bbox_lines) {
-        CGAL_assertion(m_data.igraph().line_is_on_bbox(line_idx));
-        const CGAL::Oriented_side inside = line.oriented_side(sp.data().ikcentroid);
-        CGAL_assertion(inside != CGAL::ON_ORIENTED_BOUNDARY);
-
-        std::list<std::size_t> pos_side;
-        if (!m_data.split_polygon(polygons[0], line_idx, pos_side)) {
-          CGAL_assertion_code(for (std::size_t v : polygons[0]))
-            CGAL_assertion(Data_structure::side_0plus(line, vts[v].p0, vts[v].v) != CGAL::opposite(inside));
-          continue;
-        }
-
-        if (inside == CGAL::ON_POSITIVE_SIDE)
-          std::swap(polygons[0], pos_side);
-
-        // The twins of the kept vertices are discarded.
-        std::set<std::size_t> removed(pos_side.begin(), pos_side.end());
-        for (std::size_t v : polygons[0])
-          if (removed.count(vts[v].other))
-            vts[v].other = std::size_t(-1);
-      }
-
-      std::vector<bool> zero_area_polygons(polygons.size(), false);
-      for (auto [line_idx, line] : sp.data().lines) {
-        // Skip lines on the bounding box, they won't split the polygon.
-        if (m_data.igraph().line_is_on_bbox(line_idx))
-          continue;
-
-        std::size_t num_polys = polygons.size();
-        for (std::size_t i = 0; i < num_polys; i++) {
-          Polygon& poly = polygons[i];
-          std::list<std::size_t> pos_side;
-          std::pair<bool, bool> zero_area;
-          if (m_data.split_polygon(poly, line_idx, pos_side, &zero_area)) {
-            // A part without a vertex strictly on its side at t = 0 has zero area (polygon touching the line).
-            polygons.emplace_back(std::move(pos_side));
-            zero_area_polygons.push_back(zero_area_polygons[i] || zero_area.second);
-            zero_area_polygons[i] = zero_area_polygons[i] || zero_area.first;
-          }
-        }
-      }
-
-      // A fixed vertex may lie on more than two lines if several lines intersect in the same point.
-      // Only the two lines carrying its polygon edges are kept as constraints.
-      for (Polygon& poly : polygons)
-        for (auto it = poly.begin(); it != poly.end(); ++it) {
-          Vertex& v = vts[*it];
-          if (v.moving || v.constraints.size() <= 2)
-            continue;
-          const Vertex& prev = vts[it == poly.begin() ? poly.back() : *std::prev(it)];
-          const Vertex& next = vts[std::next(it) == poly.end() ? poly.front() : *std::next(it)];
-          std::set<std::size_t> kept;
-          for (std::size_t l : v.constraints)
-            if (prev.constraints.count(l) || next.constraints.count(l))
-              kept.insert(l);
-          CGAL_assertion(kept.size() == 2);
-          if (kept.size() == 2)
-            v.constraints = kept;
-        }
+      if (num_input_polygons > 1)
+        merge_coplanar_pieces(sp_idx, pieces);
 
       // Identify which polygon belongs to which face and link the constrained vertices to the iedges.
 
-      for (std::size_t poly_idx = 0; poly_idx < polygons.size(); poly_idx++) {
-        Polygon& poly = polygons[poly_idx];
+      for (Piece& piece : pieces) {
+        std::list<std::size_t>& poly = piece.poly;
+        const IFace face = piece.face;
         bool has_moving = false;
-
-        // The face is located with the centroid of the polygon at t = 0+, as the polygon may have zero area at t = 0
-        // (e.g., if it touches a line in a vertex).
-        IkVector_2 c0 = CGAL::NULL_VECTOR, cv = CGAL::NULL_VECTOR;
-        for (std::size_t idx : poly) {
-          c0 = c0 + (vts[idx].p0 - CGAL::ORIGIN);
-          cv = cv + vts[idx].v;
-        }
-        c0 = c0 / IkFT(static_cast<unsigned int>(poly.size()));
-        cv = cv / IkFT(static_cast<unsigned int>(poly.size()));
-        IFace face = m_data.locate_iface_0plus(sp_idx, CGAL::ORIGIN + c0, cv);
-        CGAL_assertion(face != IFace(-1));
 
         for (std::size_t idx : poly) {
           Vertex &v = vts[idx];
@@ -663,10 +780,11 @@ private:
         // Move faces into sp data structure
         // A zero-area piece beyond a line touched by the polygon at t = 0 is only added to the mesh at the beginning
         // of the propagation if the polygon is allowed to cross that line (see Vertex_propagation::filter_touching_pieces()).
-        const bool zero_area = zero_area_polygons[poly_idx];
+        const bool zero_area = piece.zero_area;
         CGAL_assertion(zero_area == m_data.is_zero_area(poly));
         CGAL_assertion_code(auto res = ) sp.data().polygons.insert(std::make_pair(face, std::move(poly)));
         CGAL_assertion(res.second);
+        sp.set_piece_polygon(face, piece.polygon);
         sp.link_property_maps();
         if (zero_area)
           continue;
@@ -816,25 +934,25 @@ private:
 
   void add_input_polygons() {
     using Polygon_2 = std::vector<typename Intersection_kernel::Point_2>;
-    using Indices = std::vector<std::size_t>;
 
-    std::map< std::size_t, std::pair<Polygon_2, Indices> > polygons;
+    // Coplanar input polygons share a support plane, but are added separately.
+    std::map< std::size_t, std::vector<std::pair<Polygon_2, std::size_t> > > polygons;
     preprocess_polygons(polygons);
 
+    std::size_t num_polygons = 0;
     for (const auto& item : polygons) {
       const std::size_t support_plane_idx = item.first;
-      const auto& pair = item.second;
-      const Polygon_2& polygon = pair.first;
-      const Indices& input_indices = pair.second;
-      m_data.add_input_polygon(support_plane_idx, input_indices, polygon);
-      m_data.support_plane(support_plane_idx).set_input_polygon(static_cast<int>(item.first) - 6);
+      for (const auto& [polygon, input_index] : item.second) {
+        m_data.add_input_polygon(support_plane_idx, std::vector<std::size_t>(1, input_index), polygon);
+        num_polygons++;
+      }
+      m_data.support_plane(support_plane_idx).set_input_polygon(item.second.front().second);
     }
-    //dump_polygons(m_data, polygons, m_data.prefix() + "inserted-polygons");
 
     CGAL_assertion(m_data.number_of_support_planes() >= 6);
     if (m_parameters.verbose) {
       KSP::internal::Log_line(m_data.log_prefix()) << "* provided input polygons: " << m_data.input_polygons().size();
-      KSP::internal::Log_line(m_data.log_prefix()) << "* inserted input polygons: " << polygons.size();
+      KSP::internal::Log_line(m_data.log_prefix()) << "* inserted input polygons: " << num_polygons << " on " << polygons.size() << " support planes";
     }
   }
 
@@ -874,10 +992,8 @@ private:
     convex_hull_2(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(polygon_2));
   }
 
-  void preprocess_polygons(std::map< std::size_t, std::pair<std::vector<typename Intersection_kernel::Point_2>, std::vector<std::size_t> > >& polygons) {
-    std::size_t input_index = 0;
+  void preprocess_polygons(std::map< std::size_t, std::vector<std::pair<std::vector<typename Intersection_kernel::Point_2>, std::size_t> > >& polygons) {
     std::vector<typename Intersection_kernel::Point_2> polygon_2;
-    std::vector<std::size_t> input_indices;
     for (std::size_t i = 0; i < m_input_polygons.size(); i++) {
       bool is_added = true;
       std::size_t support_plane_idx = std::size_t(-1);
@@ -885,65 +1001,9 @@ private:
       CGAL_assertion(support_plane_idx != std::size_t(-1));
       convert_polygon(support_plane_idx, m_input_polygons[i], polygon_2);
       restrict_to_bbox(support_plane_idx, polygon_2);
-
-      if (is_added) {
-        input_indices.clear();
-        input_indices.push_back(input_index);
-        polygons[support_plane_idx] = std::make_pair(polygon_2, input_indices);
-
-      }
-      else {
-        CGAL_assertion(polygons.find(support_plane_idx) != polygons.end());
-        auto& pair = polygons.at(support_plane_idx);
-        auto& other_polygon = pair.first;
-        auto& other_indices = pair.second;
-        other_indices.push_back(input_index);
-        merge_polygons(support_plane_idx, polygon_2, other_polygon);
-      }
-      ++input_index;
+      CGAL_assertion(is_added == (polygons.find(support_plane_idx) == polygons.end()));
+      polygons[support_plane_idx].push_back(std::make_pair(polygon_2, i));
     }
-  }
-
-  void merge_polygons(const std::size_t support_plane_idx, const std::vector<typename Intersection_kernel::Point_2>& polygon_a, std::vector<typename Intersection_kernel::Point_2>& polygon_b) {
-    const bool is_debug = true;
-    CGAL_assertion(support_plane_idx >= 6);
-    if (is_debug) {
-      KSP::internal::Log_line(m_data.log_prefix()) << "support plane idx: " << support_plane_idx;
-    }
-
-    // Add points from a to b.
-    auto& points = polygon_b;
-    for (const auto& point : polygon_a) {
-      points.push_back(point);
-    }
-
-    // Create the merged polygon.
-    std::vector<typename Intersection_kernel::Point_2> merged;
-    create_merged_polygon(points, merged);
-
-    if (is_debug) {
-      KSP::internal::Log_line(m_data.log_prefix()) << "merged polygon: ";
-      From_exact from_exact;
-      for (std::size_t i = 0; i < merged.size(); ++i) {
-        const std::size_t ip = (i + 1) % merged.size();
-        const auto& p = merged[i];
-        const auto& q = merged[ip];
-        KSP::internal::Log_line(m_data.log_prefix()) << "2 " <<
-          m_data.to_3d(support_plane_idx, from_exact(p)) << " " <<
-          m_data.to_3d(support_plane_idx, from_exact(q));
-      }
-    }
-
-    // Update b with the new merged polygon.
-    polygon_b = merged;
-  }
-
-  void create_merged_polygon(const std::vector<typename Intersection_kernel::Point_2>& points, std::vector<typename Intersection_kernel::Point_2>& merged) const {
-    merged.clear();
-
-    CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(merged));
-
-    CGAL_assertion(merged.size() >= 3);
   }
 
   void create_bbox_meshes() {

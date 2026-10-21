@@ -1424,6 +1424,7 @@ private:
       m_data.init_border(other_face);
       std::list<std::size_t>& new_poly = sp.data().polygons[other_face];
       CGAL_assertion(new_poly.empty());
+      sp.set_piece_polygon(other_face, sp.piece_polygon(vts[e.vertex].face));
       sp.active_polygons++;
 
       // Create paired vertices
@@ -1795,6 +1796,7 @@ private:
       m_data.init_border(other_face);
       std::list<std::size_t>& new_poly = sp.data().polygons[other_face];
       CGAL_assertion(new_poly.empty());
+      sp.set_piece_polygon(other_face, sp.piece_polygon(vts[e.vertex].face));
       sp.active_polygons++;
 
       // stationary vertex at corner
@@ -1865,20 +1867,22 @@ private:
         m_data.init_border(q3_face);
         std::list<std::size_t>& poly_q3 = sp.data().polygons[q3_face];
         CGAL_assertion(poly_q3.empty());
+        sp.set_piece_polygon(q3_face, sp.piece_polygon(vts[e.vertex].face));
         sp.active_polygons++;
 
         // Insert vertices into q3 like in the reference implementation
-        std::list<std::size_t> polygon(sp.data().exact_vertices.size());
+        // The input polygon the piece originates from, translated such that its centroid is at the event.
+        const auto& input = sp.input_polygon(sp.piece_polygon(vts[e.vertex].face));
+        std::list<std::size_t> polygon(input.vertices.size());
         std::vector<Vertex> vertices;
         std::iota(polygon.begin(), polygon.end(), 0);
 
-        vertices.reserve(sp.data().exact_vertices.size());
+        vertices.reserve(input.vertices.size());
 
-        IkVector_2 shift = (e.p - sp.data().ikcentroid);
+        IkVector_2 shift = (e.p - input.centroid);
 
-        // get initial polygon for support plane
-        for (std::size_t v = 0; v < sp.data().exact_vertices.size(); v++)
-          vertices.emplace_back(vts[e.vertex].sp_idx, sp.data().exact_vertices[v] + shift, sp.data().original_rays[v].to_vector());
+        for (std::size_t v = 0; v < input.vertices.size(); v++)
+          vertices.emplace_back(vts[e.vertex].sp_idx, input.vertices[v] + shift, input.velocities[v]);
 
         std::list<std::size_t> other;
         const IkLine_2& constraint_line = sp.data().lines[*vts[e.vertex].constraints.begin()];
@@ -1982,6 +1986,7 @@ private:
           m_data.init_border(q4_face);
           std::list<std::size_t>& poly_q4 = sp.data().polygons[q4_face];
           CGAL_assertion(poly_q4.empty());
+          sp.set_piece_polygon(q4_face, sp.piece_polygon(vts[e.vertex].face));
           sp.active_polygons++;
 
           std::size_t q4_stationary = std::size_t(-1);
@@ -2096,17 +2101,18 @@ private:
     Support_plane &sp = m_data.support_plane(vts[e.vertex].sp_idx);
 
     // Insert vertices into q3 like in the reference implementation
-    std::list<std::size_t> polygon(sp.data().exact_vertices.size());
+    // The input polygon the piece originates from, translated such that its centroid is at the event.
+    const auto& input = sp.input_polygon(sp.piece_polygon(vts[e.vertex].face));
+    std::list<std::size_t> polygon(input.vertices.size());
     std::vector<Vertex> vertices;
     std::iota(polygon.begin(), polygon.end(), 0);
 
-    vertices.reserve(sp.data().exact_vertices.size());
+    vertices.reserve(input.vertices.size());
 
-    IkVector_2 shift = (e.p - sp.data().ikcentroid);
+    IkVector_2 shift = (e.p - input.centroid);
 
-    // get initial polygon for support plane
-    for (std::size_t v = 0; v < sp.data().exact_vertices.size(); v++)
-      vertices.emplace_back(vts[e.vertex].sp_idx, sp.data().exact_vertices[v] + shift, sp.data().original_rays[v].to_vector());
+    for (std::size_t v = 0; v < input.vertices.size(); v++)
+      vertices.emplace_back(vts[e.vertex].sp_idx, input.vertices[v] + shift, input.velocities[v]);
 
     std::list<std::size_t> other;
     std::size_t hit_line_idx = m_data.igraph().edge(hit_edge).line;
@@ -2139,6 +2145,7 @@ private:
     m_data.init_border(q3_face);
     std::list<std::size_t>& poly_q3 = sp.data().polygons[q3_face];
     CGAL_assertion(poly_q3.empty());
+    sp.set_piece_polygon(q3_face, sp.piece_polygon(vts[e.vertex].face));
     sp.active_polygons++;
 
     std::size_t q3_stationary = std::size_t(-1);
@@ -2222,6 +2229,7 @@ private:
     m_data.init_border(q4_face);
     std::list<std::size_t>& poly_q4 = sp.data().polygons[q4_face];
     CGAL_assertion(poly_q4.empty());
+    sp.set_piece_polygon(q4_face, sp.piece_polygon(vts[e.vertex].face));
     sp.active_polygons++;
 
     std::size_t q4_stationary = std::size_t(-1);
@@ -2400,6 +2408,7 @@ private:
       m_data.init_border(other_face);
       std::list<std::size_t>& new_poly = sp.data().polygons[other_face];
       CGAL_assertion(new_poly.empty());
+      sp.set_piece_polygon(other_face, sp.piece_polygon(vts[e1.vertex].face));
       sp.active_polygons++;
 
       // Create adjacent of e1.vertex prolongation
@@ -2949,6 +2958,7 @@ private:
       m_data.init_border(face);
       std::list<std::size_t>& p = sp.data().polygons[face];
       CGAL_assertion(p.empty());
+      sp.set_piece_polygon(face, sp.piece_polygon(F));
       sp.active_polygons++;
       if (!ch.forward)
         std::reverse(seq.begin(), seq.end());

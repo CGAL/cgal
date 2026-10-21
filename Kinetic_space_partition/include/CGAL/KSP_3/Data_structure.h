@@ -224,6 +224,7 @@ private:
   std::map<PFace, std::size_t> m_face2index;
   std::vector<std::vector<std::size_t> > m_face2vertices;
   std::vector<bool> m_part_of_initial;
+  std::vector<std::size_t> m_face_input; // Index of the input polygon of each face, std::size_t(-1) if none.
   std::map<PFace, std::pair<int, int> > m_pface_neighbors;
   std::vector<std::size_t> m_face2sp;
   std::vector<std::set<std::size_t> > m_sp2input_polygon;
@@ -299,6 +300,7 @@ public:
     std::map<PFace, std::size_t>().swap(m_face2index);
     std::vector<std::vector<std::size_t> >().swap(m_face2vertices);
     std::vector<bool>().swap(m_part_of_initial);
+    std::vector<std::size_t>().swap(m_face_input);
     std::map<PFace, std::pair<int, int> >().swap(m_pface_neighbors);
     std::vector<std::size_t>().swap(m_face2sp);
   }
@@ -351,6 +353,9 @@ public:
 
   std::vector<bool>& face_is_part_of_input_polygon() { return m_part_of_initial; }
   const std::vector<bool>& face_is_part_of_input_polygon() const { return m_part_of_initial; }
+
+  std::vector<std::size_t>& face_to_input_polygon() { return m_face_input; }
+  const std::vector<std::size_t>& face_to_input_polygon() const { return m_face_input; }
 
   std::vector<std::size_t>& face_to_support_plane() { return m_face2sp; }
   std::vector<std::set<std::size_t> >& support_plane_to_input_polygon() { return m_sp2input_polygon; }
@@ -760,8 +765,7 @@ public:
     preprocess(points);
 
     sort_points_by_direction(points);
-    support_plane(support_plane_idx).
-    add_input_polygon(points);
+    support_plane(support_plane_idx).add_input_polygon(points, input_indices.front());
     for (const std::size_t input_index : input_indices) {
       m_input_polygon_map[input_index] = support_plane_idx;
       m_sp2input_polygon[support_plane_idx].insert(input_index);
