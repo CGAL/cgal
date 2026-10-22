@@ -15,9 +15,10 @@
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
-// Geometry traits for a 1D arrangement on the full real line \f$(-\infty,
-// +\infty)\f$.  The parameter space is open on both sides.  Points are
-// represented as `Kernel::FT`. Pair with `Open_topology_traits`.
+/*! Geometry traits for a 1D arrangement on the full real line
+ * \f$(-\infty,+\infty)\f$.  The parameter space is open on both sides.  Points
+ * are represented as `Kernel::FT`. Pair with `Open_topology_traits`.
+ */
 template <typename Kernel_>
 class Line_traits_1 : public Ft_traits_1<Kernel_> {
   using Kernel = Kernel_;
@@ -29,8 +30,8 @@ public:
   using Right_side_category = Open_side_tag;
 
   // Parameter_space_in_x_1---every finite point is in the interior.
-  struct Parameter_space_in_x_1 {
-    Parameter_space operator()(const Point_1&) const { return INTERIOR; }
+  class Parameter_space_in_x_1 {
+    Parameter_space operator()(const Point_1&) const { return Parameter_space::INTERIOR; }
   };
 
   Parameter_space_in_x_1 parameter_space_in_x_1_object() const { return Parameter_space_in_x_1{}; }

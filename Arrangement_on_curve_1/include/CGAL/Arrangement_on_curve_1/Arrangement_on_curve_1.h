@@ -28,6 +28,7 @@ namespace Arrangement_on_curve_1 {
  * \tparam BinarySearch when true (requires UseVector = `true`), the locate()
  *                      function in locate.h uses a binary search over the sorted
  *                      vertex vector, reducing locate from \f$O(n)\f$ to \f$O(log n)\f$.
+ *                      Not supported for an identified parameter space.
  */
 template <typename GeometryTraits_1,
           typename TopologyTraits = Open_topology_traits<GeometryTraits_1>,
@@ -50,6 +51,10 @@ public:
   static constexpr bool is_identified =
     Side_is_identified<Left_side_category>::value && Side_is_identified<Right_side_category>::value;
 
+  static_assert(! BinarySearch || ! is_identified,
+    "BinarySearch = true is not supported for an identified parameter space: the vertices are cyclically "
+    "ordered, and Compare_x_1 must not be called on the identification point.");
+
   // True when the left/right side is closed.
   static constexpr bool left_is_closed = Side_is_closed<Left_side_category>::value;
   static constexpr bool right_is_closed = Side_is_closed<Right_side_category>::value;
@@ -58,7 +63,7 @@ public:
   using Shared_geometry_traits = std::shared_ptr<const Geometry_traits_1>;
 
   // Expose the allocator type from the topology traits so that callers can
-  // query it via allocator() and use it with compatible containers.
+  // query it via get_allocator() and use it with compatible containers.
   using Allocator = typename Topology_traits::Allocator;
 
   //! The standard stl type.
@@ -158,7 +163,7 @@ public:
    */
   void destroy_vertex(Vertex_descriptor v) {
     if constexpr (binary_search_enabled) {
-      // Enforce that only the rightmost vertex can be destroyed in O(1) time
+      // Enforce that only the rightmost vertex can be destroyed in \f$O(1)\f$ time
       // without invalidating stored vertex indices in existing edges.
       CGAL_assertion_msg(v == this->topology_traits().number_of_vertices() - 1,
                          "When BinarySearch = true, only the rightmost vertex can be destroyed.");
@@ -229,7 +234,7 @@ public:
   /* inserts the very first point into an empty arrangement.
    *
    * For open/closed topologies: the single sentinel edge is split into
-   * (\f$−\infty\f$ / boundary-left, v) and (v, \f$+\infty\f$ / boundary-right).
+   * (\f$-\infty\f$ / boundary-left, v) and (v, \f$+\infty\f$ / boundary-right).
    *
    * For identified (loop) topologies: the single sentinel cyclic edge is split
    */
@@ -478,7 +483,7 @@ public:
       auto res = cmp(vertices[mid].m_point, p);
       if (res == SMALLER) lo = mid + 1;
       else if (res == LARGER)  hi = mid;
-      else return mid; // EQUAL — vertex found
+      else return mid; // EQUAL: vertex found
     }
     // p is not at any vertex; lo is the index of the first vertex > p.
     return lo;

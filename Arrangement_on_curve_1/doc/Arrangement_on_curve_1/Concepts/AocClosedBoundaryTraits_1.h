@@ -9,10 +9,10 @@
 /*! \ingroup PkgArrangementOnCurve1ConceptsTraits
  * \cgalConcept
  *
- * Models of the concept `AosClosedBoundaryTraits_1` handle curves that are
+ * Models of the concept `AocClosedBoundaryTraits_1` handle curves that are
  * closed at least on one side of the two sides of the parameter space.
  *
- * \cgalRefines{AosTraits_1}
+ * \cgalRefines{AocTraits_1}
  *
  * When at least one category is `Closed_side_tag`, the traits must also provide
  * the functor type `Parameter_space_in_x_1` (and its accessor), which
@@ -26,7 +26,7 @@
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Right_ray_traits_1<Kernel>}
  * \cgalHasModelsEnd
  */
-class AosClosedBoundaryTraits_1 {
+class AocClosedBoundaryTraits_1 {
 public:
   //! \name Functor Types
   //! @{

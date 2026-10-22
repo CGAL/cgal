@@ -27,35 +27,35 @@ namespace Arrangement_on_curve_1 {
 template <typename Kernel>
 class Line_2_traits_1 {
 public:
-  /// \name Types
-  /// @{
+  //! \name Types
+  //! @{
 
-  /// The 1D arrangement point type; a 2D coordinate on the supporting line.
+  //! The 1D arrangement point type is a 2D coordinate on the supporting line.
   typedef typename Kernel::Point_2 Point_1;
 
-  /// The 2D master line supporting the topology.
+  //! The 2D master line supporting the topology.
   typedef typename Kernel::Line_2 Line_2;
 
-  /// A 2D direction vector along the master line.
+  //! A 2D direction vector along the master line.
   typedef typename Kernel::Vector_2 Vector_2;
 
-  /// The left side of the parameter space is open.
+  //! The left side of the parameter space is open.
   typedef Open_side_tag Left_side_category;
 
-  /// Both sides of the parameter space is open.
+  //! Both sides of the parameter space is open.
   typedef Open_side_tag Right_side_category;
 
-  /// @}
+  //! @}
 
-  /// \name Creation
-  /// @{
+  //! \name Creation
+  //! @{
 
   /*! constructs from an embedding 2D line.
    * \param line the supporting geometric master line trajectory.
    */
   Line_2_traits_1(const Line_2& line);
 
-  /// @}
+  //! @}
 };
 
 } // namespace Arrangement_on_curve_1

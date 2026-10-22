@@ -30,7 +30,7 @@ public:
   //! \name Types
   //! @{
 
-  //! The 1D arrangement point type — a 3D coordinate on the supporting line.
+  //! The 1D arrangement point type is a 3D coordinate on the supporting line.
   typedef typename Kernel::Point_3 Point_1;
 
   //! The 3D master line supporting the topology.

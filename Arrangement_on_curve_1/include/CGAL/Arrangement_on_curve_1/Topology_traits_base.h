@@ -17,17 +17,16 @@
  * `Left_closed_topology_traits`, `Right_closed_topology_traits`, and
  * `Identified_topology_traits`, have in common:
  *
- *   • Data_container and its void-specialization (empty-base optimization)
- *   • Map helper traits (reference, const_reference, parameter)
- *   • The Vertex and Edge node structs (with optional user data)
- *   • Container and descriptor type definitions
- *   • List-mode and vector-mode descriptor iterators
- *   • All three property maps (Vertex_point_map, Vertex_data_map, Edge_data_map)
- *   • Core navigation (left/right_edge, left/right_vertex, has_left/right_vertex,
- *     vertex_point)
- *   • Low-level storage primitives (create_vertex, create_edge, set_*, erase_*)
- *   • Copy constructor helpers (patch_cross_references for list mode)
- *   • Allocator access
+ * - Data_container and its void-specialization (empty-base optimization)
+ * - Map helper traits (reference, const_reference, parameter)
+ * - The Vertex and Edge node structs (with optional user data)
+ * - Container and descriptor type definitions
+ * - List-mode and vector-mode descriptor iterators
+ * - All three property maps (Vertex_point_map, Vertex_data_map, Edge_data_map)
+ * - Core navigation (left/right_edge, left/right_vertex, has_left/right_vertex, vertex_point)
+ * - Low-level storage primitives (create_vertex, create_edge, set_*, erase_*)
+ * - Copy constructor helpers (patch_cross_references for list mode)
+ * - Allocator access
  *
  * Each derived class adds only its topology-specific state and logic:
  * - `Open_topology_traits`---two sentinel edge descriptors
@@ -65,7 +64,7 @@ struct Data_container {
   void set_data(const Data& data) { m_data = data; }
 };
 
-// Specialization for void — zero bytes, no members.
+// Specialization for void; zero bytes, no members.
 template <>
 struct Data_container<void> {};
 
@@ -86,8 +85,8 @@ template <>  struct Map_param_traits<void> { using type = int; }; // safe dummy
 //   Point_1    - geometric point type stored at each vertex.
 //   VertexData - optional user data per vertex (void = none).
 //   EdgeData   - optional user data per edge   (void = none).
-//   UseVector  - true → std::vector + index descriptors;
-//                false → std::list  + iterator descriptors.
+//   UseVector  - true -> std::vector + index descriptors;
+//                false -> std::list + iterator descriptors.
 //   Allocator  - allocator for internal containers.
 // ============================================================================
 template <typename Point_1_,
@@ -328,17 +327,17 @@ public:
   // --------------------------------------------------------------------------
   // Allocator access
   // --------------------------------------------------------------------------
-  Allocator get_allocator() const noexcept { return Allocator(m_vertices.allocator()); }
+  Allocator get_allocator() const noexcept { return Allocator(m_vertices.get_allocator()); }
 
 protected:
   // --------------------------------------------------------------------------
-  // Protected containers — owned by derived classes through this base.
+  // Protected containers owned by derived classes through this base.
   // --------------------------------------------------------------------------
   Vertex_container m_vertices;
   Edge_container   m_edges;
 
   // --------------------------------------------------------------------------
-  // Protected helpers: descriptor → node reference
+  // Protected helpers: descriptor -> node reference
   // --------------------------------------------------------------------------
   Vertex& v_ref(Vertex_descriptor v) {
     if constexpr (UseVector) return m_vertices[v];
@@ -417,7 +416,7 @@ public:
                                         List_descriptor_iterator<Edge_const_descriptor>(m_edges.cend()));
   }
 
-  // Mutable begin/end — used by locate_impl linear scan.
+  // Mutable begin/end used by locate_impl linear scan.
   Vertex_descriptor vertices_begin() {
     if constexpr (UseVector) return 0;
     else return m_vertices.begin();
@@ -478,7 +477,7 @@ public:
   void clear_left_vertex (Edge_descriptor e) { e_ref(e).m_has_left  = false; }
   void clear_right_vertex(Edge_descriptor e) { e_ref(e).m_has_right = false; }
 
-  // erase_vertex — O(1) list; O(1) vector for last element, O(n) interior.
+  // \f$OO(1)\f$O list; \f$OO(1)\f$O vector for last element, \f$OO(n)\f$O interior.
   // Derived classes that cache vertex descriptors (e.g. Closed_topology_traits)
   // must call this through the derived-class override that patches their cache.
   void erase_vertex(Vertex_descriptor v) {
@@ -494,7 +493,7 @@ public:
     }
   }
 
-  // erase_edge — derived classes must patch their own cached edge descriptors.
+  // erase_edge derived classes must patch their own cached edge descriptors.
   void erase_edge_base(Edge_descriptor e) {
     if constexpr (!UseVector) {
       m_edges.erase(e);
@@ -517,14 +516,14 @@ protected:
   };
 
   // --------------------------------------------------------------------------
-  // patch_cross_references() — list mode only
+  // patch_cross_references() list mode only
   //
   // Called by derived-class copy constructors after the member containers have
   // been value-copied (so all stored iterators still point into the source).
   // Rebuilds every stored iterator to point into the newly copied containers.
   //
   // Returns the edge and vertex maps so derived classes can patch their own
-  // cached descriptors (e.g., m_left_boundary_edge, m_start_edge, …).
+  // cached descriptors.
   // --------------------------------------------------------------------------
   struct Patch_maps {
     std::unordered_map<Edge_const_descriptor, Edge_descriptor, Iterator_hash> edge_map;
@@ -547,7 +546,7 @@ protected:
       for (; src != other.m_vertices.cend(); ++src, ++dst)
         maps.vertex_map.emplace(src, dst);
     }
-    // Patch vertex → edge and edge → vertex cross-references.
+    // Patch vertex -> edge and edge -> vertex cross-references.
     {
       auto sv = other.m_vertices.cbegin();
       auto dv = m_vertices.begin();

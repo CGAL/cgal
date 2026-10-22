@@ -15,6 +15,7 @@
  */
 
 #include <CGAL/Arrangement_on_curve_1/Topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Parameter_space.h>
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
@@ -34,7 +35,8 @@ template <typename GeometryTraits_1,
           bool UseVector = false,
           typename Allocator_ = std::allocator<char>>
 class Left_closed_topology_traits :
-  public Topology_traits<GeometryTraits_1, Closed_side_tag, Open_side_tag, VertexData, EdgeData, UseVector, Allocator_> {
+  public Topology_traits<GeometryTraits_1, Closed_side_tag, Open_side_tag, VertexData, EdgeData, UseVector,
+                         Allocator_> {
 public:
   using Geometry_traits_1 = GeometryTraits_1;
   using Vertex_data = VertexData;

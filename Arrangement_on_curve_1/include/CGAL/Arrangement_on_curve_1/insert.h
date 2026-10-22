@@ -14,6 +14,7 @@
 
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
 #include <CGAL/Arrangement_on_curve_1/locate.h>
+#include <CGAL/Arrangement_on_curve_1/Parameter_space.h>
 #include <CGAL/property_map.h>
 
 namespace CGAL {
@@ -50,10 +51,10 @@ insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr
   if constexpr (Aoc::left_is_closed || Aoc::right_is_closed) {
     auto ps = arr.geometry_traits_1().parameter_space_in_x_1_object()(p);
     if constexpr (Aoc::left_is_closed) {
-      if (ps == LEFT_BOUNDARY) return arr.insert_left_boundary_vertex(p);
+      if (ps == Parameter_space::LEFT_BOUNDARY) return arr.insert_left_boundary_vertex(p);
     }
     if constexpr (Aoc::right_is_closed) {
-      if (ps == RIGHT_BOUNDARY) return arr.insert_right_boundary_vertex(e, p);
+      if (ps == Parameter_space::RIGHT_BOUNDARY) return arr.insert_right_boundary_vertex(e, p);
     }
   }
 
@@ -61,6 +62,17 @@ insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr
 
   if constexpr (Aoc::is_identified) {
     if (arr.geometry_traits_1().is_on_x_identification_1_object()(p)) return arr.insert_identification_vertex(p);
+
+    // Without the identification vertex, left_boundary_edge() (v_n, v_1) wraps
+    // around the identification point.  If p lies in it to the right of v_n,
+    // splitting it would leave the wrap-around part (p, v_1) in a new edge.
+    // Instead, the new edge (v_n, p) is inserted, and left_boundary_edge()
+    // keeps the part (p, v_1).
+    if (! arr.topology_traits().has_identification_vertex() && (e == arr.left_boundary_edge())) {
+      auto v_n = arr.left_vertex(e);
+      if (arr.geometry_traits_1().compare_x_1_object()(p, get(arr.vertex_point_map(), v_n)) == LARGER)
+        return arr.insert_after(v_n, p);
+    }
     return arr.split_edge(e, p);
   }
 

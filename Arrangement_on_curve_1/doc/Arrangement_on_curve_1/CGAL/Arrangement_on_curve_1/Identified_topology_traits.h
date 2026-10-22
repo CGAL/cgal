@@ -16,7 +16,7 @@ namespace Arrangement_on_curve_1 {
  *
  * When both sides of the parameter space are identified (tag:
  * `Identified_side_tag`), the curve is a closed loop, for example a circle,
- * a direction-space \f$\mathbb{S}_1\f$, or any periodic 1D domain.
+ * a direction-space \f$\mathbb{S}^1\f$, or any periodic 1D domain.
  *
  * Key topological differences from `Open_topology_traits`:
  *
@@ -32,9 +32,7 @@ namespace Arrangement_on_curve_1 {
  * - `insert_empty(p)` creates the very first vertex and a single loop edge
  *   (left and right both pointing to that vertex).
  *
- * All shared combinatorial infrastructure is inherited from
- * `Topology_traits_base`.  This class adds only `m_start_edge` / `m_has_start`
- * and the `start_edge()` / `set_start_edge()` API.
+ * All shared combinatorial infrastructure is inherited from `Topology_traits_base`.
  *
  * \tparam Point_1_ the geometric point type stored at each vertex.
  * \tparam VertexData optional user data per vertex (`void` = none, default).
@@ -57,13 +55,13 @@ template <typename GeometryTraits_1,
           typename Allocator = std::allocator<char>>
 class Identified_topology_traits {
 public:
-  /// \name Creation
-  /// @{
+  //! \name Creation
+  //! @{
 
   //! constructs an empty topology traits with an explicit allocator object.
   explicit Identified_topology_traits(const Allocator& alloc);
 
-  /// @}
+  //! @}
 };
 
 } // namespace Arrangement_on_curve_1

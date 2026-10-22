@@ -14,7 +14,7 @@
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
 #include <CGAL/Arrangement_on_curve_1/Open_topology_traits.h>
 #include <CGAL/Arrangement_on_curve_1/insert.h>
-#include <CGAL/Arrangement_on_curve_1/Geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Open_geom_traits_2_adaptor_1.h>
 
 // Setup standard 2D algebraic traits using CORE tracking
 using Integer = CORE::BigInt;
@@ -27,7 +27,7 @@ using Curve_2 = Geom_traits_2::Curve_2;
 using X_monotone_curve_2 = Geom_traits_2::X_monotone_curve_2;
 
 // Wrap into our 1D arrangement architecture
-using Geom_traits_1 = CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Geom_traits_2>;
+using Geom_traits_1 = CGAL::Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<Geom_traits_2>;
 using Point_1 = Geom_traits_1::Point_1; // Maps to Geom_traits_2::Point_2
 using Topo_traits = CGAL::Arrangement_on_curve_1::Open_topology_traits<Geom_traits_1, std::string, void>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topo_traits>;

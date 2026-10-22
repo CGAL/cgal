@@ -32,7 +32,7 @@ public:
   //! \name Types
   //! @{
 
-  //! The 1D arrangement point type — a \f$d\f$-dimensional coordinate.
+  //! The 1D arrangement point type is a \f$d\f$-dimensional coordinate.
   typedef typename Kernel::Point_d Point_1;
 
   //! The \f$d\f$-dimensional master line supporting the topology.

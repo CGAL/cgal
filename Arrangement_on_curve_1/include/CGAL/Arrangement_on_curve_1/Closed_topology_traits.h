@@ -10,6 +10,7 @@
 #define CGAL_ARRANGEMENT_ON_CURVE_1_CLOSED_TOPOLOGY_TRAITS_H
 
 #include <CGAL/Arrangement_on_curve_1/Topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Parameter_space.h>
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
@@ -53,8 +54,8 @@ public:
   Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& gt) {
     Vertex_descriptor v = Base::create_vertex(p);
     auto ps = gt.parameter_space_in_x_1_object()(p);
-    if (ps == LEFT_BOUNDARY) this->set_left_boundary_vertex(v);
-    else if (ps == RIGHT_BOUNDARY) this->set_right_boundary_vertex(v);
+    if (ps == Parameter_space::LEFT_BOUNDARY) this->set_left_boundary_vertex(v);
+    else if (ps == Parameter_space::RIGHT_BOUNDARY) this->set_right_boundary_vertex(v);
     return v;
   }
 };

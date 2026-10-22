@@ -1,5 +1,6 @@
 /*!
  * \example Arrangement_on_curve_1/arr_on_algebraic_curve.cpp
+ * \example Arrangement_on_curve_1/aarr_on_circle.cpp
  * \example Arrangement_on_curve_1/arr_on_circle_segment.cpp
  * \example Arrangement_on_curve_1/arr_on_line_2.cpp
  * \example Arrangement_on_curve_1/arr_on_line_3.cpp

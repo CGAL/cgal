@@ -34,8 +34,8 @@ namespace Arrangement_on_curve_1 {
 template <typename GeomTraits_2>
 class Open_geom_traits_2_adaptor_1 {
 public:
-  /// \name Types
-  /// @{
+  //! \name Types
+  //! @{
 
   //! the adapted 2D geometry traits type.
   typedef GeomTraits_2 Geom_traits_2;
@@ -46,10 +46,10 @@ public:
   //! a shared-ownership pointer to a const 2D geometry traits object.
   typedef std::shared_ptr<const Geom_traits_2> Shared_geom_traits_2;
 
-  /// @}
+  //! @}
 
-  /// \name Creation
-  /// @{
+  //! \name Creation
+  //! @{
 
   /*! constructs from a default-constructed 2D geometry traits object.
    */
@@ -65,10 +65,10 @@ public:
    */
   explicit Open_geom_traits_2_adaptor_1(const Geom_traits_2& traits_2);
 
-  /// @}
+  //! @}
 
-  /// \name Accessors
-  /// @{
+  //! \name Accessors
+  //! @{
 
   /*! obtains the adapted 2D geometry traits object.
    */
@@ -78,7 +78,7 @@ public:
    */
   const Shared_geom_traits_2& shared_geom_traits_2() const;
 
-  /// @}
+  //! @}
 };
 
 } // namespace Arrangement_on_curve_1

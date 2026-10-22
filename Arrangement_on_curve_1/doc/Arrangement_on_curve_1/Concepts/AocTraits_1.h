@@ -21,8 +21,12 @@
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Line_2_traits_1<Kernel>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Line_3_traits_1<Kernel>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Line_d_traits_1<Kernel>}
- * \cgalHasModels{CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<GeomTraits_2>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Circle_traits_1<Kernel>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<GeomTraits_2>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Closed_geom_traits_2_adaptor_1<GeomTraits_2>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Left_closed_geom_traits_2_adaptor_1<GeomTraits_2>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Right_closed_geom_traits_2_adaptor_1<GeomTraits_2>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Identified_geom_traits_2_adaptor_1<GeomTraits_2>}
  * \cgalHasModelsEnd
  */
 class AocTraits_1 {

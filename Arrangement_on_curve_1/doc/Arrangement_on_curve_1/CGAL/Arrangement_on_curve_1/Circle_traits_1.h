@@ -13,7 +13,7 @@ namespace Arrangement_on_curve_1 {
  *
  * \brief `Circle_traits_1` is a geometry traits model of the
  * `AocIdentifiedBoundaryTraits_1` concept for 1D arrangements of points on the
- * unit circle \f$\mathbb{S}_1\f$.
+ * unit circle \f$\mathbb{S}^1\f$.
  *
  * Points are represented as `Kernel::Direction_2` objects.  Using
  * `Direction_2` rather than a floating-point angle gives exact arithmetic when
@@ -21,7 +21,7 @@ namespace Arrangement_on_curve_1 {
  *
  * ### Parameter space and boundary categories
  *
- * The parameter space of \f$\mathbb{S}_1\f$ is \f$[-\pi, +\pi)\f$ with the two
+ * The parameter space of \f$\mathbb{S}^1\f$ is \f$[-\pi, +\pi)\f$ with the two
  * endpoints identified.  Both sides of the parameter space therefore carry
  * `Identified_side_tag`:
  * \code

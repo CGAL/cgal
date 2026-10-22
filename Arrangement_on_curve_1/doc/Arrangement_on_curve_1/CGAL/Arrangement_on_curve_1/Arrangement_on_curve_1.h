@@ -38,10 +38,10 @@ namespace Arrangement_on_curve_1 {
  * The static data member, for example, `is_identified` is `true` if and only if
  * both categories are `Identified_side_tag`; that is, the curve is a closed
  * loop such as \f$\mathbb{S}^1\f$. When `TopologyTraits` is omitted, it
- * defaults to `Open_topology_traits<GeometryTraits_1::Point_1>`, which is
- * correct for any geometry traits with `Left_side_category =
- * Right_side_category = Open_side_tag`.  For other combinations supply the
- * matching traits explicitly, e.g.:
+ * defaults to `Open_topology_traits<GeometryTraits_1>`, which is correct for
+ * any geometry traits with `Left_side_category = Right_side_category =
+ * Open_side_tag`.  For other combinations supply the matching traits
+ * explicitly, e.g.:
  *
  * \code
  * using Arr = Arrangement_on_curve_1<Circle_traits_1<Kernel>>,
@@ -58,13 +58,14 @@ namespace Arrangement_on_curve_1 {
  *
  * When `BinarySearch = true` and `TopologyTraits::UseVector = true`, the
  * `locate()` function uses binary search over the sorted vertex vector,
- * reducing point location from O(n) to O(log n).
+ * reducing point location from \f$O(n)\f$ to \f$O(log n)\f$. Binary-search mode
+ * is not supported for an identified parameter space.
  *
  * \tparam GeometryTraits_1 a model of `AocTraits_1` and optionally
  *   `AocClosedBoundaryTraits_1` or `AocIdentifiedBoundaryTraits_1`.
  * \tparam TopologyTraits a model of `AocTopologyTraits`; defaults to
  *   `Open_topology_traits<GeometryTraits_1::Point_1>`.
- * \tparam BinarySearch enable O(log n) binary-search locate
+ * \tparam BinarySearch enable \f$O(log n)\f$ binary-search locate
  *   (requires `TopologyTraits::UseVector = true`; default: `false`).
  *
  * \cgalModels{ArrangementOnCurve_1}
@@ -74,8 +75,8 @@ template <typename GeometryTraits_1,
           bool BinarySearch = false>
 class Arrangement_on_curve_1 {
 public:
-  /// \name Types
-  /// @{
+  //! \name Types
+  //! @{
 
   //! The geometry traits type.
   typedef GeometryTraits_1 Geometry_traits_1;
@@ -83,10 +84,10 @@ public:
   //! The topology traits type.
   typedef TopologyTraits Topology_traits;
 
-  /// A shared-ownership pointer to a const geometry traits object.
+  //! A shared-ownership pointer to a const geometry traits object.
   typedef std::shared_ptr<const Geometry_traits_1> Shared_geometry_traits;
 
-  /// Whether O(log n) binary-search locate is enabled.
+  //! Whether \f$O(log n)\f$ binary-search locate is enabled.
   static constexpr bool binary_search_enabled = BinarySearch;
 
   typedef typename Topology_traits::Point_1                Point_1;
@@ -104,28 +105,28 @@ public:
    */
   typedef std::variant<Vertex_const_descriptor, Edge_const_descriptor> Const_location_result;
 
-  /// Tag type describing the topological behaviour of the left boundary.
-  /// Equals `GeometryTraits_1::Left_side_category`.
+  //! Tag type describing the topological behaviour of the left boundary.
+  //! Equals `GeometryTraits_1::Left_side_category`.
   typedef typename Geometry_traits_1::Left_side_category  Left_side_category;
 
-  /// Tag type describing the topological behaviour of the right boundary.
-  /// Equals `GeometryTraits_1::Right_side_category`.
+  //! Tag type describing the topological behaviour of the right boundary.
+  //! Equals `GeometryTraits_1::Right_side_category`.
   typedef typename Geometry_traits_1::Right_side_category Right_side_category;
 
-  /// @}
+  //! @}
 
-  /// \name Static Predicates
-  /// @{
+  //! \name Static Predicates
+  //! @{
 
   /*! is `true` if both `Left_side_category` and `Right_side_category` are
    * `Identified_side_tag`.
    */
   static constexpr bool is_identified;
 
-  /// @}
+  //! @}
 
-  /// \name Creation
-  /// @{
+  //! \name Creation
+  //! @{
 
   /*! default constructor; creates an empty arrangement.
    */
@@ -159,42 +160,10 @@ public:
    */
   void reset_shared_geometry_traits(Shared_geometry_traits new_sgt);
 
-  /// @}
+  //! @}
 
-  /// \name Access
-  /// @{
-
-  /*! obtains `true` if the arrangement contains no vertices.
-   */
-  bool empty() const;
-
-  /*! obtains the number of vertices.
-   */
-  Size number_of_vertices() const;
-
-  /*! obtains the number of edges.
-   */
-  Size number_of_edges() const;
-
-  /*! obtains an iterator range over all (const) vertex descriptors.
-   */
-  auto vertices() const;
-
-  /*! obtains an iterator range over all (const) edge descriptors.
-   */
-  auto edges() const;
-
-  /*! obtains an lvalue property map from vertex descriptors to points.
-   */
-  auto vertex_point_map() const;
-
-  /*! obtains an lvalue property map from vertex descriptors to vertex data.
-   */
-  auto vertex_data_map() const;
-
-  /*! obtains an lvalue property map from edge descriptors to edge data.
-   */
-  auto edge_data_map() const;
+  //! \name Access
+  //! @{
 
   /*! obtains a pointer to the underlying geometry traits.
    */
@@ -212,85 +181,17 @@ public:
    */
   Topology_traits& topology_traits();
 
-  /*! obtains the descriptor of the left edge.
-   */
-  Edge_descriptor left_edge();
+  //! @}
 
-  /*! obtains the const descriptor of the left edge.
-   */
-  Edge_const_descriptor left_edge() const;
-
-  /*! obtains the descriptor of the right edge.
-   */
-  Edge_descriptor right_edge();
-
-  /*! obtains the const descriptor of the right edge.
-   */
-  Edge_const_descriptor right_edge() const;
-
-  /*! obtains the descriptor of the left edge of vertex `v`.
-   */
-  Edge_const_descriptor left_edge(Vertex_const_descriptor v) const;
-
-  /*! obtains the descriptor of the right edge of vertex `v`.
-   */
-  Edge_const_descriptor right_edge(Vertex_const_descriptor v) const;
-
-  /*! obtains the descriptor of the left vertex of edge `e`.
-   * \pre `has_left_vertex(e)` is `true`.
-   */
-  Vertex_const_descriptor left_vertex(Edge_const_descriptor e) const;
-
-  /*! obtains the descriptor of the right vertex of edge `e`.
-   * \pre `has_right_vertex(e)` is `true`.
-   */
-  Vertex_const_descriptor right_vertex(Edge_const_descriptor e) const;
-
-  /*! obtains `true` if edge `e` has a left vertex.
-   */
-  bool has_left_vertex(Edge_const_descriptor e) const;
-
-  /*! obtains `true` if edge `e` has a right vertex.
-   */
-  bool has_right_vertex(Edge_const_descriptor e) const;
-
-  /// @}
-
-  /// \name Modifiers
-  /// @{
-
-  /*! inserts the first point into an empty arrangement.
-   * \pre `empty()` is `true`.
-   */
-  Vertex_descriptor insert_empty(const Point_1& p);
-
-  /*! inserts a point strictly to the left of vertex `v`.
-   */
-  Vertex_descriptor insert_before(Vertex_descriptor v, const Point_1& p);
-
-  /*! inserts a point strictly to the right of vertex `v`.
-   */
-  Vertex_descriptor insert_after(Vertex_descriptor v, const Point_1& p);
-
-  /*! splits edge `e` by inserting a point inside it.
-   * `e` becomes the left sub-edge; a new edge becomes the right sub-edge.
-   */
-  Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p);
-
-  /*! removes vertex `v`, merging its two adjacent edges into one.
-   */
-  void remove(Vertex_descriptor v);
-
-  /*! clears the arrangement.
-   */
-  void clear();
+  //! \name Modifiers
+  //! @{
 
   /*! resets the shared smart pointer allowing empty arrangements to bind to a separate existing traits memory frame.
    * \pre `is_empty() == true`
    */
   void reset_shared_geometry_traits(Shared_geometry_traits new_shared_traits_traits);
 
-  /// @}
+  //! @}
 };
 
 } // namespace Arrangement_on_curve_1

@@ -9,25 +9,24 @@
 #ifndef CGAL_ARRANGEMENT_ON_CURVE_1_CIRCLE_TRAITS_1_H
 #define CGAL_ARRANGEMENT_ON_CURVE_1_CIRCLE_TRAITS_1_H
 
-/*! \file
- * Geometry traits for a 1D arrangement of points on the unit circle
- * \f$\mathbb{S}_1\f$.
+/*! Geometry traits for a 1D arrangement of points on the unit circle
+ * \f$\mathbb{S}^1\f$.
  *
  * This is the 1D analogue of `Arr_geodesic_arc_on_sphere_traits_2`, which
  * provides a traits for points (and geodesic arcs) on the unit sphere
- * \f$\mathbb{S}_2\f$.  Here, "points" are directions on the plane (elements of
- * \f$\mathbb{S}_1\f$) represented as `Direction_2` objects from the supplied
+ * \f$\mathbb{S}^2\f$.  Here, "points" are directions on the plane (elements of
+ * \f$\mathbb{S}^1\f$) represented as `Direction_2` objects from the supplied
  * Kernel.  Using `Direction_2` rather than a floating-point angle gives exact
  * arithmetic when the kernel is exact (e.g.,
  * `CGAL::Exact_predicates_exact_constructions_kernel`).
  *
  * Parameter space and boundary categories
  * ---------------------------------------
- * * The parameter space of \f$\mathbb{S}_1\f$ is \f$[-\pi, +\pi\f$) with the two
+ * * The parameter space of \f$\mathbb{S}^1\f$ is \f$[-\pi, +\pi])f$ with the two
  * endpoints identified.  Therefore:
  *
- *   Left_side_category  = Identified_side_tag
- *   Right_side_category = Identified_side_tag
+ * - `Left_side_category`  = `Identified_side_tag`
+ * - `Right_side_category` = Identified_side_tag`
  *
  * A "reference direction" `d_ref` (default: positive `x`-axis) defines the
  * position of the identification point.  The total order on directions is
@@ -58,8 +57,8 @@
  * Required Kernel concepts
  * ------------------------
  * The Kernel must provide:
- *   • `Kernel::Direction_2`
- *   * `Kernel::Counterclockwise_in_between_2`
+ * - `Kernel::Direction_2`
+ * - `Kernel::Counterclockwise_in_between_2`
  */
 
 #include <CGAL/Arrangement_on_curve_1/Side_tags.h>
@@ -81,7 +80,7 @@ public:
   using FT = typename Kernel::FT;
   using Direction_2 = typename Kernel::Direction_2;
 
-  // In this traits, a "point" on \f$\mathbb{S}_1\f$ is a `Direction_2`.
+  // In this traits, a "point" on \f$\mathbb{S}^1\f$ is a `Direction_2`.
   using Point_1 = Direction_2;
 
   // --------------------------------------------------------------------------
@@ -89,7 +88,7 @@ public:
   // of `Arrangement_on_surface_2` where the traits owns the side categories).
   //
   // Both sides of the circle's parameter space are identified: the curve is
-  // a closed loop \f$\mathbb{S}_1\f$.
+  // a closed loop \f$\mathbb{S}^1\f$.
   // --------------------------------------------------------------------------
   using Left_side_category = Identified_side_tag;
   using Right_side_category = Identified_side_tag;
@@ -140,16 +139,16 @@ public:
   public:
     explicit Compare_x_1(const Circle_traits_1& tr) : m_tr(tr) {}
 
-    CGAL::Comparison_result operator()(const Point_1& d1, const Point_1& d2) const {
+    Comparison_result operator()(const Point_1& d1, const Point_1& d2) const {
       // Precondition: neither argument is the identification point.
       CGAL_precondition(! m_tr.is_on_x_identification_1_object()(d1));
       CGAL_precondition(! m_tr.is_on_x_identification_1_object()(d2));
 
       // SMALLER: da comes before db in the CCW order starting after m_ref
       auto ccwib = m_tr.counterclockwise_in_between_2_object();
-      if (ccwib(d1, m_tr.m_ref, d2)) return CGAL::SMALLER;
-      if (ccwib(d2, m_tr.m_ref, d1)) return CGAL::LARGER;
-      return CGAL::EQUAL;
+      if (ccwib(d1, m_tr.m_ref, d2)) return SMALLER;
+      if (ccwib(d2, m_tr.m_ref, d1)) return LARGER;
+      return EQUAL;
     }
 
   private:

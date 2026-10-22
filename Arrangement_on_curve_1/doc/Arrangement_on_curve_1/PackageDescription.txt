@@ -1,45 +1,45 @@
-/// \defgroup PkgArrangementOnCurve1Ref Reference Manual
+//! \defgroup PkgArrangementOnCurve1Ref Reference Manual
 
-/// \defgroup PkgArrangementOnCurve1Concepts Concepts
-/// \ingroup PkgArrangementOnCurve1Ref
+//! \defgroup PkgArrangementOnCurve1Concepts Concepts
+//! \ingroup PkgArrangementOnCurve1Ref
 
-/// \cgalConceptNamespace
-/// The namespace containing concepts specific to 1D Arrangements.
+//! \cgalConceptNamespace
+//! The namespace containing concepts specific to 1D Arrangements.
 namespace AocTraits {}
 
-/// \defgroup PkgArrangementOnCurve1ConceptsGeometricObjects Geometric Object Concepts
-/// \ingroup PkgArrangementOnCurve1Concepts
+//! \defgroup PkgArrangementOnCurve1ConceptsGeometricObjects Geometric Object Concepts
+//! \ingroup PkgArrangementOnCurve1Concepts
 
-/// \defgroup PkgArrangementOnCurve1ConceptsFunctionObjects Function Object Concepts
-/// \ingroup PkgArrangementOnCurve1Concepts
+//! \defgroup PkgArrangementOnCurve1ConceptsFunctionObjects Function Object Concepts
+//! \ingroup PkgArrangementOnCurve1Concepts
 
-/// \defgroup PkgArrangementOnCurve1ConceptsTraits Geometry Traits Concepts
-/// \ingroup PkgArrangementOnCurve1Concepts
+//! \defgroup PkgArrangementOnCurve1ConceptsTraits Geometry Traits Concepts
+//! \ingroup PkgArrangementOnCurve1Concepts
 
-/// \defgroup PkgArrangementOnCurve1ConceptsTopologyTraits Topology Object Concepts
-/// \ingroup PkgArrangementOnCurve1Concepts
+//! \defgroup PkgArrangementOnCurve1ConceptsTopologyTraits Topology Object Concepts
+//! \ingroup PkgArrangementOnCurve1Concepts
 
 
-/// \defgroup PkgArrangementOnCurve1IO I/O
-/// \ingroup PkgArrangementOnCurve1Ref
+//! \defgroup PkgArrangementOnCurve1IO I/O
+//! \ingroup PkgArrangementOnCurve1Ref
 
-/// \defgroup PkgArrangementOnCurve1op_left_shift operator<<
-/// \ingroup PkgArrangementOnCurve1IO
+//! \defgroup PkgArrangementOnCurve1op_left_shift operator<<
+//! \ingroup PkgArrangementOnCurve1IO
 
-/// \defgroup PkgArrangementOnCurve1op_right_shift operator>>
-/// \ingroup PkgArrangementOnCurve1IO
+//! \defgroup PkgArrangementOnCurve1op_right_shift operator>>
+//! \ingroup PkgArrangementOnCurve1IO
 
-/// \defgroup PkgArrangementOnCurve1Funcs Free Functions
-/// \ingroup PkgArrangementOnCurve1Ref
+//! \defgroup PkgArrangementOnCurve1Funcs Free Functions
+//! \ingroup PkgArrangementOnCurve1Ref
 
-/// \defgroup PkgArrangementOnCurve1TraitsClasses Geometry Traits Classes
-/// \ingroup PkgArrangementOnCurve1Ref
+//! \defgroup PkgArrangementOnCurve1TraitsClasses Geometry Traits Classes
+//! \ingroup PkgArrangementOnCurve1Ref
 
-/// \defgroup PkgArrangementOnCurve1TopologyTraitsClasses Topology Traits Classes
-/// \ingroup PkgArrangementOnCurve1Ref
+//! \defgroup PkgArrangementOnCurve1TopologyTraitsClasses Topology Traits Classes
+//! \ingroup PkgArrangementOnCurve1Ref
 
-/// \defgroup PkgArrangementOnCurve1Tags Tags
-/// \ingroup PkgArrangementOnCurve1Ref
+//! \defgroup PkgArrangementOnCurve1Tags Tags
+//! \ingroup PkgArrangementOnCurve1Ref
 
 /*!
 \addtogroup PkgArrangementOnCurve1Ref
@@ -114,8 +114,8 @@ as free (global) functions.
 - `CGAL::Arrangement_on_curve_1::Circle_traits_1<Kernel>`
 - `CGAL::Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<GeomTraits_2>`
 - `CGAL::Arrangement_on_curve_1::Closed_geom_traits_2_adaptor_1<GeomTraits_2>`
-- `CGAL::Arrangement_on_curve_1::Closed_left_geom_traits_2_adaptor_1<GeomTraits_2>`
-- `CGAL::Arrangement_on_curve_1::Closed_right_geom_traits_2_adaptor_1<GeomTraits_2>`
+- `CGAL::Arrangement_on_curve_1::Left_closed_geom_traits_2_adaptor_1<GeomTraits_2>`
+- `CGAL::Arrangement_on_curve_1::Right_closed_geom_traits_2_adaptor_1<GeomTraits_2>`
 - `CGAL::Arrangement_on_curve_1::Identified_geom_traits_2_adaptor_1<GeomTraits_2>`
 
 \cgalCRPSection{Functions}

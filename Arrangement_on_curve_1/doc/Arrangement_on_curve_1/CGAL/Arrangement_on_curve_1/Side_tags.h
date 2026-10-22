@@ -22,7 +22,7 @@ namespace Arrangement_on_curve_1 {
  *
  * \sa `Closed_side_tag`
  * \sa `Identified_side_tag`
- * \sa `AosTraits_1`
+ * \sa `AocTraits_1`
  */
 struct Open_side_tag {};
 
@@ -36,7 +36,7 @@ struct Open_side_tag {};
  *
  * \sa `Open_side_tag`
  * \sa `Identified_side_tag`
- * \sa `AosTraits_1`
+ * \sa `AocTraits_1`
  */
 struct Closed_side_tag {};
 
@@ -50,7 +50,7 @@ struct Closed_side_tag {};
  *
  * \sa `Open_side_tag`
  * \sa `Closed_side_tag`
- * \sa `AosTraits_1`
+ * \sa `AocTraits_1`
  */
 struct Identified_side_tag {};
 

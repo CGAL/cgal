@@ -9,12 +9,12 @@
 /*! \ingroup PkgArrangementOnCurve1ConceptsTraits
  * \cgalConcept
  *
- * Models of the concept `AosIdentifiedBoundaryTraits_1` handle curves on a circle
+ * Models of the concept `AocIdentifiedBoundaryTraits_1` handle curves on a circle
  * or a curve that is topological equivalent to a circle. The circle is oriented
  * in such a way that the boundary of the parameter space, the circle is the
  * mapping of which, is identified on the left and right sides.
  *
- * \cgalRefines{AosTraits_1}
+ * \cgalRefines{AocTraits_1}
  *
  * When both categories are `Identified_side_tag`, the traits must also provide
  * the functor type `Is_on_x_identification_1` (and its accessor), which tests
@@ -24,7 +24,7 @@
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Circle_traits_1<Kernel>}
  * \cgalHasModelsEnd
  */
-class AosIdentifiedBoundaryTraits_1 {
+class AocIdentifiedBoundaryTraits_1 {
 public:
   //! \name Functor Types
   //! @{

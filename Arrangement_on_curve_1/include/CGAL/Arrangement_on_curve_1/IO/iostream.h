@@ -17,16 +17,14 @@ namespace Arrangement_on_curve_1 {
 
 template <typename GeometryTraits_1, typename TopologyTraits>
 std::ostream& operator<<(std::ostream& os,
-                         const Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits>& arr)
-{
+                         const Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits>& arr) {
   // Your output serialization logic here...
   return os;
 }
 
 template <typename GeometryTraits_1, typename TopologyTraits>
 std::istream& operator>>(std::istream& is,
-                         Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits>& arr)
-{
+                         Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits>& arr) {
   // Your input deserialization logic here...
   return is;
 }

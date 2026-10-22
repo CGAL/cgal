@@ -66,9 +66,9 @@ public:
 
     Parameter_space operator()(const Point_1& p) const {
       auto cmp_xy = m_tr.geom_traits_2().compare_xy_2_object();
-      if (cmp_xy(p, m_tr.m_left_bound) == EQUAL) return LEFT_BOUNDARY;
-      if (cmp_xy(p, m_tr.m_right_bound) == EQUAL) return RIGHT_BOUNDARY;
-      return INTERIOR;
+      if (cmp_xy(p, m_tr.m_left_bound) == EQUAL) return Parameter_space::LEFT_BOUNDARY;
+      if (cmp_xy(p, m_tr.m_right_bound) == EQUAL) return Parameter_space::RIGHT_BOUNDARY;
+      return Parameter_space::INTERIOR;
     }
 
   private:

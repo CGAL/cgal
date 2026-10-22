@@ -20,7 +20,7 @@
 
  * Identified_side_tag---the left and right boundaries are identified (glued
  * together), i.e., the curve is a closed loop such as a circle or a direction
- * space \f$\mathbb{S}_1\f$.
+ * space \f$\mathbb{S}^1\f$.
  *
  * The categories are declared in the geometry traits.  This is because the categories govern both:
  * (a) which combinatorial structure the topology traits builds, and
@@ -40,16 +40,16 @@
  * Identified topology (Left_side_category == Identified_side_tag AND
  *                      Right_side_category == Identified_side_tag):
  *
- *   • Is_on_x_identification_1
- *       Functor; operator()(const Point_1& p) → bool.
- *       Returns true iff p is the identification point, i.e. the point where
- *       the two identified sides meet.  Calling Compare_x_1 with such a
- *       point as an argument is forbidden; use Is_on_x_identification_1 to
+ *   - `Is_on_x_identification_1`
+ *       Functor; operator()(const Point_1& p) -> bool.
+ *       Returns true iff `p` is the identification point, i.e. the point where
+ *       the two identified sides meet.  Calling `Compare_x_1` with such a
+ *       point as an argument is forbidden; use `Is_on_x_identification_1` to
  *       guard first.
  *       Obtained via: traits.is_on_x_identification_1_object().
  *
  * Open topology (side is Open_side_tag):
- *   No additional predicate.  Points at ±∞ are never stored.
+ *   No additional predicate.
  *
  * Closed topology (side is Closed_side_tag):
  *   No additional predicate for now; the boundary point is a well-defined
@@ -67,14 +67,14 @@ namespace Arrangement_on_curve_1 {
 // Tag types
 // ---------------------------------------------------------------------------
 
-/// The curve's parameter space is open on this side (open end).
+//! The curve's parameter space is open on this side (open end).
 struct Open_side_tag {};
 
-/// The curve has a well-defined finite endpoint on this side (closed end).
+//! The curve has a well-defined finite endpoint on this side (closed end).
 struct Closed_side_tag {};
 
-/// The left and right sides are identified: the curve is a closed loop.
-/// Meaningful only when *both* sides carry this tag simultaneously.
+//! The left and right sides are identified: the curve is a closed loop.
+//! Meaningful only when *both* sides carry this tag simultaneously.
 struct Identified_side_tag {};
 
 // ---------------------------------------------------------------------------

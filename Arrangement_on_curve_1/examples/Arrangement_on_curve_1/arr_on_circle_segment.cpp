@@ -18,6 +18,7 @@
 #include <CGAL/Arrangement_on_curve_1/insert.h>
 #include <CGAL/Arrangement_on_curve_1/locate.h>
 #include <CGAL/Arrangement_on_curve_1/Closed_geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Parameter_space.h>
 #include <CGAL/Arrangement_on_curve_1/Side_tags.h>
 
 // Kernel: Arr_circle_segment_traits_2 requires the kernel's FT to be an
@@ -150,7 +151,7 @@ int main() {
   // The right boundary vertex has no edge on its right; the walks below stop there.
   auto ps_in_x = arr_1d.geometry_traits_1().parameter_space_in_x_1_object();
   auto is_right_boundary = [&](Arrangement_1::Vertex_const_descriptor v)
-  { return ps_in_x(get(v_pnt_map, v)) == Aoc::RIGHT_BOUNDARY; };
+  { return ps_in_x(get(v_pnt_map, v)) == Aoc::Parameter_space::RIGHT_BOUNDARY; };
 
   auto print_vertex = [&](Arrangement_1::Vertex_const_descriptor v) {
     std::cout << "  " << get(v_data_map, v) << "  ~  ";

@@ -24,8 +24,8 @@ namespace Arrangement_on_curve_1 {
 template <typename Kernel>
 class Segment_traits_1 {
 public:
-  /// \name Creation
-  /// @{
+  //! \name Creation
+  //! @{
 
   /* construct a traits object from the boundaries.
    * \param left_bound the left bound.
@@ -33,18 +33,18 @@ public:
    */
   Segment_traits_1(const Point_1& left_bound, const Point_1& right_bound);
 
-  /// @}
+  //! @}
 
-  /// \name Types
-  /// @{
+  //! \name Types
+  //! @{
 
-  /// The left side of the interval parameter space is closed.
+  //! The left side of the interval parameter space is closed.
   typedef Closed_side_tag Left_side_category;
 
-  /// The right side of the interval parameter space is closed.
+  //! The right side of the interval parameter space is closed.
   typedef Closed_side_tag Right_side_category;
 
-  /// @}
+  //! @}
 };
 
 } // namespace Arrangement_on_curve_1

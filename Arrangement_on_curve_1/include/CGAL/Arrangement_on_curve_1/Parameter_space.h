@@ -12,7 +12,7 @@
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
-enum Interval_parameter_space {
+enum class Interval_parameter_space {
   LEFT_BOUNDARY = 0,
   RIGHT_BOUNDARY,
   INTERIOR

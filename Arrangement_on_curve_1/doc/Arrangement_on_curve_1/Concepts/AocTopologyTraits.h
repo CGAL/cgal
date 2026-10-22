@@ -16,7 +16,7 @@
  * \cgalRefines{DefaultConstructible,CopyConstructible,Assignable,MoveConstructible,MoveAssignable}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{CGAL::Arrangement_on_curve_1::Open_topology_traits<_GeometryTraits1, VertexData, EdgeData, UseVector, Allocator>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Open_topology_traits<GeometryTraits1, VertexData, EdgeData, UseVector, Allocator>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Closed_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Left_closed_topology_traits<GeometryTraits_1, VertexData, EdgeData,UseVector, Allocator>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Right_closed_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>}

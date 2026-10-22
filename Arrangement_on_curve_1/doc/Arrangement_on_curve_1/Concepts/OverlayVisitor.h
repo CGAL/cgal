@@ -47,25 +47,25 @@ public:
    * by the vertices of the two input arrangements identified by the descriptors
    * `v_a` and `v_b`, respectively.
    */
-  void create_vertex(Vertex_const_descriptor_a v_a, Vertex_const_descriptor_b v_b, Vertex_descriptor_r v_res);
+  void create_vertex_vv(Vertex_const_descriptor_a v_a, Vertex_const_descriptor_b v_b, Vertex_descriptor_r v_res);
 
   /*! updates the vertex identified by the descriptor `v_res`, which is induced
    * by the vertex of the first input arrangements and the edge of the second
    * input arrangement, identified by the descriptors `v_a` and `e_b`,
    * repsectively.
    */
-  void create_vertex(Vertex_const_descriptor_a v_a, Edge_const_descriptor_b e_b, Vertex_descriptor_r v_res);
+  void create_vertex_ve(Vertex_const_descriptor_a v_a, Edge_const_descriptor_b e_b, Vertex_descriptor_r v_res);
 
   /*! updates the vertex identified by the descriptor `v_res`, which is induced
    * by the edge of the first input arrangements and the vertex of the second
    * input arrangement, identified by the descriptors `e_a` and `v_b`,
    * repsectively.
    */
-  void create_vertex(Edge_const_descriptor_a e_a, Vertex_const_descriptor_b v_b, Vertex_descriptor_r v_res);
+  void create_vertex_ev(Edge_const_descriptor_a e_a, Vertex_const_descriptor_b v_b, Vertex_descriptor_r v_res);
 
   /*! updates the edge identified by the descriptor `e_res`, which is induced
    * by the edges of the two input arrangements identified by the descriptors
    * `e_a` and `e_b`, repsectively.
    */
-  void create_edge(Edge_const_descriptor_a e_a, Edge_const_descriptor_b e_b, Edge_descriptor_r e_res);
+  void create_edge_ee(Edge_const_descriptor_a e_a, Edge_const_descriptor_b e_b, Edge_descriptor_r e_res);
 };

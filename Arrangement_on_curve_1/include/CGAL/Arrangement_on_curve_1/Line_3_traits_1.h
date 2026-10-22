@@ -17,7 +17,7 @@ namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
 // Geometry traits for a 1D arrangement of points on a line in
-// \f$\mathbb{R}_3\f$.  Points are ordered by their signed arc-length parameter
+// \f$\mathbb{R}^3\f$.  Points are ordered by their signed arc-length parameter
 // along the master line.  The line extends to \f$\pm\infty\f$, so both sides
 // are open.  Pair with `Open_topology_traits`.
 template <typename Kernel_>
@@ -62,7 +62,7 @@ public:
 
   // Both sides are open; every finite point is in the interior.
   struct Parameter_space_in_x_1 {
-    Parameter_space operator()(const Point_1&) const { return INTERIOR; }
+    Parameter_space operator()(const Point_1&) const { return Parameter_space::INTERIOR; }
   };
 
   Parameter_space_in_x_1 parameter_space_in_x_1_object() const { return Parameter_space_in_x_1{}; }

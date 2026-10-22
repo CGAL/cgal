@@ -79,7 +79,7 @@ public:
   // Constructors
   // --------------------------------------------------------------------------
 
-  // Default constructor — valid for all tag combinations.
+  // Default constructor; valid for all tag combinations.
   // Creates a single edge spanning the parameter space and no vertices.
   // Boundary vertices, if any, are created later by the arrangement.
   Topology_traits() { init_spanning_edge(); }
@@ -112,14 +112,17 @@ public:
   }
 
   Topology_traits& operator=(const Topology_traits& other) {
-    if (this != &other) { Topology_traits tmp(other); swap(tmp); }
+    if (this != &other) {
+      Topology_traits tmp(other);
+      swap(tmp);
+    }
     return *this;
   }
 
   ~Topology_traits() = default;
 
   // --------------------------------------------------------------------------
-  // create_vertex — creates a vertex and stores its point.
+  // creates a vertex and stores its point.
   //
   // The base implementation (open/open topology) ignores the geometry traits
   // entirely: no boundary registration is possible when both sides are open.
@@ -138,7 +141,7 @@ public:
   void set_left_boundary_edge(Edge_descriptor e) { m_left_boundary_edge = e; }
 
   // --------------------------------------------------------------------------
-  // Boundary vertex accessors — meaningful only when the corresponding side is
+  // Boundary vertex accessors are meaningful only when the corresponding side is
   // closed.  has_left/right_boundary_vertex() returns false until the
   // arrangement creates the vertex; it may return false again after clear() or
   // after the vertex is erased.
@@ -177,7 +180,7 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  // erase_edge — patches m_left_boundary_edge in vector mode.
+  // patches m_left_boundary_edge in vector mode.
   // --------------------------------------------------------------------------
   void erase_edge(Edge_descriptor e) {
     if constexpr (! UseVector) {
@@ -193,7 +196,7 @@ public:
     if (m_left_boundary_edge > e) --m_left_boundary_edge;
   }
 
-  // erase_vertex — patches boundary vertex descriptors in vector mode.
+  // patches boundary vertex descriptors in vector mode.
   void erase_vertex(Vertex_descriptor v) {
     if (m_has_left_boundary_vertex && m_left_boundary_vertex == v) m_has_left_boundary_vertex = false;
     if (m_has_right_boundary_vertex && m_right_boundary_vertex == v) m_has_right_boundary_vertex = false;
@@ -233,9 +236,7 @@ private:
   bool m_has_right_boundary_vertex = false;
 
   // --------------------------------------------------------------------------
-  // init_spanning_edge
-  //
-  // Creates the single edge that spans the entire parameter space.
+  // creates the single edge that spans the entire parameter space.
   // No vertices are created here regardless of the boundary tags; boundary
   // vertices are created later by the arrangement when the user inserts a
   // point at a closed boundary.

@@ -9,32 +9,30 @@
 #ifndef CGAL_ARRANGEMENT_ON_CURVE_1_IDENTIFIED_TOPOLOGY_TRAITS_H
 #define CGAL_ARRANGEMENT_ON_CURVE_1_IDENTIFIED_TOPOLOGY_TRAITS_H
 
-/*! \file
- * Topology traits for a 1D arrangement on a closed loop (identified boundary).
+/*! Topology traits for a 1D arrangement on a closed loop (identified boundary).
  *
  * When both sides of the parameter space are identified (tag:
- * `Identified_side_tag`), the curve is a closed loop — for example a circle,
- * a direction-space S¹, or any periodic 1D domain.
+ * `Identified_side_tag`), the curve is a closed loop; for example a circle,
+ * a direction-space \f$\mathbb{S}^1\f$, or any periodic 1D domain.
  *
  * Structure:
  *
- *   • An empty arrangement contains one edge that spans the entire parameter
- *     space and no vertices.
+ * - An empty arrangement contains one edge that spans the entire parameter space and no vertices.
  *
- *   • Vertices and edges together form a single doubly-linked cyclic list:
- *       …  ←e₀→ v₀ ←e₁→ v₁ ←e₂→ v₂ ←e₀→ …
+ * - Vertices and edges together form a single doubly-linked cyclic list:
+ *       ... <- e₀ -> v₀ <- e₁ -> v₁ <- e₂ -> v₂ <- e₀ -> ...
  *     where e₀.right = v₀, v₀.left = e₀, v₀.right = e₁, e₁.left = v₀, …
  *     and the last edge's right wraps back to v₀.
  *
- *   • `left_boundary_edge()`: the edge whose left end is at the identification
- *     point (the canonical entry point for cyclic traversal).  Set to the
- *     spanning edge at construction and updated after insertions and deletions.
+ * - `left_boundary_edge()`: the edge whose left end is at the identification point
+ *                           (the canonical entry point for cyclic traversal). Set to the
+ *                           spanning edge at construction and updated after insertions and deletions.
  *
- *   • `split_edge(e, p)`: splits edge e into (e, e_new), inserts vertex v
- *     between them, and rewires both endpoints cyclically.
+ * - `split_edge(e, p)`: splits edge e into (e, e_new), inserts vertex v between them,
+ *                       and rewires both endpoints cyclically.
  *
- *   • `remove(v)`: merges the left and right edges of v back into a single
- *     edge.  Removing the last vertex restores the single spanning edge.
+ * - `remove(v)`: merges the left and right edges of v back into a single edge.
+ *                Removing the last vertex restores the single spanning edge.
  *
  * All shared storage infrastructure is inherited from `Topology_traits_base`.
  * `Identified_topology_traits` adds `m_left_boundary_edge`, the
@@ -44,8 +42,8 @@
  *   GeometryTraits_1 - a model of `AocIdentifiedBoundaryTraits_1`.
  *   VertexData       - optional user data per vertex (void = none).
  *   EdgeData         - optional user data per edge   (void = none).
- *   UseVector        - true → std::vector + index descriptors;
- *                      false → std::list  + iterator descriptors (default).
+ *   UseVector        - true -> std::vector + index descriptors;
+ *                      false -> std::list + iterator descriptors (default).
  *   Allocator        - allocator for internal containers.
  */
 
@@ -158,10 +156,9 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  // create_vertex — creates a vertex and, when the point lies on the
-  // identification, registers it as the identification vertex.
-  //
-  // GeometryTraits_1 must provide is_on_x_identification_1_object().
+  // creates a vertex and, when the point lies on the identification, registers
+  // it as the identification vertex.  GeometryTraits_1 must provide
+  // is_on_x_identification_1_object().
   // --------------------------------------------------------------------------
   Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& gt) {
     Vertex_descriptor v = Base::create_vertex(p);
@@ -170,16 +167,16 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  // left_boundary_edge — the edge whose left end is at the identification
-  // point (canonical entry point for cyclic traversal).
-  // Always valid (the spanning edge is created at construction).
+  // the edge whose left end is at the identification point (canonical entry
+  // point for cyclic traversal).  Always valid (the spanning edge is created at
+  // construction).
   // --------------------------------------------------------------------------
   Edge_descriptor left_boundary_edge() { return m_left_boundary_edge; }
   Edge_const_descriptor left_boundary_edge() const { return m_left_boundary_edge; }
   void set_left_boundary_edge(Edge_descriptor e) { m_left_boundary_edge = e; }
 
   // --------------------------------------------------------------------------
-  // erase_edge — patches m_left_boundary_edge in vector mode.
+  // patches m_left_boundary_edge in vector mode.
   // --------------------------------------------------------------------------
   void erase_edge(Edge_descriptor e) {
     if constexpr (! UseVector) {
@@ -196,8 +193,8 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  // erase_vertex — clears the identification vertex cache if it is removed,
-  // then patches the stored index in vector mode.
+  // clears the identification vertex cache if it is removed, then patches the
+  // stored index in vector mode.
   // --------------------------------------------------------------------------
   void erase_vertex(Vertex_descriptor v) {
     if (m_has_identification_vertex && m_identification_vertex == v) m_has_identification_vertex = false;
@@ -231,9 +228,8 @@ private:
   bool m_has_identification_vertex = false;
 
   // --------------------------------------------------------------------------
-  // init_spanning_edge — creates the single edge that spans the entire
-  // parameter space and sets it as the left boundary edge.
-  // Called from constructors and clear().
+  // creates the single edge that spans the entire parameter space and sets it
+  // as the left boundary edge.  Called from constructors and clear().
   // --------------------------------------------------------------------------
   void init_spanning_edge() {
     this->m_edges.emplace_back();

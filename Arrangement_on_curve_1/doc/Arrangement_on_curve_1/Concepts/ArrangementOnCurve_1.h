@@ -27,8 +27,8 @@
  */
 class ArrangementOnCurve_1 {
 public:
-  /// \name Types
-  /// @{
+  //! \name Types
+  //! @{
 
   //! the size type (convertible to `size_t`).
   typedef unspecified_type Size;
@@ -55,29 +55,29 @@ public:
   typedef std::variant<Vertex_descriptor, Edge_descriptor> Location_result;
   typedef std::variant<Vertex_const_descriptor, Edge_const_descriptor> Const_location_result;
 
-  /// @}
+  //! @}
 
-  /// \name Boundary Categories
-  /// @{
+  //! \name Boundary Categories
+  //! @{
 
-  /// Tag type describing the left boundary condition.
-  /// Reflects `GeometryTraits_1::Left_side_category`.
+  //! Tag type describing the left boundary condition.
+  //! Reflects `GeometryTraits_1::Left_side_category`.
   typedef unspecified_type Left_side_category;
 
-  /// Tag type describing the right boundary condition.
-  /// Reflects `GeometryTraits_1::Right_side_category`.
+  //! Tag type describing the right boundary condition.
+  //! Reflects `GeometryTraits_1::Right_side_category`.
   typedef unspecified_type Right_side_category;
 
-  /// @}
+  //! @}
 
-  /// \name Accessors
-  /// @{
+  //! \name Accessors
+  //! @{
 
   /*! returns `true` if the arrangement is a closed loop (both
    * `Left_side_category` and `Right_side_category` are `Identified_side_tag`).
    * When this returns `true`, `left_boundary_edge()` is not available.
    */
-  static constexpr bool is_identified();
+  static constexpr bool is_identified;
 
   /*! returns `true` if the arrangement does not contain any vertices.
    */
@@ -113,11 +113,11 @@ public:
 
   /*! obtains the descriptor of the leftmost edge.
    */
-  Edge_descriptor left_edge();
+  Edge_descriptor left_boundary_edge();
 
   /*! obtains the constant descriptor of the leftmost edge.
    */
-  Edge_const_descriptor left_edge() const;
+  Edge_const_descriptor left_boundary_edge() const;
 
   /*! obtains the descriptor of the rightmost edge.
    */
@@ -161,10 +161,10 @@ public:
    */
   bool has_right_vertex(Edge_const_descriptor e) const;
 
-  /// @}
+  //! @}
 
-  /// \name Modifiers
-  /// @{
+  //! \name Modifiers
+  //! @{
 
   /*! creates a new vertex, enforcing the sorted ordering invariant when
    * `BinarySearch` is `true`.
@@ -210,5 +210,9 @@ public:
    */
   void remove(Vertex_descriptor v);
 
-  /// @}
+  /*! clears the arrangement.
+   */
+  void clear();
+
+  //! @}
 };

@@ -33,8 +33,7 @@ public:
 
   const Point_1& right_bound() const { return m_right_bound; }
 
-  // Parameter_space_in_x_ — returns ARR_RIGHT_BOUNDARY at the right endpoint;
-  // ARR_INTERIOR for all other points.
+  // `Parameter_space_in_x_1` obtains the location of a point in the parameter space.
   class Parameter_space_in_x_1 {
     const Right_ray_traits_1& m_tr;
 
@@ -42,7 +41,7 @@ public:
     explicit Parameter_space_in_x_1(const Right_ray_traits_1& tr) : m_tr(tr) {}
 
     Parameter_space operator()(const Point_1& p) const
-    { return (p == m_tr.m_right_bound) ? RIGHT_BOUNDARY : INTERIOR; }
+    { return (p == m_tr.m_right_bound) ? Parameter_space::RIGHT_BOUNDARY : Parameter_space::INTERIOR; }
   };
 
   Parameter_space_in_x_1 parameter_space_in_x_1_object() const { return Parameter_space_in_x_1(*this); }
