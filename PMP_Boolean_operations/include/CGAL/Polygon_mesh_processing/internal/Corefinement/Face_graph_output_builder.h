@@ -2570,33 +2570,36 @@ public:
             }
             if (!to_rm.empty())
             {
-              // Here there are an assumption that edges in to_rm are necessarly the last of shared edges
               std::reverse(to_rm.begin(), to_rm.end());
+              // Move edges to rm from shared edges to interiors and borders
               for(Hedge_iterator it : to_rm)
               {
                 patches_of_tm1[i].interior_edges.push_back(*it);
                 if (it!=std::prev(patches_of_tm1[i].shared_edges.end()))
                   std::swap(patches_of_tm1[i].shared_edges.back(), *it);
                 patches_of_tm1[i].shared_edges.pop_back();
+                patches_of_tm1[i].border_edges.emplace(opposite(*it, tm1));
               }
 
-              //now update interior vertices
-              std::set<vertex_descriptor> border_vertices;
+              // compute new shared vertices
+              std::set<vertex_descriptor> shared_vertices;
               for(halfedge_descriptor h : patches_of_tm1[i].shared_edges)
               {
-                border_vertices.insert( target(h,tm1) );
-                border_vertices.insert( source(h,tm1) );
+                shared_vertices.insert( target(h,tm1) );
+                shared_vertices.insert( source(h,tm1) );
               }
 
-              std::set<vertex_descriptor> vertices_to_add;
-              for(halfedge_descriptor h : patches_of_tm1[i].interior_edges)
+              // update interior_vertices and border with shared vertices
+              for(Hedge_iterator it : to_rm)
               {
-                if ( !border_vertices.count( target(h,tm1) ) )
-                  vertices_to_add.insert(target(h, tm1));
-                if ( !border_vertices.count( source(h,tm1) ) )
-                  vertices_to_add.insert(source(h, tm1));
+                if ( shared_vertices.count( target(*it, tm1) ) )
+                  patches_of_tm1[i].border_with_shared_target.emplace(opposite(*it, tm1));
+                else
+                  patches_of_tm1[i].interior_vertices.push_back( target(*it, tm1) );
+
+                if ( shared_vertices.count( source(*it, tm1) ) )
+                  patches_of_tm1[i].border_with_shared_source.emplace(opposite(*it, tm1));
               }
-              patches_of_tm1[i].interior_vertices.insert(patches_of_tm1[i].interior_vertices.end(), vertices_to_add.begin(), vertices_to_add.end() );
             }
           }
 
