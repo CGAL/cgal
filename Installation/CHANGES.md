@@ -30,6 +30,18 @@ Release date: December 2026
 
 - **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherit from it. In addition one can get and set a smart pointer to the class being decorated.
 
+### [2D Envelopes](https://doc.cgal.org/6.3/Manual/packages.html#PkgEnvelope2)
+
+- **Breaking change**: The envelope diagram `CGAL::Envelope_2::Envelope_diagram_1` is now a 1D arrangement; it derives from
+  `CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1`, and its vertices and edges are accessed through descriptors.
+  The handle-based interface, the concepts `EnvelopeDiagramVertex` and `EnvelopeDiagramEdge`, and the header `<CGAL/Envelope_diagram_1.h>` were removed.
+- Moved the envelope functions and `Envelope_diagram_1` into the namespace `CGAL::Envelope_2`, declared in `<CGAL/Envelope_2/envelope_2.h>`
+  and `<CGAL/Envelope_2/Envelope_diagram_1.h>`. The functions in the namespace `CGAL`, the header `<CGAL/envelope_2.h>`,
+  and the class template `Env_default_diagram_1` are deprecated.
+- The geometry traits are passed and shared through `std::shared_ptr`; by default, the envelope functions use the traits of the diagram.
+- Deprecated `set_leftmost()` and `set_rightmost()`; the diagram maintains its leftmost and rightmost edges.
+- Fixed the handling of degenerate input, such as overlapping curves, vertical segments, and intersections at the x-coordinates of endpoints.
+
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
 
 - Added operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
