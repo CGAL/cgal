@@ -96,6 +96,9 @@ template <typename CoefficientRing, int StorageFormat, template <typename, int> 
 class Sparse_matrix_core {
 
 public:
+    /*! \brief Storage format of the matrix*/
+    int Storage_format = StorageFormat;
+
     /*!
      \brief Type of coefficient ring.
      */

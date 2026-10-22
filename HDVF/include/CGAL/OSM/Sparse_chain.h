@@ -55,7 +55,7 @@ public:
     /*!  Type of the coefficient ring */
     typedef CoefficientRing Coefficient_ring;
 
-    /* \brief Type of derived sparse matrices. */
+    /** \brief Type of derived sparse matrices. */
     template <typename CT, int SF>
     using Sparse_matrix_derived = OSM::Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<CT, SF>;
 
@@ -551,8 +551,6 @@ public:
      * \brief Restricts the chain to a sub-chain by removing a given index.
      *
      * Removes the index provided from the chain.
-     *
-     * \note Will not alter the chain if given vector is empty.
      *
      * \param index The index to remove.
      *
