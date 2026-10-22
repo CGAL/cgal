@@ -662,7 +662,7 @@ bool read_MEDIT(std::istream& is,
  *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
  *                           It must have the same size as `tetrahedra`, and each element in the container is a value associated to the tetrahedron at the same position.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
- *     \cgalParamDefault{The value `0` is written for each tetrahedron}
+ *     \cgalParamDefault{The value `1` is written for each tetrahedron}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{triangles}
@@ -676,7 +676,7 @@ bool read_MEDIT(std::istream& is,
  *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
  *                           It must have the same size as `triangles`, and each element in the container is a value associated to the triangle at the same position.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
- *     \cgalParamDefault{The value `0` is written for each triangle}
+ *     \cgalParamDefault{The value `1` is written for each triangle}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{edges}
@@ -690,7 +690,7 @@ bool read_MEDIT(std::istream& is,
  *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
  *                           It must have the same size as `edges`, and each element in the container is a value associated to the edge at the same position.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
- *     \cgalParamDefault{The value `0` is written for each edge}
+ *     \cgalParamDefault{The value `1` is written for each edge}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{ridges}
@@ -784,7 +784,7 @@ bool write_MEDIT(std::ostream& os,
   os << cells.size() << "\n";
   for (std::size_t k=0; k < cells.size(); ++k)
   {
-    int ref = is_tetrahedron_refs_map ? tetrahedron_refs[k] : 0;
+    int ref = is_tetrahedron_refs_map ? tetrahedron_refs[k] : 1;
     os << cells[k][0]+1 << " "
        << cells[k][1]+1 << " "
        << cells[k][2]+1 << " "
@@ -796,7 +796,7 @@ bool write_MEDIT(std::ostream& os,
     os << "Edges\n" << edges.size() << "\n";
     for(std::size_t k = 0; k < edges.size(); ++k){
       const auto& e = edges[k];
-      int ref = is_edge_refs_map ? edge_refs[k] : 0;
+      int ref = is_edge_refs_map ? edge_refs[k] : 1;
       os << internal::get_zero(e) +1 << " " << internal::get_one(e) + 1 << " " << ref  << "\n";
     }
   }
@@ -805,7 +805,7 @@ bool write_MEDIT(std::ostream& os,
     os << "Triangles\n" << facets.size() << "\n";
     for(std::size_t k = 0; k < facets.size(); ++k){
       const auto& f =  facets[k];
-      int ref = is_triangle_refs_map ? triangle_refs[k]: 0;
+      int ref = is_triangle_refs_map ? triangle_refs[k] : 1;
       os << std::get<0>(f) +1 << " " << std::get<1>(f) + 1 << " " << std::get<2>(f) + 1 << " " <<  ref << "\n";
     }
   }

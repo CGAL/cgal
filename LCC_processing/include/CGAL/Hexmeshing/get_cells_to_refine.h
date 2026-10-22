@@ -100,10 +100,10 @@ namespace CGAL::internal::Hexmeshing
         lcc.mark_cell<1>(dit, explored_edge);
 
         // Also add incident volumes while iterating
-        Dart_descriptor other_face = __adjacent_face_on_plane(lcc, rdata.iteration, dit, rdata.additionnal_volumes_found);
+        Dart_descriptor other_face = __adjacent_face_on_plane(lcc, rdata.iteration, dit, rdata.additional_volumes_found);
         // Also do the other way around to catch volumes in the opposite dir
         if (!lcc.is_free<3>(dit)){
-          Dart_descriptor other_face2 = __adjacent_face_on_plane(lcc, rdata.iteration, lcc.beta(dit, 3), rdata.additionnal_volumes_found);
+          Dart_descriptor other_face2 = __adjacent_face_on_plane(lcc, rdata.iteration, lcc.beta(dit, 3), rdata.additional_volumes_found);
           if (other_face == lcc.null_dart_descriptor) other_face  = other_face2;
         }
 
@@ -452,14 +452,14 @@ namespace CGAL::internal::Hexmeshing
    * @param explored_face Mark used to track already explored faces to avoid duplicates
    */
   template <typename HexData>
-  void get_cells_to_refine_from_additionnal_volumes(HexData &hdata, RefinementData &rdata, size_type explored_face)
+  void get_cells_to_refine_from_additional_volumes(HexData &hdata, RefinementData &rdata, size_type explored_face)
   {
     LCC& lcc = hdata.lcc;
 
-    // No additionnal volumes should be found on the first iteration
-    CGAL_assertion(rdata.iteration != 0 || (rdata.iteration == 0 && rdata.additionnal_volumes_found.size() == 0));
+    // No additional volumes should be found on the first iteration
+    CGAL_assertion(rdata.iteration != 0 || (rdata.iteration == 0 && rdata.additional_volumes_found.size() == 0));
 
-    for (Dart_descriptor initial_edge : rdata.additionnal_volumes_found)
+    for (Dart_descriptor initial_edge : rdata.additional_volumes_found)
     {
       auto &vol_attr = lcc.attribute<3>(initial_edge)->info();
 
@@ -561,7 +561,7 @@ namespace CGAL::internal::Hexmeshing
     propagation_stage(hdata, rdata, explored_face);
 
     get_cells_to_refine_from_plane(hdata, rdata,  explored_face);
-    get_cells_to_refine_from_additionnal_volumes(hdata, rdata, explored_face);
+    get_cells_to_refine_from_additional_volumes(hdata, rdata, explored_face);
 
     for(auto dd: faces_to_unmark)
     {

@@ -101,7 +101,7 @@ struct Default_surface_intersection_visitor{
   void finalize(T&,
                 const TriangleMesh&, const TriangleMesh&,
                 const VPM1, const VPM2,
-                const std::vector<std::pair<face_descriptor, face_descriptor>>&)
+                const std::vector<std::pair<halfedge_descriptor, halfedge_descriptor>>&)
   {}
   void new_node_added_triple_face(std::size_t /* node_id */,
                                   face_descriptor /* f1 */,
@@ -777,7 +777,8 @@ class Intersection_of_triangle_meshes
                                               const VPM1& vpm1,
                                               const VPM2& vpm2,
                                               const Non_manifold_feature_map<TriangleMesh>& nm_features_map_1,
-                                              const Non_manifold_feature_map<TriangleMesh>& nm_features_map_2)
+                                              const Non_manifold_feature_map<TriangleMesh>& nm_features_map_2,
+                                              std::map<vertex_descriptor, Node_id>* vids1=nullptr)
   {
     CGAL_assertion( &tm1 < &tm2 || &tm1==&tm2 );
 
@@ -843,7 +844,15 @@ class Intersection_of_triangle_meshes
         {
           switch(ipt.type_2){
           case ON_VERTEX:
+          {
+            if (vids1!=nullptr)
+            {
+              if (is_new_node)
+                vids1->emplace(target(ipt.info_1, tm1), node_id);
+            }
+
             handle_coplanar_case_VERTEX_VERTEX(ipt.info_1,ipt.info_2,tm1,tm2,nm_features_map_1,nm_features_map_2,node_id,is_new_node);
+          }
           break;
           case ON_EDGE:
             handle_coplanar_case_VERTEX_EDGE(ipt.info_1,ipt.info_2,tm1,tm2,nm_features_map_1,nm_features_map_2,node_id,is_new_node);
@@ -1815,7 +1824,7 @@ public:
       }
     }
 
-    std::vector<std::pair<face_descriptor, face_descriptor>> identical_patches;
+    std::vector<std::pair<halfedge_descriptor, halfedge_descriptor>> identical_patches;
     if (common_vertices.size()>=4) // one triangle is useless
     {
       auto is_fshared_map1 = get(CGAL::dynamic_face_property_t<bool>(), tm1, false);
@@ -1832,24 +1841,23 @@ public:
         {
           face_descriptor f1 = face(h1, tm1);
           if (f1 == graph_traits::null_face()) continue;
-          std::size_t k1 = get(is_vshared_map1, source(h1,tm1));
-          if (k1 == NOT_SHARED) continue;
-          h1 = next(h1, tm1);
-          std::size_t k2 = get(is_vshared_map1, target(h1,tm1));
-          if (k2 == NOT_SHARED) continue;
-          if (k0>k1 || k0>k2) continue; // report faces only once
+
+          std::size_t k1 = get(is_vshared_map1, target(next(h1,tm1),tm1));
+          if (k1 == NOT_SHARED || k0>k1) continue;
+          std::size_t k2 = get(is_vshared_map1, source(h1,tm1));
+          if (k2 == NOT_SHARED || k0 > k2) continue;
 
           //looking for (k0,k1,k2) in tm2
           vertex_descriptor v0=common_vertices[k0].second,
                             v1=common_vertices[k1].second,
                             v2=common_vertices[k2].second;
-          auto [h2, found] = halfedge(v0,v1,tm2);
+          auto [h2, found] = halfedge(v2,v0,tm2);
           if (found)
           {
-            if (target(next(h2, tm2), tm2)!=v2)
+            if (target(next(h2, tm2), tm2)!=v1)
             {
               h2=opposite(h2,tm2);
-              if (target(next(h2, tm2), tm2)!=v2)
+              if (target(next(h2, tm2), tm2)!=v1)
               {
                 identical_meshes=false;
                 continue;
@@ -1862,7 +1870,7 @@ public:
               continue;
             }
 
-            identical_patches.emplace_back(f1,f2);
+            identical_patches.emplace_back(h1,h2);
             visitor.input_have_coplanar_faces();
             put(is_fshared_map1, f1, true);
             put(is_fshared_map2, f2, true);
@@ -1947,10 +1955,52 @@ public:
 // TODO: handle non-manifold edges in coplanar
     #ifndef DO_NOT_HANDLE_COPLANAR_FACES
     //first handle coplanar triangles
+    std::map<vertex_descriptor, Node_id> vids1;
     if (&tm1<&tm2)
-      compute_intersection_of_coplanar_faces(current_node, tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2);
+      compute_intersection_of_coplanar_faces(current_node, tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2, &vids1);
     else
-      compute_intersection_of_coplanar_faces(current_node, tm2, tm1, vpm2, vpm1, non_manifold_feature_map_2, non_manifold_feature_map_1);
+      compute_intersection_of_coplanar_faces(current_node, tm2, tm1, vpm2, vpm1, non_manifold_feature_map_2, non_manifold_feature_map_1, nullptr);
+
+    // look for border halfedges of common faces
+    for (auto [h1, h2] : identical_patches)
+    {
+      bool same_ori = (get(vpm1, target(h1, tm1))==get(vpm2, target(h2, tm2)));
+
+      for (int l=0; l<3; ++l)
+      {
+        if (is_border(opposite(h1, tm1), tm1) || is_border(opposite(h2, tm2), tm2))
+        {
+          Node_id_set& node_id_set = f_to_node[std::make_pair(face(h1, tm1), face(h2, tm2))];
+          auto same_ori_h2 = same_ori ? h2 : opposite(h2,tm2);
+          CGAL_assertion(get(vpm1, source(h1, tm1))==get(vpm2, source(same_ori_h2, tm2)));
+          CGAL_assertion(get(vpm1, target(h1, tm1))==get(vpm2, target(same_ori_h2, tm2)));
+
+          auto insert_res = vids1.emplace(source(h1, tm1), current_node+1);
+          if ( insert_res.second )
+          {
+            ++current_node;
+            nodes.add_new_node(get(vpm1,source(h1, tm1)));
+            handle_coplanar_case_VERTEX_VERTEX(opposite(h1, tm1), opposite(same_ori_h2, tm2), tm1, tm2, non_manifold_feature_map_1, non_manifold_feature_map_2, current_node, true);
+          }
+          std::size_t nid1=insert_res.first->second;
+          insert_res = vids1.emplace(target(h1, tm1), current_node+1);
+          if ( insert_res.second )
+          {
+            ++current_node;
+            nodes.add_new_node(get(vpm1, target(h1, tm1)));
+            handle_coplanar_case_VERTEX_VERTEX(h1, same_ori_h2, tm1, tm2, non_manifold_feature_map_1, non_manifold_feature_map_2, current_node, true);
+          }
+          std::size_t nid2=insert_res.first->second;
+          node_id_set.insert(nid1,nid2);
+        }
+
+        h1=next(h1,tm1);
+        if (same_ori)
+          h2=next(h2, tm2);
+        else
+          h2=prev(h2, tm2);
+      }
+    }
 
     visitor.set_number_of_intersection_points_from_coplanar_faces(current_node+1);
     if (!coplanar_faces.empty())
