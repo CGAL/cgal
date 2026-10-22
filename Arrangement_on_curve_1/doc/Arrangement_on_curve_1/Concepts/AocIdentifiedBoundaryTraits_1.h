@@ -16,7 +16,7 @@
  *
  * \cgalRefines{AocTraits_1}
  *
- * When both categories are `Identified_side_tag`, the traits must also provide
+ * When both categories are `CGAL::Arrangement_on_curve_1::Identified_side_tag`, the traits must also provide
  * the functor type `Is_on_x_identification_1` (and its accessor), which tests
  * whether a point lies on the identification point.
  *
@@ -34,7 +34,7 @@ public:
    * space.
    *
    * \pre `Left_side_category` and `Right_side_category` are both
-   *      `Identified_side_tag`.
+   *      `CGAL::Arrangement_on_curve_1::Identified_side_tag`.
    */
   typedef unspecified_type Is_on_x_identification_1;
 

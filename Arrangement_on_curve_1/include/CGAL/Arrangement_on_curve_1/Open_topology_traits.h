@@ -21,10 +21,10 @@ namespace Arrangement_on_curve_1 {
 
 /*! \ingroup PkgArrangementOnCurve1TopologyTraitsClasses
  *
- * \brief Topology traits for an arrangement on an open master curve \f$(-\infty, +\infty)\f$.
+ * \brief Topology traits for an arrangement on an open master curve.
  *
- * Both boundaries of the parameter space are open: neither endpoint of the
- * master curve is in the domain.  No boundary vertices are ever registered.
+ * Both boundaries of the parameter space are open: the master curve excludes
+ * its endpoints, if any; e.g., a line or an open segment.  No boundary vertices are ever registered.
  *
  * Derives from `Topology_traits_base`; `create_vertex` ignores the geometry
  * traits, since no point lies on a boundary.

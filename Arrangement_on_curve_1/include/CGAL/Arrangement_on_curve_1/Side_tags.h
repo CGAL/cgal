@@ -12,15 +12,19 @@
 /*! \file
  * Boundary-category tags for the 1D Arrangement on Curves package.
  *
- * Open_side_tag---the boundary extends to \f$\pm\infty\f$; no finite endpoint
- * exists.  The arrangement stores an sentinel edge on that side.
+ * Open_side_tag---the parameter space is open on that side; the endpoint of
+ * the curve on that side, if it exists, is not part of the curve (e.g., either
+ * side of a line, or a side of an open segment).  The edge of the arrangement
+ * on that side has no vertex on that side.
  *
- * Closed_side_tag---the boundary is a finite, well-defined endpoint of the
- * curve (e.g., the left or right endpoint of a closed arc).
-
- * Identified_side_tag---the left and right boundaries are identified (glued
- * together), i.e., the curve is a closed loop such as a circle or a direction
- * space \f$\mathbb{S}^1\f$.
+ * Closed_side_tag---the parameter space is closed on that side; the endpoint
+ * of the curve on that side is part of the curve (e.g., a side of a closed
+ * segment).  Once inserted, the endpoint is the boundary vertex on that side.
+ *
+ * Identified_side_tag---the left and right sides are identified (glued
+ * together); the curve is cyclic, such as a circle or the direction space
+ * \f$\mathbb{S}^1\f$.  The identification point is part of the curve only
+ * once it is inserted.
  *
  * The categories are declared in the geometry traits.  This is because the categories govern both:
  * (a) which combinatorial structure the topology traits builds, and
@@ -67,13 +71,13 @@ namespace Arrangement_on_curve_1 {
 // Tag types
 // ---------------------------------------------------------------------------
 
-//! The curve's parameter space is open on this side (open end).
+//! The parameter space is open on this side: the curve excludes its endpoint on this side, if any.
 struct Open_side_tag {};
 
-//! The curve has a well-defined finite endpoint on this side (closed end).
+//! The parameter space is closed on this side: the curve includes its endpoint on this side.
 struct Closed_side_tag {};
 
-//! The left and right sides are identified: the curve is a closed loop.
+//! The left and right sides are identified: the curve is cyclic.
 //! Meaningful only when *both* sides carry this tag simultaneously.
 struct Identified_side_tag {};
 
@@ -96,7 +100,7 @@ struct Side_is_identified : std::false_type {};
 template <>
 struct Side_is_identified<Identified_side_tag> : std::true_type {};
 
-// Helper: true when both sides are identified (curve is a closed loop).
+// Helper: true when both sides are identified (the curve is cyclic).
 // GeometryTraits must expose Left_side_category and Right_side_category.
 template <typename GeometryTraits>
 inline constexpr bool Is_identified_v =

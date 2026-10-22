@@ -13,7 +13,8 @@ namespace Arrangement_on_curve_1 {
  *
  * \brief The class template `Open_topology_traits` is a model of the
  * `AocTopologyTraits` concept for 1D arrangements embedded on an open
- * master curve parameterized over an open interval parameter space.
+ * master curve, that is, a curve that excludes its endpoints, if any,
+ * parameterized over an open interval parameter space.
  *
  * It maintains the arrangement as an alternating sequence of vertices and
  * edges. The class template supports both list-based and vector-based

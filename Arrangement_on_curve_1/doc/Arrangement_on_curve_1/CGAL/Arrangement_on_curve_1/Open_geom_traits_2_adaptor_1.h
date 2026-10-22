@@ -20,7 +20,7 @@ namespace Arrangement_on_curve_1 {
  * segment.  The endpoints of the master curve are not points of the 1D
  * arrangement.  Points are ordered lexicographically, by `x` and then by
  * `y`, which is the order along such a curve.  Pair this traits with
- * `Unbounded_topology_traits`.
+ * `Open_topology_traits`, which `Default_topology_traits` selects for it.
  *
  * \tparam GeomTraits_2 a model of `AosBasicTraits_2`.
  *

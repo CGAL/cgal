@@ -11,7 +11,7 @@
  *
  * A model of the `OverlayVisitor` concept contains callback functions invoked
  * while the overlay operation of two input arrangements progresses.  Models of
- * the concept are used by the free function `Arrangement_on_curve_1::overlay()`
+ * the concept are used by the free function `CGAL::Arrangement_on_curve_1::overlay()`
  * to maintain the auxiliary data stored with the cells (i.e., vertices and
  * edges) of the resulting overlaid arrangement, based on the contents of the
  * input cells.
@@ -21,7 +21,7 @@
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Copy_overlay_visitor<ArrangementA, ArrangementB, ArrangementR>}
  * \cgalHasModelsEnd
  *
- * \sa `overlay`
+ * \sa `CGAL::Arrangement_on_curve_1::overlay()`
  */
 class OverlayVisitor {
 public:

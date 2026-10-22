@@ -52,7 +52,7 @@ overhead.
 The master curve \f$C = \phi_C(X)\f$ is given by a continuous function
 \f$\phi_C: X \rightarrow \mathbb{R}^d\f$; it is defined over a
 one-dimensional interval \f$X\f$ called the parameter space. The
-parameter space can be open, half-open, closed, or identified. Each
+parameter space can be open, closed, left-closed, right-closed, or identified. Each
 geometry traits model declares two category types that determine the
 boundary conditions of both sides of the parameter space,
 respectively:
@@ -62,11 +62,17 @@ respectively:
 
 Each category type above is defined as one of the three tag types below:
 
-| Tag                   | Meaning                                             |
-|-----------------------|-----------------------------------------------------|
-| `Open_side_tag`       | The boundary side is open                           |
-| `Closed_side_tag`     | The boundary side is closed                         |
-| `Identified_side_tag` | The boundary side is identified with the other side |
+| Tag                   | Meaning                                                                        |
+|-----------------------|--------------------------------------------------------------------------------|
+| `Open_side_tag`       | The side is open: the curve excludes its endpoint on that side, if any         |
+| `Closed_side_tag`     | The side is closed: the curve includes its endpoint on that side               |
+| `Identified_side_tag` | The side is identified with the other side: the curve is cyclic                |
+
+A curve whose two sides are closed is a *closed* curve, and a curve whose two
+sides are open is an *open* curve.  A curve whose two sides are identified is
+a *cyclic* curve; it is essentially an open curve whose two (excluded) ends
+meet at the identification point, which is part of the curve only once it is
+inserted as a vertex.
 
 The combination of the two category tags determines which topology
 traits class to pair with the geometry traits; see \ref aoc_sec-topo_traits.
@@ -77,11 +83,11 @@ traits class to pair with the geometry traits; see \ref aoc_sec-topo_traits.
 
 This manual walks through the structural elements of basic 1D
 subdivisions, methods for traversing topology pools, techniques for
-point location, procedures for overlay operations, the requirements
-for writing custom geometry traits, the topology traits classes and
-their shared infrastructure, the mechanism for extending arrangement
-cells (i.e., vertices and edges), and the means of accessing cell
-properties (including extended data) via property maps.
+point location, procedures for overlay operations, input and output of
+arrangements, the requirements for writing custom geometry traits, the
+topology traits classes, the mechanism for extending arrangement cells
+(i.e., vertices and edges), and the means of accessing cell properties
+(including extended data) via property maps.
 
 The types and free functions referred to throughout this chapter are
 defined under the namespace `CGAL::Arrangement_on_curve_1`.
@@ -97,7 +103,8 @@ defined under the namespace `CGAL::Arrangement_on_curve_1`.
 A 1D arrangement subdivides a continuous curve into two alternating
 topological cells:
 - **Vertices**: Represent 0-dimensional points embedded along the curve master.
-- **Edges**: Represent 1-dimensional open intervals bounded by vertices on their left, right, or open.
+- **Edges**: Represent 1-dimensional open subcurves; an edge is bounded by a vertex on each side, unless it
+  extends to an open side of the parameter space, or, in an empty arrangement, spans the entire curve.
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection aoc_ssec-basic-arr_class The Arrangement Class Template
@@ -169,10 +176,10 @@ update methods.  When an arrangement is entirely empty, it consists of
 a single edge representing the whole master curve.  Inserting the very
 first point `p` into an arrangement object `arr` uses \link
 ArrangementOnCurve_1::insert_empty() `arr.insert_empty(p)`\endlink.
-For open curves this splits the single edge into a left edge and a
-right edge flanking the new vertex.  For identified curves it creates
-the first vertex and a single loop edge with both endpoints at that
-vertex.
+If the curve is not cyclic, this splits the single edge into a left edge
+and a right edge flanking the new vertex.  If the curve is cyclic, it
+creates the first vertex, and the single edge becomes a self-loop with
+both ends at that vertex.
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection aoc_ssec-basic-insert Inserting Points
@@ -275,7 +282,39 @@ callback functions defined in the visitor object, which must be a
 model of the `OverlayVisitor` concept. These functions can then apply
 custom logic to automatically combine, translate, or synchronize user
 extended cells from the input arrangements into the resulting output
-cells.
+cells.  The package provides two visitors:
+`Default_overlay_visitor`, which does nothing and is used by the
+overload without a visitor, and `Copy_overlay_visitor`, which copies the
+data of the input cells to the resulting cells.
+
+<!-- ======================================================================= -->
+\section aoc_sec-io Input and Output
+<!-- ======================================================================= -->
+
+An arrangement can be written to an output stream with
+\link PkgArrangementOnCurve1op_left_shift `operator<<` \endlink and
+read from an input stream with
+\link PkgArrangementOnCurve1op_right_shift `operator>>` \endlink, both
+defined in the header file `CGAL/Arrangement_on_curve_1/IO/iostream.h`.
+The format is textual: the number of vertices, followed by the points
+associated with the vertices in increasing order along the curve, each
+on its own line.  If the parameter space is identified, the
+identification point, if present, is last.  Only the points are stored;
+the edges are implied by them, and the data attached to the vertices
+and edges, if any, is neither written nor read.  The points are written
+and read with the stream operators of `AocTraits_1::Point_1`, so the
+precision of the output depends on these operators.
+
+Reading replaces the content of the arrangement.  If the input is
+malformed, for example, if the points are not in increasing order, the
+`failbit` of the stream is set and the arrangement is left empty.
+
+\code{.cpp}
+std::stringstream ss;
+ss << arr;                                            // write
+Arrangement arr2(arr.shared_geometry_traits_1());
+ss >> arr2;                                           // read
+\endcode
 
 <!-- ======================================================================= -->
 \section aoc_sec-geom_traits The Geometry Traits
@@ -298,11 +337,11 @@ In addition, the geometry traits declares two boundary-category tags:
 - `AocTraits_1::Left_side_category`---tag for the left boundary.
 - `AocTraits_1::Right_side_category`---tag for the right boundary.
 
-When either tag is `Identified_side_tag`, the traits must also provide
-a functor type `AocTraits_1::Is_on_identification_1` (accessed via
-`is_on_identification_1_object()`) that tests whether a given
+When both tags are `Identified_side_tag`, the traits must also provide
+a functor type `AocIdentifiedBoundaryTraits_1::Is_on_x_identification_1`
+(accessed via `is_on_x_identification_1_object()`) that tests whether a given
 `Point_1` coincides with the identification point.  The
-`Compare_x_1` functor must not be called with such a point.
+`AocTraits_1::Compare_x_1` functor must not be called with such a point.
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection aoc_ssec-geom_traits-models Models of the Geometry Traits Concepts
@@ -380,61 +419,48 @@ of the `AocTopologyTraits` concept.  It provides:
 - Low-level modifiers (e.g., `create_vertex`, `create_edge`, `set_*`, `erase_vertex`, `erase_edge`).
 
 <!-- ----------------------------------------------------------------------- -->
-\subsection aoc_ssec-topo_traits-base Shared Base: Topology_traits_base
+\subsection aoc_ssec-topo_traits-models Models of the Topology Traits Concept
 <!-- ----------------------------------------------------------------------- -->
 
-The class template `Topology_traits_base` factors out all combinatorial
-infrastructure shared by the five concrete topology traits classes.
-This includes the left boundary edge, which all five classes maintain.
-Derived classes add only their topology-specific cached descriptors:
+The package provides five topology traits class templates, which model the
+concept `AocTopologyTraits`, one for each supported combination of side
+categories; see `Default_topology_traits`.  All five maintain the
+arrangement as an alternating sequence of vertices and edges, and they
+share the following properties:
 
-| Derived class                  | Extra state                                    |
-|--------------------------------|------------------------------------------------|
-| `Open_topology_traits`         | None                                           |
-| `Closed_topology_traits`       | The left and the right boundary vertices       |
-| `Left_closed_topology_traits`  | The left boundary vertex                       |
-| `Right_closed_topology_traits` | The right boundary vertex                      |
-| `Identified_topology_traits`   | The identification vertex                      |
+- An empty arrangement consists of a single edge that spans the entire
+  parameter space and no vertices.  This edge is the initial *left boundary
+  edge*, obtained by
+  \link AocTopologyTraits::left_boundary_edge() `left_boundary_edge()`\endlink.
+  The left boundary edge is the leftmost edge; if the parameter space is identified, it is the edge whose
+  left vertex is the identification vertex, or, if the identification vertex
+  does not exist, the edge that contains the identification point.
+- Copying a topology traits object yields an independent copy; all
+  descriptors stored in the copy, including the left boundary edge and the
+  cached vertices listed below, refer to the copy.
+- `clear()` removes all vertices and edges and restores the single spanning
+  edge; `swap()` exchanges the contents of two objects.
 
-`Topology_traits_base` provides:
+Some classes also maintain vertices that lie on the boundary of the
+parameter space, which are created when the corresponding point is inserted:
 
-- `Data_container<T>` and its `void` specialization (empty-base optimization) for zero-overhead optional per-cell data.
-- Helper meta-types `Map_reference_traits`, `Map_const_reference_traits`,
-  `Map_param_traits` to avoid `reference-to-void` compilation errors.
-- `Vertex` and `Edge` node structs (with optional user data via EBO).
-- Descriptor type definitions for both list mode and vector mode.
-- Descriptor iterators (`List_descriptor_iterator`, `Index_descriptor_iterator`) and descriptor ranges.
-- Three Boost lvalue property maps (`Vertex_point_map`, `Vertex_data_map`, `Edge_data_map`).
-- Core navigation helpers (`left_edge`, `right_edge`, `left_vertex`, `right_vertex`, `has_left_vertex`,
-  `has_right_vertex`, `vertex_point`).
-- The left boundary edge and its accessors (`left_boundary_edge`, `set_left_boundary_edge`).
-- Low-level storage primitives (`create_vertex`, `create_edge`,
-  `set_left_edge`, `set_right_edge`, `set_left_vertex`,
-  `set_right_vertex`, `clear_left_vertex`, `clear_right_vertex`,
-  `erase_vertex`, `erase_edge`).
-- Constructors that create the single edge that spans the parameter space and
-  set it as the left boundary edge (via the protected `init_spanning_edge()`
-  helper).
-- A copy constructor that, in list mode, redirects all stored iterators,
-  including the left boundary edge, into the copy (via the private
-  `patch_cross_references()` helper), and a copy assignment operator
-  implemented via `swap()`.  Derived classes that cache vertex descriptors
-  redirect them with the protected `copied_vertex()` helper.
-- `clear()`, which removes all vertices and edges and recreates the spanning
-  edge as the left boundary edge, and `swap()`, which swaps the containers and
-  the left boundary edge.  Derived classes that cache descriptors hide these
-  functions with versions that call them and reset or swap their own cached
-  descriptors.
+| Topology traits                | Additional vertices     | Accessors                                                |
+|--------------------------------|-------------------------|----------------------------------------------------------|
+| `Open_topology_traits`         | None                    |                                                          |
+| `Closed_topology_traits`       | Left and right boundary | Those of the two classes below                           |
+| `Left_closed_topology_traits`  | Left boundary           | `has_left_boundary_vertex()`, `left_boundary_vertex()`   |
+| `Right_closed_topology_traits` | Right boundary          | `has_right_boundary_vertex()`, `right_boundary_vertex()` |
+| `Identified_topology_traits`   | Identification          | `has_identification_vertex()`, `identification_vertex()` |
 
-The template parameters of `Topology_traits_base` (and all derived classes) are:
+All five class templates have the same template parameters:
 
-| Parameter    | Default                   | Meaning                                  |
-|--------------|---------------------------|------------------------------------------|
-| `Point_1_`   | (required)                | geometric point type stored at vertices  |
-| `VertexData` | `void`                    | optional user data per vertex            |
-| `EdgeData`   | `void`                    | optional user data per edge              |
-| `UseVector`  | `false`                   | `true` = vector + index descriptors      |
-| `Allocator`  | `std::allocator<char>`    | allocator for internal containers        |
+| Parameter          | Default                   | Meaning                                  |
+|--------------------|---------------------------|------------------------------------------|
+| `GeometryTraits_1` | (required)                | the geometry traits                      |
+| `VertexData`       | `void`                    | optional user data per vertex            |
+| `EdgeData`         | `void`                    | optional user data per edge              |
+| `UseVector`        | `false`                   | `true` = vector + index descriptors      |
+| `Allocator`        | `std::allocator<char>`    | allocator for internal containers        |
 
 The topology traits classes do not declare the kind of the parameter space.
 Instead, `Arrangement_on_curve_1` derives it from the side categories of the
@@ -454,13 +480,13 @@ The `UseVector` template parameter controls the underlying container and descrip
 
 - **List mode** (`UseVector = false`): vertices and edges are stored in
   `std::list`.  Descriptors are `std::list::iterator` objects and are
-  stable across insertions.  Copying requires `patch_cross_references()`
-  to redirect intra-node links.
+  stable across insertions and removals of other cells.
 
 - **Vector mode** (`UseVector = true`): vertices and edges are stored in
   `std::vector`.  Descriptors are `std::size_t` indices.  Erasing an
-  element shifts subsequent indices; `erase_edge()` patches all
-  intra-node cross-references automatically.
+  element shifts subsequent indices; `erase_vertex()` and `erase_edge()`
+  update all the stored indices automatically, including the left boundary
+  edge and the cached vertices.
   Binary search (`BinarySearch` = `true`) is only available in vector mode.
 
 <!-- ----------------------------------------------------------------------- -->
@@ -470,22 +496,19 @@ The `UseVector` template parameter controls the underlying container and descrip
 `Open_topology_traits` is the topology traits for arrangements on an
 open curve (`Left_side_category = Right_side_category = Open_side_tag`).
 
-It inherits the left boundary edge from `Topology_traits_base`.  In list
-mode, it is patched after copy via `patch_cross_references()`.  In vector
-mode, `erase_edge()` updates its index.
+It maintains no vertices beyond those of the common structure; like all
+topology traits classes, it maintains the left boundary edge:
 
-Accessor API:
-
-| Member                             | Description                                 |
-|------------------------------------|---------------------------------------------|
-| `left_boundary_edge()` / `(const)` | Returns the left boundary edge descriptor.  |
-| `set_left_boundary_edge(e)`        | Sets the left boundary edge descriptor.     |
+| Member                                        | Description                                |
+|-----------------------------------------------|--------------------------------------------|
+| `AocTopologyTraits::left_boundary_edge()`     | Returns the left boundary edge descriptor. |
+| `AocTopologyTraits::set_left_boundary_edge()` | Sets the left boundary edge descriptor.    |
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection aoc_ssec-topo_traits-identified Identified Topology Traits
 <!-- ----------------------------------------------------------------------- -->
 
-`Identified_topology_traits` supports closed-loop curves
+`Identified_topology_traits` supports cyclic curves
 (`Left_side_category = Right_side_category = Identified_side_tag`).
 
 <!-- ======================================================================= -->
@@ -498,8 +521,11 @@ are represented as `Kernel::Direction_2` objects.
 
 ### Parameter space and identification
 
-The parameter space of \f$\mathbb{S}^1\f$ is \f$[0, 2\pi)\f$ with the
-two endpoints identified.  Both `Left_side_category` and
+The parameter space of \f$\mathbb{S}^1\f$ is
+\f$[\theta_{\mathrm{ref}}, \theta_{\mathrm{ref}} + 2\pi)\f$ with the two
+endpoints identified, where \f$\theta_{\mathrm{ref}}\f$ is the angle of the
+reference direction \f$d_{\mathrm{ref}}\f$ described below; by default,
+\f$\theta_{\mathrm{ref}} = 0\f$.  Both `Left_side_category` and
 `Right_side_category` are `Identified_side_tag`.  Consequently,
 `Circle_traits_1` must be paired with `Identified_topology_traits`.
 
@@ -512,19 +538,20 @@ after \f$d_{\mathrm{ref}}\f$:
 \f$d_{\mathrm{ref}} < d_1 < d_2 < \ldots < d_n < d_{\mathrm{ref}}\f$ (one full turn).
 
 A direction equal to \f$d_{\mathrm{ref}}\f$ is the *identification point*:
-`Is_on_identification_1` returns `true` for it, and `Compare_x_1`
-must not be called with it as either argument.
+`AocIdentifiedBoundaryTraits_1::Is_on_x_identification_1` returns `true` for
+it, and `AocTraits_1::Compare_x_1` must not be called with it as either
+argument.
 
 ### Exact angular comparison
 
-The comparison is implemented using only the kernel's orientation
-predicate (no trigonometric computation):
-1. Classify each direction into the *first half*
-   \f$(d_{\mathrm{ref}}, d_{\mathrm{ref}}+\pi]\f$ or the *second half*
-   \f$(d_{\mathrm{ref}}+\pi, d_{\mathrm{ref}}+2\pi)\f$ using the orientation of
-   \f$(d_{\mathrm{ref}}, d)\f$.
-2. Directions in different halves: first half \f$<\f$ second half.
-3. Directions in the same half: compare by the orientation of \f$(d_1, d_2)\f$.
+The comparison is implemented using only the kernel predicate
+`Kernel::CounterclockwiseInBetween_2` (no trigonometric computation).  Given
+two directions \f$d_1\f$ and \f$d_2\f$, neither of which is
+\f$d_{\mathrm{ref}}\f$, \f$d_1 < d_2\f$ if and only if \f$d_1\f$ lies strictly
+between \f$d_{\mathrm{ref}}\f$ and \f$d_2\f$ when turning counter-clockwise
+from \f$d_{\mathrm{ref}}\f$; \f$d_1 > d_2\f$ if and only if \f$d_2\f$ lies
+strictly between \f$d_{\mathrm{ref}}\f$ and \f$d_1\f$; otherwise,
+\f$d_1 = d_2\f$.
 
 ### Usage example
 
@@ -557,12 +584,11 @@ int main() {
 
 Topological cells can be extended with custom user attributes using
 template parameters for vertex and edge data inside the topology
-traits.  All topology traits (including `Topology_traits_base` and its
-derived classes) accept `VertexData` and `EdgeData` template
-parameters.  When data types are provided, they are stored directly
-inside the respective node records using an internal
-`Data_container<T>` wrapper that leverages the Empty Class Optimization
-(ECO) to ensure zero memory overhead when the field is `void`.
+traits.  All five topology traits classes accept `VertexData` and
+`EdgeData` template parameters.  When data types are provided, they are
+stored directly inside the respective vertex and edge records; when a data
+type is `void`, the records carry no data member at all, so there is no
+memory overhead.
 
 \code{.cpp}
 using Tt = CGAL::Arrangement_on_curve_1::Open_topology_traits<Gt,           // GeometryTraits_1

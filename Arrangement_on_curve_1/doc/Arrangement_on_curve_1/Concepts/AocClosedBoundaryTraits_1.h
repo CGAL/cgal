@@ -14,7 +14,7 @@
  *
  * \cgalRefines{AocTraits_1}
  *
- * When at least one category is `Closed_side_tag`, the traits must also provide
+ * When at least one category is `CGAL::Arrangement_on_curve_1::Closed_side_tag`, the traits must also provide
  * the functor type `Parameter_space_in_x_1` (and its accessor), which
  * determines the position of a point in the parameter space. If the parameter
  * space is open on both sides, then the position of a point is trivial: it is
@@ -33,7 +33,7 @@ public:
 
   /*! Functor that determines the position of a point in the parameter space;
    * either `LEFT_BOUNDARY`, `INTERIOR`, or `RIGHT_BOUNDARY`.
-   * \pre either `Left_side_category` or `Right_side_category` are `Closed_side_tag`.
+   * \pre either `Left_side_category` or `Right_side_category` are `CGAL::Arrangement_on_curve_1::Closed_side_tag`.
    */
   typedef unspecified_type Parameter_space_in_x_1;
 

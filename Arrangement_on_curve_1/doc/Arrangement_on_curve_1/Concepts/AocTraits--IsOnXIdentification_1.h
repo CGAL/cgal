@@ -14,7 +14,7 @@ namespace AocTraits {
  * \cgalRefines{CopyConstructible}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{AocIdentifiedTraits_1::Is_on_x_identification_1}
+ * \cgalHasModels{AocIdentifiedBoundaryTraits_1::Is_on_x_identification_1}
  * \cgalHasModelsEnd
  */
 class IsOnXIdentification_1 {

@@ -9,10 +9,10 @@
 #ifndef CGAL_ARRANGEMENT_ON_CURVE_1_IDENTIFIED_TOPOLOGY_TRAITS_H
 #define CGAL_ARRANGEMENT_ON_CURVE_1_IDENTIFIED_TOPOLOGY_TRAITS_H
 
-/*! Topology traits for a 1D arrangement on a closed loop (identified boundary).
+/*! Topology traits for a 1D arrangement on a cyclic curve (identified boundary).
  *
  * When both sides of the parameter space are identified (tag:
- * `Identified_side_tag`), the curve is a closed loop; for example a circle,
+ * `Identified_side_tag`), the curve is cyclic; for example a circle,
  * a direction-space \f$\mathbb{S}^1\f$, or any periodic 1D domain.
  *
  * Structure:

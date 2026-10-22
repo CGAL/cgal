@@ -233,10 +233,8 @@ public:
 
   /* inserts the very first point into an empty arrangement.
    *
-   * For open/closed topologies: the single sentinel edge is split into
-   * (\f$-\infty\f$ / boundary-left, v) and (v, \f$+\infty\f$ / boundary-right).
-   *
-   * For identified (loop) topologies: the single sentinel cyclic edge is split
+   * For open/closed topologies the single edge is split into two.
+   * For identified topologies the single edge becomes a self-loop at the new vertex
    */
   Vertex_descriptor insert_empty(const Point_1& p) {
     auto& topo = m_topology_traits;

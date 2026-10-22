@@ -32,12 +32,12 @@ namespace Arrangement_on_curve_1 {
  * The master curve \f$C = \phi_C(X)\f$ is given by a continuous function
  * \f$\phi_C: X \rightarrow \mathbb{R}^d\f$; it is defined over a
  * one-dimensional interval \f$X\f$ called the parameter space. The parameter
- * space can be open, half-open, closed, or identified. `GeometryTraits_1`
+ * space can be open, closed, left-closed, right-closed, or identified. `GeometryTraits_1`
  * declares the types `Left_side_category` and `Right_side_category`, each of
  * which is one of `Open_side_tag`, `Closed_side_tag`, or `Identified_side_tag`.
  * The static data member, for example, `is_identified` is `true` if and only if
- * both categories are `Identified_side_tag`; that is, the curve is a closed
- * loop such as \f$\mathbb{S}^1\f$. When `TopologyTraits` is omitted, it
+ * both categories are `Identified_side_tag`; that is, the curve is cyclic,
+ * such as \f$\mathbb{S}^1\f$. When `TopologyTraits` is omitted, it
  * defaults to `Default_topology_traits<GeometryTraits_1>::type`, the topology
  * traits that matches the two categories, e.g.,
  * `Identified_topology_traits<Circle_traits_1<Kernel>>` for
@@ -175,9 +175,9 @@ public:
   void reset_shared_geometry_traits(Shared_geometry_traits sgt);
 
   /*! inserts a vertex at the left boundary.  The vertex becomes the left
-   * vertex of `left_boundary_edge()`; no edge is created.
+   * vertex of \link ArrangementOnCurve_1::left_boundary_edge() `left_boundary_edge()`\endlink; no edge is created.
    * \pre `left_is_closed` is `true`.
-   * \pre `left_boundary_edge()` has no left vertex.
+   * \pre \link ArrangementOnCurve_1::left_boundary_edge() `left_boundary_edge()`\endlink has no left vertex.
    * \pre `p` lies on the left boundary.
    */
   Vertex_descriptor insert_left_boundary_vertex(const Point_1& p);
@@ -191,8 +191,9 @@ public:
   Vertex_descriptor insert_right_boundary_vertex(Edge_descriptor e, const Point_1& p);
 
   /*! inserts a vertex at the identification point.  The vertex becomes the
-   * left vertex of `left_boundary_edge()`, and a new edge is created between
-   * the last vertex and the new vertex.
+   * left vertex of
+   * \link ArrangementOnCurve_1::left_boundary_edge() `left_boundary_edge()`\endlink,
+   * and a new edge is created between the last vertex and the new vertex.
    * \pre `is_identified` is `true`.
    * \pre The arrangement is not empty and does not contain the identification vertex.
    * \pre `p` is the identification point.

@@ -22,18 +22,19 @@
  *
  * Parameter space and boundary categories
  * ---------------------------------------
- * * The parameter space of \f$\mathbb{S}^1\f$ is \f$[-\pi, +\pi])f$ with the two
- * endpoints identified.  Therefore:
+ * The parameter space of \f$\mathbb{S}^1\f$ is \f$[\theta_{\mathrm{ref}}, \theta_{\mathrm{ref}} + 2\pi)\f$ with the
+ * two endpoints identified, where \f$\theta_{\mathrm{ref}}\f$ is the angle of the reference
+ * direction `d_ref` (see below).  Therefore:
  *
  * - `Left_side_category`  = `Identified_side_tag`
- * - `Right_side_category` = Identified_side_tag`
+ * - `Right_side_category` = `Identified_side_tag`
  *
  * A "reference direction" `d_ref` (default: positive `x`-axis) defines the
  * position of the identification point.  The total order on directions is
  * the counter-clockwise order starting strictly after `d_ref` and wrapping
  * around back to `d_ref`:
  *
- *   \f$d_ref < d_1 < d_2 < \ldots < d_n < d_ref\f$
+ *   \f$d_{\mathrm{ref}} < d_1 < d_2 < \ldots < d_n < d_{\mathrm{ref}}\f$
  *
  * The identification point is `d_ref`: a direction equal to `d_ref` lies
  * exactly on the identification point.  `Is_on_x_identification_1` returns
@@ -42,17 +43,17 @@
  *
  * Angular total order
  * -------------------
- * Given a reference direction `d_ref`, define the half-open angular interval
- * \f$(d_ref, d_ref + 2\pi]\f$.  A direction \f$d_1 < d_2\f$ in this order
- * iff \f$d_1\f$ appears before \f$d_2\f$ when sweeping counter-clockwise
+ * Given a reference direction `d_ref` with angle \f$\theta_{\mathrm{ref}}\f$, define the
+ * open angular interval \f$(\theta_{\mathrm{ref}}, \theta_{\mathrm{ref}} + 2\pi)\f$.  A
+ * direction \f$d_1 < d_2\f$ in this order iff \f$d_1\f$ appears before \f$d_2\f$ when sweeping counter-clockwise
  * starting strictly after `d_ref`.
  *
  * `Direction_2` representation
  * ----------------------------
  * A CGAL `Direction_2` wraps a non-zero vector and considers two vectors equal
  * iff they are positive multiples of each other.  Opposite directions are
- * distinct.  The comparison below operates on the direction directly through
- * the kernel's orientation predicate.
+ * distinct.  The comparison below operates on the directions directly through
+ * the kernel predicate `Counterclockwise_in_between_2`.
  *
  * Required Kernel concepts
  * ------------------------
@@ -89,7 +90,7 @@ public:
   // of `Arrangement_on_surface_2` where the traits owns the side categories).
   //
   // Both sides of the circle's parameter space are identified: the curve is
-  // a closed loop \f$\mathbb{S}^1\f$.
+  // the cyclic curve \f$\mathbb{S}^1\f$.
   // --------------------------------------------------------------------------
   using Left_side_category = Identified_side_tag;
   using Right_side_category = Identified_side_tag;
@@ -129,7 +130,8 @@ public:
 
   /*! Compare_x_1
    *
-   * Strict total order on directions in \f$(d_ref -\pi,  d_ref + \pi)\f$:
+   * Strict total order on the directions whose angles lie in
+   * \f$(\theta_{\mathrm{ref}}, \theta_{\mathrm{ref}} + 2\pi)\f$:
    *   SMALLER if `d1` comes before `d2` in the CCW sweep starting after `d_ref`,
    *   EQUAL   if `d1 == d2`,
    *   LARGER  if `d1` comes after `d2`.

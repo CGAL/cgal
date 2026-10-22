@@ -24,7 +24,7 @@
  * `GeometryTraits_1` must define the `Left_side_category` and
  * `Right_side_category` categories to describe whether the parameter space is
  * open, closed, or identified at each end.  When both categories are
- * `Identified_side_tag`, the arrangement represents a closed loop.
+ * `CGAL::Arrangement_on_curve_1::Identified_side_tag`, the curve is cyclic.
  */
 class ArrangementOnCurve_1 {
 public:
@@ -74,8 +74,8 @@ public:
   //! \name Accessors
   //! @{
 
-  /*! is `true` if the arrangement is a closed loop (both
-   * `Left_side_category` and `Right_side_category` are `Identified_side_tag`).
+  /*! is `true` if the curve is cyclic (both
+   * `Left_side_category` and `Right_side_category` are `CGAL::Arrangement_on_curve_1::Identified_side_tag`).
    */
   static constexpr bool is_identified;
 

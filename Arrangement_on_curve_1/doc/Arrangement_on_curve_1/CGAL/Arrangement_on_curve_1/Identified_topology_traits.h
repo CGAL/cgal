@@ -11,16 +11,18 @@ namespace Arrangement_on_curve_1 {
 /*! \ingroup PkgArrangementOnCurve1TopologyTraitsClasses
  *
  * \brief `Identified_topology_traits` is a topology traits model of
- * `AocTopologyTraits` for 1D arrangements on a closed loop (identified
+ * `AocTopologyTraits` for 1D arrangements on a cyclic curve (identified
  * boundary).
  *
  * When both sides of the parameter space are identified (tag:
- * `Identified_side_tag`), the curve is a closed loop, for example a circle,
+ * `Identified_side_tag`), the curve is cyclic, for example a circle,
  * a direction-space \f$\mathbb{S}^1\f$, or any periodic 1D domain.
  *
  * Key topological differences from `Open_topology_traits`:
  *
- * - There is **no** sentinel edge.  An empty arrangement does not contain vertices.
+ * - An empty arrangement consists of a single edge that spans the entire
+ *   curve and no vertices, as in all topology traits; however, every edge of a
+ *   non-empty arrangement has a vertex on both sides.
  *
  * - Vertices and edges form a cyclic sequence:
  *   \f$\ldots \leftarrow e_0 \rightarrow v_0 \leftarrow e_1 \rightarrow v_1 \ldots\f$
@@ -29,10 +31,8 @@ namespace Arrangement_on_curve_1 {
  * - A edge incident on the left to a vertex that maps to the identification point
  *   provides the canonical entry point for cyclic traversal (locate, overlay).
  *
- * - `insert_empty(p)` creates the very first vertex and a single loop edge
- *   (left and right both pointing to that vertex).
- *
- * All shared combinatorial infrastructure is inherited from `Topology_traits_base`.
+ * - \link ArrangementOnCurve_1::insert_empty() `insert_empty(p)`\endlink creates the very first
+ *   vertex and a single loop edge (left and right both pointing to that vertex).
  *
  * \tparam Point_1_ the geometric point type stored at each vertex.
  * \tparam VertexData optional user data per vertex (`void` = none, default).
@@ -44,9 +44,10 @@ namespace Arrangement_on_curve_1 {
  *
  * \cgalModels{AocTopologyTraits}
  *
- * \sa `Topology_traits_base`
  * \sa `Open_topology_traits`
  * \sa `Closed_topology_traits`
+ * \sa `Left_closed_topology_traits`
+ * \sa `Right_closed_topology_traits`
  */
 template <typename GeometryTraits_1,
           typename VertexData = void,

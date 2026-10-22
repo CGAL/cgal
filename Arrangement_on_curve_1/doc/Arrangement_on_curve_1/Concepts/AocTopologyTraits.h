@@ -28,8 +28,8 @@ public:
   //! \name Types
   //! @{
 
-  //! The allocator type.
-  typedef Allocator Allocator;
+  //! The allocator type of the internal containers.
+  typedef unspecified_type Allocator;
 
   //! The standard stl type.
   typedef Allocator allocator_type;
@@ -190,9 +190,6 @@ public:
 
   //! swaps the content of the topology traits with `other`.
   void swap(AocTopologyTraits& other) noexcept;
-
-  //! obtains the allocator object.
-  allocator_type get_allocator() const noexcept;
 
   //! @}
 };

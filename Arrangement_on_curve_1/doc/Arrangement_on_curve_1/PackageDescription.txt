@@ -50,7 +50,7 @@ namespace AocTraits {}
 \cgalPkgPicture{Arrangement_on_curve_1.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Efi Fogel}
-\cgalPkgDesc{This package can be used to construct, maintain, alter, and display arrangements on a curve. Once an arrangement is constructed, the package can be used to obtain results of various queries on the arrangement, such as point location. The package also supports operations on arrangements, such as computing the overlay of two arrangements.   Arrangements and arrangement components can also be extended to store additional data.}
+\cgalPkgDesc{This package can be used to construct, maintain, and alter arrangements on a curve. Once an arrangement is constructed, the package can be used to obtain results of various queries on the arrangement, such as point location. The package also supports operations on arrangements, such as computing the overlay of two arrangements.   Arrangements and arrangement components can also be extended to store additional data.}
 \cgalPkgManuals{Chapter_1D_Arrangements,PkgArrangementOnCurve1Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -65,7 +65,7 @@ Given a set \f$\mathcal{P}\f$ of points on a curve, the <I>arrangement</I>
 the points in \f$\mathcal{P}\f$ into maximally connected cells. The cells
 can be \f$0\f$-dimensional (<I>vertices</I>) or \f$1\f$-dimensional (<I>edges</I>).
 
-The class `Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>`
+The class `CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>`
 encapsulates a data structure that maintains arrangements of points. It comes with
 a variety of algorithms that operate on 1D arrangements, such as point-location
 queries and overlay computations, which are implemented as peripheral classes or
@@ -75,7 +75,8 @@ as free (global) functions.
 
 \cgalCRPSection{Enumerations}
 
-- `CGAL::Arrangement_on_curve_1::Arr_parameter_space`
+- `CGAL::Arrangement_on_curve_1::Interval_parameter_space`
+- `CGAL::Arrangement_on_curve_1::Parameter_space`
 
 \cgalCRPSection{Tags}
 
@@ -123,6 +124,8 @@ as free (global) functions.
 - `CGAL::Arrangement_on_curve_1::Left_closed_geom_traits_2_adaptor_1<GeomTraits_2>`
 - `CGAL::Arrangement_on_curve_1::Right_closed_geom_traits_2_adaptor_1<GeomTraits_2>`
 - `CGAL::Arrangement_on_curve_1::Identified_geom_traits_2_adaptor_1<GeomTraits_2>`
+- `CGAL::Arrangement_on_curve_1::Copy_overlay_visitor<ArrangementA, ArrangementB, ArrangementR>`
+- `CGAL::Arrangement_on_curve_1::Default_overlay_visitor<ArrangementA, ArrangementB, ArrangementR>`
 
 \cgalCRPSection{Functions}
 

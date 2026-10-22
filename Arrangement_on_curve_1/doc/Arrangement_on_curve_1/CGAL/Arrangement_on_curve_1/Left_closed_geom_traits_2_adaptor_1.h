@@ -21,7 +21,8 @@ namespace Arrangement_on_curve_1 {
  * lexicographically smallest point of the master curve; the right endpoint of
  * the master curve is not a point of the 1D arrangement.  Points are ordered
  * lexicographically, by `x` and then by `y`.  Pair this traits with
- * `Left_bounded_topology_traits`.
+ * `Left_closed_topology_traits`, which `Default_topology_traits` selects for
+ * it.
  *
  * \tparam GeomTraits_2 a model of `AosBasicTraits_2`.
  *

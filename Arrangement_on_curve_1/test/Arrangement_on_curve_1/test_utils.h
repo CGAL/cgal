@@ -2,7 +2,6 @@
 #define CGAL_ARRANGEMENT_ON_CURVE_1_TEST_UTILS_H
 
 #include <algorithm>
-#include <cmath>
 #include <cstddef>
 #include <iostream>
 #include <string>
@@ -37,21 +36,22 @@ template <typename Gt, bool UseVector>
 using Test_arrangement =
   Aoc::Arrangement_on_curve_1<Gt, typename Aoc::Default_topology_traits<Gt, void, void, UseVector>::type>;
 
-// The angle of `d` in (0, 2 pi]; the identification point (1, 0) of
-// `Circle_traits_1` is mapped to 2 pi, which is the largest.
-inline double angle(const Direction_2& d) {
-  double a = std::atan2(CGAL::to_double(d.dy()), CGAL::to_double(d.dx()));
-  if (a <= 0) a += 2 * CGAL_PI;
-  return a;
-}
-
-// sorts points along the curve; in an identified arrangement, the
-// identification point is last.
-template <typename Point>
-void sort_points(std::vector<Point>& pts) {
-  if constexpr (std::is_same_v<Point, Direction_2>)
-    std::sort(pts.begin(), pts.end(), [](const Direction_2& a, const Direction_2& b) { return angle(a) < angle(b); });
-  else std::sort(pts.begin(), pts.end());
+// sorts points along the curve of `arr` using the comparison of its
+// geometry traits; in an identified arrangement, the identification point is
+// last (`Compare_x_1` must not be called on it).
+template <typename Arr>
+void sort_points(const Arr& arr, std::vector<typename Arr::Point_1>& pts) {
+  const auto& gt = arr.geometry_traits_1();
+  auto cmp = gt.compare_x_1_object();
+  auto is_on_id = [&](const typename Arr::Point_1& p) {
+    if constexpr (Arr::is_identified) return gt.is_on_x_identification_1_object()(p);
+    else return false;
+  };
+  std::sort(pts.begin(), pts.end(), [&](const typename Arr::Point_1& a, const typename Arr::Point_1& b) {
+    if (is_on_id(a)) return false;
+    if (is_on_id(b)) return true;
+    return cmp(a, b) == CGAL::SMALLER;
+  });
 }
 
 // obtains the vertex of `arr` associated with `p`.
@@ -79,7 +79,7 @@ void for_each_sequence(std::size_t n, F f) {
 // describes the first violation.
 template <typename Arr>
 bool is_valid(const Arr& arr, std::vector<typename Arr::Point_1> expected, std::string& why) {
-  sort_points(expected);
+  sort_points(arr, expected);
   const auto& tt = arr.topology_traits();
   auto pm = arr.vertex_point_map();
   auto lb = arr.left_boundary_edge();

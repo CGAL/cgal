@@ -41,7 +41,7 @@ public:
   typedef Open_side_tag Left_side_category;
 
   //! The right side of the interval parameter space is closed.
-  typedef Close_side_tag Right_side_category;
+  typedef Closed_side_tag Right_side_category;
 
   //! @}
 };

@@ -1,6 +1,6 @@
 /*! \file arr_on_circle.cpp
  * This example demonstrates `Arrangement_on_curve_1` with `Circle_traits_1`,
- * the kernel-parameterised geometry traits for points on \f$\mathbb{S}_1\f$.
+ * the kernel-parameterized geometry traits for points on \f$\mathbb{S}^1\f$.
  * Points are represented as `Direction_2` objects from the kernel.
  */
 
@@ -65,7 +65,7 @@ static void print_circle_arr(const Arr& arr, const std::string& name) {
 // main
 // ---------------------------------------------------------------------------
 int main() {
-  // The default seam is the positive x-axis direction (1, 0).
+  // The default identification point is the positive x-axis direction (1, 0).
   auto traits = std::make_shared<const Traits_1>();
 
   // -----------------------------------------------------------------------
@@ -77,10 +77,10 @@ int main() {
   //   bottom (0,-1)
   // -----------------------------------------------------------------------
   std::vector<Direction_2> normals_A = {
-    Direction_2(1,0),     // \f$0^\circ\f$  (right edge normal)
-    Direction_2(0, 1),    // \f$90^\circ\f$  (top edge normal)
-    Direction_2(-1, 0),   // \f$180^\circ\f$ (left edge normal)
-    Direction_2(0, -1),   // \f$270^\circ\f$ (bottom edge normal)
+    Direction_2(1, 0),    //   0 degrees (right edge normal)
+    Direction_2(0, 1),    //  90 degrees (top edge normal)
+    Direction_2(-1, 0),   // 180 degrees (left edge normal)
+    Direction_2(0, -1),   // 270 degrees (bottom edge normal)
   };
 
   Arr arr_a(traits);
@@ -90,28 +90,27 @@ int main() {
 
   // -----------------------------------------------------------------------
   // Build arrangement B: outward edge-normal directions of a regular hexagon.
-  // A hexagon has 6 edges; normals at \f$0^\circ\f$, \f$60^\circ\f$,
-  // \f$120^\circ\f$, \f$180^\circ\f$, \f$240^\circ\f$, \f$300^\circ\f$.  Using
-  // exact integer `Direction_2` vectors:
-  //   \f$0^\circ  \rightarrow (2, 0)\f$-- the identification point
-  //   \f$60^\circ \rightarrow (1, \sqrt{3})\f$---approximate: (1, 2) is close but not exact;
-  //                     for exact hex geometry use a sqrt extension kernel.
-  //                     Here we use integer approximations for illustration.
-  //  \f$120^\circ \rightarrow (-1, 2)\f$
-  //  \f$180^\circ \rightarrow (-2, 0)\f$
-  //  \f$240^\circ \rightarrow (-1, -2)\f$
-  //  \f$300^\circ \rightarrow (1, -2)\f$
+  // A hexagon has 6 edges; its normals are at 0, 60, 120, 180, 240, and 300
+  // degrees.  The exact normal at 60 degrees is (1, sqrt(3)); for exact hexagon
+  // geometry use a kernel that supports square roots.  Here we use integer
+  // approximations for illustration:
+  //     0 degrees -> (2, 0), the identification point
+  //    60 degrees -> (1, 2), at about 63 degrees
+  //   120 degrees -> (-1, 2), at about 117 degrees
+  //   180 degrees -> (-2, 0)
+  //   240 degrees -> (-1, -2), at about 243 degrees
+  //   300 degrees -> (1, -2), at about 297 degrees
   //
   // Note: `Circle_traits_1` works correctly for any non-zero integer
   // `Direction_2`---no need for unit-length vectors.
   // -----------------------------------------------------------------------
   std::vector<Direction_2> normals_B = {
-    Direction_2(2, 0),     // \f$\approx   0^\circ\f$
-    Direction_2(1, 2),     // \f$\approx  60^\circ\f$
-    Direction_2(-1, 2),    // \f$\approx 120^\circ\f$
-    Direction_2(-2, 0),    // \f$\approx 180^\circ\f$
-    Direction_2(-1, -2),   // \f$\approx 240^\circ\f$
-    Direction_2( 1, -2),   // \f$\approx 300^\circ\f$
+    Direction_2(2, 0),     //   0 degrees
+    Direction_2(1, 2),     //  63 degrees
+    Direction_2(-1, 2),    // 117 degrees
+    Direction_2(-2, 0),    // 180 degrees
+    Direction_2(-1, -2),   // 243 degrees
+    Direction_2(1, -2),    // 297 degrees
   };
 
   Arr arr_b(traits);
@@ -130,7 +129,8 @@ int main() {
   print_circle_arr(arr_res, "overlay A and B");
 
   // -----------------------------------------------------------------------
-  // Locate a query direction: (1, 1) ≈ 45°, between 0° and ≈60°.
+  // Locate a query direction: (1, 1), at 45 degrees, lies between (2, 0) at 0
+  // degrees and (1, 2) at about 63 degrees.
   // -----------------------------------------------------------------------
   Direction_2 query(1, 1);
   auto loc = Aoc::locate(arr_res, query);
@@ -146,16 +146,16 @@ int main() {
   else std::cout << "  -> falls inside an edge\n";
 
   // -----------------------------------------------------------------------
-  // Demonstrate Is_on_identification_1.
+  // Demonstrate Is_on_x_identification_1.
   // -----------------------------------------------------------------------
-  auto is_seam = traits->is_on_x_identification_1_object();
-  Direction_2 seam_dir(1, 0);
+  auto is_on_id = traits->is_on_x_identification_1_object();
+  Direction_2 id_dir(1, 0);
   Direction_2 other_dir(0, 1);
-  std::cout << "\nIs_on_identification_1 checks:\n";
-  std::cout << "  (1,0) -> " << (is_seam(seam_dir)  ? "true (seam)"  : "false") << "\n";
-  std::cout << "  (0,1) -> " << (is_seam(other_dir) ? "true (seam)"  : "false") << "\n";
-  std::cout << "  (2,0) -> " << (is_seam(Direction_2(2,0)) ? "true (seam)" : "false")
-            << "  (same direction as (1,0), so also the seam)\n";
+  std::cout << "\nIs_on_x_identification_1 checks:\n";
+  std::cout << "  (1,0) -> " << (is_on_id(id_dir) ? "true (identification point)" : "false") << "\n";
+  std::cout << "  (0,1) -> " << (is_on_id(other_dir) ? "true (identification point)" : "false") << "\n";
+  std::cout << "  (2,0) -> " << (is_on_id(Direction_2(2, 0)) ? "true (identification point)" : "false")
+            << "  (same direction as (1,0), so also the identification point)\n";
 
   return 0;
 }

@@ -11,17 +11,16 @@ namespace Arrangement_on_curve_1 {
 /*! \ingroup PkgArrangementOnCurve1TopologyTraitsClasses
  *
  * \brief The class template `Left_closed_topology_traits` is a model of the
- * `AocTopologyTraits` for 1D arrangements embedded on a semi closed master curve
- * parameterized over a closed interval parameter space with a (finite) boundary
- * endpoint.
+ * `AocTopologyTraits` for 1D arrangements embedded on a left-closed master curve,
+ * that is, a curve that includes its left endpoint and excludes its right
+ * endpoint, if any, parameterized over a left-closed interval parameter space.
  *
  * It maintains the arrangement as an alternating sequence of vertices and
  * edges. The class template supports both list-based and vector-based
  * underlying storage structures, and permits optional user data extension on
  * vertices and edges via property maps.
  *
- * A *closed* boundary side means the carrier curve has a known, finite
- * endpoint on that side.
+ * A *closed* side means that the curve includes its endpoint on that side.
  *
  * \tparam GeometryTraits_1 a model of `AocTraits_1` with
  *         `Left_side_category = Closed_side_tag` and `Right_side_category = Open_side_tag`.

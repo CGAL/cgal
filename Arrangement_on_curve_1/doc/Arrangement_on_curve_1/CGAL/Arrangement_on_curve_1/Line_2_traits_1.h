@@ -42,7 +42,7 @@ public:
   //! The left side of the parameter space is open.
   typedef Open_side_tag Left_side_category;
 
-  //! Both sides of the parameter space is open.
+  //! The right side of the parameter space is open.
   typedef Open_side_tag Right_side_category;
 
   //! @}
