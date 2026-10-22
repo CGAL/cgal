@@ -1,8 +1,8 @@
 // Tests the configurations of the envelope algorithm that
 // test_envelope_segments does not cover: the three pool strategies, vertical
 // segments that induce the envelope at a vertex, the reuse of a diagram, the
-// overloads that accept a traits object, unbounded curves, and the deprecated
-// interface.
+// overloads that accept a traits object, constant input ranges, unbounded
+// curves, and the deprecated interface.
 
 #define CGAL_NO_DEPRECATION_WARNINGS
 
@@ -156,6 +156,18 @@ void test_traits(std::size_t& failures) {
   report(ok, "traits overloads", failures);
 }
 
+// The input range may be constant.
+void test_const_range(std::size_t& failures) {
+  std::mt19937 rng(19);
+  const Segment_vector segs = random_segments(rng, 30, 1000);
+  const Curve_list curves(segs.begin(), segs.end());
+  Diagram_1 min_diag, max_diag;
+  CGAL::Envelope_2::lower_envelope_x_monotone_2(segs.begin(), segs.end(), min_diag);
+  CGAL::Envelope_2::upper_envelope_2(curves.begin(), curves.end(), max_diag);
+  bool ok = check_envelope(segs, min_diag, true) && check_envelope(segs, max_diag, false);
+  report(ok, "constant input ranges", failures);
+}
+
 // The envelopes of unbounded curves: the lines y = x (0) and y = -x (1), the
 // ray y = -5 for x >= 0 (2), and the segment y = -9 for -3 <= x <= -1 (3).
 void test_unbounded(std::size_t& failures) {
@@ -213,6 +225,7 @@ int main() {
   test_vertical(failures);
   test_reuse(failures);
   test_traits(failures);
+  test_const_range(failures);
   test_unbounded(failures);
 #ifndef CGAL_NO_DEPRECATED_CODE
   test_deprecated(failures);

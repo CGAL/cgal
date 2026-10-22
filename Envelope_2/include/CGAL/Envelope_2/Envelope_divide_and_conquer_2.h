@@ -55,7 +55,8 @@ protected:
   using Edge_const_descriptor = typename Envelope_diagram_1::Edge_const_descriptor;
   using Edge_descriptor = typename Envelope_diagram_1::Edge_descriptor;
 
-  using Curve_pointer_vector = std::vector<X_monotone_curve_2*>;
+  // The input curves are not modified, so the input range may be constant.
+  using Curve_pointer_vector = std::vector<const X_monotone_curve_2*>;
   using Curve_pointer_iterator = typename Curve_pointer_vector::iterator;
 
   using Traits_adaptor_2 = Arr_traits_adaptor_2<Traits_2>;
