@@ -30,54 +30,14 @@ namespace Homological_discrete_vector_field {
 
  The class `Cubical_chain_complex` represents (topological) chain complexes associated to cubical complexes.
 
- \section Description Description
-
- A cubical complex is a set of "square" cells such that: all the faces of a given cell also belong to the complex and any two cells intersect exactly along a common face.
-
- <img src="cubical_complex.png" align="center" width=20%/>
-
- A cell in a cubical complex of dimension q is the %cartesian product of \f$q\f$ intervals \f$[n_1,n_1+\delta_1]\times [n_q,n_q+\delta_q] \f$ with \f$n_i\in \mathbb N \f$ and \f$\delta_i = 0,1\f$.
- The dimension of such a cell is \f$\sum_{i=1}^q \delta_i\f$.
- A 0-cell is thus a vertex, a 1-cell contains one non zero delta (edge along one of the axes), a 2-cell contains two non zero deltas (square along two of the axes), while a 3-cell is a cube...
-
- For instance, \f$v = [2,2]\times[1,1]\times[0,0]\f$, \f$e = [0,1]\times[1,1]\times[0,0]\f$ and \f$f = [2,3]\times[0,1]\times[1,1]\f$.
-
- Given a cubical complex of dimension \f$q\f$ included in \f$[0,B_1]\times\cdots \times[0,B_q]\f$, Khalimsky coordinates associate to each cell of the complex a unique coordinate in \f$[0,2B_1]\times\cdots \times[0,2B_q]\f$:
- \f[
- \begin{array}{rcl}
- \sigma & \mapsto & \mathrm{khal}(\sigma) \\
- [n_1,n_1+\delta_1]\times\cdots \times [n_q,n_q+\delta_q] & \,\to\, & (2n_1+\delta_1,\ldots,2n_1+\delta_1) \\
- \end{array}\f]
- we set \f$N_i = 2B_i+1\f$ the size of the Khalimsky bounding box along the \f$i\f$th axis.
-
- The dimension of a cell is the given by the number of odd coordinates.
- In our previous example, \f$B_1=3, B_2=2, B_3=1\f$, hence \f$N_1=7, N_2=5, N_3=3\f$ and we get the following Khalimsky coordinates: \f$\mathrm{khal}(v) = (4,2,0)\f$, \f$\mathrm{khal}(e) = (1,2,0)\f$ and \f$\mathrm{khal}(f) = (5,1,2)\f$.
-
- The boundary map of the complex is computed by the constructor of the class using the standard formula with Khalimsky coordinates. Given a cell \f$\sigma\f$ with \f$\mathrm{khal}(\sigma) = (x_1,\ldots,x_q)\f$
- \f[ \partial(x_1,\ldots,x_q) = \sum_{\substack{i=0\\x_i\text{ odd}}}^q (-1)^{j(i)} \left( (x_1,\ldots,x_i+1,\ldots, x_q) - (x_1,\ldots,x_i-1,\ldots, x_q)\right)\f]
- where \f$j(i)\f$ is the number of odd coordinates between \f$x_1\f$ and \f$x_i\f$.
-
-
-
- Let us also point out that besides Khalimsky coordinates, cells are indexed along each dimension, thus each cell is uniquely determined by its dimension and its index in this dimension (called "base index").
-
- \section SecHdvfImplementation Implementation Details
-
- As described above, Khalimsky coordinates provide a convenient tool to identify cells of any dimension. Hence a complex of dimension \f$q\f$ can be encoded by a Boolean matrix of size \f$N_1\times\cdots\times N_q\f$ (with previous notations). For convenience, this matrix is vectorized and thus the complex is stored in a Boolean vector (denoted by  `_cells`) of size \f$N_1\times \cdots \times N_q\f$.
-
- Cells of any dimension are thus repesented by a given element of this Boolean vector and the corresponding index is called their *Boolean index*.
-
- As stated above, besides this Boolean representation, topological computations require to identify the bases of cells in any dimension (bases of the free chain groups). Hence, a cell of dimension \f$d\f$ is also identified by its index in the basis of \f$d\f$-dimensional cells. This index is called its *basis index*. The vector `_bool2base` stores, for each dimension, the map between Boolean and base indices, while the `_base2bool` stores, for each dimension, the permutation between base and Boolean indices.
-
- <img src="cubical_implementation.png" align="center" width=50%/>
+ A cubical complex is a set of "square" cells such that: all the faces of a given cell also belong to the complex and any two cells intersect exactly along a common face (see the user manual of \ref secHDVFcubical_chain_complex "cubical chain complexes" for more details).
 
  \cgalModels{GeometricChainComplex}
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept.
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
- \tparam SparseMatrixStruct an instantiation of the `Sparse_matrix` structure  providing templates of sparse chains and sparse matrices built over a given model of `SparseChain`.
+ \tparam SparseMatrixStruct a model of  `SparseMatrixStructure`  providing templates of sparse chains and sparse matrices built over a given model of `SparseChain`.
  */
-
 
 template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain>>
 class Cubical_chain_complex {
@@ -85,20 +45,20 @@ public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef CoefficientRing Coefficient_ring;
 
-    /** \brief Type of sparse matrix structure used to compute homology. */
-    typedef SparseMatrixStruct Sparse_matrix_struct;
+    /* \brief Type of sparse matrix structure used to compute homology. */
+    typedef SparseMatrixStruct Sparse_matrix_structure;
 
-    /** \brief Type of sparse chain used to compute homology. */
+    /* \brief Type of sparse chain used to compute homology. */
     template <typename _CT, int _SF>
     using Sparse_chain_type = typename SparseMatrixStruct::template Sparse_chain_type<_CT, _SF>;
 
-    /** \brief Type of sparse matrix used to compute homology. */
+    /* \brief Type of sparse matrix used to compute homology. */
     template <typename _CT, int _SF>
     using Sparse_matrix_type = typename SparseMatrixStruct::template Sparse_matrix_type<_CT, _SF>;
 
-    /** \brief Type of vertex coordinates */
+    /* \brief Type of vertex coordinates */
     typedef typename Traits::Point Point ;
-    /** \brief Type of vtk export vertex coordinates */
+    /* \brief Type of vtk export vertex coordinates */
     typedef typename Traits::Point3 Point3 ;
 private:
     /* \brief Vector of VTK types associated to cells in each dimension
@@ -106,7 +66,9 @@ private:
     static const std::vector<int> VTK_cubtypes ;
 
 public:
-    /** \brief Type used to encode primal or dual construction. */
+    /** \brief Type used to encode primal or dual construction.
+     * Values can be either `PRIMAL` or `DUAL`.
+     */
     enum Cubical_complex_primal_dual {PRIMAL, DUAL};
 
     /**
@@ -129,7 +91,7 @@ public:
      */
     Cubical_chain_complex(const Cub_object_io<Traits>& cub,Cubical_complex_primal_dual type);
 
-    //    /** \brief Friend class `Duality_cubical_complex_tools` provides tools for Alexander duality. */
+    //    /* \brief Friend class `Duality_cubical_complex_tools` provides tools for Alexander duality. */
     //    friend Duality_cubical_complex_tools<CoefficientRing> ;
 
     /** \brief Type of column-major chains */
@@ -139,9 +101,9 @@ public:
     /** \brief Type of column-major sparse matrices */
     typedef Sparse_matrix_type<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
 
-    /** \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
+    /* \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
     bool is_valid_cell_dimension(int q) const { return ((q>=0) && (q<=_dim)); }
-    /** \brief Checks if a cell of "basis" index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
+    /* \brief Checks if a cell of "basis" index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
     bool is_valid_cell(size_t id, int q) const { return is_valid_cell_dimension(q) && (id < number_of_cells(q)); }
     /** \brief Checks if a cell given in Khalimsky coordinates has the right dimension. */
     bool is_valid_cell(const std::vector<size_t>& cell ) const { return cell.size() == _dim; }
@@ -164,7 +126,7 @@ public:
 
     // Methods of the AbstractChainComplex concept
 
-    /**
+    /*
      * \brief Returns the boundary of the cell id_cell in dimension `q`.
      *
      * Returns a copy of the column-major chain stored in the boundary matrix of dimension q: boundary of the cell `id_cell` in dimension `q`. If `q` is out the range of dimensions of the complex cells, returns a null matrix.
@@ -183,7 +145,7 @@ public:
             return Column_chain(0) ;
     }
 
-    /**
+    /*
      * \brief Returns the co-boundary of the cell id_cell in dimension `q`.
      *
      * Returns a row-major chain containing the co-boundary of the cell `id_cell` in dimension `q` (so actually a row of the boundary matrix). If `q` is out the range of dimensions of the complex cells, returns a null matrix.
@@ -204,7 +166,7 @@ public:
             return Row_chain(0) ;
     }
 
-    /**
+    /*
      * \brief Returns the number of cells in a given dimension.
      *
      * If `q` is out the range of dimensions of the complex cells, returns 0.
@@ -220,7 +182,7 @@ public:
             return 0 ;
     }
 
-    /**
+    /*
      * \brief Returns the dimension of the complex.
      *
      * Returns the dimension of the cubical complex.
@@ -315,7 +277,7 @@ public:
         return cell_index;
     }
 
-    /**
+    /*
      * \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
      *
      * Returns a constant reference to the vector of boundary matrices along each dimension. The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (ie.\ rows encode q-1 cells and columns q cells).
@@ -326,7 +288,7 @@ public:
         return _d ;
     }
 
-    /**
+    /*
      * \brief Returns a copy of the dim-th boundary matrix (ie.\ column-major matrix of \f$\partial_q\f$).
      *
      * It is a column-major sparse matrix containing the boundaries of dim-cells (ie.\ rows encode q-1 cells and columns q cells).
@@ -341,7 +303,7 @@ public:
     }
 
 
-    /**
+    /*
      * \brief Returns dimension 0 cell indices included in the cell with index `id_cell` of dimension `q`.
      *
      * Returns the dimension 0 vertex indices included in the cell with index `id_cell` of dimension `q`.
@@ -360,7 +322,7 @@ public:
         return khal_to_verts(coords) ;
     }
 
-    /**
+    /*
      * \brief Returns the cofaces of a given chain in dimension `q`.
      *
      * The resulting chain lies in dimension `q+1` and is null if this dimension exceeds the dimension of the complex.
@@ -384,7 +346,7 @@ public:
     }
 
 protected:
-    /**
+    /*
      * \brief Prints informations on the complex.
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
@@ -410,7 +372,7 @@ protected:
     }
 
 public:
-    /**
+    /*
      * \brief Prints informations on the complex.
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
@@ -418,7 +380,7 @@ public:
     template <typename _CT, typename _Traits, typename _SMS>
     friend std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<_CT,_Traits,_SMS>& complex) ;
 
-    /** \brief Gets (unique) object Id.
+    /* \brief Gets (unique) object Id.
      * For comparison of constant references to the complex.
      */
     size_t id () const { return _complex_id; }
@@ -443,7 +405,7 @@ protected:
     }
 
 public:
-    /** \brief Gets the coordinates of the ith vertex */
+    /* \brief Gets the coordinates of the ith vertex */
 
     Point point(size_t i) const {
 
@@ -459,7 +421,7 @@ protected:
     }
 
 public:
-    /** \brief Gets the vector of vertex coordinates  */
+    /* \brief Gets the vector of vertex coordinates  */
     const std::vector<Point>& points() const {
         return _points;
     }
@@ -1065,7 +1027,7 @@ void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_comp
     CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::chain_to_vtk(K, filename, chain, q, cellId);
 }
 
-/**
+/*
  * \brief Exports a cubical chain  complex (plus, optionally, labels) to a %VTK file.
  *
  * The method generates legacy text %VTK files. Labels are exported as such in a %VTK property, together with CellID property, containing the index of each cell.

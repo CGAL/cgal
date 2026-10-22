@@ -92,15 +92,15 @@ protected:
     std::map<Cell,std::size_t> _cell_to_t ;
 
     /* \brief Type of sparse matrix structure used to compute homology. */
-    typedef typename ChainComplex::Sparse_matrix_struct Sparse_matrix_struct;
+    typedef typename ChainComplex::Sparse_matrix_structure Sparse_matrix_structure;
 
     /* \brief Template type of underlying sparse chains. */
     template <typename CR, int SF>
-    using Sparse_chain_base = typename Sparse_matrix_struct::template Sparse_chain_type<CR, SF>;
+    using Sparse_chain_base = typename Sparse_matrix_structure::template Sparse_chain_type<CR, SF>;
 
     /* \brief Template type of underlying sparse matrices. */
     template <typename CR, int SF>
-    using Sparse_matrix_base = typename Sparse_matrix_struct::template Sparse_matrix_type<CR, SF>;
+    using Sparse_matrix_base = typename Sparse_matrix_structure::template Sparse_matrix_type<CR, SF>;
     /*
      Type of column-major chains
      */

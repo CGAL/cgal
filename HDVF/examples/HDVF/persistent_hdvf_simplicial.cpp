@@ -23,8 +23,8 @@ typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 typedef Kernel::Compute_z_3 Compute_z;
 typedef Kernel::Point_3 Point_3;
 
-typedef CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_struct;
-typedef HDVF::Simplicial_chain_complex<Coefficient_ring,Traits,Sparse_matrix_struct> Complex;
+typedef CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_structure;
+typedef HDVF::Simplicial_chain_complex<Coefficient_ring,Traits,Sparse_matrix_structure> Complex;
 typedef double Degree;
 typedef HDVF::Filtration_lower_star<Complex, Degree> FiltrationType;
 typedef HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;

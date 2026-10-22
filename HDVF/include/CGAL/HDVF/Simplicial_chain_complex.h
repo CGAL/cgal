@@ -92,13 +92,13 @@ public:
         return *this ;
     }
 
-    /** \brief Gets the vector of vertex coordinates  */
+    /* \brief Gets the vector of vertex coordinates  */
     const std::vector<Point>& points() const
     {
         return _coords ;
     }
 
-    /** \brief Gets the coordinates of the ith dimension-0 simplex
+    /* \brief Gets the coordinates of the ith dimension-0 simplex
 
      * \warning This does not come to return vertex indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is built from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
      *  id0: 3, id1 : 2, id2: 1

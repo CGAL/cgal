@@ -134,6 +134,43 @@ For instance, in the example above:
 - \f$\partial(e) = (2,2,0)-(0,2,0)\f$
 - \f$\partial(f) = \big((6,1,2)-(4,1,2)\big) - \big((5,2,2)-(5,0,2)\big)\f$
 
+//<img src="cubical_complex.png" align="center" width=20%/>
+//
+//A cell in a cubical complex of dimension q is the %cartesian product of \f$q\f$ intervals \f$[n_1,n_1+\delta_1]\times [n_q,n_q+\delta_q] \f$ with \f$n_i\in \mathbb N \f$ and \f$\delta_i = 0,1\f$.
+//The dimension of such a cell is \f$\sum_{i=1}^q \delta_i\f$.
+//A 0-cell is thus a vertex, a 1-cell contains one non zero delta (edge along one of the axes), a 2-cell contains two non zero deltas (square along two of the axes), while a 3-cell is a cube...
+//
+//For instance, \f$v = [2,2]\times[1,1]\times[0,0]\f$, \f$e = [0,1]\times[1,1]\times[0,0]\f$ and \f$f = [2,3]\times[0,1]\times[1,1]\f$.
+//
+//Given a cubical complex of dimension \f$q\f$ included in \f$[0,B_1]\times\cdots \times[0,B_q]\f$, Khalimsky coordinates associate to each cell of the complex a unique coordinate in \f$[0,2B_1]\times\cdots \times[0,2B_q]\f$:
+//\f[
+//\begin{array}{rcl}
+//\sigma & \mapsto & \mathrm{khal}(\sigma) \\
+//[n_1,n_1+\delta_1]\times\cdots \times [n_q,n_q+\delta_q] & \,\to\, & (2n_1+\delta_1,\ldots,2n_1+\delta_1) \\
+//\end{array}\f]
+//we set \f$N_i = 2B_i+1\f$ the size of the Khalimsky bounding box along the \f$i\f$th axis.
+//
+//The dimension of a cell is the given by the number of odd coordinates.
+//In our previous example, \f$B_1=3, B_2=2, B_3=1\f$, hence \f$N_1=7, N_2=5, N_3=3\f$ and we get the following Khalimsky coordinates: \f$\mathrm{khal}(v) = (4,2,0)\f$, \f$\mathrm{khal}(e) = (1,2,0)\f$ and \f$\mathrm{khal}(f) = (5,1,2)\f$.
+//
+//The boundary map of the complex is computed by the constructor of the class using the standard formula with Khalimsky coordinates. Given a cell \f$\sigma\f$ with \f$\mathrm{khal}(\sigma) = (x_1,\ldots,x_q)\f$
+//\f[ \partial(x_1,\ldots,x_q) = \sum_{\substack{i=0\\x_i\text{ odd}}}^q (-1)^{j(i)} \left( (x_1,\ldots,x_i+1,\ldots, x_q) - (x_1,\ldots,x_i-1,\ldots, x_q)\right)\f]
+//where \f$j(i)\f$ is the number of odd coordinates between \f$x_1\f$ and \f$x_i\f$.
+//
+//
+//
+//Let us also point out that besides Khalimsky coordinates, cells are indexed along each dimension, thus each cell is uniquely determined by its dimension and its index in this dimension (called "base index").
+//
+//\section SecHdvfImplementation Implementation Details
+//
+//As described above, Khalimsky coordinates provide a convenient tool to identify cells of any dimension. Hence a complex of dimension \f$q\f$ can be encoded by a Boolean matrix of size \f$N_1\times\cdots\times N_q\f$ (with previous notations). For convenience, this matrix is vectorized and thus the complex is stored in a Boolean vector (denoted by  `_cells`) of size \f$N_1\times \cdots \times N_q\f$.
+//
+//Cells of any dimension are thus repesented by a given element of this Boolean vector and the corresponding index is called their *Boolean index*.
+//
+//As stated above, besides this Boolean representation, topological computations require to identify the bases of cells in any dimension (bases of the free chain groups). Hence, a cell of dimension \f$d\f$ is also identified by its index in the basis of \f$d\f$-dimensional cells. This index is called its *basis index*. The vector `_bool2base` stores, for each dimension, the map between Boolean and base indices, while the `_base2bool` stores, for each dimension, the permutation between base and Boolean indices.
+//
+//<img src="cubical_implementation.png" align="center" width=50%/>
+
 \subsubsection secHDVFcochain Co-chain complex (for cohomology)
 
 In the "mathematical world", singular cohomology is defined on dual groups \f$C^q = C_q^* = \mathrm{Hom}(C_q,A)\f$ with coboundary morphisms: \f$\partial^q\,:\, C^q \to C^{q+1} = \partial_q^*\f$.

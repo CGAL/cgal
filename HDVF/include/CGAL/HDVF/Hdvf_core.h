@@ -104,15 +104,15 @@ public:
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
 
     /*! \brief Type of sparse matrix structure used to compute homology. */
-    typedef typename ChainComplex::Sparse_matrix_struct Sparse_matrix_struct;
+    typedef typename ChainComplex::Sparse_matrix_structure Sparse_matrix_structure;
 
 /** \brief Template type of underlying sparse chains. */
     template <typename CR, int SF>
-    using Sparse_chain_base = typename Sparse_matrix_struct::template Sparse_chain_type<CR, SF>;
+    using Sparse_chain_base = typename Sparse_matrix_structure::template Sparse_chain_type<CR, SF>;
 
     /** \brief Template type of underlying sparse matrices. */
     template <typename CR, int SF>
-    using Sparse_matrix_base = typename Sparse_matrix_struct::template Sparse_matrix_type<CR, SF>;
+    using Sparse_matrix_base = typename Sparse_matrix_structure::template Sparse_matrix_type<CR, SF>;
     /*!
      Type of column-major chains
      */
@@ -459,7 +459,7 @@ protected:
         // Compute H_q
         for (int q=1; q<=_K.dimension(); ++q) {
             Sub_matrix_data<Column_matrix> sub(extract_sub(_K.boundary_matrix(q), q-1, q, PRIMARY, SECONDARY));
-            OSM::Full_lu<Coefficient_ring, OSM::COLUMN, Sparse_matrix_struct> lu(sub.matrix);
+            OSM::Full_lu<Coefficient_ring, OSM::COLUMN, Sparse_matrix_structure> lu(sub.matrix);
             lu.compute();
             Sub_matrix_data<Column_matrix> sub2;
             sub2.matrix = lu.inverse();

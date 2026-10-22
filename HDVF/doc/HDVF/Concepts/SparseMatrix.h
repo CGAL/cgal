@@ -64,7 +64,7 @@ public:
     /*!
      * \brief Type of `SparseChain` used for storage.
      */
-    typedef Sparse_chain Sparse_chain_type;
+    typedef unspecified_type Sparse_chain_type;
 
     /*!
      * \brief A range of indices of non empty chains.
@@ -180,7 +180,7 @@ public:
 
     /// @}
 
-    /// \name Output
+    /// \name Input, output
     /// @{
 
     /**

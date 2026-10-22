@@ -32,26 +32,28 @@ public:
     typedef unspecified_type Coefficient_ring;
 
     /**
-     Instantiation of the `Sparse_matrix` structure  providing templates of sparse chains and sparse matrices built over a given model of `SparseChain`.
+     Type of structure of sparse matrix used.
 
-     \warning Check how to document this as the structure is not a concept...
+     A model of `SparseMatrixStructure` providing a model of `SparseChain` and an associated model of `SparseMatrix`.
+
+     \warning Check if the concept `SparseMatrixStructure`and documentation are correct...
      */
-    typedef unspecified_type Sparse_matrix_struct;
+    typedef unspecified_type Sparse_matrix_structure;
 
     /*!
      Type of column-major chains (returned by the boundary operator)
      */
-    typedef Sparse_matrix_struct:: template Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
+    typedef Sparse_matrix_structure:: template Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
 
     /*!
      Type of row-major chains (returned by the co-boundary operator)
      */
-    typedef Sparse_matrix_struct:: template Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
+    typedef Sparse_matrix_structure:: template Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
 
     /*!
      Type of column-major sparse matrices (used to store the boundary operator)
      */
-    typedef Sparse_matrix_struct:: template Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
+    typedef Sparse_matrix_structure:: template Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
 
     /// @}
 
@@ -158,17 +160,21 @@ public:
 
     /// @}
 
+    /// \name Input, output
+    /// @{
+    ///
+    /*!
+     \brief Inserts the chain complex in text mode in the stream.
+
+     Displays the number of cells in each dimension and the boundary matrix in each dimension.
+
+     \param out The output stream.
+     \param complex Constant reference over the complex considered.
+     */
+    friend std::ostream& operator<<(std::ostream& out, const AbstractChainComplex& complex) const;
+    /// @}
 };
 
 
-/*!
- \relates AbstractChainComplex
- \brief Inserts the chain complex in text mode in the stream.
 
- Displays the number of cells in each dimension and the boundary matrix in each dimension.
-
- \param out The output stream.
- \param complex Constant reference over the complex considered.
- */
-std::ostream& operator<<(std::ostream& out, const AbstractChainComplex& complex) const;
 

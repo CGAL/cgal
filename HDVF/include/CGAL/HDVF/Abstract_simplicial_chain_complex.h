@@ -38,7 +38,7 @@ namespace Homological_discrete_vector_field {
  \cgalModels{AbstractChainComplex}
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept.
- \tparam SparseMatrixStruct an instantiation of the `Sparse_matrix` structure  providing templates of sparse chains and sparse matrices built over a given model of `SparseChain`.
+ \tparam SparseMatrixStruct a model of `SparseMatrixStructure`  providing templates of sparse chains and sparse matrices built over a given model of `SparseChain`.
 
  \warning Check if the documentation of the `SparseMatrixStruct` added is correct and "understandable".
  */
@@ -58,13 +58,13 @@ public:
     typedef CoefficientRing Coefficient_ring;
 
     /** \brief Type of sparse matrix structure used to compute homology. */
-    typedef SparseMatrixStruct Sparse_matrix_struct;
+    typedef SparseMatrixStruct Sparse_matrix_structure;
 
     /** \brief Type of sparse chain used to compute homology. */
     template <typename _CT, int _SF>
     using Sparse_chain_type = typename SparseMatrixStruct::template Sparse_chain_type<_CT, _SF>;
 
-    /** \brief Type of sparse matrix used to compute homology. */
+    /* \brief Type of sparse matrix used to compute homology. */
     template <typename _CT, int _SF>
     using Sparse_matrix_type = typename SparseMatrixStruct::template Sparse_matrix_type<_CT, _SF>;
 
@@ -100,7 +100,7 @@ public:
     /** \brief Checks if a simplex `simplex` of dimension `q` belongs to the complex. */
     inline bool is_valid_simplex(const Simplex& simplex, int q) const { return _simp2ind.at(q).find(simplex) != _simp2ind.at(q).end(); }
 
-    /*
+    /**
      * \brief Assignment
      */
     Abstract_simplicial_chain_complex& operator= (const Abstract_simplicial_chain_complex& complex) {
@@ -154,6 +154,11 @@ public:
         else
             return Row_chain(0) ;
     }
+
+    /* \brief Get (unique) object Id.
+     * For comparison of constant references to the complex.
+     */
+    size_t id () const { return _complex_id; }
 
     /*
      * \brief Returns the dimension of the complex.
@@ -245,7 +250,7 @@ public:
         return res ;
     }
 
-    /*!
+    /*
      * \brief Returns the cofaces of a given chain in dimension `q`.
      *
      * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
@@ -283,11 +288,6 @@ public:
      */
     template <typename _CT, typename _SMS>
     friend std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<_CT, _SMS>& complex);
-
-    /* \brief Get (unique) object Id.
-     * For comparison of constant references to the complex.
-     */
-    size_t id () const { return _complex_id; }
 
 protected:
     /* \brief Dimension of the complex */
