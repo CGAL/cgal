@@ -195,7 +195,6 @@ void CGAL_Lab_repair_cgal_lab_plugin::on_actionRemoveIsolatedVertices_triggered(
       CGAL::Polygon_mesh_processing::remove_isolated_vertices(*poly_item->polyhedron());
     CGAL::Three::Three::information(tr(" %1 isolated vertices have been removed.")
       .arg(nbv));
-    poly_item->setNbIsolatedvertices(0);
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }

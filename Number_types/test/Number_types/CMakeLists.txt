@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Number_types_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
 include_directories(BEFORE include)
 
@@ -57,6 +57,7 @@ create_single_source_cgal_program("Sqrt_extension_true.cpp")
 create_single_source_cgal_program("_test_valid_finite_double.cpp")
 create_single_source_cgal_program("_test_valid_finite_float.cpp")
 create_single_source_cgal_program("to_interval_test.cpp")
+create_single_source_cgal_program("to_interval_cpp_int_large.cpp")
 create_single_source_cgal_program("unsigned.cpp")
 create_single_source_cgal_program("utilities.cpp")
 create_single_source_cgal_program("Exact_rational.cpp")

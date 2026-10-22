@@ -16,7 +16,7 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 int main(int argc, char* argv[])
 {
   Mesh sm;
-  std::string fname = argc==1?CGAL::data_file_path("meshes/knot1.off"):argv[1];
+  std::filesystem::path fname = argc==1?CGAL::data_file_path("meshes/knot1.off"):argv[1];
   if(!CGAL::IO::read_polygon_mesh(fname, sm))
   {
     std::cerr << "Invalid input file." << std::endl;
@@ -28,7 +28,8 @@ int main(int argc, char* argv[])
 
   boost::prim_minimum_spanning_tree(sm, predecessor, boost::root_vertex(*vertices(sm).first));
 
-  std::cout << "#VRML V2.0 utf8\n"
+  std::ofstream out("prim.wrl");
+  out << "#VRML V2.0 utf8\n"
     "DirectionalLight {\n"
     "direction 0 -1 0\n"
     "}\n"
@@ -41,19 +42,19 @@ int main(int argc, char* argv[])
     "        point [ \n";
 
   for(vertex_descriptor vd : vertices(sm)){
-    std::cout <<  "        " << sm.point(vd) << "\n";
+    out <<  "        " << sm.point(vd) << "\n";
   }
 
-  std::cout << "        ]\n"
+  out << "        ]\n"
     "     }\n"
     "      coordIndex [\n";
   for(vertex_descriptor vd : vertices(sm)){
     if(predecessor[vd]!=vd){
-      std::cout << "      " << std::size_t(vd) << ", " << std::size_t(predecessor[vd]) <<  ", -1\n";
+      out << "      " << std::size_t(vd) << ", " << std::size_t(predecessor[vd]) <<  ", -1\n";
     }
   }
 
-  std::cout << "]\n"
+  out << "]\n"
     "  }#IndexedLineSet\n"
     "}# Shape\n";
 

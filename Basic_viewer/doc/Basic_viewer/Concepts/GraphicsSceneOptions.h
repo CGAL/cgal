@@ -75,6 +75,17 @@ public:
   /// `nullptr` by default.
   std::function<CGAL::IO::Color(const DS &, face_descriptor)> face_color;
 
+  /// `std::function` that returns `true` when call for faces having an associated a scalar value, and `false` otherwise. `false` by default.
+  std::function<bool(const DS &, face_descriptor)> is_face_valued;
+
+  /// `std::function` that returns the associated scalar value of a face. Called only if
+  /// `is_face_valued()` returns `true`. The viewer normalizes the values over their range
+  /// and maps them to a color palette.
+  std::function<float(const DS &, face_descriptor)> face_value;
+
+  /// name of the value, shown in the viewer's color legend (for example "aspect ratio").
+  std::string face_value_name;
+
   /// ignores all vertices when `b` is `true`; otherwise ignores only vertices for which `ignore_vertex()` returns `true`.
   void ignore_all_vertices(bool b);
 

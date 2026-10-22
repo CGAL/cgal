@@ -329,7 +329,7 @@ public:
      * hyperbolic arc, both point should be located on the same branch of the
      * hyperbola).
      *
-     * \pre `o` is not `COLLINEAR` if the supporting conic is curves, and must
+     * \pre `o` is not `COLLINEAR` if the supporting conic is curved, and must
      * be `COLLINEAR` if it is not curved (a line or a line-pair).
      */
     Curve_2 operator()(const Rational& r, const Rational& s,
@@ -368,7 +368,7 @@ public:
      * bounded segment of the supporting curve (e.g. in case of a hyperbolic
      * arc, both point should be located on the same branch of the hyperbola).
      *
-     * \pre `o` is not `COLLINEAR` if the supporting conic is curves, and must
+     * \pre `o` is not `COLLINEAR` if the supporting conic is curved, and must
      * be `COLLINEAR` if it is not curved (a line or a line-pair).
      */
     Curve_2 operator()(const Rational& r, const Rational& s,
@@ -439,19 +439,17 @@ public:
   };
 
   /*! \class Trim_2
-   * A functor that trims a conic arc.
+   * A functor for trimming curves.
    */
   class Trim_2 {
   public:
-    /*! trims the given \f$x\f$-monotone arc to new endpoints.
+    /*! trims the given \f$x\f$-monotone from `src` to `trg`.
      * \param xcv The \f$x\f$-monotone arc
-     * \param source The new source point.
-     * \param target The new target point.
-     * \pre `source` and `target` lies on the arc.
+     * \param src The new source point.
+     * \param trg The new target point.
+     * \pre `src` and `trg` lies on `xcv`.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
-                                  const Point_2& source,
-                                  const Point_2& target) const;
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, const Point_2& src, const Point_2& trg) const;
   };
 
   /// \name Accessing Functor Objects

@@ -358,6 +358,7 @@ public:
   void clear()
     {
       // clears the structure
+      edge_alpha_map.clear();
       alpha_status_container.clear();
       Dt::clear();
 

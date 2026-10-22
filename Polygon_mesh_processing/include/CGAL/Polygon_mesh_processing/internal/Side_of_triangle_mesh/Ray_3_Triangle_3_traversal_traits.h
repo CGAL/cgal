@@ -80,18 +80,18 @@ public:
 
 
 //specialization for vertical ray
-template<typename AABBTraits, class Kernel, class TraversalTraits>
-class Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,TraversalTraits,Tag_true>:
-  public Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,TraversalTraits,Tag_false>
+template<typename AABBTraits, class Kernel, class Helper>
+class Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,Helper,Tag_true>:
+  public Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,Helper,Tag_false>
 {
-  typedef Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,TraversalTraits,Tag_false> Base;
+  typedef Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,Helper,Tag_false> Base;
   typedef typename Kernel::Point_3 Point;
   typedef typename Base::Primitive Primitive;
   typedef CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Ray_3_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status, const AABBTraits& aabb_traits, const TraversalTraits& tt)
-    :Base(status, aabb_traits, tt){}
+  Ray_3_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status, const AABBTraits& aabb_traits, const Helper& h)
+    :Base(status, aabb_traits, h){}
 
   template <class Query>
   bool do_intersect(const Query& query, const Bbox_3& bbox) const

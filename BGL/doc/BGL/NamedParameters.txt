@@ -19,7 +19,7 @@ dijkstra_shortest_paths(g, s, predecessor_map(&p[0]).distance_map(&d[0]));
 \endcode
 
 In the \bgl manual, this is called
-<a href="https://www.boost.org/libs/graph/doc/bgl_named_params.html">named parameters</a>.
+<a href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/about/bgl_named_params.html">named parameters</a>.
 The named parameters in the snippet use the tags `predecessor_map` and `distance_map`
 and they are concatenated using the dot operator.<BR>
 

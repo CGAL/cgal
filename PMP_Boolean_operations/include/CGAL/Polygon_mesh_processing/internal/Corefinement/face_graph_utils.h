@@ -34,37 +34,23 @@ template <typename G>
 struct No_mark
 {
   friend
-  bool get(No_mark<G>,
+  constexpr bool get(No_mark<G>,
                   typename boost::graph_traits<G>::edge_descriptor)
   {
     return false;
   }
-  friend void put(No_mark<G>,
-                  typename boost::graph_traits<G>::edge_descriptor, bool)
+  friend
+   void put(No_mark<G>,
+                     typename boost::graph_traits<G>::edge_descriptor, bool)
   {}
 };
 
 template<class G,
-         class EdgeMarkMap>
-void mark_all_edges(G& tm, EdgeMarkMap& edge_mark_map)
-{
-  for(typename boost::graph_traits<G>::edge_descriptor ed :
-                edges(tm))
-  {
-    put(edge_mark_map, ed, true);
-  }
-}
-
-template<class G>
-void mark_all_edges(G&, No_mark<G>&)
-{} //nothing to do
-
-template<class G,
          class EdgeMarkMap,
          class HalfedgeRange>
-void unmark_edges(      G& tm,
-                        EdgeMarkMap& edge_mark_map,
-                  const HalfedgeRange& hedges)
+void unconstrain_edges(G& tm,
+                       EdgeMarkMap& edge_mark_map,
+                       const HalfedgeRange& hedges)
 {
   for(typename boost::graph_traits<G>::halfedge_descriptor hd : hedges)
     put(edge_mark_map, edge(hd, tm), false);
@@ -72,19 +58,19 @@ void unmark_edges(      G& tm,
 
 template <class G,
           class HalfedgeRange>
-void unmark_edges(      G&,
-                        No_mark<G>&,
-                  const HalfedgeRange&)
+void unconstrain_edges(G&,
+                       No_mark<G>&,
+                       const HalfedgeRange&)
 {} //nothing to do
 
 template <class G,
           class edge_descriptor,
           class EdgeMarkMapIn,
           class EdgeMarkMapOut>
-void copy_edge_mark(edge_descriptor ed_in,
-                    edge_descriptor ed_out,
-                    const EdgeMarkMapIn& edge_mark_map_in,
-                          EdgeMarkMapOut& edge_mark_map_out)
+void copy_constraint_status(edge_descriptor ed_in,
+                            edge_descriptor ed_out,
+                            EdgeMarkMapIn edge_mark_map_in,
+                            EdgeMarkMapOut edge_mark_map_out)
 {
   if(get(edge_mark_map_in, ed_in))
     put(edge_mark_map_out, ed_out, true);
@@ -93,35 +79,35 @@ void copy_edge_mark(edge_descriptor ed_in,
 template <class G,
           class edge_descriptor,
           class EdgeMarkMapOut>
-void copy_edge_mark(edge_descriptor,
-                    edge_descriptor,
-                    No_mark<G>,
-                    EdgeMarkMapOut)
+void copy_constraint_status(edge_descriptor,
+                            edge_descriptor,
+                            No_mark<G>,
+                            EdgeMarkMapOut)
 {} // nothing to do
 
 template <class G,
           class edge_descriptor,
           class EdgeMarkMapIn>
-void copy_edge_mark(edge_descriptor,
-                    edge_descriptor,
-                    EdgeMarkMapIn,
-                    No_mark<G>)
+void copy_constraint_status(edge_descriptor,
+                            edge_descriptor,
+                            EdgeMarkMapIn,
+                            No_mark<G>)
 {} // nothing to do
 
 template <class G,
           class edge_descriptor>
-void copy_edge_mark(edge_descriptor,
-                    edge_descriptor,
-                    No_mark<G>,
-                    No_mark<G>)
+void copy_constraint_status(edge_descriptor,
+                            edge_descriptor,
+                            No_mark<G>,
+                            No_mark<G>)
 {} // nothing to do
 
 template <class G,
           class EdgeMarkMapIn,
           class EdgeMarkMapOut>
-void copy_edge_mark(G& g,
-                    const EdgeMarkMapIn & edge_mark_map_in,
-                          EdgeMarkMapOut& edge_mark_map_out)
+void copy_constraint_status(G& g,
+                            EdgeMarkMapIn  edge_mark_map_in,
+                            EdgeMarkMapOut edge_mark_map_out)
 {
   for(typename boost::graph_traits<G>::edge_descriptor ed : edges(g))
     if(get(edge_mark_map_in, ed))
@@ -130,22 +116,22 @@ void copy_edge_mark(G& g,
 
 template <class G,
           class EdgeMarkMapOut>
-void copy_edge_mark(G&,
-                    const No_mark<G> &,
-                          EdgeMarkMapOut&)
+void copy_constraint_status(G&,
+                            No_mark<G>,
+                            EdgeMarkMapOut)
 {} // nothing to do
 
 template <class G,
           class EdgeMarkMapIn>
-void copy_edge_mark(G&,
-                    const EdgeMarkMapIn&,
-                          No_mark<G>&)
+void copy_constraint_status(G&,
+                            EdgeMarkMapIn,
+                            No_mark<G>)
 {} // nothing to do
 
 template <class G>
-void copy_edge_mark(G&,
-                    const No_mark<G>&,
-                          No_mark<G>&)
+void copy_constraint_status(G&,
+                            No_mark<G>,
+                            No_mark<G>)
 {} // nothing to do
 
 
@@ -526,6 +512,7 @@ triangulate_a_face(
                 ::halfedge_descriptor>& edge_to_hedge,
   const CDT& cdt,
   const VertexPointMap& vpm,
+  bool orientation_flipped,
   OutputBuilder& output_builder,
   UserVisitor& user_visitor)
 {
@@ -591,6 +578,9 @@ triangulate_a_face(
     typename CDT::Vertex_handle cdt_v0=it->vertex(0);
     typename CDT::Vertex_handle cdt_v1=it->vertex(1);
     typename CDT::Vertex_handle cdt_v2=it->vertex(2);
+
+    if (orientation_flipped)
+      std::swap(cdt_v0, cdt_v2);
 
     Node_id i0=cdt_v0->info(), i1=cdt_v1->info(), i2=cdt_v2->info();
 
@@ -1093,8 +1083,8 @@ template < bool reverse_patch_orientation,
            class PatchContainer,
            class VertexPointMap,
            class VertexPointMapOut,
-           class EdgeMarkMapOut,
-           class EdgeMarkMapIn ,
+           class EdgeCstMapOut, class EdgeMarkMapOut,
+           class EdgeCstMapIn , class EdgeMarkMapIn ,
            class UserVisitor>
 void append_patches_to_triangle_mesh(
   TriangleMesh& output,
@@ -1102,8 +1092,8 @@ void append_patches_to_triangle_mesh(
   PatchContainer& patches,
   const VertexPointMapOut& vpm_out,
   const VertexPointMap& vpm_tm,
-  EdgeMarkMapOut& edge_mark_map_out,
-  const EdgeMarkMapIn& edge_mark_map_in,
+  EdgeCstMapOut& edge_cst_map_out, EdgeMarkMapOut& edge_mark_map_out,
+  const EdgeCstMapIn& edge_cst_map_in, const EdgeMarkMapIn& edge_mark_map_in,
   std::unordered_map<
     typename boost::graph_traits<TriangleMesh>::edge_descriptor,
     typename boost::graph_traits<TriangleMesh>::edge_descriptor
@@ -1149,8 +1139,8 @@ void append_patches_to_triangle_mesh(
       user_visitor.after_edge_copy(h, tm, halfedge(new_edge, output), output);
 
       // copy the mark on input edge to the output edge
-      copy_edge_mark<TriangleMesh>(ed, new_edge,
-                                   edge_mark_map_in, edge_mark_map_out);
+      copy_constraint_status<TriangleMesh>(ed, new_edge, edge_cst_map_in, edge_cst_map_out);
+      copy_constraint_status<TriangleMesh>(ed, new_edge, edge_mark_map_in, edge_mark_map_out);
 
       halfedge_descriptor new_h = halfedge(new_edge, output);
       tm_to_output_edges[ed] = new_edge;
@@ -1329,9 +1319,9 @@ template < class TriangleMesh,
            class VertexPointMap1,
            class VertexPointMap2,
            class VertexPointMapOut,
-           class EdgeMarkMap1,
-           class EdgeMarkMap2,
-           class EdgeMarkMapOut,
+           class EdgeCstMap1, class EdgeCstMap2,
+           class EdgeMarkMap1, class EdgeMarkMap2,
+           class EdgeCstMapOut, class EdgeMarkMapOut,
            class IntersectionPolylines,
            class PatchContainer1,
            class PatchContainer2,
@@ -1350,9 +1340,9 @@ void fill_new_triangle_mesh(
   const VertexPointMap1& vpm1,
   const VertexPointMap2& vpm2,
   const VertexPointMapOut& vpm_out,
-  const EdgeMarkMap1& edge_mark_map1,
-  const EdgeMarkMap2& edge_mark_map2,
-        EdgeMarkMapOut& edge_mark_map_out,
+  const EdgeCstMap1& edge_cst_map1, const EdgeCstMap2& edge_cst_map2,
+  const EdgeMarkMap1& edge_mark_map1, const EdgeMarkMap2& edge_mark_map2,
+        EdgeCstMapOut& edge_cst_map_out, EdgeMarkMapOut& edge_mark_map_out,
   std::vector< typename boost::graph_traits<TriangleMesh>::edge_descriptor>&
                                                             output_shared_edges,
   UserVisitor& user_visitor)
@@ -1393,7 +1383,9 @@ void fill_new_triangle_mesh(
                                           patches_of_tm1,
                                           vpm_out,
                                           vpm1,
+                                          edge_cst_map_out,
                                           edge_mark_map_out,
+                                          edge_cst_map1,
                                           edge_mark_map1,
                                           tm1_to_output_edges,
                                           user_visitor);
@@ -1403,7 +1395,9 @@ void fill_new_triangle_mesh(
                                            patches_of_tm1,
                                            vpm_out,
                                            vpm1,
+                                           edge_cst_map_out,
                                            edge_mark_map_out,
+                                           edge_cst_map1,
                                            edge_mark_map1,
                                            tm1_to_output_edges,
                                            user_visitor);
@@ -1415,7 +1409,9 @@ void fill_new_triangle_mesh(
                                           patches_of_tm2,
                                           vpm_out,
                                           vpm2,
+                                          edge_cst_map_out,
                                           edge_mark_map_out,
+                                          edge_cst_map2,
                                           edge_mark_map2,
                                           tm2_to_output_edges,
                                           user_visitor);
@@ -1425,7 +1421,9 @@ void fill_new_triangle_mesh(
                                            patches_of_tm2,
                                            vpm_out,
                                            vpm2,
+                                           edge_cst_map_out,
                                            edge_mark_map_out,
+                                           edge_cst_map2,
                                            edge_mark_map2,
                                            tm2_to_output_edges,
                                            user_visitor);
@@ -1591,9 +1589,9 @@ template <class TriangleMesh,
           class EdgeMap,
           class VertexPointMap1,
           class VertexPointMap2,
-          class EdgeMarkMapIn1,
-          class EdgeMarkMapIn2,
-          class EdgeMarkMapOut,
+          class EdgeCstMapIn1, class EdgeCstMapIn2,
+          class EdgeMarkMapIn1, class EdgeMarkMapIn2,
+          class EdgeCstMapOut, class EdgeMarkMapOut,
           class UserVisitor>
 void compute_inplace_operation_delay_removal_and_insideout(
   TriangleMesh& tm1,
@@ -1606,9 +1604,9 @@ void compute_inplace_operation_delay_removal_and_insideout(
   const IntersectionPolylines& polylines,
   const VertexPointMap1& vpm1,
   const VertexPointMap2& vpm2,
-        EdgeMarkMapIn1&,
-  const EdgeMarkMapIn2& edge_mark_map2,
-  const EdgeMarkMapOut& edge_mark_map_out1,
+        EdgeCstMapIn1&, const EdgeCstMapIn2& edge_cst_map2,
+        EdgeMarkMapIn1&, const EdgeMarkMapIn2& edge_mark_map2,
+  const EdgeCstMapOut& edge_cst_map_out, const EdgeMarkMapOut& edge_mark_map_out,
   EdgeMap& disconnected_patches_edge_to_tm2_edge,
   UserVisitor& user_visitor)
 {
@@ -1658,7 +1656,9 @@ void compute_inplace_operation_delay_removal_and_insideout(
                                           patches_of_tm2,
                                           vpm1,
                                           vpm2,
-                                          edge_mark_map_out1,
+                                          edge_cst_map_out,
+                                          edge_mark_map_out,
+                                          edge_cst_map2,
                                           edge_mark_map2,
                                           tm2_edge_to_tm1_edge,
                                           user_visitor);
@@ -1668,7 +1668,9 @@ void compute_inplace_operation_delay_removal_and_insideout(
                                            patches_of_tm2,
                                            vpm1,
                                            vpm2,
-                                           edge_mark_map_out1,
+                                           edge_cst_map_out,
+                                           edge_mark_map_out,
+                                           edge_cst_map2,
                                            edge_mark_map2,
                                            tm2_edge_to_tm1_edge,
                                            user_visitor);
@@ -1676,11 +1678,13 @@ void compute_inplace_operation_delay_removal_and_insideout(
 
 template <class TriangleMesh,
           class PatchContainer,
+          class EdgeCstMap,
           class EdgeMarkMap>
 void
 remove_patches(TriangleMesh& tm,
                const boost::dynamic_bitset<>& patches_to_remove,
                PatchContainer& patches,
+               const EdgeCstMap& edge_cst_map,
                const EdgeMarkMap& edge_mark_map)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
@@ -1710,7 +1714,8 @@ remove_patches(TriangleMesh& tm,
 
     // edges removed must be unmarked to avoid issues when adding new elements
     // that could be marked because they retrieve a previously set property
-    unmark_edges(tm, edge_mark_map, patch.interior_edges);
+    unconstrain_edges(tm, edge_cst_map, patch.interior_edges);
+    unconstrain_edges(tm, edge_mark_map, patch.interior_edges);
 
     // In case a ccb of the patch is not a cycle (the source and target vertices
     // are border vertices), the first halfedge of that ccb will not have its
@@ -1751,9 +1756,9 @@ template <class TriangleMesh,
           class PatchContainer2,
           class VertexPointMap1,
           class VertexPointMap2,
-          class EdgeMarkMapIn1,
-          class EdgeMarkMapIn2,
-          class EdgeMarkMapOut1,
+          class EdgeCstMapIn1, class EdgeCstMapIn2,
+          class EdgeMarkMapIn1, class EdgeMarkMapIn2,
+          class EdgeCstMapOut, class EdgeMarkMapOut,
           class UserVisitor>
 void compute_inplace_operation(
         TriangleMesh& tm1,
@@ -1766,9 +1771,9 @@ void compute_inplace_operation(
   bool reverse_patch_orientation_tm2,
   const VertexPointMap1& vpm1,
   const VertexPointMap2& vpm2,
-        EdgeMarkMapIn1& edge_mark_map_in1,
-  const EdgeMarkMapIn2& edge_mark_map_in2,
-        EdgeMarkMapOut1& edge_mark_map_out1,
+        EdgeCstMapIn1 edge_cst_map_in1, EdgeCstMapIn2 edge_cst_map_in2,
+        EdgeMarkMapIn1 edge_mark_map_in1, EdgeMarkMapIn2 edge_mark_map_in2,
+        EdgeCstMapOut edge_cst_map_out, EdgeMarkMapOut edge_mark_map_out,
   std::unordered_map<
     typename boost::graph_traits<TriangleMesh>::edge_descriptor,
     typename boost::graph_traits<TriangleMesh>::edge_descriptor
@@ -1779,10 +1784,11 @@ void compute_inplace_operation(
       typename boost::graph_traits<TriangleMesh>::edge_descriptor,
       typename boost::graph_traits<TriangleMesh>::edge_descriptor> EdgeMap;
   //clean up patches not kept
-  remove_patches(tm1, ~patches_of_tm1_to_keep, patches_of_tm1, edge_mark_map_in1);
+  remove_patches(tm1, ~patches_of_tm1_to_keep, patches_of_tm1, edge_cst_map_in1, edge_mark_map_in1);
 
   // transfer marks of edges of patches kept to the output edge mark property
-  copy_edge_mark<TriangleMesh>(tm1, edge_mark_map_in1, edge_mark_map_out1);
+  copy_constraint_status<TriangleMesh>(tm1, edge_cst_map_in1, edge_cst_map_out);
+  copy_constraint_status<TriangleMesh>(tm1, edge_mark_map_in1, edge_mark_map_out);
 
   if (reverse_patch_orientation_tm1){
     Polygon_mesh_processing::
@@ -1800,7 +1806,9 @@ void compute_inplace_operation(
                                           patches_of_tm2,
                                           vpm1,
                                           vpm2,
-                                          edge_mark_map_out1,
+                                          edge_cst_map_out,
+                                          edge_mark_map_out,
+                                          edge_cst_map_in2,
                                           edge_mark_map_in2,
                                           tm2_edge_to_tm1_edge,
                                           user_visitor);
@@ -1810,7 +1818,9 @@ void compute_inplace_operation(
                                            patches_of_tm2,
                                            vpm1,
                                            vpm2,
-                                           edge_mark_map_out1,
+                                           edge_cst_map_out,
+                                           edge_mark_map_out,
+                                           edge_cst_map_in2,
                                            edge_mark_map_in2,
                                            tm2_edge_to_tm1_edge,
                                            user_visitor);
@@ -1859,9 +1869,9 @@ template <class TriangleMesh,
           class IntersectionPolylines,
           class VertexPointMap1,
           class VertexPointMap2,
-          class EdgeMarkMapIn1,
-          class EdgeMarkMapIn2,
-          class EdgeMarkMapOut1,
+          class EdgeCstMapIn1, class EdgeCstMapIn2,
+          class EdgeMarkMapIn1, class EdgeMarkMapIn2,
+          class EdgeCstMapOut, class EdgeMarkMapOut,
           class UserVisitor>
 void compute_inplace_operation(
         TriangleMesh& tm1,
@@ -1874,9 +1884,9 @@ void compute_inplace_operation(
   bool reverse_patch_orientation_tm2,
   const VertexPointMap1& vpm1,
   const VertexPointMap2& vpm2,
-  const EdgeMarkMapIn1& edge_mark_map_in1,
-  const EdgeMarkMapIn2& edge_mark_map_in2,
-  const EdgeMarkMapOut1& edge_mark_map_out1,
+       EdgeCstMapIn1 edge_cst_map_in1, EdgeCstMapIn2 edge_cst_map_in2,
+       EdgeMarkMapIn1 edge_mark_map_in1, EdgeMarkMapIn2 edge_mark_map_in2,
+       EdgeCstMapOut edge_cst_map_out, EdgeMarkMapOut edge_mark_map_out,
   const IntersectionPolylines& polylines,
         UserVisitor& user_visitor)
 {
@@ -1898,9 +1908,9 @@ void compute_inplace_operation(
                             reverse_patch_orientation_tm2,
                             vpm1,
                             vpm2,
-                            edge_mark_map_in1,
-                            edge_mark_map_in2,
-                            edge_mark_map_out1,
+                            edge_cst_map_in1, edge_cst_map_in2,
+                            edge_mark_map_in1, edge_mark_map_in2,
+                            edge_cst_map_out, edge_mark_map_out,
                             tm2_edge_to_tm1_edge,
                             user_visitor);
 }
@@ -2002,11 +2012,12 @@ void remove_unused_polylines(
     remove_edge(e,tm);
 }
 
-template <class TriangleMesh, class PatchContainer, class EdgeMarkMap>
+template <class TriangleMesh, class PatchContainer, class EdgeCstMap, class EdgeMarkMap>
 void remove_disconnected_patches(
   TriangleMesh& tm,
   PatchContainer& patches,
   const boost::dynamic_bitset<>& patches_to_remove,
+  EdgeCstMap& edge_cst_map,
   EdgeMarkMap& edge_mark_map)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
@@ -2022,7 +2033,8 @@ void remove_disconnected_patches(
 
     // edges removed must be unmarked to avoid issues when adding new elements
     // that could be marked because they retrieve a previously set property
-    unmark_edges(tm, edge_mark_map, patch.interior_edges);
+    unconstrain_edges(tm, edge_cst_map, patch.interior_edges);
+    unconstrain_edges(tm, edge_mark_map, patch.interior_edges);
 
     for(halfedge_descriptor h : patch.interior_edges)
       remove_edge(edge(h, tm), tm);

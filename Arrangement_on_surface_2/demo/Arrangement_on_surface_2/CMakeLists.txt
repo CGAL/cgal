@@ -12,7 +12,7 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt6)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS  Qt6)
 find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if (CGAL_Qt6_FOUND AND Qt6_FOUND)
@@ -110,7 +110,7 @@ if (CGAL_Qt6_FOUND AND Qt6_FOUND)
                  ${CGAL_Qt6_MOC_FILES})
 
   target_link_libraries(arrangement_2 PRIVATE Qt6::Widgets)
-  target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 CGAL::CGAL_Core)
+  target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS arrangement_2)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)

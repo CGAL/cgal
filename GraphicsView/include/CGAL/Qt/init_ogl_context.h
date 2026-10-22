@@ -43,6 +43,9 @@ inline void init_ogl_context(int major, int minor) {
   // anti-aliased by the framebuffer instead of by per-pixel blending in the
   // shader. This keeps thin edges fully solid instead of fading to the background.
   fmt.setSamples(4);
+  // Stencil buffer for clip-plane capping (filling the cut cross-section of a
+  // clipped solid). Requested here so it is available on the default framebuffer.
+  fmt.setStencilBufferSize(8);
   QSurfaceFormat::setDefaultFormat(fmt);
 
   //for windows

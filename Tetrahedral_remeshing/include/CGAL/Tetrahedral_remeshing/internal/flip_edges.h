@@ -25,6 +25,7 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
 #include <limits>
 #include <queue>
 
@@ -88,7 +89,7 @@ void update_c3t3_facets(C3t3& c3t3,
 template<typename C3t3, typename IncCellsVectorMap, typename CellSelector>
 Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
                                   C3t3& c3t3,
-                                  const std::vector<typename C3t3::Vertex_handle>& vertices_around_edge,
+                                  const boost::container::small_vector<typename C3t3::Vertex_handle, 16>& vertices_around_edge,
                                   const Flip_Criterion& criterion,
                                   IncCellsVectorMap& inc_cells,
                                   CellSelector& cell_selector)
@@ -499,6 +500,15 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
           keep = false;
           break;
         }
+
+        // the worst angle of the flip only ever grows from here, so once it has
+        // reached the one the edge already has, this vertex cannot be kept -
+        // unless the cells are inverted, where it is kept whatever it measures
+        if (is_sliver_well_oriented && !(max_flip_cos_dh < curr_max_cos_dh))
+        {
+          keep = false;
+          break;
+        }
       }
     }
     facets.clear();
@@ -569,125 +579,155 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   Facet_circulator curr_fcirc = tr.incident_facets(edge);
   Facet_circulator curr_fdone = curr_fcirc;
 
-  //Only keep the possible flips
-  std::vector<Vertex_handle> opposite_vertices;
-  int nb_cells_around_edge = 0;
+  //Collect the vertex opposite to the edge in each facet around it, in
+  //circulation order. The chord test below used to re-circulate the facets
+  //around the edge once per such vertex to enumerate the other apices; those
+  //are the same vertices collected here, so the tests can be indexed on the
+  //ring instead. is_edge_uv is read-only, so stopping at the first chord
+  //found yields the same verdict as running the ring to its end.
+  boost::container::small_vector<Vertex_handle, 32> ring_apices;
   do
   {
-    Vertex_handle vh;
-    //Get the ids of the opposite vertices
+    //Get the id of the opposite vertex
     for (int i = 0; i < 3; ++i)
     {
       Vertex_handle curr_vertex = curr_fcirc->first->vertex(
                                     indices(curr_fcirc->second, i));
       if (curr_vertex != vh0 && curr_vertex != vh1)
       {
-        vh = curr_vertex;
+        ring_apices.push_back(curr_vertex);
         break;
       }
     }
+  }
+  while (++curr_fcirc != curr_fdone);
+
+  const int n_apices = static_cast<int>(ring_apices.size());
+
+  //Gather the star of every finite apex. An infinite apex has no star and is
+  //never a candidate, but it can still be the far end of a chord, so it keeps
+  //its place on the ring and is marked by a null star here.
+  //All of them are gathered, not only those the chord test below asks about:
+  //inc_cells is shared by the whole flip pass, and whether a star is cached
+  //changes the order of its cells, which changes the flips chosen.
+  using Star = boost::container::small_vector<Cell_handle, 64>;
+  boost::container::small_vector<Star*, 32> apex_star(n_apices, nullptr);
+  int nb_cells_around_edge = 0;
+  for (int p = 0; p < n_apices; ++p)
+  {
+    const Vertex_handle vh = ring_apices[p];
 
     if(tr.is_infinite(vh))
       continue;
 
-    boost::container::small_vector<Cell_handle, 64>& o_inc_vh = inc_cells[vh];
+    Star& o_inc_vh = inc_cells[vh];
     if (o_inc_vh.empty())
       tr.incident_cells(vh, std::back_inserter(o_inc_vh));
 
-    Facet_circulator facet_circulator = curr_fcirc;
-    Facet_circulator facet_done = curr_fcirc;
-
-    facet_done--;
-    facet_circulator++;
-    facet_circulator++;
-    bool is_edge = false;
-    do
-    {
-      //Get the ids of the opposite vertices
-      for (int i = 0; i < 3; ++i)
-      {
-        Vertex_handle curr_vertex = facet_circulator->first->vertex(
-                                      indices(facet_circulator->second, i));
-        if (curr_vertex != vh0  && curr_vertex != vh1)
-        {
-          if (is_edge_uv(vh, curr_vertex, o_inc_vh))
-          {
-            is_edge = true;
-            break;
-          }
-        }
-      }
-    } while (++facet_circulator != facet_done);
-
-    if (!is_edge)
-      opposite_vertices.push_back(vh);
-
+    apex_star[p] = &o_inc_vh;
     nb_cells_around_edge++;
   }
-  while (++curr_fcirc != curr_fdone);
+
   if (nb_cells_around_edge < 4)
     return;
 
+  //Judge each apex on its angles first, and ask whether a chord rules it out
+  //only if it would be kept: the angle test usually rejects on the first
+  //facet, while the chord test walks a whole star per pair. The apices kept,
+  //and their order, are unchanged.
+  //
   //Facets that will be used to create new cells
   //    i.e. all the facets opposite to vh1 and don't have vh
   //Facets that will be used to update cells
   //    i.e. all the facets opposite to vh0 will be set to vh:
   //    facet.first->set_vertex( facet.second, vh )
-
-  Cell_circulator cell_circulator = tr.incident_cells(edge);
-  Cell_circulator done = cell_circulator;
-
-  boost::container::small_vector<Facet, 60> facets;
-  for (Vertex_handle vh : opposite_vertices)
+  //
+  // Judge each facet as the circulation produces it: the tests below usually
+  // reject the vertex on its first facet, so collecting the whole ring first is wasted.
+  for (int p = 0; p < n_apices; ++p)
   {
+    if (apex_star[p] == nullptr)
+      continue;
+
+    const Vertex_handle vh = ring_apices[p];
+
     bool keep = true;
+    Dihedral_angle_cosine max_flip_cos_dh(CGAL::NEGATIVE, 1., 1.);
+
+    Cell_circulator cell_circulator = tr.incident_cells(edge);
+    Cell_circulator done = cell_circulator;
     do
     {
-      //Store it if it do not have vh
+      //Cells that do not have vh are the ones the flip rewrites
       if (!cell_circulator->has_vertex(vh))
       {
-        //Facets opposite to vh0
-        Facet facet_vh0(cell_circulator, cell_circulator->index(vh0));
+        //Facets opposite to vh1, then opposite to vh0
+        const Facet ring_facets[2]
+          = { Facet(cell_circulator, cell_circulator->index(vh1)),
+              Facet(cell_circulator, cell_circulator->index(vh0)) };
 
-        //Facets opposite to vh1
-        Facet facet_vh1(cell_circulator, cell_circulator->index(vh1));
+        for (const Facet& fi : ring_facets)
+        {
+          if (tr.is_infinite(fi.first))
+            continue;
 
-        facets.push_back(facet_vh1);
-        facets.push_back(facet_vh0);
+          if (is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
+                               fi.first->vertex(indices(fi.second, 1)),
+                               fi.first->vertex(indices(fi.second, 2))))
+          {
+            max_flip_cos_dh = (std::max)(max_flip_cos_dh,
+              max_cos_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
+                                             fi.first->vertex(indices(fi.second, 1)),
+                                             fi.first->vertex(indices(fi.second, 2))));
+          }
+          else
+          {
+            keep = false;
+            break;
+          }
+
+          if (max_flip_cos_dh.is_one())//it will not get worse than 1.
+          {
+            keep = false;
+            break;
+          }
+
+          // the worst angle of the flip only ever grows from here, so once it has
+          // reached the one the edge already has, this vertex cannot be kept -
+          // unless the cells are inverted, where it is kept whatever it measures
+          if (is_sliver_well_oriented && !(max_flip_cos_dh < curr_max_cosdh))
+          {
+            keep = false;
+            break;
+          }
+        }
+
+        if (!keep)
+          break;
       }
     }
     while (++cell_circulator != done);
 
-    Dihedral_angle_cosine max_flip_cos_dh(CGAL::NEGATIVE, 1., 1.);
-    for (const Facet& fi : facets)
+    if (!keep || !(max_flip_cos_dh < curr_max_cosdh || !is_sliver_well_oriented))
+      continue;
+
+    //a chord is an edge joining vh to an apex that is not one of its two
+    //neighbors on the ring (positions p-1 and p+1)
+    const Star& o_inc_vh = *apex_star[p];
+
+    bool chorded = false;
+    for (int j = 0; j < n_apices && !chorded; ++j)
     {
-      if (!tr.is_infinite(fi.first))
-      {
-        if (is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
-                             fi.first->vertex(indices(fi.second, 1)),
-                             fi.first->vertex(indices(fi.second, 2))))
-        {
-          max_flip_cos_dh = (std::max)(max_flip_cos_dh,
-            max_cos_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
-                                           fi.first->vertex(indices(fi.second, 1)),
-                                           fi.first->vertex(indices(fi.second, 2))));
-        }
-        else
-        {
-          keep = false;
-          break;
-        }
+      if (j == p || j == p - 1 || j == p + 1)
+        continue;
+      if ((p == 0 && j == n_apices - 1) || (p == n_apices - 1 && j == 0))
+        continue;
 
-        if (max_flip_cos_dh.is_one())//it will not get worse than 1.
-        {
-          keep = false;
-          break;
-        }
-      }
+      if (is_edge_uv(vh, ring_apices[j], o_inc_vh))
+        chorded = true;
     }
-    facets.clear();
 
-    if (keep && (max_flip_cos_dh < curr_max_cosdh || !is_sliver_well_oriented))
+    if (!chorded)
     {
       //std::cout << "vh " << vh->info() <<" old " << curr_max_cosdh << " min " << min_flip_tan_dh << std::endl;
       candidates.push(std::make_pair(max_flip_cos_dh, std::make_pair(vh, e_id)));
@@ -1097,8 +1137,12 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
   Facet_circulator circ = tr.incident_facets(edge);
   Facet_circulator done = circ;
 
-  //Identify the vertices around this edge
-  std::unordered_set<Vertex_handle> vertices_around_edge;
+  //Identify the vertices around this edge. The ring of apices around an edge
+  //holds a handful of distinct vertices, so they are kept inline and scanned
+  //rather than hashed. flip_3_to_2 does not depend on their order : it picks
+  //vh2/vh3 by testing each vertex against ch0/ch1 individually, and is_facet
+  //is symmetric in its three vertices.
+  boost::container::small_vector<Vertex_handle, 16> vertices_around_edge;
   bool boundary_edge = false;
   bool hull_edge = false;
 
@@ -1112,7 +1156,9 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
       Vertex_handle vi = circ->first->vertex(indices(circ->second, i));
       if (vi != v0 && vi != v1)
       {
-        vertices_around_edge.insert(vi);
+        if (std::find(vertices_around_edge.begin(), vertices_around_edge.end(), vi)
+            == vertices_around_edge.end())
+          vertices_around_edge.push_back(vi);
 
         if ( circ->first->subdomain_index()
              != circ->first->neighbor(circ->second)->subdomain_index())
@@ -1143,9 +1189,7 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
   {
     if (!boundary_edge && !hull_edge)
     {
-      std::vector<Vertex_handle> vertices;
-      vertices.insert(vertices.end(), vertices_around_edge.begin(), vertices_around_edge.end());
-      res = flip_3_to_2(edge, c3t3, vertices, criterion, inc_cells, cell_selector);
+      res = flip_3_to_2(edge, c3t3, vertices_around_edge, criterion, inc_cells, cell_selector);
     }
   }
   else

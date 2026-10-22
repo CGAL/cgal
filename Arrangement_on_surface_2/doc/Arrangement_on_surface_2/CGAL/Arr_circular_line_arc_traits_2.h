@@ -6,8 +6,7 @@ namespace CGAL {
  * of concept `CircularKernel`. It provides curves that can be of both types
  * `CGAL::Line_arc_2<CircularKernel>` or `CGAL::Circular_arc_2<CircularKernel>`.
  *
- * It uses the
- * <A HREF="https://www.boost.org/doc/html/variant.html">std::variant</A>.
+ * It uses `std::variant`.
  *
  * \cgalModels{AosTraits_2}
  */
