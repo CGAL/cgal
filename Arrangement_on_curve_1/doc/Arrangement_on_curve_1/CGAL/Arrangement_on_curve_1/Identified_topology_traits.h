@@ -62,6 +62,32 @@ public:
   explicit Identified_topology_traits(const Allocator& alloc);
 
   //! @}
+
+  //! \name Identification Vertex
+  //! @{
+
+  /*! determines whether the identification vertex exists.  It does not exist
+   * until the identification point is inserted into the arrangement, and does
+   * not exist again after `clear()` or after the vertex is erased.
+   */
+  bool has_identification_vertex() const;
+
+  /*! obtains the identification vertex.
+   * \pre `has_identification_vertex()` is `true`.
+   */
+  Vertex_descriptor identification_vertex();
+
+  /*! obtains the identification vertex (const version).
+   * \pre `has_identification_vertex()` is `true`.
+   */
+  Vertex_const_descriptor identification_vertex() const;
+
+  /*! sets the identification vertex to `v`.  It is called by `create_vertex()`
+   * when the point of the new vertex is the identification point.
+   */
+  void set_identification_vertex(Vertex_descriptor v);
+
+  //! @}
 };
 
 } // namespace Arrangement_on_curve_1

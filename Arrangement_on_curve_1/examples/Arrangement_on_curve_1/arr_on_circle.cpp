@@ -1,14 +1,4 @@
-// Copyright (c) 2026 Tel-Aviv University (Israel).
-// All rights reserved.
-// This file is part of CGAL (www.cgal.org).
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// Author(s): Efi Fogel         <efifogel@gmail.com>
-
 /*! \file arr_on_circle.cpp
- * Example: 1D arrangement on a circle (identified parameter space).
- *
  * This example demonstrates `Arrangement_on_curve_1` with `Circle_traits_1`,
  * the kernel-parameterised geometry traits for points on \f$\mathbb{S}_1\f$.
  * Points are represented as `Direction_2` objects from the kernel.

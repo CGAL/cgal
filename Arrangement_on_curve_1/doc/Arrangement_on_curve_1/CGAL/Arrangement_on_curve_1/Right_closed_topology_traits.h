@@ -51,6 +51,32 @@ public:
   explicit Right_closed_topology_traits(const Allocator& alloc);
 
   //! @}
+
+  //! \name Boundary Vertices
+  //! @{
+
+  /*! determines whether the right boundary vertex exists.  It does not exist
+   * until a point on the closed right boundary is inserted into the arrangement,
+   * and does not exist again after `clear()` or after the vertex is erased.
+   */
+  bool has_right_boundary_vertex() const;
+
+  /*! obtains the right boundary vertex.
+   * \pre `has_right_boundary_vertex()` is `true`.
+   */
+  Vertex_descriptor right_boundary_vertex();
+
+  /*! obtains the right boundary vertex (const version).
+   * \pre `has_right_boundary_vertex()` is `true`.
+   */
+  Vertex_const_descriptor right_boundary_vertex() const;
+
+  /*! sets the right boundary vertex to `v`.  It is called by `create_vertex()`
+   * when the point of the new vertex lies on the closed right boundary.
+   */
+  void set_right_boundary_vertex(Vertex_descriptor v);
+
+  //! @}
 };
 
 } // namespace Arrangement_on_curve_1

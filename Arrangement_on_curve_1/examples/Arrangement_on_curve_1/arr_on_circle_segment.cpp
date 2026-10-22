@@ -18,8 +18,6 @@
 #include <CGAL/Arrangement_on_curve_1/insert.h>
 #include <CGAL/Arrangement_on_curve_1/locate.h>
 #include <CGAL/Arrangement_on_curve_1/Closed_geom_traits_2_adaptor_1.h>
-#include <CGAL/Arrangement_on_curve_1/Parameter_space.h>
-#include <CGAL/Arrangement_on_curve_1/Side_tags.h>
 
 // Kernel: Arr_circle_segment_traits_2 requires the kernel's FT to be an
 // exact rational type so that circle centers and squared radii are exact.
@@ -32,7 +30,6 @@ using FT = Kernel::FT;
 using Geom_traits_2 = CGAL::Arr_circle_segment_traits_2<Kernel>;
 using CoordNT = Geom_traits_2::CoordNT;
 using Point_2 = Geom_traits_2::Point_2;
-using Curve_2 = Geom_traits_2::Curve_2;
 using X_monotone_curve_2 = Geom_traits_2::X_monotone_curve_2;
 using Rat_point_2 = Geom_traits_2::Rational_point_2;
 using Circle_2 = Geom_traits_2::Rational_circle_2;
@@ -84,11 +81,9 @@ int main() {
   std::cout << "Circle x^2 + y^2 = 25 (center origin, radius 5).\n"
             << "Master arc: upper semicircle from (-5,0) to (5,0), y >= 0.\n\n";
 
-  /* Build the 2D arrangement of the full circle.
-   * The Curve_2(circle) constructor creates a full-circle curve that is
-   * not x-monotone; CGAL::insert() handles its decomposition internally.
-   * The result has 2 vertices (the x-axis crossings), 2 edges (the two
-   * semicircular arcs), and 2 faces (inside and outside the circle).
+  /* Build the 2D arrangement of the upper semicircle.  It has 2 vertices (the
+   * x-axis crossings), 1 edge, and 1 face; the points inserted into the 1D
+   * arrangement below are also inserted into it.
    */
   auto traits_2_ptr = std::make_shared<const Geom_traits_2>();
   Arrangement_2 arr_2d(traits_2_ptr.get());
@@ -138,50 +133,41 @@ int main() {
     put(v_data_map, v, std::string(s.label));
   }
 
-  /* Traverse the 1D arrangement in sorted (left-to-right) order by
-   *  walking the topological linked structure from the leftmost edge.
-   */
   std::cout << "Resulting 1D arrangement:\n";
   std::cout << "  Number of vertices: " << arr_1d.number_of_vertices() << "\n";
   std::cout << "  Number of edges:    " << arr_1d.number_of_edges()    << "\n\n";
 
+  /* Traverse the 1D arrangement in sorted (left-to-right) order, starting at
+   * the leftmost edge.  The arrangement has number_of_edges() edges, and every
+   * edge but the last has a right vertex.
+   */
   auto v_pnt_map = arr_1d.vertex_point_map();
-
-  std::cout << "Sorted vertex sequence (left to right by x-coordinate):\n";
-  // The right boundary vertex has no edge on its right; the walks below stop there.
-  auto ps_in_x = arr_1d.geometry_traits_1().parameter_space_in_x_1_object();
-  auto is_right_boundary = [&](Arrangement_1::Vertex_const_descriptor v)
-  { return ps_in_x(get(v_pnt_map, v)) == Aoc::Parameter_space::RIGHT_BOUNDARY; };
-
   auto print_vertex = [&](Arrangement_1::Vertex_const_descriptor v) {
     std::cout << "  " << get(v_data_map, v) << "  ~  ";
     print_point(get(v_pnt_map, v));
     std::cout << "\n";
   };
+  auto next = [&](auto e) { return arr_1d.right_edge(arr_1d.right_vertex(e)); };
 
+  std::cout << "Sorted vertex sequence (left to right by x-coordinate):\n";
   auto e = arr_1d.left_boundary_edge();
   if (arr_1d.has_left_vertex(e)) print_vertex(arr_1d.left_vertex(e));
-  while (arr_1d.has_right_vertex(e)) {
-    auto v = arr_1d.right_vertex(e);
-    print_vertex(v);
-    if (is_right_boundary(v)) break;
-    e = arr_1d.right_edge(v);
+  for (std::size_t i = 0; i < arr_1d.number_of_edges(); ++i) {
+    if (i > 0) e = next(e);
+    if (arr_1d.has_right_vertex(e)) print_vertex(arr_1d.right_vertex(e));
   }
 
   std::cout << "\nEdge structure (left to right):\n";
-  size_t idx = 0;
   e = arr_1d.left_boundary_edge();
-  while (true) {
-    std::cout << "  Edge " << idx++ << ": ";
+  for (std::size_t i = 0; i < arr_1d.number_of_edges(); ++i) {
+    if (i > 0) e = next(e);
+    std::cout << "  Edge " << i << ": ";
     if (arr_1d.has_left_vertex(e)) std::cout << "[" << get(v_data_map, arr_1d.left_vertex(e)) << "]";
     else std::cout << "(arc start)";
     std::cout << " -- ";
-
     if (arr_1d.has_right_vertex(e)) std::cout << "[" << get(v_data_map, arr_1d.right_vertex(e)) << "]";
     else std::cout << "(arc end)";
     std::cout << "\n";
-    if (! arr_1d.has_right_vertex(e) || is_right_boundary(arr_1d.right_vertex(e))) break;
-    e = arr_1d.right_edge(arr_1d.right_vertex(e));
   }
 
   /* Locate a query point and report whether it coincides with a vertex.
@@ -207,7 +193,7 @@ int main() {
                                typename Arrangement_2::Face_const_handle> gso;
   gso.ignore_all_vertices(false);
   gso.colored_vertex = [](const Arrangement_2&, Arrangement_2::Vertex_const_handle) -> bool { return true; };
-  gso.vertex_color = [](const Arrangement_2&, Arrangement_2::Vertex_const_handle fh) -> CGAL::IO::Color
+  gso.vertex_color = [](const Arrangement_2&, Arrangement_2::Vertex_const_handle) -> CGAL::IO::Color
   { return CGAL::IO::Color(128, 0, 128); };
   gso.colored_face = [](const Arrangement_2&, Arrangement_2::Face_const_handle) -> bool { return false; };
   CGAL::draw(arr_2d, gso, "circle");

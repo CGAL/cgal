@@ -61,6 +61,7 @@
  * - `Kernel::Counterclockwise_in_between_2`
  */
 
+#include <CGAL/enum.h>
 #include <CGAL/Arrangement_on_curve_1/Side_tags.h>
 
 namespace CGAL {

@@ -41,6 +41,9 @@ namespace AocTraits {}
 //! \defgroup PkgArrangementOnCurve1Tags Tags
 //! \ingroup PkgArrangementOnCurve1Ref
 
+/// \defgroup PkgArrangementOnCurve1Enums Enumerations
+/// \ingroup PkgArrangementOnCurve1Ref
+
 /*!
 \addtogroup PkgArrangementOnCurve1Ref
 \cgalPkgDescriptionBegin{1D Arrangements,PkgArrangementOnCurve1}
@@ -72,11 +75,13 @@ as free (global) functions.
 
 \cgalCRPSection{Enumerations}
 
+- `CGAL::Arrangement_on_curve_1::Arr_parameter_space`
+
 \cgalCRPSection{Tags}
 
-- `Open_side_tag`
-- `Closed_side_tag`
-- `Identified_side_tag`
+- `CGAL::Arrangement_on_curve_1::Open_side_tag`
+- `CGAL::Arrangement_on_curve_1::Closed_side_tag`
+- `CGAL::Arrangement_on_curve_1::Identified_side_tag`
 
 \cgalCRPSection{Concepts}
 
@@ -104,6 +109,7 @@ as free (global) functions.
 - `CGAL::Arrangement_on_curve_1::Open_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
 - `CGAL::Arrangement_on_curve_1::Closed_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
 - `CGAL::Arrangement_on_curve_1::Identified_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Default_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
 - `CGAL::Arrangement_on_curve_1::Line_traits_1<Kernel>`
 - `CGAL::Arrangement_on_curve_1::Segment_traits_1<Kernel>`
 - `CGAL::Arrangement_on_curve_1::Left_ray_traits_1<Kernel>`
@@ -123,7 +129,7 @@ as free (global) functions.
 - `CGAL::Arrangement_on_curve_1::insert()`
 - `CGAL::Arrangement_on_curve_1::locate()`
 - `CGAL::Arrangement_on_curve_1::overlay()`
-- \link PkgArrangementOnCurve1op_left_shift `CGAL::operator<<` \endlink
-- \link PkgArrangementOnCurve1op_right_shift `CGAL::operator<<` \endlink
+- \link PkgArrangementOnCurve1op_left_shift `CGAL::Arrangement_on_curve_1::operator<<` \endlink
+- \link PkgArrangementOnCurve1op_right_shift `CGAL::Arrangement_on_curve_1::operator>>` \endlink
 
 */

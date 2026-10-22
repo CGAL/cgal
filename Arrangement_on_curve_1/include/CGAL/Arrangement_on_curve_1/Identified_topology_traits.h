@@ -19,19 +19,16 @@
  *
  * - An empty arrangement contains one edge that spans the entire parameter space and no vertices.
  *
- * - Vertices and edges together form a single doubly-linked cyclic list:
- *       ... <- e₀ -> v₀ <- e₁ -> v₁ <- e₂ -> v₂ <- e₀ -> ...
- *     where e₀.right = v₀, v₀.left = e₀, v₀.right = e₁, e₁.left = v₀, …
- *     and the last edge's right wraps back to v₀.
+ * - Vertices and edges together form a single doubly-linked cyclic list.
  *
  * - `left_boundary_edge()`: the edge whose left end is at the identification point
  *                           (the canonical entry point for cyclic traversal). Set to the
  *                           spanning edge at construction and updated after insertions and deletions.
  *
- * - `split_edge(e, p)`: splits edge e into (e, e_new), inserts vertex v between them,
+ * - `split_edge(e, p)`: splits edge `e` into (e, e_new), inserts vertex `v` between them,
  *                       and rewires both endpoints cyclically.
  *
- * - `remove(v)`: merges the left and right edges of v back into a single edge.
+ * - `remove(v)`: merges the left and right edges of `v` back into a single edge.
  *                Removing the last vertex restores the single spanning edge.
  *
  * All shared storage infrastructure, including the left boundary edge, is
@@ -76,44 +73,26 @@ public:
 
   using Base::Base;
 
-  using typename Base::Vertex_container;
-  using typename Base::Edge_container;
   using typename Base::Vertex_descriptor;
-  using typename Base::Edge_descriptor;
   using typename Base::Vertex_const_descriptor;
-  using typename Base::Edge_const_descriptor;
-  using typename Base::Vertex_descriptor_iterator;
-  using typename Base::Edge_descriptor_iterator;
-  using typename Base::Vertex_descriptor_range;
-  using typename Base::Edge_descriptor_range;
-  using typename Base::Size;
-  using typename Base::Vertex;
-  using typename Base::Edge;
-  using typename Base::Vertex_point_map;
-  using typename Base::Vertex_data_map;
-  using typename Base::Edge_data_map;
-
-  static constexpr bool use_vector = Base::use_vector;
 
   // --------------------------------------------------------------------------
   // Constructors
-  //
-  // An empty identified arrangement has one spanning edge and no vertices.
   // --------------------------------------------------------------------------
-  Identified_topology_traits() { this->init_spanning_edge(); }
-
-  explicit Identified_topology_traits(const Allocator& alloc) : Base(alloc) { this->init_spanning_edge(); }
+  Identified_topology_traits() = default;
 
   Identified_topology_traits(Identified_topology_traits&&) noexcept = default;
   Identified_topology_traits& operator=(Identified_topology_traits&&) noexcept = default;
 
+  // In list mode, the cached identification vertex descriptor still points
+  // into the source after the base copy; it is redirected to the copied vertex.
   Identified_topology_traits(const Identified_topology_traits& other) :
     Base(other),
     m_identification_vertex(other.m_identification_vertex),
     m_has_identification_vertex(other.m_has_identification_vertex) {
     if constexpr (! UseVector) {
-      auto maps = this->patch_cross_references(other);
-      if (m_has_identification_vertex) m_identification_vertex = maps.vertex_map.at(other.m_identification_vertex);
+      if (m_has_identification_vertex)
+        m_identification_vertex = this->copied_vertex(other, other.m_identification_vertex);
     }
   }
 

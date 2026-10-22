@@ -4,6 +4,13 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Arrangement_on_curve_1_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
-create_single_source_cgal_program("aoc_test.cpp")
+# create a target per cppfile
+file(
+  GLOB cppfiles
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+foreach(cppfile ${cppfiles})
+  create_single_source_cgal_program("${cppfile}")
+endforeach()

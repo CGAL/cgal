@@ -41,7 +41,7 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearc
     std::size_t idx = arr.binary_search_vertex(p, cmp);
 
     // Check if p coincides with the vertex at idx
-    if (idx < topo.number_of_vertices() && cmp(p, topo.vertex_point(idx)) == CGAL::EQUAL)
+    if (idx < topo.number_of_vertices() && cmp(p, topo.vertex_point(idx)) == EQUAL)
       return Result{std::in_place_index<0>, idx};
 
     // p lies in an edge: either to the left of vertex idx (idx < n),
@@ -85,8 +85,8 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearc
       for (auto n = arr.number_of_vertices() - (has_id_vertex ? 1 : 0); n > 0; --n) {
         auto curr_v = arr.right_vertex(curr_e);
         auto res = cmp(p, get(v_pnt_map, curr_v));
-        if (res == CGAL::EQUAL) return Result{std::in_place_index<0>, curr_v};
-        if (res == CGAL::SMALLER) return Result{std::in_place_index<1>, curr_e};
+        if (res == EQUAL) return Result{std::in_place_index<0>, curr_v};
+        if (res == SMALLER) return Result{std::in_place_index<1>, curr_e};
         curr_e = arr.right_edge(curr_v);
       }
 
@@ -98,15 +98,15 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearc
       if constexpr (Aoc::left_is_closed) {
         if (arr.has_left_vertex(curr_e)) {
           auto v = arr.left_vertex(curr_e);
-          if (cmp(p, get(v_pnt_map, v)) == CGAL::EQUAL) return Result{std::in_place_index<0>, v};
+          if (cmp(p, get(v_pnt_map, v)) == EQUAL) return Result{std::in_place_index<0>, v};
         }
       }
 
       while (arr.has_right_vertex(curr_e)) {
         auto curr_v = arr.right_vertex(curr_e);
         auto res = cmp(p, get(v_pnt_map, curr_v));
-        if (res == CGAL::EQUAL) return Result{std::in_place_index<0>, curr_v};
-        if (res == CGAL::SMALLER) return Result{std::in_place_index<1>, curr_e};
+        if (res == EQUAL) return Result{std::in_place_index<0>, curr_v};
+        if (res == SMALLER) return Result{std::in_place_index<1>, curr_e};
         curr_e = arr.right_edge(curr_v);
       }
 

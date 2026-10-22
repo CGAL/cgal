@@ -15,22 +15,22 @@ namespace Arrangement_on_curve_1 {
 template <typename ArrangementA, typename ArrangementB, typename ArrangementR>
 class Default_overlay_visitor {
 public:
-  using Vertex_descriptor_a = typename ArrangementA::Vertex_const_descriptor;
-  using Vertex_descriptor_b = typename ArrangementB::Vertex_const_descriptor;
+  using Vertex_const_descriptor_a = typename ArrangementA::Vertex_const_descriptor;
+  using Vertex_const_descriptor_b = typename ArrangementB::Vertex_const_descriptor;
   using Vertex_descriptor_r = typename ArrangementR::Vertex_descriptor;
 
-  using Edge_descriptor_a = typename ArrangementA::Edge_const_descriptor;
-  using Edge_descriptor_b = typename ArrangementB::Edge_const_descriptor;
+  using Edge_const_descriptor_a = typename ArrangementA::Edge_const_descriptor;
+  using Edge_const_descriptor_b = typename ArrangementB::Edge_const_descriptor;
   using Edge_descriptor_r = typename ArrangementR::Edge_descriptor;
 
 public:
   Default_overlay_visitor(const ArrangementA&, const ArrangementB&, ArrangementR&) {}
 
   // 4 Core Required Intersection Callbacks (Nops)
-  void create_vertex_vv(Vertex_descriptor_a, Vertex_descriptor_b, Vertex_descriptor_r) {}
-  void create_vertex_ve(Vertex_descriptor_a, Edge_descriptor_b, Vertex_descriptor_r) {}
-  void create_vertex_ev(Edge_descriptor_a, Vertex_descriptor_b, Vertex_descriptor_r) {}
-  void create_edge_ee(Edge_descriptor_a, Edge_descriptor_b, Edge_descriptor_r) {}
+  void create_vertex_vv(Vertex_const_descriptor_a, Vertex_const_descriptor_b, Vertex_descriptor_r) {}
+  void create_vertex_ve(Vertex_const_descriptor_a, Edge_const_descriptor_b, Vertex_descriptor_r) {}
+  void create_vertex_ev(Edge_const_descriptor_a, Vertex_const_descriptor_b, Vertex_descriptor_r) {}
+  void create_edge_ee(Edge_const_descriptor_a, Edge_const_descriptor_b, Edge_descriptor_r) {}
 };
 
 } // namespace Arrangement_on_curve_1

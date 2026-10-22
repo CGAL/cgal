@@ -54,9 +54,9 @@ public:
      * otherwise, returns INTERIOR
      */
     Parameter_space operator()(const Point_1& p) const {
-      if (p == m_tr.m_left_bound) return LEFT_BOUNDARY;
-      if (p == m_tr.m_right_bound) return RIGHT_BOUNDARY;
-      return INTERIOR;
+      if (p == m_tr.m_left_bound) return Parameter_space::LEFT_BOUNDARY;
+      if (p == m_tr.m_right_bound) return Parameter_space::RIGHT_BOUNDARY;
+      return Parameter_space::INTERIOR;
     }
   };
 

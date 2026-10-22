@@ -15,7 +15,7 @@
 #include <memory>
 
 #include <CGAL/Arrangement_on_curve_1/Side_tags.h>
-#include <CGAL/Arrangement_on_curve_1/Open_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Default_topology_traits.h>
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
@@ -31,7 +31,7 @@ namespace Arrangement_on_curve_1 {
  *                      Not supported for an identified parameter space.
  */
 template <typename GeometryTraits_1,
-          typename TopologyTraits = Open_topology_traits<GeometryTraits_1>,
+          typename TopologyTraits = typename Default_topology_traits<GeometryTraits_1>::type,
           bool BinarySearch = false>
 class Arrangement_on_curve_1 {
   static_assert(! BinarySearch || TopologyTraits::use_vector,
@@ -225,7 +225,7 @@ public:
   bool has_right_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
 
   // obtains the allocator used by the internal topology traits.
-  Allocator get_allocator() const noexcept { return m_topology_traits.allocator(); }
+  Allocator get_allocator() const noexcept { return m_topology_traits.get_allocator(); }
 
   // ============================================================================
   // HIGH-LEVEL TOPOLOGICAL OPERATIONS
@@ -359,6 +359,11 @@ public:
     // v's left edge is now e_between.
     m_topology_traits.set_left_edge(v, e_between);
 
+    // Both edges of the right boundary vertex are its left edge.
+    if constexpr (right_is_closed) {
+      if (m_topology_traits.right_edge(v) == e_left) m_topology_traits.set_right_edge(v, e_between);
+    }
+
     return v_new;
   }
 
@@ -369,6 +374,13 @@ public:
       // Enforce that v is the current rightmost vertex
       CGAL_assertion_msg(v == m_topology_traits.number_of_vertices() - 1,
                          "When BinarySearch = true, insert_after() can only be called on the rightmost vertex.");
+    }
+
+    // Both edges of the left boundary vertex are left_boundary_edge(), which
+    // must remain the leftmost edge; split it instead.
+    if constexpr (left_is_closed) {
+      if (m_topology_traits.left_edge(v) == m_topology_traits.right_edge(v))
+        return split_edge(m_topology_traits.right_edge(v), p);
     }
 
     Vertex_descriptor v_new = create_vertex(p);
@@ -394,7 +406,7 @@ public:
   }
 
   /*! splits the edge `e` by inserting a new point `p` inside it.
-   * A new edge becomes the left sub-edge; `e` becomes the right sub-edge,
+   * `e` becomes the left sub-edge; a new edge becomes the right sub-edge,
    * so that `e` retains its identity (left_boundary_edge() remains stable).
    */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p) {
@@ -415,6 +427,10 @@ public:
       Vertex_descriptor v_old_right = m_topology_traits.right_vertex(e);
       m_topology_traits.set_right_vertex(e_right, v_old_right);
       m_topology_traits.set_left_edge(v_old_right, e_right);
+      // Both edges of the right boundary vertex are its left edge.
+      if constexpr (right_is_closed) {
+        if (m_topology_traits.right_edge(v_old_right) == e) m_topology_traits.set_right_edge(v_old_right, e_right);
+      }
     }
     m_topology_traits.set_left_vertex(e_right, v_new);
 
@@ -429,29 +445,50 @@ public:
   }
 
   /*! removes a vertex from the arrangement.
-   * It merges its two adjacent edges into one, keeping the left edge and removing the right.
+   *
+   * If the two edges incident to `v` are distinct, they are merged into one;
+   * left_boundary_edge() is always the one kept.  Otherwise, `v` is a boundary
+   * vertex of a closed side, or the only vertex of an identified arrangement,
+   * and no edge is removed; `v` is detached from its incident edge.
    */
   void remove(Vertex_descriptor v) {
-    Edge_descriptor e_left = m_topology_traits.left_edge(v);
-    Edge_descriptor e_right = m_topology_traits.right_edge(v);
+    auto& topo = m_topology_traits;
+    Edge_descriptor e_left = topo.left_edge(v);
+    Edge_descriptor e_right = topo.right_edge(v);
 
-    // Extend e_left to cover the span formerly covered by e_right.
-    if (m_topology_traits.has_right_vertex(e_right)) {
-      Vertex_descriptor v_right = m_topology_traits.right_vertex(e_right);
-      m_topology_traits.set_right_vertex(e_left, v_right);
-      m_topology_traits.set_left_edge(v_right, e_left);
+    if (e_left == e_right) {
+      // A boundary vertex is either the left or the right end of its edge; the
+      // only vertex of an identified arrangement is both.  Removing the latter
+      // restores the spanning edge.
+      if (topo.has_left_vertex(e_left) && (topo.left_vertex(e_left) == v)) topo.clear_left_vertex(e_left);
+      if (topo.has_right_vertex(e_left) && (topo.right_vertex(e_left) == v)) topo.clear_right_vertex(e_left);
+    }
+    else if (e_right == topo.left_boundary_edge()) {
+      // Identified only: v is the identification vertex, or, if it does not
+      // exist, the last vertex.  left_boundary_edge() absorbs e_left.
+      Vertex_descriptor u = topo.left_vertex(e_left);
+      topo.set_left_vertex(e_right, u);
+      topo.set_right_edge(u, e_right);
+      destroy_edge(e_left);
     }
     else {
-      m_topology_traits.clear_right_vertex(e_left);
+      // e_left absorbs e_right.
+      if (topo.has_right_vertex(e_right)) {
+        Vertex_descriptor w = topo.right_vertex(e_right);
+        topo.set_right_vertex(e_left, w);
+        topo.set_left_edge(w, e_left);
+        // Both edges of the right boundary vertex are its left edge.
+        if (topo.right_edge(w) == e_right) topo.set_right_edge(w, e_left);
+      }
+      else topo.clear_right_vertex(e_left);
+      destroy_edge(e_right);
     }
 
-    // Destroy the now-redundant right edge and the vertex.
-    destroy_edge(e_right);
     destroy_vertex(v);
   }
 
   // ==================================================================
-  // BINARY SEARCH SUPPORT (only available / called when Topology_traits::UseVector = true)
+  // BINARY SEARCH SUPPORT (only available / called when Topology_traits::use_vector = true)
   //
   // locate.h calls binary_search_vertex() when the topology traits has
   // BinarySearch = true (detected via the static constexpr below).

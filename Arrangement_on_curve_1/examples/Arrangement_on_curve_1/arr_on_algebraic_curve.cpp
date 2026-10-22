@@ -76,7 +76,7 @@ int main() {
   // 2. Wrap one of the x-monotone arcs as the "master arc" of the 1D
   //    geometry traits, and create the (initially empty) 1D arrangement.
   //
-  //    Note: Compare_x_1 (defined in Geom_traits_2_adaptor_1) orders points
+  //    Note: Compare_x_1 (defined in Geom_traits_2_adaptor_1_base) orders points
   //    globally via Geom_traits_2::compare_x_2_object() /
   //    compare_xy_2_object(), independent of which arc the points were
   //    constructed on. Hence any x-monotone arc of the curve is a valid

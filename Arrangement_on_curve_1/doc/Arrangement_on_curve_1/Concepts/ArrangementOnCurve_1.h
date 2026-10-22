@@ -1,4 +1,5 @@
-// Copyright (c) 2026 Tel-Aviv University (Israel). All rights reserved.
+// Copyright (c) 2026 Tel-Aviv University (Israel).
+// All rights reserved.
 // This file is part of CGAL (www.cgal.org).
 // $URL$
 // $Id$
@@ -73,9 +74,8 @@ public:
   //! \name Accessors
   //! @{
 
-  /*! returns `true` if the arrangement is a closed loop (both
+  /*! is `true` if the arrangement is a closed loop (both
    * `Left_side_category` and `Right_side_category` are `Identified_side_tag`).
-   * When this returns `true`, `left_boundary_edge()` is not available.
    */
   static constexpr bool is_identified;
 
@@ -111,21 +111,16 @@ public:
    */
   auto edge_data_map() const;
 
-  /*! obtains the descriptor of the leftmost edge.
+  /*! obtains the descriptor of the leftmost edge.  If the parameter space is
+   * identified, this is the edge whose left vertex is the identification
+   * vertex, or, if the identification vertex does not exist, the edge that
+   * contains the identification point.
    */
   Edge_descriptor left_boundary_edge();
 
   /*! obtains the constant descriptor of the leftmost edge.
    */
   Edge_const_descriptor left_boundary_edge() const;
-
-  /*! obtains the descriptor of the rightmost edge.
-   */
-  Edge_descriptor right_edge();
-
-  /*! obtains the constant descriptor of the rightmost edge.
-   */
-  Edge_const_descriptor right_edge() const;
 
   /*! obtains the descriptor of the left vertex of an edge.
    * \param e the edge.
@@ -141,13 +136,11 @@ public:
 
   /*! obtains the descriptor of the left edge of a vertex.
    * \param v the vertex.
-   * \pre `has_left_vertex(e)` evaluates to `true`.
    */
   Edge_const_descriptor left_edge(Vertex_const_descriptor v) const;
 
   /*! obtains the descriptor of the right edge of a vertex.
    * \param v the vertex.
-   * \pre `has_right_vertex(e)` evaluates to `true`.
    */
   Edge_const_descriptor right_edge(Vertex_const_descriptor v) const;
 
@@ -183,10 +176,11 @@ public:
    */
   void destroy_edge(Edge_descriptor e);
 
-  /*! inserts the very first point into an empty arrangement.  For an
-   * open/closed arrangement the single edge is split into (\f$(-\infty\f$, `v`)
-   * and (`v`, \f$(+\infty\f$). For an identified arrangement a degenerate
-   * self-loop edge is created.
+  /*! inserts the very first point into an empty arrangement.  If the
+   * parameter space is not identified, the single edge that spans the
+   * parameter space is split into the edge to the left of the new vertex `v`
+   * and the edge to the right of `v`.  Otherwise, the single edge becomes a
+   * self-loop whose two ends are `v`.
    *
    * \param p the point to insert.
    */
@@ -205,8 +199,11 @@ public:
    */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p);
 
-  /*! removes vertex `v` from the arrangement, merging its left and right
-   * edges into a single edge.
+  /*! removes vertex `v` from the arrangement.  If the two edges incident to
+   * `v` are distinct, they are merged into a single edge.  Otherwise, `v` is
+   * a boundary vertex of a closed side, or the only vertex of an arrangement
+   * on an identified parameter space, and no edge is removed; in the latter
+   * case the arrangement becomes empty.
    */
   void remove(Vertex_descriptor v);
 

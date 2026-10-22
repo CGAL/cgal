@@ -14,7 +14,7 @@
  * Both boundaries are open; no boundary vertices are ever registered.
  */
 
-#include <CGAL/Arrangement_on_curve_1/Topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Topology_traits_base.h>
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
@@ -26,9 +26,8 @@ namespace Arrangement_on_curve_1 {
  * Both boundaries of the parameter space are open: neither endpoint of the
  * master curve is in the domain.  No boundary vertices are ever registered.
  *
- * Derives from `Topology_traits` with both sides set to `Open_side_tag`.
- * The base-class `create_vertex` already handles the open/open case correctly
- * (it ignores the geometry traits), so no override is needed here.
+ * Derives from `Topology_traits_base`; `create_vertex` ignores the geometry
+ * traits, since no point lies on a boundary.
  *
  * \tparam GeometryTraits_1 a model of `AocTraits_1` with
  *         `Left_side_category = Open_side_tag` and
@@ -46,7 +45,7 @@ template <typename GeometryTraits_1,
           bool UseVector = false,
           typename Allocator_ = std::allocator<char>>
 class Open_topology_traits :
-  public Topology_traits<GeometryTraits_1, Open_side_tag, Open_side_tag, VertexData, EdgeData, UseVector, Allocator_> {
+  public Topology_traits_base<typename GeometryTraits_1::Point_1, VertexData, EdgeData, UseVector, Allocator_> {
 public:
   using Geometry_traits_1 = GeometryTraits_1;
   using Vertex_data = VertexData;
@@ -57,16 +56,15 @@ public:
   using allocator_type = Allocator;
 
 private:
-  using Base =
-    Topology_traits<Geometry_traits_1, Open_side_tag, Open_side_tag, Vertex_data, Edge_data, UseVector, Allocator>;
+  using Base = Topology_traits_base<typename GeometryTraits_1::Point_1, VertexData, EdgeData, UseVector, Allocator>;
 
 public:
   using Base::Base;
   using typename Base::Point_1;
   using typename Base::Vertex_descriptor;
 
+  //! creates a new vertex associated with point `p`.
   Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& /* gt */) { return Base::create_vertex(p); }
-
 };
 
 } // namespace Arrangement_on_curve_1

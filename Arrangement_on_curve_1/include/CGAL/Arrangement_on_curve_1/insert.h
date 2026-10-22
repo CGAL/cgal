@@ -27,8 +27,6 @@ typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>::V
 insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr,
        const typename GeometryTraits::Point_1& p) {
   using Aoc = Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>;
-  using Vertex_descriptor = typename Aoc::Vertex_descriptor;
-  using Edge_descriptor = typename Aoc::Edge_descriptor;
 
   auto loc = locate(arr, p);
 

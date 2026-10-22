@@ -81,12 +81,6 @@ public:
   //! Reflects the value of template parameter `UseVector`.
   static constexpr bool use_vector = UseVector;
 
-  //! Indicates whether the left side is closed.
-  static constexpr bool left_is_closed = Side_is_closed<LeftTag>::value;
-
-  //! Indicates whether the right side is closed.
-  static constexpr bool right_is_closed = Side_is_closed<RightTag>::value;
-
   //! @}
 
   //! \name Queries and Ranges

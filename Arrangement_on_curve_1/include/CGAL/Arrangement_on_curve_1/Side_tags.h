@@ -32,7 +32,7 @@
  *   using Right_side_category = <one of the three tags above>;
  *
  * The topology traits class reads these from the geometry traits.
- * `Arrangement_on_curve_1` and all free functions (insert, locate, overlay, …)
+ * `Arrangement_on_curve_1` and all free functions (e.g., insert, locate, overlay)
  * dispatch on them at compile time using if constexpr.
  *
  * Additional geometry-traits predicates required per category

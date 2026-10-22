@@ -111,17 +111,33 @@ container allocations, incidence cell updates, and property map
 indexing to the backend topology traits model.
 
 When `TopologyTraits` is omitted it defaults to
-`Open_topology_traits<GeometryTraits_1>`, which is correct for any
-geometry traits with `Left_side_category = Right_side_category =
-Open_side_tag`.  For other combinations supply the matching traits
-explicitly, e.g.:
+`Default_topology_traits<GeometryTraits_1>::type`, which selects the
+topology traits that matches the side categories of the geometry traits:
+
+| `Left_side_category`  | `Right_side_category` | Topology traits                |
+|-----------------------|-----------------------|--------------------------------|
+| `Open_side_tag`       | `Open_side_tag`       | `Open_topology_traits`         |
+| `Closed_side_tag`     | `Closed_side_tag`     | `Closed_topology_traits`       |
+| `Closed_side_tag`     | `Open_side_tag`       | `Left_closed_topology_traits`  |
+| `Open_side_tag`       | `Closed_side_tag`     | `Right_closed_topology_traits` |
+| `Identified_side_tag` | `Identified_side_tag` | `Identified_topology_traits`   |
+
+Any other combination is rejected at compile time.  For example, the
+following two definitions are equivalent:
 
 \code{.cpp}
 using K = CGAL::Exact_predicates_exact_constructions_kernel;
 using Gt = CGAL::Arrangement_on_curve_1::Circle_traits_1<K>;
 using Tt = CGAL::Arrangement_on_curve_1::Identified_topology_traits<Gt>;
-using Arr = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Gt, Tt>;
+using Arr1 = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Gt>;
+using Arr2 = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Gt, Tt>;
 \endcode
+
+`Default_topology_traits` accepts the same `VertexData`, `EdgeData`,
+`UseVector`, and `Allocator` template parameters as the topology traits
+classes; for example,
+`Default_topology_traits<Gt, Vertex_data, void, true>::type` is
+`Identified_topology_traits<Gt, Vertex_data, void, true>`.
 
 An empty arrangement consists of a single edge representing the whole master curve.
 
@@ -192,7 +208,9 @@ A vertex `v` can be removed from the arrangement using the call
 
 Removing a vertex removes its point from the track and merges its left
 and right flanking edges back into a single unified edge, preserving
-the overall topological continuity of the curve.
+the overall topological continuity of the curve.  A boundary vertex of a
+closed side, and the only vertex of an arrangement on an identified parameter
+space, has a single incident edge; removing it removes no edge.
 
 <!-- ======================================================================= -->
 \section aoc_sec-free_funcs Free Functions
@@ -394,16 +412,19 @@ Derived classes add only their topology-specific cached descriptors:
   `set_left_edge`, `set_right_edge`, `set_left_vertex`,
   `set_right_vertex`, `clear_left_vertex`, `clear_right_vertex`,
   `erase_vertex`, `erase_edge`).
-- The protected `patch_cross_references()` helper for list-mode copy, which also
-  patches the left boundary edge.
-- The protected `init_spanning_edge()` helper, which creates the single edge that
-  spans the parameter space and sets it as the left boundary edge.
-- The protected `clear()` helper, which removes all vertices and edges and
-  recreates the spanning edge as the left boundary edge; the `clear()` functions
-  of the derived classes call it and reset their own cached descriptors.
-- The protected `swap()` helper, which swaps the containers and the left boundary
-  edge; the `swap()` functions of the derived classes call it and swap their own
-  cached descriptors.
+- Constructors that create the single edge that spans the parameter space and
+  set it as the left boundary edge (via the protected `init_spanning_edge()`
+  helper).
+- A copy constructor that, in list mode, redirects all stored iterators,
+  including the left boundary edge, into the copy (via the private
+  `patch_cross_references()` helper), and a copy assignment operator
+  implemented via `swap()`.  Derived classes that cache vertex descriptors
+  redirect them with the protected `copied_vertex()` helper.
+- `clear()`, which removes all vertices and edges and recreates the spanning
+  edge as the left boundary edge, and `swap()`, which swaps the containers and
+  the left boundary edge.  Derived classes that cache descriptors hide these
+  functions with versions that call them and reset or swap their own cached
+  descriptors.
 
 The template parameters of `Topology_traits_base` (and all derived classes) are:
 
@@ -415,9 +436,12 @@ The template parameters of `Topology_traits_base` (and all derived classes) are:
 | `UseVector`  | `false`                   | `true` = vector + index descriptors      |
 | `Allocator`  | `std::allocator<char>`    | allocator for internal containers        |
 
-Two static predicates declare the topology:
+The topology traits classes do not declare the kind of the parameter space.
+Instead, `Arrangement_on_curve_1` derives it from the side categories of the
+geometry traits, and provides three static predicates:
 
 \code{.cpp}
+static constexpr bool is_identified;    // true if both side categories are Identified_side_tag
 static constexpr bool left_is_closed;   // true if Left_side_category = Closed_side_tag
 static constexpr bool right_is_closed;  // true if Right_side_category = Closed_side_tag
 \endcode
@@ -443,9 +467,8 @@ The `UseVector` template parameter controls the underlying container and descrip
 \subsection aoc_ssec-topo_traits-unbounded Open Topology Traits
 <!-- ----------------------------------------------------------------------- -->
 
-`Open_topology_traits` is the default topology traits for
-arrangements on an open, infinite curve
-(`Left_side_category = Right_side_category = Open_side_tag`).
+`Open_topology_traits` is the topology traits for arrangements on an
+open curve (`Left_side_category = Right_side_category = Open_side_tag`).
 
 It inherits the left boundary edge from `Topology_traits_base`.  In list
 mode, it is patched after copy via `patch_cross_references()`.  In vector
