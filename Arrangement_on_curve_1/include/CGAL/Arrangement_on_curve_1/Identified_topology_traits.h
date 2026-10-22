@@ -34,9 +34,9 @@
  * - `remove(v)`: merges the left and right edges of v back into a single edge.
  *                Removing the last vertex restores the single spanning edge.
  *
- * All shared storage infrastructure is inherited from `Topology_traits_base`.
- * `Identified_topology_traits` adds `m_left_boundary_edge`, the
- * identification-vertex cache, and `init_spanning_edge()`.
+ * All shared storage infrastructure, including the left boundary edge, is
+ * inherited from `Topology_traits_base`.  `Identified_topology_traits` adds the
+ * identification-vertex cache.
  *
  * Template parameters:
  *   GeometryTraits_1 - a model of `AocIdentifiedBoundaryTraits_1`.
@@ -100,21 +100,19 @@ public:
   //
   // An empty identified arrangement has one spanning edge and no vertices.
   // --------------------------------------------------------------------------
-  Identified_topology_traits() { init_spanning_edge(); }
+  Identified_topology_traits() { this->init_spanning_edge(); }
 
-  explicit Identified_topology_traits(const Allocator& alloc) : Base(alloc) { init_spanning_edge(); }
+  explicit Identified_topology_traits(const Allocator& alloc) : Base(alloc) { this->init_spanning_edge(); }
 
   Identified_topology_traits(Identified_topology_traits&&) noexcept = default;
   Identified_topology_traits& operator=(Identified_topology_traits&&) noexcept = default;
 
   Identified_topology_traits(const Identified_topology_traits& other) :
     Base(other),
-    m_left_boundary_edge(other.m_left_boundary_edge),
     m_identification_vertex(other.m_identification_vertex),
     m_has_identification_vertex(other.m_has_identification_vertex) {
     if constexpr (! UseVector) {
       auto maps = this->patch_cross_references(other);
-      m_left_boundary_edge = maps.edge_map.at(other.m_left_boundary_edge);
       if (m_has_identification_vertex) m_identification_vertex = maps.vertex_map.at(other.m_identification_vertex);
     }
   }
@@ -167,32 +165,6 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  // the edge whose left end is at the identification point (canonical entry
-  // point for cyclic traversal).  Always valid (the spanning edge is created at
-  // construction).
-  // --------------------------------------------------------------------------
-  Edge_descriptor left_boundary_edge() { return m_left_boundary_edge; }
-  Edge_const_descriptor left_boundary_edge() const { return m_left_boundary_edge; }
-  void set_left_boundary_edge(Edge_descriptor e) { m_left_boundary_edge = e; }
-
-  // --------------------------------------------------------------------------
-  // patches m_left_boundary_edge in vector mode.
-  // --------------------------------------------------------------------------
-  void erase_edge(Edge_descriptor e) {
-    if constexpr (! UseVector) {
-      this->m_edges.erase(e);
-      return;
-    }
-    if (e == this->m_edges.size() - 1) {
-      this->m_edges.pop_back();
-      if (m_left_boundary_edge == e) --m_left_boundary_edge;
-      return;
-    }
-    this->erase_edge_base(e);
-    if (m_left_boundary_edge > e) --m_left_boundary_edge;
-  }
-
-  // --------------------------------------------------------------------------
   // clears the identification vertex cache if it is removed, then patches the
   // stored index in vector mode.
   // --------------------------------------------------------------------------
@@ -208,34 +180,19 @@ public:
   // clear / swap
   // --------------------------------------------------------------------------
   void clear() {
-    this->m_vertices.clear();
-    this->m_edges.clear();
+    Base::clear();
     m_has_identification_vertex = false;
-    init_spanning_edge();
   }
 
   void swap(Identified_topology_traits& other) noexcept {
-    std::swap(this->m_vertices, other.m_vertices);
-    std::swap(this->m_edges, other.m_edges);
-    std::swap(m_left_boundary_edge, other.m_left_boundary_edge);
+    Base::swap(other);
     std::swap(m_identification_vertex, other.m_identification_vertex);
     std::swap(m_has_identification_vertex, other.m_has_identification_vertex);
   }
 
 private:
-  Edge_descriptor m_left_boundary_edge {};
   Vertex_descriptor m_identification_vertex {};
   bool m_has_identification_vertex = false;
-
-  // --------------------------------------------------------------------------
-  // creates the single edge that spans the entire parameter space and sets it
-  // as the left boundary edge.  Called from constructors and clear().
-  // --------------------------------------------------------------------------
-  void init_spanning_edge() {
-    this->m_edges.emplace_back();
-    if constexpr (UseVector) m_left_boundary_edge = 0;
-    else m_left_boundary_edge = this->m_edges.begin();
-  }
 };
 
 } // namespace Arrangement_on_curve_1

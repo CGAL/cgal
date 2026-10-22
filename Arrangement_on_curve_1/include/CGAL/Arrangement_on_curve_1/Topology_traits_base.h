@@ -24,16 +24,17 @@
  * - List-mode and vector-mode descriptor iterators
  * - All three property maps (Vertex_point_map, Vertex_data_map, Edge_data_map)
  * - Core navigation (left/right_edge, left/right_vertex, has_left/right_vertex, vertex_point)
- * - Low-level storage primitives (create_vertex, create_edge, set_*, erase_*)
+ * - The left boundary edge (left_boundary_edge, set_left_boundary_edge)
+ * - Low-level storage primitives (create_vertex, create_edge, set_*, erase_vertex, erase_edge)
  * - Copy constructor helpers (patch_cross_references for list mode)
  * - Allocator access
  *
  * Each derived class adds only its topology-specific state and logic:
- * - `Open_topology_traits`---two sentinel edge descriptors
- * - `Closed_topology_traits`---two boundary vertex descriptors
- * - `Left_topology_traits`---one boundary vertex descriptors
- * - `Right_closed_topology_traits`---one boundary vertex descriptors
- * - `Identified_topology_traits`---a single self-loop edge descriptor
+ * - `Topology_traits` (the base of `Open_topology_traits`,
+ *   `Closed_topology_traits`, `Left_closed_topology_traits`, and
+ *   `Right_closed_topology_traits`)---the left and right boundary vertex
+ *   descriptors
+ * - `Identified_topology_traits`---the identification vertex descriptor
  */
 
 #include <list>
@@ -41,6 +42,8 @@
 #include <memory>
 #include <type_traits>
 #include <unordered_map>
+
+#include <CGAL/assertions.h>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -336,6 +339,10 @@ protected:
   Vertex_container m_vertices;
   Edge_container   m_edges;
 
+  // The leftmost edge; in an identified arrangement, the edge whose left end
+  // is at the identification point.
+  Edge_descriptor m_left_boundary_edge {};
+
   // --------------------------------------------------------------------------
   // Protected helpers: descriptor -> node reference
   // --------------------------------------------------------------------------
@@ -378,7 +385,8 @@ public:
   // after copying.
   Topology_traits_base(const Topology_traits_base& other) :
     m_vertices(other.m_vertices),
-    m_edges(other.m_edges)
+    m_edges(other.m_edges),
+    m_left_boundary_edge(other.m_left_boundary_edge)
   {}
 
   // Copy assignment: implemented by derived classes via swap.
@@ -446,6 +454,17 @@ public:
   const Point_1& vertex_point(Vertex_const_descriptor v) const { return v_ref(v).m_point; }
 
   // --------------------------------------------------------------------------
+  // Left boundary edge accessors
+  //
+  // left_boundary_edge() is always valid; the derived classes set it to the
+  // spanning edge at construction.
+  // --------------------------------------------------------------------------
+  Edge_descriptor left_boundary_edge() { return m_left_boundary_edge; }
+  Edge_const_descriptor left_boundary_edge() const { return m_left_boundary_edge; }
+
+  void set_left_boundary_edge(Edge_descriptor e) { m_left_boundary_edge = e; }
+
+  // --------------------------------------------------------------------------
   // Low-level storage primitives
   // --------------------------------------------------------------------------
   Vertex_descriptor create_vertex(const Point_1& p) {
@@ -493,17 +512,20 @@ public:
     }
   }
 
-  // erase_edge derived classes must patch their own cached edge descriptors.
-  void erase_edge_base(Edge_descriptor e) {
-    if constexpr (!UseVector) {
-      m_edges.erase(e);
-      return;
-    }
-    if (e == m_edges.size() - 1) { m_edges.pop_back(); return; }
-    m_edges.erase(m_edges.begin() + static_cast<std::ptrdiff_t>(e));
-    for (auto& vert : m_vertices) {
-      if (vert.m_left  > e) --vert.m_left;
-      if (vert.m_right > e) --vert.m_right;
+  // erases the edge `e`.  In vector mode, decrements every stored edge index
+  // greater than `e`, including m_left_boundary_edge.
+  // Pre: `e` is not the left boundary edge.
+  void erase_edge(Edge_descriptor e) {
+    CGAL_precondition(e != m_left_boundary_edge);
+    if constexpr (! UseVector) m_edges.erase(e);
+    else {
+      if (e == m_edges.size() - 1) { m_edges.pop_back(); return; }
+      m_edges.erase(m_edges.begin() + static_cast<std::ptrdiff_t>(e));
+      for (auto& vert : m_vertices) {
+        if (vert.m_left  > e) --vert.m_left;
+        if (vert.m_right > e) --vert.m_right;
+      }
+      if (m_left_boundary_edge > e) --m_left_boundary_edge;
     }
   }
 
@@ -522,8 +544,8 @@ protected:
   // been value-copied (so all stored iterators still point into the source).
   // Rebuilds every stored iterator to point into the newly copied containers.
   //
-  // Returns the edge and vertex maps so derived classes can patch their own
-  // cached descriptors.
+  // Also patches m_left_boundary_edge.  Returns the edge and vertex maps so
+  // derived classes can patch their own cached descriptors.
   // --------------------------------------------------------------------------
   struct Patch_maps {
     std::unordered_map<Edge_const_descriptor, Edge_descriptor, Iterator_hash> edge_map;
@@ -563,7 +585,43 @@ protected:
         if (se->m_has_right) de->m_right = maps.vertex_map.at(se->m_right);
       }
     }
+    m_left_boundary_edge = maps.edge_map.at(other.m_left_boundary_edge);
     return maps;
+  }
+
+  // --------------------------------------------------------------------------
+  // removes all vertices and edges, and recreates the single spanning edge as
+  // the left boundary edge.  Called by the clear() functions of the derived
+  // classes, which also reset their own cached descriptors.
+  // --------------------------------------------------------------------------
+  void clear() {
+    m_vertices.clear();
+    m_edges.clear();
+    init_spanning_edge();
+  }
+
+  // --------------------------------------------------------------------------
+  // swaps the containers and the left boundary edge.  Called by the swap()
+  // functions of the derived classes, which also swap their own cached
+  // descriptors.
+  // --------------------------------------------------------------------------
+  void swap(Topology_traits_base& other) noexcept {
+    std::swap(m_vertices, other.m_vertices);
+    std::swap(m_edges, other.m_edges);
+    std::swap(m_left_boundary_edge, other.m_left_boundary_edge);
+  }
+
+  // --------------------------------------------------------------------------
+  // creates the single edge that spans the entire parameter space and sets it
+  // as the left boundary edge.  No vertices are created here regardless of the
+  // boundary tags; boundary vertices are created later by the arrangement when
+  // the user inserts a point at a closed boundary.  Called from the derived
+  // class constructors and clear().
+  // --------------------------------------------------------------------------
+  void init_spanning_edge() {
+    m_edges.emplace_back();
+    if constexpr (UseVector) m_left_boundary_edge = 0;
+    else m_left_boundary_edge = m_edges.begin();
   }
 
   void reserve_vertices(std::size_t n) { if constexpr (UseVector) m_vertices.reserve(n); }

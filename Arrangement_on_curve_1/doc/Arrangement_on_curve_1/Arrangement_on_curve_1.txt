@@ -367,15 +367,16 @@ of the `AocTopologyTraits` concept.  It provides:
 
 The class template `Topology_traits_base` factors out all combinatorial
 infrastructure shared by the five concrete topology traits classes.
+This includes the left boundary edge, which all five classes maintain.
 Derived classes add only their topology-specific cached descriptors:
 
-| Derived class                  | Extra state                               |
-|--------------------------------|-------------------------------------------|
-| `Open_topology_traits`         | Two sentinel edges                        |
-| `Closed_topology_traits`       | Two sentinel vertexs                      |
-| `Left_closed_topology_traits`  | One sentinel vertex and one sentinel edge |
-| `Right_closed_topology_traits` | Two sentinel vertex and one sentinel edge |
-| `Identified_topology_traits`   | One canonical start-edge                  |
+| Derived class                  | Extra state                                    |
+|--------------------------------|------------------------------------------------|
+| `Open_topology_traits`         | None                                           |
+| `Closed_topology_traits`       | The left and the right boundary vertices       |
+| `Left_closed_topology_traits`  | The left boundary vertex                       |
+| `Right_closed_topology_traits` | The right boundary vertex                      |
+| `Identified_topology_traits`   | The identification vertex                      |
 
 `Topology_traits_base` provides:
 
@@ -388,11 +389,21 @@ Derived classes add only their topology-specific cached descriptors:
 - Three Boost lvalue property maps (`Vertex_point_map`, `Vertex_data_map`, `Edge_data_map`).
 - Core navigation helpers (`left_edge`, `right_edge`, `left_vertex`, `right_vertex`, `has_left_vertex`,
   `has_right_vertex`, `vertex_point`).
+- The left boundary edge and its accessors (`left_boundary_edge`, `set_left_boundary_edge`).
 - Low-level storage primitives (`create_vertex`, `create_edge`,
   `set_left_edge`, `set_right_edge`, `set_left_vertex`,
   `set_right_vertex`, `clear_left_vertex`, `clear_right_vertex`,
-  `erase_vertex`, `erase_edge_base`).
-- The protected `patch_cross_references()` helper for list-mode copy.
+  `erase_vertex`, `erase_edge`).
+- The protected `patch_cross_references()` helper for list-mode copy, which also
+  patches the left boundary edge.
+- The protected `init_spanning_edge()` helper, which creates the single edge that
+  spans the parameter space and sets it as the left boundary edge.
+- The protected `clear()` helper, which removes all vertices and edges and
+  recreates the spanning edge as the left boundary edge; the `clear()` functions
+  of the derived classes call it and reset their own cached descriptors.
+- The protected `swap()` helper, which swaps the containers and the left boundary
+  edge; the `swap()` functions of the derived classes call it and swap their own
+  cached descriptors.
 
 The template parameters of `Topology_traits_base` (and all derived classes) are:
 
@@ -424,7 +435,7 @@ The `UseVector` template parameter controls the underlying container and descrip
 
 - **Vector mode** (`UseVector = true`): vertices and edges are stored in
   `std::vector`.  Descriptors are `std::size_t` indices.  Erasing an
-  element shifts subsequent indices; `erase_edge_base()` patches all
+  element shifts subsequent indices; `erase_edge()` patches all
   intra-node cross-references automatically.
   Binary search (`BinarySearch` = `true`) is only available in vector mode.
 
@@ -436,19 +447,16 @@ The `UseVector` template parameter controls the underlying container and descrip
 arrangements on an open, infinite curve
 (`Left_side_category = Right_side_category = Open_side_tag`).
 
-It inherits `Topology_traits_base` and adds two sentinel edge
-descriptors: `m_left_edge` (the edge spanning to
-\f$-\infty\f$) and `m_right_edge` (the edge spanning to
-\f$+\infty\f$).  In list mode, these are patched after copy via
-`patch_cross_references()`.  In vector mode, `erase_edge()` updates
-the sentinel indices before calling `erase_edge_base()`.
+It inherits the left boundary edge from `Topology_traits_base`.  In list
+mode, it is patched after copy via `patch_cross_references()`.  In vector
+mode, `erase_edge()` updates its index.
 
 Accessor API:
 
-| Member                                     | Description                                |
-|--------------------------------------------|--------------------------------------------|
-| `left_boundary edge()` / `(const)`         | Returns the left sentinel edge descriptor. |
-| `set_left_boundaryedge(e)` / `_right_*(e)` | Sets a sentinel edge descriptor.           |
+| Member                             | Description                                 |
+|------------------------------------|---------------------------------------------|
+| `left_boundary_edge()` / `(const)` | Returns the left boundary edge descriptor.  |
+| `set_left_boundary_edge(e)`        | Sets the left boundary edge descriptor.     |
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection aoc_ssec-topo_traits-identified Identified Topology Traits

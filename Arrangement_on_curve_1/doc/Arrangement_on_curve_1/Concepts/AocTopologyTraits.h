@@ -186,7 +186,9 @@ public:
   //! erases vertex `v`.
   void erase_vertex(Vertex_descriptor v);
 
-  //! erases edge `e`.
+  /*! erases edge `e`.
+   * \pre `e` is not the left boundary edge.
+   */
   void erase_edge(Edge_descriptor e);
 
   //! removes all vertices and edges and resets the topology to its initial state.

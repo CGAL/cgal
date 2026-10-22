@@ -82,10 +82,10 @@ public:
   // Default constructor; valid for all tag combinations.
   // Creates a single edge spanning the parameter space and no vertices.
   // Boundary vertices, if any, are created later by the arrangement.
-  Topology_traits() { init_spanning_edge(); }
+  Topology_traits() { this->init_spanning_edge(); }
 
   // Allocator-aware default constructor.
-  explicit Topology_traits(const Allocator& alloc) : Base(alloc) { init_spanning_edge(); }
+  explicit Topology_traits(const Allocator& alloc) : Base(alloc) { this->init_spanning_edge(); }
 
   // --------------------------------------------------------------------------
   // Move constructor / assignment
@@ -98,14 +98,12 @@ public:
   // --------------------------------------------------------------------------
   Topology_traits(const Topology_traits& other) :
     Base(other),
-    m_left_boundary_edge(other.m_left_boundary_edge),
     m_left_boundary_vertex(other.m_left_boundary_vertex),
     m_right_boundary_vertex(other.m_right_boundary_vertex),
     m_has_left_boundary_vertex(other.m_has_left_boundary_vertex),
     m_has_right_boundary_vertex(other.m_has_right_boundary_vertex) {
     if constexpr (! UseVector) {
       auto maps = this->patch_cross_references(other);
-      m_left_boundary_edge = maps.edge_map.at(other.m_left_boundary_edge);
       if (m_has_left_boundary_vertex) m_left_boundary_vertex  = maps.vertex_map.at(other.m_left_boundary_vertex);
       if (m_has_right_boundary_vertex) m_right_boundary_vertex = maps.vertex_map.at(other.m_right_boundary_vertex);
     }
@@ -131,14 +129,6 @@ public:
   // left or right boundary vertex when the point lies on a closed boundary.
   // --------------------------------------------------------------------------
   Vertex_descriptor create_vertex(const Point_1& p) { return Base::create_vertex(p); }
-
-  // --------------------------------------------------------------------------
-  // Left edge accessor
-  // --------------------------------------------------------------------------
-  Edge_descriptor left_boundary_edge() { return m_left_boundary_edge; }
-  Edge_const_descriptor left_boundary_edge() const { return m_left_boundary_edge; }
-
-  void set_left_boundary_edge(Edge_descriptor e) { m_left_boundary_edge = e; }
 
   // --------------------------------------------------------------------------
   // Boundary vertex accessors are meaningful only when the corresponding side is
@@ -179,23 +169,6 @@ public:
     m_has_right_boundary_vertex = true;
   }
 
-  // --------------------------------------------------------------------------
-  // patches m_left_boundary_edge in vector mode.
-  // --------------------------------------------------------------------------
-  void erase_edge(Edge_descriptor e) {
-    if constexpr (! UseVector) {
-      this->m_edges.erase(e);
-      return;
-    }
-    if (e == this->m_edges.size() - 1) {
-      this->m_edges.pop_back();
-      if (m_left_boundary_edge == e) --m_left_boundary_edge;
-      return;
-    }
-    this->erase_edge_base(e);
-    if (m_left_boundary_edge > e) --m_left_boundary_edge;
-  }
-
   // patches boundary vertex descriptors in vector mode.
   void erase_vertex(Vertex_descriptor v) {
     if (m_has_left_boundary_vertex && m_left_boundary_vertex == v) m_has_left_boundary_vertex = false;
@@ -211,17 +184,13 @@ public:
   // clear / swap
   // --------------------------------------------------------------------------
   void clear() {
-    this->m_vertices.clear();
-    this->m_edges.clear();
+    Base::clear();
     m_has_left_boundary_vertex  = false;
     m_has_right_boundary_vertex = false;
-    init_spanning_edge();
   }
 
   void swap(Topology_traits& other) noexcept {
-    std::swap(this->m_vertices, other.m_vertices);
-    std::swap(this->m_edges, other.m_edges);
-    std::swap(m_left_boundary_edge, other.m_left_boundary_edge);
+    Base::swap(other);
     std::swap(m_left_boundary_vertex,  other.m_left_boundary_vertex);
     std::swap(m_right_boundary_vertex, other.m_right_boundary_vertex);
     std::swap(m_has_left_boundary_vertex,  other.m_has_left_boundary_vertex);
@@ -229,23 +198,10 @@ public:
   }
 
 private:
-  Edge_descriptor m_left_boundary_edge {};
   Vertex_descriptor m_left_boundary_vertex {};
   Vertex_descriptor m_right_boundary_vertex {};
   bool m_has_left_boundary_vertex = false;
   bool m_has_right_boundary_vertex = false;
-
-  // --------------------------------------------------------------------------
-  // creates the single edge that spans the entire parameter space.
-  // No vertices are created here regardless of the boundary tags; boundary
-  // vertices are created later by the arrangement when the user inserts a
-  // point at a closed boundary.
-  // --------------------------------------------------------------------------
-  void init_spanning_edge() {
-    this->m_edges.emplace_back();
-    if constexpr (UseVector) m_left_boundary_edge = 0;
-    else m_left_boundary_edge = this->m_edges.begin();
-  }
 };
 
 } // namespace Arrangement_on_curve_1
