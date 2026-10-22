@@ -33,8 +33,7 @@ void EnvelopeFunctions<Arr_>::lowerEnvelope(
 {
   auto curves = getXMonotoneCurves(arr);
   CGAL::Envelope_2::lower_envelope_x_monotone_2(
-    curves.begin(), curves.end(), diagram,
-    diagram.geometry_traits_1().shared_geom_traits_2());
+    curves.begin(), curves.end(), diagram);
 }
 
 template <typename Arr_>
@@ -43,8 +42,7 @@ void EnvelopeFunctions<Arr_>::upperEnvelope(
 {
   auto curves = getXMonotoneCurves(arr);
   CGAL::Envelope_2::upper_envelope_x_monotone_2(
-    curves.begin(), curves.end(), diagram,
-    diagram.geometry_traits_1().shared_geom_traits_2());
+    curves.begin(), curves.end(), diagram);
 }
 
 ARRANGEMENT_DEMO_SPECIALIZE_ARR(EnvelopeFunctions)

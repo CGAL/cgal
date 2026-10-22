@@ -186,10 +186,11 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
 {
   typedef typename EnvelopeFunctions<Arrangement>::Diagram_1 Diagram_1;
 
-  // The diagram shares the traits of the arrangement, which owns it.
-  std::shared_ptr<const Traits> traits(
+  // The diagram, and thus the envelope computation, shares the traits of the
+  // arrangement, which owns it.
+  typename Diagram_1::Shared_traits_2 traits(
     this->arr->geometry_traits(), [](const Traits*) {});
-  Diagram_1 diagram(traits);
+  Diagram_1 diagram(std::move(traits));
   CGAL::Qt::CurveGraphicsItem<Traits>* envelopeToUpdate;
 
   EnvelopeFunctions<Arrangement> envelope_functions;

@@ -139,7 +139,8 @@ void test_reuse(std::size_t& failures) {
   report(ok, "diagram reuse", failures);
 }
 
-// The overloads that accept a traits object; the diagrams share it.
+// The overloads that accept a traits object, and the diagrams that share it.
+// Without a traits object, the traits of the diagram are used.
 void test_traits(std::size_t& failures) {
   std::mt19937 rng(13);
   auto segs = random_segments(rng, 30, 1000);
@@ -147,8 +148,11 @@ void test_traits(std::size_t& failures) {
   Diagram_1 min_diag(traits), max_diag(traits);
   CGAL::Envelope_2::lower_envelope_x_monotone_2(segs.begin(), segs.end(), min_diag, traits);
   CGAL::Envelope_2::upper_envelope_x_monotone_2(segs.begin(), segs.end(), max_diag, traits);
+  Diagram_1 diag(traits);
+  CGAL::Envelope_2::lower_envelope_x_monotone_2(segs.begin(), segs.end(), diag);
   bool ok = check_envelope(segs, min_diag, true) && check_envelope(segs, max_diag, false) &&
-    (min_diag.geometry_traits_1().shared_geom_traits_2() == traits);
+    (dump(diag) == dump(min_diag)) && (min_diag.shared_geometry_traits_2() == traits) &&
+    (&min_diag.geometry_traits_2() == traits.get());
   report(ok, "traits overloads", failures);
 }
 

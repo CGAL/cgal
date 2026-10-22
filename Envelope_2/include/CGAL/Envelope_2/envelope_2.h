@@ -36,7 +36,7 @@ template <typename InputIterator, typename EnvelopeDiagram>
 void lower_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Dac env(Dac::LOWER);
+  Dac env(Dac::LOWER, diag.shared_geometry_traits_2());
   env.insert_curves(begin, end, diag);
 }
 
@@ -50,7 +50,7 @@ template <typename InputIterator, typename EnvelopeDiagram>
 void upper_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Dac env(Dac::UPPER);
+  Dac env(Dac::UPPER, diag.shared_geometry_traits_2());
   env.insert_curves(begin, end, diag);
 }
 
@@ -64,7 +64,7 @@ template <typename InputIterator, typename EnvelopeDiagram>
 void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Dac env(Dac::LOWER);
+  Dac env(Dac::LOWER, diag.shared_geometry_traits_2());
   env.insert_x_monotone_curves(begin, end, diag);
 }
 
@@ -72,15 +72,15 @@ void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
  * \param begin An iterator for the first x-monotone curve.
  * \param end A past-the-end iterator for the x-monotone curves.
  * \param diag Output: The minimization diagram.
- * \param traits The arrangement traits responsible for the x-monotone curves.
+ * \param traits The traits object responsible for the x-monotone curves.
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
-template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
+template <typename InputIterator, typename EnvelopeDiagram>
 void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag,
-                                 std::shared_ptr<const Traits> traits) {
+                                 typename EnvelopeDiagram::Shared_traits_2 traits) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Dac env(Dac::LOWER, traits);
+  Dac env(Dac::LOWER, std::move(traits));
   env.insert_x_monotone_curves(begin, end, diag);
 }
 
@@ -94,7 +94,7 @@ template <typename InputIterator, typename EnvelopeDiagram>
 void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Dac env(Dac::UPPER);
+  Dac env(Dac::UPPER, diag.shared_geometry_traits_2());
   env.insert_x_monotone_curves(begin, end, diag);
 }
 
@@ -102,15 +102,15 @@ void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
  * \param begin An iterator for the first x-monotone curve.
  * \param end A past-the-end iterator for the x-monotone curves.
  * \param diag Output: The maximization diagram.
- * \param traits The arrangement traits responsible for the x-monotone curves.
+ * \param traits The traits object responsible for the x-monotone curves.
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
-template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
+template <typename InputIterator, typename EnvelopeDiagram>
 void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag,
-                                 std::shared_ptr<const Traits> traits) {
+                                 typename EnvelopeDiagram::Shared_traits_2 traits) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Dac env(Dac::UPPER, traits);
+  Dac env(Dac::UPPER, std::move(traits));
   env.insert_x_monotone_curves(begin, end, diag);
 }
 

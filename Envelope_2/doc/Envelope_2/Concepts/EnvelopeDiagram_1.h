@@ -43,6 +43,10 @@ public:
    */
   typedef unspecified_type Traits_2;
 
+  /*! the shared pointer to the geometric traits.
+   */
+  typedef std::shared_ptr<const Traits_2> Shared_traits_2;
+
   /*! the point type.
    */
   typedef Traits_2::Point_2 Point_2;
@@ -75,6 +79,10 @@ public:
    */
   EnvelopeDiagram_1();
 
+  /*! constructs an empty diagram that shares the geometric traits `traits`.
+   */
+  EnvelopeDiagram_1(Shared_traits_2 traits);
+
   /*! copy constructor.
    */
   EnvelopeDiagram_1(const EnvelopeDiagram_1& other);
@@ -83,6 +91,14 @@ public:
 
   /// \name Accessors
   /// @{
+
+  /*! obtains the geometric traits.
+   */
+  const Traits_2& geometry_traits_2() const;
+
+  /*! obtains the shared pointer to the geometric traits.
+   */
+  Shared_traits_2 shared_geometry_traits_2() const;
 
   /*! obtains the leftmost edge of the diagram. (A non-const version is also available.)
    */

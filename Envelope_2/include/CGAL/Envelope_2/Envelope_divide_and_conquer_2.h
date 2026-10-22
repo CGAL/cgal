@@ -43,7 +43,7 @@ public:
   using Curve_2 = typename Traits_2::Curve_2;
 
   using Envelope_diagram_1 = Diagram_;
-  using Shared_traits = std::shared_ptr<const Traits_2>;
+  using Shared_geometry_traits = std::shared_ptr<const Traits_2>;
 
   enum Envelope_type { LOWER, UPPER };
 
@@ -59,7 +59,7 @@ protected:
   using Curve_pointer_iterator = typename Curve_pointer_vector::iterator;
 
   using Traits_adaptor_2 = Arr_traits_adaptor_2<Traits_2>;
-  using Shared_traits_adaptor = std::shared_ptr<const Traits_adaptor_2>;
+  using Shared_geometry_traits_adaptor = std::shared_ptr<const Traits_adaptor_2>;
 
   // All sides
   using Left_side_category = typename CGAL::internal::Arr_complete_left_side_category<Traits_2>::Category;
@@ -73,36 +73,37 @@ protected:
 
 private:
   // Data members:
-  Shared_traits_adaptor m_traits;       // the traits object.
-  Envelope_type m_env_type;             // either LOWER or UPPER.
+  Shared_geometry_traits_adaptor m_geometry_traits;     // the traits object.
+  Envelope_type m_env_type;                             // either LOWER or UPPER.
 
   // copy constructor and assignment operator - not supported.
   Envelope_divide_and_conquer_2(const Self&) = delete;
   Self& operator=(const Self&) = delete;
 
 public:
-  /*! default constructor.
+  /*! constructs with a default-constructed traits object.
    */
   Envelope_divide_and_conquer_2(Envelope_type type = LOWER) :
-    m_traits(std::make_shared<const Traits_adaptor_2>()),
+    m_geometry_traits(std::make_shared<const Traits_adaptor_2>()),
     m_env_type(type)
   {}
 
-  /*! constructor with a traits object.
-   * \param traits The traits object.
+  /*! constructs with a shared traits object.
+   * \param shared_geom_tr The traits object.
    */
-  Envelope_divide_and_conquer_2(Shared_traits traits) :
-    m_traits(std::static_pointer_cast<const Traits_adaptor_2>(traits)),
+  Envelope_divide_and_conquer_2(Shared_geometry_traits shared_geom_tr) :
+    m_geometry_traits(std::static_pointer_cast<const Traits_adaptor_2>(std::move(shared_geom_tr))),
     m_env_type(LOWER)
-  {}
+  { CGAL_assertion(m_geometry_traits != nullptr); }
 
-  /*! constructor with a traits object.
-   * \param traits The traits object.
+  /*! constructs with a shared traits object.
+   * \param type The envelope type.
+   * \param shared_geom_tr The traits object.
    */
-  Envelope_divide_and_conquer_2(Envelope_type type, Shared_traits traits) :
-    m_traits(std::static_pointer_cast<const Traits_adaptor_2>(traits)),
+  Envelope_divide_and_conquer_2(Envelope_type type, Shared_geometry_traits shared_geom_tr) :
+    m_geometry_traits(std::static_pointer_cast<const Traits_adaptor_2>(std::move(shared_geom_tr))),
     m_env_type(type)
-  {}
+  { CGAL_assertion(m_geometry_traits != nullptr); }
 
   /*! destructor.
    */
@@ -125,7 +126,7 @@ public:
     for (auto it = begin; it != end; ++it) {
       // Split the current curve to x-monotone subcurves.
       objects.clear();
-      m_traits->make_x_monotone_2_object()(*it, std::back_inserter(objects));
+      m_geometry_traits->make_x_monotone_2_object()(*it, std::back_inserter(objects));
       for (auto obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
         if (const auto* xcv_ptr = std::get_if<X_monotone_curve_2>(&(*obj_it))) x_curves.push_back(*xcv_ptr);
       }
@@ -147,7 +148,7 @@ public:
     diagram.clear();
 
     // Separate the regular curves from the vertical ones.
-    auto is_vertical = m_traits->is_vertical_2_object();
+    auto is_vertical = m_geometry_traits->is_vertical_2_object();
 
     Curve_pointer_vector reg_vec;
     Curve_pointer_vector vert_vec;
@@ -177,9 +178,12 @@ public:
   }
 
   /*! obtains the traits object.
-   * \return A pointer to the traits object.
    */
-  const Traits_2* geometry_traits() const { return m_traits.get(); }
+  const Traits_2& geometry_traits_2() const { return *m_geometry_traits; }
+
+  /*! obtains the shared pointer to the traits object.
+   */
+  Shared_geometry_traits shared_geometry_traits_2() const { return m_geometry_traits; }
 
 protected:
   /*! constructs the lower/upper envelope of the given list of non-vertical curves.
@@ -311,9 +315,9 @@ protected:
     typename Traits_2::Construct_min_vertex_2 m_min_vertex;
 
   public:
-    Less_vertical_segment(const Traits_2* traits) :
-      m_comp_x(traits->compare_x_2_object()),
-      m_min_vertex(traits->construct_min_vertex_2_object())
+    Less_vertical_segment(const Traits_2& traits) :
+      m_comp_x(traits.compare_x_2_object()),
+      m_min_vertex(traits.construct_min_vertex_2_object())
     {}
 
     bool operator()(const X_monotone_curve_2* cv1, const X_monotone_curve_2* cv2) const

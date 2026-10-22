@@ -74,7 +74,7 @@ public:
       d->clear();
       return d;
     }
-    return new Diagram(out_d.shared_geometry_traits_1());
+    return new Diagram(out_d.shared_geometry_traits_2());
   }
 
   void release_diagram(Diagram* d) { m_diagram_pool.push_back(d); }
@@ -110,7 +110,7 @@ public:
       return &d;
     }
     CGAL_assertion(m_diagram_pool.size() < m_diagram_pool.capacity());
-    m_diagram_pool.emplace_back(out_d.shared_geometry_traits_1());
+    m_diagram_pool.emplace_back(out_d.shared_geometry_traits_2());
     ++m_active_count;
     return &m_diagram_pool.back();
   }
