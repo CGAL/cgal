@@ -93,10 +93,12 @@ public:
   /// @{
 
   /*! sets the leftmost edge of the diagram to be `e`.
+   * \deprecated The leftmost edge is maintained by the modifiers of the diagram.
    */
   void set_leftmost(Edge_const_descriptor e);
 
   /*! sets the rightmost edge of the diagram to be `e`.
+   * \deprecated The rightmost edge is maintained by the modifiers of the diagram.
    */
   void set_rightmost(Edge_const_descriptor e);
 

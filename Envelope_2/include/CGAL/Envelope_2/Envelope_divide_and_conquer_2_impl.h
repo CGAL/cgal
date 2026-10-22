@@ -119,32 +119,14 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
   CGAL_assertion(out_d.leftmost() == out_d.rightmost());
   CGAL_assertion(out_d.empty_edge_curves(out_d.leftmost()));
 
-  auto& topo = out_d.topology_traits();
-
-  Vertex_descriptor v1 = out_d.create_vertex(m_traits->construct_min_vertex_2_object()(xcv));
-  Vertex_descriptor v2 = out_d.create_vertex(m_traits->construct_max_vertex_2_object()(xcv));
-
-  Edge_descriptor e_left = out_d.create_edge();
-  Edge_descriptor e_right = out_d.create_edge();
-  Edge_descriptor e = out_d.leftmost();
+  // Splitting the rightmost edge keeps it as the left part; the new right part
+  // becomes the rightmost edge.
+  Vertex_descriptor v1 = out_d.split_edge(out_d.rightmost(), m_traits->construct_min_vertex_2_object()(xcv));
+  Vertex_descriptor v2 = out_d.split_edge(out_d.rightmost(), m_traits->construct_max_vertex_2_object()(xcv));
 
   out_d.add_vertex_curve(v1, xcv);
-  topo.set_left_edge(v1, e_left);
-  topo.set_right_edge(v1, e);
-
   out_d.add_vertex_curve(v2, xcv);
-  topo.set_left_edge(v2, e);
-  topo.set_right_edge(v2, e_right);
-
-  out_d.add_edge_curve(e, xcv);
-  topo.set_left_vertex(e, v1);
-  topo.set_right_vertex(e, v2);
-
-  topo.set_right_vertex(e_left, v1);
-  topo.set_left_vertex(e_right, v2);
-
-  out_d.set_leftmost(e_left);
-  out_d.set_rightmost(e_right);
+  out_d.add_edge_curve(out_d.right_edge(v1), xcv);
 }
 
 /*! constructs a diagram of a single curve.
@@ -157,8 +139,6 @@ void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d, Arr_not_all_sides_oblivious_tag) {
   CGAL_assertion(out_d.leftmost() == out_d.rightmost());
   CGAL_assertion(out_d.empty_edge_curves(out_d.leftmost()));
-
-  auto& topo = out_d.topology_traits();
 
   // Check if the given curve is bounded from the left and from the right.
   if (m_traits->parameter_space_in_x_2_object()(xcv, ARR_MIN_END) != ARR_INTERIOR) {
@@ -173,18 +153,9 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
     // Create a vertex and associate it with the right endpoint of xcv.
     CGAL_precondition(m_traits->parameter_space_in_y_2_object()(xcv, ARR_MAX_END) == ARR_INTERIOR);
 
-    Vertex_descriptor v = out_d.create_vertex(m_traits->construct_max_vertex_2_object()(xcv));
-    Edge_descriptor e_right = out_d.create_edge();
-
+    Vertex_descriptor v = out_d.split_edge(out_d.leftmost(), m_traits->construct_max_vertex_2_object()(xcv));
     out_d.add_vertex_curve(v, xcv);
-    topo.set_left_edge(v, out_d.leftmost());
-    topo.set_right_edge(v, e_right);
-
     out_d.add_edge_curve(out_d.leftmost(), xcv);
-    topo.set_right_vertex(out_d.leftmost(), v);
-
-    topo.set_left_vertex(e_right, v);
-    out_d.set_rightmost(e_right);
     return;
   }
 
@@ -193,18 +164,9 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
     // Create a vertex and associate it with the left endpoint of xcv.
     CGAL_precondition(m_traits->parameter_space_in_y_2_object()(xcv, ARR_MIN_END) == ARR_INTERIOR);
 
-    Vertex_descriptor v = out_d.create_vertex(m_traits->construct_min_vertex_2_object()(xcv));
-    Edge_descriptor e_left = out_d.create_edge();
-
+    Vertex_descriptor v = out_d.split_edge(out_d.rightmost(), m_traits->construct_min_vertex_2_object()(xcv));
     out_d.add_vertex_curve(v, xcv);
-    topo.set_left_edge(v, e_left);
-    topo.set_right_edge(v, out_d.rightmost());
-
     out_d.add_edge_curve(out_d.rightmost(), xcv);
-    topo.set_left_vertex(out_d.rightmost(), v);
-
-    topo.set_right_vertex(e_left, v);
-    out_d.set_leftmost(e_left);
     return;
   }
 
@@ -712,35 +674,13 @@ template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
 typename Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::Vertex_descriptor
 Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_descriptor e, const Envelope_diagram_1& in_d) {
-  auto& topo = diag.topology_traits();
-
-  // Create the new vertex and the new edge.
-  Vertex_descriptor new_v = diag.create_vertex(p);
-  Edge_descriptor new_e = diag.create_edge();
-
-  if (! in_d.empty_edge_curves(e)) diag.add_edge_curves(new_e, in_d.edge_curves(e).begin(), in_d.edge_curves(e).end());
-
-  // Connect the new vertex.
-  topo.set_left_edge(new_v, new_e);
-  topo.set_right_edge(new_v, diag.rightmost());
-
-  if (diag.leftmost() != diag.rightmost()) {
-    // The diagram is not empty. Connect the new edge to the left of the
-    // rightmost edge of the diagram.
-    topo.set_right_vertex(new_e, new_v);
-
-    Vertex_descriptor last_v = diag.left_vertex(diag.rightmost());
-    topo.set_left_vertex(new_e, last_v);
-    topo.set_right_edge(last_v, new_e);
-    topo.set_left_vertex(diag.rightmost(), new_v);
-  }
-  else {
-    // The diagram is empty: Make the new edge the leftmost.
-    topo.set_right_vertex(new_e, new_v);
-    diag.set_leftmost(new_e);
-    topo.set_left_vertex(diag.rightmost(), new_v);
-  }
-
+  // The rightmost edge is associated with curves only after the last vertex
+  // is appended.  Splitting it keeps it as the edge to the left of the new
+  // vertex; the new right part becomes the rightmost edge.
+  CGAL_assertion(diag.empty_edge_curves(diag.rightmost()));
+  Vertex_descriptor new_v = diag.split_edge(diag.rightmost(), p);
+  if (! in_d.empty_edge_curves(e))
+    diag.add_edge_curves(diag.left_edge(new_v), in_d.edge_curves(e).begin(), in_d.edge_curves(e).end());
   return new_v;
 }
 
@@ -857,30 +797,13 @@ template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
 typename Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::Vertex_descriptor
 Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_descriptor e) {
-  auto& topo = diag.topology_traits();
-
-  // Create the new vertex and the new edge.
-  Vertex_descriptor new_v = diag.create_vertex(p);
-  Edge_descriptor new_e = diag.create_edge();
+  // `e` becomes the left part; the new right part becomes the rightmost edge
+  // if `e` is.
+  Vertex_descriptor new_v = diag.split_edge(e, p);
 
   // Duplicate the curves container associated with e.
-  if (! diag.empty_edge_curves(e)) diag.add_edge_curves(new_e, diag.edge_curves(e).begin(), diag.edge_curves(e).end());
-
-  // Connect the new vertex between e and new_e.
-  topo.set_left_edge(new_v, e);
-  topo.set_right_edge(new_v, new_e);
-
-  topo.set_left_vertex(new_e, new_v);
-  if (e != diag.rightmost()) {
-    Vertex_descriptor v_right = diag.right_vertex(e);
-    topo.set_right_vertex(new_e, v_right);
-    topo.set_left_edge(v_right, new_e);
-  }
-  else {
-    diag.set_rightmost(new_e);
-  }
-
-  topo.set_right_vertex(e, new_v);
+  if (! diag.empty_edge_curves(e))
+    diag.add_edge_curves(diag.right_edge(new_v), diag.edge_curves(e).begin(), diag.edge_curves(e).end());
 
   return new_v;
 }

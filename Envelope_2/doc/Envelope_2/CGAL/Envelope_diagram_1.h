@@ -17,29 +17,29 @@ namespace Envelope_2 {
  *
  * \cgalModels{EnvelopeDiagram_1}
  *
- * \sa `CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1, Topology_traits>`
- * \sa `CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<GeometryTraits_2>`
- * \sa `CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point_1, VertexData, EdgeData, UseVector, BinarySearch, Allocator>`
+ * \sa `CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1`
+ * \sa `CGAL::Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1`
+ * \sa `CGAL::Arrangement_on_curve_1::Open_topology_traits`
  */
-template <typename Traits_2, Allocator = CGAL_ALLOCATOR(int)>
+template <typename Traits_2, typename Allocator = CGAL_ALLOCATOR(int)>
 class Envelope_diagram_1 :
   public Arrangement_on_curve_1::Arrangement_on_curve_1<
-    Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_2>,
-    Arrangement_on_curve_1::Unbounded_topology_traits<typename Traits_2::Point_2,
-                                                      std::list<typename Traits_2::X_monotone_curve_2>,
-                                                      std::list<typename Traits_2::X_monotone_curve_2>,
-                                                      false, false, Allocator>> {
+    Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<Traits_2>,
+    Arrangement_on_curve_1::Open_topology_traits<Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<Traits_2>,
+                                                 std::list<typename Traits_2::X_monotone_curve_2>,
+                                                 std::list<typename Traits_2::X_monotone_curve_2>,
+                                                 false, Allocator>> {
 public:
 
   /// \name Types
   /// @{
 
-  //! The topology traits of the base 1D arrangement.
-  typedef Arrangement_on_curve_1::Unbounded_topology_traits<Point_2, Curve_container, Curve_container, false, false,
-                                                            Allocator> Topol_traits;
-
   //! The 1D geometry traits.
-  typedef Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_2> Geom_traits_1;
+  typedef Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<Traits_2> Geom_traits_1;
+
+  //! The topology traits of the base 1D arrangement.
+  typedef Arrangement_on_curve_1::Open_topology_traits<Geom_traits_1, Curve_container, Curve_container, false,
+                                                       Allocator> Topol_traits;
 
   //! The type of the base 1D arrangement.
   typedef Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topol_traits> Arrangement_on_curve_1;

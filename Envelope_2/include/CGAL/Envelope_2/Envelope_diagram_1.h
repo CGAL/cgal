@@ -20,8 +20,8 @@
 
 #include <CGAL/memory.h>
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
-#include <CGAL/Arrangement_on_curve_1/Geom_traits_2_adaptor_1.h>
-#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Open_geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Open_topology_traits.h>
 
 namespace CGAL {
 namespace Envelope_2 {
@@ -33,11 +33,11 @@ namespace Envelope_2 {
 template <typename Traits_, typename Allocator = CGAL_ALLOCATOR(int)>
 class Envelope_diagram_1 :
   public Arrangement_on_curve_1::Arrangement_on_curve_1<
-    Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_>,
-    Arrangement_on_curve_1::Unbounded_topology_traits<typename Traits_::Point_2,
-                                                      std::list<typename Traits_::X_monotone_curve_2>,
-                                                      std::list<typename Traits_::X_monotone_curve_2>,
-                                                      false, Allocator>,
+    Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<Traits_>,
+    Arrangement_on_curve_1::Open_topology_traits<Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<Traits_>,
+                                                 std::list<typename Traits_::X_monotone_curve_2>,
+                                                 std::list<typename Traits_::X_monotone_curve_2>,
+                                                 false, Allocator>,
     false> {
 public:
   using Traits_2 = Traits_;
@@ -48,9 +48,9 @@ public:
   using Curve_const_iterator = typename Curve_container::const_iterator;
   using Curve_size = std::size_t;
 
-  using Geom_traits_1 = Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_2>;
+  using Geom_traits_1 = Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<Traits_2>;
   using Topol_traits =
-    Arrangement_on_curve_1::Unbounded_topology_traits<Point_2, Curve_container, Curve_container, false, Allocator>;
+    Arrangement_on_curve_1::Open_topology_traits<Geom_traits_1, Curve_container, Curve_container, false, Allocator>;
 
   using Base = Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topol_traits, false>;
 
@@ -65,7 +65,6 @@ public:
   using Edge_handle = typename Base::Edge_descriptor;
   using Edge_const_handle = typename Base::Edge_const_descriptor;
 
-public:
   /*! Default constructor.
    * Constructs an empty diagram with a default-constructed geometry traits.
    * Used when a diagram is needed before the traits is known (rare).
@@ -82,15 +81,9 @@ public:
    * This is the preferred constructor; it avoids a heap allocation by
    * sharing the traits object rather than copying it.
    */
-  Envelope_diagram_1(std::shared_ptr<const Geom_traits_1> traits_2_ptr) : Base(traits_2_ptr) {}
-
-  Envelope_diagram_1(const Envelope_diagram_1&) = default;
-  Envelope_diagram_1& operator=(const Envelope_diagram_1&) = default;
-
-  Envelope_diagram_1(Envelope_diagram_1&&) noexcept = default;
-  Envelope_diagram_1& operator=(Envelope_diagram_1&&) noexcept = default;
-
-  ~Envelope_diagram_1() = default;
+  Envelope_diagram_1(std::shared_ptr<const Geom_traits_1> traits_2_ptr) :
+    Base(traits_2_ptr)
+  {}
 
   // --------------------------------------------------------------------------
   // Diagram Accessors
@@ -98,25 +91,29 @@ public:
 
   /*! obtains the leftmost edge of the diagram.
    */
-  Edge_const_descriptor leftmost() const { return this->unbounded_left_edge(); }
-  Edge_descriptor leftmost() { return this->unbounded_left_edge(); }
+  Edge_const_descriptor leftmost() const { return this->left_boundary_edge(); }
+  Edge_descriptor leftmost() { return this->left_boundary_edge(); }
 
   /*! obtains the rightmost edge of the diagram.
    */
-  Edge_const_descriptor rightmost() const { return this->unbounded_right_edge(); }
-  Edge_descriptor rightmost() { return this->unbounded_right_edge(); }
+  Edge_const_descriptor rightmost() const { return this->right_boundary_edge(); }
+  Edge_descriptor rightmost() { return this->right_boundary_edge(); }
 
   // --------------------------------------------------------------------------
   // Diagram Modifiers
   // --------------------------------------------------------------------------
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   /*! sets the leftmost edge of the diagram to be `e`.
+   * \deprecated The leftmost edge is maintained by the modifiers of the diagram.
    */
-  void set_leftmost(Edge_descriptor e) { this->topology_traits().set_unbounded_left_edge(e); }
+  CGAL_DEPRECATED void set_leftmost(Edge_descriptor e) { this->topology_traits().set_left_boundary_edge(e); }
 
   /*! sets the rightmost edge of the diagram to be `e`.
+   * \deprecated The rightmost edge is maintained by the modifiers of the diagram.
    */
-  void set_rightmost(Edge_descriptor e) { this->topology_traits().set_unbounded_right_edge(e); }
+  CGAL_DEPRECATED void set_rightmost(Edge_descriptor e) { this->topology_traits().set_right_boundary_edge(e); }
+#endif
 
   // --------------------------------------------------------------------------
   // Curve Data Accessors
