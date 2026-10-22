@@ -113,7 +113,7 @@ kernel(const FaceRange& face_range,
   if(bbox_filtering){
     // We compute and store the vertices that realized the bbox
     struct Bbox_entry {
-      std::size_t index;
+      int index;
       std::function<double(const EPoint_3&)> bound;
       bool take_min;
     };

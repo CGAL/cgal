@@ -578,7 +578,7 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
     auto &bbox = *bbox_pointer;
     auto &bbox_vertices = *bbox_vertices_pointer;
     struct Bbox_entry {
-      std::size_t index;
+      int index;
       std::function<double(const Point_3&)> bound;
       bool take_min;
     };
