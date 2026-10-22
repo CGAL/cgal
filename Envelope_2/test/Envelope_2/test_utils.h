@@ -1,8 +1,13 @@
 #ifndef CGAL_ENVELOPE_2_TEST_UTILS_H
 #define CGAL_ENVELOPE_2_TEST_UTILS_H
 
+#include <algorithm>
 #include <iostream>
 #include <list>
+#include <set>
+#include <utility>
+#include <variant>
+#include <vector>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
@@ -203,6 +208,173 @@ bool check_envelope(const Segments& segs, const Diagram& diag, bool is_lower) {
     if (e == diag.rightmost()) return true;
     if (! check_edge(segs, diag, e, is_lower)) return false;
   }
+}
+
+/*! obtains the envelope value of a segment at a given \f$x\f$-coordinate.
+ * For a vertical segment, this is its lower (upper) endpoint.
+ * \param seg The segment.
+ * \param x The \f$x\f$-coordinate.
+ * \param is_lower Is the envelope the lower or the upper envelope.
+ * \param y Output: The value.
+ * \return Whether `x` lies in the \f$x\f$-range of `seg`.
+ */
+inline bool value_at(const Curve_2& seg, const NT& x, bool is_lower, NT& y) {
+  const Point_2& p = seg.source();
+  const Point_2& q = seg.target();
+  if ((x < (std::min)(p.x(), q.x())) || (x > (std::max)(p.x(), q.x()))) return false;
+  if (p.x() == q.x()) y = is_lower ? (std::min)(p.y(), q.y()) : (std::max)(p.y(), q.y());
+  else y = p.y() + (x - p.x()) * (q.y() - p.y()) / (q.x() - p.x());
+  return true;
+}
+
+/*! computes the envelope of a given set of segments at a given
+ * \f$x\f$-coordinate by brute force.
+ * \param segs The segments.
+ * \param x The \f$x\f$-coordinate.
+ * \param is_lower Is the envelope the lower or the upper envelope.
+ * \param with_vertical Whether vertical segments participate.
+ * \param y Output: The envelope value.
+ * \param ids Output: The data of the segments that attain it.
+ * \return Whether any segment is defined at `x`.
+ */
+template <typename Segments>
+bool envelope_at(const Segments& segs, const NT& x, bool is_lower, bool with_vertical, NT& y, std::set<int>& ids) {
+  bool found = false;
+  ids.clear();
+  for (const auto& seg : segs) {
+    if (! with_vertical && (seg.source().x() == seg.target().x())) continue;
+    NT y_seg;
+    if (! value_at(seg, x, is_lower, y_seg)) continue;
+    if (! found || (is_lower ? (y_seg < y) : (y_seg > y))) {
+      y = y_seg;
+      ids.clear();
+      found = true;
+    }
+    if (y_seg == y) ids.insert(seg.data());
+  }
+  return found;
+}
+
+/*! checks the envelope of a given set of segments against a brute-force
+ * reference.  The candidate \f$x\f$-coordinates are those of all the
+ * endpoints and of all the pairwise intersections.  At every candidate and at
+ * the midpoint between every two consecutive candidates, the envelope value
+ * and the set of segments that attain it are computed directly and compared
+ * with the diagram feature at that \f$x\f$-coordinate.  The vertices must
+ * lie at distinct candidates, in increasing \f$x\f$-order; a vertex must be at
+ * the envelope and be associated with exactly the segments that attain it;
+ * an edge must be associated with exactly the non-vertical segments that
+ * attain the envelope, and a candidate in the interior of an edge must not
+ * require a vertex.  The cost is quadratic in the number of segments.
+ * \param segs The segments.
+ * \param diag The diagram.
+ * \param is_lower Does the diagram represent the lower or the upper envelope.
+ * \return Whether the diagram matches the reference.
+ */
+template <typename Segments, typename Diagram>
+bool check_envelope_reference(const Segments& segs, const Diagram& diag, bool is_lower) {
+  using Kernel_segment_2 = Kernel::Segment_2;
+
+  // Collect the candidate x-coordinates.
+  std::set<NT> xs;
+  std::vector<Kernel_segment_2> ksegs;
+  for (const auto& seg : segs) {
+    xs.insert(seg.source().x());
+    xs.insert(seg.target().x());
+    ksegs.push_back(Kernel_segment_2(seg.source(), seg.target()));
+  }
+  for (std::size_t i = 0; i < ksegs.size(); ++i) {
+    for (std::size_t j = i + 1; j < ksegs.size(); ++j) {
+      auto res = CGAL::intersection(ksegs[i], ksegs[j]);
+      if (! res) continue;
+      if (const auto* p = std::get_if<Point_2>(&*res)) xs.insert(p->x());
+      else if (const auto* s = std::get_if<Kernel_segment_2>(&*res)) {
+        xs.insert(s->source().x());
+        xs.insert(s->target().x());
+      }
+    }
+  }
+
+  // The vertices lie at distinct candidates, in increasing x-order.
+  {
+    auto e = diag.leftmost();
+    const NT* prev_x = nullptr;
+    while (e != diag.rightmost()) {
+      auto v = diag.right_vertex(e);
+      const NT& x = diag.point(v).x();
+      if ((xs.count(x) == 0) || (prev_x && (*prev_x >= x))) {
+        std::cerr << "The vertex (" << diag.point(v) << ") is not at a distinct candidate x-coordinate." << std::endl;
+        return false;
+      }
+      prev_x = &x;
+      e = diag.right_edge(v);
+    }
+  }
+
+  // The samples, in increasing x-order; the second element indicates a candidate.
+  std::vector<NT> cands(xs.begin(), xs.end());
+  std::vector<std::pair<NT, bool>> samples;
+  for (std::size_t i = 0; i < cands.size(); ++i) {
+    samples.push_back(std::make_pair(cands[i], true));
+    if (i + 1 < cands.size()) samples.push_back(std::make_pair((cands[i] + cands[i + 1]) / 2, false));
+  }
+
+  // Walk along the diagram and the samples in parallel.
+  auto e = diag.leftmost();
+  for (const auto& [x, is_cand] : samples) {
+    // Advance to the feature at x: the vertex at x, or the edge that contains x.
+    bool on_vertex = false;
+    typename Diagram::Vertex_const_descriptor v{};
+    while (e != diag.rightmost()) {
+      auto w = diag.right_vertex(e);
+      CGAL::Comparison_result res = CGAL::compare(diag.point(w).x(), x);
+      if (res == CGAL::LARGER) break;
+      if (res == CGAL::EQUAL) {
+        on_vertex = true;
+        v = w;
+        break;
+      }
+      e = diag.right_edge(w);
+    }
+
+    NT y;
+    std::set<int> ids;
+    const bool defined = envelope_at(segs, x, is_lower, on_vertex || is_cand, y, ids);
+    if (on_vertex) {
+      std::set<int> v_ids;
+      for (const auto& cv : diag.vertex_curves(v)) v_ids.insert(cv.data());
+      if (! defined || (diag.point(v).y() != y) || (v_ids != ids)) {
+        std::cerr << "The vertex (" << diag.point(v) << ") does not match the reference envelope." << std::endl;
+        return false;
+      }
+      continue;
+    }
+
+    std::set<int> e_ids;
+    for (const auto& cv : diag.edge_curves(e)) e_ids.insert(cv.data());
+    if (is_cand) {
+      // A candidate in the interior of an edge: the non-vertical segments that
+      // attain the envelope there must be those of the edge, and no other
+      // segment (e.g., a vertical one or an endpoint) may attain it.
+      NT y_e;
+      std::set<int> ids_e;
+      const bool defined_e = envelope_at(segs, x, is_lower, false, y_e, ids_e);
+      if ((defined != defined_e) || (defined && ((ids != ids_e) || (y != y_e)))) {
+        std::cerr << "A vertex is missing at x = " << x << "." << std::endl;
+        return false;
+      }
+      if ((defined_e != ! e_ids.empty()) || (defined_e && (ids_e != e_ids))) {
+        std::cerr << "The edge that contains x = " << x << " does not match the reference envelope." << std::endl;
+        return false;
+      }
+      continue;
+    }
+    if ((defined != ! e_ids.empty()) || (defined && (e_ids != ids))) {
+      std::cerr << "The edge that contains x = " << x << " does not match the reference envelope." << std::endl;
+      return false;
+    }
+  }
+  return true;
 }
 
 #endif
