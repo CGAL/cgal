@@ -211,6 +211,9 @@ public:
   Edge_descriptor left_boundary_edge() { return m_topology_traits.left_boundary_edge(); }
   Edge_const_descriptor left_boundary_edge() const { return m_topology_traits.left_boundary_edge(); }
 
+  Edge_descriptor right_boundary_edge() { return m_topology_traits.right_boundary_edge(); }
+  Edge_const_descriptor right_boundary_edge() const { return m_topology_traits.right_boundary_edge(); }
+
   Vertex_descriptor left_vertex(Edge_descriptor e) { return m_topology_traits.left_vertex(e); }
   Vertex_descriptor right_vertex(Edge_descriptor e) { return m_topology_traits.right_vertex(e); }
   Edge_descriptor left_edge(Vertex_descriptor v) { return m_topology_traits.left_edge(v); }
@@ -257,6 +260,7 @@ public:
       Edge_descriptor e_right = topo.create_edge();
       topo.set_left_vertex(e_right, v);
       topo.set_right_edge(v, e_right);
+      topo.set_right_boundary_edge(e_right);
     }
 
     return v;
@@ -281,12 +285,13 @@ public:
   /*! inserts a vertex at the right boundary of a right-bounded arrangement.
    * Sets `p` as the right vertex of `e`, the rightmost edge; no new edge is
    * created.
-   * \pre `e` has no right vertex.
+   * \pre `e` is the right boundary edge and has no right vertex.
    */
   Vertex_descriptor insert_right_boundary_vertex(Edge_descriptor e, const Point_1& p) {
     static_assert(right_is_closed,
                   "insert_right_boundary_vertex() is only valid for arrangements with a closed right boundary.");
     auto& topo = m_topology_traits;
+    CGAL_precondition(e == topo.right_boundary_edge());
     CGAL_precondition(! topo.has_right_vertex(e));
     Vertex_descriptor v = create_vertex(p);
     topo.set_right_vertex(e, v);
@@ -326,6 +331,7 @@ public:
     topo.set_left_vertex(e_lb, v);
     topo.set_left_edge(v, e_left);
     topo.set_right_edge(v, e_lb);
+    topo.set_right_boundary_edge(e_left);
 
     return v;
   }
@@ -362,6 +368,9 @@ public:
       if (m_topology_traits.right_edge(v) == e_left) m_topology_traits.set_right_edge(v, e_between);
     }
 
+    // If v is at the right boundary, e_between is the new right boundary edge.
+    if (ends_at_right_boundary(e_left)) m_topology_traits.set_right_boundary_edge(e_between);
+
     return v_new;
   }
 
@@ -378,6 +387,13 @@ public:
     // must remain the leftmost edge; split it instead.
     if constexpr (left_is_closed) {
       if (m_topology_traits.left_edge(v) == m_topology_traits.right_edge(v))
+        return split_edge(m_topology_traits.right_edge(v), p);
+    }
+
+    // The right edge of the identification vertex is left_boundary_edge(),
+    // whose left end must remain at the identification point; split it instead.
+    if constexpr (is_identified) {
+      if (m_topology_traits.has_identification_vertex() && (v == m_topology_traits.identification_vertex()))
         return split_edge(m_topology_traits.right_edge(v), p);
     }
 
@@ -406,6 +422,9 @@ public:
   /*! splits the edge `e` by inserting a new point `p` inside it.
    * `e` becomes the left sub-edge; a new edge becomes the right sub-edge,
    * so that `e` retains its identity (left_boundary_edge() remains stable).
+   * If `e` is the right boundary edge, the new edge becomes the right
+   * boundary edge, unless the arrangement is identified and the
+   * identification vertex does not exist.
    */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p) {
 
@@ -439,6 +458,8 @@ public:
     m_topology_traits.set_left_edge(v_new, e);
     m_topology_traits.set_right_edge(v_new, e_right);
 
+    if (ends_at_right_boundary(e)) m_topology_traits.set_right_boundary_edge(e_right);
+
     return v_new;
   }
 
@@ -463,10 +484,13 @@ public:
     }
     else if (e_right == topo.left_boundary_edge()) {
       // Identified only: v is the identification vertex, or, if it does not
-      // exist, the last vertex.  left_boundary_edge() absorbs e_left.
+      // exist, the last vertex.  left_boundary_edge() absorbs e_left.  The
+      // identification vertex does not exist afterwards, so left_boundary_edge()
+      // is also the right boundary edge.
       Vertex_descriptor u = topo.left_vertex(e_left);
       topo.set_left_vertex(e_right, u);
       topo.set_right_edge(u, e_right);
+      topo.set_right_boundary_edge(e_right);
       destroy_edge(e_left);
     }
     else {
@@ -479,6 +503,7 @@ public:
         if (topo.right_edge(w) == e_right) topo.set_right_edge(w, e_left);
       }
       else topo.clear_right_vertex(e_left);
+      if (e_right == topo.right_boundary_edge()) topo.set_right_boundary_edge(e_left);
       destroy_edge(e_right);
     }
 
@@ -522,6 +547,18 @@ public:
     }
     // p is not at any vertex; lo is the index of the first vertex > p.
     return lo;
+  }
+
+private:
+  // determines whether `e` is the right boundary edge and its right end is at
+  // the right boundary.  In an identified arrangement without the
+  // identification vertex, the right boundary edge is left_boundary_edge(),
+  // which contains the identification point and remains the right boundary
+  // edge when it is split.
+  bool ends_at_right_boundary(Edge_descriptor e) const {
+    if (e != m_topology_traits.right_boundary_edge()) return false;
+    if constexpr (is_identified) return m_topology_traits.has_identification_vertex();
+    else return true;
   }
 };
 

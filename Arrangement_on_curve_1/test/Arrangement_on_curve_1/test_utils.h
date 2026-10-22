@@ -74,7 +74,7 @@ void for_each_sequence(std::size_t n, F f) {
 // determines whether `arr` is a valid arrangement whose vertices are
 // associated with the points in `expected` (in any order).  It checks the
 // order of the vertices, the incidence relations, the number of edges, the
-// left boundary edge, the cached boundary and identification vertices, and
+// boundary edges, the cached boundary and identification vertices, and
 // that every point is located at its vertex.  If `arr` is not valid, `why`
 // describes the first violation.
 template <typename Arr>
@@ -83,6 +83,7 @@ bool is_valid(const Arr& arr, std::vector<typename Arr::Point_1> expected, std::
   const auto& tt = arr.topology_traits();
   auto pm = arr.vertex_point_map();
   auto lb = arr.left_boundary_edge();
+  auto rb = arr.right_boundary_edge();
   if (arr.number_of_vertices() != expected.size()) { why = "number of vertices"; return false; }
 
   std::vector<typename Arr::Point_1> pts;
@@ -92,6 +93,7 @@ bool is_valid(const Arr& arr, std::vector<typename Arr::Point_1> expected, std::
       if ((arr.number_of_edges() != 1) || arr.has_left_vertex(lb) || arr.has_right_vertex(lb))
       { why = "empty arrangement"; return false; }
       if (tt.has_identification_vertex()) { why = "identification vertex of an empty arrangement"; return false; }
+      if (rb != lb) { why = "right boundary edge of an empty arrangement"; return false; }
       return true;
     }
     auto e = lb;
@@ -109,6 +111,8 @@ bool is_valid(const Arr& arr, std::vector<typename Arr::Point_1> expected, std::
     if (tt.has_identification_vertex() != has_id) { why = "identification vertex flag"; return false; }
     if (has_id && (arr.left_vertex(lb) != tt.identification_vertex()))
     { why = "left boundary edge does not follow the identification vertex"; return false; }
+    if (rb != (has_id ? arr.left_edge(tt.identification_vertex()) : lb))
+    { why = "right boundary edge"; return false; }
   }
   else {
     const bool has_lbv = arr.has_left_vertex(lb);
@@ -143,6 +147,7 @@ bool is_valid(const Arr& arr, std::vector<typename Arr::Point_1> expected, std::
       if (! arr.has_left_vertex(e) || (arr.left_vertex(e) != v)) { why = "left vertex"; return false; }
       ++ne;
     }
+    if (rb != e) { why = "right boundary edge"; return false; }
     if constexpr (Arr::right_is_closed) {
       if (! has_rbv && tt.has_right_boundary_vertex()) { why = "right boundary vertex flag"; return false; }
     }

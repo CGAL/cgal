@@ -25,13 +25,16 @@
  *                           (the canonical entry point for cyclic traversal). Set to the
  *                           spanning edge at construction and updated after insertions and deletions.
  *
+ * - `right_boundary_edge()`: the edge whose right end is at the identification point, or, if
+ *                            the identification vertex does not exist, `left_boundary_edge()`.
+ *
  * - `split_edge(e, p)`: splits edge `e` into (e, e_new), inserts vertex `v` between them,
  *                       and rewires both endpoints cyclically.
  *
  * - `remove(v)`: merges the left and right edges of `v` back into a single edge.
  *                Removing the last vertex restores the single spanning edge.
  *
- * All shared storage infrastructure, including the left boundary edge, is
+ * All shared storage infrastructure, including the boundary edges, is
  * inherited from `Topology_traits_base`.  `Identified_topology_traits` adds the
  * identification-vertex cache.
  *

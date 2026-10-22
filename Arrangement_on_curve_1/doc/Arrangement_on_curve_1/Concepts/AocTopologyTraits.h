@@ -124,6 +124,12 @@ public:
   //! obtains the leftmost boundary edge (const version).
   Edge_const_descriptor left_boundary_edge() const;
 
+  //! obtains the rightmost boundary edge.
+  Edge_descriptor right_boundary_edge();
+
+  //! obtains the rightmost boundary edge (const version).
+  Edge_const_descriptor right_boundary_edge() const;
+
   //! returns the edge incident to the left of vertex `v`.
   Edge_descriptor left_edge(Vertex_descriptor v);
 
@@ -153,6 +159,9 @@ public:
   //! sets the leftmost boundary edge descriptor.
   void set_left_boundary_edge(Edge_descriptor e);
 
+  //! sets the rightmost boundary edge descriptor.
+  void set_right_boundary_edge(Edge_descriptor e);
+
   //! creates a new vertex associated with point `p`.
   Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& gt);
 
@@ -181,7 +190,7 @@ public:
   void erase_vertex(Vertex_descriptor v);
 
   /*! erases edge `e`.
-   * \pre `e` is not the left boundary edge.
+   * \pre `e` is neither the left nor the right boundary edge.
    */
   void erase_edge(Edge_descriptor e);
 

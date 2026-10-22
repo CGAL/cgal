@@ -122,6 +122,18 @@ public:
    */
   Edge_const_descriptor left_boundary_edge() const;
 
+  /*! obtains the descriptor of the rightmost edge.  If the parameter space is
+   * identified, this is the edge whose right vertex is the identification
+   * vertex, or, if the identification vertex does not exist, the edge that
+   * contains the identification point, that is,
+   * \link ArrangementOnCurve_1::left_boundary_edge() `left_boundary_edge()`\endlink.
+   */
+  Edge_descriptor right_boundary_edge();
+
+  /*! obtains the constant descriptor of the rightmost edge.
+   */
+  Edge_const_descriptor right_boundary_edge() const;
+
   /*! obtains the descriptor of the left vertex of an edge.
    * \param e the edge.
    * \pre `has_left_vertex(e)` is `true`.

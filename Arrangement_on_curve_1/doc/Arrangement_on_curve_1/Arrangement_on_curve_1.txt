@@ -435,8 +435,15 @@ share the following properties:
   The left boundary edge is the leftmost edge; if the parameter space is identified, it is the edge whose
   left vertex is the identification vertex, or, if the identification vertex
   does not exist, the edge that contains the identification point.
+- Symmetrically, the spanning edge is also the initial *right boundary edge*,
+  obtained by
+  \link AocTopologyTraits::right_boundary_edge() `right_boundary_edge()`\endlink.
+  The right boundary edge is the rightmost edge; if the parameter space is identified, it is the edge whose
+  right vertex is the identification vertex, or, if the identification vertex
+  does not exist, the edge that contains the identification point, that is,
+  the left boundary edge.
 - Copying a topology traits object yields an independent copy; all
-  descriptors stored in the copy, including the left boundary edge and the
+  descriptors stored in the copy, including the boundary edges and the
   cached vertices listed below, refer to the copy.
 - `clear()` removes all vertices and edges and restores the single spanning
   edge; `swap()` exchanges the contents of two objects.
@@ -497,12 +504,14 @@ The `UseVector` template parameter controls the underlying container and descrip
 open curve (`Left_side_category = Right_side_category = Open_side_tag`).
 
 It maintains no vertices beyond those of the common structure; like all
-topology traits classes, it maintains the left boundary edge:
+topology traits classes, it maintains the left and right boundary edges:
 
-| Member                                        | Description                                |
-|-----------------------------------------------|--------------------------------------------|
-| `AocTopologyTraits::left_boundary_edge()`     | Returns the left boundary edge descriptor. |
-| `AocTopologyTraits::set_left_boundary_edge()` | Sets the left boundary edge descriptor.    |
+| Member                                         | Description                                 |
+|------------------------------------------------|---------------------------------------------|
+| `AocTopologyTraits::left_boundary_edge()`      | Returns the left boundary edge descriptor.  |
+| `AocTopologyTraits::set_left_boundary_edge()`  | Sets the left boundary edge descriptor.     |
+| `AocTopologyTraits::right_boundary_edge()`     | Returns the right boundary edge descriptor. |
+| `AocTopologyTraits::set_right_boundary_edge()` | Sets the right boundary edge descriptor.    |
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection aoc_ssec-topo_traits-identified Identified Topology Traits

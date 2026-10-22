@@ -2,7 +2,7 @@
 // every arrangement constructed by inserting a permutation of a subset of a set
 // of points is removed on its own, and all the vertices are removed one by
 // one.  Also tests insert_before() and insert_after() next to the boundary
-// vertices.
+// vertices and the identification vertex.
 
 #include <cstdlib>
 
@@ -74,8 +74,19 @@ void test_neighbors(const std::string& mode, std::size_t& failures) {
     Arr arr2(tr);
     auto w = Aoc::insert(arr2, Direction_2(0, 1));
     arr2.insert_after(w, Direction_2(-1, 0));
+    Arr arr3(tr);                               // next to the identification vertex
+    Aoc::insert(arr3, Direction_2(0, 1));
+    auto v_id = Aoc::insert(arr3, Direction_2(1, 0));
+    arr3.insert_after(v_id, Direction_2(1, 1));
+    arr3.insert_before(v_id, Direction_2(0, -1));
+    Arr arr4(tr);                               // the identification vertex alone, which is a self-loop
+    Aoc::insert(arr4, Direction_2(1, 0));
+    arr4.remove(Aoc::insert(arr4, Direction_2(0, 1)));
+    arr4.insert_after(find_vertex(arr4, Direction_2(1, 0)), Direction_2(-1, 0));
     bool ok = is_valid(arr1, {Direction_2(1, 1), Direction_2(0, 1)}, why) &&
-      is_valid(arr2, {Direction_2(0, 1), Direction_2(-1, 0)}, why);
+      is_valid(arr2, {Direction_2(0, 1), Direction_2(-1, 0)}, why) &&
+      is_valid(arr3, {Direction_2(1, 1), Direction_2(0, 1), Direction_2(0, -1), Direction_2(1, 0)}, why) &&
+      is_valid(arr4, {Direction_2(-1, 0), Direction_2(1, 0)}, why);
     std::string name = mode + " identified insert_before/insert_after";
     std::cout << (report(ok, name, why, failures) ? "PASS " : "FAIL ") << name << std::endl;
   }

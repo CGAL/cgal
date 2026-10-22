@@ -185,7 +185,8 @@ public:
   /*! inserts a vertex at the right boundary.  The vertex becomes the right
    * vertex of `e`; no edge is created.
    * \pre `right_is_closed` is `true`.
-   * \pre `e` is the rightmost edge and has no right vertex.
+   * \pre `e` is \link ArrangementOnCurve_1::right_boundary_edge() `right_boundary_edge()`\endlink and has no right
+   * vertex.
    * \pre `p` lies on the right boundary.
    */
   Vertex_descriptor insert_right_boundary_vertex(Edge_descriptor e, const Point_1& p);
