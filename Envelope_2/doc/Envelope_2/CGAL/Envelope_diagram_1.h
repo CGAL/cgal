@@ -52,15 +52,11 @@ public:
   /// \name Creation
   /// @{
 
-  /*! constructs an empty diagram from a shared pointer to a 2D geometry traits.
+  /*! constructs an empty diagram that shares the 1D geometry traits `traits`.
+   * Unlike the constructor from a shared pointer to the 2D geometry traits, it
+   * does not allocate a 1D geometry traits.
    */
-  Envelope_diagram_1(std::shared_ptr<const Traits_2> traits_2_ptr);
-
-  /*! constructs an empty diagram from a shared pointer to a 2D geometry traits adaptor.
-   * This is the preferred constructor; it avoids a heap allocation by
-   * sharing the traits object rather than copying it.
-   */
-  Envelope_diagram_1(std::shared_ptr<const Geom_traits_1> traits_2_ptr);
+  Envelope_diagram_1(std::shared_ptr<const Geom_traits_1> traits);
 
   /// @}
 

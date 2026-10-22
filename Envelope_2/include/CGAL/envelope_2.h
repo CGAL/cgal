@@ -67,7 +67,11 @@ CGAL_DEPRECATED void lower_envelope_x_monotone_2(InputIterator begin, InputItera
 template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
 CGAL_DEPRECATED void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag,
                                                  const Traits& traits)
-{ Envelope_2::lower_envelope_x_monotone_2(begin, end, diag, std::make_shared<const Traits>(traits)); }
+{
+  // The traits object is owned by the caller; it is shared without being copied.
+  typename EnvelopeDiagram::Shared_traits_2 shared_traits(&traits, [](const Traits*) {});
+  Envelope_2::lower_envelope_x_monotone_2(begin, end, diag, std::move(shared_traits));
+}
 
 /*! computes the upper envelope of a range of x-monotone curves.
  * \param begin An iterator for the first x-monotone curve.
@@ -89,7 +93,11 @@ CGAL_DEPRECATED void upper_envelope_x_monotone_2(InputIterator begin, InputItera
 template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
 CGAL_DEPRECATED void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag,
                                                  const Traits& traits)
-{ Envelope_2::upper_envelope_x_monotone_2(begin, end, diag, std::make_shared<const Traits>(traits)); }
+{
+  // The traits object is owned by the caller; it is shared without being copied.
+  typename EnvelopeDiagram::Shared_traits_2 shared_traits(&traits, [](const Traits*) {});
+  Envelope_2::upper_envelope_x_monotone_2(begin, end, diag, std::move(shared_traits));
+}
 
 } // namespace CGAL
 

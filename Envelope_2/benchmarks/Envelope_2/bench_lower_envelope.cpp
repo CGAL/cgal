@@ -77,7 +77,7 @@ struct Run_result {
 };
 
 static Run_result run_once(std::vector<Segment_2>& segs, std::shared_ptr<const Traits_2> traits) {
-  Diagram_1 diag;
+  Diagram_1 diag(traits);
   auto t0 = std::chrono::steady_clock::now();
   CGAL::Envelope_2::lower_envelope_x_monotone_2(segs.begin(), segs.end(), diag, traits);
   auto t1 = std::chrono::steady_clock::now();

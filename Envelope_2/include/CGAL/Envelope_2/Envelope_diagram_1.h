@@ -54,6 +54,8 @@ public:
 
   using Base = Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topol_traits, false>;
 
+  using Shared_traits_2 = std::shared_ptr<const Traits_2>;
+
   using Vertex_descriptor = typename Base::Vertex_descriptor;
   using Vertex_const_descriptor = typename Base::Vertex_const_descriptor;
   using Edge_descriptor = typename Base::Edge_descriptor;
@@ -71,17 +73,29 @@ public:
 
   /*! constructs an empty diagram from a shared pointer to a 2D geometry traits.
    */
-  Envelope_diagram_1(std::shared_ptr<const Traits_2> traits_2_ptr) :
-    Base(std::make_shared<const Geom_traits_1>(traits_2_ptr))
-  {}
+  Envelope_diagram_1(Shared_traits_2 shared_geom_tr) :
+    Base(std::make_shared<const Geom_traits_1>(std::move(shared_geom_tr)))
+  { CGAL_assertion(this->geometry_traits_1().shared_geom_traits_2() != nullptr); }
 
   /*! constructs an empty diagram from a shared pointer to a 2D geometry traits adaptor.
    * This is the preferred constructor; it avoids a heap allocation by
    * sharing the traits object rather than copying it.
    */
-  Envelope_diagram_1(std::shared_ptr<const Geom_traits_1> traits_2_ptr) :
-    Base(traits_2_ptr)
+  Envelope_diagram_1(std::shared_ptr<const Geom_traits_1> shared_geom_tr) :
+    Base(std::move(shared_geom_tr))
   {}
+
+  // --------------------------------------------------------------------------
+  // Geometry Traits Accessors
+  // --------------------------------------------------------------------------
+
+  /*! obtains the 2D geometry traits.
+   */
+  const Traits_2& geometry_traits_2() const { return this->geometry_traits_1().geom_traits_2(); }
+
+  /*! obtains the shared pointer to the 2D geometry traits.
+   */
+  Shared_traits_2 shared_geometry_traits_2() const { return this->geometry_traits_1().shared_geom_traits_2(); }
 
   // --------------------------------------------------------------------------
   // Diagram Accessors
