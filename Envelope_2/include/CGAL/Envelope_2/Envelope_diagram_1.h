@@ -61,12 +61,6 @@ public:
   using Edge_descriptor = typename Base::Edge_descriptor;
   using Edge_const_descriptor = typename Base::Edge_const_descriptor;
 
-  // Backward compatibility (limited)
-  using Vertex_handle = typename Base::Vertex_descriptor;
-  using Vertex_const_handle = typename Base::Vertex_const_descriptor;
-  using Edge_handle = typename Base::Edge_descriptor;
-  using Edge_const_handle = typename Base::Edge_const_descriptor;
-
   /*! constructs an empty diagram with a default-constructed geometry traits.
    */
   Envelope_diagram_1() : Base() {}
