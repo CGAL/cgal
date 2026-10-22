@@ -512,6 +512,8 @@ output_to_medit(std::ostream& os,
         << '\n';
   }
   auto vertex_index = [&](const Vertex_handle& v) {
+    constexpr bool use_meshing_info =
+    has_meshing_info<typename std::remove_reference<decltype(*std::declval<Vertex_handle>())>::type>::value;
     if constexpr (use_meshing_info)
       return v->meshing_info();
     else
