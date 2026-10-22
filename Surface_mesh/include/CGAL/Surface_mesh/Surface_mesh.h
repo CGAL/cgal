@@ -928,7 +928,9 @@ public:
       , garbage_(std::exchange(sm.garbage_, false))
       , recycle_(std::exchange(sm.recycle_, true))
       , anonymous_property_(std::exchange(sm.anonymous_property_, 0))
-    {}
+    {
+      sm.initialize_standard_properties();
+    }
 
     /// assigns `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh& operator=(const Surface_mesh& rhs);
@@ -956,6 +958,7 @@ public:
       garbage_ = std::exchange(sm.garbage_, false);
       recycle_ = std::exchange(sm.recycle_, true);
       anonymous_property_ = std::exchange(sm.anonymous_property_, 0);
+      sm.initialize_standard_properties();
       return *this;
     }
 
@@ -1983,6 +1986,17 @@ public:
 
 
 private: //--------------------------------------------------- property handling
+
+    void initialize_standard_properties()
+    {
+      vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+      hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+      fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
+      vpoint_   = add_property_map<Vertex_index, Point>("v:point").first;
+      vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
+      eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
+      fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
+    }
 
   // Property_selector maps an index type to a property_container, the
   // dummy is necessary to make it a partial specialization (full

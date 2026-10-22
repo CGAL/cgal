@@ -231,37 +231,59 @@ void properties () {
 }
 
 void move () {
-  Surface_fixture f;
+  Sm source;
+  const Sm::Vertex_index v0 = source.add_vertex(Point_3(0, 0, 0));
+  const Sm::Vertex_index v1 = source.add_vertex(Point_3(1, 1, 1));
+  auto custom = source.add_property_map<Sm::Vertex_index, int>("custom", 42).first;
+  custom[v0] = 7;
 
-  auto nf = num_faces(f.m);
+  Sm destination;
+  destination.add_vertex(Point_3(9, 9, 9));
+  destination = std::move(source);
+  assert(destination.is_valid());
+  assert(source.is_valid());
+  assert((destination.point(v0) == Point_3(0, 0, 0)));
+  assert((destination.point(v1) == Point_3(1, 1, 1)));
+  assert((destination.property_map<Sm::Vertex_index, int>("custom").value()[v0] == 7));
 
-  // test move-constructor
-  Sm m2{std::move(f.m)};
-  assert(f.m.is_valid());
-  assert(m2.is_valid());
-  assert(num_faces(m2) == nf);
-  assert(num_faces(f.m) == 0);
+  source.add_vertex(Point_3(8, 8, 8));
+  assert((destination.point(v0) == Point_3(0, 0, 0)));
+  assert((destination.point(v1) == Point_3(1, 1, 1)));
 
-  // test move-assignment
-  f.m = std::move(m2);
-  assert(f.m.is_valid());
-  assert(m2.is_valid());
-  assert(num_faces(f.m) == nf);
-  assert(num_faces(m2) == 0);
+  // Self-move of a property-map handle must preserve the handle.
+  auto point_map = destination.points();
+  point_map = std::move(point_map);
+  assert(point_map);
+  assert((point_map[v0] == Point_3(0, 0, 0)));
+
+  // Move construction must also leave the source reusable.
+  Sm constructed(std::move(destination));
+  assert((constructed.point(v1) == Point_3(1, 1, 1)));
+  destination.add_vertex(Point_3(6, 6, 6));
+  assert((constructed.point(v0) == Point_3(0, 0, 0)));
+
+  // Repeated moves and empty/nonempty combinations.
+  Sm empty;
+  empty = std::move(constructed);
+  assert((empty.point(v0) == Point_3(0, 0, 0)));
+  constructed.add_vertex(Point_3(5, 5, 5));
+  Sm nonempty;
+  nonempty.add_vertex(Point_3(4, 4, 4));
+  nonempty = std::move(constructed);
+  assert(nonempty.number_of_vertices() == 1);
+  assert((empty.point(v1) == Point_3(1, 1, 1)));
 
   // test copy-assignment
-  m2 = f.m;
-  assert(f.m.is_valid());
-  assert(m2.is_valid());
-  assert(num_faces(f.m) == nf);
-  assert(num_faces(m2) == nf);
+  constructed = empty;
+  assert(empty.is_valid());
+  assert(constructed.is_valid());
+  assert((constructed.point(v0) == Point_3(0, 0, 0)));
 
   // test copy-constructor
-  Sm m3 {f.m};
-  assert(f.m.is_valid());
-  assert(m2.is_valid());
-  assert(num_faces(f.m) == nf);
-  assert(num_faces(m2) == nf);
+  Sm m3 {empty};
+  assert(empty.is_valid());
+  assert(m3.is_valid());
+  assert((m3.point(v1) == Point_3(1, 1, 1)));
 }
 
 
