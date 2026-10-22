@@ -45,7 +45,7 @@ int main (int argc, char** argv){
 
 
   // Open file
-  std::string input_file = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/elephant.mesh"));
+  std::filesystem::path input_file = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/elephant.mesh"));
   std::ifstream in (input_file, std::ios_base::in);
   if(!in) {
     std::cerr << "Error! Cannot open file " << input_file << std::endl;
