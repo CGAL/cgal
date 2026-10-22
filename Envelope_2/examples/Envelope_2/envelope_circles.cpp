@@ -1,13 +1,13 @@
-//! \file examples/Example_2/envelope_circles.cpp
+//! \file examples/Envelope_2/envelope_circles.cpp
 // Constructing the envelopes of a set of circles using the circle-segment
 // traits.
 
 #include <cassert>
+#include <iostream>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
-#include <CGAL/Arrangement_2.h>
 #include <CGAL/Envelope_2/Envelope_diagram_1.h>
 #include <CGAL/Envelope_2/envelope_2.h>
 
@@ -20,7 +20,7 @@ using Curve_2 = Traits_2::Curve_2;
 using Diagram_1 = CGAL::Envelope_2::Envelope_diagram_1<Traits_2>;
 
 /*! Print the given envelope diagram. */
-void print_diagram (const Diagram_1& diag) {
+void print_diagram(const Diagram_1& diag) {
   Diagram_1::Edge_const_descriptor e = diag.leftmost();
   while (e != diag.rightmost()) {
     std::cout << "Edge: ";

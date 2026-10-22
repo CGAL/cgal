@@ -3,8 +3,8 @@
  * \cgalConcept
  *
  * This concept defines the representation of an envelope diagram of a set of
- * planar curve. The <I>envelope diagram</I> is a subdivision of the \f$
- * x\f$-axis into 0-dimensional cells (<I>vertices</I>) and 1-dimensional cells
+ * planar curves. The <I>envelope diagram</I> is a subdivision of the
+\f$* x\f$-axis into 0-dimensional cells (<I>vertices</I>) and 1-dimensional cells
  * (<I>edges</I>), such that the identity of the curves that induce the lower
  * envelope (or the upper envelope) over each cell is fixed.
  *
@@ -24,7 +24,7 @@
  * the diagram contains two unbounded edges, its <I>leftmost</I> edge,
  * representing the interval \f$(-\infty, x_l)\f$, and its <I>rightmost</I>
  * edge, representing the interval \f$(x_r, \infty)\f$, where \f$x_l\f$ and
- * \f$x_r\f$ are the \f$ x\f$-coordinates of the leftmost and the rightmost
+ * \f$x_r\f$ are the \f$x\f$-coordinates of the leftmost and the rightmost
  * vertices in the diagram, respectively.  Note that a diagram may contain no
  * vertices at all, in which case it comprises a single edge.
  *
@@ -47,7 +47,7 @@ public:
    */
   typedef Traits_2::Point_2 Point_2;
 
-  /*! the \f$ x\f$-monotone curve type.
+  /*! the \f$x\f$-monotone curve type.
    */
   typedef Traits_2::X_monotone_curve_2 X_monotone_curve_2;
 
@@ -55,7 +55,12 @@ public:
    */
   typedef unspecified_type Curve_size;
 
-  /*! an iterator for the \f$ x\f$-monotone curves that induce a diagram feature, with value type `X_monotone_curve_2`.
+  /*! the container of the \f$x\f$-monotone curves that induce a diagram feature,
+   * with value type `X_monotone_curve_2`.
+   */
+  typedef unspecified_type Curve_container;
+
+  /*! an iterator for the \f$x\f$-monotone curves that induce a diagram feature, with value type `X_monotone_curve_2`.
    */
   typedef unspecified_type Curve_const_iterator;
 
@@ -72,7 +77,7 @@ public:
 
   /*! copy constructor.
    */
-  Envelope_diagram_1(const Self& other);
+  EnvelopeDiagram_1(const EnvelopeDiagram_1& other);
 
   /// @}
 
@@ -95,12 +100,12 @@ public:
   /*! sets the leftmost edge of the diagram to be `e`.
    * \deprecated The leftmost edge is maintained by the modifiers of the diagram.
    */
-  void set_leftmost(Edge_const_descriptor e);
+  void set_leftmost(Edge_descriptor e);
 
   /*! sets the rightmost edge of the diagram to be `e`.
    * \deprecated The rightmost edge is maintained by the modifiers of the diagram.
    */
-  void set_rightmost(Edge_const_descriptor e);
+  void set_rightmost(Edge_descriptor e);
 
   /// @}
 
@@ -113,11 +118,11 @@ public:
 
   /*! obtains the diagram curves associated with a given vertex. (A non-const version is also available.)
    */
-  const Curve_container& vertex_curves(Vertex_descriptor v) const;
+  const Curve_container& vertex_curves(Vertex_const_descriptor v) const;
 
   /*! obtains the diagram curves associated with a given edge. (A non-const version is also available.)
    */
-  const Curve_container& edge_curves(Edge_descriptor e) const;
+  const Curve_container& edge_curves(Edge_const_descriptor e) const;
 
   /*! obtains the number of curves associated with a given vertex.
    */
@@ -135,13 +140,13 @@ public:
    */
   bool empty_edge_curves(Edge_const_descriptor e) const;
 
-  /*! obtains the first curve assocuayed with a given vertex.
+  /*! obtains the first curve associated with a given vertex.
    * \pre `empty_vertex_curves(v)` is `false`.
    */
   const X_monotone_curve_2& vertex_curve(Vertex_const_descriptor v) const;
 
   /*! obtains the first curve associated with a given edge.
-   * \pre `empty_vertex_curves(v)` is `false`.
+   * \pre `empty_edge_curves(e)` is `false`.
    */
   const X_monotone_curve_2& edge_curve(Edge_const_descriptor e) const;
 
@@ -150,7 +155,7 @@ public:
   /// \name Curve Data Modifiers
   /// @{
 
-  /*! sets the point associated with a fiven vertex.
+  /*! sets the point associated with a given vertex.
    */
   void set_point(Vertex_descriptor v, const Point_2& p);
 
@@ -164,11 +169,11 @@ public:
 
   /*! adds a range of \f$x\f$-monotone curves to the list of curves associated with a given vertex.
    */
-  void add_edge_curves(Edge_descriptor e, Curve_const_iterator begin, Curve_const_iterator end);
+  void add_vertex_curves(Vertex_descriptor v, Curve_const_iterator begin, Curve_const_iterator end);
 
   /*! adds a range of \f$x\f$-monotone curves to the list of curves associated with a given edge.
    */
-  void add_vertex_curves(Vertex_descriptor v, Curve_const_iterator begin, Curve_const_iterator end);
+  void add_edge_curves(Edge_descriptor e, Curve_const_iterator begin, Curve_const_iterator end);
 
   /*! clears the curves associated with a given vertex.
    */

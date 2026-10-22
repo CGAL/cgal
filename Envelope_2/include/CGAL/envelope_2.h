@@ -16,16 +16,8 @@
 #include <CGAL/license/Envelope_2.h>
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/envelope_2.h>"
-#define CGAL_REPLACEMENT_HEADER "<CGAL/Envelope_2/envelope_2>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Envelope_2/envelope_2.h>"
 #include <CGAL/Installation/internal/deprecation_warning.h>
-
-#if (defined __GNUC__)
-  #if !(defined __STRICT_ANSI__)
-  #warning "envelope_2.h is DEPRECATED, please include Envelope_2/envelope_2.h instead."
-  #endif
-#elif (defined _MSC_VER)
-  #pragma message("envelope_2.h is DEPRECATED, please include Envelope_2/envelope_2.h instead")
-#endif
 
 #include <CGAL/Envelope_2/envelope_2.h>
 
@@ -66,7 +58,6 @@ CGAL_DEPRECATED void lower_envelope_x_monotone_2(InputIterator begin, InputItera
 { Envelope_2::lower_envelope_x_monotone_2(begin, end, diag); }
 
 /*! computes the lower envelope of a range of x-monotone curves.
- * Compute the lower envelope of a range of x-monotone curves.
  * \param begin An iterator for the first x-monotone curve.
  * \param end A past-the-end iterator for the x-monotone curves.
  * \param diag Output: The minimization diagram.

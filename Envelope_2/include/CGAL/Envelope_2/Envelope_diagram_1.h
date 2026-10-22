@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Ron Wein   <wein@post.tau.ac.il>
-//            Efi Fogel  <efif@post.tau.ac.il>
+//            Efi Fogel  <efifogel@gmail.com>
 
 #ifndef CGAL_ENVELOPE_2_ENVELOPE_DIAGRAM_1_H
 #define CGAL_ENVELOPE_2_ENVELOPE_DIAGRAM_1_H
@@ -65,19 +65,17 @@ public:
   using Edge_handle = typename Base::Edge_descriptor;
   using Edge_const_handle = typename Base::Edge_const_descriptor;
 
-  /*! Default constructor.
-   * Constructs an empty diagram with a default-constructed geometry traits.
-   * Used when a diagram is needed before the traits is known (rare).
+  /*! constructs an empty diagram with a default-constructed geometry traits.
    */
   Envelope_diagram_1() : Base() {}
 
-  /*! Constructor passing a 2D geometry traits shared pointer.
+  /*! constructs an empty diagram from a shared pointer to a 2D geometry traits.
    */
   Envelope_diagram_1(std::shared_ptr<const Traits_2> traits_2_ptr) :
     Base(std::make_shared<const Geom_traits_1>(traits_2_ptr))
   {}
 
-  /*! Constructor passing a 2D geometry traits adaptor shared pointer.
+  /*! constructs an empty diagram from a shared pointer to a 2D geometry traits adaptor.
    * This is the preferred constructor; it avoids a heap allocation by
    * sharing the traits object rather than copying it.
    */
@@ -158,7 +156,7 @@ public:
   }
 
   /*! obtains the first curve associated with a given edge.
-   * \pre `empty_vertex_curves(v)` is `false`.
+   * \pre `empty_edge_curves(e)` is `false`.
    */
   const X_monotone_curve_2& edge_curve(Edge_const_descriptor e) const {
     CGAL_precondition(! empty_edge_curves(e));

@@ -1,7 +1,10 @@
-//! \file examples/Envelope_2/convex_hull.cpp
-// Compute the convex hull of set of points using the lower envelope and upper
-// envelopes of their dual line.
+//! \file examples/Envelope_2/convex_hull_2.cpp
+// Computing the convex hull of a set of points using the lower and upper
+// envelopes of their dual lines.
 
+#include <fstream>
+#include <iostream>
+#include <list>
 #include <vector>
 
 #include <CGAL/Exact_rational.h>
@@ -20,7 +23,7 @@ using Traits_2 = CGAL::Arr_curve_data_traits_2<Linear_traits_2, unsigned int>;
 using Dual_line_2 = Traits_2::X_monotone_curve_2;
 using Diagram_1 = CGAL::Envelope_2::Envelope_diagram_1<Traits_2>;
 
-int main (int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
   // Read the points from the input file.
   const char* filename = (argc > 1) ? argv[1] : "ch_points.dat";
   std::ifstream in_file(filename);
@@ -40,14 +43,14 @@ int main (int argc, char* argv[]) {
   for (std::size_t k = 0; k < n; ++k) {
     int px, py;
     in_file >> px >> py;
-    points[k] = Point_2 (px, py);
+    points[k] = Point_2(px, py);
 
     // The line dual to the point (p_x, p_y) is y = p_x*x - p_y,
     // or: p_x*x - y - p_y = 0:
     Line_2 line = Line_2(Number_type(px), Number_type(-1), Number_type(-py));
 
     // Generate the x-monotone curve based on the line and the point index.
-    dual_lines.push_back(Dual_line_2 (line, k));
+    dual_lines.push_back(Dual_line_2(line, k));
   }
   in_file.close();
 
@@ -72,7 +75,7 @@ int main (int argc, char* argv[]) {
 
   // Handle the degenerate case of a vertical convex hull edge:
   if (min_diag.edge_curve(e).data() != max_diag.edge_curve(max_diag.leftmost()).data())
-    std::cout << " (" << points[max_diag.edge_curve(e).data()] << ')';
+    std::cout << " (" << points[min_diag.edge_curve(e).data()] << ')';
 
   e = max_diag.leftmost();
   while (e != max_diag.rightmost()) {

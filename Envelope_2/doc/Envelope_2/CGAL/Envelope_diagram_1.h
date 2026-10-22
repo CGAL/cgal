@@ -34,6 +34,9 @@ public:
   /// \name Types
   /// @{
 
+  //! The container of the curves associated with a diagram feature.
+  typedef std::list<typename Traits_2::X_monotone_curve_2> Curve_container;
+
   //! The 1D geometry traits.
   typedef Arrangement_on_curve_1::Open_geom_traits_2_adaptor_1<Traits_2> Geom_traits_1;
 
@@ -49,24 +52,16 @@ public:
   /// \name Creation
   /// @{
 
-  /*! Constructor passing a 2D geometry traits shared pointer.
+  /*! constructs an empty diagram from a shared pointer to a 2D geometry traits.
    */
   Envelope_diagram_1(std::shared_ptr<const Traits_2> traits_2_ptr);
 
-  /*! Constructor passing a 2D geometry traits adaptor shared pointer.
+  /*! constructs an empty diagram from a shared pointer to a 2D geometry traits adaptor.
    * This is the preferred constructor; it avoids a heap allocation by
    * sharing the traits object rather than copying it.
    */
   Envelope_diagram_1(std::shared_ptr<const Geom_traits_1> traits_2_ptr);
 
-  /// @}
-
-  /// \name Accessors
-  /// @{
-  /// @}
-
-  /// \name Modifiers
-  /// @{
   /// @}
 
 }; // end Envelope_diagram_1

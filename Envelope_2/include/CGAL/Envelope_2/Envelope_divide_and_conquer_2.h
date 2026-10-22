@@ -15,6 +15,8 @@
 
 #include <CGAL/license/Envelope_2.h>
 
+#include <iterator>
+#include <list>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -104,7 +106,7 @@ public:
 
   /*! destructor.
    */
-  ~Envelope_divide_and_conquer_2() {}
+  ~Envelope_divide_and_conquer_2() = default;
 
   /*! constructs the lower (or upper) envelope to the given range of curves.
    * \param begin An iterator pointing at the beginning of the curves range.
@@ -141,6 +143,9 @@ public:
    */
   template <typename XCurvesIterator>
   void insert_x_monotone_curves(XCurvesIterator begin, XCurvesIterator end, Envelope_diagram_1& diagram) {
+    // The diagram is cleared also when all the curves are vertical.
+    diagram.clear();
+
     // Separate the regular curves from the vertical ones.
     auto is_vertical = m_traits->is_vertical_2_object();
 
@@ -161,8 +166,7 @@ public:
     if (! reg_vec.empty()) {
       if constexpr (! Pooled) _construct_envelope_non_vertical(reg_vec.begin(), reg_vec.end(), diagram);
       else {
-        const std::size_t n = std::distance(begin, end);
-        this->init_pool(n);
+        this->init_pool(num_curves);
         _construct_envelope_non_vertical_pooled(reg_vec.begin(), reg_vec.end(), diagram);
         this->clear_pool();
       }
@@ -175,7 +179,7 @@ public:
   /*! obtains the traits object.
    * \return A pointer to the traits object.
    */
-  const Traits_2* geometry_traits() const { return m_traits; }
+  const Traits_2* geometry_traits() const { return m_traits.get(); }
 
 protected:
   /*! constructs the lower/upper envelope of the given list of non-vertical curves.
@@ -262,7 +266,7 @@ protected:
    * \pre The two \f$x\f$-monotone curves need to have a partially overlapping \f$x\f$-ranges.
    * \return `SMALLER` - the end of `xcv1` is below the end of `xcv2`.
    *         `EQUAL`   - the end of `xcv1` and the end of `xcv2` have the same \f$y\f$ coordinates.
-   * \       `LARGER`  - the end of `xcv1` is above the end of `xcv2`.
+   *         `LARGER`  - the end of `xcv1` is above the end of `xcv2`.
    */
   Comparison_result compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                      Arr_curve_end curve_end, Arr_all_sides_oblivious_tag) const;
@@ -279,7 +283,7 @@ protected:
    * \param origin_of_v The origin of v: SMALLER if it is from e1,
    *                    otherwise it is from e2. EQUAL result means that
    *                    both diagram have vertex at the same place (but v
-   *                    is still taken from e2.
+   *                    is still taken from e2).
    * \param out_d The merged diagram.
    */
   void _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_descriptor e2, bool is_leftmost2,

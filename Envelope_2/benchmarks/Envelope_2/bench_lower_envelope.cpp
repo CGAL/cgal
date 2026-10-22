@@ -29,12 +29,9 @@
 
 // ---------------------------------------------------------------------------
 // Type setup.
-// Arr_curve_data_traits_2 wraps Arr_segment_traits_2 and is required for
-// compatibility with Envelope_diagram_1 and Env_divide_and_conquer_2: those
-// templates type their internal curve-pointer containers from the diagram's
-// X_monotone_curve_2, which must match the wrapped type used as input.
-// We attach a dummy char label (unused) solely to satisfy the wrapper's
-// interface — this matches the pattern used in the reference example.
+// Arr_curve_data_traits_2 wraps Arr_segment_traits_2 and attaches a char label
+// to every segment, as in the envelope_segments example, so the benchmark runs
+// on the same curve type.  The labels themselves are not used.
 // ---------------------------------------------------------------------------
 using NT = CGAL::Exact_rational;
 using Kernel = CGAL::Cartesian<NT>;
@@ -137,13 +134,14 @@ int main(int argc, char* argv[]) {
   // Input sizes to test.  Geometric progression: 100, 200, 400, ..., 25600.
   const std::vector<std::size_t> sizes = { 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600 };
 
-  // Coordinate range: sqrt(n) * 4 gives moderate intersection density without
-  // degenerating to a fully overlapping clump.  We reuse a fixed range
-  // (large enough for the biggest n) so results across sizes are comparable.
+  // Coordinate range.  The segments are scale invariant, so the range does not
+  // affect the number of intersections; it only controls how often integer
+  // coordinates coincide.  A fixed, large range keeps the inputs of all sizes
+  // in near-general position, so the results across sizes are comparable.
   const int coord_range = 10000;
 
   // -- Print header ---------------------------------------------------------
-  std::cout << "# Lower envelope benchmark — Arr_segment_traits_2\n"
+  std::cout << "# Lower envelope benchmark - Arr_segment_traits_2\n"
             << "# seed=" << seed << "  reps=" << reps << "\n"
             << "#\n"
             << std::left

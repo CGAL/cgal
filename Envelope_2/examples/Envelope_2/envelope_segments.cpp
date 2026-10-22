@@ -1,5 +1,5 @@
-//! \file examples/Example_2/envelope_segments.cpp
-// Constructing the lower envelope of a set of segments using the new Envelope_diagram_1 API.
+//! \file examples/Envelope_2/envelope_segments.cpp
+// Constructing the lower envelope of a set of segments.
 
 #include <list>
 #include <iostream>
@@ -38,7 +38,7 @@ int main() {
   Diagram_1 min_diag;
   CGAL::Envelope_2::lower_envelope_x_monotone_2(segments.begin(), segments.end(), min_diag);
 
-  // Print the minimization diagram using the new API functions on min_diag.
+  // Print the minimization diagram.
   Diagram_1::Edge_const_descriptor e = min_diag.leftmost();
   while (e != min_diag.rightmost()) {
     std::cout << "Edge:";

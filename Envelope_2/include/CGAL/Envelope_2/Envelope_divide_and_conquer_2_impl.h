@@ -19,9 +19,8 @@
  * Definitions of the functions of the Envelope_divide_and_conquer_2 class.
  *
  * All accesses to vertex and edge data (curve lists, connectivity) are made
- * through the diagram's public interface rather than through raw node-pointer
- * arrow operators, because the new Envelope_diagram_1 derives from
- * Arrangement_on_curve_1 and stores curve data in property maps.
+ * through the public interface of the diagram, which derives from
+ * Arrangement_on_curve_1 and stores the curve data in property maps.
  */
 
 #include <optional>
@@ -37,7 +36,8 @@ namespace Envelope_2 {
 template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
 void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_iterator end, Envelope_diagram_1& out_d) {
-  out_d.clear();
+  // The output diagram is either cleared by insert_x_monotone_curves() or new.
+  CGAL_precondition(out_d.empty());
 
   Curve_pointer_iterator iter = begin;
   if (iter == end) return;
@@ -76,7 +76,9 @@ template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
 void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _construct_envelope_non_vertical_pooled(Curve_pointer_iterator begin, Curve_pointer_iterator end,
                                         Envelope_diagram_1& out_d) {
-  out_d.clear();
+  // The output diagram is either cleared by insert_x_monotone_curves() or
+  // acquired from the pool, which clears it.
+  CGAL_precondition(out_d.empty());
 
   Curve_pointer_iterator iter = begin;
   CGAL_assertion(iter != end);
@@ -306,8 +308,9 @@ _merge_single_interval(Edge_const_descriptor e, Edge_const_descriptor other_edge
   }
 
   if (origin_of_v == EQUAL) {
-    Vertex_descriptor new_v = _append_vertex(out_d, in_d.point(v), e, in_d);
+    // v may be a vertex of other_d; use the coinciding vertex of in_d.
     Vertex_const_descriptor v1 = in_d.right_vertex(e);
+    Vertex_descriptor new_v = _append_vertex(out_d, in_d.point(v1), e, in_d);
     Vertex_const_descriptor v2 = other_d.right_vertex(other_edge);
     out_d.add_vertex_curves(new_v, in_d.vertex_curves(v1).begin(), in_d.vertex_curves(v1).end());
     out_d.add_vertex_curves(new_v, other_d.vertex_curves(v2).begin(), other_d.vertex_curves(v2).end());
@@ -583,8 +586,9 @@ _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_des
   if (equal_at_v) {
     CGAL_assertion(v_exists);
 
+    // A vertex was appended at v.
     Edge_descriptor e_last = out_d.rightmost();
-    if (! out_d.has_left_vertex(e_last)) return;
+    CGAL_assertion(out_d.has_left_vertex(e_last));
 
     Vertex_descriptor v_to_be_updated = out_d.left_vertex(e_last);
     if (origin_of_v == EQUAL) {
@@ -595,10 +599,13 @@ _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_des
       return;
     }
 
-    const Envelope_diagram_1& src_d = (origin_of_v == SMALLER) ? d2 : d1;
+    // v is a vertex of the diagram it originates from, and e is the edge of
+    // the other diagram.
+    const Envelope_diagram_1& v_d = (origin_of_v == SMALLER) ? d1 : d2;
+    const Envelope_diagram_1& e_d = (origin_of_v == SMALLER) ? d2 : d1;
     Edge_const_descriptor e = (origin_of_v == SMALLER) ? e2 : e1;
-    out_d.add_vertex_curves(v_to_be_updated, src_d.vertex_curves(v).begin(), src_d.vertex_curves(v).end());
-    out_d.add_vertex_curves(v_to_be_updated, src_d.edge_curves(e).begin(), src_d.edge_curves(e).end());
+    out_d.add_vertex_curves(v_to_be_updated, v_d.vertex_curves(v).begin(), v_d.vertex_curves(v).end());
+    out_d.add_vertex_curves(v_to_be_updated, e_d.edge_curves(e).begin(), e_d.edge_curves(e).end());
     return;
   }
 
@@ -768,6 +775,8 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
         out_d.add_vertex_curves(v, env_cvs.begin(), env_cvs.end());
       }
       else if ((m_env_type == LOWER && res == SMALLER) || (m_env_type == UPPER && res == LARGER)) {
+        // The vertical segments induce the envelope at v, which moves to p.
+        out_d.set_point(v, p);
         out_d.clear_vertex_curves(v);
         out_d.add_vertex_curves(v, env_cvs.begin(), env_cvs.end());
       }

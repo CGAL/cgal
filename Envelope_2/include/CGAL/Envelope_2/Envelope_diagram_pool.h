@@ -1,17 +1,37 @@
-// Copyright (c) 2006  Tel-Aviv University (Israel).
+// Copyright (c) 2026  Tel-Aviv University (Israel).
 // All rights reserved.
+//
 // This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s): Efi Fogel  <efifogel@gmail.com>
 
 #ifndef CGAL_ENVELOPE_2_ENVELOPE_DIAGRAM_POOL_H
 #define CGAL_ENVELOPE_2_ENVELOPE_DIAGRAM_POOL_H
 
+#include <CGAL/license/Envelope_2.h>
+
 #include <vector>
 #include <cstddef>
 
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 namespace Envelope_2 {
+namespace internal {
+
+// obtains the ceiling of the binary logarithm of `n`, which is the maximal
+// depth of the recursion of the divide-and-conquer algorithm on `n` curves.
+inline std::size_t ceil_log2(std::size_t n) {
+  std::size_t depth = 0;
+  for (--n; n > 0; n >>= 1) ++depth;
+  return depth;
+}
+
+} // namespace internal
 
 // ============================================================================
 // Primary Template: Default fallback or primary definition
@@ -39,10 +59,7 @@ public:
 
   void init_pool(std::size_t n) {
     clear_pool();
-    if (n > 1) {
-      const std::size_t max_depth = 64 - __builtin_clzll(n - 1);
-      m_diagram_pool.reserve(2 * max_depth);
-    }
+    if (n > 1) m_diagram_pool.reserve(2 * internal::ceil_log2(n));
   }
 
   void clear_pool() {
@@ -78,10 +95,10 @@ public:
 
   void init_pool(std::size_t n) {
     m_active_count = 0;
-    if (n > 1) {
-      const std::size_t max_depth = 64 - __builtin_clzll(n - 1);
-      m_diagram_pool.reserve(2 * max_depth);
-    }
+    // At most two diagrams per recursion level are active at a time.  The
+    // reserved capacity is never exceeded, so the vector never reallocates,
+    // and the pointers to the active diagrams remain valid.
+    if (n > 1) m_diagram_pool.reserve(2 * internal::ceil_log2(n));
   }
 
   void clear_pool() { m_diagram_pool.clear(); }
@@ -92,6 +109,7 @@ public:
       d.clear();
       return &d;
     }
+    CGAL_assertion(m_diagram_pool.size() < m_diagram_pool.capacity());
     m_diagram_pool.emplace_back(out_d.shared_geometry_traits_1());
     ++m_active_count;
     return &m_diagram_pool.back();

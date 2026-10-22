@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.12...3.31)
-project(Envelope_2_Examples)
+project(Envelope_2_Benchmarks)
 
 find_package(CGAL REQUIRED)
 

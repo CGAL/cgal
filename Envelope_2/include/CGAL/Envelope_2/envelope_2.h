@@ -19,6 +19,8 @@
  * Global functions for computing lower and upper envelopes of curves in the plane.
  */
 
+#include <memory>
+
 #include <CGAL/Envelope_2/Envelope_divide_and_conquer_2.h>
 
 namespace CGAL {
@@ -67,7 +69,6 @@ void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
 }
 
 /*! computes the lower envelope of a range of x-monotone curves.
- * Compute the lower envelope of a range of x-monotone curves.
  * \param begin An iterator for the first x-monotone curve.
  * \param end A past-the-end iterator for the x-monotone curves.
  * \param diag Output: The minimization diagram.
