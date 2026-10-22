@@ -479,7 +479,10 @@ _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_des
 
     if ((intersection_point = std::get_if<Intersection_point>(&obj)) != nullptr) {
       bool is_in_x_range = true;
-      if (p_leftmost && m_geometry_traits->compare_xy_2_object() (intersection_point->first, *p_leftmost) != LARGER)
+      // An intersection point that is not strictly to the right of the reached
+      // point does not induce a vertex; in particular, one that lies above (or
+      // below) the reached point would yield a vertex at the same x-coordinate.
+      if (p_leftmost && m_geometry_traits->compare_x_2_object()(intersection_point->first, *p_leftmost) != LARGER)
         is_in_x_range = false;
 
       if (is_in_x_range && v_exists) {
@@ -487,7 +490,11 @@ _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_des
 
         if (res == EQUAL) equal_at_v = true;
 
-        if (res == LARGER) break;
+        // Stop at an intersection point beyond v, or at one other than v at the
+        // x-coordinate of v, which v dominates.
+        else if ((res == LARGER) ||
+                 (m_geometry_traits->compare_x_2_object()(intersection_point->first, *p_v) == EQUAL))
+          break;
       }
 
       if (is_in_x_range) {
@@ -528,7 +535,7 @@ _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_des
       if (has_right) pt_right = m_geometry_traits->construct_max_vertex_2_object()(*intersection_curve);
 
       bool is_in_x_range = true;
-      if (p_leftmost && has_right && (m_geometry_traits->compare_xy_2_object()(pt_right, *p_leftmost) != LARGER))
+      if (p_leftmost && has_right && (m_geometry_traits->compare_x_2_object()(pt_right, *p_leftmost) != LARGER))
         is_in_x_range = false;
 
       if (is_in_x_range && v_exists && has_left) {
@@ -536,11 +543,13 @@ _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_des
 
         if (res == EQUAL) equal_at_v = true;
 
-        if (res == LARGER) break;
+        // Stop at an overlap that starts beyond v, or at the x-coordinate of v
+        // other than at v, which v dominates.
+        else if ((res == LARGER) || (m_geometry_traits->compare_x_2_object()(pt_left, *p_v) == EQUAL)) break;
       }
 
       if (is_in_x_range && has_left &&
-          (! p_leftmost || (m_geometry_traits->compare_xy_2_object()(pt_left, *p_leftmost) == LARGER))) {
+          (! p_leftmost || (m_geometry_traits->compare_x_2_object()(pt_left, *p_leftmost) == LARGER))) {
         CGAL_assertion(current_res != EQUAL);
 
         Vertex_descriptor new_v = (current_res == SMALLER) ?
@@ -554,7 +563,7 @@ _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_des
         p_leftmost = pt_left;
       }
 
-      if (is_in_x_range && has_right && (! v_exists || (m_geometry_traits->compare_xy_2_object()(pt_right, *p_v) == SMALLER))) {
+      if (is_in_x_range && has_right && (! v_exists || (m_geometry_traits->compare_x_2_object()(pt_right, *p_v) == SMALLER))) {
         Vertex_descriptor new_v = _append_vertex(out_d, pt_right, e1, d1);
         Edge_descriptor e_left = out_d.left_edge(new_v);
         out_d.add_edge_curves(e_left, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
@@ -566,7 +575,7 @@ _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_des
         p_leftmost = pt_right;
       }
 
-      if (has_right == false || (v_exists && m_geometry_traits->compare_xy_2_object()(pt_right, *p_v) != SMALLER)) {
+      if (has_right == false || (v_exists && m_geometry_traits->compare_x_2_object()(pt_right, *p_v) != SMALLER)) {
         if (v_exists) {
           Vertex_descriptor new_v = _append_vertex(out_d, *p_v, e1, d1);
           Edge_descriptor e_left = out_d.left_edge(new_v);
@@ -605,7 +614,11 @@ _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_des
     const Envelope_diagram_1& e_d = (origin_of_v == SMALLER) ? d2 : d1;
     Edge_const_descriptor e = (origin_of_v == SMALLER) ? e2 : e1;
     out_d.add_vertex_curves(v_to_be_updated, v_d.vertex_curves(v).begin(), v_d.vertex_curves(v).end());
-    out_d.add_vertex_curves(v_to_be_updated, e_d.edge_curves(e).begin(), e_d.edge_curves(e).end());
+    // The curves of e coincide with those of the other edge at the
+    // x-coordinate of v, but they pass through v only if v does not dominate
+    // them there, e.g., when they overlap up to that x-coordinate.
+    if (m_geometry_traits->compare_y_at_x_2_object()(v_d.point(v), e_d.edge_curve(e)) == EQUAL)
+      out_d.add_vertex_curves(v_to_be_updated, e_d.edge_curves(e).begin(), e_d.edge_curves(e).end());
     return;
   }
 
@@ -791,7 +804,8 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
         if (((m_env_type == LOWER) && (res != LARGER)) || ((m_env_type == UPPER) && (res != SMALLER))) {
           Vertex_descriptor new_v = _split_edge(out_d, p, e);
           out_d.add_vertex_curves(new_v, env_cvs.begin(), env_cvs.end());
-          if (res == EQUAL) out_d.add_vertex_curve(new_v, out_d.edge_curves(e).front());
+          // All the (overlapping) curves of e pass through p.
+          if (res == EQUAL) out_d.add_vertex_curves(new_v, out_d.edge_curves(e).begin(), out_d.edge_curves(e).end());
         }
       }
     }

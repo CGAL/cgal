@@ -1,12 +1,14 @@
 // Tests the configurations of the envelope algorithm that
 // test_envelope_segments does not cover: the three pool strategies, vertical
-// segments that induce the envelope at a vertex, the reuse of a diagram, the
+// segments that induce the envelope at a vertex, degenerate configurations,
+// the reuse of a diagram, the
 // overloads that accept a traits object, constant input ranges, unbounded
 // curves, and the deprecated interface.
 
 #define CGAL_NO_DEPRECATION_WARNINGS
 
 #include <algorithm>
+#include <array>
 #include <cstdlib>
 #include <memory>
 #include <random>
@@ -24,6 +26,13 @@
 #endif
 
 using Segment_vector = std::vector<Curve_2>;
+
+// checks the envelope of the segments `segs` both structurally and against
+// the brute-force reference.
+template <typename Segments, typename Diagram>
+bool is_valid_envelope(const Segments& segs, const Diagram& diag, bool is_lower) {
+  return check_envelope(segs, diag, is_lower) && check_envelope_reference(segs, diag, is_lower);
+}
 
 // obtains a text representation of a diagram: the points of its vertices and
 // the sorted data of the curves associated with its features, from left to
@@ -59,8 +68,8 @@ void report(bool ok, const std::string& name, std::size_t& failures) {
 }
 
 // generates `n` segments with integer endpoints in [0, range]^2, a quarter of
-// which are vertical.  The vertical segments may share their x-coordinate with
-// endpoints of other segments.
+// which are vertical.  A small range yields degenerate configurations: shared
+// endpoints, overlaps, and intersections at the x-coordinates of endpoints.
 Segment_vector random_segments(std::mt19937& rng, int n, int range) {
   std::uniform_int_distribution<int> dist(0, range);
   Segment_vector segs;
@@ -81,17 +90,17 @@ std::string envelope(Segment_vector& segs, bool is_lower, std::size_t& invalid) 
   Diagram_1 diag;
   Dac env(is_lower ? Dac::LOWER : Dac::UPPER);
   env.insert_x_monotone_curves(segs.begin(), segs.end(), diag);
-  if (! check_envelope(segs, diag, is_lower)) ++invalid;
+  if (! is_valid_envelope(segs, diag, is_lower)) ++invalid;
   return dump(diag);
 }
 
 // The value-based pool, the pointer-based pool, and no pool must all yield
-// the same valid diagrams.
+// the same valid diagrams, also for degenerate inputs.
 void test_pools(std::size_t& failures) {
   std::mt19937 rng(7);
   std::size_t invalid = 0, mismatches = 0;
-  for (int t = 0; t < 100; ++t) {
-    auto segs = random_segments(rng, 1 + t % 40, 1000);
+  for (int t = 0; t < 200; ++t) {
+    auto segs = random_segments(rng, 1 + t % 40, 3 + t % 18);
     for (bool is_lower : {true, false}) {
       auto value_based = envelope<true, true>(segs, is_lower, invalid);
       auto pointer_based = envelope<true, false>(segs, is_lower, invalid);
@@ -113,8 +122,44 @@ void test_vertical(std::size_t& failures) {
   Diagram_1 min_diag, max_diag;
   CGAL::Envelope_2::lower_envelope_x_monotone_2(lower_segs.begin(), lower_segs.end(), min_diag);
   CGAL::Envelope_2::upper_envelope_x_monotone_2(upper_segs.begin(), upper_segs.end(), max_diag);
-  bool ok = check_envelope(lower_segs, min_diag, true) && check_envelope(upper_segs, max_diag, false);
+  bool ok = is_valid_envelope(lower_segs, min_diag, true) && is_valid_envelope(upper_segs, max_diag, false);
   report(ok, "vertical segments at vertices", failures);
+}
+
+// constructs segments from the coordinates of their endpoints.
+Segment_vector segments(const std::vector<std::array<int, 4>>& coords) {
+  Segment_vector segs;
+  for (const auto& c : coords)
+    segs.push_back(Curve_2(Segment_2(Point_2(c[0], c[1]), Point_2(c[2], c[3])), static_cast<int>(segs.size())));
+  return segs;
+}
+
+// Degenerate configurations that used to yield invalid diagrams or to fail
+// an assertion.
+void test_degenerate(std::size_t& failures) {
+  struct Case {
+    const char* name;
+    bool is_lower;
+    Segment_vector segs;
+  };
+  const std::vector<Case> cases{
+    // An intersection point above the reached vertex yielded a second vertex at its x-coordinate.
+    {"intersection above the reached vertex", true, segments({{5, 3, 15, 13}, {4, 8, 9, 1}, {3, 13, 11, 5}})},
+    // The same configuration failed an assertion.
+    {"intersection at the x-coordinate of an endpoint", true, segments({{15, 2, 18, 5}, {20, 2, 17, 4}, {4, 11, 17, 1}})},
+    // An intersection point below the next vertex of the upper envelope yielded a second vertex.
+    {"intersection below the next vertex", false, segments({{2, 2, 0, 2}, {0, 3, 1, 2}, {3, 0, 1, 3}})},
+    // Curves that overlap up to the x-coordinate of a vertex were associated with it.
+    {"overlap up to a vertex", true, segments({{2, 1, 4, 1}, {4, 2, 3, 0}, {0, 1, 3, 1}})},
+    // A vertical segment on overlapping curves was associated with only one of them.
+    {"vertical segment on an overlap (lower)", true, segments({{2, 1, 5, 1}, {4, 1, 0, 1}, {3, 2, 3, 1}})},
+    {"vertical segment on an overlap (upper)", false, segments({{2, 3, 0, 3}, {2, 3, 0, 3}, {1, 3, 1, 2}})}};
+  for (const auto& c : cases) {
+    Diagram_1 diag;
+    if (c.is_lower) CGAL::Envelope_2::lower_envelope_x_monotone_2(c.segs.begin(), c.segs.end(), diag);
+    else CGAL::Envelope_2::upper_envelope_x_monotone_2(c.segs.begin(), c.segs.end(), diag);
+    report(is_valid_envelope(c.segs, diag, c.is_lower), c.name, failures);
+  }
 }
 
 // A diagram that is reused must not retain its previous content, also when
@@ -129,11 +174,11 @@ void test_reuse(std::size_t& failures) {
 
   Diagram_1 diag;
   CGAL::Envelope_2::lower_envelope_x_monotone_2(segs1.begin(), segs1.end(), diag);
-  bool ok = check_envelope(segs1, diag, true);
+  bool ok = is_valid_envelope(segs1, diag, true);
   CGAL::Envelope_2::lower_envelope_x_monotone_2(segs2.begin(), segs2.end(), diag);
-  ok = ok && check_envelope(segs2, diag, true);
+  ok = ok && is_valid_envelope(segs2, diag, true);
   CGAL::Envelope_2::upper_envelope_x_monotone_2(segs3.begin(), segs3.end(), diag);
-  ok = ok && check_envelope(segs3, diag, false);
+  ok = ok && is_valid_envelope(segs3, diag, false);
   CGAL::Envelope_2::lower_envelope_x_monotone_2(none.begin(), none.end(), diag);
   ok = ok && (diag.leftmost() == diag.rightmost()) && diag.empty_edge_curves(diag.leftmost());
   report(ok, "diagram reuse", failures);
@@ -150,7 +195,7 @@ void test_traits(std::size_t& failures) {
   CGAL::Envelope_2::upper_envelope_x_monotone_2(segs.begin(), segs.end(), max_diag, traits);
   Diagram_1 diag(traits);
   CGAL::Envelope_2::lower_envelope_x_monotone_2(segs.begin(), segs.end(), diag);
-  bool ok = check_envelope(segs, min_diag, true) && check_envelope(segs, max_diag, false) &&
+  bool ok = is_valid_envelope(segs, min_diag, true) && is_valid_envelope(segs, max_diag, false) &&
     (dump(diag) == dump(min_diag)) && (min_diag.shared_geometry_traits_2() == traits) &&
     (&min_diag.geometry_traits_2() == traits.get());
   report(ok, "traits overloads", failures);
@@ -164,7 +209,7 @@ void test_const_range(std::size_t& failures) {
   Diagram_1 min_diag, max_diag;
   CGAL::Envelope_2::lower_envelope_x_monotone_2(segs.begin(), segs.end(), min_diag);
   CGAL::Envelope_2::upper_envelope_2(curves.begin(), curves.end(), max_diag);
-  bool ok = check_envelope(segs, min_diag, true) && check_envelope(segs, max_diag, false);
+  bool ok = is_valid_envelope(segs, min_diag, true) && is_valid_envelope(segs, max_diag, false);
   report(ok, "constant input ranges", failures);
 }
 
@@ -213,7 +258,7 @@ void test_deprecated(std::size_t& failures) {
   CGAL::lower_envelope_x_monotone_2(segs.begin(), segs.end(), min_diag, traits);
   CGAL::upper_envelope_x_monotone_2(segs.begin(), segs.end(), max_diag);
   CGAL::lower_envelope_2(curves.begin(), curves.end(), diag);
-  bool ok = check_envelope(segs, min_diag, true) && check_envelope(segs, max_diag, false) &&
+  bool ok = is_valid_envelope(segs, min_diag, true) && is_valid_envelope(segs, max_diag, false) &&
     (dump(diag) == dump(min_diag));
   report(ok, "deprecated interface", failures);
 }
@@ -223,6 +268,7 @@ int main() {
   std::size_t failures = 0;
   test_pools(failures);
   test_vertical(failures);
+  test_degenerate(failures);
   test_reuse(failures);
   test_traits(failures);
   test_const_range(failures);
