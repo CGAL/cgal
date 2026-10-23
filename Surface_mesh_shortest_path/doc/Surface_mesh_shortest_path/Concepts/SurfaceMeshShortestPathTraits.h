@@ -284,7 +284,7 @@ public:
   /*!
   Function object type that provides
   `std::pair<CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type,std::size_t> operator()(Barycentric_coordinates b)`,
-  which computes the classification and the associated edge (if applicable) of the coordinates `b`
+  which computes the classification and the associated edge (if applicable) of the coordinates `b`.
   \details Returns the pair (`type`, `i`), such that `type` is one of the values of `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type`
   - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX`, `i` is the index of that vertex
   - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_BOUNDARY`, `i` is the index of the non-zero edge
