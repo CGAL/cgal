@@ -30,7 +30,11 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/tags.h>
-#include <CGAL/for_each.h>
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
+#include <tbb/partitioner.h>
+#endif
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -1681,25 +1685,44 @@ private:
     return true;
   }
 
+  // Calls f(i) for each octree leaf m_partitions[i], in parallel if ConcurrencyTag is Parallel_tag.
+  // The leaves are processed in the order of decreasing number of input polygons, so that the most expensive leaves are
+  // started first and do not delay the end of the computation. Each leaf is scheduled separately for the same reason.
+  template<typename ConcurrencyTag, typename Function>
+  void for_each_leaf(const Function& f) const {
+    std::vector<std::size_t> order(m_partitions.size());
+    std::iota(order.begin(), order.end(), 0);
+    std::stable_sort(order.begin(), order.end(), [&](std::size_t a, std::size_t b) {
+      return m_partition_nodes[m_partitions[a]].input_polygons.size() > m_partition_nodes[m_partitions[b]].input_polygons.size();
+    });
+
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (std::is_convertible_v<ConcurrencyTag, Parallel_tag>) {
+      tbb::parallel_for(tbb::blocked_range<std::size_t>(0, order.size(), 1), [&](const tbb::blocked_range<std::size_t>& r) {
+        for (std::size_t i = r.begin(); i != r.end(); ++i)
+          f(order[i]);
+      }, tbb::simple_partitioner());
+      return;
+    }
+#endif
+
+    for (std::size_t i : order)
+      f(i);
+  }
+
   // Initializes the kinetic data structures of all octree leaves.
   template<typename ConcurrencyTag>
   bool initialize_subpartitions(FT& initialization_time) {
     // Times are collected per partition. In the parallel version, they sum up to more than the elapsed time.
     std::vector<FT> initialization_times(m_partitions.size(), 0);
-    std::vector<std::size_t> positions(m_partitions.size());
-    std::iota(positions.begin(), positions.end(), 0);
     std::atomic<bool> failed(false);
 
-    CGAL::for_each<ConcurrencyTag>(positions, [&](const std::size_t i) -> bool {
+    for_each_leaf<ConcurrencyTag>([&](const std::size_t i) {
       if (failed)
-        return false;
+        return;
 
-      if (!initialize_subpartition(m_partitions[i], initialization_times[i])) {
+      if (!initialize_subpartition(m_partitions[i], initialization_times[i]))
         failed = true;
-        return false;
-      }
-
-      return true;
     });
 
     initialization_time = std::accumulate(initialization_times.begin(), initialization_times.end(), FT(0));
@@ -1714,8 +1737,6 @@ private:
   bool compute_subpartitions(std::size_t k, bool init_and_release, FT& initialization_time, FT& partition_time, FT& finalization_time) {
     // Times are collected per partition. In the parallel version, they sum up to more than the elapsed time.
     std::vector<FT> initialization_times(m_partitions.size(), 0), partition_times(m_partitions.size(), 0), finalization_times(m_partitions.size(), 0);
-    std::vector<std::size_t> positions(m_partitions.size());
-    std::iota(positions.begin(), positions.end(), 0);
     std::atomic<bool> failed(false);
 
     std::cout.precision(17);
@@ -1725,17 +1746,14 @@ private:
     if (std::is_same<ConcurrencyTag, Parallel_tag>::value)
       std::cout << "parallel" << std::endl;
 
-    CGAL::for_each<ConcurrencyTag>(positions, [&](const std::size_t i) -> bool {
+    for_each_leaf<ConcurrencyTag>([&](const std::size_t i) {
       if (failed)
-        return false;
+        return;
 
       if (!compute_partition(m_partitions[i], k, init_and_release, initialization_times[i], partition_times[i], finalization_times[i])) {
         failed = true;
-        std::cout << "Warning: partition() failed for partition " << i << " " << m_partitions[i] << std::endl;
-        return false;
+        KSP::internal::Log_line() << "Warning: partition() failed for partition " << i << " " << m_partitions[i];
       }
-
-      return true;
     });
 
     initialization_time = std::accumulate(initialization_times.begin(), initialization_times.end(), FT(0));
