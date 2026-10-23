@@ -2171,13 +2171,7 @@ private:
     return v->ccdt_3_data().is_marked();
   }
 
-  class Non_planar_plc_facet_exception : public std::exception
-  {
-    const char* what() const throw()
-    {
-      return "ERROR : PLC facet is not coplanar";
-    }
-  };
+  using Non_planar_plc_facet_exception = CGAL::Non_planar_plc_facet_exception;
 
   void fill_cdt_2(CDT_2& cdt_2, CDT_3_signed_index polygon_constraint_id) const
   {
