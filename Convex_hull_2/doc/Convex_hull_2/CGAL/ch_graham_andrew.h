@@ -43,7 +43,7 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 This function implements Andrew's variant of the Graham
-scan algorithm \cgalCite{a-aeach-79} and follows the presentation of Mehlhorn
+scan algorithm \cgalCite{a-aeach-79} and follows the presentation of
 \cgalCite{m-mdscg-84}. This algorithm requires \cgalBigO{n \log n} time
 in the worst case for \f$ n\f$ input points.
 

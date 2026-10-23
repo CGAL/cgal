@@ -290,7 +290,7 @@ functions included in the
 
 <UL>
 <LI>The `Optimal_convex_decomposition_2<Kernel>` class template uses
-the dynamic-programming algorithm of Greene \cgalCite{g-dpcp-83} for
+the dynamic-programming algorithm of \cgalCite{g-dpcp-83} for
 computing an optimal decomposition of a polygon into a minimal number
 of convex sub-polygons. While this algorithm results in a small number
 of convex polygons, it consumes rather many resources, as it runs in
@@ -298,8 +298,8 @@ of convex polygons, it consumes rather many resources, as it runs in
 \f$ n \f$ is the number of vertices in the input polygon.
 
 <LI>The `Hertel_Mehlhorn_convex_decomposition_2<Kernel>` class
-template implements the approximation algorithm suggested by Hertel and
-Mehlhorn \cgalCite{hm-ftsp-83}, which triangulates the input polygon
+template implements the approximation algorithm suggested by
+\cgalCite{hm-ftsp-83}, which triangulates the input polygon
 and then discards unnecessary triangulation edges. After triangulation
 (carried out by the constrained-triangulation procedure of CGAL) the
 algorithm runs in \cgalBigO{n} time and space, and guarantees that the
@@ -317,7 +317,7 @@ and Mehlhorn's algorithm.
 <LI>The `Small_side_angle_bisector_decomposition_2<Kernel>` class
 template is an implementation of a decomposition algorithm introduced
 in \cgalCite{cgal:afh-pdecm-02}. It is based on the angle-bisector
-decomposition method suggested by Chazelle and Dobkin
+decomposition method suggested by
 \cgalCite{cd-ocd-85}, which runs in \cgalBigO{n^2} time. In addition,
 it applies a heuristic by Flato that reduces the number of output
 polygons in many common cases.  The convex decompositions that it

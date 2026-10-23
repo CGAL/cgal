@@ -419,7 +419,7 @@ Result of the run of the draw_periodic_2_triangulation_2 program for display mod
 The periodic 2D-triangulation is based on the 2D triangulation package
 developed by Mariette Yvinec and inspired by the periodic 3D-triangulation package
 developed by Manuel Caroli and Monique Teillaud. The periodic
-3D-triangulation package is described in Manuel's PhD thesis
+3D-triangulation package is described in
 \cgalCite{cgal:c-tpsos-10} Triangulating Point Sets in Orbit Spaces and \cgalCite{cgal:ct-c3pt-09}.
 
 In 2009, Nico Kruithof started implementation of the

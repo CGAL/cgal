@@ -43,11 +43,11 @@ Left: the axis-aligned bounding box. Right: the optimal bounding box, a much bet
 
 In 2D, the optimal bounding rectangle of an input can be computed in linear time
 using the technique of <em>rotating calipers</em>, first introduced
-by Toussaint \cgalCite{cgal:t-sgprc-83} (see also the \cgal package \ref PkgBoundingVolumes).
+by \cgalCite{cgal:t-sgprc-83} (see also the \cgal package \ref PkgBoundingVolumes).
 An algorithm to compute the optimal oriented bounding box in 3D was proposed
-by O’Rourke \cgalCite{cgal:or-fmeb-85}, but its cubic complexity in the number
+by \cgalCite{cgal:or-fmeb-85}, but its cubic complexity in the number
 of points makes it unusable in practice. The implementation proposed
-in this package is based on the paper of Chang et al.\cgalCite{cgal:cgm-fobbo-11},
+in this package is based on the paper of \cgalCite{cgal:cgm-fobbo-11},
 who introduced an algorithm to compute a close approximation of the optimal
 bounding box. As this is but an approximation of the optimal bounding box,
 we call the resulting box, the <em>Oriented Bounding Box</em>.
