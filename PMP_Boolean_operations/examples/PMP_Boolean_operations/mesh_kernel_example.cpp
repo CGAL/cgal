@@ -15,8 +15,8 @@ int main(int argc, char** argv)
   const std::filesystem::path fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
   const std::filesystem::path ofname = (argc > 2) ? argv[2] : fname.stem().concat("-kernel").concat(fname.extension().native());
 
-  Mesh m;
-  if (!CGAL::IO::read_polygon_mesh(fname, m) || is_empty(m))
+  Mesh mesh;
+  if (!CGAL::IO::read_polygon_mesh(fname, mesh) || is_empty(mesh))
   {
     std::cerr << "ERROR: cannot read " << fname << "\n";
     return EXIT_FAILURE;
@@ -26,7 +26,7 @@ int main(int argc, char** argv)
   timer.start();
 
   Mesh kernel;
-  PMP::kernel(m, kernel);
+  PMP::kernel(mesh, kernel);
 
   timer.stop();
 
