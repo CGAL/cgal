@@ -2065,15 +2065,9 @@ _intersect(const Self& cv,
     typename std::list<Point_2>::iterator  pit;
 
     for (pit = inter_pts.begin(); pit != inter_pts.end(); ++pit) {
-      // Check if the point is in the range of this curve - first using
-      // its parameter bounds, and if we fail we perform an exact check.
-      if (! self_intersect) {
-        in_range1 = _is_in_range(*pit, correct_res);
-      }
-      else {
-        in_range1 = true;
-        correct_res = true;
-      }
+      // Check if the point is in the range of this curve
+      // Note: We MUST perform this check even for self-intersections.
+      in_range1 = _is_in_range(*pit, correct_res);
 
       if (! correct_res) {
         if (! pit->is_exact()) pit->make_exact(cache);
@@ -2086,15 +2080,9 @@ _intersect(const Self& cv,
 
       if (! in_range1) continue;
 
-      // Check if the point is in the range of the other curve - first using
-      // its parameter bounds, and if we fail we perform an exact check.
-      if (! self_intersect) {
-        in_range2 = cv._is_in_range (*pit, correct_res);
-      }
-      else {
-        in_range2 = true;
-        correct_res = true;
-      }
+      // Check if the point is in the range of the other curve
+      // Note: We MUST perform this check even for self-intersections.
+      in_range2 = cv._is_in_range (*pit, correct_res);
 
       if (! correct_res) {
         if (! pit->is_exact()) pit->make_exact (cache);
