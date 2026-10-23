@@ -541,11 +541,12 @@ th.valid-expression {
 /* issue #9655: let long return types wrap in function templates */
 tr.template .memItemLeft {
   white-space: normal;
-  max-width: 25%;
+  max-width: 40%;
   text-align: left;
   padding-right: 1em;
 }
 tr.template .memItemRight {
+  max-width: 90%;
   white-space: normal;
 }
 .memItemRight a.el {
