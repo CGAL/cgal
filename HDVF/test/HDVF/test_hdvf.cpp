@@ -352,12 +352,12 @@ int main(int argc, char **argv) {
     CGAL::IO::write_VTK(hdvf, complex, "tmp/test_hdvf");
     //
     //    // z over a critical cell
-    //    std::vector<size_t> criticals(hdvf.psc_flags(HDVF::CRITICAL,1));
+    //    std::vector<size_t> criticals(hdvf.psc_flag(HDVF::CRITICAL,1));
     //    HDVF_type::Column_chain test_z(hdvf.z(criticals.at(0),1));
     //    CGAL::IO::write_VTK(complex, "tmp/z_critical.vtk", test_z, 1);
     //
     //    // z over a primary cell
-    //    std::vector<size_t> primary(hdvf.psc_flags(HDVF::PRIMARY,1));
+    //    std::vector<size_t> primary(hdvf.psc_flag(HDVF::PRIMARY,1));
     //    HDVF_type::Column_chain test_z_p(hdvf.z(primary.at(0),1));
     //    Complex::chain_to_vtk(complex, "tmp/z_primary.vtk", test_z_p, 1);
     //
@@ -368,7 +368,7 @@ int main(int argc, char **argv) {
     //    CGAL::IO::write_VTK(complex, "tmp/co_z_critical.vtk", test_co_z, 1);
     //
     //    // co_z over a secondary cell
-    //    std::vector<size_t> secondary(hdvf.psc_flags(HDVF::SECONDARY,1));
+    //    std::vector<size_t> secondary(hdvf.psc_flag(HDVF::SECONDARY,1));
     //    HDVF_type::Column_chain test_co_z_s(hdvf.co_z(secondary.at(0),1));
     //    CGAL::IO::write_VTK(complex, "tmp/co_z_secondary.vtk", test_co_z_s, 1);
     {

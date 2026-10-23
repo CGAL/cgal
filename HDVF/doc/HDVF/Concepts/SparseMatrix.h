@@ -13,7 +13,7 @@
  The `SparseMatrix` concept describes requirements for such sparse matrix. It relies on the model of `SparseChain`
  which encodes sparse row or column vectors. Matrices are either column major or row major (hence they either store column sparse chains or row sparse chains).
 
- The following constants, called `Storage_format`, encode the major direction of both sparse chains and sparse matrices.
+ The following integer constants, called `Storage_format`, encode the major direction of both sparse chains and sparse matrices.
  - `CGAL::OSM::COLUMN` for column-major chains and matrices (which is the default),
  - `CGAL::OSM::ROW` for row-major chains and matrices.
 

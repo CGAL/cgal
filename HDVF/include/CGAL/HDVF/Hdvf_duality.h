@@ -289,7 +289,7 @@ public:
      *
      * \param flag PSC_flag to select.
      */
-    std::vector<std::vector<size_t> > psc_flags (PSC_flag flag) const ;
+    std::vector<std::vector<size_t> > psc_flag (PSC_flag flag) const ;
 
     /**
      * \brief Gets cells with a given `PSC_flag` in dimension `q` *in the current sub chain complex*.
@@ -299,7 +299,7 @@ public:
      * \param flag PSC_flag to select.
      * \param q Dimension visited.
      */
-    std::vector<size_t> psc_flags (PSC_flag flag, int q) const ;
+    std::vector<size_t> psc_flag (PSC_flag flag, int q) const ;
 
     // Hdvf_duality I/O
 
@@ -788,7 +788,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool ver
 #ifdef DEBUG_HDVF_DUALITY
     std::cout << tmp.size() << " cells paired" << std::endl ;
 #endif
-    _critical_K = psc_flags(CRITICAL) ;
+    _critical_K = psc_flag(CRITICAL) ;
 
 #ifdef DEBUG_HDVF_DUALITY
     std::cout << std::endl << "==== Compute perfect HDVF over L-K" << std::endl ;
@@ -802,7 +802,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool ver
 #ifdef DEBUG_HDVF_DUALITY
     std::cout << tmp2.size() << " cells paired" << std::endl ;
 #endif
-    _critical_L_K = psc_flags(CRITICAL) ;
+    _critical_L_K = psc_flag(CRITICAL) ;
 
     // Return the vector of paired cells
     tmp.insert(tmp.end(), tmp2.begin(), tmp2.end());
@@ -825,7 +825,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(boo
 #ifdef DEBUG_HDVF_DUALITY
     std::cout << tmp.size() << " cells paired" << std::endl ;
 #endif
-    _critical_K = psc_flags(CRITICAL) ;
+    _critical_K = psc_flag(CRITICAL) ;
 
 #ifdef DEBUG_HDVF_DUALITY
     std::cout << std::endl << "==== Compute perfect HDVF over L-K" << std::endl ;
@@ -839,7 +839,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(boo
 #ifdef DEBUG_HDVF_DUALITY
     std::cout << tmp2.size() << " cells paired" << std::endl ;
 #endif
-    _critical_L_K = psc_flags(CRITICAL) ;
+    _critical_L_K = psc_flag(CRITICAL) ;
 
     // Return the vector of paired cells
     tmp.insert(tmp.end(), tmp2.begin(), tmp2.end());
@@ -899,7 +899,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_pairing_hdvf()
 
 // Method to get cells of _subCC with a given PSC_flag for each dimension
 template<typename ChainComplex>
-std::vector<std::vector<size_t> > Hdvf_duality<ChainComplex>::psc_flags (PSC_flag flag) const
+std::vector<std::vector<size_t> > Hdvf_duality<ChainComplex>::psc_flag (PSC_flag flag) const
 {
     std::vector<std::vector<size_t> > res(_L.dimension()+1) ;
     for (int q=0; q<=_L.dimension(); ++q)
@@ -915,7 +915,7 @@ std::vector<std::vector<size_t> > Hdvf_duality<ChainComplex>::psc_flags (PSC_fla
 
 // Method to get cells of _subCC with a given PSC_flag for a given dimension
 template<typename ChainComplex>
-std::vector<size_t> Hdvf_duality<ChainComplex>::psc_flags (PSC_flag flag, int q) const
+std::vector<size_t> Hdvf_duality<ChainComplex>::psc_flag (PSC_flag flag, int q) const
 {
     std::vector<size_t> res ;
     for (size_t i=0; i<this->_K.number_of_cells(q); ++i)

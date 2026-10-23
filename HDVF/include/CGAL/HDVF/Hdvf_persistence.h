@@ -291,7 +291,7 @@ public:
         }
 
         // Compute "infinite" holes
-        std::vector<std::vector<size_t> > criticals(this->psc_flags(CRITICAL)) ;
+        std::vector<std::vector<size_t> > criticals(this->psc_flag(CRITICAL)) ;
         for (int q=min_dim; q <= max_dim; ++q)
         {
             for (size_t i : criticals.at(q))

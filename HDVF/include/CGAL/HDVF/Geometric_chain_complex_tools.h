@@ -96,7 +96,7 @@ void write_VTK (const Homological_discrete_vector_field::Hdvf_core<ChainComplex>
     if (hdvf.hdvf_opts() != Homological_discrete_vector_field::OPT_BND) {
         // Export generators of all critical cells in the computed range
         // [min_dim, max_dim]
-        std::vector<std::vector<size_t> > criticals(hdvf.psc_flags(Homological_discrete_vector_field::CRITICAL)) ;
+        std::vector<std::vector<size_t> > criticals(hdvf.psc_flag(Homological_discrete_vector_field::CRITICAL)) ;
         for (int q = min_dim; q <= max_dim; ++q) {
             for (size_t c : criticals.at(q)) {
                 // Homology generators
@@ -251,7 +251,7 @@ void write_VTK (const Homological_discrete_vector_field::Hdvf_duality<ChainCompl
 
     if (hdvf.hdvf_opts() != Homological_discrete_vector_field::OPT_BND) {
         // Export generators of all critical cells
-        std::vector<std::vector<size_t> > criticals(hdvf.psc_flags(Homological_discrete_vector_field::CRITICAL)) ;
+        std::vector<std::vector<size_t> > criticals(hdvf.psc_flag(Homological_discrete_vector_field::CRITICAL)) ;
         for (int q = 0; q <= complex.dimension(); ++q) {
             for (size_t c : criticals.at(q)) {
                 // Homology generators

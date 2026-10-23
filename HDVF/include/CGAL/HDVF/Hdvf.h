@@ -31,7 +31,7 @@ namespace Homological_discrete_vector_field {
  The class `Hdvf` implements homology and cohomology computation via homological discrete vector fields (%HDVF for short). It derives from `Hdvf_core` and shares all its data and methods.
 
  Perfect HDVFs provide various topological results:
- - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `psc_flags()` with the `CRITICAL``PSC_flag` as argument).
+ - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `psc_flag()` with the `CRITICAL``PSC_flag` as argument).
  - Homology/cohomology generators are actually algebraic objects, namely chains. Methods `homology_chain()` and `cohomology_chain()` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients. Figures here above illustrate such homology and co-homology generators.
  - Homology/cohomology annotation: use `get_annotation()` or `get_coannotation()` to get the annotation/co-annotation of a cycle/co-cycle in the homology/cohomology basis (as a chain of critical cells).
  - Homology/cohomology comparison: use `are_same_cycles()` or `are_same_cocycles()` to check if two cycles (or co-cycles) belong to the same homology / cohomology class.

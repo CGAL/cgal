@@ -7,7 +7,7 @@ More precisely, `SparseChain` provides all the operations on chains required by 
 
  `SparseChain` encodes non zero coefficients of a sparse vector.
 
- `SparseChain`  can be either row or column vectors. The following constants, called `StorageFormat`, encode the direction of sparse chains (and sparse matrices).
+ `SparseChain`  can be either row or column vectors. The following integer constants, called `Storage_format`, encode the direction of sparse chains (and sparse matrices).
  - `CGAL::OSM::COLUMN` for column-major chains and matrices (which is the default),
  - `CGAL::OSM::ROW` for row-major chains and matrices.
 

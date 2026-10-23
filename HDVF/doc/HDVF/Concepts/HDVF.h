@@ -1,12 +1,12 @@
 /*!
-\ingroup PkgHDVFConcepts
-\cgalConcept
+ \ingroup PkgHDVFConcepts
+ \cgalConcept
 
-The concept `HDVF` describes the requirements for Homological Discrete Vector Fields (%HDVF for short) , a theory of computational homology unifying discrete Morse theory and effective homology. HDVFs were introduced by Aldo Gonzalez-Lorenzo in his PhD (see [AGL,2017], [AGL,2016]).
+ The concept `HDVF` describes the requirements for Homological Discrete Vector Fields (%HDVF for short) , a theory of computational homology unifying discrete Morse theory and effective homology. HDVFs were introduced by Aldo Gonzalez-Lorenzo in his PhD (see [AGL,2017], [AGL,2016]).
 
-A HDVF is a combinatorial tool computing the homology of a chain complex (described by the `AbstractChainComplex` concept) including "geometric" information such as homology and cohomology generators.
+ A HDVF is a combinatorial tool computing the homology of a chain complex (described by the `AbstractChainComplex` concept) including "geometric" information such as homology and cohomology generators.
 
- In order to build a perfect HDVF, a pairing operation called `A()` associates (under conditions) two critical cells (becoming PRIMARY and SECONDARY) and updates the reduction in time \f$\mathscr O(n^2)\f$. Intuitively, this operation bears some similitudes (see users guide) with discrete Morse theory's DGVF arrows (and an HDVF can always be represented by such a vector field - possibly with cycles).
+ In order to build a perfect HDVF, a pairing operation called `A()` associates (under conditions) two critical cells (becoming PRIMARY and SECONDARY) and updates the reduction in time \f$\mathscr O(n^2)\f$. Intuitively, this operation bears some similitudes  with discrete Morse theory's DGVF arrows (see \ref secHDVFdiscrete_Morse "introduction to discrete Morse theory" in user manual). Actually, an HDVF can always be represented by a vector field - possibly with cycles.
  The *validity condition for A* is tested by various `find_pair_A()` and `find_pairs_A()` methods, which search for such valid pairs.
 
 
@@ -21,12 +21,12 @@ A HDVF is a combinatorial tool computing the homology of a chain complex (descri
  - compute the full reduction (option `OPT_FULL`): to get the full homological / cohomological information
 
 
-\cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_core<IntegralDomainWithoutDivision, AbstractChainComplex, SparseChain, Sparse_matrix>`}
-\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf<IntegralDomainWithoutDivision, AbstractChainComplex>`}
-\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_persistence<IntegralDomainWithoutDivision, AbstractChainComplex>`}
-\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_duality<IntegralDomainWithoutDivision, AbstractChainComplex>`}
-\cgalHasModelsEnd
+ \cgalHasModelsBegin
+ \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_core<IntegralDomainWithoutDivision, AbstractChainComplex, SparseChain, Sparse_matrix>`}
+ \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf<IntegralDomainWithoutDivision, AbstractChainComplex>`}
+ \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_persistence<IntegralDomainWithoutDivision, AbstractChainComplex>`}
+ \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_duality<IntegralDomainWithoutDivision, AbstractChainComplex>`}
+ \cgalHasModelsEnd
 
  \sa `AbstractChainComplex`
  \sa `IntegralDomainWithoutDivision`
@@ -39,302 +39,411 @@ A HDVF is a combinatorial tool computing the homology of a chain complex (descri
 
  [AGL, 2016] Aldo Gonzalez-Lorenzo. Computational Homology Applied to Discrete Objects. Discrete Mathematics [cs.DM]. Aix-Marseille Université; Universidad de Sevilla, 2016.
 
-*/
+ */
 
 class HDVF
 {
 public:
-/// \name Types
-/// @{
+    /// \name Constants
+    /// @{
 
-/*!
- * \brief Type of underlying chain complex (a model of `AbstractChainComplex`).
- */
-typedef unspecified_type Complex;
-
-/*! \brief Type of coefficients used to compute homology. */
-typedef Complex::Coefficient_ring Coefficient_ring;
-
-    /** \brief HDVF option (compute only reduced boundary). */
+    /** \brief HDVF computation option: compute only the reduced boundary. */
     const int OPT_BND = 0b0001;
-    /** \brief HDVF option (compute only reduced boundary and f). */
+    /** \brief HDVF computation option: compute only the reduced boundary and \f$f\f$. */
     const int OPT_F = 0b0010;
-    /** \brief HDVF option (compute only reduced boundary and g). */
+    /** \brief HDVF computation option: compute only the reduced boundary and \f$g\f$. */
     const int OPT_G = 0b0100;
-    /** \brief HDVF option (compute full reduction). */
+    /** \brief HDVF computation option: compute the full reduction. */
     const int OPT_FULL = 0b1000;
 
-/*!
- * \brief Type of sparse chains (a model of `SparseChain`).
- */
+    /** \brief HDVF Enum for the label of cells.
+     *
+     * Values can be `PRIMARY`, `SECONDARY`, `CRITICAL` or `NONE` (for discarded cells in persistent homology or duality).
+     */
+    enum PSC_flag {
+        PRIMARY,
+        SECONDARY,
+        CRITICAL,
+        NONE
+    };
+
+    /// @}
+
+    /// \name Types
+    /// @{
+
+    /*!
+     * \brief Type of underlying chain complex (a model of `AbstractChainComplex`).
+     */
+    typedef unspecified_type Complex;
+
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef Complex::Coefficient_ring Coefficient_ring;
+
+    /*!
+     * \brief Type of sparse chains (a model of `SparseChain`).
+     */
     typedef unspecified_type Sparse_chain;
 
-/*!
- * \brief Type of sparse matrices (a model of `SparseMatrix`).
- */
+    /*!
+     * \brief Type of sparse matrices (a model of `SparseMatrix`).
+     */
     typedef unspecified_type Sparse_matrix;
 
-/*! \brief Structure to represent data for HDVF operations (pairs of cells).
- *
- * Cells are always sorted so that the dimension of `sigma` is lesser than the dimension of `tau`.
- */
-struct Cell_pair {
-    /// Index of the first cell
-    size_t sigma;
-    /// Index of the second cell
-    size_t tau;
-    /// Lower dimension of the cells
-    int dim;
-};
 
-/*!
- Type of column-major chains
- */
-typedef Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
+    /*! \brief Structure to represent data for HDVF operations (between pairs of cells).
+     *
+     * Cells are always sorted so that the dimension of `sigma` is lesser than the dimension of `tau`.
+     */
+    struct Cell_pair {
+        /// Index of the first cell
+        size_t sigma;
+        /// Index of the second cell
+        size_t tau;
+        /// Lower dimension of the cells
+        int dim;
+        /// Comparison operator
+        inline bool operator==(const Cell_pair& pair2);
+    };
 
-/*!
- Type of row-major chains
- */
-typedef Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
+    /*!
+     Type of column-major chains
+     */
+    typedef Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
 
-/*!
- Type of column-major sparse matrices
- */
-typedef Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
+    /*!
+     Type of row-major chains
+     */
+    typedef Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
 
-/*!
- Type of row-major sparse matrices
- */
-typedef Sparse_matrix<CoefficientType, CGAL::OSM::ROW> Row_matrix;
+    /*!
+     Type of column-major sparse matrices
+     */
+    typedef Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 
-/// @}
+    /*!
+     Type of row-major sparse matrices
+     */
+    typedef Sparse_matrix<CoefficientType, CGAL::OSM::ROW> Row_matrix;
 
-/// \name Functions to find valid pairs for `A()` operations
-/// @{
+    /// @}
 
-/*!
- * \brief Finds a valid Cell_pair of dimension q / q+1 for A.
- *
- * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
- *
- * \param q Lower dimension of the pair.
- * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
- */
-virtual Cell_pair find_pair_A(int q, bool &found) const;
+    /// \name Functions to find valid pairs for A() operations
+    /// @{
 
-/*!
- * \brief Finds a valid Cell_pair for A containing `gamma` (a cell of dimension `q`)
- *
- * The function searches a cell \f$\gamma'\f$ such that one of the following conditions holds:
- * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
- * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
- *
- * \param q Dimension of the cell `gamma`.
- * \param gamma Index of a cell to pair.
- * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
- */
-virtual Cell_pair find_pair_A(int q, size_t gamma, bool &found) const;
+    /*!
+     * \brief Finds a valid Cell_pair of dimension q / q+1 for A.
+     *
+     * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     *
+     * If the dimension is incorrect (negative or larger than the dimension of the underlying complex), `found` is set to `false`.
+     *
+     * \param q Lower dimension of the pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     */
+    virtual Cell_pair find_pair_A(int q, bool &found) const;
 
-/**
- * \brief Finds *all* valid Cell_pair of dimension q / q+1 for A.
- *
- * The function searches all pairs of critical cells \f$(\gamma_1, \gamma_2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
- * It returns a vector of such pairs.
- *
- * \param q Lower dimension of the pair.
- * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
- */
-virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
+    /*!
+     * \brief Finds a valid Cell_pair for A containing `gamma` (a cell of dimension `q`)
+     *
+     * The function searches a cell \f$\gamma'\f$ such that one of the following conditions holds:
+     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
+     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+     *
+     * If the dimension is incorrect (negative or larger than the dimension of the underlying complex), `found` is set to `false`. If the cell index is incorrect (larger than the number of cells in the dimension), `found` is set to `false`.
+     *
+     * \param q Dimension of the cell `gamma`.
+     * \param gamma Index of a cell to pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     */
+    virtual Cell_pair find_pair_A(int q, size_t gamma, bool &found) const;
 
-/**
- * \brief Finds *all* valid Cell_pair for A containing `gamma` (a cell of dimension `q`)
- *
- * The function searches all critical cells \f$\gamma'\f$ such that one of the following conditions holds:
- * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
- * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
- * It returns a vector of such pairs.
- *
- * \param q Dimension of the cell `gamma`.
- * \param gamma Index of a cell to pair.
- * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
- */
-virtual std::vector<Cell_pair> find_pairs_A(int q, size_t gamma, bool &found) const;
+    /**
+     * \brief Finds *all* valid Cell_pair of dimension q / q+1 for A.
+     *
+     * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
+     * It returns a vector of such pairs.
+     *
+     * If the dimension is incorrect (negative or larger than the dimension of the underlying complex), `found` is set to `false` and the function returns an empty vector.
+     *
+     * \param q Lower dimension of the pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     */
+    virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
+
+    /**
+     * \brief Finds *all* valid Cell_pair for A containing `gamma` (a cell of dimension `q`)
+     *
+     * The function searches all `CRITICAL` cells \f$\gamma'\f$ such that one of the following conditions holds:
+     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
+     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+     * It returns a vector of such pairs.
+     *
+     * If the dimension is incorrect (negative or larger than the dimension of the underlying complex), `found` is set to `false`. If the cell index is incorrect (larger than the number of cells in the dimension), `found` is set to `false`. In both cases, the function returns an empty vector.
+     *
+     * \param q Dimension of the cell `gamma`.
+     * \param gamma Index of a cell to pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     */
+    virtual std::vector<Cell_pair> find_pairs_A(int q, size_t gamma, bool &found) const;
 
 
-/// @}
+    /// @}
 
 
-/// \name HDVF functions and operations
-/// @{
+    /// \name HDVF functions and operations
+    /// @{
 
-/*!
- * \brief A operation (pairs two critical cells).
- *
- * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the `A()` operation, \f$\gamma_1\f$ becomes PRIMARY, \f$\gamma_2\f$ becomes SECONDARY. The `A()` functions updates the reduction accordingly (in time \f$\mathscr O(n^2)\f$).
- */
-void A(size_t gamma1, size_t gamma2, int q);
+    /*!
+     * \brief A operation: pairs critical cells.
+     *
+     * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the `A()` operation, \f$\gamma_1\f$ becomes `PRIMARY`, \f$\gamma_2\f$ becomes `SECONDARY`. The A method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     *
+     * \param gamma1 First cell of the pair (dimension `q`)
+     * \param gamma2 Second cell of the pair (dimension `q+1`)
+     * \param q Dimension of the pair
+     */
+    void A(size_t gamma1, size_t gamma2, int q);
 
-/*!
- * \brief Computes a perfect HDVF.
- *
- * As long as valid pairs for A exist, the function selects the first available pair (returned by `find_pair_A()`) and applies the corresponding `A()` operation.
- * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
- *
- * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
- *
- * \param verbose If `true`, all intermediate reductions are printed out.
- *
- */
-std::vector<Cell_pair> compute_perfect_hdvf(bool verbose = false);
+    /**
+     * \brief A operation (pairs critical cells).
+     *
+     * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the `A()` operation, \f$\gamma_1\f$ becomes `PRIMARY`, \f$\gamma_2\f$ becomes `SECONDARY`. The A method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     *
+     * \param p Argument `Cell_pair` containing \f$\gamma_1\f$, \f$\gamma_2\f$ and the dimension of the pair.
+     */
+    void A(const Cell_pair& p);
 
-/*!
- * \brief Computes a random perfect HDVF.
- *
- *As long as valid pairs for A exist, the function selects a random pair (among pairs returned by `find_pairs_A()`) and applies the corresponding `A()` operation.
- * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
- *
- * If the HDVF is initially not trivial (some cells have already been paired), the function randomly completes it into a perfect HDVF.
- *
- * \param verbose If `true`, all intermediate reductions are printed out.
- */
-std::vector<Cell_pair> compute_rand_perfect_hdvf(bool verbose = false);
-/// @}
+    /*!
+     * \brief Computes a perfect HDVF.
+     *
+     * As long as valid pairs for A exist, the function selects the first available pair (returned by `find_pair_A`()) and applies the corresponding `A()` operation.
+     * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
+     * Otherwise the operation produces a maximal HDVF with a residual boundary matrix over critical cells.
+     *
+     * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
+     *
+     * \param verbose If this parameter is `true`, all intermediate reductions are printed out.
+     *
+     * \return The vector of all `Cell_pair` paired with A.
+     *
+     */
+    std::vector<Cell_pair> compute_perfect_hdvf(bool verbose = false);
 
-/// \name Getters
-/// @{
+    /*!
+     * \brief Computes a random perfect HDVF.
+     *
+     * As long as valid pairs for A exist, the function selects a random pair (among pairs returned by `find_pairs_A()`) and applies the corresponding `A()` operation.
+     * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (that  is the reduced boundary is null and the reduction provides homology and cohomology information).
+     *
+     * If the HDVF is initially not trivial (some cells have already been paired), the function randomly completes it into a perfect HDVF.
+     *
+     * \warning This method is slower that `compute_perfect_hdvf()` (finding out all possible valid pairs requires additional time).
+     *
+     * \param verbose If this  parameter is `true`, all intermediate reductions are printed out.
+     *
+     * \return The vector of all pairs of cells used for apply A.
+     */
+    std::vector<Cell_pair> compute_rand_perfect_hdvf(bool verbose = false);
 
-/*!
- * \brief Gets cells with a given `PSC_flag` in any dimension.
- *
- * The function returns in each dimension the vector of cells with a given `PSC_flag`.
- */
-std::vector<std::vector<size_t> > flag (PSC_flag flag) const;
-
-/*!
- * \brief Gets cells with a given `PSC_flag` in dimension `q`.
- *
- * The function returns the vector of cells of dimension `q` with a given `PSC_flag`.
- */
-std::vector<size_t> psc_flags (PSC_flag flag, int q) const;
-
-/*!
- * \brief Gets the `PSC_flag` of the cell `tau` in dimension `q`.
- */
-PSC_flag psc_flag (size_t tau, int q) const;
-
-/*!
- * \brief Gets HDVF option.
- */
-int hdvf_opts ();
-
-/*!
- * \brief Gets the row-major matrix of \f$f\f$ (from the reduction associated to the HDVF).
- */
-const Row_matrix& matrix_f (int q) const;
-
-/*!
- * \brief Gets the column-major matrix of \f$g\f$ (from the reduction associated to the HDVF).
- */
-const Column_matrix& matrix_g (int q) const;
-
-/*!
- * \brief Gets the column-major matrix of \f$h\f$ (from the reduction associated to the HDVF).
- */
-const Column_matrix& matrix_h (int q) const;
-
-/*!
- * \brief Gets the column-major matrix of \f$\partial'\f$, reduced boundary operator (from the reduction associated to the HDVF).
- */
-const Column_matrix& matrix_dd (int q) const;
-
-/*!
- * \brief Tests if a HDVF is perfect.
- *
- * The function returns `true` if the reduced boundary matrix is null and `false` otherwise.
- */
+    /*!
+     * \brief Tests if a HDVF is perfect.
+     *
+     * The function returns `true` if the reduced boundary matrix is null and `false` otherwise.
+     */
     bool is_perfect_hdvf();
 
-/// @}
+    /// @}
 
-/// \name Output functions
-/// @{
+    /// \name Getters
+    /// @{
 
-/*!
- * \brief Writes the matrices of the reduction.
- *
- * Exports the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
- *
- * By default, writes the complex to `std::cout`.
-*/
-std::ostream& write_matrices(std::ostream &out = std::cout) const;
+    /*!
+     * \brief Gets cells with a given `PSC_flag` in any dimension.
+     *
+     * The function returns a vector containing, for each dimension, the vector of cells with a given `PSC_flag`. Indices are sorted by increasing value.
+     *
+     * \param flag PSC_flag to select.
+     */
+    std::vector<std::vector<size_t> > psc_flag (PSC_flag flag) const;
 
-/*! \brief Writes the homology and cohomology reduction information.
- *
- * Exports  the homology and cohomology reduction information (that is \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell).
- *
- * By default, writes the complex to `std::cout`.
-*/
-std::ostream& write_reduction(std::ostream &out = std::cout) const;
+    /*!
+     * \brief Gets cells with a given `PSC_flag` in dimension `q`.
+     *
+     * The function returns the vector of cells of dimension `q` with a given `PSC_flag`. Indices are sorted by increasing value.
+     *
+     * \param flag PSC_flag to select.
+     * \param q Dimension visited.
+     */
+    std::vector<size_t> psc_flag (PSC_flag flag, int q) const;
 
-/*!
- *\brief Writes a HDVF and its reduction to a stream.
- *
- * Exports  them to a stream  in  `.hdvf` file format (see \ref secHDVFHDVF_format  for a specification).
- */
+    /*!
+     * \brief Gets the PSC_flag of the cell `tau` in dimension `q`.
+     *
+     * \param tau Index of the cell.
+     * \param q Dimension of the cell.
+     */
+    PSC_flag psc_flag (size_t tau, int q) const;
 
-std::ostream& write_hdvf_reduction(std::ostream& out) ;
+    /**
+     * \brief Gets the`PSC_flag` of all cells in dimension `q`.
+     *
+     * The function returns the vector of `PSC_flag` of cells of dimension `q`.
+     *
+     * \param q Dimension visited.
+     */
+    virtual const std::vector<PSC_flag>& psc_flags (int q) const;
 
-/*!
- * \brief Reads a HDVF and its reduction from a stream.
- *
- * Imports them from a `.hdvf` file format (see \ref secHDVFHDVF_format  for a specification).
- */
-std::istream& read_hdvf_reduction(std::istream& in) ;
+    /**
+     * \brief Gets the`PSC_flag` of all cells.
+     *
+     * The function returns a vector which `qth element contains the vector of `PSC_flag` of cells of dimension `q`.
+     */
+    virtual const std::vector<std::vector<PSC_flag> >& psc_flags () const;
 
-/*!
- * \brief Exports primary/secondary/critical labels (in particular for vtk export).
- *
- * The method exports the labels of every cell in each dimension.
- *
- * \return A vector containing, for each dimension, the vector of labels by cell index.
- */
-std::vector<std::vector<int> > psc_labels () const;
+    /*!
+     * \brief Gets HDVF option.
+     */
+    int hdvf_opts ();
 
-/*!
- * \brief Returns a chain containing the homology generator associated to `cell_index` (critical cell) of dimension  `q` (in particular for vtk export).
- *
- * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
- *
- * \return A column-major chain.
- */
-Column_chain homology_chain (size_t cell_index, int q) const;
+    /*!
+     * \brief Gets the row-major matrix of \f$f\f$ (from the reduction associated to the HDVF).
+     */
+    const Row_matrix& matrix_f (int q) const;
 
-/*!
- * \brief Returns a chain containing the cohomology generators associated to `cell_index` (critical cell) of dimension  `q` (in particular for vtk export).
- *
- * The method exports:
- * - the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`,
- * - or the co-faces of this chain if `co_faces` is true (sometimes easier to view cohomology generators)
- *
- * Below, a sample mesh with, (left) homology generators, (right) two examples of cohomology generators (corresponding generators/co-generators bear similar colours):
- *
- * <img src="HDVF_dtorus_homs.png" align="center" width=25%/>
- * <img src="HDVF_dtorus_cohom1.png" align="center" width=25%/>
- * <img src="HDVF_dtorus_cohom2.png" align="center" width=25%/>
- *
- * The same generators displayed through their co-faces:
- *
- * <img src="HDVF_dtorus_cohom1_co.png" align="center" width=25%/>
- * <img src="HDVF_dtorus_cohom2_co.png" align="center" width=25%/>
- *
- * All homology / cohomology generators:
- *
- *<img src="HDVF_dtorus_all.png" align="center" width=30%/>
- *
- * \return A column-major chain.
- */
-virtual Column_chain cohomology_chain (size_t cell_index, int dim, bool co_faces = false) const;
+    /*!
+     * \brief Gets the column-major matrix of \f$g\f$ (from the reduction associated to the HDVF).
+     */
+    const Column_matrix& matrix_g (int q) const;
 
-/// @}
+    /*!
+     * \brief Gets the column-major matrix of \f$h\f$ (from the reduction associated to the HDVF).
+     */
+    const Column_matrix& matrix_h (int q) const;
+
+    /*!
+     * \brief Gets the column-major matrix of \f$\partial'\f$, reduced boundary operator (from the reduction associated to the HDVF).
+     */
+    const Column_matrix& matrix_dd (int q) const;
+
+    /**
+     \brief Gets a constant reference over the underlying chain complex.
+     */
+    const Chain_complex& complex () const;
+
+    /// @}
+
+    /// \name Dimension restriction functions
+    /// @{
+
+    /** \brief Returns the dimension of the Hdvf computation.
+     *
+     * If HDVF computation is full (computation of homology in any dimension), returns -1; otherwise, returns the dimension along which the HDVF is computed.
+     */
+    int dimension_restriction() const;
+
+    /** \brief Changes the dimension of Hdvf computation.
+     *
+     * \param dimension Dimension along which the computation is restricted.  Set -1 for full computation (computation of homology in any dimension), and a positive value lower than the complex dimension for a computation restricted to dimension `dimension`.
+     */
+    inline void dimension_restriction(int dimension);
+
+    /// @}
+
+    /// \name Input, output
+    /// @{
+
+    /*!
+     * \brief Writes the matrices of the reduction.
+     *
+     * Writes the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
+     *
+     * If `dimension_restriction` is -1, writes matrices in any dimensions. If `dimension_restriction` is positive, restricts output to `dimension_restriction`. If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
+     *
+     * \param out Output stream (by default, writes the complex to `std::cout`).
+     * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs matrices in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.
+     */
+    std::ostream& write_matrices(std::ostream &out = std::cout) const;
+
+    /*! \brief Writes the homology and cohomology reduction information.
+     *
+     * Writes \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell.
+     *
+     * If `dimension_restriction` is -1, writes the reduction in any dimensions. If `dimension_restriction` is positive, restricts output to `dimension_restriction`. If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
+     *
+     * \param out Output stream (by default, writes the complex to `std::cout`).
+     * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs reductions in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.
+     */
+    std::ostream& write_reduction(std::ostream &out = std::cout) const;
+
+    /**
+     * \brief Writes the PSC flags of cells along computed dimensions.
+     *
+     * If `dimension_restriction` is -1, writes the reduction in any dimensions. If `dimension_restriction` is positive, restricts output to `dimension_restriction`. If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
+     *
+     * \param out Output stream (by default, writes the complex to `std::cout`).
+     * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs reductions in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.
+     */
+    std::ostream& write_flags(std::ostream &out = std::cout, int dimension_restriction = -2) const;
+
+    /*!
+     *\brief Writes a HDVF and its reduction to a stream.
+     *
+     * Exports  them to a stream  in  `.hdvf` file format (see \ref secHDVFHDVF_format  for a specification).
+     */
+    std::ostream& write_hdvf_reduction(std::ostream& out) ;
+
+    /*!
+     * \brief Reads a HDVF and its reduction from a stream.
+     *
+     * Imports them from a `.hdvf` file format (see \ref secHDVFHDVF_format  for a specification).
+     */
+    std::istream& read_hdvf_reduction(std::istream& in) ;
+
+    /*!
+     * \brief Exports primary/secondary/critical labels (in particular for vtk export).
+     *
+     * The method exports the labels of every cell in each dimension.
+     *
+     * \return A vector containing, for each dimension, the vector of labels by cell index.
+     */
+    std::vector<std::vector<int> > psc_labels () const;
+
+    /*!
+     * \brief Returns a chain containing the homology generator associated to `cell_index` (critical cell) of dimension  `q` (in particular for vtk export).
+     *
+     * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
+     *
+     * \return A column-major chain.
+     */
+    Column_chain homology_chain (size_t cell_index, int q) const;
+
+    /*!
+     * \brief Returns a chain containing the cohomology generators associated to `cell_index` (critical cell) of dimension  `q` (in particular for vtk export).
+     *
+     * The method exports:
+     * - the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`,
+     * - or the co-faces of this chain if `co_faces` is true (sometimes easier to view cohomology generators)
+     *
+     * Below, a sample mesh with, (left) homology generators, (right) two examples of cohomology generators (corresponding generators/co-generators bear similar colours):
+     *
+     * <img src="HDVF_dtorus_homs.png" align="center" width=25%/>
+     * <img src="HDVF_dtorus_cohom1.png" align="center" width=25%/>
+     * <img src="HDVF_dtorus_cohom2.png" align="center" width=25%/>
+     *
+     * The same generators displayed through their co-faces:
+     *
+     * <img src="HDVF_dtorus_cohom1_co.png" align="center" width=25%/>
+     * <img src="HDVF_dtorus_cohom2_co.png" align="center" width=25%/>
+     *
+     * All homology / cohomology generators:
+     *
+     *<img src="HDVF_dtorus_all.png" align="center" width=30%/>
+     *
+     * \return A column-major chain.
+     */
+    virtual Column_chain cohomology_chain (size_t cell_index, int dim, bool co_faces = false) const;
+
+    /// @}
 
 };
