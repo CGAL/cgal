@@ -1,168 +1,204 @@
 /*!
-\ingroup PkgEnvelope2Concepts
-\cgalConcept
-
-This concept defines the representation of an envelope diagram of a set
-of planar curve. The <I>envelope diagram</I> is a subdivision of the \f$ x\f$-axis
-into 0-dimensional cells (<I>vertices</I>) and 1-dimensional cells
-(<I>edges</I>), such that the identity of the curves that induce the lower
-envelope (or the upper envelope) over each cell is fixed.
-
-A vertex in an envelope diagram is therefore associated with a point
-on the envelope, and corresponds to either a curve endpoint
-or to an intersection point of two (or more) curves. Therefore each vertex
-is associated with a set of \f$ x\f$-monotone curves that induce the envelope
-over this point. Each vertex is incident to two edges, one lying to its
-left and the other to its right.
-
-An edge in the envelope diagram represents a continuous portion of the
-\f$ x\f$-axis, and is associated with a (possibly empty) set of curves that
-induce the envelope over this portion of the \f$ x\f$-axis. An edge may be bounded
-by two vertices, one to its left and the other to its right. However, the
-diagram contains two unbounded edges, its <I>leftmost</I> edge, representing
-the interval \f$ (-\infty, x_l)\f$, and its <I>rightmost</I> edge, representing the
-interval \f$ (x_r, \infty)\f$, where \f$ x_l\f$ and \f$ x_r\f$ are the \f$ x\f$-coordinates of
-the leftmost and the rightmost vertices in the diagram, respectively.
-Note that a diagram may contain no vertices at all, in which case it
-comprises a single edge.
-
-Note that any model of the `EnvelopeDiagram_1` concept must define a geometric
-traits class, which in turn defines the `Point_2` and
-`X_monotone_curve_2` types defined with the diagram features.
-
-\sa `EnvelopeDiagramVertex`
-\sa `EnvelopeDiagramEdge`
-
-*/
+ * \ingroup PkgEnvelope2Concepts
+ * \cgalConcept
+ *
+ * This concept defines the representation of an envelope diagram of a set of
+ * planar curves. The <I>envelope diagram</I> is a subdivision of the
+\f$* x\f$-axis into 0-dimensional cells (<I>vertices</I>) and 1-dimensional cells
+ * (<I>edges</I>), such that the identity of the curves that induce the lower
+ * envelope (or the upper envelope) over each cell is fixed.
+ *
+ * \cgalRefines{ArrangementOnCurve_1}
+ *
+ * A vertex in an envelope diagram is therefore associated with a point on the
+ * envelope, and corresponds to either a curve endpoint or to an intersection
+ * point of two (or more) curves. Therefore each vertex is associated with a set
+ * of \f$x\f$-monotone curves that induce the envelope over this point. Each
+ * vertex is incident to two edges, one lying to its left and the other to its
+ * right.
+ *
+ * An edge in the envelope diagram represents a continuous portion of the
+ * \f$x\f$-axis, and is associated with a (possibly empty) set of curves that
+ * induce the envelope over this portion of the \f$x\f$-axis. An edge may be
+ * bounded by two vertices, one to its left and the other to its right. However,
+ * the diagram contains two unbounded edges, its <I>leftmost</I> edge,
+ * representing the interval \f$(-\infty, x_l)\f$, and its <I>rightmost</I>
+ * edge, representing the interval \f$(x_r, \infty)\f$, where \f$x_l\f$ and
+ * \f$x_r\f$ are the \f$x\f$-coordinates of the leftmost and the rightmost
+ * vertices in the diagram, respectively.  Note that a diagram may contain no
+ * vertices at all, in which case it comprises a single edge.
+ *
+ * Note that any model of the `EnvelopeDiagram_1` concept must define a
+ * geometric traits class, which in turn defines the `Point_2` and
+ * `X_monotone_curve_2` types defined with the diagram features.
+ */
 
 class EnvelopeDiagram_1 {
 public:
 
-/// \name Types
-/// @{
+  /// \name Types
+  /// @{
 
-/*!
-the geometric traits class.
-*/
-typedef unspecified_type Traits_2;
+  /*! the geometric traits class.
+   */
+  typedef unspecified_type Traits_2;
 
-/*!
-the point type.
-*/
-typedef Traits_2::Point_2 Point_2;
+  /*! the shared pointer to the geometric traits.
+   */
+  typedef std::shared_ptr<const Traits_2> Shared_traits_2;
 
-/*!
-the \f$ x\f$-monotone curve type.
-*/
-typedef Traits_2::X_monotone_curve_2 X_monotone_curve_2;
+  /*! the point type.
+   */
+  typedef Traits_2::Point_2 Point_2;
 
-/*!
-the size type (convertible to `size_t`).
-*/
-typedef unspecified_type Size;
+  /*! the \f$x\f$-monotone curve type.
+   */
+  typedef Traits_2::X_monotone_curve_2 X_monotone_curve_2;
 
-/*!
-an iterator for the \f$ x\f$-monotone curves that induce a diagram feature, with value type `X_monotone_curve_2`.
-*/
-typedef unspecified_type Curve_const_iterator;
+  /*! the size type (convertible to `size_t`).
+   */
+  typedef unspecified_type Curve_size;
 
-/*!
-the vertex type, a model of the concept `EnvelopeDiagramVertex`.
-*/
-typedef unspecified_type Vertex;
+  /*! the container of the \f$x\f$-monotone curves that induce a diagram feature,
+   * with value type `X_monotone_curve_2`.
+   */
+  typedef unspecified_type Curve_container;
 
-/*!
-the edge type, a model of the concept `EnvelopeDiagramEdge`.
-*/
-typedef unspecified_type Edge;
+  /*! an iterator for the \f$x\f$-monotone curves that induce a diagram feature, with value type `X_monotone_curve_2`.
+   */
+  typedef unspecified_type Curve_const_iterator;
 
-/*!
-a handle to a diagram vertex.
-*/
-typedef unspecified_type Vertex_handle;
+  /// @}
 
-/*!
-a non-mutable handle to a diagram vertex.
-*/
-typedef unspecified_type Vertex_const_handle;
+  /// \name Creation
+  /// @{
 
-/*!
-a handle to a diagram edge.
-*/
-typedef unspecified_type Edge_handle;
+  /*! constructs an empty diagram containing one unbounded edge,
+   * which corresponds to the entire plane and has no \f$x\f$-monotone
+   * curves that are associated with it.
+   */
+  EnvelopeDiagram_1();
 
-/*!
-a non-mutable handle to a diagram edge.
-*/
-typedef unspecified_type Edge_const_handle;
+  /*! constructs an empty diagram that shares the geometric traits `traits`.
+   */
+  EnvelopeDiagram_1(Shared_traits_2 traits);
 
-/// @}
+  /*! copy constructor.
+   */
+  EnvelopeDiagram_1(const EnvelopeDiagram_1& other);
 
-/// \name Creation
-/// @{
+  /// @}
 
-/*!
-constructs an empty diagram containing one unbounded edge,
-which corresponds to the entire plane and has no \f$ x\f$-monotone
-curves that are associated with it.
-*/
-EnvelopeDiagram_1();
+  /// \name Accessors
+  /// @{
 
-/*!
-copy constructor.
-*/
-Envelope_diagram_1 (const Self& other);
+  /*! obtains the geometric traits.
+   */
+  const Traits_2& geometry_traits_2() const;
 
-/// @}
+  /*! obtains the shared pointer to the geometric traits.
+   */
+  Shared_traits_2 shared_geometry_traits_2() const;
 
-/// \name Access Functions
-/// @{
+  /*! obtains the leftmost edge of the diagram. (A non-const version is also available.)
+   */
+  Edge_const_descriptor leftmost() const;
 
-/*!
-returns the leftmost edge of the diagram (a non-const version is also available).
-*/
-Edge_const_handle leftmost() const;
+  /*! obtains the rightmost edge of the diagram. (A non-const version is also available.)
+   */
+  Edge_const_descriptor rightmost() const;
 
-/*!
-returns the rightmost edge of the diagram (a non-const version is also available).
-*/
-Edge_const_handle rightmost() const;
+  /// @}
 
-/// @}
+  /// \name Modifiers
+  /// @{
 
-/// \name Modifiers
-/// @{
+  /*! sets the leftmost edge of the diagram to be `e`.
+   * \deprecated The leftmost edge is maintained by the modifiers of the diagram.
+   */
+  void set_leftmost(Edge_descriptor e);
 
-/*!
-sets the leftmost edge of the diagram to be `e`.
-*/
-void set_leftmost (Edge_const_handle e);
+  /*! sets the rightmost edge of the diagram to be `e`.
+   * \deprecated The rightmost edge is maintained by the modifiers of the diagram.
+   */
+  void set_rightmost(Edge_descriptor e);
 
-/*!
-sets the rightmost edge of the diagram to be `e`.
-*/
-void set_rightmost (Edge_const_handle e);
+  /// @}
 
-/*!
-creates a new diagram vertex, associated with the point `p`.
-*/
-Vertex_handle new_vertex (const Point_2& p);
+  /// \name Curve Data Accessors
+  /// @{
 
-/*!
-creates a new diagram edge.
-*/
-Edge_handle new_edge ();
+  /*! obtains the point associated with a given vertex.
+   */
+  const Point_2& point(Vertex_const_descriptor v) const;
 
-/*!
-deletes the given vertex `v`.
-*/
-void delete_vertex (Vertex_handle v);
+  /*! obtains the diagram curves associated with a given vertex. (A non-const version is also available.)
+   */
+  const Curve_container& vertex_curves(Vertex_const_descriptor v) const;
 
-/*!
-deletes the given edge `e`.
-*/
-void delete_edge (Edge_handle e);
+  /*! obtains the diagram curves associated with a given edge. (A non-const version is also available.)
+   */
+  const Curve_container& edge_curves(Edge_const_descriptor e) const;
 
-/// @}
+  /*! obtains the number of curves associated with a given vertex.
+   */
+  Curve_size number_of_vertex_curves(Vertex_const_descriptor v) const;
 
-}; /* end EnvelopeDiagram_1 */
+  /*! obtains the number of curves associated with a given edge.
+   */
+  Curve_size number_of_edge_curves(Edge_const_descriptor e) const;
+
+  /*! determines whether there are no curves associated with a given vertex.
+   */
+  bool empty_vertex_curves(Vertex_const_descriptor v) const;
+
+  /*! determines whether there are no curves associated with a given edge.
+   */
+  bool empty_edge_curves(Edge_const_descriptor e) const;
+
+  /*! obtains the first curve associated with a given vertex.
+   * \pre `empty_vertex_curves(v)` is `false`.
+   */
+  const X_monotone_curve_2& vertex_curve(Vertex_const_descriptor v) const;
+
+  /*! obtains the first curve associated with a given edge.
+   * \pre `empty_edge_curves(e)` is `false`.
+   */
+  const X_monotone_curve_2& edge_curve(Edge_const_descriptor e) const;
+
+  /// @}
+
+  /// \name Curve Data Modifiers
+  /// @{
+
+  /*! sets the point associated with a given vertex.
+   */
+  void set_point(Vertex_descriptor v, const Point_2& p);
+
+  /*! adds an \f$x\f$-monotone curve to the list of curves associated with a given vertex.
+   */
+  void add_vertex_curve(Vertex_descriptor v, const X_monotone_curve_2& xcv);
+
+  /*! adds an \f$x\f$-monotone curve to the list of curves associated with a given edge.
+   */
+  void add_edge_curve(Edge_descriptor e, const X_monotone_curve_2& xcv);
+
+  /*! adds a range of \f$x\f$-monotone curves to the list of curves associated with a given vertex.
+   */
+  void add_vertex_curves(Vertex_descriptor v, Curve_const_iterator begin, Curve_const_iterator end);
+
+  /*! adds a range of \f$x\f$-monotone curves to the list of curves associated with a given edge.
+   */
+  void add_edge_curves(Edge_descriptor e, Curve_const_iterator begin, Curve_const_iterator end);
+
+  /*! clears the curves associated with a given vertex.
+   */
+  void clear_vertex_curves(Vertex_descriptor v);
+
+  /*! clears the curves associated with a given edge.
+   */
+  void clear_edge_curves(Edge_descriptor e);
+
+  /// @}
+
+}; // end EnvelopeDiagram_1

@@ -1,0 +1,116 @@
+// Tests the geometry traits that the other tests do not cover: the traits of
+// lines in 2D, 3D, and dD, and the adaptors of a 2D geometry traits with an
+// open, a closed, a left-closed, and a right-closed parameter space.  Every
+// permutation of every subset of a set of points is inserted, and then every
+// vertex is removed on its own.
+
+#include <cstdlib>
+
+#include <CGAL/Cartesian_d.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Arr_segment_traits_2.h>
+
+#include "test_utils.h"
+#include <CGAL/Arrangement_on_curve_1/Line_2_traits_1.h>
+#include <CGAL/Arrangement_on_curve_1/Line_3_traits_1.h>
+#include <CGAL/Arrangement_on_curve_1/Line_d_traits_1.h>
+#include <CGAL/Arrangement_on_curve_1/Open_geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Closed_geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Left_closed_geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Right_closed_geom_traits_2_adaptor_1.h>
+
+using Point_2 = Kernel::Point_2;
+using Point_3 = Kernel::Point_3;
+
+using Kernel_d = CGAL::Cartesian_d<CGAL::Quotient<CGAL::MP_Float>>;
+using Point_d = Kernel_d::Point_d;
+
+using Geom_traits_2 = CGAL::Arr_segment_traits_2<Kernel>;
+
+template <typename Arr>
+void test(const std::string& name, std::shared_ptr<const typename Arr::Geometry_traits_1> tr,
+          const std::vector<typename Arr::Point_1>& pts, std::size_t& failures) {
+  std::size_t local_failures = 0;
+  for_each_sequence(pts.size(), [&](const std::vector<int>& seq) {
+    Arr arr(tr);
+    std::vector<typename Arr::Point_1> inserted;
+    for (int i : seq) {
+      Aoc::insert(arr, pts[i]);
+      inserted.push_back(pts[i]);
+    }
+    std::string why;
+    if (! report(is_valid(arr, inserted, why), name + " (insert)", why, local_failures)) return;
+    for (std::size_t k = 0; k < inserted.size(); ++k) {
+      Arr copy(arr);
+      copy.remove(find_vertex(copy, inserted[k]));
+      auto rest = inserted;
+      rest.erase(rest.begin() + k);
+      report(is_valid(copy, rest, why), name + " (remove)", why, local_failures);
+    }
+  });
+  failures += local_failures;
+  std::cout << (local_failures ? "FAIL " : "PASS ") << name << std::endl;
+}
+
+// constructs the point of `Kernel_d` whose coordinates are `t` times (1, 2, 3).
+Point_d point_d(int t) {
+  std::vector<Kernel_d::FT> coords{Kernel_d::FT(t), Kernel_d::FT(2 * t), Kernel_d::FT(3 * t)};
+  return Point_d(3, coords.begin(), coords.end());
+}
+
+int main() {
+  std::size_t failures = 0;
+
+  // Lines in 2D, 3D, and dD; the points are ordered along the direction of the line.
+  {
+    using Traits = Aoc::Line_2_traits_1<Kernel>;
+    auto tr = std::make_shared<const Traits>(Kernel::Line_2(Point_2(0, 0), Point_2(1, 1)));
+    test<Test_arrangement<Traits, false>>("Line_2_traits_1", tr,
+                                          {Point_2(-3, -3), Point_2(1, 1), Point_2(2, 2), Point_2(5, 5)}, failures);
+  }
+  {
+    using Traits = Aoc::Line_3_traits_1<Kernel>;
+    auto tr = std::make_shared<const Traits>(Kernel::Line_3(Point_3(0, 0, 0), Point_3(1, 1, 1)));
+    test<Test_arrangement<Traits, false>>("Line_3_traits_1", tr,
+                                          {Point_3(-3, -3, -3), Point_3(1, 1, 1), Point_3(2, 2, 2), Point_3(5, 5, 5)},
+                                          failures);
+  }
+  {
+    using Traits = Aoc::Line_d_traits_1<Kernel_d>;
+    std::vector<Kernel_d::FT> dir{Kernel_d::FT(1), Kernel_d::FT(2), Kernel_d::FT(3)};
+    Kernel_d::Line_d line(point_d(0), Kernel_d::Direction_d(Kernel_d::Vector_d(3, dir.begin(), dir.end())));
+    auto tr = std::make_shared<const Traits>(line);
+    test<Test_arrangement<Traits, false>>("Line_d_traits_1", tr, {point_d(-1), point_d(1), point_d(2), point_d(4)},
+                                          failures);
+  }
+
+  // Adaptors of a 2D geometry traits; the master curve is the segment from (0, 0) to (10, 5).
+  auto tr_2 = std::make_shared<const Geom_traits_2>();
+  const Point_2 left(0, 0), right(10, 5);
+  {
+    using Traits = Aoc::Open_geom_traits_2_adaptor_1<Geom_traits_2>;
+    test<Test_arrangement<Traits, false>>("Open_geom_traits_2_adaptor_1", std::make_shared<const Traits>(tr_2),
+                                          {Point_2(2, 1), Point_2(4, 2), Point_2(6, 3), Point_2(8, 4)}, failures);
+  }
+  {
+    using Traits = Aoc::Closed_geom_traits_2_adaptor_1<Geom_traits_2>;
+    test<Test_arrangement<Traits, false>>("Closed_geom_traits_2_adaptor_1",
+                                          std::make_shared<const Traits>(tr_2, left, right),
+                                          {left, Point_2(4, 2), Point_2(6, 3), right}, failures);
+  }
+  {
+    using Traits = Aoc::Left_closed_geom_traits_2_adaptor_1<Geom_traits_2>;
+    test<Test_arrangement<Traits, false>>("Left_closed_geom_traits_2_adaptor_1",
+                                          std::make_shared<const Traits>(tr_2, left),
+                                          {left, Point_2(4, 2), Point_2(6, 3), Point_2(8, 4)}, failures);
+  }
+  {
+    using Traits = Aoc::Right_closed_geom_traits_2_adaptor_1<Geom_traits_2>;
+    test<Test_arrangement<Traits, false>>("Right_closed_geom_traits_2_adaptor_1",
+                                          std::make_shared<const Traits>(tr_2, right),
+                                          {Point_2(2, 1), Point_2(4, 2), Point_2(6, 3), right}, failures);
+  }
+
+  return (failures == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+}

@@ -1,0 +1,616 @@
+namespace CGAL {
+namespace Arrangement_on_curve_1 {
+
+/*!
+
+\mainpage User Manual
+\anchor Chapter_1D_Arrangements
+\anchor chapterArrangement_on_curve_1
+\cgalAutoToc
+
+\authors Efi Fogel
+
+<!-- ======================================================================= -->
+\section aoc_sec-intro Introduction
+<!-- ======================================================================= -->
+
+The package `Arrangement_on_curve_1` is designed for constructing,
+manipulating, and querying one-dimensional arrangements embedded along
+continuous curves referred to as *master curves*. A 1D arrangement
+offers an efficient mechanism to maintain ordered sequences of points
+across diverse geometric tracking scenarios.
+\cgalFigureRef{aoc_fig-semicircle} shows a 1D arrangement embedded on
+the closed upper semicircle.  It has seven vertices
+\f$v_0,v_1,...,v_6\f$ and six edges \f$e_0, e_1, ..., e_5\f$; see
+\ref Arrangement_on_curve_1/arr_on_circle_segment.cpp.
+
+\cgalFigureBegin{aoc_fig-semicircle,semicircle.png}
+\cgalFigureEnd
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-intro-sep Separation of Topology and Geometry
+<!-- ----------------------------------------------------------------------- -->
+
+Following standard \cgal architectural practices, this package
+strictly isolates the topological framework from the underlying geometry.
+- **Topology** describes the incidence relations (left or right)
+  between vertices and edges and the topology of the master curve.
+- **Geometry** encapsulates geometric predicates and geometric object
+  constructions required to compute relative ordering along a master curve.
+
+The core arrangement structure handles its geometry traits via a
+shared smart pointer (`std::shared_ptr<const Geometry_traits_1>`) to
+optimize lifecycle safety and reference tracking during intensive
+geometric operations. This allows sub-arrangements or output results
+to safely share identical geometric contexts with zero duplication
+overhead.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-intro-boundary Parameter Space and Boundary Categories
+<!-- ----------------------------------------------------------------------- -->
+
+The master curve \f$C = \phi_C(X)\f$ is given by a continuous function
+\f$\phi_C: X \rightarrow \mathbb{R}^d\f$; it is defined over a
+one-dimensional interval \f$X\f$ called the parameter space. The
+parameter space can be open, closed, left-closed, right-closed, or identified. Each
+geometry traits model declares two category types that determine the
+boundary conditions of both sides of the parameter space,
+respectively:
+
+- `Left_side_category`: the boundary condition of the left side of the curve's parameter space.
+- `Right_side_category`: the boundary condition of the right side of the curve's parameter space.
+
+Each category type above is defined as one of the three tag types below:
+
+| Tag                   | Meaning                                                                        |
+|-----------------------|--------------------------------------------------------------------------------|
+| `Open_side_tag`       | The side is open: the curve excludes its endpoint on that side, if any         |
+| `Closed_side_tag`     | The side is closed: the curve includes its endpoint on that side               |
+| `Identified_side_tag` | The side is identified with the other side: the curve is cyclic                |
+
+A curve whose two sides are closed is a *closed* curve, and a curve whose two
+sides are open is an *open* curve.  A curve whose two sides are identified is
+a *cyclic* curve; it is essentially an open curve whose two (excluded) ends
+meet at the identification point, which is part of the curve only once it is
+inserted as a vertex.
+
+The combination of the two category tags determines which topology
+traits class to pair with the geometry traits; see \ref aoc_sec-topo_traits.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-intro-outline Outline
+<!-- ----------------------------------------------------------------------- -->
+
+This manual walks through the structural elements of basic 1D
+subdivisions, methods for traversing topology pools, techniques for
+point location, procedures for overlay operations, input and output of
+arrangements, the requirements for writing custom geometry traits, the
+topology traits classes, the mechanism for extending arrangement cells
+(i.e., vertices and edges), and the means of accessing cell properties
+(including extended data) via property maps.
+
+The types and free functions referred to throughout this chapter are
+defined under the namespace `CGAL::Arrangement_on_curve_1`.
+
+<!-- ======================================================================= -->
+\section aoc_sec-basic Basic Arrangements
+<!-- ======================================================================= -->
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-basic-rep Representation of Arrangements
+<!-- ----------------------------------------------------------------------- -->
+
+A 1D arrangement subdivides a continuous curve into two alternating
+topological cells:
+- **Vertices**: Represent 0-dimensional points embedded along the curve master.
+- **Edges**: Represent 1-dimensional open subcurves; an edge is bounded by a vertex on each side, unless it
+  extends to an open side of the parameter space, or, in an empty arrangement, spans the entire curve.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-basic-arr_class The Arrangement Class Template
+<!-- ----------------------------------------------------------------------- -->
+
+The primary interface is provided by the class template
+`Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>`,
+which models the concept `ArrangementOnCurve_1`.
+It exposes safe APIs for query evaluations while delegating memory
+container allocations, incidence cell updates, and property map
+indexing to the backend topology traits model.
+
+When `TopologyTraits` is omitted it defaults to
+`Default_topology_traits<GeometryTraits_1>::type`, which selects the
+topology traits that matches the side categories of the geometry traits:
+
+| `Left_side_category`  | `Right_side_category` | Topology traits                |
+|-----------------------|-----------------------|--------------------------------|
+| `Open_side_tag`       | `Open_side_tag`       | `Open_topology_traits`         |
+| `Closed_side_tag`     | `Closed_side_tag`     | `Closed_topology_traits`       |
+| `Closed_side_tag`     | `Open_side_tag`       | `Left_closed_topology_traits`  |
+| `Open_side_tag`       | `Closed_side_tag`     | `Right_closed_topology_traits` |
+| `Identified_side_tag` | `Identified_side_tag` | `Identified_topology_traits`   |
+
+Any other combination is rejected at compile time.  For example, the
+following two definitions are equivalent:
+
+\code{.cpp}
+using K = CGAL::Exact_predicates_exact_constructions_kernel;
+using Gt = CGAL::Arrangement_on_curve_1::Circle_traits_1<K>;
+using Tt = CGAL::Arrangement_on_curve_1::Identified_topology_traits<Gt>;
+using Arr1 = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Gt>;
+using Arr2 = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Gt, Tt>;
+\endcode
+
+`Default_topology_traits` accepts the same `VertexData`, `EdgeData`,
+`UseVector`, and `Allocator` template parameters as the topology traits
+classes; for example,
+`Default_topology_traits<Gt, Vertex_data, void, true>::type` is
+`Identified_topology_traits<Gt, Vertex_data, void, true>`.
+
+An empty arrangement consists of a single edge representing the whole master curve.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-basic-traverse Traversing the Arrangement
+<!-- ----------------------------------------------------------------------- -->
+
+Neighbor-to-neighbor structural traversals can be performed in either
+direction along the chain using incidence descriptor accessors
+like `ArrangementOnCurve_1::left_edge()`,
+`ArrangementOnCurve_1::right_edge()`,
+`ArrangementOnCurve_1::left_vertex()`, and
+`ArrangementOnCurve_1::right_vertex()`.
+
+The arrangement vertices and edges can be traversed using descriptor iterators.
+Callers can query all vertices or edges globally via ranges:
+\code{.cpp}
+for (auto v_desc : arr.vertices()) {
+  // Access information using property maps...
+}
+\endcode
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-basic-modify Modifying the Arrangement
+<!-- ----------------------------------------------------------------------- -->
+
+Arrangements can be dynamically built or modified using primitive
+update methods.  When an arrangement is entirely empty, it consists of
+a single edge representing the whole master curve.  Inserting the very
+first point `p` into an arrangement object `arr` uses \link
+ArrangementOnCurve_1::insert_empty() `arr.insert_empty(p)`\endlink.
+If the curve is not cyclic, this splits the single edge into a left edge
+and a right edge flanking the new vertex.  If the curve is cyclic, it
+creates the first vertex, and the single edge becomes a self-loop with
+both ends at that vertex.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-basic-insert Inserting Points
+<!-- ----------------------------------------------------------------------- -->
+
+The arrangement class provides low-level topological construction
+modifiers to handle structured manual assembly:
+
+- The call \link ArrangementOnCurve_1::insert_before() `arr.insert_before(v, p)`\endlink
+  inserts a new point `p` strictly to the left of an existing vertex `v`.
+
+- The call \link ArrangementOnCurve_1::insert_after() `arr.insert_after(v, p)`\endlink
+  inserts a new point `p` strictly to the right of an existing vertex `v`.
+
+- The call \link ArrangementOnCurve_1::split_edge() `arr.split_edge(e, p)`\endlink
+  subdivides an edge at the designated point `p`, introducing a new interior vertex.
+
+Note that when the template parameter `BinarySearch` of
+`Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>`
+is set to `true` (and `TopologyTraits::UseVector = true`):
+- The function `ArrangementOnCurve_1::insert_before()` is not supported.
+- The function `ArrangementOnCurve_1::insert_after()` can be used only if
+  the new point extends the topology further toward \f$+\infty\f$.
+- The function `ArrangementOnCurve_1::split_edge()` can be used only if
+  the edge to split is the right boundary edge (spans to \f$+\infty\f$).
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-basic-remove Removing Vertices and Edges
+<!-- ----------------------------------------------------------------------- -->
+
+A vertex `v` can be removed from the arrangement using the call
+\link ArrangementOnCurve_1::remove() `arr.remove(v)`\endlink.
+
+Removing a vertex removes its point from the track and merges its left
+and right flanking edges back into a single unified edge, preserving
+the overall topological continuity of the curve.  A boundary vertex of a
+closed side, and the only vertex of an arrangement on an identified parameter
+space, has a single incident edge; removing it removes no edge.
+
+<!-- ======================================================================= -->
+\section aoc_sec-free_funcs Free Functions
+<!-- ======================================================================= -->
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-free_locate Issuing Queries
+<!-- ----------------------------------------------------------------------- -->
+
+Given a query point \f$q\f$, the call \link locate() `locate(arr, q)`\endlink
+locates the query point `q` in the given arrangement `arr`. The function returns
+a discriminated union container of type `ArrangementOnCurve_1::Const_location_result`
+(an instance of `std::variant`) that identifies a cell (i.e., a vertex or an edge).
+In particular, the result is a `Vertex_const_descriptor` if the geometric
+embedding of the identified vertex coincides exactly with the query point \f$q\f$,
+or otherwise an `Edge_const_descriptor`, such that the geometric embedding of the
+identified edge contains \f$q\f$ in its interior.
+
+The search is a linear topological walk from left to right starting at
+\link ArrangementOnCurve_1::left_boundary_edge()
+`left_boundary_edge()`\endlink.  When `BinarySearch = true` and
+`TopologyTraits::UseVector = true`, the search uses binary search over
+the sorted vertex vector, reducing point location from \f$O(n)\f$ to
+\f$O(\log n)\f$.
+
+A similar function that returns an object of type
+`ArrangementOnCurve_1::Location_result` storing a non-const descriptor
+is also supported.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-free_insert Inserting Points
+<!-- ----------------------------------------------------------------------- -->
+
+A high-level free function to insert points into the arrangement is provided.
+The call \link insert() `insert(arr, p)`\endlink
+invokes the function. It first calls
+\link locate() `locate(arr, p)`\endlink
+internally to find where the point `p` is located. If the point
+already matches an existing vertex, the descriptor of that vertex is
+returned. Otherwise, the function invokes
+`ArrangementOnCurve_1::insert_empty()`,
+`ArrangementOnCurve_1::insert_before()`,
+`ArrangementOnCurve_1::insert_after()`, or
+`ArrangementOnCurve_1::split_edge()`
+as needed to safely update the topology.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-free_overlay Overlaying Two Arrangements
+<!-- ----------------------------------------------------------------------- -->
+
+The call \link overlay() `overlay(arr_a, arr_b, arr_r)`\endlink
+combines two input arrangements `arr_a` and `arr_b` aligned along the
+same continuous supporting curve into a single unified output
+arrangement `arr_r` (embedded in the same underlying curve).  The
+algorithm performs a synchronized left-to-right sweep across both
+structures simultaneously.
+
+An overloaded version accepts a fourth argument, referred to as the
+visitor, is also supported. As intersections, point overlaps, or edge
+segment splits are discovered, the process notifies user-specified
+callback functions defined in the visitor object, which must be a
+model of the `OverlayVisitor` concept. These functions can then apply
+custom logic to automatically combine, translate, or synchronize user
+extended cells from the input arrangements into the resulting output
+cells.  The package provides two visitors:
+`Default_overlay_visitor`, which does nothing and is used by the
+overload without a visitor, and `Copy_overlay_visitor`, which copies the
+data of the input cells to the resulting cells.
+
+<!-- ======================================================================= -->
+\section aoc_sec-io Input and Output
+<!-- ======================================================================= -->
+
+An arrangement can be written to an output stream with
+\link PkgArrangementOnCurve1op_left_shift `operator<<` \endlink and
+read from an input stream with
+\link PkgArrangementOnCurve1op_right_shift `operator>>` \endlink, both
+defined in the header file `CGAL/Arrangement_on_curve_1/IO/iostream.h`.
+The format is textual: the number of vertices, followed by the points
+associated with the vertices in increasing order along the curve, each
+on its own line.  If the parameter space is identified, the
+identification point, if present, is last.  Only the points are stored;
+the edges are implied by them, and the data attached to the vertices
+and edges, if any, is neither written nor read.  The points are written
+and read with the stream operators of `AocTraits_1::Point_1`, so the
+precision of the output depends on these operators.
+
+Reading replaces the content of the arrangement.  If the input is
+malformed, for example, if the points are not in increasing order, the
+`failbit` of the stream is set and the arrangement is left empty.
+
+\code{.cpp}
+std::stringstream ss;
+ss << arr;                                            // write
+Arrangement arr2(arr.shared_geometry_traits_1());
+ss >> arr2;                                           // read
+\endcode
+
+<!-- ======================================================================= -->
+\section aoc_sec-geom_traits The Geometry Traits
+<!-- ======================================================================= -->
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-geom_traits-concepts The Geometry Traits Concept
+<!-- ----------------------------------------------------------------------- -->
+
+A model of the geometry traits must satisfy the requirements of the
+`AocTraits_1` concept.  It defines the types for geometric points
+(\link ArrangementOnCurve_1::Point_1 `Point_1`\endlink) and provides a
+factory function producing a \link AocTraits_1::Compare_x_1 `Compare_x_1`\endlink
+comparison functor. This functor must provide a strict linear ordering predicate,
+returning `SMALLER`, `EQUAL`, or `LARGER` when comparing two points along the curve
+direction.
+
+In addition, the geometry traits declares two boundary-category tags:
+
+- `AocTraits_1::Left_side_category`---tag for the left boundary.
+- `AocTraits_1::Right_side_category`---tag for the right boundary.
+
+When both tags are `Identified_side_tag`, the traits must also provide
+a functor type `AocIdentifiedBoundaryTraits_1::Is_on_x_identification_1`
+(accessed via `is_on_x_identification_1_object()`) that tests whether a given
+`Point_1` coincides with the identification point.  The
+`AocTraits_1::Compare_x_1` functor must not be called with such a point.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-geom_traits-models Models of the Geometry Traits Concepts
+<!-- ----------------------------------------------------------------------- -->
+
+The package provides five built-in geometry traits models covering
+different dimensional spaces and curve topologies:
+
+- `Line_traits_1<Kernel>`: A minimal, scalar traits model parameterizing
+  an arrangement directly using a numerical coordinate field type
+  scalar along a flat number line.  Both sides are `Open_side_tag`.
+
+- `Line_2_traits_1<Kernel>`: Supports tracking points along an
+  infinite straight line embedded in 2D space.  Points are ordered by
+  projecting them onto the 2D supporting line equation.
+  Both sides are `Open_side_tag`.
+
+- `Line_3_traits_1<Kernel>`: Supports tracking points along a 3D
+  spatial trajectory line by projecting 3D coordinates onto its
+  directional vector.  Both sides are `Open_side_tag`.
+
+- `Line_d_traits_1<Kernel>`: Scales the 1D arrangement concept across
+  arbitrary \f$d\f$-dimensional space by computing inner dot products
+  across coordinate ranges via Cartesian iterators.
+  Both sides are `Open_side_tag`.
+
+- `Closed_geom_traits_2_adaptor_1<GeomTraits_2>`: Adapts a 2D geometry
+  traits model (providing x-monotone curves) to the 1D arrangement
+  setting.  `Point_1 = GeomTraits_2::Point_2`.
+  Both sides are `Closed_side_tag`.
+
+- `Left_closed_geom_traits_2_adaptor_1<GeomTraits_2>`: Adapts a 2D geometry
+  traits model (providing x-monotone curves) to the 1D arrangement
+  setting.  `Point_1 = GeomTraits_2::Point_2`.
+  Left side is `Closed_side_tag` and right side is `Open_side_tag`.
+
+- `Right_closed_geom_traits_2_adaptor_1<GeomTraits_2>`: Adapts a 2D geometry
+  traits model (providing x-monotone curves) to the 1D arrangement
+  setting.  `Point_1 = GeomTraits_2::Point_2`.
+  Left side is `Open_side_tag` and right side is `Closed_side_tag`.
+
+- `Open_geom_traits_2_adaptor_1<GeomTraits_2>`: Adapts a 2D geometry
+  traits model (providing x-monotone curves) to the 1D arrangement
+  setting.  `Point_1 = GeomTraits_2::Point_2`.
+  Both sides are `Open_side_tag`.
+
+- `Identified_geom_traits_2_adaptor_1<GeomTraits_2>`: Adapts a 2D geometry
+  traits model (providing x-monotone curves) to the 1D arrangement
+  setting.  `Point_1 = GeomTraits_2::Point_2`.
+  Both sides are `Identified_side_tag`.
+
+- `Circle_traits_1<Kernel>`: Supports arrangements on the unit circle
+  \f$\mathbb{S}^1\f$, representing points as `Kernel::Direction_2`
+  objects for exact arithmetic.  Both sides are `Identified_side_tag`;
+  must be paired with `Identified_topology_traits`; see \ref
+  aoc_sec-circle.
+
+<!-- ======================================================================= -->
+\section aoc_sec-topo_traits The Topology Traits
+<!-- ======================================================================= -->
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-topo_traits-concept The Topology Traits Concept
+<!-- ----------------------------------------------------------------------- -->
+
+The topology traits are responsible for the combinatorial storage and
+navigation of the arrangement.  A model must satisfy the requirements
+of the `AocTopologyTraits` concept.  It provides:
+
+- Vertex and edge types with optional user data.
+- Container and descriptor types (list-based with stable iterators, or vector-based with integer indices).
+- Descriptor iterators and ranges.
+- Property maps for point and user-data access.
+- Core navigation (`left_edge`, `right_edge`, `left_vertex`, `right_vertex`, `has_left_vertex`, `has_right_vertex`).
+- Low-level modifiers (e.g., `create_vertex`, `create_edge`, `set_*`, `erase_vertex`, `erase_edge`).
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-topo_traits-models Models of the Topology Traits Concept
+<!-- ----------------------------------------------------------------------- -->
+
+The package provides five topology traits class templates, which model the
+concept `AocTopologyTraits`, one for each supported combination of side
+categories; see `Default_topology_traits`.  All five maintain the
+arrangement as an alternating sequence of vertices and edges, and they
+share the following properties:
+
+- An empty arrangement consists of a single edge that spans the entire
+  parameter space and no vertices.  This edge is the initial *left boundary
+  edge*, obtained by
+  \link AocTopologyTraits::left_boundary_edge() `left_boundary_edge()`\endlink.
+  The left boundary edge is the leftmost edge; if the parameter space is identified, it is the edge whose
+  left vertex is the identification vertex, or, if the identification vertex
+  does not exist, the edge that contains the identification point.
+- Symmetrically, the spanning edge is also the initial *right boundary edge*,
+  obtained by
+  \link AocTopologyTraits::right_boundary_edge() `right_boundary_edge()`\endlink.
+  The right boundary edge is the rightmost edge; if the parameter space is identified, it is the edge whose
+  right vertex is the identification vertex, or, if the identification vertex
+  does not exist, the edge that contains the identification point, that is,
+  the left boundary edge.
+- Copying a topology traits object yields an independent copy; all
+  descriptors stored in the copy, including the boundary edges and the
+  cached vertices listed below, refer to the copy.
+- `clear()` removes all vertices and edges and restores the single spanning
+  edge; `swap()` exchanges the contents of two objects.
+
+Some classes also maintain vertices that lie on the boundary of the
+parameter space, which are created when the corresponding point is inserted:
+
+| Topology traits                | Additional vertices     | Accessors                                                |
+|--------------------------------|-------------------------|----------------------------------------------------------|
+| `Open_topology_traits`         | None                    |                                                          |
+| `Closed_topology_traits`       | Left and right boundary | Those of the two classes below                           |
+| `Left_closed_topology_traits`  | Left boundary           | `has_left_boundary_vertex()`, `left_boundary_vertex()`   |
+| `Right_closed_topology_traits` | Right boundary          | `has_right_boundary_vertex()`, `right_boundary_vertex()` |
+| `Identified_topology_traits`   | Identification          | `has_identification_vertex()`, `identification_vertex()` |
+
+All five class templates have the same template parameters:
+
+| Parameter          | Default                   | Meaning                                  |
+|--------------------|---------------------------|------------------------------------------|
+| `GeometryTraits_1` | (required)                | the geometry traits                      |
+| `VertexData`       | `void`                    | optional user data per vertex            |
+| `EdgeData`         | `void`                    | optional user data per edge              |
+| `UseVector`        | `false`                   | `true` = vector + index descriptors      |
+| `Allocator`        | `std::allocator<char>`    | allocator for internal containers        |
+
+The topology traits classes do not declare the kind of the parameter space.
+Instead, `Arrangement_on_curve_1` derives it from the side categories of the
+geometry traits, and provides three static predicates:
+
+\code{.cpp}
+static constexpr bool is_identified;    // true if both side categories are Identified_side_tag
+static constexpr bool left_is_closed;   // true if Left_side_category = Closed_side_tag
+static constexpr bool right_is_closed;  // true if Right_side_category = Closed_side_tag
+\endcode
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-topo_traits-list-vs-vector List Mode vs. Vector Mode
+<!-- ----------------------------------------------------------------------- -->
+
+The `UseVector` template parameter controls the underlying container and descriptor type:
+
+- **List mode** (`UseVector = false`): vertices and edges are stored in
+  `std::list`.  Descriptors are `std::list::iterator` objects and are
+  stable across insertions and removals of other cells.
+
+- **Vector mode** (`UseVector = true`): vertices and edges are stored in
+  `std::vector`.  Descriptors are `std::size_t` indices.  Erasing an
+  element shifts subsequent indices; `erase_vertex()` and `erase_edge()`
+  update all the stored indices automatically, including the left boundary
+  edge and the cached vertices.
+  Binary search (`BinarySearch` = `true`) is only available in vector mode.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-topo_traits-unbounded Open Topology Traits
+<!-- ----------------------------------------------------------------------- -->
+
+`Open_topology_traits` is the topology traits for arrangements on an
+open curve (`Left_side_category = Right_side_category = Open_side_tag`).
+
+It maintains no vertices beyond those of the common structure; like all
+topology traits classes, it maintains the left and right boundary edges:
+
+| Member                                         | Description                                 |
+|------------------------------------------------|---------------------------------------------|
+| `AocTopologyTraits::left_boundary_edge()`      | Returns the left boundary edge descriptor.  |
+| `AocTopologyTraits::set_left_boundary_edge()`  | Sets the left boundary edge descriptor.     |
+| `AocTopologyTraits::right_boundary_edge()`     | Returns the right boundary edge descriptor. |
+| `AocTopologyTraits::set_right_boundary_edge()` | Sets the right boundary edge descriptor.    |
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-topo_traits-identified Identified Topology Traits
+<!-- ----------------------------------------------------------------------- -->
+
+`Identified_topology_traits` supports cyclic curves
+(`Left_side_category = Right_side_category = Identified_side_tag`).
+
+<!-- ======================================================================= -->
+\section aoc_sec-circle Arrangements on the Unit Circle \f$\mathbb{S}^1\f$
+<!-- ======================================================================= -->
+
+`Circle_traits_1<Kernel>` provides a geometry traits model for 1D
+arrangements of points on the unit circle \f$\mathbb{S}^1\f$.  Points
+are represented as `Kernel::Direction_2` objects.
+
+### Parameter space and identification
+
+The parameter space of \f$\mathbb{S}^1\f$ is
+\f$[\theta_{\mathrm{ref}}, \theta_{\mathrm{ref}} + 2\pi)\f$ with the two
+endpoints identified, where \f$\theta_{\mathrm{ref}}\f$ is the angle of the
+reference direction \f$d_{\mathrm{ref}}\f$ described below; by default,
+\f$\theta_{\mathrm{ref}} = 0\f$.  Both `Left_side_category` and
+`Right_side_category` are `Identified_side_tag`.  Consequently,
+`Circle_traits_1` must be paired with `Identified_topology_traits`.
+
+### Reference direction and total order
+
+An optional reference direction \f$d_{\mathrm{ref}}\f$ (default: positive
+`x`-axis \f$(1,0)\f$) defines the identification point.  The total order
+on directions is the counter-clockwise (CCW) order starting strictly
+after \f$d_{\mathrm{ref}}\f$:
+\f$d_{\mathrm{ref}} < d_1 < d_2 < \ldots < d_n < d_{\mathrm{ref}}\f$ (one full turn).
+
+A direction equal to \f$d_{\mathrm{ref}}\f$ is the *identification point*:
+`AocIdentifiedBoundaryTraits_1::Is_on_x_identification_1` returns `true` for
+it, and `AocTraits_1::Compare_x_1` must not be called with it as either
+argument.
+
+### Exact angular comparison
+
+The comparison is implemented using only the kernel predicate
+`Kernel::CounterclockwiseInBetween_2` (no trigonometric computation).  Given
+two directions \f$d_1\f$ and \f$d_2\f$, neither of which is
+\f$d_{\mathrm{ref}}\f$, \f$d_1 < d_2\f$ if and only if \f$d_1\f$ lies strictly
+between \f$d_{\mathrm{ref}}\f$ and \f$d_2\f$ when turning counter-clockwise
+from \f$d_{\mathrm{ref}}\f$; \f$d_1 > d_2\f$ if and only if \f$d_2\f$ lies
+strictly between \f$d_{\mathrm{ref}}\f$ and \f$d_1\f$; otherwise,
+\f$d_1 = d_2\f$.
+
+### Usage example
+
+\code{.cpp}
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Arrangement_on_curve_1/Circle_traits_1.h>
+#include <CGAL/Arrangement_on_curve_1/Identified_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
+#include <CGAL/Arrangement_on_curve_1/insert.h>
+
+using K = CGAL::Exact_predicates_exact_constructions_kernel;
+using Gt = CGAL::Arrangement_on_curve_1::Circle_traits_1<K>;
+using Tt = CGAL::Arrangement_on_curve_1::Identified_topology_traits<Gt>;
+using Arr = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Gt, Tt>;
+
+int main() {
+  Arr arr;
+  typename Gt::Point_1 p1(1, 0), p2(0, 1), p3(-1, 0);
+  CGAL::Arrangement_on_curve_1::insert(arr, p1);
+  CGAL::Arrangement_on_curve_1::insert(arr, p2);
+  CGAL::Arrangement_on_curve_1::insert(arr, p3);
+  // arr now has 3 vertices and 3 edges on the circle.
+}
+\endcode
+
+
+<!-- ======================================================================= -->
+\section aoc_sec-extending Extending the Arrangement
+<!-- ======================================================================= -->
+
+Topological cells can be extended with custom user attributes using
+template parameters for vertex and edge data inside the topology
+traits.  All five topology traits classes accept `VertexData` and
+`EdgeData` template parameters.  When data types are provided, they are
+stored directly inside the respective vertex and edge records; when a data
+type is `void`, the records carry no data member at all, so there is no
+memory overhead.
+
+\code{.cpp}
+using Tt = CGAL::Arrangement_on_curve_1::Open_topology_traits<Gt,           // GeometryTraits_1
+                                                              std::string,  // VertexData
+                                                              int>;         // EdgeData
+\endcode
+
+These attributes can be read or modified cleanly using standard Boost
+lvalue property maps accessed via
+`ArrangementOnCurve_1::vertex_data_map()` and
+`ArrangementOnCurve_1::edge_data_map()`.
+
+*/
+
+} // namespace Arrangement_on_curve_1
+} // namespace CGAL

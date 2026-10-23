@@ -1,0 +1,2 @@
+pdflatex Arrangement_on_curve_1.tex
+convert Arrangement_on_curve_1.pdf -resize 120x120 -background none -gravity center -extent 120x120 Arrangement_on_curve_1.png
