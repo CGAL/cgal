@@ -9,6 +9,7 @@
 #include <CGAL/Homogeneous.h>
 
 #include <vector>
+#include <utility>
 #include <iostream>
 #include <cassert>
 
@@ -240,6 +241,37 @@ struct Test {
     std::cout << "Point - Triangle\n";
     check_squared_distance (p( 10,  0), T(p(  5,  2), p( 18, 57), p(  2,56)), 29);
     check_squared_distance (p(  5,101), T(p(  0,  0), p(  5,  1), p( 10, 0)), 10000);
+
+    // query points in all regions around the triangle (0,0) (8,0) (2,6), for
+    // every cyclic shift of its vertices, in both orientations
+    const std::vector<std::pair<P, FT> > queries = {
+      { p(  3,  2),  0 }, // inside
+      { p(  4,  0),  0 }, // on an edge
+      { p(  2,  6),  0 }, // on a vertex
+      { p(  4, -3),  9 }, // outside of one edge, closest to its interior
+      { p(  7,  5),  8 },
+      { p( -2,  4), 10 },
+      { p( -2, -2),  8 }, // outside of two edges, closest to their common vertex
+      { p( 11, -2), 13 },
+      { p(  2,  9),  9 },
+      { p(  9, -2),  5 }, // outside of one edge, past one of its ends
+      { p( -1, -4), 17 },
+      { p( 11,  1), 10 },
+      { p(  3,  8),  5 },
+      { p(  0,  7),  5 },
+      { p( -4,  1), 17 }
+    };
+    const P v[3] = { p(0, 0), p(8, 0), p(2, 6) };
+    for(int i = 0; i < 3; ++i)
+    {
+      const T ccw(v[i], v[(i+1)%3], v[(i+2)%3]);
+      const T cw(v[i], v[(i+2)%3], v[(i+1)%3]);
+      for(const auto& q : queries)
+      {
+        check_squared_distance (q.first, ccw, q.second);
+        check_squared_distance (q.first, cw, q.second);
+      }
+    }
   }
 
   void L_T()
