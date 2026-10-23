@@ -1,4 +1,5 @@
 #define CGAL_GENERIC_EXTRACT 1
+#define CGAL_FORCE_IFORMAT_DOUBLE
 
 #include <cstdio>
 #include <stdlib.h>
