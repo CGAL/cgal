@@ -171,7 +171,7 @@ public:
     /* \relates Sparse_chain
      *
      * \defgroup WriteChain Writes chain to an output stream or a file.
-     * 
+     *
      * @brief  Write a sparse chain to an output stream or a file using the `.osm` file format.
      *
      * Output a sparse chain  (the chain can be reloaded using `read_chain`).
