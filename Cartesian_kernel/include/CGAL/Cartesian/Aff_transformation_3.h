@@ -19,6 +19,9 @@
 
 #include <cmath>
 #include <CGAL/aff_transformation_tags.h>
+#include <CGAL/determinant.h>
+#include <ostream>
+#include <vector>
 
 namespace CGAL {
 
@@ -268,7 +271,7 @@ public:
 
   FT hm(int i, int j) const { return cartesian(i,j); }
 
-  Aff_transformation_3 compose(const Aff_transformation_3 &t) const
+  Aff_transformation_3 compose(const Aff_transformationC3 &t) const
   {
     if(is_identity()){
       return t;
