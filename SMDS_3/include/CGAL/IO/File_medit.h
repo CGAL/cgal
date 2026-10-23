@@ -458,18 +458,21 @@ bool build_triangulation_from_file(std::istream& is,
 
   using Edge         = std::array<int,2>;
   using Facet        = std::array<int, 3>; // 3 = id
+  using Quad         = std::array<int,4>;
   using Tet = std::array<int, 4>; // 4 = id
-
+  using Hex = std::array<int,8>;
   using Edge_with_index = CGAL::IO::internal::Edge_with_curve_index<Curve_index>;
   using Corner_with_index = CGAL::IO::internal::Vertex_with_corner_index<Corner_index>;
 
   std::vector<Tet> finite_cells;
+  std::vector<Hex> hexahedra;
   std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
 
+  std::vector<Quad> quads;
   std::vector<Facet> facets;
   std::vector<Edge> edges;
-  std::vector<int> corners, facet_refs, edge_refs, point_refs;
+  std::vector<int> corners, facet_refs, edge_refs, point_refs, quad_refs, hexahedra_refs;
   std::vector<int>  ignored_ridges;
 
   bool is_CGAL_mesh = false;
@@ -480,13 +483,16 @@ bool build_triangulation_from_file(std::istream& is,
     std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
   }
 
-  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells,
+  bool ok = CGAL::IO::internal::read_MEDIT(is, points, hexahedra, finite_cells,
+                                           quads, false,
                                            facets, true,
                                            edges, true,
                                            ignored_ridges, false,
                                            corners, true,
                                            point_refs, true,
+                                           hexahedra_refs, false,
                                            subdomains, true,
+                                           quad_refs, false,
                                            facet_refs, true,
                                            edge_refs, true,
                                            verbose,

@@ -167,18 +167,25 @@ CurveIndex get_two(const Edge_with_curve_index<CurveIndex>& t)
 }
 
 template<class PointRange,
-         class CellRange,
+         class HexahedronRange,
+         class TetrahedronRange,
+         class QuadrilateralRange,
          class FacetRange, // either Facet or a tuple/array
          class EdgeRange, // either Edge or a tuple/array
          class RidgeRange,
          class CornerRange,
          class PointRefRange,
-         class CellRefRange,
+         class HexahedronRefRange,
+         class TetrahedronRefRange,
+         class QuadrilateralRefRange,
          class FacetRefRange,
          class EdgeRefRange> // either Vertex_with_corner_index or a tuple/pair/array
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
-                CellRange& cells,
+                HexahedronRange& hexahedra,
+                TetrahedronRange& tetrahedra,
+                QuadrilateralRange& quadrilaterals,
+                bool read_quadrilaterals,
                 FacetRange& facets,
                 bool read_facets,
                 EdgeRange& edges,
@@ -189,8 +196,12 @@ bool read_MEDIT(std::istream& is,
                 bool read_corners,
                 PointRefRange& point_refs,
                 bool read_point_refs,
-                CellRefRange& cell_refs,
-                bool read_cell_refs,
+                HexahedronRefRange& hexahedron_refs,
+                bool read_hexahedron_refs,
+                TetrahedronRefRange& tetrahedron_refs,
+                bool read_tetrahedron_refs,
+                QuadrilateralRefRange& quadrilateral_refs,
+                bool read_quadrilateral_refs,
                 FacetRefRange& facet_refs,
                 bool read_facet_refs,
                 EdgeRefRange& edge_refs,
@@ -200,14 +211,16 @@ bool read_MEDIT(std::istream& is,
 {
   using Point_3 = typename PointRange::value_type;
   using FT      = typename Kernel_traits<Point_3>::Kernel::FT;
+  using Quadrilateral = std::array<int, 4>;
   using Facet   = std::array<int, 3>;
-  using Cell_with_ref = typename std::iterator_traits<typename CellRange::const_iterator>::value_type;
+  using Tetrahedron_with_ref = typename std::iterator_traits<typename TetrahedronRange::const_iterator>::value_type;
+  using Hexahedron_with_ref = typename std::iterator_traits<typename HexahedronRange::const_iterator>::value_type;
 
   if(!is)
     return false;
 
   int dim;
-  int nv, nf, ntet, ref, nvertices, nedges, nridges;
+  int nv, nf, nq, nhex, ntet, ref, nvertices, nedges, nridges;
   int offset = static_cast<int>(points.size());
   std::string word;
 
@@ -319,12 +332,66 @@ bool read_MEDIT(std::istream& is,
           std::getline(is, buffer);
       }
     }
+
+    if(line.find("Quadrilaterals") != std::string::npos)
+    {
+      if(read_quadrilaterals){
+        is >> nq;
+        CGAL::internal::reserve(quadrilaterals, nf);
+
+        if(verbose)
+          std::cerr << "Reading "<< nq << " quadrilaterals" << std::endl;
+
+        for(int i=0; i<nq; ++i)
+        {
+          int n[4];
+          Surface_path_index_t<QuadrilateralRange> surface_patch_id;
+          if(!(is >> n[0] >> n[1] >> n[2]>> n[3] >> surface_patch_id))
+          {
+            if(verbose)
+              std::cerr << "Issue while reading quadrilaterals" << std::endl;
+            return false;
+          }
+          Quadrilateral facet;
+          facet[0] = offset + n[0] - 1;
+          facet[1] = offset + n[1] - 1;
+          facet[2] = offset + n[2] - 1;
+          facet[3] = offset + n[3] - 1;
+
+          if(verbose)
+            std::cout << "Looking at face #" << i << ": " << n[0] << " " << n[1] << " " << n[2] << " " << n[4] << std::endl;
+
+          CGAL_warning_code(
+          for(int j=0; j<4; ++j)
+            for(int k=0; k<4; ++k)
+              if(j != k)
+                CGAL_warning(n[j] != n[k]);
+          )
+
+          // find the circular permutation that puts the smallest index in the first place.
+          int n0 = (std::min)({facet[0],facet[1], facet[2], facet[3]});
+          while(facet[0] != n0)
+          {
+            std::rotate(std::begin(facet), std::next(std::begin(facet)), std::end(facet));
+          }
+          quadrilaterals.emplace_back(facet); // AF: why does that not compile?? {facet[0], facet[1], facet[2]});
+          if(read_quadrilateral_refs)
+            quadrilateral_refs.emplace_back(surface_patch_id);
+        }
+      }else{
+        is >> nq;
+        std::string buffer;
+        for(int i=0; i<nq; ++i)
+          std::getline(is, buffer);
+      }
+    }
+
     if(line.find("Tetrahedra") != std::string::npos)
     {
       is >> ntet;
 
       if(verbose)
-        std::cerr << "Reading "<< ntet << " cells" << std::endl;
+        std::cerr << "Reading "<< ntet << " tetrahedra" << std::endl;
 
       for(int i=0; i<ntet; ++i)
       {
@@ -334,7 +401,7 @@ bool read_MEDIT(std::istream& is,
         if(!(is >> n[0] >> n[1] >> n[2] >> n[3] >> ref))
         {
           if(verbose)
-            std::cerr << "Issue while reading cells" << std::endl;
+            std::cerr << "Issue while reading tetrahedra" << std::endl;
           return false;
         }
 
@@ -348,15 +415,61 @@ bool read_MEDIT(std::istream& is,
               CGAL_warning(n[j] != n[k]);
         )
 
-        Cell_with_ref t;
+        Tetrahedron_with_ref t;
         t[0] = offset + n[0] - 1;
         t[1] = offset + n[1] - 1;
         t[2] = offset + n[2] - 1;
         t[3] = offset + n[3] - 1;
 
-        cells.push_back(t);
-        if(read_cell_refs)
-          cell_refs.push_back(ref);
+        tetrahedra.push_back(t);
+        if(read_tetrahedron_refs)
+          tetrahedron_refs.push_back(ref);
+      }
+    }
+
+
+    if(line.find("Hexahedra") != std::string::npos) // Documented without 'h'
+    {
+      is >> nhex;
+
+      if(verbose)
+        std::cerr << "Reading "<< nhex << " hexahedra" << std::endl;
+
+      for(int i=0; i<nhex; ++i)
+      {
+        int n[8];
+        int ref;
+
+        if(!(is >> n[0] >> n[1] >> n[2] >> n[3] >> n[4] >> n[5] >> n[6] >> n[7] >> ref))
+        {
+          if(verbose)
+            std::cerr << "Issue while reading hexahedra" << std::endl;
+          return false;
+        }
+
+        if(verbose)
+          std::cout << "Looking at hex #" << i << ": " << n[0] << " " << n[1] << " " << n[2] << " " << n[3] << " " << n[4] << " " << n[5] << " " << n[6] << " " << n[7] << std::endl;
+
+        CGAL_warning_code(
+        for(int j=0; j<8; ++j)
+          for(int k=0; k<8; ++k)
+            if(j != k)
+              CGAL_warning(n[j] != n[k]);
+        )
+
+        Hexahedron_with_ref t;
+        t[0] = offset + n[0] - 1;
+        t[1] = offset + n[1] - 1;
+        t[2] = offset + n[2] - 1;
+        t[3] = offset + n[3] - 1;
+        t[4] = offset + n[4] - 1;
+        t[5] = offset + n[5] - 1;
+        t[6] = offset + n[6] - 1;
+        t[7] = offset + n[7] - 1;
+
+        hexahedra.push_back(t);
+        if(read_hexahedron_refs)
+          hexahedron_refs.push_back(ref);
       }
     }
 
@@ -425,14 +538,15 @@ bool read_MEDIT(std::istream& is,
   if (verbose)
   {
     std::cout << points.size() - std::size_t(offset) << " points" << std::endl;
-    std::cout << cells.size() << " cells" << std::endl;
-    std::cout << facets.size() << " facets" << std::endl;
+    std::cout << tetrahedra.size() << " tetrahedra" << std::endl;
+    std::cout << quadrilaterals.size() << " quadrilaterals" << std::endl;
+    std::cout << facets.size() << " triangles" << std::endl;
     std::cout << edges.size() << " edges" << std::endl;
     std::cout << ridges.size() << " ridges" << std::endl;
     std::cout << corners.size() << " corners" << std::endl;
   }
 
-  if(cells.empty())
+  if(tetrahedra.empty())
     return false;
 
   return true;
@@ -551,11 +665,23 @@ bool read_MEDIT(std::istream& is,
 
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
-  // cells
+  // hexahedra
+  std::vector<std::array<int, 8>> default_hexahedra;
+  using Hexahedra = typename internal_np::Lookup_named_param_def<internal_np::hexahedra_t, CGAL_NP_CLASS, std::vector<std::array<int,8>>>::reference;
+  static_assert(std::is_reference_v<Hexahedra> || !"hexahedra named parameter must be a reference_wrapper");
+  Hexahedra hexahedra = choose_parameter(get_parameter_reference(np, internal_np::hexahedra), default_hexahedra);
+
+  // tetrahedra
   std::vector<std::array<int, 4>> default_tetrahedra;
   using Tetrahedra = typename internal_np::Lookup_named_param_def<internal_np::tetrahedra_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
   static_assert(std::is_reference_v<Tetrahedra> || !"tetrahedra named parameter must be a reference_wrapper");
   Tetrahedra tetrahedra = choose_parameter(get_parameter_reference(np, internal_np::tetrahedra), default_tetrahedra);
+
+  // quadrilaterals
+  std::vector<std::array<int, 4>> default_quadrilaterals;
+  using Quadrilaterals = typename internal_np::Lookup_named_param_def<internal_np::quadrilaterals_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
+  static_assert(std::is_reference_v<Quadrilaterals> || !"quadrilaterals named parameter must be a reference_wrapper");
+  Quadrilaterals quadrilaterals = choose_parameter(get_parameter_reference(np, internal_np::quadrilaterals), default_quadrilaterals);
 
   // triangles
   std::vector<std::array<int, 3>> default_triangles;
@@ -581,11 +707,22 @@ bool read_MEDIT(std::istream& is,
   static_assert(std::is_reference_v<Corners> || !"corners named parameter must be a reference_wrapper");
   Corners corners = choose_parameter(get_parameter_reference(np, internal_np::corners), default_corners);
 
+  // hexahedron_refs
+  std::vector<int> default_hexahedron_refs;
+  using Hexahedron_refs = typename internal_np::Lookup_named_param_def<internal_np::hexahedron_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  static_assert(std::is_reference_v<Hexahedron_refs> || !"tetrahedron_refs named parameter must be a reference_wrapper");
+  Hexahedron_refs  hexahedron_refs  = choose_parameter(get_parameter_reference(np, internal_np::hexahedron_refs), default_hexahedron_refs);
+
   // tetrahedron_refs
   std::vector<int> default_tetrahedron_refs;
   using Tetrahedron_refs = typename internal_np::Lookup_named_param_def<internal_np::tetrahedron_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   static_assert(std::is_reference_v<Tetrahedron_refs> || !"tetrahedron_refs named parameter must be a reference_wrapper");
   Tetrahedron_refs  tetrahedron_refs  = choose_parameter(get_parameter_reference(np, internal_np::tetrahedron_refs), default_tetrahedron_refs);
+
+  std::vector<int> default_quadrilateral_refs;
+  using Quadrilateral_refs = typename internal_np::Lookup_named_param_def<internal_np::quadrilateral_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  static_assert(std::is_reference_v<Quadrilateral_refs> || !"quadrilateral_refs named parameter must be a reference_wrapper");
+  Quadrilateral_refs  quadrilateral_refs  = choose_parameter(get_parameter_reference(np, internal_np::quadrilateral_refs), default_quadrilateral_refs);
 
   std::vector<int> default_triangle_refs;
   using Triangle_refs = typename internal_np::Lookup_named_param_def<internal_np::triangle_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
@@ -602,25 +739,32 @@ bool read_MEDIT(std::istream& is,
   static_assert(std::is_reference_v<Point_refs> || !"point_refs named parameter must be a reference_wrapper");
   Point_refs  point_refs  = choose_parameter(get_parameter_reference(np, internal_np::point_refs), default_point_refs);
 
+  constexpr bool is_quadrilaterals_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::quadrilaterals_t>::value;
   constexpr bool is_triangles_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::triangles_t>::value;
   constexpr bool is_edges_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edges_t>::value;
   constexpr bool is_ridges_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::ridges_t>::value;
   constexpr bool is_corners_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::corners_t>::value;
 
+  constexpr bool is_hexahedron_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::hexahedron_refs_t>::value;
   constexpr bool is_tetrahedron_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::tetrahedron_refs_t>::value;
+  constexpr bool is_quadrilateral_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::quadrilateral_refs_t>::value;
   constexpr bool is_triangle_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::triangle_refs_t>::value;
   constexpr bool is_edge_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edge_refs_t>::value;
   constexpr bool is_point_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::point_refs_t>::value;
 
   bool is_CGAL_mesh;
 
-  return internal::read_MEDIT(is, points, tetrahedra,
+  return internal::read_MEDIT(is, points,
+                              hexahedra, tetrahedra,
+                              quadrilaterals, is_quadrilaterals_map,
                               triangles, is_triangles_map,
                               edges, is_edges_map,
                               ridges, is_ridges_map,
                               corners, is_corners_map,
                               point_refs, is_point_refs_map,
+                              hexahedron_refs, is_hexahedron_refs_map,
                               tetrahedron_refs, is_tetrahedron_refs_map,
+                              quadrilateral_refs, is_quadrilateral_refs_map,
                               triangle_refs, is_triangle_refs_map,
                               edge_refs, is_edge_refs_map,
                               verbose, is_CGAL_mesh);
@@ -651,11 +795,25 @@ bool read_MEDIT(std::istream& is,
  *     \cgalParamDefault{The value `0` is written for each point}
  *   \cgalParamNEnd
  *
+ *   \cgalParamNBegin{hexahedra}
+ *     \cgalParamDescription{a const reference wrapper of a container of octuples of integers that will be written by this function.
+ *                           Each element corresponds to a hexahedron with vertices corresponding to the eight integers.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the octuples can be accessed with `std::get<int>()`}
+ *     \cgalParamDefault{hexahedra are not written}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{tetrahedra}
  *     \cgalParamDescription{a const reference wrapper of a container of quadruples of integers that will be written by this function.
  *                           Each element corresponds to a tetrahedron with vertices corresponding to the four integers.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the quadruples can be accessed with `std::get<int>()`}
  *     \cgalParamDefault{tetrahedra are not written}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{hexahedron_refs}
+ *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
+ *                           It must have the same size as `hexahedra`, and each element in the container is a value associated to the hexahedron at the same position.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
+ *     \cgalParamDefault{The value `0` is written for each hexahedron}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{tetrahedron_refs}
@@ -675,8 +833,22 @@ bool read_MEDIT(std::istream& is,
  *   \cgalParamNBegin{triangle_refs}
  *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
  *                           It must have the same size as `triangles`, and each element in the container is a value associated to the triangle at the same position.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as value type.}
  *     \cgalParamDefault{The value `1` is written for each triangle}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{quadrilaterals}
+ *     \cgalParamDescription{a const reference wrapper of a container of quaduples of integers that will be written by this function.
+ *                           Each element corresponds to a quadrilateral with vertices corresponding to the four integers.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the triples can be accessed with `std::get<int>()`}
+ *     \cgalParamDefault{quadrilaterals are not written}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{quadrilateral_refs}
+ *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
+ *                           It must have the same size as `quadrilaterals`, and each element in the container is a value associated to the quadrilateral at the same position.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as value type.}
+ *     \cgalParamDefault{The value `0` is written for each quadrilateral}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{edges}
@@ -733,13 +905,21 @@ bool write_MEDIT(std::ostream& os,
     return false;
 
   std::vector<int> default_ridges, default_corners;
-  std::vector<int> default_tetrahedron_refs, default_triangle_refs, default_edge_refs, default_point_refs;
+  std::vector<int> default_hexahedron_refs, default_tetrahedron_refs, default_quadrilateral_refs, default_triangle_refs, default_edge_refs, default_point_refs;
   std::vector<std::array<int,2>> default_edges;
+  std::vector<std::array<int,4>> default_quadrilaterals;
   std::vector<std::array<int,3>> default_facets;
-  std::vector<std::array<int,4>> default_cells;
+  std::vector<std::array<int,4>> default_tetrahedra;
+  std::vector<std::array<int,8>> default_hexahedra;
 
-  using Cells = typename internal_np::Lookup_named_param_def<internal_np::tetrahedra_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
-  Cells cells = choose_parameter(get_parameter_reference(np, internal_np::tetrahedra), default_cells);
+  using Hexahedra = typename internal_np::Lookup_named_param_def<internal_np::hexahedra_t, CGAL_NP_CLASS, std::vector<std::array<int,8>>>::reference;
+  Hexahedra hexahedra = choose_parameter(get_parameter_reference(np, internal_np::hexahedra), default_hexahedra);
+
+  using Tetrahedra = typename internal_np::Lookup_named_param_def<internal_np::tetrahedra_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
+  Tetrahedra tetrahedra = choose_parameter(get_parameter_reference(np, internal_np::tetrahedra), default_tetrahedra);
+
+  using Quadrilaterals = typename internal_np::Lookup_named_param_def<internal_np::quadrilaterals_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
+  Quadrilaterals quadrilaterals = choose_parameter(get_parameter_reference(np, internal_np::quadrilaterals), default_quadrilaterals);
 
   using Facets = typename internal_np::Lookup_named_param_def<internal_np::triangles_t, CGAL_NP_CLASS, std::vector<std::array<int,3>>>::reference;
   Facets facets = choose_parameter(get_parameter_reference(np, internal_np::triangles), default_facets);
@@ -753,8 +933,14 @@ bool write_MEDIT(std::ostream& os,
   using Corners = typename internal_np::Lookup_named_param_def<internal_np::corners_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Corners corners = choose_parameter(get_parameter_reference(np, internal_np::corners), default_corners);
 
+  using Hexahedron_refs = typename internal_np::Lookup_named_param_def<internal_np::hexahedron_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Hexahedron_refs hexahedron_refs = choose_parameter(get_parameter_reference(np, internal_np::hexahedron_refs), default_hexahedron_refs);
+
   using Tetrahedron_refs = typename internal_np::Lookup_named_param_def<internal_np::tetrahedron_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Tetrahedron_refs tetrahedron_refs = choose_parameter(get_parameter_reference(np, internal_np::tetrahedron_refs), default_tetrahedron_refs);
+
+  using Quadrilateral_refs = typename internal_np::Lookup_named_param_def<internal_np::quadrilateral_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Quadrilateral_refs quadrilateral_refs = choose_parameter(get_parameter_reference(np, internal_np::quadrilateral_refs), default_quadrilateral_refs);
 
   using Triangle_refs = typename internal_np::Lookup_named_param_def<internal_np::triangle_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Triangle_refs triangle_refs = choose_parameter(get_parameter_reference(np, internal_np::triangle_refs), default_triangle_refs);
@@ -765,7 +951,9 @@ bool write_MEDIT(std::ostream& os,
   using Point_refs = typename internal_np::Lookup_named_param_def<internal_np::point_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Point_refs point_refs = choose_parameter(get_parameter_reference(np, internal_np::point_refs), default_point_refs);
 
+  constexpr bool is_hexahedron_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::hexahedron_refs_t>::value;
   constexpr bool is_tetrahedron_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::tetrahedron_refs_t>::value;
+  constexpr bool is_quadrilateral_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::quadrilateral_refs_t>::value;
   constexpr bool is_triangle_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::triangle_refs_t>::value;
   constexpr bool is_edge_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edge_refs_t>::value;
   constexpr bool is_point_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::point_refs_t>::value;
@@ -780,15 +968,31 @@ bool write_MEDIT(std::ostream& os,
     os << p << " " << ref  << "\n";
   }
 
+  os << "Hexaedra\n";   // Documented without 'h'
+  os << hexahedra.size() << "\n";
+  for (std::size_t k=0; k < hexahedra.size(); ++k)
+  {
+    int ref = is_hexahedron_refs_map ? hexahedron_refs[k] : 0;
+    os << hexahedra[k][0]+1 << " "
+       << hexahedra[k][1]+1 << " "
+       << hexahedra[k][2]+1 << " "
+       << hexahedra[k][3]+1 << " "
+       << hexahedra[k][4]+1 << " "
+       << hexahedra[k][5]+1 << " "
+       << hexahedra[k][6]+1 << " "
+       << hexahedra[k][7]+1 << " "
+       << ref << "\n";
+  }
+
   os << "Tetrahedra\n";
-  os << cells.size() << "\n";
-  for (std::size_t k=0; k < cells.size(); ++k)
+  os << tetrahedra.size() << "\n";
+  for (std::size_t k=0; k < tetrahedra.size(); ++k)
   {
     int ref = is_tetrahedron_refs_map ? tetrahedron_refs[k] : 1;
-    os << cells[k][0]+1 << " "
-       << cells[k][1]+1 << " "
-       << cells[k][2]+1 << " "
-       << cells[k][3]+1 << " "
+    os << tetrahedra[k][0]+1 << " "
+       << tetrahedra[k][1]+1 << " "
+       << tetrahedra[k][2]+1 << " "
+       << tetrahedra[k][3]+1 << " "
        << ref << "\n";
   }
 
@@ -798,6 +1002,15 @@ bool write_MEDIT(std::ostream& os,
       const auto& e = edges[k];
       int ref = is_edge_refs_map ? edge_refs[k] : 1;
       os << internal::get_zero(e) +1 << " " << internal::get_one(e) + 1 << " " << ref  << "\n";
+    }
+  }
+
+  if(!quadrilaterals.empty()){
+    os << "Quadrilateral\n" << quadrilaterals.size() << "\n";
+    for(std::size_t k = 0; k < quadrilaterals.size(); ++k){
+      const auto& f =  quadrilaterals[k];
+      int ref = is_quadrilateral_refs_map ? quadrilateral_refs[k]: 0;
+      os << std::get<0>(f) +1 << " " << std::get<1>(f) + 1 << " " << std::get<2>(f) + 1  << " " << std::get<3>(f) + 1 << " " <<  ref << "\n";
     }
   }
 
