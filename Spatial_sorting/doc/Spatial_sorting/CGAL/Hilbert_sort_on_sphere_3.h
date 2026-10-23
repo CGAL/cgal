@@ -27,7 +27,7 @@ public:
 /*!
 constructs an instance with `traits` as traits class instance, `sq_r` as the squared_radius of the given sphere,
 and `p` as the center of the given sphere.
-\pre The value of \f$sq\_r\f$ should be greater than 0.
+\pre The value of \f$sq\_r\f$ must be greater than 0.
 */
 Hilbert_sort_on_sphere_3(const Traits &traits = Traits(),
                          double sq_r = 1.0,
