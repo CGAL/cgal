@@ -24,6 +24,11 @@ create_single_source_cgal_program("deprecation_warning.cpp")
 
 create_single_source_cgal_program("test_use_h.cpp")
 
+create_single_source_cgal_program("test_expensive_checks.cpp")
+if(CGAL_ENABLE_EXPENSIVE_ASSERTIONS)
+  target_compile_definitions(test_expensive_checks PRIVATE CGAL_EXPECT_EXPENSIVE_CHECKS)
+endif()
+
 create_single_source_cgal_program(will_fail.cpp will_fail_aux.cpp)
 if(CGAL_ENABLE_TESTING)
   set_property(TEST "execution   of  will_fail" PROPERTY WILL_FAIL TRUE)
