@@ -42,6 +42,7 @@ namespace IO {
   left to its default value (255 = no transparency), which is why we
   often refer to the <I>rgb-value</I> of the color.
 
+  \see Color_ramp
 */
 
 class Color
