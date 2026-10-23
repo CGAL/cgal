@@ -231,6 +231,39 @@ void properties () {
 }
 
 void move () {
+  Surface_fixture f;
+  auto nf = num_faces(f.m);
+
+  // test move-constructor
+  Sm m2{std::move(f.m)};
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(m2) == nf);
+  assert(num_faces(f.m) == 0);
+
+  // test move-assignment
+  f.m = std::move(m2);
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(f.m) == nf);
+  assert(num_faces(m2) == 0);
+
+  // test copy-assignment
+  m2 = f.m;
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(f.m) == nf);
+  assert(num_faces(m2) == nf);
+
+  // test copy-constructor
+  Sm m3 {f.m};
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(f.m) == nf);
+  assert(num_faces(m2) == nf);
+}
+
+void move_issue_regressions () {
   Sm source;
   const Sm::Vertex_index v0 = source.add_vertex(Point_3(0, 0, 0));
   const Sm::Vertex_index v1 = source.add_vertex(Point_3(1, 1, 1));
@@ -304,6 +337,7 @@ int main()
   point_position_accessor();
   properties();
   move();
+  move_issue_regressions();
   std::cout << "done" << std::endl;
   return 0;
 }
