@@ -938,6 +938,9 @@ public:
     /// move assignment
     Surface_mesh& operator=(Surface_mesh&& sm)
     {
+      if (this == &sm)
+        return *this;
+
       vprops_ = std::move(sm.vprops_);
       hprops_ = std::move(sm.hprops_);
       eprops_ = std::move(sm.eprops_);

@@ -256,6 +256,9 @@ void move () {
   assert(point_map);
   assert((point_map[v0] == Point_3(0, 0, 0)));
 
+  destination = std::move(destination);
+  assert((destination.point(v0) == Point_3(0, 0, 0)));
+
   // Move construction must also leave the source reusable.
   Sm constructed(std::move(destination));
   assert((constructed.point(v1) == Point_3(1, 1, 1)));
