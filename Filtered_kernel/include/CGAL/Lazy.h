@@ -51,6 +51,77 @@
 
 namespace CGAL {
 
+namespace internal {
+
+// Lock-free replacement for std::call_once in Lazy_rep::exact().
+//
+// libstdc++ has a futex fast path for std::call_once on Linux only; on
+// every other platform (notably mingw-w64) it falls back to the generic
+// implementation, which acquires a GLOBAL mutex and broadcasts a GLOBAL
+// condition variable (one kernel wake syscall) for every once_flag that
+// completes.  Lazy_rep evaluates each DAG node through call_once exactly
+// once, and an exact-kernel workload creates millions of nodes, so on
+// those platforms every first exactification pays a syscall and all
+// threads serialize on one process-wide lock: profiling a Boolean-set
+// workload on Windows/mingw-w64 showed ~1/3 of all samples inside
+// SetEvent stacks in a single-threaded run, and negative scaling at any
+// thread count (2 threads = 2x slower, 32 threads = 5.7x slower than 1).
+//
+// States: 0 = not run, 1 = running, 2 = done, 3 = running with waiters.
+// The fast path is a single acquire load; the completing thread issues a
+// wake only when a waiter actually announced itself, so the uncontended
+// case never touches the kernel.  An exception returns the flag to 0,
+// matching std::call_once semantics.
+//
+// C++20 atomic wait/notify is used when available (it parks contended
+// waiters in the kernel); in C++17 mode the rare contended wait
+// degrades to a yield loop, which is still strictly better than the
+// global-mutex path this replaces.
+inline void lazy_once_wait(std::atomic<unsigned char>& flag)
+{
+#if defined(__cpp_lib_atomic_wait)
+  flag.wait(3, std::memory_order_acquire);
+#else
+  while (flag.load(std::memory_order_acquire) == 3)
+    std::this_thread::yield();
+#endif
+}
+
+inline void lazy_once_wake(std::atomic<unsigned char>& flag)
+{
+#if defined(__cpp_lib_atomic_wait)
+  flag.notify_all();
+#else
+  (void)flag;
+#endif
+}
+
+template <class F>
+inline void lazy_call_once(std::atomic<unsigned char>& flag, F&& f)
+{
+  unsigned char s = flag.load(std::memory_order_acquire);
+  while (s != 2) {
+    if (s == 0 && flag.compare_exchange_weak(s, 1, std::memory_order_acquire)) {
+      try {
+        f();
+      } catch (...) {
+        if (flag.exchange(0, std::memory_order_release) == 3) lazy_once_wake(flag);
+        throw;
+      }
+      if (flag.exchange(2, std::memory_order_release) == 3) lazy_once_wake(flag);
+      return;
+    }
+    if (s == 1 && !flag.compare_exchange_weak(s, 3, std::memory_order_acquire))
+      continue;
+    if (s == 1 || s == 3) {
+      lazy_once_wait(flag);
+      s = flag.load(std::memory_order_acquire);
+    }
+  }
+}
+
+} // namespace internal
+
 template <typename D>
 class Bbox_d;
 
@@ -321,7 +392,7 @@ public:
 
   AT_wrap<AT> at_orig{};
   mutable std::atomic<AT_wrap<AT>*> ptr_ { &at_orig };
-  mutable std::once_flag once;
+  mutable std::atomic<unsigned char> once{0}; // see internal::lazy_call_once above
 
   Lazy_rep () {}
 
@@ -352,7 +423,7 @@ public:
   {
     // The test is unnecessary, only use it if benchmark says so, or in order to avoid calling Lazy_exact_Ex_Cst::update_exact() (which used to contain an assertion)
     //if (is_lazy())
-    std::call_once(once, [this](){this->update_exact();});
+    internal::lazy_call_once(once, [this](){this->update_exact();});
     return exact_unsafe(); // call_once already synchronized memory
   }
 
@@ -435,7 +506,7 @@ public:
   mutable AT at;
   mutable std::atomic<ET*> ptr_ { nullptr };
 #ifdef CGAL_HAS_THREADS
-  mutable std::once_flag once;
+  mutable std::atomic<unsigned char> once{0}; // see internal::lazy_call_once above
 #endif
 
   Lazy_rep () {}
@@ -477,7 +548,7 @@ public:
 #ifdef CGAL_HAS_THREADS
     // The test is unnecessary, only use it if benchmark says so, or in order to avoid calling Lazy_exact_Ex_Cst::update_exact() (which used to contain an assertion)
     //if (is_lazy())
-    std::call_once(once, [this](){this->update_exact();});
+    internal::lazy_call_once(once, [this](){this->update_exact();});
 #else
     if (is_lazy())
       this->update_exact();
@@ -547,7 +618,7 @@ public:
 
   mutable std::atomic<double> x, y; // -inf, +sup
   mutable std::atomic<ET*> ptr_ { nullptr };
-  mutable std::once_flag once;
+  mutable std::atomic<unsigned char> once{0}; // see internal::lazy_call_once above
 
   Lazy_rep (AT a = AT())
       : x(-a.inf()), y(a.sup()) {}
@@ -586,7 +657,7 @@ public:
   {
     // The test is unnecessary, only use it if benchmark says so, or in order to avoid calling Lazy_exact_Ex_Cst::update_exact() (which used to contain an assertion)
     //if (is_lazy())
-    std::call_once(once, [this](){this->update_exact();});
+    internal::lazy_call_once(once, [this](){this->update_exact();});
     return exact_unsafe(); // call_once already synchronized memory
   }
 
