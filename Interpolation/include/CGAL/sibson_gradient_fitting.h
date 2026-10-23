@@ -23,8 +23,6 @@
 #include <functional>
 
 #include <any>
-#include <boost/utility/result_of.hpp>
-
 #include <iterator>
 #include <utility>
 #include <vector>
@@ -39,16 +37,16 @@ sibson_gradient_fitting(ForwardIterator first,
                         ForwardIterator beyond,
                         const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                         const Point& p,
-                        const typename boost::result_of<
-                                         ValueFunctor(typename std::iterator_traits<ForwardIterator>::value_type::first_type)>
-                                         ::type::first_type fn,
+                        const typename std::invoke_result_t<
+                                         ValueFunctor, typename std::iterator_traits<ForwardIterator>::value_type::first_type>
+                                         ::first_type fn,
                         ValueFunctor value_function,
                         const Traits& traits)
 {
   CGAL_precondition( first != beyond && norm != 0);
 
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
 
   typedef typename Traits::Aff_transformation_d Aff_transformation;
   typedef typename Traits::FT                   Coord_type;
@@ -91,7 +89,7 @@ sibson_gradient_fitting(ForwardIterator first,
                         const Traits& traits)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
 
   value_functor_result_type fn = value_function(p);
   CGAL_assertion(fn.second);
@@ -113,7 +111,7 @@ sibson_gradient_fitting_internal_with_dummy(ForwardIterator first,
                                             const typename Traits::Point_d& /*dummy*/)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
 
   const typename Traits::Point_d& bare_p = traits.construct_point_d_object()(vh->point());
   value_functor_result_type fn = value_function(bare_p);
@@ -135,7 +133,7 @@ sibson_gradient_fitting_internal_with_dummy(ForwardIterator first,
                                             const typename Traits::Weighted_point_d& /*dummy*/)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
 
   value_functor_result_type fn = value_function(vh->point());
   CGAL_assertion(fn.second);
@@ -156,7 +154,7 @@ sibson_gradient_fitting_internal_with_dummy(ForwardIterator first,
                                             VH /*dummy*/)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
 
   const typename Traits::Point_d& bare_p = traits.construct_point_d_object()(vh->point());
   value_functor_result_type fn = value_function(vh);
