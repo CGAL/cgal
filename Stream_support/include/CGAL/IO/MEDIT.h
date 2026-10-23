@@ -167,18 +167,18 @@ CurveIndex get_two(const Edge_with_curve_index<CurveIndex>& t)
 }
 
 template<class PointRange,
-         class CellRange,
+         class TetrahedronRange,
          class FacetRange, // either Facet or a tuple/array
          class EdgeRange, // either Edge or a tuple/array
          class RidgeRange,
          class CornerRange,
          class PointRefRange,
-         class CellRefRange,
+         class TetrahedronRefRange,
          class FacetRefRange,
          class EdgeRefRange> // either Vertex_with_corner_index or a tuple/pair/array
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
-                CellRange& cells,
+                TetrahedronRange& tetrahedra,
                 FacetRange& facets,
                 bool read_facets,
                 EdgeRange& edges,
@@ -189,8 +189,8 @@ bool read_MEDIT(std::istream& is,
                 bool read_corners,
                 PointRefRange& point_refs,
                 bool read_point_refs,
-                CellRefRange& cell_refs,
-                bool read_cell_refs,
+                TetrahedronRefRange& tetrahedron_refs,
+                bool read_tetrahedron_refs,
                 FacetRefRange& facet_refs,
                 bool read_facet_refs,
                 EdgeRefRange& edge_refs,
@@ -201,7 +201,7 @@ bool read_MEDIT(std::istream& is,
   using Point_3 = typename PointRange::value_type;
   using FT      = typename Kernel_traits<Point_3>::Kernel::FT;
   using Facet   = std::array<int, 3>;
-  using Cell_with_ref = typename std::iterator_traits<typename CellRange::const_iterator>::value_type;
+  using Tetrahedron_with_ref = typename std::iterator_traits<typename TetrahedronRange::const_iterator>::value_type;
 
   if(!is)
     return false;
@@ -324,7 +324,7 @@ bool read_MEDIT(std::istream& is,
       is >> ntet;
 
       if(verbose)
-        std::cerr << "Reading "<< ntet << " cells" << std::endl;
+        std::cerr << "Reading "<< ntet << " tetrahedra" << std::endl;
 
       for(int i=0; i<ntet; ++i)
       {
@@ -334,7 +334,7 @@ bool read_MEDIT(std::istream& is,
         if(!(is >> n[0] >> n[1] >> n[2] >> n[3] >> ref))
         {
           if(verbose)
-            std::cerr << "Issue while reading cells" << std::endl;
+            std::cerr << "Issue while reading tetrahedra" << std::endl;
           return false;
         }
 
@@ -348,15 +348,15 @@ bool read_MEDIT(std::istream& is,
               CGAL_warning(n[j] != n[k]);
         )
 
-        Cell_with_ref t;
+        Tetrahedron_with_ref t;
         t[0] = offset + n[0] - 1;
         t[1] = offset + n[1] - 1;
         t[2] = offset + n[2] - 1;
         t[3] = offset + n[3] - 1;
 
-        cells.push_back(t);
-        if(read_cell_refs)
-          cell_refs.push_back(ref);
+        tetrahedra.push_back(t);
+        if(read_tetrahedron_refs)
+          tetrahedron_refs.push_back(ref);
       }
     }
 
@@ -425,14 +425,14 @@ bool read_MEDIT(std::istream& is,
   if (verbose)
   {
     std::cout << points.size() - std::size_t(offset) << " points" << std::endl;
-    std::cout << cells.size() << " cells" << std::endl;
+    std::cout << tetrahedra.size() << " tetrahedra" << std::endl;
     std::cout << facets.size() << " facets" << std::endl;
     std::cout << edges.size() << " edges" << std::endl;
     std::cout << ridges.size() << " ridges" << std::endl;
     std::cout << corners.size() << " corners" << std::endl;
   }
 
-  if(cells.empty())
+  if(tetrahedra.empty())
     return false;
 
   return true;
@@ -551,7 +551,7 @@ bool read_MEDIT(std::istream& is,
 
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
-  // cells
+  // tetrahedra
   std::vector<std::array<int, 4>> default_tetrahedra;
   using Tetrahedra = typename internal_np::Lookup_named_param_def<internal_np::tetrahedra_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
   static_assert(std::is_reference_v<Tetrahedra> || !"tetrahedra named parameter must be a reference_wrapper");
@@ -736,10 +736,10 @@ bool write_MEDIT(std::ostream& os,
   std::vector<int> default_tetrahedron_refs, default_triangle_refs, default_edge_refs, default_point_refs;
   std::vector<std::array<int,2>> default_edges;
   std::vector<std::array<int,3>> default_facets;
-  std::vector<std::array<int,4>> default_cells;
+  std::vector<std::array<int,4>> default_tetrahedra;
 
-  using Cells = typename internal_np::Lookup_named_param_def<internal_np::tetrahedra_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
-  Cells cells = choose_parameter(get_parameter_reference(np, internal_np::tetrahedra), default_cells);
+  using Tetrahedra = typename internal_np::Lookup_named_param_def<internal_np::tetrahedra_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
+  Tetrahedra tetrahedra = choose_parameter(get_parameter_reference(np, internal_np::tetrahedra), default_tetrahedra);
 
   using Facets = typename internal_np::Lookup_named_param_def<internal_np::triangles_t, CGAL_NP_CLASS, std::vector<std::array<int,3>>>::reference;
   Facets facets = choose_parameter(get_parameter_reference(np, internal_np::triangles), default_facets);
@@ -781,14 +781,14 @@ bool write_MEDIT(std::ostream& os,
   }
 
   os << "Tetrahedra\n";
-  os << cells.size() << "\n";
-  for (std::size_t k=0; k < cells.size(); ++k)
+  os << tetrahedra.size() << "\n";
+  for (std::size_t k=0; k < tetrahedra.size(); ++k)
   {
     int ref = is_tetrahedron_refs_map ? tetrahedron_refs[k] : 1;
-    os << cells[k][0]+1 << " "
-       << cells[k][1]+1 << " "
-       << cells[k][2]+1 << " "
-       << cells[k][3]+1 << " "
+    os << tetrahedra[k][0]+1 << " "
+       << tetrahedra[k][1]+1 << " "
+       << tetrahedra[k][2]+1 << " "
+       << tetrahedra[k][3]+1 << " "
        << ref << "\n";
   }
 
