@@ -113,24 +113,25 @@ kernel(const FaceRange& face_range,
   if(bbox_filtering){
     // We compute and store the vertices that realized the bbox
     struct Bbox_entry {
-      std::size_t index;
+      int index;
       std::function<double(const EPoint_3&)> bound;
-      std::function<double(const Bbox_3&)> value;
+      bool take_min;
     };
     std::array<Bbox_entry,6> entries {{
-        {0, [](const EPoint_3& p){ return approx(p).x().inf();  }, [](const Bbox_3& b){ return b.xmin(); }},
-        {1, [](const EPoint_3& p){ return approx(p).x().sup(); }, [](const Bbox_3& b){ return b.xmax(); }},
-        {2, [](const EPoint_3& p){ return approx(p).y().inf();  }, [](const Bbox_3& b){ return b.ymin(); }},
-        {3, [](const EPoint_3& p){ return approx(p).y().sup(); }, [](const Bbox_3& b){ return b.ymax(); }},
-        {4, [](const EPoint_3& p){ return approx(p).z().inf();  }, [](const Bbox_3& b){ return b.zmin(); }},
-        {5, [](const EPoint_3& p){ return approx(p).z().sup(); }, [](const Bbox_3& b){ return b.zmax(); }}
+        {0, [](const EPoint_3& p){ return approx(p).x().inf();  }, true},  // xmin
+        {1, [](const EPoint_3& p){ return approx(p).y().inf();  }, true},  // ymin
+        {2, [](const EPoint_3& p){ return approx(p).z().inf();  }, true},  // zmin
+        {3, [](const EPoint_3& p){ return approx(p).x().sup();  }, false}, // xmax
+        {4, [](const EPoint_3& p){ return approx(p).y().sup();  }, false}, // ymax
+        {5, [](const EPoint_3& p){ return approx(p).z().sup();  }, false}  // zmax
     }};
 
+    // Remark: No other operations have been performed since the bounding box was computed,
+    // so the intervals have not been refined.
     for (const auto& e : entries){
       for (vertex_descriptor v : vertices(kernel)){
-        std::size_t i = e.index;
-        double bound = e.bound(get(kvpm, v));
-        if (bound == e.value(bb3)){
+        int i = e.index;
+        if (e.bound(get(kvpm, v)) == bb3.get_value(i)){
           bbox_vertices[i] = v;
           break;
         }
@@ -184,7 +185,7 @@ kernel(const FaceRange& face_range,
                                                                     geom_traits(kgt).
                                                                     do_not_triangulate_faces(true).
                                                                     vertex_point_map(kvpm).
-                                                                    bounding_box(&bbox_vertices).
+                                                                    bounding_box(std::make_pair(&bb3, &bbox_vertices)).
                                                                     starting_vertex_descriptor(start_vertex).
                                                                     face_to_face_map(f2f_map),
                                                                     f);
@@ -193,13 +194,9 @@ kernel(const FaceRange& face_range,
                                                                     geom_traits(kgt).
                                                                     do_not_triangulate_faces(true).
                                                                     vertex_point_map(kvpm).
-                                                                    bounding_box(&bbox_vertices).
+                                                                    bounding_box(std::make_pair(&bb3, &bbox_vertices)).
                                                                     starting_vertex_descriptor(start_vertex));
       if (is_empty(kernel)) return;
-
-      // update bbox, ( By looking which bbox_vertices have changed, it is possible to avoid recomputing all of them at each step )
-      bb3 = get(kvpm, bbox_vertices[0]).bbox()+get(kvpm, bbox_vertices[1]).bbox()+get(kvpm, bbox_vertices[2]).bbox()+
-            get(kvpm, bbox_vertices[3]).bbox()+get(kvpm, bbox_vertices[4]).bbox()+get(kvpm, bbox_vertices[5]).bbox();
     }
     else
     {
@@ -234,7 +231,7 @@ kernel(const FaceRange& face_range,
     using AK = typename EK::Approximate_kernel;
     using APoint_3 = typename AK::Point_3;
 
-    auto to_approx = [&kernel, &kvpm](vertex_descriptor v) { return approx(get(kvpm, v)); };
+    auto to_approx = [&kvpm](vertex_descriptor v) { return approx(get(kvpm, v)); };
     const auto& vrange = vertices(kernel);
 
     APoint_3 approx_centroid;
@@ -245,7 +242,7 @@ kernel(const FaceRange& face_range,
     }
     EPoint_3 double_centroid(to_double(approx_centroid.x()),
                              to_double(approx_centroid.y()),
-                             to_double(approx_centroid.z())); // todo use converter
+                             to_double(approx_centroid.z()));
 
     // Check if the approximate_centroid is inside the kernel
     auto is_inside_kernel = [&](const EPoint_3& p) {
@@ -265,33 +262,27 @@ kernel(const FaceRange& face_range,
 
     if(is_inside_kernel(double_centroid)) {
       *p = from_exact(double_centroid);
+      return;
     }
 
     // If not, refine the centroid position
-    // Sum the vectors with a balanced reduction (to limit the depth of the lazy
-    // expression tree), and divide only once.
-    auto to_vector = [&kernel, &kvpm](vertex_descriptor v) { return EVector_3(ORIGIN, get(kvpm, v)); };
-    const EVector_3 sum = CGAL::divide_and_conquer_reduce<2>(boost::make_transform_iterator(vrange.begin(), to_vector),
-                                                             boost::make_transform_iterator(vrange.end(), to_vector),
-                                                             EVector_3(NULL_VECTOR), std::plus<EVector_3>());
-    EPoint_3 centroid = ORIGIN + sum / vrange.size();
+    using ExactK = typename EK::Exact_kernel;
+    using ExactPoint_3 = typename ExactK::Point_3;
 
-    double_centroid = EPoint_3(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
-
-    if(is_inside_kernel(double_centroid)){
-      *p = from_exact(double_centroid);
-      return;
-    }
-
-    centroid.exact();
-    double_centroid = EPoint_3(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
+    auto to_exact = [&](vertex_descriptor v) { return exact(get(kvpm, v)); };
+    ExactPoint_3 ecentroid = CGAL::centroid(boost::make_transform_iterator(vrange.begin(), to_exact),
+                                            boost::make_transform_iterator(vrange.end(), to_exact));
+    double_centroid = EPoint_3(to_double(ecentroid.x()),
+                               to_double(ecentroid.y()),
+                               to_double(ecentroid.z()));
 
     if(is_inside_kernel(double_centroid)){
       *p = from_exact(double_centroid);
       return;
     }
 
-    *p = from_exact(centroid);
+    // Not inside if the GT kernel is not EPECK
+    *p = from_exact(EPoint_3(ecentroid));
     return;
   }
 
