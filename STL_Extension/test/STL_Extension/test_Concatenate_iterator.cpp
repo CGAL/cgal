@@ -265,6 +265,71 @@ int main()
      assert(ppb != ppe);
   }
 
+  // Test O(1) operator+ and operator- for random access iterators (vectors)
+  {
+    std::cout << "testing O(1) operator+ and operator-..." << std::endl;
+
+    std::vector<int> v_a = {0, 1, 2, 3, 4};
+    std::vector<int> v_b = {10, 11, 12, 13, 14};
+
+    using VV_Iterator = CGAL::Concatenate_iterator<
+      std::vector<int>::iterator, std::vector<int>::iterator>;
+
+    VV_Iterator begin(v_a.end(), v_b.begin(), v_a.begin());
+    VV_Iterator end(v_a.end(), v_b.begin(), v_b.end(), 0);
+
+    // Test operator+ within first range
+    VV_Iterator it = begin + 2;
+    assert(*it == 2);
+
+    // Test operator+ crossing from first to second range
+    it = begin + 6;
+    assert(*it == 11);
+
+    // Test operator+ within second range
+    it = begin + 8;
+    assert(*it == 13);
+
+    // Test operator- within second range
+    it = end - 2;
+    assert(*it == 13);
+
+    // Test operator- crossing from second to first range
+    it = end - 7;
+    assert(*it == 3);
+
+    // Test operator- within first range
+    VV_Iterator mid = begin + 3;
+    it = mid - 2;
+    assert(*it == 1);
+
+    // Test difference operator
+    assert(end - begin == 10);
+    assert((begin + 7) - begin == 7);
+    assert(end - (end - 3) == 3);
+
+    // Test operator+= and operator-=
+    it = begin;
+    it += 5;
+    assert(*it == 10);
+    it -= 3;
+    assert(*it == 2);
+
+    // Test negative offsets
+    it = begin + 5;
+    it = it + (-2);
+    assert(*it == 3);
+    it = it - (-3);
+    assert(*it == 11);
+
+    // Test negative differences
+    assert(begin - end == -10);
+    assert((begin + 3) - (begin + 7) == -4);
+    assert((begin + 5) - (begin + 2) == 3);
+
+    std::cout << "O(1) operator tests passed!" << std::endl;
+  }
+
 
   //------------------------------------------------------------------
 #if 0
@@ -316,6 +381,19 @@ int main()
     std::cout << std::endl << std::endl;
   }
 #endif
+
+  // Test mixed iterator categories (Random Access + Bidirectional) regression
+  {
+      std::cout << "testing mixed iterator categories (Random Access + Bidirectional) regression..." << std::endl;
+      std::vector<int> v = {1, 2, 3};
+      std::list<int> l = {4, 5, 6};
+      using Iterator = CGAL::Concatenate_iterator<std::vector<int>::iterator, std::list<int>::iterator>;
+      Iterator begin(v.end(), l.begin(), v.begin());
+
+      Iterator it = begin + 4;
+      assert(*it == 5);
+      std::cout << "Mixed iterator category test passed!" << std::endl;
+  }
 
   return 0;
 }
