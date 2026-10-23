@@ -37,7 +37,7 @@ struct Polyhedron_tester : public Tester<K>
       typename Mesh_domain::Curve_index> C3t3;
 
     // Criteria
-    typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+    typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
     MeshPolyhedron_3 P;
 

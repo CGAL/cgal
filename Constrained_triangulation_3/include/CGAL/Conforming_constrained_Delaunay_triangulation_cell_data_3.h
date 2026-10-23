@@ -42,8 +42,6 @@ class Conforming_constrained_Delaunay_triangulation_cell_data_3 {
   template <typename Tr> friend class Conforming_constrained_Delaunay_triangulation_3_impl;
   /// @endcond
 
-  std::array<CDT_3_signed_index, 4> face_id = { -1, -1, -1, -1 };
-  std::array<void*, 4> facet_2d = {nullptr, nullptr, nullptr, nullptr};
   std::bitset<static_cast<unsigned>(CDT_3_cell_marker::nb_of_markers)> markers;
 
   bool is_marked() const { return markers.any(); }
@@ -52,35 +50,6 @@ class Conforming_constrained_Delaunay_triangulation_cell_data_3 {
   void clear_mark(CDT_3_cell_marker m) { markers.reset(static_cast<unsigned>(m)); }
   void clear_marks() { markers.reset(); }
 
-  static unsigned int uint(int i) { return static_cast<unsigned int>(i); }
-
-  template <typename Facet_handle>
-  void set_facet_constraint(int i, CDT_3_signed_index face_id,
-                            Facet_handle facet_2d)
-  {
-    this->face_id[uint(i)] = face_id;
-    this->facet_2d[uint(i)] = static_cast<void*>(facet_2d == Facet_handle{} ?  nullptr : std::addressof(*facet_2d));
-  }
-
-  template <typename CDT_2>
-  auto face_2 (const CDT_2& cdt, int i) const {
-    using Face = typename CDT_2::Face;
-    auto ptr = static_cast<Face*>(facet_2d[uint(i)]);
-    return cdt.tds().faces().iterator_to(*ptr);
-  }
-public:
-  /// @{
-  // @cond SKIP_IN_MANUAL
-  bool is_facet_constrained(int i) const { return face_id[uint(i)] >= 0; }
-
-  CDT_3_signed_index face_constraint_index(int i) const {
-    return face_id[uint(i)];
-  }
-
-  void set_face_constraint_index(int i, CDT_3_signed_index index) {
-    face_id[uint(i)] = index;
-  }
-  /// @endcond
 };
 
 } // namespace CGAL

@@ -262,6 +262,7 @@ private:
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Lock_data_structure Lock_data_structure;
   typedef typename MeshDomain::Subdomain_index  Subdomain_index;
+  typedef typename MeshDomain::Surface_patch_index  Surface_patch_index;
   typedef typename MeshDomain::Index  Index;
   typedef typename Criteria::Is_cell_bad Is_cell_bad;
 
@@ -387,9 +388,9 @@ public:
   Bare_point refinement_point_impl(const Cell_handle& cell) const
   {
     this->set_last_vertex_index(
-      r_oracle_.index_from_subdomain_index(cell->subdomain_index()) );
+      r_oracle_.index_from_subdomain_index(r_c3t3_.subdomain_index(cell)) );
 
-    //    last_vertex_index_ = Index(cell->subdomain_index());
+    //    last_vertex_index_ = Index(r_c3t3_.subdomain_index(cell));
     // NB : dual() is optimized when the cell base class has circumcenter()
     return r_tr_.dual(cell);
   }
@@ -411,11 +412,7 @@ public:
 
   // Job to do after insertion
   void after_insertion_impl(const Vertex_handle& v)
-#ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
   { update_star_self(v); }
-#else
-  { update_star(v); }
-#endif
 
   // Insertion implementation ; returns the inserted vertex
   Vertex_handle insert_impl(const Weighted_point& p, const Zone& zone);
@@ -766,7 +763,7 @@ number_of_bad_elements_impl()
     const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell_it));
     if ( subdomain )
     {
-      const Is_cell_bad is_cell_bad = r_criteria_(r_tr_, cell_it);
+      const Is_cell_bad is_cell_bad = r_criteria_(r_c3t3_, cell_it);
       if( is_cell_bad )
         ++count;
     }
@@ -896,21 +893,10 @@ update_star_self(const Vertex_handle& vertex)
     // Restore surface
     const int& k = (*cell_it)->index(vertex);
     const Facet mirror_f = mirror_facet(*cell_it,k);
-    const Cell_handle& neighbor_cell = mirror_f.first;
-    const int& neighb_k = mirror_f.second;
 
-    if ( neighbor_cell->is_facet_on_surface(neighb_k) )
-    {
-      // Facet(*cell_it,k) is on surface
-      (*cell_it)->set_surface_patch_index(
-        k,neighbor_cell->surface_patch_index(neighb_k));
-
-      (*cell_it)->set_facet_surface_center(
-        k,neighbor_cell->get_facet_surface_center(neighb_k));
-
-      (*cell_it)->set_facet_surface_center_index(
-        k,neighbor_cell->get_facet_surface_center_index(neighb_k));
-    }
+    // @todo here and below is 2 map looks up which could be only one.
+    if (r_c3t3_.is_in_complex(mirror_f))
+      r_c3t3_.set_surface_info(*cell_it, k, r_c3t3_.surface_info(mirror_f));
 
     // Set subdomain index
     set_cell_in_domain(*cell_it, cells_subdomain);
@@ -948,7 +934,7 @@ void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 is_bad(const Cell_handle& cell)
 {
-  const Is_cell_bad is_cell_bad = r_criteria_(r_tr_, cell);
+  const Is_cell_bad is_cell_bad = r_criteria_(r_c3t3_, cell);
   if( is_cell_bad )
   {
     this->add_bad_element(this->from_cell_to_refinement_queue_element(cell), *is_cell_bad);
@@ -961,6 +947,16 @@ Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 insert_impl(const Weighted_point& point,
             const Zone& zone)
 {
+  // Remove the cell's facets from the complex (and from the hash map).
+  // Do *not* call the C3T3's remove_from_complex() because the information
+  // on the opposite facet must not be cleared for boundary facets.
+  auto cit = zone.cells.begin();
+  for ( ; cit != zone.cells.end() ; ++cit )
+  {
+    for (int i = 0 ; i < 4 ; ++i)
+      r_c3t3_.set_surface_patch_index(*cit, i, Surface_patch_index());
+  }
+
   // TODO: look at this
   if( zone.locate_type == Tr::VERTEX )
   {
