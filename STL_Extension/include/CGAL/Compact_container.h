@@ -430,6 +430,15 @@ public:
   static const_iterator s_iterator_to(const_reference value) {
     return const_iterator(&value, 0);
   }
+  static iterator s_iterator_to(pointer value) {
+    return iterator(value, 0);
+  }
+  static const_iterator s_iterator_to(const_pointer value) {
+    return const_iterator(value, 0);
+  }
+  static iterator s_iterator_to(std::nullptr_t) {
+    return iterator(nullptr);
+  }
 
   // Special insert methods that construct the objects in place
   // (just forward the arguments to the constructor, to optimize a copy).
