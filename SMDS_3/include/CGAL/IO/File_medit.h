@@ -1090,6 +1090,14 @@ void write_MEDIT(std::ostream& os,
  *     \cgalParamType{bool}
  *     \cgalParamDefault{false}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{replace_domain_0}
+ *     \cgalParamDescription{If `true`, tetrahedra with subdomain index `0` are assigned
+ *       one more than the largest subdomain index in the file. This allows them to
+ *       be included in the mesh complex, where `0` denotes the exterior.
+ *       This parameter is ignored for files identified as CGAL mesh complexes.}
+ *     \cgalParamType{bool}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * @returns `true` if the connectivity of the triangulation could be built consistently
@@ -1121,8 +1129,9 @@ bool read_MEDIT(std::istream& in,
                                              std::is_same<typename T3::Periodic_tag, Tag_true>::value);
   const bool negative_allowed = choose_parameter(get_parameter(np, internal_np::allow_negative_orientation), false);
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+  const bool replace_domain_0 = choose_parameter(get_parameter(np, internal_np::replace_domain_0), false);
 
-  bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3, verbose, false /*replace_domain_0*/,
+  bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3, verbose, replace_domain_0,
                                                        non_manifold, negative_allowed,
                                                        CGAL::Emptyset_iterator());
   if(!b)
@@ -1165,6 +1174,14 @@ bool read_MEDIT(std::istream& in,
  *     \cgalParamType{bool}
  *     \cgalParamDefault{false}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{replace_domain_0}
+ *     \cgalParamDescription{If `true`, tetrahedra with subdomain index `0` are assigned
+ *       one more than the largest subdomain index in the file. This allows them to
+ *       be included in the mesh complex, where `0` denotes the exterior.
+ *       This parameter is ignored for files identified as CGAL mesh complexes.}
+ *     \cgalParamType{bool}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * @returns `true` if the connectivity of the triangulation could be built consistently
@@ -1199,6 +1216,7 @@ bool read_MEDIT(std::istream& in,
                                              std::is_same<typename T3::Periodic_tag, Tag_true>::value);
   const bool negative_allowed = choose_parameter(get_parameter(np, internal_np::allow_negative_orientation), false);
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+  const bool replace_domain_0 = choose_parameter(get_parameter(np, internal_np::replace_domain_0), false);
 
   struct Cx_edge
   {
@@ -1210,7 +1228,7 @@ bool read_MEDIT(std::istream& in,
 
   bool built = CGAL::SMDS_3::build_triangulation_from_file(in, c3t3.triangulation(),
                                                            verbose,
-                                                           false /*replace_domain_0*/,
+                                                           replace_domain_0,
                                                            non_manifold,
                                                            negative_allowed,
                                                            std::back_inserter(cx_edges));
