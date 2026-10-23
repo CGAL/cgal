@@ -9,7 +9,8 @@ include(CGAL_Eigen3_support)
 find_package(OpenMP COMPONENTS CXX)
 
 if(NOT TARGET CGAL::Eigen3_support)
-  message(FATAL_ERROR "Mesh_smoothing_3 tests require Eigen.")
+  message("NOTICE: This project requires the Eigen library, and will not be compiled.")
+  return()
 endif()
 
 create_single_source_cgal_program("test_boundary_aware_mesh_smoothing.cpp")
