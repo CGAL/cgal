@@ -8,6 +8,7 @@ find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("test_hilbert.cpp")
 create_single_source_cgal_program("test_multiscale.cpp")
+create_single_source_cgal_program("test_hilbert_empty_ranges.cpp")
 
 find_package(TBB QUIET)
 include(CGAL_TBB_support)
