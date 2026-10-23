@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
+  \ingroup nt_builtin
 
   \cgalModels{ComplexNumber}
 
