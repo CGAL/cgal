@@ -23,6 +23,7 @@
 
 #include <CGAL/Default.h>
 
+
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
 #endif
