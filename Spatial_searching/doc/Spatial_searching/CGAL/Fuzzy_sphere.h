@@ -71,7 +71,7 @@ Fuzzy_sphere(Traits::Base::Point_d center, FT radius, FT epsilon=FT(0), Traits t
 Test whether the fuzzy sphere contains `p`.
 
 That is, whether the distance between the center of the fuzzy sphere and `p` is
-less than \f$ r\f$.
+at most the radius `r`.
 */
 bool contains(const Point_d& p) const;
 
