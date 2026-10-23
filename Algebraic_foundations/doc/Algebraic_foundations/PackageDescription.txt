@@ -38,6 +38,7 @@
 - `AlgebraicStructureTraits`
 - `AlgebraicStructureTraits_::IsZero`
 - `AlgebraicStructureTraits_::IsOne`
+- `AlgebraicStructureTraits_::IsInvertible`
 - `AlgebraicStructureTraits_::Square`
 - `AlgebraicStructureTraits_::Simplify`
 - `AlgebraicStructureTraits_::UnitPart`

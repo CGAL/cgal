@@ -18,7 +18,6 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithKthRoot >` is a model of `
 \sa `EuclideanRing`
 \sa `Field`
 \sa `FieldWithSqrt`
-\sa `FieldWithKthRoot`
 \sa `FieldWithRootOf`
 \sa `AlgebraicStructureTraits`
 
