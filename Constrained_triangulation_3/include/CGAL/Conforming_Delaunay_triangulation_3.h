@@ -292,8 +292,8 @@ public:
   using Locate_type = typename T_3::Locate_type;
 
   inline static With_offset_tag with_offset{ -1 };
-  inline static With_point_tag with_point{ {-1} };
-  inline static With_point_and_info_tag with_point_and_info{ { {-1} } };
+  With_point_tag<T_3> with_point{ {-1}, this };
+  With_point_and_info_tag<T_3> with_point_and_info{ { {-1}, this } };
 
   Conforming_Delaunay_triangulation_3(const Geom_traits& gt = Geom_traits())
     : T_3(gt)
@@ -440,7 +440,7 @@ protected:
       // vertices as sub-constraints.
       std::for_each(tr().segment_traverser_simplices_begin(va, vb), tr().segment_traverser_simplices_end(),
                     [&, prev = Vertex_handle{}](auto simplex) mutable {
-                      // std::cerr << "- " << oformat(simplex, With_point_tag{}) << '\n';
+                      // std::cerr << "- " << oformat(simplex, with_point) << '\n';
                       if(simplex.dimension() == 0) {
                         const auto v = static_cast<Vertex_handle>(simplex);
                         v->ccdt_3_data().set_on_constraint(c_id);
@@ -947,7 +947,7 @@ protected:
     };
     auto fill_encroaching_vertices = [&](const auto simplex) {
       if(debug().encroaching_vertices()) {
-        std::cerr << " - " << IO::oformat(simplex, With_point_tag{}) << '\n';
+        std::cerr << " - " << IO::oformat(simplex, with_point) << '\n';
       }
       auto visit_cell = [&](Cell_handle cell) {
         for(int i = 0, end = this->tr().dimension() + 1; i < end; ++i) {
