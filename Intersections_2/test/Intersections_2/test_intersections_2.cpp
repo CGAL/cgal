@@ -544,6 +544,13 @@ struct Test
     // segment intersection
     check_intersection     (S(p(  0,   0), p(  1,  0)), R(p(  0,   0), p( 10,   0)), S(P(0, 0), P(1,0)));
     check_intersection<S>  (S(p(  3,   7), p(  2,  5)), R(p(  1,   3), p(  4,   9)));
+
+    // the ray starts inside the segment, so only a part of it is covered
+    check_intersection     (S(p(  0,   0), p( 10,   0)), R(p(  4,   0), p( 20,   0)), S(P(4, 0), P(10, 0)));
+    check_intersection     (S(p(  0,   0), p( 10,   0)), R(p(  4,   0), p(-10,   0)), S(P(4, 0), P(0, 0)));
+    check_intersection     (S(p(  1,  -1), p(  1,   3)), R(p(  1,   1), p(  1,   5)), S(P(1, 1), P(1, 3)));
+    check_intersection     (S(p(  1,  -1), p(  1,   3)), R(p(  1,   1), p(  1,  -3)), S(P(1, 1), P(1, -1)));
+    check_intersection     (S(p(  1,   0), p( -2,   3)), R(p( -1,   2), p(  0,   1)), S(P(-1, 2), P(1, 0)));
   }
 
   void L_R()
