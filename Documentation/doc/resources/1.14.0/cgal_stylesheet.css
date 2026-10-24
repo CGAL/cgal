@@ -544,3 +544,6 @@ tr.template .memItemRight {
 .memItemRight a.el {
   font-weight: 600;
 }
+td.memTemplParams {
+  white-space: normal;
+}
