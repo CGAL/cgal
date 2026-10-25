@@ -83,6 +83,10 @@ public:
 
   ~Left_closed_topology_traits() = default;
 
+  // creates a new vertex associated with `p` without registering it as the
+  // left boundary vertex; the caller registers it if needed.
+  using Base::create_vertex;
+
   //! creates a new vertex associated with point `p`.
   Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& gt) {
     Vertex_descriptor v = Base::create_vertex(p);

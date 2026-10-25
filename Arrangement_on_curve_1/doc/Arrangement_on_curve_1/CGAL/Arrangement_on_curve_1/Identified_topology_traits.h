@@ -83,8 +83,9 @@ public:
    */
   Vertex_const_descriptor identification_vertex() const;
 
-  /*! sets the identification vertex to `v`.  It is called by `create_vertex()`
-   * when the point of the new vertex is the identification point.
+  /*! sets the identification vertex to `v`.  It is called when a vertex is created
+   * whose point is the identification point, either by `create_vertex(p, gt)`
+   * or by the arrangement.
    */
   void set_identification_vertex(Vertex_descriptor v);
 

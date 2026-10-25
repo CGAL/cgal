@@ -199,15 +199,21 @@ public:
   Vertex_descriptor insert_empty(const Point_1& p);
 
   /*! inserts a new point `p` strictly to the left of an existing vertex `v`.
+   * \pre `p` lies in the interior of the parameter space; that is, it lies on
+   * no closed boundary, and it is not the identification point.
    */
   Vertex_descriptor insert_before(Vertex_descriptor v, const Point_1& p);
 
   /*! inserts a new point `p` strictly to the right of an existing vertex `v`.
+   * \pre `p` lies in the interior of the parameter space; that is, it lies on
+   * no closed boundary, and it is not the identification point.
    */
   Vertex_descriptor insert_after(Vertex_descriptor v, const Point_1& p);
 
   /*! splits the edge `e` by inserting a new point `p` inside it.
    * `e` becomes the left sub-edge; a new edge becomes the right sub-edge.
+   * \pre `p` lies in the interior of the parameter space; that is, it lies on
+   * no closed boundary, and it is not the identification point.
    */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p);
 
