@@ -15,6 +15,7 @@
 #include <memory>
 
 #include <CGAL/Arrangement_on_curve_1/Side_tags.h>
+#include <CGAL/Arrangement_on_curve_1/Parameter_space.h>
 #include <CGAL/Arrangement_on_curve_1/Default_topology_traits.h>
 
 namespace CGAL {
@@ -136,22 +137,50 @@ public:
     m_topology_traits(alloc)
   { CGAL_assertion(m_geometry_traits != nullptr); }
 
-  // ==========================================================================
-  // MODIFIERS
-  // ==========================================================================
-
-  /*! creates a new vertex, enforcing the rightmost ordering invariant when BinarySearch is active,
-   * and registers it as the left or right boundary vertex when the point lies on a closed boundary.
-   */
-  Vertex_descriptor create_vertex(const Point_1& p) {
+private:
+  // asserts that `p` lies to the right of all the vertices when BinarySearch
+  // is active, as vertices must be created in left-to-right order.
+  void assert_rightmost(const Point_1& p) const {
     if constexpr (binary_search_enabled) {
-      // Enforce that new vertices are inserted strictly in left-to-right order.
       CGAL_assertion_msg(empty() ||
                          m_geometry_traits->compare_x_1_object()
                          (m_topology_traits.vertex_point(m_topology_traits.number_of_vertices() - 1), p) == SMALLER,
                          "When BinarySearch = true, vertices must be created in strictly increasing x-order.");
     }
+    else CGAL_USE(p);
+  }
 
+  // creates a new vertex associated with `p` without determining whether `p`
+  // lies on a boundary or is the identification point; the caller, which
+  // knows, registers the vertex accordingly.
+  Vertex_descriptor create_vertex_at(const Point_1& p) {
+    assert_rightmost(p);
+    return m_topology_traits.create_vertex(p);
+  }
+
+  // determines whether `p` lies in the interior of the parameter space, that
+  // is, neither on a closed boundary nor at the identification point.
+  bool is_interior(const Point_1& p) const {
+    if constexpr (is_identified) return ! m_geometry_traits->is_on_x_identification_1_object()(p);
+    else if constexpr (left_is_closed || right_is_closed)
+      return m_geometry_traits->parameter_space_in_x_1_object()(p) == Parameter_space::INTERIOR;
+    else {
+      CGAL_USE(p);
+      return true;
+    }
+  }
+
+public:
+  // ==========================================================================
+  // MODIFIERS
+  // ==========================================================================
+
+  /*! creates a new vertex, enforcing the rightmost ordering invariant when BinarySearch is active,
+   * and registers it as the left or right boundary vertex when the point lies on a closed boundary,
+   * or as the identification vertex when the point is the identification point.
+   */
+  Vertex_descriptor create_vertex(const Point_1& p) {
+    assert_rightmost(p);
     return m_topology_traits.create_vertex(p, *m_geometry_traits);
   }
 
@@ -275,7 +304,9 @@ public:
     auto& topo = m_topology_traits;
     auto e_lb = topo.left_boundary_edge();
     CGAL_precondition(! topo.has_left_vertex(e_lb));
-    Vertex_descriptor v = create_vertex(p);
+    CGAL_precondition(m_geometry_traits->parameter_space_in_x_1_object()(p) == Parameter_space::LEFT_BOUNDARY);
+    Vertex_descriptor v = create_vertex_at(p);
+    topo.set_left_boundary_vertex(v);
     topo.set_left_vertex(e_lb, v);
     topo.set_left_edge(v, e_lb);
     topo.set_right_edge(v, e_lb);
@@ -293,7 +324,9 @@ public:
     auto& topo = m_topology_traits;
     CGAL_precondition(e == topo.right_boundary_edge());
     CGAL_precondition(! topo.has_right_vertex(e));
-    Vertex_descriptor v = create_vertex(p);
+    CGAL_precondition(m_geometry_traits->parameter_space_in_x_1_object()(p) == Parameter_space::RIGHT_BOUNDARY);
+    Vertex_descriptor v = create_vertex_at(p);
+    topo.set_right_boundary_vertex(v);
     topo.set_right_vertex(e, v);
     topo.set_left_edge(v, e);
     topo.set_right_edge(v, e);
@@ -319,9 +352,11 @@ public:
     static_assert(is_identified, "insert_identification_vertex() is only valid for identified arrangements.");
     CGAL_assertion_msg(! m_topology_traits.has_identification_vertex(), "The identification vertex already exists.");
     CGAL_assertion_msg(! empty(), "The arrangement must be non-empty.");
+    CGAL_precondition(m_geometry_traits->is_on_x_identification_1_object()(p));
     auto& topo = m_topology_traits;
     auto e_lb = topo.left_boundary_edge();
-    Vertex_descriptor v = create_vertex(p);
+    Vertex_descriptor v = create_vertex_at(p);
+    topo.set_identification_vertex(v);
     Edge_descriptor e_left = create_edge();
 
     Vertex_descriptor v_old_left = topo.left_vertex(e_lb);
@@ -337,14 +372,16 @@ public:
   }
 
   /*! inserts a new point `p` strictly to the left of an existing vertex `v`.
+   * \pre `p` lies in the interior of the parameter space.
    */
   Vertex_descriptor insert_before(Vertex_descriptor v, const Point_1& p) {
     if constexpr (binary_search_enabled) {
       CGAL_error_msg("insert_before() cannot be invoked when binary_search_enabled is true. "
                      "Vertices must be appended in strictly increasing x-order.");
     }
+    CGAL_precondition(is_interior(p));
 
-    Vertex_descriptor v_new = create_vertex(p);
+    Vertex_descriptor v_new = create_vertex_at(p);
     Edge_descriptor e_between = create_edge();
 
     Edge_descriptor e_left = m_topology_traits.left_edge(v);
@@ -375,8 +412,10 @@ public:
   }
 
   /*! inserts a new point `p` strictly to the right of an existing vertex `v`.
+   * \pre `p` lies in the interior of the parameter space.
    */
   Vertex_descriptor insert_after(Vertex_descriptor v, const Point_1& p) {
+    CGAL_precondition(is_interior(p));
     if constexpr (binary_search_enabled) {
       // Enforce that v is the current rightmost vertex
       CGAL_assertion_msg(v == m_topology_traits.number_of_vertices() - 1,
@@ -397,7 +436,7 @@ public:
         return split_edge(m_topology_traits.right_edge(v), p);
     }
 
-    Vertex_descriptor v_new = create_vertex(p);
+    Vertex_descriptor v_new = create_vertex_at(p);
     Edge_descriptor e_between = create_edge();
 
     Edge_descriptor e_right = m_topology_traits.right_edge(v);
@@ -425,8 +464,10 @@ public:
    * If `e` is the right boundary edge, the new edge becomes the right
    * boundary edge, unless the arrangement is identified and the
    * identification vertex does not exist.
+   * \pre `p` lies in the interior of the parameter space.
    */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p) {
+    CGAL_precondition(is_interior(p));
 
     if constexpr (binary_search_enabled) {
       CGAL_assertion_msg(! m_topology_traits.has_right_vertex(e),
@@ -436,7 +477,7 @@ public:
                          "When BinarySearch = true, the edge being split must originate from the rightmost vertex.");
     }
 
-    Vertex_descriptor v_new = create_vertex(p);
+    Vertex_descriptor v_new = create_vertex_at(p);
     Edge_descriptor e_right = create_edge();
 
     // Transfer e's right vertex (if any) to e_right.

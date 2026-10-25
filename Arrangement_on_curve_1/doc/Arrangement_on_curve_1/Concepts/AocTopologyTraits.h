@@ -162,8 +162,19 @@ public:
   //! sets the rightmost boundary edge descriptor.
   void set_right_boundary_edge(Edge_descriptor e);
 
-  //! creates a new vertex associated with point `p`.
+  /*! creates a new vertex associated with point `p`.  If `p` lies on a closed
+   * boundary or is the identification point, the vertex is registered as the
+   * corresponding boundary vertex or as the identification vertex,
+   * respectively; `gt` is used to determine this.
+   */
   Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& gt);
+
+  /*! creates a new vertex associated with point `p` without registering it as
+   * a boundary vertex or as the identification vertex.  It is used when the
+   * caller knows the location of `p` in the parameter space, which spares the
+   * geometric test; the caller registers the vertex if needed.
+   */
+  Vertex_descriptor create_vertex(const Point_1& p);
 
   //! creates a new uninitialized edge.
   Edge_descriptor create_edge();

@@ -71,8 +71,9 @@ public:
    */
   Vertex_const_descriptor left_boundary_vertex() const;
 
-  /*! sets the left boundary vertex to `v`.  It is called by `create_vertex()`
-   * when the point of the new vertex lies on the closed left boundary.
+  /*! sets the left boundary vertex to `v`.  It is called when a vertex is created
+   * whose point lies on the closed left boundary, either by `create_vertex(p, gt)`
+   * or by the arrangement.
    */
   void set_left_boundary_vertex(Vertex_descriptor v);
 
@@ -92,8 +93,9 @@ public:
    */
   Vertex_const_descriptor right_boundary_vertex() const;
 
-  /*! sets the right boundary vertex to `v`.  It is called by `create_vertex()`
-   * when the point of the new vertex lies on the closed right boundary.
+  /*! sets the right boundary vertex to `v`.  It is called when a vertex is created
+   * whose point lies on the closed right boundary, either by `create_vertex(p, gt)`
+   * or by the arrangement.
    */
   void set_right_boundary_vertex(Vertex_descriptor v);
 

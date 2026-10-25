@@ -63,6 +63,10 @@ public:
   using typename Base::Point_1;
   using typename Base::Vertex_descriptor;
 
+  // creates a new vertex associated with `p` (the parameter space has no
+  // boundary, so both overloads are equivalent).
+  using Base::create_vertex;
+
   //! creates a new vertex associated with point `p`.
   Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& /* gt */) { return Base::create_vertex(p); }
 };

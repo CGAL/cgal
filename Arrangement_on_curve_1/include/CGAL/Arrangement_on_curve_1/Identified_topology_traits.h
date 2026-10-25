@@ -135,6 +135,10 @@ public:
     m_has_identification_vertex = true;
   }
 
+  // creates a new vertex associated with `p` without registering it as the
+  // identification vertex; the caller registers it if needed.
+  using Base::create_vertex;
+
   // --------------------------------------------------------------------------
   // creates a vertex and, when the point lies on the identification, registers
   // it as the identification vertex.  GeometryTraits_1 must provide
