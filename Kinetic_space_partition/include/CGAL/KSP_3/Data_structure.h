@@ -762,9 +762,9 @@ public:
     }
     CGAL_assertion(points.size() == polygon.size());
 
-    preprocess(points);
-
-    sort_points_by_direction(points);
+    // The polygon is the exact convex hull of the clipped input polygon, i.e., it is strictly convex and counterclockwise.
+    // Thus, no inexact preprocessing is needed. The vertices are sorted exactly around the centroid by the support plane.
+    CGAL_assertion(points.size() >= 3);
     support_plane(support_plane_idx).add_input_polygon(points, input_indices.front());
     for (const std::size_t input_index : input_indices) {
       m_input_polygon_map[input_index] = support_plane_idx;

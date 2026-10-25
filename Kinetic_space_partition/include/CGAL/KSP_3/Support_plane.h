@@ -589,13 +589,14 @@ public:
       m_data->original_rays[i] = typename Intersection_kernel::Ray_2(point, directions[dir_vec[i].first]);
     }
 
+    // The exact directions are sorted. The approximated directions may coincide for small polygons.
     CGAL_assertion_code(
-    for (std::size_t i = 0; i < m_data->original_directions.size(); i++) {
-      for (std::size_t j = 0; j < m_data->original_directions.size(); j++) {
+    for (std::size_t i = 0; i < m_data->exact_directions.size(); i++) {
+      for (std::size_t j = 0; j < m_data->exact_directions.size(); j++) {
         if (j < i)
-          CGAL_assertion(m_data->original_directions[j] < m_data->original_directions[i]);
+          CGAL_assertion(m_data->exact_directions[j] < m_data->exact_directions[i]);
         if (j > i)
-          CGAL_assertion(m_data->original_directions[i] < m_data->original_directions[j]);
+          CGAL_assertion(m_data->exact_directions[i] < m_data->exact_directions[j]);
       }
     });
   }
@@ -618,7 +619,7 @@ public:
       const std::size_t ip = (i + 1) % polygon.size();
       const auto& p = polygon[i].first;
       const auto& q = polygon[ip].first;
-      const bool is_equal_zero = (KSP::internal::distance(p, q) == 0);
+      const bool is_equal_zero = (p == q);
       CGAL_assertion_msg(!is_equal_zero,
         "ERROR: WE HAVE EQUAL POINTS IN THE INPUT POLYGON!");
       if (is_equal_zero) return false;
@@ -628,24 +629,21 @@ public:
 
   template<typename Pair>
   bool is_simple_polygon(const std::vector<Pair>& points) const {
-    From_exact from_exact;
-    std::vector<Point_2> polygon;
+    // Decided with the exact points, as a small polygon may not be simple after rounding.
+    std::vector<typename Intersection_kernel::Point_2> polygon;
     polygon.reserve(points.size());
     for (const auto& pair : points)
-      polygon.push_back(from_exact(pair.first));
-    CGAL_assertion(polygon.size() == points.size());
-    return CGAL::is_simple_2(polygon.begin(), polygon.end());
+      polygon.push_back(pair.first);
+    return CGAL::is_simple_2(polygon.begin(), polygon.end(), Intersection_kernel());
   }
 
   template<typename Pair>
   bool is_convex_polygon(const std::vector<Pair>& points) const {
-    From_exact from_exact;
-    std::vector<Point_2> polygon;
+    std::vector<typename Intersection_kernel::Point_2> polygon;
     polygon.reserve(points.size());
     for (const auto& pair : points)
-      polygon.push_back(from_exact(pair.first));
-    CGAL_assertion(polygon.size() == points.size());
-    return CGAL::is_convex_2(polygon.begin(), polygon.end());
+      polygon.push_back(pair.first);
+    return CGAL::is_convex_2(polygon.begin(), polygon.end(), Intersection_kernel());
   }
 
   const Plane_3& plane() const { return m_data->plane; }

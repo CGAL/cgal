@@ -24,6 +24,11 @@
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 #include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/tags.h>
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
+#endif
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/KSP/debug.h>
@@ -34,6 +39,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 
+#include <algorithm>
 #include <array>
 #include <filesystem>
 #include <map>
@@ -525,6 +531,7 @@ public:
 
     \tparam ConcurrencyTag enables sequential versus parallel computation of the kinetic partitions of the octree leaves. Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
     The default `Parallel_if_available_tag` computes in parallel if \cgal is linked with \ref thirdpartyTBB.
+    The tag also applies to the mapping of the inlier points onto the faces of the partition in the subsequent reconstruction.
 
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -563,6 +570,12 @@ public:
   */
   template<typename ConcurrencyTag = CGAL::Parallel_if_available_tag, typename CGAL_NP_TEMPLATE_PARAMETERS>
   void partition(std::size_t k, const CGAL_NP_CLASS& np = parameters::default_values()) {
+#ifndef CGAL_LINKED_WITH_TBB
+    static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
+      "Parallel_tag is enabled but TBB is unavailable.");
+#endif
+    m_parallel = std::is_convertible<ConcurrencyTag, Parallel_tag>::value;
+
     if (m_regions.empty())
       return;
 
@@ -835,7 +848,9 @@ private:
 
   // Face indices are now of type Indices and are not in a range 0 to n
   std::vector<Indices> m_face_inliers;
-  std::vector<std::size_t> m_input_plane_group; // Group of coplanar input polygons for each input polygon of the kinetic partition.
+  std::vector<std::size_t> m_region_plane; // Index of the plane in the kinetic partition for each region.
+  std::vector<std::vector<typename LCC::Dart_descriptor> > m_plane_faces; // Faces that are part of an input polygon for each plane.
+  bool m_parallel = false; // Parallel computation, set by partition().
   std::vector<FT> m_face_area, m_face_area_lcc;
   std::vector<std::pair<std::size_t, std::size_t> > m_face_neighbors_lcc;
   std::map<std::pair<std::size_t, std::size_t>, std::size_t> m_neighbors2index_lcc;
@@ -1390,7 +1405,8 @@ private:
     From_exact from_exact;
     const LCC& lcc = m_lcc;
 
-    int ip = lcc.template info<2>(face).input_polygon_index;
+    // Faces of coplanar input polygons are on the same plane and are combined.
+    int ip = lcc.template info<2>(face).input_plane_index;
     typename Intersection_kernel::Plane_3 pl = lcc.template info<2>(face).plane;
 
     if (m_labels[lcc.template info<3>(face).volume_id + 6] == 0)
@@ -1473,7 +1489,7 @@ private:
           }
 
           if (ip != -7) {
-            if (lcc.template info<2>(fdh).input_polygon_index == ip) {
+            if (lcc.template info<2>(fdh).input_plane_index == ip) {
               if (internal)
                 break;
               face_queue.push(fdh);
@@ -1527,7 +1543,7 @@ private:
 
       auto& finfo2 = lcc.template info_of_attribute<2>(fa2);
       // Is neighbor face on same support plane?
-      if (finfo2.input_polygon_index != finfo.input_polygon_index)
+      if (finfo2.input_plane_index != finfo.input_plane_index)
       {
         if (!internal)
           return true;
@@ -1542,7 +1558,7 @@ private:
         }
       }
 
-      if (finfo2.input_polygon_index == -7)
+      if (finfo2.input_plane_index == -7)
       {
         if (finfo2.plane != finfo.plane && finfo2.plane != finfo.plane.opposite())
         {
@@ -1725,9 +1741,9 @@ private:
     do {
       Face_attribute fa2 = lcc.template attribute<2>(dh2);
       auto& finfo2 = lcc.template info_of_attribute<2>(fa2);
-      if (finfo2.input_polygon_index == finfo.input_polygon_index) {
+      if (finfo2.input_plane_index == finfo.input_plane_index) {
         CGAL_assertion(fa != fa2);
-        if (finfo2.input_polygon_index == -7) {
+        if (finfo2.input_plane_index == -7) {
           if (finfo2.plane == finfo.plane || finfo2.plane == finfo.plane.opposite())
             return dh2;
         }
@@ -1896,16 +1912,16 @@ private:
   }
 
   void collect_points_for_faces_lcc() {
-    // Coplanar input polygons share the same plane in the kinetic partition, i.e., the same plane object up to
-    // the representation. Their planes are identified via the approximation of the coefficients.
-    {
-      const auto& planes = m_kinetic_partition.input_planes();
-      std::map<std::array<double, 4>, std::size_t> plane2group;
-      m_input_plane_group.resize(planes.size());
-      for (std::size_t i = 0; i < planes.size(); i++) {
-        const std::array<double, 4> key = { CGAL::to_double(planes[i].a()), CGAL::to_double(planes[i].b()), CGAL::to_double(planes[i].c()), CGAL::to_double(planes[i].d()) };
-        m_input_plane_group[i] = plane2group.emplace(key, plane2group.size()).first->second;
-      }
+    // Coplanar input polygons share a plane in the kinetic partition, which is identified by its index.
+    // If the linear cell complex has been provided instead of being computed, each region has a plane of its own.
+    // Regions whose polygon is degenerate have been dropped by the kinetic partition and have no plane.
+    const std::vector<std::size_t>& plane_indices = m_kinetic_partition.input_plane_indices();
+    std::size_t num_planes = 0;
+    m_region_plane.resize(m_regions.size());
+    for (std::size_t i = 0; i < m_regions.size(); i++) {
+      m_region_plane[i] = (plane_indices.size() == m_regions.size()) ? plane_indices[i] : i;
+      if (m_region_plane[i] != std::size_t(-1))
+        num_planes = (std::max)(num_planes, m_region_plane[i] + 1);
     }
 
     FT total_area = 0;
@@ -1915,29 +1931,49 @@ private:
 
     std::vector<std::vector<Dart_descriptor> > poly2faces(m_regions.size());
     std::vector<Dart_descriptor> other_faces;
+    m_plane_faces.assign(num_planes, std::vector<Dart_descriptor>());
     for (auto& d : lcc.template one_dart_per_cell<2>()) {
       Dart_descriptor dh = lcc.dart_descriptor(d);
-      if (lcc.template info<2>(dh).input_polygon_index >= 0)
-        poly2faces[lcc.template info<2>(dh).input_polygon_index].push_back(dh);
+      const int ip = lcc.template info<2>(dh).input_polygon_index;
+      if (ip >= 0) {
+        poly2faces[ip].push_back(dh);
+        const int plane = (plane_indices.size() == m_regions.size()) ? lcc.template info<2>(dh).input_plane_index : ip;
+        if (lcc.template info<2>(dh).part_of_initial_polygon && plane >= 0 && static_cast<std::size_t>(plane) < num_planes)
+          m_plane_faces[plane].push_back(dh);
+      }
       else
         other_faces.push_back(dh); // Contains faces originating from the octree decomposition as well as bbox faces
     }
 
-    for (std::size_t i = 0; i < m_regions.size(); i++) {
-
-      std::vector<std::pair<Dart_descriptor, std::vector<std::size_t> > > mapping;
-
+    // The points of each region are mapped onto the faces independently, in parallel if enabled.
+    std::vector<std::vector<std::pair<Dart_descriptor, std::vector<std::size_t> > > > mappings(m_regions.size());
+    auto map_region = [&](std::size_t i) {
       std::vector<Point_3> pts;
       pts.reserve(m_regions[i].second.size());
 
       for (std::size_t j = 0; j < m_regions[i].second.size(); j++)
         pts.emplace_back(get(m_point_map, m_regions[i].second[j]));
 
-      map_points_to_faces(i, pts, mapping);
+      map_points_to_faces(i, pts, mappings[i]);
+    };
+
+#ifdef CGAL_LINKED_WITH_TBB
+    if (m_parallel)
+      tbb::parallel_for(tbb::blocked_range<std::size_t>(0, m_regions.size()), [&](const tbb::blocked_range<std::size_t>& r) {
+        for (std::size_t i = r.begin(); i != r.end(); ++i)
+          map_region(i);
+      });
+    else
+#endif
+      for (std::size_t i = 0; i < m_regions.size(); i++)
+        map_region(i);
+
+    for (std::size_t i = 0; i < m_regions.size(); i++) {
+      const std::vector<std::pair<Dart_descriptor, std::vector<std::size_t> > >& mapping = mappings[i];
 
       // Remap from mapping to m_face_inliers
       // A face may receive points of several coplanar regions.
-      for (auto p : mapping) {
+      for (const auto& p : mapping) {
         std::vector<std::size_t>& inliers = m_face_inliers[m_attrib2index_lcc[lcc.template attribute<2>(p.first)]];
         for (std::size_t k = 0; k < p.second.size(); k++)
           inliers.push_back(m_regions[i].second[p.second[k]]);
@@ -2245,28 +2281,22 @@ private:
 
     const Plane_3& pl = m_regions[polygon_index].first;
 
-    // Faces originating from a coplanar input polygon may also contain points of this polygon.
-    auto on_polygon_plane = [&](int ip) {
-      return ip >= 0 && m_input_plane_group[ip] == m_input_plane_group[polygon_index];
-    };
-
     std::vector<Point_2> pts2d;
     pts2d.reserve(pts.size());
 
     for (const Point_3& p : pts)
       pts2d.push_back(pl.to_2d(p));
 
-    // Iterate over all faces of the lcc
-    for (const Dart& d : lcc.template one_dart_per_cell<2>()) {
-      Dart_descriptor dd = lcc.dart_descriptor(d);
-      if (!on_polygon_plane(lcc.template info<2>(lcc.dart_descriptor(d)).input_polygon_index) || !lcc.template info<2>(lcc.dart_descriptor(d)).part_of_initial_polygon)
-        continue;
+    // Iterate over the faces of the polygon and of coplanar polygons, see collect_points_for_faces_lcc().
+    // Only read access to the lcc without marks, as this function may be called in parallel.
+    if (m_region_plane[polygon_index] == std::size_t(-1))
+      return;
 
+    for (const Dart_descriptor dd : m_plane_faces[m_region_plane[polygon_index]]) {
       // No filtering of points per partition
-      face_to_points.push_back(std::make_pair(lcc.dart_descriptor(d), std::vector<std::size_t>()));
+      face_to_points.push_back(std::make_pair(dd, std::vector<std::size_t>()));
 
       std::vector<Point_2> vts2d;
-      vts2d.reserve(lcc.template one_dart_per_incident_cell<0, 2>(lcc.dart_descriptor(d)).size());
 
       typename LCC::Dart_descriptor n = dd;
       do {

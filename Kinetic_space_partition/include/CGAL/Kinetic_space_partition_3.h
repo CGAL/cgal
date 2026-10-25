@@ -101,6 +101,7 @@ public:
 
     struct Face_attribute {
       int input_polygon_index; // Non-negative numbers represent the index of the input polygon. Negative numbers correspond to the values defined in the enum `Kinetic_space_partition_3::Face_support`.
+      int input_plane_index; // Non-negative numbers represent the index of the plane of the input polygon into `input_planes()`. Negative numbers like input_polygon_index.
       typename Intersection_kernel::Plane_3 plane;
       bool part_of_initial_polygon;
     };
@@ -267,7 +268,9 @@ private:
     Plane_3 plane; // Plane fitted to the vertices of the polygons inserted together with the first polygon of the group.
   };
   std::vector<Coplanar_group> m_coplanar_groups;
-  std::vector<std::size_t> m_input2regularized; // Mapping from actual input planes to regularized input planes.
+  std::vector<typename Intersection_kernel::Plane_3> m_planes; // Plane of each group in m_coplanar_groups.
+  std::vector<std::size_t> m_input_plane_indices; // Index into m_planes for each inserted polygon, std::size_t(-1) for dropped degenerate polygons.
+  std::vector<std::size_t> m_input2regularized; // Mapping from inserted polygons to the input polygons of the partition, std::size_t(-1) for dropped degenerate polygons.
   std::vector<std::vector<std::size_t> > m_regularized2input; // Mapping from partitioning planes to original input polygons.
   std::unique_ptr<Octree> m_octree;
   std::vector<std::size_t> m_node2partition;
@@ -397,6 +400,7 @@ public:
   A plane is fitted to the vertices of each polygon and the polygon is replaced by the convex hull of its vertices projected onto the plane.
   Polygons that are coplanar up to a small tolerance relative to their extent get the same plane, which is fitted to the vertices of all of them.
   This avoids very thin volumes between nearly coplanar polygons.
+  Degenerate polygons, i.e., polygons with less than three vertices or with collinear vertices, are dropped.
 
   Coplanar polygons share a support plane in the partition and expand separately. Pieces of several coplanar polygons that lie in the same face of
   the arrangement of the intersection lines within the support plane at the beginning are merged into their convex hull. A face of the partition
@@ -457,6 +461,7 @@ public:
     std::vector<std::size_t> group(polygons.size(), std::size_t(-1));
     for (std::size_t p = 0; p < polygons.size(); p++) {
       std::array<IkPoint_3, 3> span;
+      // Degenerate polygons, i.e., with less than three vertices or collinear vertices, are dropped.
       if (!spanning_points(polygon_points[p], span))
         continue;
 
@@ -478,16 +483,20 @@ public:
       if (group[p] != std::size_t(-1) && group[p] >= first_new_group)
         std::copy(polygon_points[p].begin(), polygon_points[p].end(), std::back_inserter(group_points[group[p] - first_new_group]));
 
-    for (std::size_t g = 0; g < group_points.size(); g++)
-      CGAL::linear_least_squares_fitting_3(group_points[g].begin(), group_points[g].end(), m_coplanar_groups[first_new_group + g].plane, CGAL::Dimension_tag<0>());
-
     To_exact to_exact;
+    for (std::size_t g = 0; g < group_points.size(); g++) {
+      CGAL::linear_least_squares_fitting_3(group_points[g].begin(), group_points[g].end(), m_coplanar_groups[first_new_group + g].plane, CGAL::Dimension_tag<0>());
+      m_planes.push_back(to_exact(m_coplanar_groups[first_new_group + g].plane));
+    }
+
     for (std::size_t p = 0; p < polygons.size(); p++) {
-      Plane_3 pl;
-      if (group[p] != std::size_t(-1))
-        pl = m_coplanar_groups[group[p]].plane;
-      else
-        CGAL::linear_least_squares_fitting_3(polygon_points[p].begin(), polygon_points[p].end(), pl, CGAL::Dimension_tag<0>());
+      if (group[p] == std::size_t(-1)) {
+        m_input2regularized.push_back(std::size_t(-1));
+        m_input_plane_indices.push_back(std::size_t(-1));
+        continue;
+      }
+
+      const Plane_3& pl = m_coplanar_groups[group[p]].plane;
 
       Point_2 c;
       std::vector<Point_2> ch;
@@ -497,7 +506,8 @@ public:
       m_input2regularized.push_back(m_input_planes.size());
       m_regularized2input.push_back(std::vector<std::size_t>());
       m_regularized2input.back().push_back(p + offset);
-      m_input_planes.push_back(to_exact(pl));
+      m_input_planes.push_back(m_planes[group[p]]);
+      m_input_plane_indices.push_back(group[p]);
       m_input_centroids.push_back(c);
       m_input_polygons.push_back(std::vector<Point_3>(ch.size()));
 
@@ -749,13 +759,31 @@ public:
   /*!
   \brief provides the planes of the input polygons.
 
+  Polygons that are coplanar up to a small tolerance share a plane. Thus, each plane occurs only once.
+  The planes are indexed by `input_plane_indices()` and by the input plane index stored in the face attributes of the linear cell complex, see `get_linear_cell_complex()`.
+
   @return
-   vector of planes, one for each inserted polygon. Polygons that are coplanar up to a small tolerance have the same plane.
+   vector of planes.
 
   \pre inserted polygons
   */
   const std::vector<typename Intersection_kernel::Plane_3> &input_planes() const {
-    return m_input_planes;
+    return m_planes;
+  }
+
+  /*!
+  \brief provides the index of the plane of each input polygon into `input_planes()`.
+
+  Polygons that are coplanar up to a small tolerance share a plane and thus have the same index.
+  Degenerate polygons, i.e., polygons with less than three vertices or with collinear vertices, are dropped when inserted. Their index is `std::size_t(-1)`.
+
+  @return
+   vector of plane indices, one for each inserted polygon.
+
+  \pre inserted polygons
+  */
+  const std::vector<std::size_t>& input_plane_indices() const {
+    return m_input_plane_indices;
   }
 
   /*!
@@ -1067,10 +1095,16 @@ private:
   }
 
   template<class OutputIterator>
-  void faces_of_input_polygon(const std::size_t polygon_index, OutputIterator it) const {
-    if (polygon_index >= m_input_planes.size()) {
+  void faces_of_input_polygon(const std::size_t inserted_index, OutputIterator it) const {
+    if (inserted_index >= m_input2regularized.size()) {
       CGAL_assertion(false);
+      return;
     }
+
+    // Dropped degenerate polygons have no faces.
+    const std::size_t polygon_index = m_input2regularized[inserted_index];
+    if (polygon_index == std::size_t(-1))
+      return;
 
     for (std::size_t idx : m_partitions) {
       const Sub_partition& p = m_partition_nodes[idx];
@@ -1640,7 +1674,8 @@ private:
 
     std::set<std::size_t> n;
     for (auto p : m_input2regularized)
-      n.insert(p);
+      if (p != std::size_t(-1))
+        n.insert(p);
 
     CGAL_assertion(m_regularized2input.size() == m_input_polygons.size());
     CGAL_assertion(m_regularized2input.size() == n.size());
@@ -1740,11 +1775,11 @@ private:
     std::atomic<bool> failed(false);
 
     std::cout.precision(17);
-
-    if (std::is_same<ConcurrencyTag, Sequential_tag>::value)
-      std::cout << "sequential" << std::endl;
-    if (std::is_same<ConcurrencyTag, Parallel_tag>::value)
-      std::cout << "parallel" << std::endl;
+    if (m_parameters.verbose)
+      if (std::is_same<ConcurrencyTag, Sequential_tag>::value)
+        std::cout << "sequential" << std::endl;
+      else if (std::is_same<ConcurrencyTag, Parallel_tag>::value)
+        std::cout << "parallel" << std::endl;
 
     for_each_leaf<ConcurrencyTag>([&](const std::size_t i) {
       if (failed)
@@ -2233,8 +2268,12 @@ private:
       if (ip == -1)
         ip = static_cast<int>(m_partition_nodes[face.first].sp_input_polygon[sp]);
 
-      if (ip != -1)
-        lcc.template info<2>(face_dart).input_polygon_index = static_cast<Face_support>(m_partition_nodes[face.first].input_polygons[ip]);
+      if (ip != -1) {
+        // Index of the inserted polygon. It differs from the index of the input polygon of the partition if degenerate polygons have been dropped.
+        const std::size_t input = m_regularized2input[m_partition_nodes[face.first].input_polygons[ip]].front();
+        lcc.template info<2>(face_dart).input_polygon_index = static_cast<Face_support>(input);
+        lcc.template info<2>(face_dart).input_plane_index = static_cast<int>(m_input_plane_indices[input]);
+      }
       else {
         // If there is no input polygon, check whether it has two neighbors
         auto n = neighbors(face);
@@ -2242,6 +2281,7 @@ private:
           lcc.template info<2>(face_dart).input_polygon_index = static_cast<Face_support>(-7);
         else
           lcc.template info<2>(face_dart).input_polygon_index = static_cast<Face_support>(n.second);
+        lcc.template info<2>(face_dart).input_plane_index = lcc.template info<2>(face_dart).input_polygon_index;
       }
 
       lcc.template info<2>(face_dart).part_of_initial_polygon = m_partition_nodes[face.first].face_part_of_input_polygon[face.second];
@@ -2848,6 +2888,7 @@ void write_cmap_attribute_node(boost::property_tree::ptree& node, const typename
   node.add("v.c", fa.plane.c());
   node.add("v.d", fa.plane.d());
   node.add("v.ip", fa.input_polygon_index);
+  node.add("v.ipl", fa.input_plane_index);
   node.add("v.poip", fa.part_of_initial_polygon);
 }
 
@@ -2877,6 +2918,7 @@ void read_cmap_attribute_node
   double d = v.second.get<double>("d");
   fa.plane = Exact_predicates_exact_constructions_kernel::Plane_3(a, b, c, d);
   fa.input_polygon_index = v.second.get<int>("ip");
+  fa.input_plane_index = v.second.get<int>("ipl", fa.input_polygon_index);
   fa.part_of_initial_polygon = v.second.get<bool>("poip");
 }
 
