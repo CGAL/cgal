@@ -160,6 +160,16 @@ public:
   inline void push_back(const Subcurve_type_2& seg)
   { this->m_subcurves.push_back(seg); }
 
+  /*! appends a subcurve to the (x-monotone) polycurve (move version).
+   * Warning: This is a risky function! Don't use it! Prefer the
+   *          provided implementation in the traits class.
+   * \param seg The new subcurve to be appended to the polycurve.
+   * \pre If the polycurve is not empty, seg source must be the
+   *      same as the target point of the last subcurve in the polycurve.
+   */
+  inline void push_back(Subcurve_type_2&& seg)
+  { this->m_subcurves.push_back(std::move(seg)); }
+
   /*! appends a subcurve to the (x-monotone) polycurve.
    * Warning: This is a risky function! Don't use it! Prefer the
    *          provided implementation in the traits class.

@@ -556,12 +556,14 @@ public:
     void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
                     X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      auto min_vertex = geom_traits->construct_min_vertex_2_object();
       auto max_vertex = geom_traits->construct_max_vertex_2_object();
-      auto equal = geom_traits->equal_2_object();
+      auto cmp_xy = geom_traits->compare_xy_2_object();
       auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
+      auto split = geom_traits->split_2_object();
+      auto opposite = geom_traits->construct_opposite_2_object();
 
       // Make sure the split point is not one of the curve endpoints.
+      CGAL_precondition_code(auto equal = geom_traits->equal_2_object());
       CGAL_precondition((! equal(m_poly_traits.
                                  construct_min_vertex_2_object()(xcv), p)));
       CGAL_precondition((! equal(m_poly_traits.
@@ -570,76 +572,58 @@ public:
       CGAL_precondition_msg(xcv.number_of_subcurves() > 0,
                             "Cannot split a polycurve of length zero.");
 
-      Comparison_result dir = cmp_seg_endpts(xcv[0]);
+      const std::size_t n = xcv.number_of_subcurves();
+      const Comparison_result dir = cmp_seg_endpts(xcv[0]);
 
-      // Locate the subcurve on the polycurve xcv that contains p.
-      auto i = m_poly_traits.locate_impl(xcv, p, All_sides_oblivious_category());
-      CGAL_precondition(i != Polycurve_traits_2::INVALID_INDEX);
+      // Obtains the index of the subcurve whose rank, in left-to-right
+      // order, is k.
+      auto index = [&](std::size_t k) { return (dir == SMALLER) ? k : n - 1 - k; };
+
+      // Locate the subcurve that contains p by scanning the subcurves from
+      // left to right; obtain its rank k and the xy-order of p and its right
+      // endpoint. The right endpoint of the rightmost subcurve is not
+      // examined; by the precondition, it is not p. The scan replaces a
+      // binary search followed by equality tests: the split takes time linear
+      // in the number of subcurves anyway, as they are copied, and the split
+      // point is typically near the left end of the polycurve (e.g., the
+      // surface-sweep splits off the part to the left of the current event),
+      // where the scan terminates early.
+      std::size_t k = 0;
+      Comparison_result res = SMALLER;
+      for (; k + 1 < n; ++k)
+        if ((res = cmp_xy(p, max_vertex(xcv[index(k)]))) != LARGER) break;
+      if (k + 1 == n) res = SMALLER;
+      const std::size_t i = index(k);
 
       // Clear the output curves.
       xcv1.clear();
       xcv2.clear();
 
-      // Push all subcurves labeled(0, 1, ... , i-1) into xcv1.
-      for (std::size_t j = 0; j < i; ++j) xcv1.push_back(xcv[j]);
+      // The subcurves xcv[0], ..., xcv[i-1] form the beginning of the
+      // resulting polycurve that contains xcv[0], namely `head`; the
+      // subcurves xcv[i+1], ..., xcv[n-1] form the end of the other resulting
+      // polycurve, namely `tail`. If xcv is directed left-to-right, `head`
+      // is the left polycurve (xcv1); otherwise it is the right one (xcv2).
+      X_monotone_curve_2& head = (dir == SMALLER) ? xcv1 : xcv2;
+      X_monotone_curve_2& tail = (dir == SMALLER) ? xcv2 : xcv1;
 
-      if (dir == SMALLER){
-        // Check whether the split point is xcv[i]'s source or target.
-        if (equal(max_vertex(xcv[i]), p)) {
-          // The entire i-th subcurve belongs to xcv1:
-          xcv1.push_back(xcv[i]);
-        }
-        else if (equal(min_vertex(xcv[i]), p)) {
-          // The entire i-th subcurves belongs to xcv2:
-          xcv2.push_back(xcv[i]);
-        }
-        else {
-          // The i-th subcurve should be split: The left part(seg1)
-          // goes to xcv1, and the right part(seg2) goes to xcv2.
-          X_monotone_subcurve_2 seg1, seg2;
-          m_poly_traits.subcurve_traits_2()->split_2_object()(xcv[i], p, seg1, seg2);
-
-          xcv1.push_back(seg1);
-          xcv2.push_back(seg2);
-        }
+      for (std::size_t j = 0; j < i; ++j) head.push_back(xcv[j]);
+      if (res == EQUAL) {
+        // p is the right endpoint of xcv[i], which therefore belongs, as a
+        // whole, to the left polycurve (xcv1).
+        ((dir == SMALLER) ? head : tail).push_back(xcv[i]);
       }
       else {
-        if (equal(min_vertex(xcv[i]), p)) {
-          xcv1.push_back(xcv[i]);
-        }
-        else if (equal(max_vertex(xcv[i]), p)) {
-          xcv2.push_back(xcv[i]);
-        }
-        else {
-          X_monotone_subcurve_2 seg1, seg2;
-          m_poly_traits.subcurve_traits_2()->split_2_object()(xcv[i], p, seg1, seg2);
-
-          if (cmp_seg_endpts(seg2) == LARGER){
-            xcv1.push_back(seg2);
-          }
-          else {
-            // seg2 has to be reversed
-            seg2 = m_poly_traits.subcurve_traits_2()->construct_opposite_2_object()(seg2);
-            xcv1.push_back(seg2);
-          }
-
-          if (cmp_seg_endpts(seg1) == LARGER){
-            xcv2.push_back(seg1);
-          }
-          else {
-            // seg2 has to be reversed
-            seg1 = m_poly_traits.subcurve_traits_2()->construct_opposite_2_object()(seg1);
-            xcv1.push_back(seg1);
-          }
-        }
+        // p lies in the interior of xcv[i]. Split xcv[i] and append the two
+        // parts, oriented like xcv, to `head` and `tail`.
+        X_monotone_subcurve_2 seg1, seg2;   // the left and right parts
+        split(xcv[i], p, seg1, seg2);
+        if (cmp_seg_endpts(seg1) != dir) seg1 = opposite(seg1);
+        if (cmp_seg_endpts(seg2) != dir) seg2 = opposite(seg2);
+        head.push_back(std::move((dir == SMALLER) ? seg1 : seg2));
+        tail.push_back(std::move((dir == SMALLER) ? seg2 : seg1));
       }
-
-      // Push all subcurves labeled(i+1, i+2, ... , n-1) into xcv1.
-      std::size_t n = xcv.number_of_subcurves();
-
-      for (std::size_t j = i+1; j < n; ++j) xcv2.push_back(xcv[j]);
-
-      if (dir != SMALLER) std::swap(xcv1, xcv2);
+      for (std::size_t j = i+1; j < n; ++j) tail.push_back(xcv[j]);
     }
   };
 
@@ -669,7 +653,6 @@ public:
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, OutputIterator oi) const {
-      // std::cout << "intersect(" << cv1 << ", " << cv2 << ")\n";
       using Intersection_point = std::pair<Point_2, Multiplicity>;
       using Intersection_base_result = std::variant<Intersection_point, X_monotone_subcurve_2>;
 
@@ -685,21 +668,15 @@ public:
 
       Comparison_result dir1 = cmp_endpts(cv1[0]);
       Comparison_result dir2 = cmp_endpts(cv2[0]);
-      // std::cout << "dir1: " << dir1 << std::endl;
-      // std::cout << "dir2: " << dir2 << std::endl;
 
       const bool consistent = (dir1 == dir2);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       CGAL_assertion(consistent);
 #endif
-      std::vector<X_monotone_subcurve_2> ocv; // Used to represent overlaps.
       const bool invert_ocv = ((dir1 == LARGER) && (dir2 == LARGER));
 
       const std::size_t n1 = cv1.number_of_subcurves();
       const std::size_t n2 = cv2.number_of_subcurves();
-
-      std::size_t i1 = (dir1 == SMALLER) ? 0 : n1-1;
-      std::size_t i2 = (dir2 == SMALLER) ? 0 : n2-1;
 
       Point_2 saved_point;
       X_monotone_curve_2 saved_xcv;
@@ -744,10 +721,58 @@ public:
 
       // Spit out the saved x-monotone curve
       auto spit_saved_xcv = [&]() {
-        *oi++ = saved_xcv;
+        *oi++ = std::move(saved_xcv);
         saved_xcv.clear();
         xcv_saved = false;
       };
+
+      // Spit out an overlapping subcurve (as an x-monotone curve).
+      auto spit_xcv = [&](const X_monotone_subcurve_2& sxcv) {
+        CGAL_assertion(! xcv_saved);
+        update_saved_xcv(sxcv);
+        spit_saved_xcv();
+      };
+
+      // Determines whether an end of the range common to the subcurves xs1
+      // and xs2 (whose ranges overlap) lies on both subcurves; that is,
+      // whether it is an endpoint of both, or the endpoint of one lies on
+      // the other.
+      auto is_on_both = [&](const X_monotone_subcurve_2& xs1, const X_monotone_subcurve_2& xs2,
+                            Arr_curve_end ce, Comparison_result res) {
+        if (res == EQUAL) return true;
+        // The end of the common range is the end of the subcurve that
+        // starts last (ARR_MIN_END) or ends first (ARR_MAX_END).
+        const bool first = (ce == ARR_MIN_END) ? (res == LARGER) : (res == SMALLER);
+        return first ? (cmp_y_at_x(xs1, ce, xs2) == EQUAL) : (cmp_y_at_x(xs2, ce, xs1) == EQUAL);
+      };
+
+      // Fast path: each curve consists of a single subcurve; thus, there are
+      // no joints, at which intersections reported for adjacent subcurves
+      // must be merged. An intersection point at an endpoint of a subcurve
+      // is reported with multiplicity 0 (undefined), as in the general case
+      // below; such a point must be the first intersection, at the left end
+      // of the common range, or the last one, at its right end.
+      if ((n1 == 1) && (n2 == 1)) {
+        const auto& xs1 = cv1[0];
+        const auto& xs2 = cv2[0];
+        std::vector<Intersection_base_result> xsecs;
+        intersect(xs1, xs2, std::back_inserter(xsecs));
+        for (auto it = xsecs.begin(); it != xsecs.end(); ++it) {
+          if (const auto* xp_p = std::get_if<Intersection_point>(&*it)) {
+            auto is_at_end = [&](Arr_curve_end ce)
+            { return is_on_both(xs1, xs2, ce, cmp_xy(xs1, ce, xs2, ce)); };
+            if (((it == xsecs.begin()) && is_at_end(ARR_MIN_END)) ||
+                ((std::next(it) == xsecs.end()) && is_at_end(ARR_MAX_END)))
+              *oi++ = std::make_pair(xp_p->first, 0);
+            else *oi++ = *xp_p;
+          }
+          else spit_xcv(std::get<X_monotone_subcurve_2>(*it));
+        }
+        return oi;
+      }
+
+      std::size_t i1 = (dir1 == SMALLER) ? 0 : n1-1;
+      std::size_t i2 = (dir2 == SMALLER) ? 0 : n2-1;
 
       auto left_res = cmp_xy(cv1[i1], ARR_MIN_END, cv2[i2], ARR_MIN_END);
       if (left_res == SMALLER) {
@@ -811,131 +836,101 @@ public:
         update_saved_point(min_vertex(cv1[i1]));
       }
 
+      // Traverse the pairs of subcurves cv1[i1] and cv2[i2] whose x-ranges
+      // overlap, from left to right. Let [L, R] denote the range common to
+      // the subcurves of a pair, where L < R. An intersection of the pair at
+      // L or at R is also an intersection of the adjacent pair (unless L or
+      // R is an endpoint of cv1 or cv2); it is kept pending, so that it is
+      // reported only once, and merged with an adjacent overlap. The
+      // following invariant holds: an intersection is pending iff L lies on
+      // both subcurves, that is, iff the first intersection of the pair is
+      // at L. (Initially, this has been established above; afterwards, L of
+      // a pair is R of the preceding pair.) Similarly, the last intersection
+      // of the pair is at R iff R lies on both subcurves. Thus, no equality
+      // test between a (constructed) intersection point and an endpoint of a
+      // subcurve is necessary.
+      std::vector<Intersection_base_result> xsecs;
       do {
-        // std::cout << "i1, i2 = " << i1 <<", " << i2 << std::endl;
-        std::vector<Intersection_base_result> xsecs;
+        auto right_res = cmp_xy(cv1[i1], ARR_MAX_END, cv2[i2], ARR_MAX_END);
+
+        // Determine whether R lies on both subcurves.
+        auto is_at_right = [&]() { return is_on_both(cv1[i1], cv2[i2], ARR_MAX_END, right_res); };
+
+        xsecs.clear();
         intersect(cv1[i1], cv2[i2], std::back_inserter(xsecs));
 
-        // Iterate over all intersections.
         if (! xsecs.empty()) {
+          // It is impossible to have a pending point and a pending
+          // x-monotone curve concurrently
+          CGAL_assertion(! (xcv_saved && point_saved));
+          const bool pending = xcv_saved || point_saved;
+
           auto it = xsecs.begin();
           const auto& xsec = *it++;
           if (it == xsecs.end()) {
             // There is exactly one intersection
-            const auto* xp_p = std::get_if<Intersection_point>(&xsec);
-            if (xp_p) {
+            if (const auto* xp_p = std::get_if<Intersection_point>(&xsec)) {
               // The intersection is a point
-              const auto& xp = xp_p->first;
-              auto is_min_end_1 = equal(xp, min_vertex(cv1[i1]));
-              auto is_min_end_2 = equal(xp, min_vertex(cv2[i2]));
-              if ((is_min_end_1 || is_min_end_2) && (xcv_saved || point_saved)) {
-                // It is impossible to have a pending point and a pending
-                // x-monotone curve concurrently
-                CGAL_assertion((xcv_saved && ! point_saved) ||
-                               (! xcv_saved && point_saved));
+              if (pending) {
+                // The point is L, which is pending.
                 if (xcv_saved) spit_saved_xcv();
                 else spit_saved_point();
               }
-              else {
-                auto is_max_end_1 = equal(xp, max_vertex(cv1[i1]));
-                auto is_max_end_2 = equal(xp, max_vertex(cv2[i2]));
-                if (is_max_end_1 || is_max_end_2) update_saved_point(xp);
-                else *oi++ = *xp_p;
-              }
+              else if (is_at_right()) update_saved_point(xp_p->first);
+              else *oi++ = *xp_p;
             }
             else {
               // The intersection is an x-monotone curve
-              auto* sxcv_p = std::get_if<X_monotone_subcurve_2>(&xsec);
-              CGAL_assertion(sxcv_p != nullptr);
-              const auto& xp_min = min_vertex(*sxcv_p);
-              auto is_min_end_1 = equal(xp_min, min_vertex(cv1[i1]));
-              auto is_min_end_2 = equal(xp_min, min_vertex(cv2[i2]));
-              const auto& xp_max = max_vertex(*sxcv_p);
-              auto is_max_end_1 = equal(xp_max, max_vertex(cv1[i1]));
-              auto is_max_end_2 = equal(xp_max, max_vertex(cv2[i2]));
-              if (is_min_end_1 || is_min_end_2) {
-                update_saved_xcv(*sxcv_p);
-                if (! is_max_end_1 && ! is_max_end_2) spit_saved_xcv();
-              }
-              else {
-                if (xcv_saved) spit_saved_xcv();
-                if (is_max_end_1 || is_max_end_2) update_saved_xcv(*sxcv_p);
-                else *oi++ = *sxcv_p;
-              }
+              const auto& sxcv = std::get<X_monotone_subcurve_2>(xsec);
               point_saved = false;
+              const bool at_right = is_at_right();
+              if (at_right || pending) update_saved_xcv(sxcv);
+              else spit_xcv(sxcv);
+              if (pending && ! at_right) spit_saved_xcv();
             }
           }
           else {
             // There is more than one intersection
             // Handle the first intersection
-            const auto* xp_p = std::get_if<Intersection_point>(&xsec);
-            if (xp_p) {
-              const auto& xp = xp_p->first;
-              auto is_min_end_1 = equal(xp, min_vertex(cv1[i1]));
-              auto is_min_end_2 = equal(xp, min_vertex(cv2[i2]));
-              if ((is_min_end_1 || is_min_end_2) && (xcv_saved || point_saved)) {
-                // It is impossible to have a pending point and a pending
-                // x-monotone curve concurrently
-                CGAL_assertion((xcv_saved && ! point_saved) ||
-                               (! xcv_saved && point_saved));
+            if (std::get_if<Intersection_point>(&xsec)) {
+              if (pending) {
+                // The point is L, which is pending.
                 if (xcv_saved) spit_saved_xcv();
                 else spit_saved_point();
               }
-              else *oi++ = *xp_p;
+              else *oi++ = std::get<Intersection_point>(xsec);
             }
             else {
-              const auto* sxcv_p = std::get_if<X_monotone_subcurve_2>(&xsec);
-              CGAL_assertion(sxcv_p);
-              const auto& xp = min_vertex(*sxcv_p);
-              auto is_min_end_1 = equal(xp, min_vertex(cv1[i1]));
-              auto is_min_end_2 = equal(xp, min_vertex(cv2[i2]));
-              if (is_min_end_1 || is_min_end_2) {
-                update_saved_xcv(*sxcv_p);
+              const auto& sxcv = std::get<X_monotone_subcurve_2>(xsec);
+              point_saved = false;
+              if (pending) {
+                update_saved_xcv(sxcv);
                 spit_saved_xcv();
               }
-              else {
-                if (xcv_saved) spit_saved_xcv();
-                else *oi++ = *sxcv_p;
-              }
-              point_saved = false;
+              else spit_xcv(sxcv);
             }
 
             // Handle all but the last intersection
             for (; it != std::prev(xsecs.end()); ++it) {
-              const auto& xsec = *it;
-              xp_p = std::get_if<Intersection_point>(&xsec);
-              if (xp_p) *oi++ = *xp_p;
-              else {
-                const auto* sxcv_p = std::get_if<X_monotone_subcurve_2>(&xsec);
-                CGAL_assertion(sxcv_p);
-                *oi++ = *sxcv_p;
-              }
+              if (const auto* xp_p = std::get_if<Intersection_point>(&*it)) *oi++ = *xp_p;
+              else spit_xcv(std::get<X_monotone_subcurve_2>(*it));
             }
 
             // Handle the last intersection
-            const auto& xsec = *it;
-            xp_p = std::get_if<Intersection_point>(&xsec);
-            if (xp_p) {
-              const auto& xp = xp_p->first;
-              auto is_max_end_1 = equal(xp, max_vertex(cv1[i1]));
-              auto is_max_end_2 = equal(xp, max_vertex(cv2[i2]));
-              if (is_max_end_1 || is_max_end_2) update_saved_point(xp);
+            const bool at_right = is_at_right();
+            if (const auto* xp_p = std::get_if<Intersection_point>(&*it)) {
+              if (at_right) update_saved_point(xp_p->first);
               else *oi++ = *xp_p;
             }
             else {
-              const auto* sxcv_p = std::get_if<X_monotone_subcurve_2>(&xsec);
-              CGAL_assertion(sxcv_p);
-              const auto& xp = max_vertex(*sxcv_p);
-              auto is_max_end_1 = equal(xp, max_vertex(cv1[i1]));
-              auto is_max_end_2 = equal(xp, max_vertex(cv2[i2]));
-              if (is_max_end_1 || is_max_end_2) update_saved_xcv(*sxcv_p);
-              else *oi++ = *sxcv_p;
+              const auto& sxcv = std::get<X_monotone_subcurve_2>(*it);
+              if (at_right) update_saved_xcv(sxcv);
+              else spit_xcv(sxcv);
             }
           }
         }
 
         // Advance the indices
-        auto right_res = cmp_xy(cv1[i1], ARR_MAX_END, cv2[i2], ARR_MAX_END);
         if (right_res != LARGER) {
           if (dir1 == SMALLER) {
             ++i1;
