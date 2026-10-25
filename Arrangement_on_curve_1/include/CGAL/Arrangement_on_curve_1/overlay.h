@@ -56,6 +56,9 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA, Bina
                 std::is_same_v<typename ArrB::Right_side_category, typename ArrRes::Right_side_category>,
                 "The input and result arrangements must have the same parameter space.");
   constexpr bool is_identified = ArrRes::is_identified;
+
+  // Every vertex of the result originates from a vertex of an input.
+  arr_res.reserve(arr_a.number_of_vertices() + arr_b.number_of_vertices());
   constexpr bool left_is_closed = ArrRes::left_is_closed;
   constexpr bool right_is_closed = ArrRes::right_is_closed;
   using Vertex_a = typename ArrA::Vertex_const_descriptor;

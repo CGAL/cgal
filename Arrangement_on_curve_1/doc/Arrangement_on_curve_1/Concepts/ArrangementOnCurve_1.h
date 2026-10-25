@@ -229,5 +229,11 @@ public:
    */
   void clear();
 
+  /*! reserves storage for `num_vertices` vertices and the edges between them,
+   * so that, in vector mode, no reallocation occurs until the arrangement has
+   * more vertices; has no effect in list mode.
+   */
+  void reserve(Size num_vertices);
+
   //! @}
 };
