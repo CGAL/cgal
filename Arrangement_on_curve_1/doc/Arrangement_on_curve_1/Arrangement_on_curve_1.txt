@@ -554,13 +554,13 @@ argument.
 ### Exact angular comparison
 
 The comparison is implemented using only the kernel predicate
-`Kernel::CounterclockwiseInBetween_2` (no trigonometric computation).  Given
-two directions \f$d_1\f$ and \f$d_2\f$, neither of which is
-\f$d_{\mathrm{ref}}\f$, \f$d_1 < d_2\f$ if and only if \f$d_1\f$ lies strictly
-between \f$d_{\mathrm{ref}}\f$ and \f$d_2\f$ when turning counter-clockwise
-from \f$d_{\mathrm{ref}}\f$; \f$d_1 > d_2\f$ if and only if \f$d_2\f$ lies
-strictly between \f$d_{\mathrm{ref}}\f$ and \f$d_1\f$; otherwise,
-\f$d_1 = d_2\f$.
+`Kernel::CompareAngleWithXAxis_2` (no trigonometric computation), which
+compares the angles in \f$[0, 2\pi)\f$ between the positive \f$x\f$-axis and
+two directions.  If \f$d_{\mathrm{ref}}\f$ is the positive \f$x\f$-axis, the
+order of two directions \f$d_1\f$ and \f$d_2\f$ is the order of their
+angles.  Otherwise, the directions whose angles are larger than the angle of
+\f$d_{\mathrm{ref}}\f$ precede the others, and within each of these two
+groups, the order is the order of the angles.
 
 ### Usage example
 
