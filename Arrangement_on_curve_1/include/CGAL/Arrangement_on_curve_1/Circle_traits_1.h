@@ -53,13 +53,14 @@
  * A CGAL `Direction_2` wraps a non-zero vector and considers two vectors equal
  * iff they are positive multiples of each other.  Opposite directions are
  * distinct.  The comparison below operates on the directions directly through
- * the kernel predicate `Counterclockwise_in_between_2`.
+ * the kernel predicate `Compare_angle_with_x_axis_2`, which compares the
+ * angles in \f$[0, 2\pi)\f$ between the positive `x`-axis and the directions.
  *
  * Required Kernel concepts
  * ------------------------
  * The Kernel must provide:
  * - `Kernel::Direction_2`
- * - `Kernel::Counterclockwise_in_between_2`
+ * - `Kernel::Compare_angle_with_x_axis_2`
  */
 
 #include <CGAL/enum.h>
@@ -104,7 +105,10 @@ public:
    *
    * \param reference the identification-point.
    */
-  explicit Circle_traits_1(const Direction_2& reference = Direction_2(1, 0)) : m_ref(reference) {}
+  explicit Circle_traits_1(const Direction_2& reference = Direction_2(1, 0)) :
+    m_ref(reference),
+    m_ref_is_x_axis(this->compare_angle_with_x_axis_2_object()(reference, Direction_2(1, 0)) == EQUAL)
+  {}
 
   const Direction_2& reference_direction() const { return m_ref; }
 
@@ -147,11 +151,21 @@ public:
       CGAL_precondition(! m_tr.is_on_x_identification_1_object()(d1));
       CGAL_precondition(! m_tr.is_on_x_identification_1_object()(d2));
 
-      // SMALLER: da comes before db in the CCW order starting after m_ref
-      auto ccwib = m_tr.counterclockwise_in_between_2_object();
-      if (ccwib(d1, m_tr.m_ref, d2)) return SMALLER;
-      if (ccwib(d2, m_tr.m_ref, d1)) return LARGER;
-      return EQUAL;
+      // The counterclockwise order starting at the positive x-axis is the
+      // order of the angles in [0, 2pi) between the positive x-axis and the
+      // directions. If the reference direction is not the positive x-axis,
+      // the directions whose angles are larger than the angle of the
+      // reference direction precede the others, and within each of these two
+      // groups the order is that of the angles. (Neither direction is the
+      // reference direction, so neither angle equals the angle of the
+      // reference direction.)
+      auto cmp_angle = m_tr.compare_angle_with_x_axis_2_object();
+      if (! m_tr.m_ref_is_x_axis) {
+        const bool after1 = (cmp_angle(d1, m_tr.m_ref) == LARGER);
+        const bool after2 = (cmp_angle(d2, m_tr.m_ref) == LARGER);
+        if (after1 != after2) return after1 ? SMALLER : LARGER;
+      }
+      return cmp_angle(d1, d2);
     }
 
   private:
@@ -161,7 +175,8 @@ public:
   Compare_x_1 compare_x_1_object() const { return Compare_x_1(*this); }
 
 private:
-  Direction_2 m_ref;  // the identification-point direction
+  Direction_2 m_ref;      // the identification-point direction
+  bool m_ref_is_x_axis;   // is the reference direction the positive x-axis?
 };
 
 } // namespace Arrangement_on_curve_1
