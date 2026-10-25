@@ -495,6 +495,8 @@ The `UseVector` template parameter controls the underlying container and descrip
   update all the stored indices automatically, including the left boundary
   edge and the cached vertices.
   Binary search (`BinarySearch` = `true`) is only available in vector mode.
+  When the number of vertices is known in advance, `reserve()` avoids the
+  reallocations of the vectors; the overlay reserves the storage of its result.
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection aoc_ssec-topo_traits-unbounded Open Topology Traits

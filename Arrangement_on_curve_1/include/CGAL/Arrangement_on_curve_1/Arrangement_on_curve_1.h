@@ -14,6 +14,7 @@
 #include <variant>
 #include <memory>
 
+#include <CGAL/use.h>
 #include <CGAL/Arrangement_on_curve_1/Side_tags.h>
 #include <CGAL/Arrangement_on_curve_1/Parameter_space.h>
 #include <CGAL/Arrangement_on_curve_1/Default_topology_traits.h>
@@ -208,6 +209,13 @@ public:
   /*! clears
    */
   void clear() { m_topology_traits.clear(); }
+
+  /*! reserves storage for `num_vertices` vertices and the edges between them
+   * (at most `num_vertices + 1`), so that, in vector mode, no reallocation
+   * occurs until the arrangement has more vertices; has no effect in list
+   * mode.
+   */
+  void reserve(Size num_vertices) { m_topology_traits.reserve(num_vertices, num_vertices + 1); }
 
   void reset_shared_geometry_traits(Shared_geometry_traits new_shared_geom_tr) {
     // Safety check: changing traits on a populated structure is highly dangerous

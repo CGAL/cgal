@@ -46,6 +46,7 @@
 #include <unordered_map>
 
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -421,6 +422,22 @@ public:
     m_vertices.clear();
     m_edges.clear();
     init_spanning_edge();
+  }
+
+  // --------------------------------------------------------------------------
+  // reserves storage for the given numbers of vertices and edges in vector
+  // mode, so that no reallocation occurs until these numbers are exceeded;
+  // has no effect in list mode.
+  // --------------------------------------------------------------------------
+  void reserve(Size num_vertices, Size num_edges) {
+    if constexpr (UseVector) {
+      m_vertices.reserve(num_vertices);
+      m_edges.reserve(num_edges);
+    }
+    else {
+      CGAL_USE(num_vertices);
+      CGAL_USE(num_edges);
+    }
   }
 
   // --------------------------------------------------------------------------

@@ -208,6 +208,12 @@ public:
   //! removes all vertices and edges and resets the topology to its initial state.
   void clear();
 
+  /*! reserves storage for `num_vertices` vertices and `num_edges` edges, so
+   * that, in vector mode, no reallocation occurs until these numbers are
+   * exceeded; has no effect in list mode.
+   */
+  void reserve(Size num_vertices, Size num_edges);
+
   //! swaps the content of the topology traits with `other`.
   void swap(AocTopologyTraits& other) noexcept;
 
