@@ -193,6 +193,8 @@ public:
     // at t = 0 are merged within the iface into the convex hull of their pieces, which is added as an additional polygon.
     std::vector<Input_polygon> input_polygons;
     std::map<IFace, std::size_t> piece_polygon; // Index into input_polygons of the polygon each piece in polygons originates from.
+    // Input polygons lying in a bbox support plane: index of the input polygon of the partition and vertices.
+    std::vector<std::pair<std::size_t, std::vector<typename Intersection_kernel::Point_2> > > coinciding_polygons;
     std::unordered_map<IFace, Face_index> iface2pface;
     std::unordered_map<IFace, std::list<IEdge>> borders;
     std::vector<Vertex> &vertices;

@@ -1723,7 +1723,171 @@ private:
     }
   }
 
-  void case_C2(const std::vector<Event>& events) {
+  // Creates the piece of the polygon of the event vertex in the face `face` around the ivertex e.destination, which the
+  // polygon reaches at the event. The face is bounded at the ivertex by the edges ea and eb. The input polygon the piece originates from is translated such that its centroid is at the event and
+  // is clipped by the lines of ea and eb. The piece consists of a stationary vertex at the ivertex and of a vertex moving
+  // along each edge. Returns the indices of the stationary vertex and of the vertices moving along ea and eb.
+  std::array<std::size_t, 3> create_wedge_piece(const Event& e, IFace face, IEdge ea, IEdge eb, std::vector<std::size_t>& new_moving_vertices) {
+    const std::size_t sp_idx = vts[e.vertex].sp_idx;
+    Support_plane& sp = m_data.support_plane(sp_idx);
+    const IVertex d = e.destination;
+    const std::size_t la = m_data.igraph().edge(ea).line;
+    const std::size_t lb = m_data.igraph().edge(eb).line;
+    CGAL_assertion(la != lb);
+
+    m_data.init_border(face);
+    std::list<std::size_t>& poly = sp.data().polygons[face];
+    CGAL_assertion(poly.empty());
+    sp.set_piece_polygon(face, sp.piece_polygon(vts[e.vertex].face));
+    sp.active_polygons++;
+
+    const IVertex ta = m_data.igraph().other(ea, d);
+    const IVertex tb = m_data.igraph().other(eb, d);
+    // A point inside the face close to the ivertex.
+    const IkPoint_2 inside = CGAL::centroid(e.p, sp.to_2d(m_data.igraph().point_3(ta)), sp.to_2d(m_data.igraph().point_3(tb)));
+
+    const auto& input = sp.input_polygon(sp.piece_polygon(vts[e.vertex].face));
+    std::vector<Vertex> vertices;
+    vertices.reserve(input.vertices.size());
+    const IkVector_2 shift = (e.p - input.centroid);
+    for (std::size_t v = 0; v < input.vertices.size(); v++)
+      vertices.emplace_back(sp_idx, input.vertices[v] + shift, input.velocities[v]);
+
+    std::list<std::size_t> polygon(input.vertices.size()), other;
+    std::iota(polygon.begin(), polygon.end(), 0);
+    m_data.split_polygon(vertices, polygon, la, other);
+    if (sp.data().lines[la].oriented_side(inside) == CGAL::ON_POSITIVE_SIDE)
+      std::swap(polygon, other);
+    other.clear();
+    m_data.split_polygon(vertices, polygon, lb, other);
+    if (sp.data().lines[lb].oriented_side(inside) == CGAL::ON_POSITIVE_SIDE)
+      std::swap(polygon, other);
+
+    std::array<std::size_t, 3> res = { std::size_t(-1), std::size_t(-1), std::size_t(-1) };
+    for (std::size_t i : polygon) {
+      if (vertices[i].constraints.empty())
+        continue;
+      vts.emplace_back(vertices[i]);
+      const std::size_t idx = vts.size() - 1;
+      Vertex& v = vts.back();
+      v.t_init = e.time;
+      v.p0 = e.p;
+      v.face = face;
+      v.other = std::size_t(-1);
+      if (!v.moving) {
+        CGAL_assertion(res[0] == std::size_t(-1));
+        CGAL_assertion(v.constraints.size() == 2);
+        v.constraint_edge = ea;
+        v.other_constraint_edge = eb;
+        v.ivertex = d;
+        res[0] = idx;
+      }
+      else {
+        CGAL_assertion(v.constraints.size() == 1);
+        v.k = vts[e.vertex].k;
+        if (*v.constraints.begin() == la) {
+          CGAL_assertion(res[1] == std::size_t(-1));
+          v.constraint_edge = ea;
+          v.itarget = ta;
+          res[1] = idx;
+        }
+        else {
+          CGAL_assertion(*v.constraints.begin() == lb);
+          CGAL_assertion(res[2] == std::size_t(-1));
+          v.constraint_edge = eb;
+          v.itarget = tb;
+          res[2] = idx;
+        }
+        new_moving_vertices.push_back(idx);
+      }
+      poly.push_back(idx);
+    }
+    CGAL_assertion(res[0] != std::size_t(-1) && res[1] != std::size_t(-1) && res[2] != std::size_t(-1));
+
+    register_on_edge(ea, res[0], res[1]);
+    register_on_edge(eb, res[0], res[2]);
+    return res;
+  }
+
+  // Propagates the polygon of the event vertex around the ivertex e.destination, starting with the face `face` entered via
+  // entry_edge. Used if more than two lines intersect in the ivertex. The polygon enters the faces around the ivertex one
+  // after the other, as long as no polygon of another support plane blocks the crossed edge.
+  // The vertex `paired` moves along entry_edge in the face the polygon comes from.
+  void propagate_around_ivertex(const Event& e, IEdge entry_edge, IFace face, std::size_t paired, std::vector<std::size_t>& new_moving_vertices) {
+    const std::size_t sp_idx = vts[e.vertex].sp_idx;
+    Support_plane& sp = m_data.support_plane(sp_idx);
+    const IFace start = vts[e.vertex].face;
+    bool first = true;
+    while (true) {
+      const IEdge exit_edge = other_face_edge(face, entry_edge, e.destination);
+      CGAL_assertion(exit_edge != m_data.igraph().null_iedge());
+      const auto piece = create_wedge_piece(e, face, entry_edge, exit_edge, new_moving_vertices);
+      if (first) {
+        // The vertex entering the face moves like its mirrored vertex.
+        vts[piece[1]].v = vts[paired].v;
+        first = false;
+      }
+      if (paired != std::size_t(-1)) {
+        vts[piece[1]].other = paired;
+        vts[paired].other = piece[1];
+      }
+
+      const IFace next = m_data.igraph().get_other_face(sp_idx, exit_edge, face);
+      if (next == std::size_t(-1) || next == start || sp.data().polygons.find(next) != sp.data().polygons.end())
+        break;
+      if (!could_cross(sp_idx, face, e.destination, e.time, exit_edge))
+        break;
+
+      paired = piece[2];
+      entry_edge = exit_edge;
+      face = next;
+    }
+  }
+
+  // A constrained vertex reaches an ivertex at the same time as its unconstrained neighbor, i.e., the edge between both
+  // vertices collapses in the ivertex. The unconstrained vertex is removed and the event is handled like case_C2 for the
+  // constrained vertex. The polygon edge of the removed vertex is used to compute the speed of the ricochet vertex.
+  bool handle_collapse_at_ivertex(const std::vector<Event>& connected, const std::vector<std::size_t>& vertices) {
+    if (vertices.size() != 2)
+      return false;
+    std::size_t c = vertices[0], f = vertices[1];
+    if (vts[c].constraints.empty())
+      std::swap(c, f);
+    if (vts[c].constraints.empty() || !vts[f].constraints.empty())
+      return false;
+
+    std::vector<Event> ce;
+    const Event* fe = nullptr;
+    for (const Event& ev : connected)
+      if (ev.vertex == c)
+        ce.push_back(ev);
+      else
+        fe = &ev;
+    if (ce.size() != 1 || fe == nullptr || ce[0].destination == m_data.igraph().null_ivertex() || fe->p != ce[0].p)
+      return false;
+
+    Support_plane& sp = m_data.support_plane(vts[c].sp_idx);
+    std::list<std::size_t>& poly = sp.data().polygons[vts[c].face];
+    auto it = std::find(poly.begin(), poly.end(), c);
+    CGAL_assertion(it != poly.end());
+    auto prev = (it == poly.begin()) ? std::prev(poly.end()) : std::prev(it);
+    auto next = (std::next(it) == poly.end()) ? poly.begin() : std::next(it);
+    std::list<std::size_t>::iterator fit;
+    if (*prev == f)
+      fit = prev;
+    else if (*next == f)
+      fit = next;
+    else
+      return false;
+
+    const Vertex ref = vts[f];
+    poly.erase(fit);
+    vts[f].stop(*fe);
+    case_C2(ce, &ref);
+    return true;
+  }
+
+  void case_C2(const std::vector<Event>& events, const Vertex* edge_ref = nullptr) {
     c2_events++;
     const Event& e = events.front();
 
@@ -1755,7 +1919,7 @@ private:
     auto adjacent = (vts[*prev].constraints.find(m_data.igraph().edge(vts[e.vertex].constraint_edge).line) != vts[*prev].constraints.end()) ? next : prev;
     IkVector_2 dir(0, 0);
 
-    dir = sp.calculate_edge_speed(vts[e.vertex], vts[*adjacent], e.p, sp.data().lines[hit_line_idx], e.time);
+    dir = sp.calculate_edge_speed(edge_ref ? *edge_ref : vts[e.vertex], vts[*adjacent], e.p, sp.data().lines[hit_line_idx], e.time);
     IVertex target = (m_data.igraph().source(hit_edge) == e.destination ? m_data.igraph().target(hit_edge) : m_data.igraph().source(hit_edge));
     IkPoint_2 rico_target = sp.to_2d(m_data.igraph().point_3(target));
     IkVector_2 dir_check = rico_target - e.p;
@@ -1790,9 +1954,15 @@ private:
     std::size_t corner = -1;
     std::size_t prolongation = -1;
 
-    if (can_cross(e, hit_edge)) {
+    const bool crossing = can_cross(e, hit_edge);
+    IFace other_face = crossing ? m_data.igraph().get_other_face(vts[e.vertex].sp_idx, hit_edge, vts[e.vertex].face) : IFace(-1);
+    const std::size_t constraint_line_idx = m_data.igraph().edge(vts[e.vertex].constraint_edge).line;
+    if (crossing && m_data.igraph().edge(other_face_edge(other_face, hit_edge, e.destination)).line != constraint_line_idx) {
+      // More than two lines intersect in the ivertex.
+      propagate_around_ivertex(e, hit_edge, other_face, ricochet, new_moving_vertices);
+    }
+    else if (crossing) {
       // Initialize new face
-      IFace other_face = m_data.igraph().get_other_face(vts[e.vertex].sp_idx, hit_edge, vts[e.vertex].face);
       m_data.init_border(other_face);
       std::list<std::size_t>& new_poly = sp.data().polygons[other_face];
       CGAL_assertion(new_poly.empty());
@@ -1870,7 +2040,7 @@ private:
         sp.set_piece_polygon(q3_face, sp.piece_polygon(vts[e.vertex].face));
         sp.active_polygons++;
 
-        // Insert vertices into q3 like in the reference implementation
+        // Insert vertices into q3
         // The input polygon the piece originates from, translated such that its centroid is at the event.
         const auto& input = sp.input_polygon(sp.piece_polygon(vts[e.vertex].face));
         std::list<std::size_t> polygon(input.vertices.size());
@@ -2100,7 +2270,7 @@ private:
 
     Support_plane &sp = m_data.support_plane(vts[e.vertex].sp_idx);
 
-    // Insert vertices into q3 like in the reference implementation
+    // Insert vertices into q3
     // The input polygon the piece originates from, translated such that its centroid is at the event.
     const auto& input = sp.input_polygon(sp.piece_polygon(vts[e.vertex].face));
     std::list<std::size_t> polygon(input.vertices.size());
@@ -2327,10 +2497,27 @@ private:
 
     bool propagates_front = can_cross(e1, hit_edge) || can_cross(e2, hit_edge);
     bool propagates_e1_side = false, propagates_e2_side = false;
-    if (propagates_front && !vts[e1.vertex].constraints.empty())
+    // If more than two lines intersect in the ivertex reached by a constrained vertex, the face beyond the hit edge is
+    // not bounded by the prolongation of the constraint line at the ivertex, but by another line (edge m_e1/m_e2).
+    IEdge m_e1 = m_data.igraph().null_iedge(), m_e2 = m_data.igraph().null_iedge();
+    if (propagates_front) {
+      const IFace front_face = m_data.igraph().get_other_face(vts[e1.vertex].sp_idx, hit_edge, vts[e1.vertex].face);
+      auto fan_edge = [&](const Event& ev) {
+        const IEdge prolongation = get_next_edge(vts[ev.vertex].constraint_edge, ev.destination, *vts[ev.vertex].constraints.begin());
+        const IEdge bounding = other_face_edge(front_face, hit_edge, ev.destination);
+        return (bounding != prolongation) ? bounding : m_data.igraph().null_iedge();
+      };
+      if (!vts[e1.vertex].constraints.empty())
+        m_e1 = fan_edge(e1);
+      if (!vts[e2.vertex].constraints.empty())
+        m_e2 = fan_edge(e2);
+    }
+    if (propagates_front && !vts[e1.vertex].constraints.empty() && m_e1 == m_data.igraph().null_iedge())
       propagates_e1_side = expands_laterally(e1, hit_line_idx, hit_edge); // Check lateral propagation
-    if (propagates_front && !vts[e2.vertex].constraints.empty())
+    if (propagates_front && !vts[e2.vertex].constraints.empty() && m_e2 == m_data.igraph().null_iedge())
       propagates_e2_side = expands_laterally(e2, hit_line_idx, hit_edge); // Check lateral propagation
+    std::size_t fan_slider_e1 = std::size_t(-1), fan_slider_e2 = std::size_t(-1);
+    IFace front_face_idx = std::size_t(-1);
 
     // Local propagation
     Support_plane& sp = m_data.support_plane(vts[e1.vertex].sp_idx);
@@ -2411,8 +2598,33 @@ private:
       sp.set_piece_polygon(other_face, sp.piece_polygon(vts[e1.vertex].face));
       sp.active_polygons++;
 
+      front_face_idx = other_face;
       // Create adjacent of e1.vertex prolongation
-      if (!vts[e1.vertex].constraints.empty()) {
+      if (m_e1 != m_data.igraph().null_iedge()) {
+        // The polygon is bounded at the ivertex by the hit line and another line through the ivertex.
+        const std::size_t m_line = m_data.igraph().edge(m_e1).line;
+        vts.emplace_back(vts[e1.vertex].sp_idx, e1.p, IkVector_2(0, 0), e1.time);
+        vts.back().moving = false;
+        vts.back().constraints.insert(m_line);
+        vts.back().constraints.insert(hit_line_idx);
+        vts.back().face = other_face;
+        vts.back().ivertex = e1.destination;
+        vts.back().constraint_edge = hit_edge;
+        vts.back().other_constraint_edge = m_e1;
+        new_poly.push_back(vts.size() - 1);
+
+        vts.emplace_back(vts[e1.vertex].sp_idx, e1.p, sp.calculate_edge_speed(vts[e1.vertex], vts[e2.vertex], e1.p, sp.data().lines[m_line], e1.time), e1.time);
+        vts.back().constraints.insert(m_line);
+        vts.back().face = other_face;
+        vts.back().k = vts[e1.vertex].k;
+        vts.back().constraint_edge = m_e1;
+        vts.back().itarget = m_data.igraph().other(m_e1, e1.destination);
+        new_moving_vertices.push_back(vts.size() - 1);
+        new_poly.push_back(vts.size() - 1);
+        register_on_edge(m_e1, vts.size() - 2, vts.size() - 1);
+        fan_slider_e1 = vts.size() - 1;
+      }
+      else if (!vts[e1.vertex].constraints.empty()) {
         IEdge prolongation_edge_e1 = get_next_edge(vts[e1.vertex].constraint_edge, e1.destination, *vts[e1.vertex].constraints.begin());
         vts.emplace_back(vts[e1.vertex].sp_idx, e1.p, IkVector_2(0, 0), e1.time);
         vts.back().moving = false;
@@ -2438,6 +2650,7 @@ private:
       }
 
       // prolongation e1.vertex
+      if (m_e1 == m_data.igraph().null_iedge()) {
       vts.emplace_back(vts[e1.vertex].sp_idx, e1.p, vts[e1.vertex].v, e1.time);
       vts.back().constraints = vts[e1.vertex].constraints;
       vts.back().face = other_face;
@@ -2453,8 +2666,33 @@ private:
 
       if (!vts[e1.vertex].constraints.empty())
         register_on_edge(vts.back().constraint_edge, vts.size() - 2, vts.size() - 1);
+      }
 
       // prolongation e2.vertex
+      if (m_e2 != m_data.igraph().null_iedge()) {
+        const std::size_t m_line = m_data.igraph().edge(m_e2).line;
+        vts.emplace_back(vts[e2.vertex].sp_idx, e2.p, sp.calculate_edge_speed(vts[e1.vertex], vts[e2.vertex], e2.p, sp.data().lines[m_line], e2.time), e2.time);
+        vts.back().constraints.insert(m_line);
+        vts.back().face = other_face;
+        vts.back().k = vts[e2.vertex].k;
+        vts.back().constraint_edge = m_e2;
+        vts.back().itarget = m_data.igraph().other(m_e2, e2.destination);
+        new_moving_vertices.push_back(vts.size() - 1);
+        new_poly.push_back(vts.size() - 1);
+        fan_slider_e2 = vts.size() - 1;
+
+        vts.emplace_back(vts[e2.vertex].sp_idx, e2.p, IkVector_2(0, 0), e2.time);
+        vts.back().moving = false;
+        vts.back().constraints.insert(m_line);
+        vts.back().constraints.insert(hit_line_idx);
+        vts.back().face = other_face;
+        vts.back().ivertex = e2.destination;
+        vts.back().constraint_edge = hit_edge;
+        vts.back().other_constraint_edge = m_e2;
+        new_poly.push_back(vts.size() - 1);
+        register_on_edge(m_e2, vts.size() - 2, vts.size() - 1);
+      }
+      else {
       vts.emplace_back(vts[e2.vertex].sp_idx, e2.p, vts[e2.vertex].v, e2.time);
       vts.back().constraints = vts[e2.vertex].constraints;
       vts.back().face = other_face;
@@ -2493,9 +2731,25 @@ private:
         new_moving_vertices.push_back(vts.size() - 1);
         new_poly.push_back(vts.size() - 1);
       }
+      }
 
       // The front polygon is bounded on the hit edge by its first and last vertex.
       register_on_edge(hit_edge, new_poly.front(), new_poly.back());
+    }
+
+    // Propagation around an ivertex in which more than two lines intersect.
+    for (int side = 0; side < 2; side++) {
+      const Event& ev = (side == 0) ? e1 : e2;
+      const IEdge m_edge = (side == 0) ? m_e1 : m_e2;
+      const std::size_t slider = (side == 0) ? fan_slider_e1 : fan_slider_e2;
+      if (m_edge == m_data.igraph().null_iedge())
+        continue;
+      const IFace next = m_data.igraph().get_other_face(vts[ev.vertex].sp_idx, m_edge, front_face_idx);
+      if (next == std::size_t(-1) || next == vts[ev.vertex].face || sp.data().polygons.find(next) != sp.data().polygons.end())
+        continue;
+      if (!could_cross(vts[ev.vertex].sp_idx, front_face_idx, ev.destination, ev.time, m_edge))
+        continue;
+      propagate_around_ivertex(ev, m_edge, next, slider, new_moving_vertices);
     }
 
     // propagate laterally
@@ -3234,6 +3488,8 @@ private:
           case_A(connected); // Single unconstrained vertex hits line
         break;
       case 2:
+        if (handle_collapse_at_ivertex(connected, vertices))
+          break;
         if (!vts[vertices[0]].constraints.empty() && !vts[vertices[1]].constraints.empty() && connected[0].destination == connected[1].destination)
           case_C1(connected); // Two constrained vertices meet in corner
         else

@@ -157,7 +157,8 @@ public:
 
   const std::vector<std::pair<IkFT, Vertex_descriptor> >& vertices_on_line(std::size_t line_idx) const {
     CGAL_assertion(line_idx < m_lines.size());
-    return m_vertices_on_line[line_idx];
+    static const std::vector<std::pair<IkFT, Vertex_descriptor> > none;
+    return (line_idx < m_vertices_on_line.size()) ? m_vertices_on_line[line_idx] : none;
   }
 
   Edge_descriptor locate_edge_on_line(std::size_t line_idx, IkFT u) const {

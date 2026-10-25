@@ -251,6 +251,20 @@ private:
           m_data.face_to_input_polygon()[p.second] = i;
           break;
         }
+
+      // Faces on a side of the bbox overlapping an input polygon lying in that side, e.g., on a split plane of the octree.
+      Support_plane& sp = m_data.support_plane(p.first.first);
+      if (p.first.first < 6 && !sp.data().coinciding_polygons.empty()) {
+        std::vector<typename Intersection_kernel::Point_2> face;
+        for (const PVertex& pv : m_data.pvertices_of_pface(p.first))
+          face.push_back(sp.to_2d(m_data.point_3(m_data.ivertex(pv))));
+        for (const auto& [input, polygon] : sp.data().coinciding_polygons)
+          if (interiors_intersect(face, polygon)) {
+            m_data.face_is_part_of_input_polygon()[p.second] = true;
+            m_data.face_to_input_polygon()[p.second] = input;
+            break;
+          }
+      }
     }
 
     m_data.face_to_vertices().resize(num_faces);
@@ -267,6 +281,43 @@ private:
     }
 
     remove_collinear_vertices();
+  }
+
+  // Do the interiors of the two convex polygons intersect? The polygons are separated if all vertices of one of them
+  // are on the outer side of an edge of the other one, or on its line.
+  static bool interiors_intersect(std::vector<typename Intersection_kernel::Point_2> a, std::vector<typename Intersection_kernel::Point_2> b) {
+    auto make_ccw = [](std::vector<typename Intersection_kernel::Point_2>& poly) {
+      typename Intersection_kernel::FT area = 0;
+      for (std::size_t i = 0; i < poly.size(); i++) {
+        const auto& p = poly[i];
+        const auto& q = poly[(i + 1) % poly.size()];
+        area += p.x() * q.y() - q.x() * p.y();
+      }
+      if (CGAL::is_negative(area))
+        std::reverse(poly.begin(), poly.end());
+      return !CGAL::is_zero(area);
+    };
+    if (a.size() < 3 || b.size() < 3 || !make_ccw(a) || !make_ccw(b))
+      return false;
+
+    auto separates = [](const std::vector<typename Intersection_kernel::Point_2>& p, const std::vector<typename Intersection_kernel::Point_2>& q) {
+      for (std::size_t i = 0; i < p.size(); i++) {
+        const auto& s = p[i];
+        const auto& t = p[(i + 1) % p.size()];
+        if (s == t)
+          continue;
+        bool all_outside = true;
+        for (const auto& r : q)
+          if (CGAL::orientation(s, t, r) == CGAL::LEFT_TURN) {
+            all_outside = false;
+            break;
+          }
+        if (all_outside)
+          return true;
+      }
+      return false;
+    };
+    return !separates(a, b) && !separates(b, a);
   }
 
   void segment_adjacent_volumes(const PFace& pface, std::vector<Volume_cell>& volumes, std::map<PFace, std::pair<int, int> >& map_volumes) {

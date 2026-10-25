@@ -1501,7 +1501,34 @@ public:
       }
     );
 
-    std::size_t line_idx = m_intersection_graph.add_line(line);
+    // An intersection with another line may coincide with a vertex on the bbox.
+    sorted_vertices.erase(std::unique(sorted_vertices.begin(), sorted_vertices.end(),
+      [](const std::pair<IkFT, IVertex>& a, const std::pair<IkFT, IVertex>& b) { return a.second == b.second; }), sorted_vertices.end());
+
+    // The line may already exist, e.g., if it lies in a side of the bbox and has been created by intersecting the support
+    // planes with the bbox. Then, the existing line is extended by the support planes.
+    std::size_t line_idx = std::size_t(-1);
+    // Such a line passes through the first vertex, which lies on the boundary of the bbox.
+    {
+      const IVertex first = sorted_vertices.front().second;
+      const IVertex last = sorted_vertices.back().second;
+      for (const auto& e : m_intersection_graph.incident_edges(first)) {
+        const IVertex other = m_intersection_graph.target(e);
+        if (other == first)
+          continue;
+        if (CGAL::collinear(m_intersection_graph.point_3(first), m_intersection_graph.point_3(other), m_intersection_graph.point_3(last))) {
+          line_idx = m_intersection_graph.line(e);
+          break;
+        }
+      }
+    }
+
+    if (line_idx != std::size_t(-1)) {
+      add_to_existing_line(line_idx, support_planes_idx, sorted_vertices);
+      return;
+    }
+
+    line_idx = m_intersection_graph.add_line(line);
 
     for (std::size_t sp_idx : support_planes_idx) {
       Support_plane& sp = support_plane(sp_idx);
@@ -1521,6 +1548,82 @@ public:
     }
 
     m_intersection_graph.set_vertices_on_line(line_idx, std::move(sorted_vertices));
+  }
+
+  // Adds the support planes to an existing line, e.g., a line in a side of the bbox, and inserts the given vertices into it.
+  // The existing edges are split at the new vertices.
+  void add_to_existing_line(std::size_t line_idx, const std::set<std::size_t>& support_planes_idx, const std::vector<std::pair<IkFT, IVertex> >& new_vertices) {
+    const typename Intersection_kernel::Line_3& line = m_intersection_graph.line(line_idx);
+    auto u = [&](IVertex v) { return line.to_vector() * (m_intersection_graph.point_3(v) - line.point()); };
+
+    std::vector<std::pair<IkFT, IVertex> > old_vertices(m_intersection_graph.vertices_on_line(line_idx).begin(), m_intersection_graph.vertices_on_line(line_idx).end());
+    std::set<IVertex> all;
+    for (const auto& p : old_vertices)
+      all.insert(p.second);
+    for (const auto& p : new_vertices)
+      all.insert(p.second);
+
+    std::vector<std::pair<IkFT, IVertex> > sorted;
+    for (IVertex v : all)
+      sorted.push_back(std::make_pair(u(v), v));
+    std::sort(sorted.begin(), sorted.end(), [](const auto& a, const auto& b) { return a.first < b.first; });
+
+    // Split the existing edges at the vertices lying in their interior.
+    for (std::size_t i = 0; i + 1 < old_vertices.size(); i++) {
+      const IVertex a = old_vertices[i].second;
+      const IVertex b = old_vertices[i + 1].second;
+      if (!m_intersection_graph.is_edge(a, b))
+        continue;
+      const IkFT ua = u(a), ub = u(b);
+      std::vector<IVertex> interior;
+      for (const auto& p : sorted)
+        if ((ua < p.first && p.first < ub) || (ub < p.first && p.first < ua))
+          interior.push_back(p.second);
+      if (interior.empty())
+        continue;
+      if (ub < ua)
+        std::reverse(interior.begin(), interior.end());
+
+      IEdge edge = m_intersection_graph.edge(a, b);
+      const std::set<std::size_t> planes = m_intersection_graph.intersected_planes(edge);
+      for (std::size_t plane_idx : planes)
+        support_plane(plane_idx).iedges().erase(edge);
+      IVertex last = a;
+      for (IVertex v : interior) {
+        m_intersection_graph.split_edge(edge, v);
+        CGAL_assertion(m_intersection_graph.is_edge(last, v) && m_intersection_graph.is_edge(v, b));
+        for (std::size_t plane_idx : planes)
+          support_plane(plane_idx).iedges().insert(m_intersection_graph.edge(last, v));
+        edge = m_intersection_graph.edge(v, b);
+        last = v;
+      }
+      for (std::size_t plane_idx : planes)
+        support_plane(plane_idx).iedges().insert(edge);
+    }
+
+    // Add missing edges and the support planes to all edges between the new vertices.
+    for (std::size_t i = 0; i + 1 < sorted.size(); i++) {
+      const IVertex a = sorted[i].second, b = sorted[i + 1].second;
+      // Only the part of the line between the vertices of the new line belongs to the support planes.
+      if (sorted[i].first < u(new_vertices.front().second) && sorted[i].first < u(new_vertices.back().second))
+        continue;
+      if (u(new_vertices.front().second) < sorted[i + 1].first && u(new_vertices.back().second) < sorted[i + 1].first)
+        continue;
+      auto pair = m_intersection_graph.add_edge(a, b, support_planes_idx);
+      if (pair.second)
+        m_intersection_graph.set_line(pair.first, line_idx);
+      CGAL_assertion(m_intersection_graph.line(pair.first) == line_idx);
+      for (std::size_t plane_idx : m_intersection_graph.intersected_planes(pair.first))
+        support_plane(plane_idx).iedges().insert(pair.first);
+    }
+
+    for (std::size_t sp_idx : support_planes_idx) {
+      Support_plane& sp = support_plane(sp_idx);
+      if (sp.data().lines.find(line_idx) == sp.data().lines.end())
+        sp.data().lines[line_idx] = typename Intersection_kernel::Line_2(sp.to_2d(m_intersection_graph.point_3(sorted.front().second)), sp.to_2d(m_intersection_graph.point_3(sorted.back().second)));
+    }
+
+    m_intersection_graph.set_vertices_on_line(line_idx, std::move(sorted));
   }
 
   template<typename IVertexRange>

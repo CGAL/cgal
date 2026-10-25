@@ -883,14 +883,23 @@ private:
   void add_polygons(const std::vector<std::vector<typename Intersection_kernel::Point_3> >& bbox_faces, std::vector<std::size_t>& input_polygons) {
     add_bbox_faces(bbox_faces);
 
-    // Filter input polygons
+    // Input polygons lying in a side of the bbox, e.g., on a split plane of the octree, are not propagated, as the side is
+    // part of the partition anyway. They are kept with the bbox support plane to identify the faces they overlap.
     std::vector<bool> remove(input_polygons.size(), false);
-    for (std::size_t i = 0; i < 6; i++)
-      for (std::size_t j = 0; j < m_input_planes.size(); j++)
+    std::vector<std::pair<std::size_t, std::size_t> > on_bbox; // bbox support plane, input polygon
+    for (std::size_t j = 0; j < m_input_planes.size(); j++)
+      for (std::size_t i = 0; i < 6 && !remove[j]; i++)
         if (m_data.support_plane(i).exact_plane() == m_input_planes[j] || m_data.support_plane(i).exact_plane() == m_input_planes[j].opposite()) {
-          m_data.support_plane(i).set_input_polygon(j);
           remove[j] = true;
+          on_bbox.push_back(std::make_pair(i, j));
         }
+
+    std::vector<std::vector<IkPoint_3> > removed_polygons(on_bbox.size());
+    std::vector<std::size_t> removed_indices(on_bbox.size());
+    for (std::size_t r = 0; r < on_bbox.size(); r++) {
+      removed_polygons[r] = m_input_polygons[on_bbox[r].second];
+      removed_indices[r] = input_polygons[on_bbox[r].second];
+    }
 
     std::size_t write = 0;
     for (std::size_t i = 0; i < input_polygons.size(); i++)
@@ -903,6 +912,19 @@ private:
     m_input_polygons.resize(write);
     m_input_planes.resize(write);
     input_polygons.resize(write);
+
+    // The removed polygons are appended to the input polygons of the partition, so that faces can refer to them.
+    for (std::size_t r = 0; r < on_bbox.size(); r++) {
+      Support_plane& sp = m_data.support_plane(on_bbox[r].first);
+      std::vector<IkPoint_2> polygon;
+      for (const IkPoint_3& p : removed_polygons[r])
+        polygon.push_back(sp.to_2d(p));
+      if (sp.data().actual_input_polygon == std::size_t(-1))
+        sp.set_input_polygon(input_polygons.size());
+      sp.data().coinciding_polygons.push_back(std::make_pair(input_polygons.size(), std::move(polygon)));
+      input_polygons.push_back(removed_indices[r]);
+    }
+
     add_input_polygons();
 
     // Order vertices on lines
@@ -1022,18 +1044,49 @@ private:
     using Map_p2vv = std::map<std::set<std::size_t>, std::pair<IVertex, IVertex> >;
     Map_p2vv map_p2vv;
 
+    // Each line of two support planes leaves the bbox in two vertices on the bbox. Further planes may pass through these
+    // vertices without containing the line, so the set of planes of the line is the intersection of the plane sets of
+    // both vertices. Lines lying in more than two planes are thus only created once.
+    std::map<IVertex, std::set<std::size_t> > vertex_planes;
+    std::map<std::pair<std::size_t, std::size_t>, std::vector<IVertex> > pair2vertices;
     for (const auto ivertex : m_data.ivertices()) {
-      const auto key = m_data.intersected_planes(ivertex, false);
-      if (key.size() < 2) {
+      std::set<std::size_t> planes = m_data.intersected_planes(ivertex, false);
+      if (planes.size() < 2)
         continue;
-      }
 
-      const auto pair = map_p2vv.insert(
-        std::make_pair(key, std::make_pair(ivertex, IVertex())));
-      const bool is_inserted = pair.second;
-      if (!is_inserted) {
-        pair.first->second.second = ivertex;
+      for (auto a = planes.begin(); a != planes.end(); ++a)
+        for (auto b = std::next(a); b != planes.end(); ++b)
+          pair2vertices[std::make_pair(*a, *b)].push_back(ivertex);
+      vertex_planes[ivertex] = std::move(planes);
+    }
+
+    for (const auto& [pair, vertices] : pair2vertices) {
+      if (vertices.size() < 2)
+        continue;
+
+      // The line may run within a side of the bbox and touch further bbox vertices. Its extreme vertices are used.
+      IVertex first = vertices.front(), last = vertices.back();
+      if (vertices.size() > 2) {
+        typename Intersection_kernel::Line_3 line;
+        CGAL_assertion_code(bool intersect =) intersection(m_data.support_plane(pair.first).exact_plane(), m_data.support_plane(pair.second).exact_plane(), line);
+        CGAL_assertion(intersect);
+        auto u = [&](IVertex v) { return line.to_vector() * (m_data.point_3(v) - line.point()); };
+        for (IVertex v : vertices) {
+          if (u(v) < u(first))
+            first = v;
+          if (u(last) < u(v))
+            last = v;
+        }
       }
+      if (first == last)
+        continue;
+
+      std::set<std::size_t> key;
+      const std::set<std::size_t>& planes_first = vertex_planes[first];
+      const std::set<std::size_t>& planes_last = vertex_planes[last];
+      std::set_intersection(planes_first.begin(), planes_first.end(), planes_last.begin(), planes_last.end(), std::inserter(key, key.begin()));
+      CGAL_assertion(key.size() >= 2);
+      map_p2vv.insert(std::make_pair(key, std::make_pair(first, last)));
     }
 
     std::unordered_map<std::set<std::size_t>, IVertex, boost::hash<std::set<std::size_t>>> internal_v;

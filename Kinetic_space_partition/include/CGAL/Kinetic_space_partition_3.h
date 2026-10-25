@@ -852,7 +852,8 @@ public:
     std::vector<bool> added_volumes(number_of_volumes(), false);
 
     std::deque<std::size_t> queue;
-    queue.push_back(0);
+    if (number_of_volumes() > 0)
+      queue.push_back(0);
 
     bool first = true;
     while (!queue.empty()) {
@@ -1112,10 +1113,15 @@ private:
       std::size_t sp_idx = static_cast<std::size_t>(-1);
       for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
         if (p.input_polygons[i] == polygon_index) {
-          auto it = p.input2sp.find(i);
-          CGAL_assertion(it != p.input2sp.end());
-          if (it != p.input2sp.end())
-            sp_idx = it->second;
+          auto sp_it = p.input2sp.find(i);
+          if (sp_it != p.input2sp.end())
+            sp_idx = sp_it->second;
+          else {
+            // The polygon lies in a side of the bbox of the partition. Its faces are the faces overlapping it.
+            for (std::size_t f = 0; f < p.face_input.size(); f++)
+              if (p.face_input[f] == i)
+                *it++ = std::make_pair(idx, f);
+          }
           break;
         }
       }
@@ -1704,7 +1710,8 @@ private:
         KSP_3::internal::dump_polygon<GeomTraits>(m_input_polygons[i], std::to_string(i) + "-input_polygon");
     }
 
-    split_octree();
+    if (!split_octree())
+      return false;
     m_partitions.resize(m_partition_nodes.size());
     std::iota(m_partitions.begin(), m_partitions.end(), 0);
 
@@ -2288,8 +2295,16 @@ private:
 
       lcc.template info<2>(face_dart).plane = m_partition_nodes[face.first].sp_exact_planes[sp];
     }
-    else {
-      CGAL_assertion(lcc.template info<2>(face_dart).part_of_initial_polygon == m_partition_nodes[face.first].face_part_of_input_polygon[face.second]);
+    else if (!lcc.template info<2>(face_dart).part_of_initial_polygon && m_partition_nodes[face.first].face_part_of_input_polygon[face.second]) {
+      // A face on a split plane of the octree is present in both adjacent leaves. An input polygon lying in the split plane
+      // may only be assigned to one of the leaves, so only one of them marks the face as part of the input polygon.
+      const int ip = static_cast<int>(m_partition_nodes[face.first].face_input[face.second]);
+      if (ip != -1) {
+        const std::size_t input = m_regularized2input[m_partition_nodes[face.first].input_polygons[ip]].front();
+        lcc.template info<2>(face_dart).input_polygon_index = static_cast<Face_support>(input);
+        lcc.template info<2>(face_dart).input_plane_index = static_cast<int>(m_input_plane_indices[input]);
+      }
+      lcc.template info<2>(face_dart).part_of_initial_polygon = true;
     }
   }
 
@@ -2714,7 +2729,8 @@ private:
     return typename Intersection_kernel::Point_3(-(b * p.y() + c * p.z() + d) / a, p.y(), p.z());
   }
 
-  void split_octree() {
+  // Returns false if the input polygons do not span a volume, e.g., if all of them lie in the same plane.
+  bool split_octree() {
     // Octree creation for sub partition
     std::size_t count = 0;
     for (const auto& p : m_input_polygons)
@@ -2762,6 +2778,17 @@ private:
           pts.push_back(project_along_axis(m_input_planes[i], to_exact(pt)));
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
         std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
+      }
+    }
+
+    // The bounding box, which is dilated per dimension, needs a positive extent in each dimension.
+    for (std::size_t d = 0; d < 3; d++) {
+      auto cmp = [d](const typename Intersection_kernel::Point_3& a, const typename Intersection_kernel::Point_3& b) { return a[d] < b[d]; };
+      auto mm = std::minmax_element(pts.begin(), pts.end(), cmp);
+      if (mm.first == pts.end() || (*mm.first)[d] == (*mm.second)[d]) {
+        KSP::internal::Log_line() << "Warning: The input polygons lie in a plane " << (m_parameters.reorient_bbox ? "" : "orthogonal to an axis ")
+          << "and do not span a volume. No partition is created.";
+        return false;
       }
     }
 
@@ -2878,6 +2905,8 @@ private:
       }
     if (m_parameters.verbose)
       std::cout << "input split into " << m_partition_nodes.size() << " partitions" << std::endl;
+
+    return true;
   }
 };
 
