@@ -1021,7 +1021,8 @@ public:
       }
 
       ++i;
-      std::cout << std::endl;
+      if(CGAL_SMP_IA_DEBUG_L0)
+        std::cout << std::endl;
     }
 
     // Check postconditions

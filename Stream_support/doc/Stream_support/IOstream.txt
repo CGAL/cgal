@@ -505,8 +505,8 @@ which can perform some combinatorial repairing to ensure the input data is a 2-m
 
   <tr>
     <th>\ref IOStreamMedit "MEDIT"</th>
-    <td>\link CGAL::IO::read_MEDIT(std::istream&, PointRange&, CellRange&, std::vector<int>&,bool) `CGAL::IO::read_MEDIT()` \endlink</td>
-    <td><center> - </center></td>
+    <td>\link CGAL::IO::read_MEDIT(std::istream&, PointRange&, const NamedParameters&) `CGAL::IO::read_MEDIT()` \endlink</td>
+    <td>\link CGAL::IO::write_MEDIT(std::ostream&, const PointRange&, const NamedParameters&) `CGAL::IO::write_MEDIT()` \endlink</td>
   </tr>
 </table>
 
@@ -562,7 +562,7 @@ Other data structures of \cgal have their own I/O functions, see their respectiv
 \subsection IOstreamOther Reading Unsupported Formats
 
 If \cgal does not support the file format of your data, the
-<a href="https://www.boost.org/doc/libs/release/libs/property_tree/">`boost::property_tree`</a>
+<a href="https://www.boost.org/doc/libs/latest/doc/html/property_tree.html">`boost::property_tree`</a>
 might come in handy if your data has a simple-enough structure.
 The following small example shows how to parse an <a href="https://en.wikipedia.org/wiki/XML">XML</a> file,
 which might look as follows:

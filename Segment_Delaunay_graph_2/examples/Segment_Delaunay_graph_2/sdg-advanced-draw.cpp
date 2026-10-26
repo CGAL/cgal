@@ -7,6 +7,7 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/use.h>
 
 #include <fstream>
 #include <iostream>
@@ -14,7 +15,7 @@
 #include <set>
 #include <vector>
 
-#define SDG_DRAW_DEBUG // debug log
+// #define SDG_DRAW_DEBUG // debug log
 #define SDG_DRAW_DUMP_FILES // print input / output
 // #define SINGLE_INPUT_FILE // if not defined, each segment of the input has its own file
 
@@ -250,6 +251,8 @@ void fill_Voronoi_structure(const SDG& sdg,
   std::cout << ns << " segments" << std::endl;
   std::cout << nr << " rays" << std::endl;
   std::cout << np << " parabolas" << std::endl;
+#else
+   CGAL_USE(nl); CGAL_USE(ns); CGAL_USE(nr); CGAL_USE(np);
 #endif
 }
 

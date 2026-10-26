@@ -21,7 +21,7 @@ typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<Triangle_mesh> He
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   Triangle_mesh tm;
   if (!CGAL::IO::read_polygon_mesh(filename, tm) ||
