@@ -3007,7 +3007,7 @@ Release date: May 2017
     sets based on the assumption that they sample a curve in 2D or a
     surface in 3D.
 
-### More changes to CGAL and the Boost Graph Library (BGL)
+### CGAL and the Boost Graph Library (BGL)
 
 - Add function `CGAL::convert_nef_polyhedron_to_polygon_mesh()` to
     convert a `Nef_polyhedron_3` to any model of the `MutableFaceGraph`
