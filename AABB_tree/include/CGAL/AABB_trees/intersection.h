@@ -50,7 +50,7 @@ namespace AABB_trees {
   ///     \cgalParamDefault{An identity transformation}
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{use_inverse_transformation}
-  ///     \cgalParamDescription{If true, the inverse of the transformations are used to accelerate the queries.
+  ///     \cgalParamDescription{If true, the inverse of the transformations are used to accelerate the queries.}
   ///     \cgalParamType{`CGAL::Tag_true` or `CGAL::Tag_false`}
   ///     \cgalParamDefault{`CGAL::Tag_false`}
   ///     \cgalParamExtra{The result may be less accurate than using the original transformations.}
