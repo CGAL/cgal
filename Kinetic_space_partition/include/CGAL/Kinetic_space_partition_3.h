@@ -1607,11 +1607,12 @@ private:
     std::atomic<bool> failed(false);
 
     std::cout.precision(17);
-    if (m_parameters.verbose)
+    if (m_parameters.verbose) {
       if (std::is_same<ConcurrencyTag, Sequential_tag>::value)
         std::cout << "sequential" << std::endl;
       else if (std::is_same<ConcurrencyTag, Parallel_tag>::value)
         std::cout << "parallel" << std::endl;
+    }
 
     for_each_leaf<ConcurrencyTag>([&](const std::size_t i) {
       if (failed)
