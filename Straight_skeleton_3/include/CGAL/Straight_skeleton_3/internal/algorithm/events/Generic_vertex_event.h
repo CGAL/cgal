@@ -167,16 +167,12 @@ public:
 
   bool operator==(const Generic_vertex_event& other) const
   {
-    return (Base::time() == other.time()) &&
-            (point_ == other.point_) &&
-            ((facet_1_.lock() == other.facet_1_.lock() &&
-              facet_2_.lock() == other.facet_2_.lock()) ||
-            (facet_1_.lock() == other.facet_2_.lock() &&
-              facet_2_.lock() == other.facet_1_.lock())) &&
-            ((vertex_1_.lock() == other.vertex_1_.lock() &&
-              vertex_2_.lock() == other.vertex_2_.lock()) ||
-            (vertex_1_.lock() == other.vertex_2_.lock() &&
-              vertex_2_.lock() == other.vertex_1_.lock()));
+    return (Base::time() == other.time() &&
+            point_ == other.point_ &&
+            ((facet_1_.lock() == other.facet_1_.lock() && facet_2_.lock() == other.facet_2_.lock()) ||
+             (facet_1_.lock() == other.facet_2_.lock() && facet_2_.lock() == other.facet_1_.lock())) &&
+            ((vertex_1_.lock() == other.vertex_1_.lock() && vertex_2_.lock() == other.vertex_2_.lock()) ||
+             (vertex_1_.lock() == other.vertex_2_.lock() && vertex_2_.lock() == other.vertex_1_.lock())));
   }
 
 protected:

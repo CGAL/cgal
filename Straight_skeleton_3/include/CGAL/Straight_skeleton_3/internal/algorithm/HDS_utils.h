@@ -486,7 +486,7 @@ public:
     };
 
     if (const std::optional<bool> cached = Hds_utils::reflex_status(edge)) {
-#ifndef NDEBUG
+#ifndef CGAL_NDEBUG
       const bool recomputed = compute_reflex();
       if(cached != recomputed) {
         std::cerr << __FILE__ << ":" << __LINE__ << std::endl;

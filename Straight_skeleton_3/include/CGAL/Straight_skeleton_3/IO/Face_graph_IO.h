@@ -84,7 +84,7 @@ void save_colored_mesh(const PolygonMesh& pmesh,
     colors[value] = Color(static_cast<unsigned char>(dist(gen)),
                           static_cast<unsigned char>(dist(gen)),
                           static_cast<unsigned char>(dist(gen)));
-    std::cout << " value " << value << " has color " << colors[value] << std::endl;
+    // std::cout << " value " << value << " has color " << colors[value] << std::endl;
   }
 
   auto& nc_pmesh = const_cast<PolygonMesh&>(pmesh);

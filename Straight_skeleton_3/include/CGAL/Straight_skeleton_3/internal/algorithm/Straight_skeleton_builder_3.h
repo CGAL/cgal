@@ -527,9 +527,15 @@ public:
       CGAL_assertion(facet->get_plane().a() == Hds_utils::get_base_plane(facet).a());
       CGAL_assertion(facet->get_plane().b() == Hds_utils::get_base_plane(facet).b());
       CGAL_assertion(facet->get_plane().c() == Hds_utils::get_base_plane(facet).c());
-      CGAL_assertion_code(FT speed = Hds_utils::get_speed(facet);)
+      CGAL_assertion_code(const FT& speed = Hds_utils::get_speed(facet);)
       CGAL_assertion(facet->get_plane().d() == Hds_utils::get_base_plane(facet).d() - speed * current_time);
       CGAL_assertion_code(})
+
+#ifdef CGAL_SS3_DEBUG_PRINT_QUEUE
+      print_queue(queue);
+      bool queue_ok = check_queue_correctness(queue, polyhedron, current_time, time_future_bound);
+      std::cout << "queue sanity = " << queue_ok << std::endl;
+#endif
 
       Abstract_event_sptr event = nextEvent(queue, polyhedron, current_time);
       if (!event) {
@@ -575,8 +581,6 @@ public:
         continue;
       }
 
-      current_time = upcoming_event_time;
-
 #ifdef CGAL_SS3_DUMP_FILES
       IO::write_OBJ("results/event_" + std::to_string(step_id_) + ".obj", polyhedron,
                     parameters::do_not_triangulate_faces(true));
@@ -584,7 +588,9 @@ public:
                     parameters::do_not_triangulate_faces(false));
 #endif
 
-      if (visitor_ && event->getType() == Abstract_event::SAVE_EVENT) {
+      current_time = upcoming_event_time;
+
+      if (visitor_ && event->getType() == Event_type::SAVE_EVENT) {
         visitor_->on_save_event(polyhedron, current_time);
       }
 
@@ -943,7 +949,6 @@ public:
     Point_3 o_tgt = Transformation::offset_point_from_base(edge->target(), event_time);
     CGAL_assertion(o_src != o_tgt);
     CGAL_assertion(CGAL::collinear(o_src, point, o_tgt));
-
     return CGAL::collinear_are_ordered_along_line(o_src, point, o_tgt);
   }
 
@@ -1467,7 +1472,7 @@ public:
         break;
       }
 
-      // if here, it's a triangle evnet
+      // if here, it's a triangle event
       Triangle_event_sptr triangle_event = Triangle_event::create();
       triangle_event->set_time(event_time);
       triangle_event->set_point(point);
@@ -4074,12 +4079,6 @@ public:
     timer.stop();
     CGAL_SS3_CORE_TRACE_V(2, "Sought All Local Events in: " << timer.time());
 #endif
-
-#ifdef CGAL_SS3_DEBUG_PRINT_QUEUE
-    print_queue(queue);
-#endif
-
-    // CGAL_postcondition(check_queue_correctness(queue, polyhedron, current_time, time_future_bound));
   }
 
   /**
@@ -4139,10 +4138,6 @@ public:
 #ifdef CGAL_SS3_RUN_TIMERS
     timer.stop();
     CGAL_SS3_CORE_TRACE_V(2, "Sought All Events in: " << timer.time());
-#endif
-
-#ifdef CGAL_SS3_DEBUG_PRINT_QUEUE
-    print_queue(queue);
 #endif
   }
 

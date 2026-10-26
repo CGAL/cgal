@@ -1003,10 +1003,10 @@ public:
       return true;
     };
 
-#ifndef NDEBUG
+#ifndef CGAL_NDEBUG
     CGAL_SS3_TRANSF_TRACE_CODE(std::vector<Stability_failure> failures;)
     CGAL_SS3_TRANSF_TRACE_V(32, "Is input in general position?\n" << are_planes_in_general_position(polyhedron, &failures));
-#endif // NDEBUG
+#endif
 
 #ifdef CGAL_SS3_DUMP_FILES
     std::ofstream out_unstable_before("results/input_unstable_vertices.xyz");
@@ -2767,9 +2767,9 @@ public:
           CGAL_assertion(id_to_polygons.size() == vertex->degree());
         }
       }
-#endif
+#endif // CGAL_SS3_DUMP_FILES_PP
 
-#ifndef NDEBUG
+#ifndef CGAL_NDEBUG
       // Sanity checks
       // - a boundary facet cannot have an OUTSIDE volume on its bottom and an INSIDE volume on its top
       for (std::size_t i=0; i<polygons.size(); ++i) {
@@ -2801,7 +2801,7 @@ public:
         }
       }
       CGAL_assertion(found_facets.size() == vertex->degree());
-#endif
+#endif // CGAL_NDEBUG
 
       // Now, we want to deal with the tentative cells
 
@@ -3065,7 +3065,7 @@ public:
 
         CGAL_SS3_TRANSF_TRACE_V(32, "Model:\n" << CpModelStats(proto));
 
-#ifndef NDEBUG
+#ifndef CGAL_NDEBUG
         const std::string validation_error = ValidateCpModel(proto);
         if (!validation_error.empty()) {
           CGAL_SS3_TRANSF_TRACE_V(1, "Error: invalid model (" << validation_error << ")");
@@ -3622,8 +3622,8 @@ public:
         ok = rand_move_points(polyhedron);
       }
     } else {
-      CGAL_assertion(are_planes_in_general_position(polyhedron));
-      CGAL_assertion(!Self_intersection::has_self_intersecting_surface(polyhedron));
+      CGAL_postcondition(are_planes_in_general_position(polyhedron));
+      CGAL_postcondition(!Self_intersection::has_self_intersecting_surface(polyhedron));
     }
 
 #ifdef CGAL_SS3_DUMP_FILES
