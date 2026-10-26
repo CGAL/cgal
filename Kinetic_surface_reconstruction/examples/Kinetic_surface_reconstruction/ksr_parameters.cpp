@@ -78,7 +78,7 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   parser.add_val_parameter("-k", parameters.k_intersections);
   parser.add_val_parameter("-odepth", parameters.max_octree_depth);
   parser.add_val_parameter("-osize", parameters.max_octree_node_size);
-  parser.add_val_parameter("-sequential", parameters.sequential);
+  parser.add_bool_parameter("-sequential", parameters.sequential);
 
   // Reconstruction.
   parser.add_val_parameter("-lambda", parameters.graphcut_lambda);
@@ -92,9 +92,8 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
 }
 
 int main(const int argc, const char** argv) {
-  system("cls");
   // Parameters.
-  std::cout.precision(20);
+  std::cout.precision(17);
   std::cout << std::endl;
   std::cout << "--- PARSING INPUT: " << std::endl;
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
@@ -112,10 +111,6 @@ int main(const int argc, const char** argv) {
   Point_set point_set;
   std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> regions;
   std::filesystem::path path = parameters.data;
-
-//   if (CGAL::IO::read_VG("planar_shapes.vg", point_set, std::back_inserter(regions))) {
-//     std::cout << "Successfully read planar_shapes_.vg" << std::endl;
-//   }
 
   // Input.
   if (!regions.empty())
@@ -190,21 +185,19 @@ int main(const int argc, const char** argv) {
   typename KSR::LCC lcc_input;
   std::string lcc_file = path.filename().generic_string() + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".lcc";
 
-//   if (!regions.empty() && std::filesystem::exists(lcc_file)) {
-//     std::ifstream lccfile(lcc_file);
-//     if (lccfile.is_open()) {
-//       lccfile >> lcc_input;
-//       lccfile.close();
-//     }
-//   }
+  if (!regions.empty() && std::filesystem::exists(lcc_file)) {
+    std::ifstream lccfile(lcc_file);
+    if (lccfile.is_open()) {
+      lccfile >> lcc_input;
+      lccfile.close();
+    }
+  }
 
   Timer timer;
   timer.start();
 
-  if (regions.empty()) {
+  if (regions.empty())
     ksr.detect_planar_shapes(param);
-    //CGAL::IO::write_VG("planar_shapes.vg", point_set, ksr.planar_shapes());
-  }
   else if (lcc_input.template one_dart_per_cell<3>().empty() && lcc_input.template one_dart_per_cell<3>().empty())
       ksr.insert_planar_shapes(regions);
 
@@ -225,14 +218,14 @@ int main(const int argc, const char** argv) {
     if (parameters.sequential)
       ksr.partition<CGAL::Sequential_tag>(parameters.k_intersections, param);
     else
-      ksr.partition<CGAL::Parallel_if_available_tag>(parameters.k_intersections, param);
+      ksr.partition<CGAL::Parallel_tag>(parameters.k_intersections, param);
 
     after_partition = timer.time();
 
     const typename KSR::LCC& lcc = ksr.get_linear_cell_complex();
-//     std::ofstream file(lcc_file);
-//     file << lcc;
-//     file.close();
+    std::ofstream file(lcc_file);
+    file << lcc;
+    file.close();
   }
 
   std::vector<Point_3> vtx;
@@ -252,7 +245,7 @@ int main(const int argc, const char** argv) {
   std::cout << polylist.size() << " polygons, " << vtx.size() << " vertices" << std::endl;
 
   if (polylist.size() > 0)
-    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+    CGAL::IO::write_polygon_soup(path.stem().string() + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
 
   timer.stop();
 
@@ -274,7 +267,7 @@ int main(const int argc, const char** argv) {
 
     if (polylist.size() > 0) {
       non_empty = true;
-      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+      CGAL::IO::write_polygon_soup(path.stem().string() + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
     }
   }
 

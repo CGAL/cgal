@@ -134,11 +134,11 @@ Polygons in reconstruction
 <TD class="math" ALIGN=CENTER NOWRAP>
 Vertices in reconstruction
 <TD class="math" ALIGN=CENTER NOWRAP>
-Shape Detection
+Shape Detection and initialization
 <TD class="math" ALIGN=CENTER NOWRAP>
 Kinetic Space Partition
 <TD class="math" ALIGN=CENTER NOWRAP>
-Total Time (sequential)
+Total Time
 <TD class="math" ALIGN=CENTER NOWRAP>
 Total Time (parallel)
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=11><HR>
@@ -159,13 +159,13 @@ Foam_box
 <TD class="math" ALIGN=RIGHT NOWRAP>
 464
 <TD class="math" ALIGN=RIGHT NOWRAP>
-6.6
+6,3
 <TD class="math" ALIGN=RIGHT NOWRAP>
-3.2
+6,2
 <TD class="math" ALIGN=RIGHT NOWRAP>
-13.1
+12,7
 <TD class="math" ALIGN=RIGHT NOWRAP>
-9.2
+8,7
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -183,13 +183,13 @@ Lans
 <TD class="math" ALIGN=RIGHT NOWRAP>
 1.023
 <TD class="math" ALIGN=RIGHT NOWRAP>
-28.2
+27,5
 <TD class="math" ALIGN=RIGHT NOWRAP>
-19,2
+13,7
 <TD class="math" ALIGN=RIGHT NOWRAP>
-47,0
+41,7
 <TD class="math" ALIGN=RIGHT NOWRAP>
-35,7
+36,3
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -201,19 +201,19 @@ Meeting Room
 <TD class="math" ALIGN=RIGHT NOWRAP>
 777
 <TD class="math" ALIGN=RIGHT NOWRAP>
-27.102
+26.602
 <TD class="math" ALIGN=RIGHT NOWRAP>
-2.813
+2.711
 <TD class="math" ALIGN=RIGHT NOWRAP>
-11.574
+11.395
 <TD class="math" ALIGN=RIGHT NOWRAP>
-40.65
+39,2
 <TD class="math" ALIGN=RIGHT NOWRAP>
-78.1
+123,1
 <TD class="math" ALIGN=RIGHT NOWRAP>
-151.7
+172,8
 <TD class="math" ALIGN=RIGHT NOWRAP>
-88.6
+99,3
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -223,21 +223,21 @@ Full Thing
 <TD class="math" ALIGN=RIGHT NOWRAP>
 1.974
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.971
+1.790
 <TD class="math" ALIGN=RIGHT NOWRAP>
-22.163
+22.491
 <TD class="math" ALIGN=RIGHT NOWRAP>
-2.556
+2.563
 <TD class="math" ALIGN=RIGHT NOWRAP>
-13.014
+12.857
 <TD class="math" ALIGN=RIGHT NOWRAP>
-18,1
+8,5
 <TD class="math" ALIGN=RIGHT NOWRAP>
-534,0
+481,6
 <TD class="math" ALIGN=RIGHT NOWRAP>
-588,2
+494,0
 <TD class="math" ALIGN=RIGHT NOWRAP>
-269,5
+177,8
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -255,13 +255,13 @@ Hilbert cube
 <TD class="math" ALIGN=RIGHT NOWRAP>
 4.112
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,7
+0,6
 <TD class="math" ALIGN=RIGHT NOWRAP>
-11,0
+10,8
 <TD class="math" ALIGN=RIGHT NOWRAP>
-12,4
+11,8
 <TD class="math" ALIGN=RIGHT NOWRAP>
-12,1
+3,7
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -279,13 +279,13 @@ Asian Dragon
 <TD class="math" ALIGN=RIGHT NOWRAP>
 24.656
 <TD class="math" ALIGN=RIGHT NOWRAP>
-54,9
+31,6
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1144,9
+844,3
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1310,7
+881,3
 <TD class="math" ALIGN=RIGHT NOWRAP>
-610,7
+335,9
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -293,25 +293,25 @@ Building_C
 <TD class="math" ALIGN=RIGHT NOWRAP>
 1.000.000
 <TD class="math" ALIGN=RIGHT NOWRAP>
-221
+225
 <TD class="math" ALIGN=RIGHT NOWRAP>
-172
+177
 <TD class="math" ALIGN=RIGHT NOWRAP>
-2.074
+2.522
 <TD class="math" ALIGN=RIGHT NOWRAP>
-358
+321
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.412
+1.446
 <TD class="math" ALIGN=RIGHT NOWRAP>
-47,9
+33,1
 <TD class="math" ALIGN=RIGHT NOWRAP>
-28.3
+23,0
 <TD class="math" ALIGN=RIGHT NOWRAP>
-76,3
+56,8
 <TD class="math" ALIGN=RIGHT NOWRAP>
-58,3
+45,7
 <TR>
-<TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
+<TD ALIGN=LEFT NOWRAP COLSPAN=11><HR>
 </TABLE>
 
 The parameters to reconstruct these models are available in the following table:
@@ -479,7 +479,7 @@ Building_C
 <TD class="math" ALIGN=RIGHT NOWRAP>
 2
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,6
+0,77
 <TR>
 <TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
 </TABLE>

@@ -43,7 +43,7 @@ The main parameter of this method is `k`, the maximum number of intersections th
 The default bounding box of the partition is axis-aligned. Setting `reorient_bbox` to true aligns the x-axis of the bounding box with the direction of the largest variation in horizontal direction of the input data while maintaining the z-axis.
 
 - `bbox_dilation_ratio`: FT\n
-By default the size bounding box of the input data is increased by 10% to avoid that input polygons are coplanar with the sides of the bounding box.
+By default, the size of the bounding box of the input data is increased by 10% to avoid that input polygons are coplanar with the sides of the bounding box.
 
 - `max_octree_node_size`: unsigned int\n
 A kinetic partition is split into 8 subpartitions using an octree if the number of intersecting polygons is larger than specified. The default value is 40 polygons.

@@ -395,7 +395,7 @@ public:
   }
 
   /*!
-  \brief inserts polygons, requires `initialize()` afterwards to have effect.
+  \brief inserts polygons, requires `initialize()` or `init_and_partition()` afterwards to have effect.
 
   A plane is fitted to the vertices of each polygon and the polygon is replaced by the convex hull of its vertices projected onto the plane.
   Polygons that are coplanar up to a small tolerance relative to their extent get the same plane, which is fitted to the vertices of all of them.
