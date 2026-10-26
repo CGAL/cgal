@@ -24,6 +24,7 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/centroid.h>
+#include <CGAL/Profile_counter.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -309,6 +310,8 @@ kernel(const FaceRange& face_range,
   if(used_to_find_a_point){
     bool strictly_inside = choose_parameter(get_parameter(np, internal_np::strictly_inside), true);
 
+    CGAL_BRANCH_PROFILER_3(std::string("failures/need_refinements/calls to PMP::kernel_point() filters: "), tmp);
+
     // If we don't want a point on the surface and the kernel is degenerated, do nothing
     if(strictly_inside && ((vertices(kernel).size()<3) || (faces(kernel).size()==1))){
       clear(kernel);
@@ -353,6 +356,8 @@ kernel(const FaceRange& face_range,
       return;
     }
 
+    CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
     // If not, refine the centroid position
     using ExactK = typename EK::Exact_kernel;
     using ExactPoint_3 = typename ExactK::Point_3;
@@ -367,6 +372,8 @@ kernel(const FaceRange& face_range,
       *p = from_exact(double_centroid);
       return;
     }
+
+    CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
 
     // Not inside if the GT kernel is not EPECK
     *p = from_exact(EPoint_3(ecentroid));
