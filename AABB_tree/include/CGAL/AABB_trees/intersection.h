@@ -31,11 +31,17 @@
 
 /// \file AABB_trees/intersection.h
 
-namespace CGAL{
+namespace CGAL {
 namespace AABB_trees {
+
   /// \ingroup PkgAABBTreeRef
   ///
-  /// \brief tests if at least two primitives each from an AABB tree intersect.
+  /// \brief tests if two AABB trees intersect, i.e. if there exists a primitive of `tree1`
+  /// and a primitive of `tree2` that intersect.
+  ///
+  /// Two primitives intersect if their datum intersect according to the traits of the tree.
+  /// Thus, with all documented traits in CGAL, two triangles sharing a vertex are considered
+  /// to intersect, and similarly for other primitives types and types of intersection.
   ///
   /// \cgalNamedParamsBegin
   ///   \cgalParamNBegin{concurrency_tag}
@@ -45,12 +51,14 @@ namespace AABB_trees {
   ///     \cgalParamExtra{`np1` only}
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{transformation}
-  ///     \cgalParamDescription{An affine transformation apply to `tree1` (`tree2`)}
-  ///     \cgalParamType{`CGAL::Aff_transformation_3<Kernel>` where `Kernel` is deduced from `AABBTree1::AABB_traits::Point`, using `Kernel_traits`}
-  ///     \cgalParamDefault{An identity transformation}
+  ///     \cgalParamDescription{An affine transformation applied to `tree1` (`tree2`)}
+  ///     \cgalParamType{`CGAL::Aff_transformation_2<Kernel>` or `CGAL::Aff_transformation_3<Kernel>`, depending
+  ///                    on the dimension of the primitive. The kernel is deduced from `AABBTree1::AABB_traits::Point`
+  ///                    and `AABBTree2::AABB_traits::Point`, respectively}
+  ///     \cgalParamDefault{the identity transformation}
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{use_inverse_transformation}
-  ///     \cgalParamDescription{If true, the inverse of the transformations are used to accelerate the queries.
+  ///     \cgalParamDescription{If `true`, the inverses of the transformations are used to accelerate the queries.}
   ///     \cgalParamType{`CGAL::Tag_true` or `CGAL::Tag_false`}
   ///     \cgalParamDefault{`CGAL::Tag_false`}
   ///     \cgalParamExtra{The result may be less accurate than using the original transformations.}
@@ -121,12 +129,16 @@ namespace AABB_trees {
   ///
   /// Both trees are traversed and all pairs of primitives that intersect are collected.
   /// Each output element is a pair `(id1, id2)` where:
-  ///       - `id1` is the ID of a primitive from `tree1`
-  ///       - `id2` is the ID of a primitive from `tree2`
+  ///  - `id1` is the ID of a primitive from `tree1`
+  ///  - `id2` is the ID of a primitive from `tree2`
   ///
-  /// \tparam AABBTree1        Type of the first AABB tree.
-  /// \tparam AABBTree2        Type of the second AABB tree.
-  /// \tparam OutputIterator   Output iterator storing std::pair<AABBTree1::Primitive::Id, AABBTree2::Primitive::Id>.
+  /// Two primitives intersect if their datum intersect according to the traits of the tree.
+  /// Thus, with all documented traits in CGAL, two triangles sharing a vertex are considered
+  /// to intersect, and similarly for other primitives types and types of intersection.
+  ///
+  /// \tparam AABBTree1        type of the first AABB tree.
+  /// \tparam AABBTree2        type of the second AABB tree.
+  /// \tparam OutputIterator   output iterator storing std::pair<AABBTree1::Primitive::Id, AABBTree2::Primitive::Id>.
   /// \tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   /// \tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   ///
@@ -138,13 +150,15 @@ namespace AABB_trees {
   ///     \cgalParamExtra{`np1` only}
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{transformation}
-  ///     \cgalParamDescription{An affine transformation apply to `tree1` (`tree2`)}
-  ///     \cgalParamType{`CGAL::Aff_transformation_3<Kernel>` where `Kernel` is the kernel associated with `AABBTree1::AABB_traits::Point` (`AABBTree2::AABB_traits::Point`)}
-  ///     \cgalParamDefault{The identity transformation}
+  ///     \cgalParamDescription{An affine transformation applied to `tree1` (`tree2`)}
+  ///     \cgalParamType{`CGAL::Aff_transformation_2<Kernel>` or `CGAL::Aff_transformation_3<Kernel>`, depending
+  ///                    on the dimension of the primitive. The kernel is deduced from `AABBTree1::AABB_traits::Point`
+  ///                    and `AABBTree2::AABB_traits::Point`, respectively}
+  ///     \cgalParamDefault{the identity transformation}
   ///   \cgalParamNEnd
   /// \cgalNamedParamsEnd
   ///
-  /// \see do_intersect()
+  /// \see `do_intersect()`
   template< typename AABBTree1,
             typename AABBTree2,
             typename OutputIterator,
@@ -194,13 +208,10 @@ namespace AABB_trees {
 
   /// \ingroup PkgAABBTreeRef
   ///
-  /// \brief computes all pairs of primitives from a single AABB tree that are intersecting.
+  /// \brief computes all pairs of primitives of a tree that are intersecting.
   ///
-  /// \note Two primitives do intersect if their datum do intersect according to the traits of the tree. Thus, with all documented traits in CGAL, two triangles sharing
-  /// a vertex are considered to intersect, and similarly for other primitives types and types of intersection.
-  ///
-  /// Intersections of a primitive with itself are not reported, and each intersecting
-  /// pair of distinct primitives is reported only once.
+  /// The intersection of a primitive with itself is not reported, and each pair
+  /// of distinct, intersecting primitives is reported only once.
   template< typename Concurrency_tag = Sequential_tag,
             typename AABBTree,
             typename OutputIterator>
@@ -211,6 +222,7 @@ namespace AABB_trees {
     CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree, tree, traversal_traits);
   }
 
-}} // end namespace CGAL::AABB_trees
+} // namespace AABB_trees
+} // namespace CGAL
 
-#endif
+#endif // CGAL_AABB_TREES_INTERSECTIONS_H
