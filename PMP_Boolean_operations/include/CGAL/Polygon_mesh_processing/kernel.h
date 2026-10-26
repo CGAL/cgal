@@ -217,7 +217,7 @@ kernel(const FaceRange& face_range,
     // so the intervals have not been refined.
     for (const auto& e : entries){
       for (vertex_descriptor v : vertices(kernel)){
-        std::size_t i = e.index;
+        int i = e.index;
         if (e.bound(get(kvpm, v)) == bb3.get_value(i)){
           bbox_vertices[i] = v;
           break;
@@ -318,7 +318,7 @@ kernel(const FaceRange& face_range,
     using AK = typename EK::Approximate_kernel;
     using APoint_3 = typename AK::Point_3;
 
-    auto to_approx = [&kernel, &kvpm](vertex_descriptor v) { return approx(get(kvpm, v)); };
+    auto to_approx = [&kvpm](vertex_descriptor v) { return approx(get(kvpm, v)); };
     const auto& vrange = vertices(kernel);
 
     APoint_3 approx_centroid;
