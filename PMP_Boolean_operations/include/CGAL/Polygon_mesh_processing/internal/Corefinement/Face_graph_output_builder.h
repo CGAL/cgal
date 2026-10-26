@@ -844,7 +844,7 @@ public:
     bool input_have_coplanar_faces,
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&,
-    const std::vector<std::pair<face_descriptor, face_descriptor>>& identical_patches)
+    const std::vector<std::pair<halfedge_descriptor, halfedge_descriptor>>& identical_patches)
   {
     const bool used_to_classify_patches =  requested_output[UNION]==std::nullopt &&
                                            requested_output[TM1_MINUS_TM2]==std::nullopt &&
@@ -1787,8 +1787,10 @@ public:
         }
     }
 
-    for (auto [f1, f2] : identical_patches)
+    for (auto [h1, h2] : identical_patches)
     {
+      face_descriptor f1=face(h1, tm1), f2=face(h2, tm2);
+
       std::size_t pid1 = tm1_patch_ids[ get(fids1, f1) ];
       std::size_t pid2 = tm2_patch_ids[ get(fids2, f2) ];
 

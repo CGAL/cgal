@@ -8,5 +8,3 @@ HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  false
 
 EXCLUDE_SYMBOLS += experimental
-
-HTML_EXTRA_FILES           = ${CGAL_PACKAGE_DOC_DIR}/fig/kernel.png

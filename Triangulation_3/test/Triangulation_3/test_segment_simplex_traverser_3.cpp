@@ -403,11 +403,16 @@ bool test(const DT& dt,
           const std::array<unsigned, 4>& expected_result);
 
 
-int main(int, char* [])
+int main(int argc, char* [])
 {
   std::cerr.precision(17);
   std::clog.precision(17);
   std::cout.precision(17);
+
+  if(argc < 2) {
+    // silence clog output
+    std::clog.setstate(std::ios_base::failbit);
+  }
 
   bool ok = true;
   ok = test_a_simple_tetrahedron() && ok;

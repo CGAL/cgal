@@ -94,7 +94,7 @@ template <class Traits,
           class Items,
           template < class T, class I, class A> class HDS,
           class Alloc, class CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname,
+bool read_OFF(const std::filesystem::path& fname,
               Polyhedron_3<Traits, Items, HDS, Alloc>& P,
               const CGAL_NP_CLASS& np = parameters::default_values())
 {

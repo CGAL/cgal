@@ -27,7 +27,7 @@ using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 namespace params = CGAL::parameters;
 
 void check_stream(const std::ios& stream,
-                  const std::string& filename,
+                  const std::filesystem::path& filename,
                   const std::string& operation,
                   bool ok = true) {
   if(!stream || !ok) {
@@ -52,7 +52,7 @@ void check_stream(const std::ios& stream,
 }
 
 int main(int argc, char* argv[]) {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
+  const std::filesystem::path fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
 
   // Create input polyhedron
   Polyhedron polyhedron;

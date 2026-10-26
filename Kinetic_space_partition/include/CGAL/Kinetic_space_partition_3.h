@@ -349,7 +349,7 @@ public:
       \cgalParamDefault{false}
     \cgalParamNEnd
     \cgalParamNBegin{verbose}
-      \cgalParamDescription{Write timing and internal information to std::cout.}
+      \cgalParamDescription{Write timing and internal information to `std::cout`.}
       \cgalParamType{bool}
       \cgalParamDefault{false}
     \cgalParamNEnd
