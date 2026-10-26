@@ -469,7 +469,8 @@ corefine_and_compute_boolean_operations(
                                                   Default,
                                                   Edge_properties_in,
                                                   Edge_properties_out,
-                                                  User_visitor> Ob;
+                                                  User_visitor,
+                                                  ConcurrencyTag> Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
             TriangleMesh, VPM1, VPM2, Ob, Edge_properties_in, User_visitor> Algo_visitor;
