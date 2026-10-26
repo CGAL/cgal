@@ -98,7 +98,7 @@ Release date: December 2026
 - Added [`CGAL::tetrahedron_soup_to_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gab3809ed3822b039266a9a3605648e640)
   to import a tetrahedron soup into a linear cell complex.
 - The following function has been deprecated and renamed for better naming clarity and consistency:
-  - `(CGAL::polyhedron_3_to_lcc())` → [`CGAL::import_face_graph_in_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gaf2fa5a468b97eb3358d25b2f147c2a72)
+  - `CGAL::polyhedron_3_to_lcc()` → [`CGAL::import_face_graph_in_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gaf2fa5a468b97eb3358d25b2f147c2a72)
 
 ### [2D Arrangements](https://doc.cgal.org/6.3/Manual/packages.html#PkgArrangementOnSurface2)
 
@@ -111,7 +111,7 @@ Release date: December 2026
 
 - **Breaking change**: Removed the class template `Regular_triangulation_euclidean_traits_3`, which was deprecated since CGAL-4.10.
 - **Breaking change**: Removed the concept `WeightedPoint`, which was deprecated since CGAL-4.9.
-- **Breaking change**: Removed the member function `vertices_in_conflict()` of the Delaunay and the regular triangulation, which were deprecated since CGAL-3.8.
+- **Breaking change**: Removed the member function `vertices_in_conflict()` of the Delaunay and the regular triangulations, which were deprecated since CGAL-3.8.
 
 ### [Polygon Mesh Processing - Remeshing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
 
@@ -186,6 +186,8 @@ Release date: June 2026
 - This package provides functions to compute various types of generalized barycentric coordinates
   (Wachspress, mean value, discrete harmonic and tetrahedron coordinates) for points located inside
   closed convex 3D polyhedra.
+
+  See also the associated [news entry](https://www.cgal.org/2026/05/04/barycentric_3/).
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing) (major changes)
 
