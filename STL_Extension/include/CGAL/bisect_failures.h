@@ -46,6 +46,7 @@ enum Bisection_event {
   FINAL_BAD_DATA     ///< Minimal failing data that cannot be further simplified
 };
 
+#if (defined(_MSC_VER) && _MSC_VER < 1920)
 template <typename InputData, typename Notify, bool>
 struct Notify_wrapper
 {
@@ -76,7 +77,7 @@ struct Notify_wrapper<InputData, Notify, true>
   }
 };
 
-
+#endif
 
 /**
  * \ingroup PkgSTLExtensionUtilities
@@ -144,8 +145,10 @@ int bisect_failures(const InputData& data,
                     Run run,
                     Notify notify)
 {
-  std::cout << "Enter bisect_failures" << std::endl;
-#if 0
+#if (defined(_MSC_VER) && _MSC_VER < 1920)
+  constexpr bool is_invocable = std::is_invocable_v<Notify, const InputData&, Bisection_event>;
+  Notify_wrapper<InputData,Notify,is_invocable> notify_wrapper(notify);
+#else
   // Wrapper to call `notify` with `Bisection_event` or `std::string` as second argument, for backward compatibility
   auto notify_wrapper = [&](const InputData& data, Bisection_event event) {
     if constexpr (std::is_invocable_v<Notify, const InputData&, Bisection_event>) {
@@ -161,10 +164,8 @@ int bisect_failures(const InputData& data,
       return notify(data, filename_prefix);
     }
   };
-#else
-  constexpr bool is_invocable = std::is_invocable_v<Notify, const InputData&, Bisection_event>;
-  Notify_wrapper<InputData,Notify,is_invocable> notify_wrapper(notify);
 #endif
+
   // Redirect temporarily cout to cerr, and clog to stdout, for debug output
   auto* old_clog_buf = std::clog.rdbuf();
   auto* old_cout_buf = std::cout.rdbuf();
