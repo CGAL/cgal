@@ -5256,7 +5256,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
     }
   }
 
-  boost::unordered_map<typename Tr::Facet, std::size_t> constraint_index_map;
+  boost::unordered_map<typename Tr::Facet, CDT_3_signed_index> constraint_index_map;
   for(auto [c, index] : ccdt.triangulation().finite_facets())
   {
     if(ccdt.is_facet_constrained(c, index))
