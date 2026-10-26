@@ -4882,8 +4882,9 @@ public:
       post_op_vertices_VV_.insert(vertex_src->next(facets[2]));
       post_op_vertices_VV_.insert(vertex_tgt->prev(facets[2]));
       CGAL_assertion(post_op_vertices_VV_.size() == 6);
-
-      // if there was no flip, then (unmodified) vertices should not have new events
+    } else {
+      // not flipped, but the convexity might change, so invalidate the cache
+      Hds_utils::set_reflex_status(edge, std::nullopt);
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS

@@ -761,9 +761,23 @@ public:
         return result;
       }
 
-      virtual EdgeDataSPtr clone() const {
+      virtual EdgeDataSPtr clone() const
+      {
         return std::make_shared<Edge_data>(*this);
       }
+
+      void set_reflex_status(const std::optional<bool>& reflex_status)
+      {
+        cached_reflex_status_ = reflex_status;
+      }
+
+      std::optional<bool> reflex_status() const
+      {
+        return cached_reflex_status_;
+      }
+
+    protected:
+      mutable std::optional<bool> cached_reflex_status_;
     };
 
     class Skeleton_edge_data
@@ -930,7 +944,9 @@ public:
     void set_facet_L(const FacetSPtr& facet)
     {
       this->facet_l_ = facet;
-      this->cachedReflexStatus_ = std::nullopt;
+      if (this->data_) {
+        this->data_->set_reflex_status(std::nullopt);
+      }
     }
 
     typename std::list<EdgeSPtr>::iterator getFacetLListIt() const
@@ -951,7 +967,9 @@ public:
     void set_facet_R(const FacetSPtr& facet)
     {
       this->facet_r_ = facet;
-      this->cachedReflexStatus_ = std::nullopt;
+      if (this->data_) {
+        this->data_->set_reflex_status(std::nullopt);
+      }
     }
 
     typename std::list<EdgeSPtr>::iterator getFacetRListIt() const
@@ -1039,9 +1057,19 @@ public:
       return result;
     }
 
+    void set_reflex_status(const std::optional<bool>& reflex_status)
+    {
+      if (this->data_) {
+        this->data_->set_reflex_status(reflex_status);
+      }
+    }
+
     std::optional<bool> reflex_status() const
     {
-      return cachedReflexStatus_;
+      if (this->data_) {
+        return this->data_->reflex_status();
+      }
+      return std::nullopt;
     }
 
     Segment_3 segment() const
@@ -1313,26 +1341,47 @@ public:
     bool is_reflex() const
     {
       CGAL_precondition(vertex_src_->point() != vertex_tgt_->point());
-      if (cachedReflexStatus_) {
-        return *cachedReflexStatus_;
+
+      const auto compute_reflex = [this]() -> bool
+      {
+        bool result = false;
+        FacetSPtr facet_l = this->get_facet_L();
+        FacetSPtr facet_r = this->get_facet_R();
+        CGAL_SS3_DEBUG_SPTR(facet_l);
+        CGAL_SS3_DEBUG_SPTR(facet_r);
+        const Plane_3& plane_l = facet_l->get_plane();
+        const Vector_3 normal_l = plane_l.orthogonal_vector();
+        CGAL_assertion(normal_l != CGAL::NULL_VECTOR);
+        const Vector_3 dir { vertex_src_->point(), vertex_tgt_->point() };
+        CGAL_assertion(dir != CGAL::NULL_VECTOR);
+        const Point_3& p_src = vertex_src_->point();
+        Point_3 p = p_src + CGAL::cross_product(normal_l, dir);
+        const Plane_3& plane_r = facet_r->get_plane();
+        if (plane_r.oriented_side(p) == CGAL::ON_POSITIVE_SIDE) {
+          result = true;
+        }
+        return result;
+      };
+
+      if (const std::optional<bool> cached = reflex_status()) {
+#ifndef NDEBUG
+        const bool recomputed = compute_reflex();
+        if(cached != recomputed) {
+          std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
+          std::cerr << "Cached reflex status does not match recomputed value!" << std::endl;
+          std::cerr << "Cached: " << *cached << ", Recomputed: " << recomputed << std::endl;
+          std::cerr << "Edge ID: " << this->id() << std::endl;
+          std::cerr << this->to_string() << std::endl;
+          std::abort();
+        }
+#endif
+        return *cached;
       }
-      bool result = false;
-      FacetSPtr facet_l = this->get_facet_L();
-      FacetSPtr facet_r = this->get_facet_R();
-      CGAL_SS3_DEBUG_SPTR(facet_l);
-      CGAL_SS3_DEBUG_SPTR(facet_r);
-      const Plane_3& plane_l = facet_l->get_plane();
-      const Vector_3 normal_l = plane_l.orthogonal_vector();
-      CGAL_assertion(normal_l != CGAL::NULL_VECTOR);
-      const Vector_3 dir { vertex_src_->point(), vertex_tgt_->point() };
-      CGAL_assertion(dir != CGAL::NULL_VECTOR);
-      const Point_3& p_src = vertex_src_->point();
-      Point_3 p = p_src + CGAL::cross_product(normal_l, dir);
-      const Plane_3& plane_r = facet_r->get_plane();
-      if (plane_r.oriented_side(p) == CGAL::ON_POSITIVE_SIDE) {
-        result = true;
+
+      const bool result = compute_reflex();
+      if (this->data_) {
+        this->data_->set_reflex_status(result);
       }
-      cachedReflexStatus_ = result;
       return result;
     }
 
@@ -1405,7 +1454,6 @@ public:
     typename std::list<EdgeSPtr>::iterator polyhedron_list_it_;
 
     int id_;
-    mutable std::optional<bool> cachedReflexStatus_;
     EdgeDataSPtr data_;
   };
 

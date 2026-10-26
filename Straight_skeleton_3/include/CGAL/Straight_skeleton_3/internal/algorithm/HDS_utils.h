@@ -287,6 +287,21 @@ public:
     data->set_sheet(SheetSPtr());
   }
 
+  static std::optional<bool> reflex_status(const EdgeSPtr& edge)
+  {
+    CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_precondition(edge->has_data());
+    return edge->get_data()->reflex_status();
+  }
+
+  static void set_reflex_status(const EdgeSPtr& edge,
+                                const std::optional<bool>& reflex_status)
+  {
+    CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_precondition(edge->has_data());
+    edge->get_data()->set_reflex_status(reflex_status);
+  }
+
 public:
   // just for convenience to avoid all the verbosity of extracting the data
   static const FT& get_speed(const FacetSPtr& facet)
@@ -429,47 +444,63 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(edge);
 
-    if (edge->reflex_status()) {
-      return *(edge->reflex_status());
-    }
+    const auto compute_reflex = [&edge, future_facing]() -> bool
+    {
+      bool result = false;
 
-    bool result = false;
+      VertexSPtr vertex_src = edge->source();
+      VertexSPtr vertex_tgt = edge->target();
 
-    VertexSPtr vertex_src = edge->source();
-    VertexSPtr vertex_tgt = edge->target();
+      // @todo is degenerate edge? pointer comparison or actual position comparison?
+      if (vertex_src->point() == vertex_tgt->point()) {
+        FacetSPtr facet_l = edge->get_facet_L();
+        FacetSPtr facet_r = edge->get_facet_R();
+        FacetSPtr facet_src = edge->get_facet_src();
+        FacetSPtr facet_tgt = edge->get_facet_tgt();
 
-    // @todo is degenerate edge? pointer comparison or actual position comparison?
-    if (vertex_src->point() == vertex_tgt->point()) {
-      FacetSPtr facet_l = edge->get_facet_L();
-      FacetSPtr facet_r = edge->get_facet_R();
-      FacetSPtr facet_src = edge->get_facet_src();
-      FacetSPtr facet_tgt = edge->get_facet_tgt();
+        FT od = future_facing ? -1 : 1;
+        const Plane_3 offset_plane_l = Transformation::shift_plane(facet_l, od);
+        const Plane_3 offset_plane_r = Transformation::shift_plane(facet_r, od);
+        const Plane_3 offset_plane_src = Transformation::shift_plane(facet_src, od);
+        const Plane_3 offset_plane_tgt = Transformation::shift_plane(facet_tgt, od);
 
-      FT od = future_facing ? -1 : 1;
-      const Plane_3 offset_plane_l = Transformation::shift_plane(facet_l, od);
-      const Plane_3 offset_plane_r = Transformation::shift_plane(facet_r, od);
-      const Plane_3 offset_plane_src = Transformation::shift_plane(facet_src, od);
-      const Plane_3 offset_plane_tgt = Transformation::shift_plane(facet_tgt, od);
+        std::optional<Point_3> p_src = Kernel_wrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
+        std::optional<Point_3> p_tgt = Kernel_wrapper::intersection(offset_plane_tgt, offset_plane_l, offset_plane_r);
+        CGAL_assertion(p_src && p_tgt);
 
-      std::optional<Point_3> p_src = Kernel_wrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
-      std::optional<Point_3> p_tgt = Kernel_wrapper::intersection(offset_plane_tgt, offset_plane_l, offset_plane_r);
-      CGAL_assertion(p_src && p_tgt);
+        const Vector_3 v_dir { *p_src, *p_tgt };
+        CGAL_assertion(v_dir != CGAL::NULL_VECTOR);
 
-      const Vector_3 v_dir { *p_src, *p_tgt };
-      CGAL_assertion(v_dir != CGAL::NULL_VECTOR);
+        const Vector_3 normal_l = offset_plane_l.orthogonal_vector();
+        CGAL_assertion(normal_l != CGAL::NULL_VECTOR);
 
-      const Vector_3 normal_l = offset_plane_l.orthogonal_vector();
-      CGAL_assertion(normal_l != CGAL::NULL_VECTOR);
-
-      const Vector_3 v_cross = CGAL::cross_product(normal_l, v_dir);
-      const Point_3 p = *p_src + v_cross;
-      if (Kernel_wrapper::side(offset_plane_r, p) > 0) {
-        result = true;
+        const Vector_3 v_cross = CGAL::cross_product(normal_l, v_dir);
+        const Point_3 p = *p_src + v_cross;
+        if (Kernel_wrapper::side(offset_plane_r, p) > 0) {
+          result = true;
+        }
+      } else {
+        result = edge->is_reflex();
       }
-    } else {
-      result = edge->is_reflex();
+      return result;
+    };
+
+    if (const std::optional<bool> cached = Hds_utils::reflex_status(edge)) {
+#ifndef NDEBUG
+      const bool recomputed = compute_reflex();
+      if(cached != recomputed) {
+        std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
+        std::cerr << "Cached reflex status does not match recomputed value!" << std::endl;
+        std::cerr << "Cached: " << *cached << ", Recomputed: " << recomputed << std::endl;
+        std::cerr << "Edge ID: " << edge->id() << std::endl;
+        std::cerr << edge->to_string() << std::endl;
+        std::abort();
+      }
+#endif
+      return *cached;
     }
-    return result;
+
+    return compute_reflex();
   }
 
   static bool is_reflex(const VertexSPtr& vertex)
