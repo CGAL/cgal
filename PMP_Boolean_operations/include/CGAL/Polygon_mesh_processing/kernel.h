@@ -20,6 +20,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Three_point_cut_plane_traits.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/centroid.h>
@@ -315,17 +316,18 @@ kernel(const FaceRange& face_range,
     }
 
     // Get the centroid
-    using AK = typename EK::Approximate_kernel;
+    using AK = Simple_cartesian<double>;
     using APoint_3 = typename AK::Point_3;
 
-    auto to_approx = [&kvpm](vertex_descriptor v) { return approx(get(kvpm, v)); };
+    auto to_approx = [&kvpm](vertex_descriptor v) {
+      auto &p = approx(get(kvpm, v));
+      return APoint_3(to_double(p.x()),
+                      to_double(p.y()),
+                      to_double(p.z()));
+    };
     const auto& vrange = vertices(kernel);
 
-    APoint_3 approx_centroid;
-    {
-      typename AK::FT::Protector p;
-      approx_centroid = find_intern_point<AK>(kernel, to_approx);
-    }
+    APoint_3 approx_centroid = approx_centroid = find_intern_point<AK>(kernel, to_approx);
     EPoint_3 double_centroid(to_double(approx_centroid.x()),
                              to_double(approx_centroid.y()),
                              to_double(approx_centroid.z()));
