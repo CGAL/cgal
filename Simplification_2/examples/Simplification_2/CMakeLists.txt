@@ -11,5 +11,5 @@ find_package(CGAL REQUIRED)
 
 include_directories (BEFORE "include")
 
-create_single_source_cgal_program( "simplify_collection.cpp" )
+create_single_source_cgal_program( "simplify_wkt.cpp" )
 

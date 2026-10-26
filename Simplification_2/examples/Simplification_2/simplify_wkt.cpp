@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Simplification_2/simplification_vw.h>
 #include <CGAL/Simplification_2/simplification_ksbb.h>
+#include <CGAL/Simplification_2/simplification_bmrs.h>
 #include <CGAL/IO/WKT.h>
 
 #include <fstream>
@@ -59,15 +60,22 @@ int main(int argc, char* argv[])
 
   // Simplify with the VW vertex removal algorithm.
   CGAL::Simplification_VW vw(input);
-  vw.simplify(ratio * vw.complexity());
+  size_t inputComplexity = vw.complexity();
+  vw.simplify(ratio * inputComplexity);
   Collection simplified_vw = vw.get_collection();
   write_WKT("simplified_vw.wkt", simplified_vw);
 
   // Simplify with the KSBB edge collapse algorithm.
   CGAL::Simplification_KSBB ksbb(input);
-  ksbb.simplify(ratio * ksbb.complexity());
+  ksbb.simplify(ratio * inputComplexity);
   Collection simplified_ksbb = ksbb.get_collection();
   write_WKT("simplified_ksbb.wkt", simplified_ksbb);
+
+  // Make orthogonal schematization with the BMRS algorithm.
+  CGAL::Simplification_BMRS bmrs(input, {.orientations=CGAL::regular_orientations<K>(2)});
+  bmrs.simplify(ratio * inputComplexity); // note that here bmrs.complexity() is not the same as inputComplexity because of the orientation restriction step
+  Collection simplified_bmrs = bmrs.get_collection();
+  write_WKT("simplified_bmrs.wkt", simplified_bmrs);
 
   return 0;
 }
