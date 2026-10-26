@@ -595,7 +595,7 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
     for (vertex_descriptor v : vertices_to_remove){
       for (const auto& e : entries){
         // Only update this bbox entry if the removed vertex *was* this extremum
-        std::size_t i = e.index;
+        int i = e.index;
         if (v == bbox_vertices[i]){
           auto it = boundary_vertices.begin();
           bbox_vertices[i] = *it;
