@@ -154,7 +154,7 @@ There is no restriction on the input for the function `CGAL::Polygon_mesh_proces
 Degenerate triangles will be eliminated, duplicated points will be merged. If several triangles are coplanar,
 the output will contain as many copies of the triangulation of those refined triangles.
 
-\subsection tsoup_bolop_subsec Computing Boolean Operations on Triangle Soups
+\subsection tsoup_bolop_subsec Computing General Boolean Operations on Triangle Soups
 The Boolean operation functions based on corefine operate on triangle meshes. This data structure is not meant to
 handle non-manifold edges. As it is sometime desirable to handle such cases, we also provide operations that are
 taking as input triangle soups, representing possibly non-manifold volumes, and providing the result of a Boolean

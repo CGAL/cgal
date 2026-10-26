@@ -1150,11 +1150,15 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   *
   * computes the union of two volumes, each bounded by a triangle soup.
   *
+  * The definition given of triangle mesh \link coref_def_subsec bounding \endlink a volume can be extended to a triangle soup, allowing non-manifold edges and vertices.
+  *
   * \pre \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect() `!CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points_1, triangles_1)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect() `!CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points_2, triangles_2)` \endlink
   *
   * @tparam PointRange a model of the concepts `RandomAccessContainer` whose value type is `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the named parameter `geom_traits`.
-  * @tparam TriangleRange a model of the concept `RandomAccessContainer` whose `value_type` is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
+  *                    Additionally, it must also be a model of `BackInsertionSequence` and `Swappable`.
+  * @tparam TriangleRange a model of the concept `RandomAccessContainer` whose `value_type`, say `Triangle`, is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
+  *                       Additionally, both `TriangleRange` and `Triangle` must also be model of `BackInsertionSequence` and `Swappable`.
   *
   * @param points_1 points of the first triangle soup.
   * @param triangles_1 triangles of the first triangle soup, each element in the vector describes a triangle using the indices of the points in `points_1`.
@@ -1176,8 +1180,8 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   *   \cgalParamNBegin{geom_traits}
   *     \cgalParamDescription{an instance of a geometric traits class}
   *     \cgalParamType{a class model of `Kernel`}
-  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the value type of `PointRange`, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The nested `Point_3` type of the geometric traits class must be compatible with the value type of `PointRange`.}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
