@@ -135,8 +135,6 @@ public:
 
     CGAL_assertion(m_data.check_bbox());
 
-    m_data.initialization_done();
-
     if (m_parameters.debug) {
       for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++)
         dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "before-partition-sp" + std::to_string(sp));
@@ -694,12 +692,9 @@ private:
       for (Piece& piece : pieces) {
         std::list<std::size_t>& poly = piece.poly;
         const IFace face = piece.face;
-        bool has_moving = false;
 
         for (std::size_t idx : poly) {
           Vertex &v = vts[idx];
-          if (v.moving)
-            has_moving = true;
 
           if (v.constraints.size() == 1) {
             IVertex s(-1), t(-1);
@@ -789,10 +784,6 @@ private:
         if (zero_area)
           continue;
         m_data.init_border(face, true);
-        sp.data().initial_ifaces.push_back(face);
-
-        if(has_moving)
-          sp.active_polygons++;
       } // end of poly
 
       for (std::size_t i = 0; i < m_data.igraph().number_of_lines(); i++) {
@@ -973,7 +964,7 @@ private:
 
     CGAL_assertion(m_data.number_of_support_planes() >= 6);
     if (m_parameters.verbose) {
-      KSP::internal::Log_line(m_data.log_prefix()) << "* provided input polygons: " << m_data.input_polygons().size();
+      KSP::internal::Log_line(m_data.log_prefix()) << "* provided input polygons: " << m_input_polygons.size();
       KSP::internal::Log_line(m_data.log_prefix()) << "* inserted input polygons: " << num_polygons << " on " << polygons.size() << " support planes";
     }
   }

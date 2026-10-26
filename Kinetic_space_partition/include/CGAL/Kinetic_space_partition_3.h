@@ -147,7 +147,6 @@ private:
   using Propagation = KSP_3::internal::Vertex_propagation<Kernel, Intersection_kernel>;
   using Finalizer   = KSP_3::internal::Finalizer<Kernel, Intersection_kernel>;
 
-  using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Timer        = CGAL::Real_timer;
   using Parameters = KSP::internal::Parameters_3<FT>;
 
@@ -216,16 +215,12 @@ private:
 
 private:
   struct Sub_partition {
-    Sub_partition() : parent(static_cast<std::size_t>(- 1)) {}
+    Sub_partition() {}
     std::shared_ptr<Data_structure> m_data;
     std::array<typename Intersection_kernel::Point_3, 8> bbox;
-    std::vector<typename Intersection_kernel::Plane_3> m_bbox_planes;
     std::vector<std::size_t> input_polygons;
     std::vector<std::vector<typename Intersection_kernel::Point_3> > clipped_polygons;
     std::vector<typename Intersection_kernel::Plane_3> m_input_planes;
-    std::size_t parent;
-    std::vector<std::size_t> children;
-    std::size_t split_plane;
     std::size_t index;
 
     // Results of the finalization. They are extracted from m_data after the Finalizer has run and m_data is released afterwards.
@@ -251,7 +246,6 @@ private:
   };
 
   Parameters m_parameters;
-  std::array<Point_3, 8> m_bbox;
   CGAL::Aff_transformation_3<Intersection_kernel> m_transform;
   std::vector<Sub_partition> m_partition_nodes; // Tree of partitions.
   std::vector<std::size_t> m_partitions; // Contains the indices of the leaf nodes, the actual partitions to be calculated.
@@ -259,7 +253,6 @@ private:
   std::vector<std::vector<std::size_t> > m_polygons;
   std::vector<std::vector<Point_3> > m_input_polygons;
   std::vector<typename Intersection_kernel::Plane_3> m_input_planes;
-  std::vector<Point_2> m_input_centroids;
 
   // Polygons that are coplanar up to a tolerance share a plane.
   struct Coplanar_group {
@@ -280,7 +273,6 @@ private:
 
   bool m_kinetic_data_initialized = false; // True if initialize() created the kinetic data structures of all octree leaves.
 
-  std::set<Index> duplicates;
 
 public:
   /// \name Initialization
@@ -498,9 +490,8 @@ public:
 
       const Plane_3& pl = m_coplanar_groups[group[p]].plane;
 
-      Point_2 c;
       std::vector<Point_2> ch;
-      process_input_polygon(polygon_points[p], pl, c, ch);
+      process_input_polygon(polygon_points[p], pl, ch);
 
       // Coplanar input polygons are inserted separately. They share a support plane in the kinetic partition.
       m_input2regularized.push_back(m_input_planes.size());
@@ -508,7 +499,6 @@ public:
       m_regularized2input.back().push_back(p + offset);
       m_input_planes.push_back(m_planes[group[p]]);
       m_input_plane_indices.push_back(group[p]);
-      m_input_centroids.push_back(c);
       m_input_polygons.push_back(std::vector<Point_3>(ch.size()));
 
       for (std::size_t i = 0; i < ch.size(); i++)
@@ -991,12 +981,6 @@ private:
     Index vA, vB;
   };
 
-  const Point_3& volume_centroid(std::size_t volume_index) const {
-    CGAL_assertion(volume_index < m_volumes.size());
-    auto p = m_volumes[volume_index];
-    return m_partition_nodes[p.first].volumes[p.second].centroid;
-  }
-
 
   /*!
   \brief Face indices of the volume.
@@ -1030,18 +1014,6 @@ private:
   */
   const Point_3& vertex(const Index& vertex_index) const {
     return m_partition_nodes[vertex_index.first].vertices[vertex_index.second];
-  }
-
-  /*!
-  \brief Mapping of a vertex index to its exact position.
-
-  @return
-   vector of points.
-
-    \pre created partition
-  */
-  const typename Intersection_kernel::Point_3& exact_vertex(const Index& vertex_index) const {
-    return m_partition_nodes[vertex_index.first].exact_vertices[vertex_index.second];
   }
 
   /*!
@@ -1095,50 +1067,6 @@ private:
     }
   }
 
-  template<class OutputIterator>
-  void faces_of_input_polygon(const std::size_t inserted_index, OutputIterator it) const {
-    if (inserted_index >= m_input2regularized.size()) {
-      CGAL_assertion(false);
-      return;
-    }
-
-    // Dropped degenerate polygons have no faces.
-    const std::size_t polygon_index = m_input2regularized[inserted_index];
-    if (polygon_index == std::size_t(-1))
-      return;
-
-    for (std::size_t idx : m_partitions) {
-      const Sub_partition& p = m_partition_nodes[idx];
-      // Check if it contains this input polygon and get support plane index
-      std::size_t sp_idx = static_cast<std::size_t>(-1);
-      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
-        if (p.input_polygons[i] == polygon_index) {
-          auto sp_it = p.input2sp.find(i);
-          if (sp_it != p.input2sp.end())
-            sp_idx = sp_it->second;
-          else {
-            // The polygon lies in a side of the bbox of the partition. Its faces are the faces overlapping it.
-            for (std::size_t f = 0; f < p.face_input.size(); f++)
-              if (p.face_input[f] == i)
-                *it++ = std::make_pair(idx, f);
-          }
-          break;
-        }
-      }
-
-      // Continue if the partition does not contain this input polygon.
-      if (sp_idx == static_cast<std::size_t>(-1))
-        continue;
-
-      const auto& f2sp = p.face2sp;
-
-      for (std::size_t i = 0; i < f2sp.size(); i++) {
-        if (f2sp[i] == sp_idx)
-          *it++ = std::make_pair(idx, i);
-      }
-    }
-  }
-
   /*!
   \brief Indices of adjacent volumes. Negative indices correspond to the empty spaces behind the sides of the bounding box.
 
@@ -1173,26 +1101,14 @@ private:
     }
   }
 
-  // Computes the convex hull of the polygon projected onto the plane pl and its centroid.
-  void process_input_polygon(const std::vector<Point_3>& poly, const Plane_3& pl, Point_2& c, std::vector<Point_2>& ch) const {
+  // Computes the convex hull of the polygon projected onto the plane pl.
+  void process_input_polygon(const std::vector<Point_3>& poly, const Plane_3& pl, std::vector<Point_2>& ch) const {
     std::vector<Point_2> pts2d(poly.size());
     for (std::size_t i = 0; i < poly.size(); i++)
       pts2d[i] = pl.to_2d(poly[i]);
 
     ch.clear();
     CGAL::convex_hull_2(pts2d.begin(), pts2d.end(), std::back_inserter(ch));
-
-    // Centroid
-    FT x = 0, y = 0, w = 0;
-    for (std::size_t i = 2; i < ch.size(); i++) {
-      Triangle_2 tri(ch[0], ch[i - 1], ch[i]);
-      w += CGAL::area(ch[0], ch[i - 1], ch[i]);
-      Point_2 c = CGAL::centroid(ch[0], ch[i - 1], ch[i]);
-      x += c.x() * w;
-      y += c.y() * w;
-    }
-
-    c = Point_2(x / w, y / w);
   }
 
   // Provides three points of the polygon that are not collinear. The points are chosen to span a large triangle.
@@ -1380,97 +1296,6 @@ private:
     }
 
     return area;
-  }
-
-  void check_tjunctions() {
-    std::map<Index, std::vector<Index> > vertex2neighbors;
-
-    for (std::size_t v = 0; v < m_volumes.size(); v++) {
-      auto &vp = m_volumes[v];
-      for (const std::size_t f : m_partition_nodes[vp.first].volumes[vp.second].faces) {
-        auto& vtx = m_partition_nodes[vp.first].face2vertices[f];
-        for (std::size_t i = 0; i < vtx.size(); i++) {
-          vertex2neighbors[vtx[i]].push_back(vtx[(i + 1) % vtx.size()]);
-          vertex2neighbors[vtx[i]].push_back(vtx[(i - 1 + vtx.size()) % vtx.size()]);
-        }
-      }
-    }
-
-    for (auto& p : vertex2neighbors) {
-      typename Intersection_kernel::Point_3 a = m_partition_nodes[p.first.first].exact_vertices[p.first.second];
-      //Check pairwise collinear
-      for (std::size_t i = 0; i < p.second.size(); i++) {
-        typename Intersection_kernel::Point_3 b = m_partition_nodes[p.second[i].first].exact_vertices[p.second[i].second];
-        for (std::size_t j = i + 1; j < p.second.size(); j++) {
-          if (p.second[i] == p.second[j])
-            continue;
-          typename Intersection_kernel::Point_3 c = m_partition_nodes[p.second[j].first].exact_vertices[p.second[j].second];
-          if (CGAL::collinear(a, b, c) && ((b - a) * (c - a) > 0)) {
-            std::cout << "non-manifold v (" << p.first.first << ", " << p.first.second << ")" << std::endl;
-            std::cout << " v (" << p.second[i].first << ", " << p.second[i].second << ")" << std::endl;
-            std::cout << " v (" << p.second[j].first << ", " << p.second[j].second << ")" << std::endl;
-
-            From_exact from_exact;
-
-            std::ofstream vout2("a.xyz");
-            vout2.precision(20);
-            vout2 << from_exact(a) << std::endl;
-            vout2.close();
-            std::ofstream vout3("b.xyz");
-            vout3.precision(20);
-            vout3 << from_exact(b) << std::endl;
-            vout3.close();
-            std::ofstream vout4("c.xyz");
-            vout4.precision(20);
-            vout4 << from_exact(c) << std::endl;
-            vout4.close();
-
-            for (std::size_t v = 0; v < m_volumes.size(); v++) {
-              auto& vp = m_volumes[v];
-              for (const std::size_t f : m_partition_nodes[vp.first].volumes[vp.second].faces) {
-                auto& vtx = m_partition_nodes[vp.first].face2vertices[f];
-                bool hasa = false, hasb = false, hasc = false;
-                for (std::size_t k = 0; k < vtx.size(); k++) {
-                  if (vtx[k] == p.first)
-                    hasa = true;
-                  if (vtx[k] == p.second[i])
-                    hasb = true;
-                  if (vtx[k] == p.second[j])
-                    hasc = true;
-                }
-
-                if (hasa && (hasb || hasc)) {
-                  const std::string vfilename = std::to_string(v) + " " + std::to_string(f) + "-non_manifold.polylines.txt";
-                  std::ofstream vout(vfilename);
-                  vout.precision(20);
-                  vout << vtx.size() + 1;
-                  for (const auto& v : vtx) {
-                    vout << " " << from_exact(m_partition_nodes[v.first].exact_vertices[v.second]);
-                  }
-
-                  vout << " " << from_exact(m_partition_nodes[vtx[0].first].exact_vertices[vtx[0].second]);
-
-                  vout << std::endl;
-                  vout.close();
-                }
-              }
-            }
-            std::cout << std::endl;
-          }
-        }
-      }
-    }
-  }
-
-  void insert_map(const Index& a, const Index& b, std::map<Index, Index>& pm) const {
-    if (a == b)
-      return;
-
-    Index target = b;
-    auto it = pm.find(b);
-    if (it != pm.end())
-      target = it->second;
-    pm[a] = target;
   }
 
   void build_cdt(CDTplus& cdt, std::vector<CDTplus>& partitions, std::vector<std::vector<std::vector<Constraint_info> > >& constraints,  const typename Intersection_kernel::Plane_3& plane) {
@@ -1814,7 +1639,7 @@ private:
     Timer timer;
     timer.start();
 
-    partition.m_data = std::make_shared<Data_structure>(m_parameters, std::to_string(idx) + "-", log_prefix);
+    partition.m_data = std::make_shared<Data_structure>(std::to_string(idx) + "-", log_prefix);
 
     Initializer initializer(partition.clipped_polygons, partition.m_input_planes, *partition.m_data, m_parameters, m_partitions.size() != 1);
     initializer.initialize(partition.bbox, partition.input_polygons);
@@ -1822,7 +1647,6 @@ private:
     // The input of the Initializer is not needed anymore.
     std::vector<std::vector<typename Intersection_kernel::Point_3> >().swap(partition.clipped_polygons);
     std::vector<typename Intersection_kernel::Plane_3>().swap(partition.m_input_planes);
-    std::vector<typename Intersection_kernel::Plane_3>().swap(partition.m_bbox_planes);
 
     initialization_time = timer.time();
 
@@ -2650,7 +2474,6 @@ private:
     std::vector< std::vector<std::vector<Constraint_info> > > a_constraints;
     std::vector< std::vector<std::vector<Constraint_info> > > b_constraints;
 
-    std::map<Index, Index> point_mapping;
 
     std::size_t idx = 0;
     a_constraints.resize(a_sets.size());

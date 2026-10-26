@@ -374,8 +374,6 @@ private:
         if (sp.data().borders.find(face) != sp.data().borders.end())
           continue;
         m_data.init_border(face, true);
-        sp.data().initial_ifaces.push_back(face);
-        sp.active_polygons++;
       }
     }
   }
@@ -1381,7 +1379,6 @@ private:
     //export_event("e_A_" + std::to_string(handled_events) + "_" + std::to_string(vts[e.vertex].sp_idx) + "_", e);
 
     Support_plane& sp = m_data.support_plane(vts[e.vertex].sp_idx);
-    sp.ea++;
     std::list<std::size_t>& poly = sp.data().polygons[vts[e.vertex].face];
     std::list<std::size_t>::iterator it = std::find(poly.begin(), poly.end(), e.vertex);
     std::list<std::size_t>::iterator it_next = ((std::next(it) == poly.end()) ? poly.begin() : std::next(it));
@@ -1425,7 +1422,6 @@ private:
       std::list<std::size_t>& new_poly = sp.data().polygons[other_face];
       CGAL_assertion(new_poly.empty());
       sp.set_piece_polygon(other_face, sp.piece_polygon(vts[e.vertex].face));
-      sp.active_polygons++;
 
       // Create paired vertices
       vts.emplace_back(vts[e.vertex].sp_idx, e.p, dir_prev, e.time);
@@ -1470,14 +1466,6 @@ private:
     for (std::size_t v : new_moving_vertices)
       calculate_events(v, e.time);
 
-    bool still_moving = false;
-    for (std::size_t i : poly)
-      if (vts[i].moving) {
-        still_moving = true;
-        break;
-      }
-    if (!still_moving)
-      sp.active_polygons--;
     CGAL_assertion_code(check_vertices_on_edge(e.crossed_edge);)
   }
 
@@ -1488,7 +1476,6 @@ private:
       t_events++;
     CGAL_assertion(adj != std::size_t(-1));
     Support_plane& sp = m_data.support_plane(vts[e.vertex].sp_idx);
-    sp.eb++;
 
     //export_event("e_B_" + std::to_string(handled_events) + "_" + std::to_string(vts[e.vertex].sp_idx) + "_", e);
 
@@ -1662,7 +1649,6 @@ private:
     v1.ivertex = v2.ivertex = e.destination;
 
     Support_plane& sp = m_data.support_plane(v1.sp_idx);
-    sp.ec1++;
 
     bool still_moving = false;
     std::list<std::size_t>& poly = sp.data().polygons[v1.face];
@@ -1672,9 +1658,7 @@ private:
         break;
       }
 
-    if (!still_moving)
-      sp.active_polygons--;
-    else {
+    if (still_moving) {
       // update border
       std::list<std::size_t>::iterator it = std::find(poly.begin(), poly.end(), e.vertex);
       bool ccw = true;
@@ -1739,7 +1723,6 @@ private:
     std::list<std::size_t>& poly = sp.data().polygons[face];
     CGAL_assertion(poly.empty());
     sp.set_piece_polygon(face, sp.piece_polygon(vts[e.vertex].face));
-    sp.active_polygons++;
 
     const IVertex ta = m_data.igraph().other(ea, d);
     const IVertex tb = m_data.igraph().other(eb, d);
@@ -1895,7 +1878,6 @@ private:
       t_events++;
 
     Support_plane &sp = m_data.support_plane(vts[e.vertex].sp_idx);
-    sp.ec2++;
     std::list<std::size_t> &poly = sp.data().polygons[vts[e.vertex].face];
 
     IEdge hit_edge = m_data.igraph().null_iedge();
@@ -1967,7 +1949,6 @@ private:
       std::list<std::size_t>& new_poly = sp.data().polygons[other_face];
       CGAL_assertion(new_poly.empty());
       sp.set_piece_polygon(other_face, sp.piece_polygon(vts[e.vertex].face));
-      sp.active_polygons++;
 
       // stationary vertex at corner
       vts.emplace_back(vts[e.vertex].sp_idx, e.p, IkVector_2(0, 0), e.time);
@@ -2038,7 +2019,6 @@ private:
         std::list<std::size_t>& poly_q3 = sp.data().polygons[q3_face];
         CGAL_assertion(poly_q3.empty());
         sp.set_piece_polygon(q3_face, sp.piece_polygon(vts[e.vertex].face));
-        sp.active_polygons++;
 
         // Insert vertices into q3
         // The input polygon the piece originates from, translated such that its centroid is at the event.
@@ -2157,7 +2137,6 @@ private:
           std::list<std::size_t>& poly_q4 = sp.data().polygons[q4_face];
           CGAL_assertion(poly_q4.empty());
           sp.set_piece_polygon(q4_face, sp.piece_polygon(vts[e.vertex].face));
-          sp.active_polygons++;
 
           std::size_t q4_stationary = std::size_t(-1);
           std::size_t q4_inverse = std::size_t(-1);
@@ -2316,7 +2295,6 @@ private:
     std::list<std::size_t>& poly_q3 = sp.data().polygons[q3_face];
     CGAL_assertion(poly_q3.empty());
     sp.set_piece_polygon(q3_face, sp.piece_polygon(vts[e.vertex].face));
-    sp.active_polygons++;
 
     std::size_t q3_stationary = std::size_t(-1);
     std::size_t q3_prolongation = std::size_t(-1);
@@ -2400,7 +2378,6 @@ private:
     std::list<std::size_t>& poly_q4 = sp.data().polygons[q4_face];
     CGAL_assertion(poly_q4.empty());
     sp.set_piece_polygon(q4_face, sp.piece_polygon(vts[e.vertex].face));
-    sp.active_polygons++;
 
     std::size_t q4_stationary = std::size_t(-1);
     std::size_t q4_inverse = std::size_t(-1);
@@ -2521,7 +2498,6 @@ private:
 
     // Local propagation
     Support_plane& sp = m_data.support_plane(vts[e1.vertex].sp_idx);
-    sp.ed1++;
     std::list<std::size_t>& poly = sp.data().polygons[vts[e1.vertex].face];
 
     bool cw = true;
@@ -2596,7 +2572,6 @@ private:
       std::list<std::size_t>& new_poly = sp.data().polygons[other_face];
       CGAL_assertion(new_poly.empty());
       sp.set_piece_polygon(other_face, sp.piece_polygon(vts[e1.vertex].face));
-      sp.active_polygons++;
 
       front_face_idx = other_face;
       // Create adjacent of e1.vertex prolongation
@@ -3008,7 +2983,6 @@ private:
     const std::size_t sp_idx = vts[ch.corners[0]].sp_idx;
     const IFace F = vts[ch.corners[0]].face;
     Support_plane& sp = m_data.support_plane(sp_idx);
-    sp.ed2++;
     const IkFT t = ch.corner_events[0].first.time;
     const std::vector<std::size_t>& L = ch.lines;
 
@@ -3213,7 +3187,6 @@ private:
       std::list<std::size_t>& p = sp.data().polygons[face];
       CGAL_assertion(p.empty());
       sp.set_piece_polygon(face, sp.piece_polygon(F));
-      sp.active_polygons++;
       if (!ch.forward)
         std::reverse(seq.begin(), seq.end());
       p.assign(seq.begin(), seq.end());
@@ -3437,35 +3410,6 @@ private:
   void apply(std::list<Event>& events) {
 
     std::list<Event> bkp = events;
-
-    /*
-    int total_active_polys = 0;
-    int total_active_vertices = 0;
-
-    std::size_t idx = 0;
-    for (const Vertex &v : vts) {
-      CGAL_assertion(v.face != std::size_t(-1));
-      CGAL_assertion(v.sp_idx != std::size_t(-1));
-      if (v.moving) {
-        total_active_vertices++;
-        CGAL_assertion(v.v != IkVector_2(0, 0));
-        CGAL_assertion(v.queued_events != 0);
-        if (v.constraints.empty()) {
-          CGAL_assertion(v.other == std::size_t(-1));
-          CGAL_assertion(v.itarget == IVertex(-1));
-          CGAL_assertion(v.constraint_edge == IEdge(IVertex(-1), IVertex(-1), nullptr));
-        }
-        else {
-          CGAL_assertion(v.constraints.size() == 1);
-          CGAL_assertion(v.constraint_edge != IEdge(IVertex(-1), IVertex(-1), nullptr));
-          CGAL_assertion(v.itarget != IVertex(-1));
-        }
-      }
-      idx++;
-    }
-    for (std::size_t i = 6;i<m_data.number_of_support_planes();i++) {
-      total_active_polys += m_data.support_plane(i).active_polygons;
-    }*/
 
     //export_timestamp(std::to_string(handled_events) + "_" + std::to_string(CGAL::to_double(events.front().time)), events.front().time);
 

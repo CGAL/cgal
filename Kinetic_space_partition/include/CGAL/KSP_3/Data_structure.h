@@ -64,7 +64,6 @@ public:
   using Plane_3     = typename Kernel::Plane_3;
 
   using Polygon_2  = CGAL::Polygon_2<Kernel>;
-  using Parameters = KSP::internal::Parameters_3<FT>;
 
   using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_kernel>;
   using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
@@ -139,30 +138,10 @@ public:
     }
   };
 
-  struct Halfedge_to_pface {
-    using argument_type = Halfedge_index;
-    using result_type = PFace;
-
-    const std::size_t support_plane_idx;
-    const Mesh& mesh;
-
-    Halfedge_to_pface(const std::size_t sp_idx, const Mesh& m)
-      : support_plane_idx(sp_idx), mesh(m)
-    {}
-
-    const result_type operator()(const argument_type& arg) const {
-      return result_type(support_plane_idx, mesh.face(arg));
-    }
-  };
-
-  using PEdge_around_pvertex_iterator = boost::transform_iterator<Halfedge_to_pedge, CGAL::Halfedge_around_target_iterator<Mesh> >;
-  using PEdges_around_pvertex = CGAL::Iterator_range<PEdge_around_pvertex_iterator>;
 
   using PEdge_of_pface_iterator = boost::transform_iterator<Halfedge_to_pedge, CGAL::Halfedge_around_face_iterator<Mesh> >;
   using PEdges_of_pface = CGAL::Iterator_range<PEdge_of_pface_iterator>;
 
-  using PFace_around_pvertex_iterator = boost::transform_iterator<Halfedge_to_pface, CGAL::Halfedge_around_target_iterator<Mesh> >;
-  using PFaces_around_pvertex = CGAL::Iterator_range<PFace_around_pvertex_iterator>;
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
   using IEdge   = typename Intersection_graph::Edge_descriptor;
@@ -185,18 +164,9 @@ public:
     FT outside = FT(0);
     FT weight  = FT(0);
 
-    FT inside_count = FT(0);
-    FT outside_count = FT(0);
-
     void add_pface(const PFace& pface, const int neighbor) {
       pfaces.push_back(pface);
       neighbors.push_back(neighbor);
-    }
-    void set_index(const std::size_t idx) {
-      index = idx;
-    }
-    void set_centroid(const Point_3& point) {
-      centroid = point;
     }
   };
 
@@ -204,13 +174,11 @@ private:
   std::vector<Support_plane> m_support_planes;
   Intersection_graph m_intersection_graph;
 
-  std::vector<std::vector<Point_3> > m_input_polygons;
   std::vector<Vertex> m_kinetic_vertices;
 
   To_exact to_exact;
   From_exact from_exact;
 
-  const Parameters& m_parameters;
 
   std::string m_prefix;
   std::string m_log_prefix; // Prefix for each line written to std::cout, e.g., the index of the partition.
@@ -231,8 +199,8 @@ private:
   std::map<std::size_t, std::size_t> m_input_polygon_map; // Maps index of input polygon onto support plane indices.
 
 public:
-  Data_structure(const Parameters& parameters, const std::string &prefix, const std::string &log_prefix = std::string())
-    : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix), m_log_prefix(log_prefix)
+  Data_structure(const std::string &prefix, const std::string &log_prefix = std::string())
+    : to_exact(), from_exact(), m_prefix(prefix), m_log_prefix(log_prefix)
   {}
 
   template<typename Type1, typename Type2, typename ResultType>
@@ -256,10 +224,6 @@ public:
     m_volumes.clear();
     m_pface_neighbors.clear();
     m_input_polygon_map.clear();
-  }
-
-  void initialization_done() {
-    m_intersection_graph.initialization_done();
   }
 
   // Everything that is modified by the propagation and the finalization:
@@ -309,17 +273,7 @@ public:
   **           ACCESS           **
   ********************************/
 
-  const std::vector<std::vector<Point_3> >& input_polygons() const {
-    return m_input_polygons;
-  }
-
   const std::map<std::size_t, std::size_t>& input_polygon_map() const { return m_input_polygon_map; }
-
-  int support_plane_index(const std::size_t polygon_index) const {
-    CGAL_assertion(m_input_polygon_map.find(polygon_index) != m_input_polygon_map.end());
-    const std::size_t sp_idx = m_input_polygon_map.at(polygon_index);
-    return static_cast<int>(sp_idx);
-  }
 
   std::vector<Vertex>& kinetic_vertices() {
     return m_kinetic_vertices;
@@ -358,10 +312,7 @@ public:
   const std::vector<std::size_t>& face_to_input_polygon() const { return m_face_input; }
 
   std::vector<std::size_t>& face_to_support_plane() { return m_face2sp; }
-  std::vector<std::set<std::size_t> >& support_plane_to_input_polygon() { return m_sp2input_polygon; }
 
-  const std::vector<Support_plane>& support_planes() const { return m_support_planes; }
-  std::vector<Support_plane>& support_planes() { return m_support_planes; }
 
   const Intersection_graph& igraph() const { return m_intersection_graph; }
   Intersection_graph& igraph() { return m_intersection_graph; }
@@ -371,18 +322,6 @@ public:
 
   void resize(const std::size_t number_of_items) {
     m_support_planes.resize(number_of_items);
-  }
-
-  template<typename OutputIterator>
-  OutputIterator border(std::size_t sp_idx, IFace face, OutputIterator oi) const {
-    const auto boundary = m_intersection_graph.face(face).edges;
-    for (IEdge e : boundary) {
-      auto it = m_intersection_graph.edge(e).vertices.find(std::make_pair(sp_idx, face));
-      if (it == m_intersection_graph.edge(e).vertices.end() || m_kinetic_vertices[it->second.first].moving || m_kinetic_vertices[it->second.second].moving)
-        *oi++ = e;
-    }
-
-    return oi;
   }
 
   std::vector<Volume_cell>& volumes() { return m_volumes; }
@@ -773,13 +712,6 @@ public:
   }
 
   template<typename Pair>
-  void preprocess(std::vector<Pair>& points, const FT min_dist = 0, const FT min_angle = FT(0)) const {
-    remove_equal_points(points, min_dist);
-
-    remove_collinear_points(points, min_angle);
-  }
-
-  template<typename Pair>
   void remove_equal_points(std::vector<Pair>& points, const FT min_dist) const {
     std::vector<Pair> polygon;
     const std::size_t n = points.size();
@@ -804,58 +736,6 @@ public:
     }
     CGAL_assertion(polygon.size() >= 3);
     points = polygon;
-  }
-
-  template<typename Pair>
-  void remove_collinear_points(std::vector<Pair>& points, const FT min_angle) const {
-    std::vector<Pair> polygon;
-    const std::size_t n = points.size();
-    for (std::size_t i = 0; i < n; ++i) {
-      const std::size_t im = (i + n - 1) % n;
-      const std::size_t ip = (i + 1) % n;
-
-      const auto& p = points[im].first;
-      const auto& q = points[i].first;
-      const auto& r = points[ip].first;
-
-      using Vector = typename CGAL::Kernel_traits<typename Pair::first_type>::type::Vector_2;
-      using Direction = typename CGAL::Kernel_traits<typename Pair::first_type>::type::Direction_2;
-
-      Vector vec1(q, r);
-      Vector vec2(q, p);
-      vec1 = KSP::internal::normalize(vec1);
-      vec2 = KSP::internal::normalize(vec2);
-
-      const Direction dir1(vec1);
-      const Direction dir2(vec2);
-      const auto angle = KSP::internal::angle_2(dir1, dir2);
-
-      if (angle > min_angle) polygon.push_back(points[i]);
-    }
-    if (polygon.size() >= 3) points = polygon;
-    else remove_collinear_points(points, min_angle / FT(2));
-  }
-
-  template<typename Pair>
-  void sort_points_by_direction(std::vector<Pair>& points) const {
-    From_exact from_exact;
-    FT x = FT(0), y = FT(0); FT num = 0;
-    for (const auto& pair : points) {
-      const auto& point = from_exact(pair.first);
-      x += point.x();
-      y += point.y();
-      num += 1;
-    }
-    x /= num;
-    y /= num;
-    const Point_2 mid(x, y);
-
-    std::sort(points.begin(), points.end(),
-    [&](const Pair& a, const Pair& b) -> bool {
-      const Segment_2 sega(mid, from_exact(a.first));
-      const Segment_2 segb(mid, from_exact(b.first));
-      return ( Direction_2(sega) < Direction_2(segb) );
-    });
   }
 
   /*******************************
@@ -1308,21 +1188,6 @@ public:
     return PFace(support_plane, fi);
   }
 
-  bool inside_iface(const IkPoint_2& p, IFace f_idx) const {
-    const typename Intersection_graph::Face_property& fp = m_intersection_graph.face(f_idx);
-
-    // poly, vertices and edges in IFace are oriented ccw
-    for (std::size_t i = 0; i < fp.pts.size(); i++) {
-      IkVector_2 ts = fp.pts[(i + fp.pts.size() - 1) % fp.pts.size()] - p;
-      IkVector_2 tt = fp.pts[i] - p;
-
-      if ((tt.x() * ts.y() - tt.y() * ts.x()) > 0)
-        return false;
-    }
-
-    return true;
-  }
-
   // Face containing the point p + t * v at t = 0+. The point is strictly inside one face at t = 0+, unless it moves along a line.
   IFace locate_iface_0plus(std::size_t sp_idx, const IkPoint_2& p, const IkVector_2& v) const {
     const Support_plane &sp = m_support_planes[sp_idx];
@@ -1345,31 +1210,8 @@ public:
     return IFace(-1);
   }
 
-  IFace locate_iface(std::size_t sp_idx, const IkPoint_2& p) const {
-    const Support_plane &sp = m_support_planes[sp_idx];
-    for (auto& f : sp.ifaces()) {
-      if (inside_iface(p, f))
-        return f;
-    }
-
-    return IFace(-1);
-  }
-
   void clear_pfaces(const std::size_t support_plane_idx) {
     support_plane(support_plane_idx).clear_pfaces();
-  }
-
-  void clear_polygon_faces(const std::size_t support_plane_idx) {
-    Mesh& m = mesh(support_plane_idx);
-    for (const auto& fi : m.faces()) {
-      m.remove_face(fi);
-    }
-    for (const auto& ei : m.edges()) {
-      m.remove_edge(ei);
-    }
-    for (const auto& vi : m.vertices()) {
-      m.set_halfedge(vi, Halfedge_index());
-    }
   }
 
   PVertex opposite(const PEdge& pedge, const PVertex& pvertex) const {
@@ -1380,31 +1222,11 @@ public:
     return PVertex(pedge.first, mesh(pedge.first).target(mesh(pedge.first).halfedge(pedge.second)));
   }
 
-  Point_3 centroid_of_pface(const PFace& pface) const {
-    const std::function<Point_3(PVertex)> unary_f =
-      [&](const PVertex& pvertex) -> Point_3 {
-      return point_3(pvertex);
-    };
-    const std::vector<Point_3> polygon(
-      boost::make_transform_iterator(pvertices_of_pface(pface).begin(), unary_f),
-      boost::make_transform_iterator(pvertices_of_pface(pface).end(), unary_f));
-    CGAL_assertion(polygon.size() >= 3);
-    return CGAL::centroid(polygon.begin(), polygon.end());
-  }
-
   PEdges_of_pface pedges_of_pface(const PFace& pface) const {
     const auto pedges = PEdges_of_pface(
       boost::make_transform_iterator(halfedges_around_face(halfedge(pface.second, mesh(pface.first)), mesh(pface.first)).begin(), Halfedge_to_pedge(pface.first, mesh(pface.first))),
       boost::make_transform_iterator(halfedges_around_face(halfedge(pface.second, mesh(pface.first)), mesh(pface.first)).end(), Halfedge_to_pedge(pface.first, mesh(pface.first))));
     CGAL_assertion(pedges.size() >= 3);
-    return pedges;
-  }
-
-  PEdges_around_pvertex pedges_around_pvertex(const PVertex& pvertex) const {
-    const auto pedges = PEdges_around_pvertex(
-      boost::make_transform_iterator(halfedges_around_target(halfedge(pvertex.second, mesh(pvertex.first)), mesh(pvertex.first)).begin(), Halfedge_to_pedge(pvertex.first, mesh(pvertex.first))),
-      boost::make_transform_iterator(halfedges_around_target(halfedge(pvertex.second, mesh(pvertex.first)), mesh(pvertex.first)).end(), Halfedge_to_pedge(pvertex.first, mesh(pvertex.first))));
-    CGAL_assertion(pedges.size() >= 2);
     return pedges;
   }
 
@@ -1452,11 +1274,6 @@ public:
 
   const int& k(const std::size_t support_plane_idx) const { return support_plane(support_plane_idx).k(); }
   int& k(const std::size_t support_plane_idx) { return support_plane(support_plane_idx).k(); }
-
-  const Vector_2& direction(const PVertex& pvertex) const { return support_plane(pvertex).direction(pvertex.second); }
-  Vector_2& direction(const PVertex& pvertex) { return support_plane(pvertex).direction(pvertex.second); }
-
-  const FT speed(const PVertex& pvertex) { return support_plane(pvertex).speed(pvertex.second); }
 
   /*******************************
   **          ISimplices        **
@@ -1671,14 +1488,6 @@ public:
     return support_plane(support_plane_idx).iedges();
   }
 
-  const std::vector<Bbox_2>& ibboxes(const std::size_t support_plane_idx) const {
-    return support_plane(support_plane_idx).ibboxes();
-  }
-
-  std::vector<Bbox_2>& ibboxes(const std::size_t support_plane_idx) {
-    return support_plane(support_plane_idx).ibboxes();
-  }
-
   const std::set<std::size_t>& intersected_planes(IEdge iedge) const {
     return m_intersection_graph.intersected_planes(iedge);
   }
@@ -1696,36 +1505,12 @@ public:
     return out;
   }
 
-  bool is_zero_length_iedge(IVertex a, IVertex b) const {
-    const auto& p = m_intersection_graph.point_3(a);
-    const auto& q = m_intersection_graph.point_3(b);
-    return KSP::internal::distance(p, q) == 0;
-  }
-
-  bool is_iedge(IVertex source, IVertex target) const {
-    return m_intersection_graph.is_edge(source, target);
-  }
-
-  bool is_bbox_iedge(IEdge edge) const {
-    for (const auto support_plane_idx : m_intersection_graph.intersected_planes(edge)) {
-      if (support_plane_idx < 6) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   /*******************************
   **          STRINGS           **
   ********************************/
 
   inline const std::string str(IEdge iedge) const {
     std::ostringstream oss; oss << "IEdge" << iedge; return oss.str();
-  }
-
-  inline const std::string lstr(const PEdge& pedge) const {
-    return "PEdge(" + std::to_string(pedge.first) + ":e" + std::to_string(pedge.second)
-      + ")[v" + std::to_string(source(pedge).second) + "->v" + std::to_string(target(pedge).second) + "]";
   }
 
   /*******************************
@@ -1775,10 +1560,6 @@ public:
 
   Point_2 point_2(const std::size_t support_plane_idx, IVertex ivertex) const {
     return support_plane(support_plane_idx).to_2d(from_exact(point_3(ivertex)));
-  }
-
-  IkSegment_2 segment_2(const std::size_t support_plane_idx, IEdge iedge) const {
-    return support_plane(support_plane_idx).to_2d(segment_3(iedge));
   }
 
   Point_3 to_3d(const std::size_t support_plane_idx, const Point_2& point_2) const {
@@ -1926,26 +1707,6 @@ public:
     return success;
   }
 
-  bool is_volume_degenerate(const std::vector<PFace>& pfaces) const {
-    for (const auto& pface : pfaces) {
-      const auto pedges = pedges_of_pface(pface);
-      const std::size_t n = pedges.size();
-
-      std::size_t count = 0;
-      for (const auto pedge : pedges) {
-        CGAL_assertion(has_iedge(pedge));
-        const auto iedge = this->iedge(pedge);
-        const std::size_t num_found = find_adjacent_pfaces(pface, iedge, pfaces);
-        if (num_found == 1) ++count;
-      }
-      if (count != n) {
-        KSP::internal::Log_line(m_log_prefix) << "- current number of neighbors " << count << " != " << n;
-        dump_info(*this, pface, *pedges.begin(), pfaces, "");
-        return true;
-      }
-    }
-    return false;
-  }
 };
 
 #endif //DOXYGEN_RUNNING

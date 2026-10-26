@@ -46,7 +46,6 @@ public:
   using Point_3 = typename Intersection_kernel::Point_3;
   using Segment_3 = typename Intersection_kernel::Segment_3;
   using Line_3 = typename Intersection_kernel::Line_3;
-  using Polygon_2 = typename CGAL::Polygon_2<Intersection_kernel>;
 
   struct Vertex_property {
     Point_3 point;
@@ -54,7 +53,6 @@ public:
     Vertex_property(const Point_3& point) : point(point) {}
   };
 
-  using Kinetic_interval = std::vector<std::pair<IkFT, IkFT> >;// barycentric coordinate and intersection time.
 
   struct Edge_property {
     std::size_t line;
@@ -136,7 +134,6 @@ private:
   std::map<std::vector<std::size_t>, Vertex_descriptor> m_map_vertices;
   std::vector<Face_property> m_ifaces;
 
-  std::vector<bool> m_initial_part_of_partition;
 
 public:
   Intersection_graph()
@@ -185,10 +182,6 @@ public:
 
   std::size_t number_of_vertices() const {
     return static_cast<std::size_t>(boost::num_vertices(m_graph));
-  }
-
-  std::size_t number_of_faces() const {
-    return m_ifaces.size();
   }
 
   static Vertex_descriptor null_ivertex() {
@@ -280,12 +273,6 @@ public:
     return false;
   }
 
-  void get_faces(std::size_t sp_idx, Edge_descriptor edge, std::pair<Face_descriptor, Face_descriptor>& pair) const {
-    auto it = m_graph[edge].faces.find(sp_idx);
-    if (it != m_graph[edge].faces.end())
-      pair = it->second;
-  }
-
   Face_descriptor get_other_face(std::size_t sp_idx, Edge_descriptor edge, Face_descriptor face) const {
     auto it = m_graph[edge].faces.find(sp_idx);
     if (it != m_graph[edge].faces.end())
@@ -351,18 +338,6 @@ public:
 
   void finished_bbox() {
     m_nb_lines_on_bbox = m_lines.size();
-  }
-
-  void initialization_done() {
-    m_initial_part_of_partition.resize(m_ifaces.size());
-    for (std::size_t idx = 0; idx < m_ifaces.size(); idx++)
-      m_initial_part_of_partition[idx] = m_ifaces[idx].part_of_partition;
-  }
-
-  void reset_to_initialization() {
-    CGAL_assertion(m_ifaces.size() == m_initial_part_of_partition.size());
-    for (std::size_t idx = 0; idx < m_ifaces.size(); idx++)
-      m_ifaces[idx].part_of_partition = m_initial_part_of_partition[idx];
   }
 
   // Parts of the intersection graph that are modified by the propagation and finalization.
@@ -486,11 +461,6 @@ public:
       m_graph[boost::target(edge, m_graph)].point);
   }
 
-  const Line_3 line_3(Edge_descriptor edge) const {
-    return Line_3(
-      m_graph[boost::source(edge, m_graph)].point,
-      m_graph[boost::target(edge, m_graph)].point);
-  }
 };
 
 template<typename GeomTraits, typename IntersectionKernel> std::atomic<std::size_t> Intersection_graph<GeomTraits, IntersectionKernel>::Edge_property::edge_counter{0};
