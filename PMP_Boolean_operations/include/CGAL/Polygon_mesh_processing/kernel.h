@@ -330,10 +330,10 @@ kernel(const FaceRange& face_range,
     };
     const auto& vrange = vertices(kernel);
 
-    APoint_3 approx_centroid = approx_centroid = find_intern_point<AK>(kernel, to_approx);
-    EPoint_3 double_centroid(to_double(approx_centroid.x()),
-                             to_double(approx_centroid.y()),
-                             to_double(approx_centroid.z()));
+    APoint_3 approx_centroid = find_intern_point<AK>(kernel, to_approx);
+    EPoint_3 double_centroid(approx_centroid.x(),
+                             approx_centroid.y(),
+                             approx_centroid.z());
 
     // Check if the approximate_centroid is inside the kernel
     auto is_inside_kernel = [&](const EPoint_3& p) {
