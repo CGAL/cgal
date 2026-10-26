@@ -440,6 +440,40 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
 };
 
 
+template <typename VertexHandle, bool HasVertexInfo> 
+struct Vertex_index_functor
+{
+  Vertex_index_functor(const std::unordered_map<VertexHandle, int>&) 
+  {}
+
+  int operator()(const VertexHandle& v)
+  { return -1; }
+};
+
+template <typename VertexHandle> 
+struct Vertex_index_functor<VertexHandle, true>
+{
+  Vertex_index_functor(const std::unordered_map<VertexHandle, int>&) 
+  {}
+
+  int operator()(const VertexHandle& v) 
+  { return v->meshing_info(); }
+};
+
+
+template <typename VertexHandle> 
+struct Vertex_index_functor<VertexHandle, false>
+{
+  const std::unordered_map<VertexHandle, int>& V;
+  Vertex_index_functor(const std::unordered_map<VertexHandle, int>& V)
+  : V(V)
+  {}
+
+
+  int operator()(const VertexHandle& v) 
+  { return V.at(v); }
+};
+
 //-------------------------------------------------------
 // IO functions
 //-------------------------------------------------------
@@ -511,6 +545,7 @@ output_to_medit(std::ostream& os,
         << get(vertex_pmap, v)
         << '\n';
   }
+  /*
   auto vertex_index = [&](const Vertex_handle& v) {
     constexpr bool use_meshing_info =
     has_meshing_info<typename std::remove_reference<decltype(*std::declval<Vertex_handle>())>::type>::value;
@@ -519,6 +554,10 @@ output_to_medit(std::ostream& os,
     else
       return V.at(v);
   };
+  */
+
+  Vertex_index_functor<Vertex_handle, use_meshing_info> vertex_index(V);
+
   os << "Vertices\n" << inum - 1 << "\n";
   os << oss.str();
 
