@@ -440,28 +440,28 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
 };
 
 
-template <typename VertexHandle, bool HasVertexInfo> 
+template <typename VertexHandle, bool HasVertexInfo>
 struct Vertex_index_functor
 {
-  Vertex_index_functor(const std::unordered_map<VertexHandle, int>&) 
+  Vertex_index_functor(const std::unordered_map<VertexHandle, int>&)
   {}
 
   int operator()(const VertexHandle& v)
   { return -1; }
 };
 
-template <typename VertexHandle> 
+template <typename VertexHandle>
 struct Vertex_index_functor<VertexHandle, true>
 {
-  Vertex_index_functor(const std::unordered_map<VertexHandle, int>&) 
+  Vertex_index_functor(const std::unordered_map<VertexHandle, int>&)
   {}
 
-  int operator()(const VertexHandle& v) 
+  auto operator()(const VertexHandle& v)
   { return v->meshing_info(); }
 };
 
 
-template <typename VertexHandle> 
+template <typename VertexHandle>
 struct Vertex_index_functor<VertexHandle, false>
 {
   const std::unordered_map<VertexHandle, int>& V;
@@ -470,7 +470,7 @@ struct Vertex_index_functor<VertexHandle, false>
   {}
 
 
-  int operator()(const VertexHandle& v) 
+  int operator()(const VertexHandle& v)
   { return V.at(v); }
 };
 
