@@ -24,21 +24,21 @@
 // @fixme now:
 
 // @fixme later:
-// - test save time at an event time
-// - re-using items in event handlers goes against detecting obsolete events with expired pointers;
-//   erase counters would be better.
+// - handle save time at an event time
+// - re-using items in event handlers goes against detecting obsolete events with expired
+//   pointers; erase counters would be better.
 
 // @fixme latest:
-// - Fix simultaneous events still happening sometimes (likely the same event multiple times
+// - Fix simultaneous events still happening sometimes (could also be the same event multiple times
 //   since we don't check the queue before pushing)
-// - Similar to above, event order matters whereas it shouldn't really. This means we don't filter
-//   some contact events that should be detected as vanish events, but since events are processed
+// - Similar to above, event order still matters whereas it shouldn't really. This means we don't filter
+//   some contact events that should be classified as vanish events, but since events are processed
 //   first in the queue for similar time, it falls back on its feet.
 // - EPECK -> EPICK embedding could create self-intersections
 
 // @speed
 // - If an edge is growing, there is no point computing its vanish event
-// - Avoid recomputing the vanish time if the edge has not been modified
+// - Avoid recomputing the vanish time when the edge has not been modified
 // - Don't actually shift at all intermediate steps: we can do everything with base planes,
 //   including at places where we use shifted point positions
 // - Use CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION and CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
@@ -50,7 +50,6 @@
 //   event of any edge of the facet (probably not worth it, though)
 // - get rid of the exact construction requirement? At least if we do not have to split high-degree
 //   vertices, it should be possible, but that would require writing filtered predicates like SLS2's.
-// - splitting high degree vertices in reasonable time with plane arrangements
 // - CT3 based contact event detection
 // - lighter & faster polyhedron data structures
 
@@ -59,7 +58,7 @@
 
 // @todo
 // - User manual (doc figures)
-// - Reject non-manifold inputs, non-triangulated inputs (clarify doc)
+// - Reject non-manifold inputs, non-triangulated inputs (clarify ref doc)
 
 // @todo later:
 // - Do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
