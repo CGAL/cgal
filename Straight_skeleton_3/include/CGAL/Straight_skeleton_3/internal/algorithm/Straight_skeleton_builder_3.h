@@ -570,8 +570,8 @@ public:
         visitor_->before_event(polyhedron, current_time, event);
       }
 
-      CGAL_assertion_code(Point_3 p_box_min = Transformation::bounding_box_min(polyhedron);)
-      CGAL_assertion_code(Point_3 p_box_max = Transformation::bounding_box_max(polyhedron);)
+      CGAL_assertion_code(const Point_3 p_box_min = Transformation::bounding_box_min(polyhedron);)
+      CGAL_assertion_code(const Point_3 p_box_max = Transformation::bounding_box_max(polyhedron);)
 
       // Event treatment
       Event_status es = handle_event(event, time_future_bound, polyhedron);
