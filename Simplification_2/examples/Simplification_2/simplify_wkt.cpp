@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Simplification_2/simplification_vw.h>
-#include <CGAL/Simplification_2/simplification_ksbb.h>
-#include <CGAL/Simplification_2/simplification_bmrs.h>
+#include <CGAL/Simplification_2/Simplification_VW.h>
+#include <CGAL/Simplification_2/Simplification_KSBB.h>
+#include <CGAL/Simplification_2/Simplification_BMRS.h>
 #include <CGAL/IO/WKT.h>
 
 #include <fstream>
@@ -14,7 +14,7 @@ typedef K::Point_2                                          Point_2;
 typedef CGAL::Polygon_2<K>                                  Polygon_2;
 typedef CGAL::Polygon_with_holes_2<K>                       Polygon_with_holes_2;
 typedef CGAL::Polyline_2<K>                                 Polyline_2;
-typedef CGAL::StraightGeometryCollection<K>                 Collection;
+typedef CGAL::Straight_geometry_collection_2<K>             Collection;
 
 void write_WKT(const std::string& filename, const Collection& collection)
 {

@@ -4,27 +4,27 @@
 #include "straight_simplification_algorithm.h"
 
 namespace CGAL {
-namespace detail {
+namespace internal {
 template<class Kernel, bool History>
 class KSBB_algorithm {
 public:
 	using Graph = CGAL::internal::EdgeCollapseGraph<Kernel, History>;
 
 private:
-	static constexpr int DEPTH = 10;
+	static constexpr int quadtree_depth = 10;
 	/// Quadtree child cells overlap their siblings by this fraction of the cell size
-	static constexpr double FUZZ = 0.05;
+	static constexpr double quadtree_fuzz = 0.05;
 
 	using KSBB = CGAL::internal::KronenfeldEtAl<Graph>;
-	using VertexTree = KSBB::VertexTree;
-	using EdgeTree = KSBB::EdgeTree;
-	std::unique_ptr<VertexTree> m_vt;
-	std::unique_ptr<EdgeTree> m_et;
+	using Vertex_tree = KSBB::VertexTree;
+	using Edge_tree = KSBB::EdgeTree;
+	std::unique_ptr<Vertex_tree> m_vt;
+	std::unique_ptr<Edge_tree> m_et;
 	KSBB m_ksbb;
 
 public:
-	KSBB_algorithm(Graph& graph, std::unique_ptr<VertexTree> vt)
-	    : m_vt(std::move(vt)), m_et(std::make_unique<EdgeTree>(m_vt->root_box(), DEPTH, FUZZ)), m_ksbb(graph, *m_et, *m_vt) {
+	KSBB_algorithm(Graph& graph, std::unique_ptr<Vertex_tree> vt)
+	    : m_vt(std::move(vt)), m_et(std::make_unique<Edge_tree>(m_vt->root_box(), quadtree_depth, quadtree_fuzz)), m_ksbb(graph, *m_et, *m_vt) {
 		// The edge collapse only uses isolated vertices (points) as obstacles,
 		// so the vertex tree is rebuilt to contain just those, and the edge tree is filled.
 		m_ksbb.initialize(true, true);
@@ -46,19 +46,19 @@ public:
 /// @tparam Data data stored with each geometry, or std::monostate for none.
 /// @tparam PolygonContainer the container of the polygon vertices.
 template<bool History = false, class Kernel = CGAL::Epick, class Data = std::monostate, class PolygonContainer = std::vector<CGAL::Point_2<Kernel>>>
-class Simplification_KSBB : public internal::Straight_simplification_algorithm<Kernel, detail::KSBB_algorithm<Kernel, History>, Data, PolygonContainer> {
+class Simplification_KSBB : public internal::Straight_simplification_algorithm<Kernel, internal::KSBB_algorithm<Kernel, History>, Data, PolygonContainer> {
 	// all methods are inherited from the base class
-	using Base = internal::Straight_simplification_algorithm<Kernel, detail::KSBB_algorithm<Kernel, History>, Data, PolygonContainer>;
+	using Base = internal::Straight_simplification_algorithm<Kernel, internal::KSBB_algorithm<Kernel, History>, Data, PolygonContainer>;
 public:
 	using Base::Base;
 };
 
 template<class K, class Data, class PolygonContainer>
-Simplification_KSBB(const CGAL::StraightGeometryCollection<K, Data, PolygonContainer>&)
+Simplification_KSBB(const CGAL::Straight_geometry_collection_2<K, Data, PolygonContainer>&)
     -> Simplification_KSBB<false, K, Data, PolygonContainer>;
 
 template<class K, class Data, class PolygonContainer>
-Simplification_KSBB(const CGAL::StraightGeometryCollection<K, Data, PolygonContainer>&, const Simplification_options<K>&)
+Simplification_KSBB(const CGAL::Straight_geometry_collection_2<K, Data, PolygonContainer>&, const Simplification_options<K>&)
     -> Simplification_KSBB<false, K, Data, PolygonContainer>;
 
 // ---- Simplifying a collection ---- //
@@ -66,7 +66,7 @@ Simplification_KSBB(const CGAL::StraightGeometryCollection<K, Data, PolygonConta
 /// Boundaries and vertices shared by several geometries are simplified once, so they stay shared, and shared edges count once.
 /// The result has the geometries in the same order and with the same data as the input, so handles of the input remain valid.
 template<class K, class Data, class PolygonContainer>
-CGAL::StraightGeometryCollection<K, Data, PolygonContainer> simplify_KSBB(const CGAL::StraightGeometryCollection<K, Data, PolygonContainer>& collection, size_t complexity, const Simplification_options<K>& options = {}) {
+CGAL::Straight_geometry_collection_2<K, Data, PolygonContainer> simplify_KSBB(const CGAL::Straight_geometry_collection_2<K, Data, PolygonContainer>& collection, size_t complexity, const Simplification_options<K>& options = {}) {
 	return internal::simplify_collection<Simplification_KSBB<false, K, Data, PolygonContainer>>(collection, complexity, options);
 }
 
@@ -82,9 +82,9 @@ CGAL::Polygon_with_holes_2<K, PolygonContainer> simplify_KSBB(const CGAL::Polygo
 }
 
 template<class K, class PolygonContainer>
-CGAL::Multipolygon_with_holes_2<K, PolygonContainer> simplify_KSBB(const CGAL::Multipolygon_with_holes_2<K, PolygonContainer>& multiPolygon, size_t complexity, const Simplification_options<K>& options = {}) {
+CGAL::Multipolygon_with_holes_2<K, PolygonContainer> simplify_KSBB(const CGAL::Multipolygon_with_holes_2<K, PolygonContainer>& multipolygon, size_t complexity, const Simplification_options<K>& options = {}) {
 	CGAL::Multipolygon_with_holes_2<K, PolygonContainer> input;
-	for (const auto& polygon : multiPolygon.polygons_with_holes()) {
+	for (const auto& polygon : multipolygon.polygons_with_holes()) {
 		input.add_polygon_with_holes(polygon);
 	}
 	return internal::simplify_geometry<Simplification_KSBB<false, K, std::monostate, PolygonContainer>>(input, complexity, options);
@@ -96,7 +96,7 @@ CGAL::Polyline_2<K> simplify_KSBB(const CGAL::Polyline_2<K>& polyline, size_t co
 }
 
 template<class K>
-CGAL::MultiPolyline<K> simplify_KSBB(const CGAL::MultiPolyline<K>& multiPolyline, size_t complexity, const Simplification_options<K>& options = {}) {
-	return internal::simplify_geometry<Simplification_KSBB<false, K>>(multiPolyline, complexity, options);
+CGAL::Multipolyline_2<K> simplify_KSBB(const CGAL::Multipolyline_2<K>& multipolyline, size_t complexity, const Simplification_options<K>& options = {}) {
+	return internal::simplify_geometry<Simplification_KSBB<false, K>>(multipolyline, complexity, options);
 }
 }

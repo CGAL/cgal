@@ -17,24 +17,27 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "polyline.h"
+#include <CGAL/Aff_transformation_2.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Point_2.h>
 
-// Mirrors CGAL's Multipolygon_with_holes and Polygon_set
+#include <vector>
+
 namespace CGAL {
-template<class K>
-struct MultiPolyline {
-   std::vector<Polyline_2<K>> polylines;
+template <class K> 
+struct Multipoint_2 {
+	std::vector<Point_2<K>> points;
 
-   MultiPolyline<K> transform(const CGAL::Aff_transformation_2<K>& trans) const {
-       MultiPolyline<K> transformed;
-       for (const auto& pl : polylines) {
-           transformed.polylines.push_back(pl.transform(trans));
-       }
-       return transformed;
-   }
+	Multipoint_2<K> transform(const CGAL::Aff_transformation_2<K>& trans) const {
+		Multipoint_2<K> transformed;
+		for (const auto& p : points) {
+			transformed.points.push_back(p.transform(trans));
+		}
+		return transformed;
+	}
 
-   Bbox_2 bbox() const {
-       return CGAL::bbox_2(polylines.begin(), polylines.end());
-   }
+	Bbox_2 bbox() const {
+		return CGAL::bbox_2(points.begin(), points.end());
+	}
 };
-}
+} // namespace CGAL

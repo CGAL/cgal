@@ -40,27 +40,27 @@ std::vector<Direction_2<K>> regular_orientations(int count, double initial_angle
 	return orientations;
 }
 
-namespace detail {
+namespace internal {
 template<class Kernel, bool History>
 class BMRS_algorithm {
 public:
 	using Graph = CGAL::internal::EdgeMovesGraph<Kernel, History>;
 
 private:
-	static constexpr int DEPTH = 10;
+	static constexpr int quadtree_depth = 10;
 	/// Quadtree child cells overlap their siblings by this fraction of the cell size
-	static constexpr double FUZZ = 0.05;
+	static constexpr double quadtree_fuzz = 0.05;
 
 	using BMRS = CGAL::internal::BuchinEtAl<Graph>;
-	using VertexTree = BMRS::VertexTree;
-	using EdgeTree = BMRS::EdgeTree;
-	std::unique_ptr<VertexTree> m_vt;
-	std::unique_ptr<EdgeTree> m_et;
+	using Vertex_tree = BMRS::VertexTree;
+	using Edge_tree = BMRS::EdgeTree;
+	std::unique_ptr<Vertex_tree> m_vt;
+	std::unique_ptr<Edge_tree> m_et;
 	BMRS m_bmrs;
 
 public:
-	BMRS_algorithm(Graph& graph, std::unique_ptr<VertexTree> vt)
-	    : m_vt(std::move(vt)), m_et(std::make_unique<EdgeTree>(m_vt->root_box(), DEPTH, FUZZ)), m_bmrs(graph, *m_et, *m_vt) {
+	BMRS_algorithm(Graph& graph, std::unique_ptr<Vertex_tree> vt)
+	    : m_vt(std::move(vt)), m_et(std::make_unique<Edge_tree>(m_vt->root_box(), quadtree_depth, quadtree_fuzz)), m_bmrs(graph, *m_et, *m_vt) {
 		// Merges collinear degree-2 vertices, rebuilds the vertex tree to contain just the isolated vertices (points),
 		// which are obstacles during simplification, and fills the edge tree.
 		m_bmrs.initialize(true, true);
@@ -109,15 +109,15 @@ std::vector<CGAL::internal::Vector<CGAL::internal::Inexact>> orientation_vectors
 /// @tparam Data data stored with each geometry, or std::monostate for none.
 /// @tparam PolygonContainer the container of the polygon vertices.
 template<bool History = false, class Kernel = CGAL::Epick, class Data = std::monostate, class PolygonContainer = std::vector<CGAL::Point_2<Kernel>>>
-class Simplification_BMRS : public internal::Straight_simplification_algorithm<Kernel, detail::BMRS_algorithm<Kernel, History>, Data, PolygonContainer> {
-	using Base = internal::Straight_simplification_algorithm<Kernel, detail::BMRS_algorithm<Kernel, History>, Data, PolygonContainer>;
-	using Graph = typename detail::BMRS_algorithm<Kernel, History>::Graph;
+class Simplification_BMRS : public internal::Straight_simplification_algorithm<Kernel, internal::BMRS_algorithm<Kernel, History>, Data, PolygonContainer> {
+	using Base = internal::Straight_simplification_algorithm<Kernel, internal::BMRS_algorithm<Kernel, History>, Data, PolygonContainer>;
+	using Graph = typename internal::BMRS_algorithm<Kernel, History>::Graph;
 
 	static std::function<void(Graph&)> restriction(const Simplification_BMRS_options<Kernel>& options) {
 		if (options.orientations.empty()) {
 			return {};
 		}
-		auto vectors = detail::orientation_vectors(options.orientations);
+		auto vectors = internal::orientation_vectors(options.orientations);
 		return [vectors, lambda = options.lambda, eps = options.eps](Graph& graph) {
 			CGAL::internal::restrict_orientations(graph, vectors, lambda, eps);
 		};
@@ -131,11 +131,11 @@ public:
 };
 
 template<class K, class Data, class PolygonContainer>
-Simplification_BMRS(const CGAL::StraightGeometryCollection<K, Data, PolygonContainer>&)
+Simplification_BMRS(const CGAL::Straight_geometry_collection_2<K, Data, PolygonContainer>&)
     -> Simplification_BMRS<false, K, Data, PolygonContainer>;
 
 template<class K, class Data, class PolygonContainer>
-Simplification_BMRS(const CGAL::StraightGeometryCollection<K, Data, PolygonContainer>&, const Simplification_BMRS_options<K>&)
+Simplification_BMRS(const CGAL::Straight_geometry_collection_2<K, Data, PolygonContainer>&, const Simplification_BMRS_options<K>&)
     -> Simplification_BMRS<false, K, Data, PolygonContainer>;
 
 // ---- Simplifying a collection ---- //
@@ -143,7 +143,7 @@ Simplification_BMRS(const CGAL::StraightGeometryCollection<K, Data, PolygonConta
 /// Boundaries and vertices shared by several geometries are simplified once, so they stay shared, and shared edges count once.
 /// The result has the geometries in the same order and with the same data as the input, so handles of the input remain valid.
 template<class K, class Data, class PolygonContainer>
-CGAL::StraightGeometryCollection<K, Data, PolygonContainer> simplify_BMRS(const CGAL::StraightGeometryCollection<K, Data, PolygonContainer>& collection, size_t complexity, const Simplification_BMRS_options<K>& options = {}) {
+CGAL::Straight_geometry_collection_2<K, Data, PolygonContainer> simplify_BMRS(const CGAL::Straight_geometry_collection_2<K, Data, PolygonContainer>& collection, size_t complexity, const Simplification_BMRS_options<K>& options = {}) {
 	return internal::simplify_collection<Simplification_BMRS<false, K, Data, PolygonContainer>>(collection, complexity, options);
 }
 
@@ -159,9 +159,9 @@ CGAL::Polygon_with_holes_2<K, PolygonContainer> simplify_BMRS(const CGAL::Polygo
 }
 
 template<class K, class PolygonContainer>
-CGAL::Multipolygon_with_holes_2<K, PolygonContainer> simplify_BMRS(const CGAL::Multipolygon_with_holes_2<K, PolygonContainer>& multiPolygon, size_t complexity, const Simplification_BMRS_options<K>& options = {}) {
+CGAL::Multipolygon_with_holes_2<K, PolygonContainer> simplify_BMRS(const CGAL::Multipolygon_with_holes_2<K, PolygonContainer>& multipolygon, size_t complexity, const Simplification_BMRS_options<K>& options = {}) {
 	CGAL::Multipolygon_with_holes_2<K, PolygonContainer> input;
-	for (const auto& polygon : multiPolygon.polygons_with_holes()) {
+	for (const auto& polygon : multipolygon.polygons_with_holes()) {
 		input.add_polygon_with_holes(polygon);
 	}
 	return internal::simplify_geometry<Simplification_BMRS<false, K, std::monostate, PolygonContainer>>(input, complexity, options);
@@ -173,7 +173,7 @@ CGAL::Polyline_2<K> simplify_BMRS(const CGAL::Polyline_2<K>& polyline, size_t co
 }
 
 template<class K>
-CGAL::MultiPolyline<K> simplify_BMRS(const CGAL::MultiPolyline<K>& multiPolyline, size_t complexity, const Simplification_BMRS_options<K>& options = {}) {
-	return internal::simplify_geometry<Simplification_BMRS<false, K>>(multiPolyline, complexity, options);
+CGAL::Multipolyline_2<K> simplify_BMRS(const CGAL::Multipolyline_2<K>& multipolyline, size_t complexity, const Simplification_BMRS_options<K>& options = {}) {
+	return internal::simplify_geometry<Simplification_BMRS<false, K>>(multipolyline, complexity, options);
 }
 }

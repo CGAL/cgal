@@ -32,7 +32,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <CGAL/Segment_2.h>
 #include <CGAL/Vector_2.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Simplification_2/geometries/polyline.h>
+#include <CGAL/Simplification_2/geometries/Polyline_2.h>
 
 #include <numbers>
 

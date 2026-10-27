@@ -1,6 +1,6 @@
 #pragma once
 
-#include "straight_geometry.h"
+#include "Straight_geometry_2.h"
 #include "transform_helpers.h"
 
 #include <CGAL/utility.h>
@@ -10,7 +10,7 @@
 
 namespace CGAL {
 template <class K, class Data, class Container>
-class StraightGeometryCollection;
+class Straight_geometry_collection_2;
 
 namespace internal {
 template <class K, class Data, class Container>
@@ -21,20 +21,17 @@ template <class Geometry> struct Handle {
 	size_t index;
 	Handle(size_t index) : index(index) {}
 
-	template <class K, class Data, class Container> friend class CGAL::StraightGeometryCollection;
+	template <class K, class Data, class Container> friend class CGAL::Straight_geometry_collection_2;
 	template <class K, class Data, class Container> friend class StraightGeometryCollectionHelper;
 };
 
 template <class K, class Data, class Container> class StraightGeometryCollectionHelper {
   protected:
-	std::vector<StraightGeometry<K, Container>> m_geometries;
-	using DataContainer = std::vector<Data>;
-	DataContainer m_data;
+	std::vector<Straight_geometry_2<K, Container>> m_geometries;
+	using Data_container = std::vector<Data>;
+	Data_container m_data;
 
   public:
-	template <class Geometry> Data getData(Handle<Geometry> handle) {
-		return m_data[handle.index];
-	}
 	Handle<CGAL::Polygon_2<K, Container>> insert(const CGAL::Polygon_2<K, Container>& polygon, Data data) {
 		m_geometries.emplace_back(polygon);
 		m_data.push_back(std::move(data));
@@ -55,10 +52,10 @@ template <class K, class Data, class Container> class StraightGeometryCollection
 		return Handle<Multipolygon_with_holes_2<K, Container>>{m_geometries.size() - 1};
 	}
 
-	Handle<MultiPolyline<K>> insert(const MultiPolyline<K>& polyline, Data data) {
+	Handle<Multipolyline_2<K>> insert(const Multipolyline_2<K>& polyline, Data data) {
 		m_geometries.emplace_back(polyline);
 		m_data.push_back(std::move(data));
-		return Handle<MultiPolyline<K>>{m_geometries.size() - 1};
+		return Handle<Multipolyline_2<K>>{m_geometries.size() - 1};
 	}
 
 	Handle<Polyline_2<K>> insert(const Polyline_2<K>& polyline, Data data) {
@@ -67,10 +64,10 @@ template <class K, class Data, class Container> class StraightGeometryCollection
 		return Handle<Polyline_2<K>>{m_geometries.size() - 1};
 	}
 
-	Handle<MultiPoint<K>> insert(const MultiPoint<K>& point, Data data) {
+	Handle<Multipoint_2<K>> insert(const Multipoint_2<K>& point, Data data) {
 		m_geometries.emplace_back(point);
 		m_data.push_back(std::move(data));
-		return Handle<MultiPoint<K>>{m_geometries.size() - 1};
+		return Handle<Multipoint_2<K>>{m_geometries.size() - 1};
 	}
 
 	Handle<CGAL::Point_2<K>> insert(const CGAL::Point_2<K>& point, Data data) {
@@ -80,38 +77,38 @@ template <class K, class Data, class Container> class StraightGeometryCollection
 	}
 
 	template <typename T> 
-	typename DataContainer::reference // for std::vector<bool> this returns a bool by value.
+	typename Data_container::reference // for std::vector<bool> this returns a bool by value.
 	get_data(Handle<T> handle) {
 		return m_data[handle.index];
 	}
 
 	template <typename T> 
-	typename DataContainer::const_reference
+	typename Data_container::const_reference
 	get_data(Handle<T> handle) const {
 		return m_data[handle.index];
 	}
 
-	DataContainer& data() {
+	Data_container& data() {
 		return m_data;
 	}
 
-	const DataContainer& data() const {
+	const Data_container& data() const {
 		return m_data;
 	}
 
-	DataContainer::iterator data_begin() {
+	Data_container::iterator data_begin() {
 		return m_data.begin();
 	}
 
-	DataContainer::iterator data_end() {
+	Data_container::iterator data_end() {
 		return m_data.end();
 	}
 
-	DataContainer::iterator data_begin() const {
+	Data_container::iterator data_begin() const {
 		return m_data.begin();
 	}
 
-	DataContainer::iterator data_end() const {
+	Data_container::iterator data_end() const {
 		return m_data.end();
 	}
 };
@@ -119,7 +116,7 @@ template <class K, class Data, class Container> class StraightGeometryCollection
 template <class K, class Container>
 class StraightGeometryCollectionHelper<K, std::monostate, Container> {
   protected:
-	std::vector<StraightGeometry<K, Container>> m_geometries;
+	std::vector<Straight_geometry_2<K, Container>> m_geometries;
 
   public:
 	Handle<CGAL::Polygon_2<K, Container>> insert(const CGAL::Polygon_2<K, Container>& polygon) {
@@ -139,9 +136,9 @@ class StraightGeometryCollectionHelper<K, std::monostate, Container> {
 		return Handle<Multipolygon_with_holes_2<K, Container>>{m_geometries.size() - 1};
 	}
 
-	Handle<MultiPolyline<K>> insert(const MultiPolyline<K>& polyline) {
+	Handle<Multipolyline_2<K>> insert(const Multipolyline_2<K>& polyline) {
 		m_geometries.emplace_back(polyline);
-		return Handle<MultiPolyline<K>>{m_geometries.size() - 1};
+		return Handle<Multipolyline_2<K>>{m_geometries.size() - 1};
 	}
 
 	Handle<Polyline_2<K>> insert(const Polyline_2<K>& polyline) {
@@ -149,9 +146,9 @@ class StraightGeometryCollectionHelper<K, std::monostate, Container> {
 		return Handle<Polyline_2<K>>{m_geometries.size() - 1};
 	}
 
-	Handle<MultiPoint<K>> insert(const MultiPoint<K>& point) {
+	Handle<Multipoint_2<K>> insert(const Multipoint_2<K>& point) {
 		m_geometries.emplace_back(point);
-		return Handle<MultiPoint<K>>{m_geometries.size() - 1};
+		return Handle<Multipoint_2<K>>{m_geometries.size() - 1};
 	}
 
 	Handle<CGAL::Point_2<K>> insert(const CGAL::Point_2<K>& point) {
@@ -162,10 +159,10 @@ class StraightGeometryCollectionHelper<K, std::monostate, Container> {
 } // namespace internal
 
 template <class K, class Data = std::monostate, class Container = std::vector<CGAL::Point_2<K>>>
-class StraightGeometryCollection
+class Straight_geometry_collection_2
     : public internal::StraightGeometryCollectionHelper<K, Data, Container> {
   public:
-	using GeometryContainer = std::vector<StraightGeometry<K, Container>>;
+	using Geometry_container = std::vector<Straight_geometry_2<K, Container>>;
 	template <class Geometry> using Handle = internal::Handle<Geometry>;
 
 	template <typename T> T& get_geometry(Handle<T> handle) {
@@ -176,33 +173,33 @@ class StraightGeometryCollection
 		return std::get<T>(this->m_geometries.at(handle.index));
 	}
 
-	GeometryContainer& geometries() {
+	Geometry_container& geometries() {
 		return this->m_geometries;
 	}
 
-	const GeometryContainer& geometries() const {
+	const Geometry_container& geometries() const {
 		return this->m_geometries;
 	}
 
-	GeometryContainer::iterator geometries_begin() {
+	Geometry_container::iterator geometries_begin() {
 		return this->m_geometries.begin();
 	}
 
-	GeometryContainer::iterator geometries_end() {
+	Geometry_container::iterator geometries_end() {
 		return this->m_geometries.end();
 	}
 
-	GeometryContainer::const_iterator geometries_begin() const {
+	Geometry_container::const_iterator geometries_begin() const {
 		return this->m_geometries.begin();
 	}
 
-	GeometryContainer::const_iterator geometries_end() const {
+	Geometry_container::const_iterator geometries_end() const {
 		return this->m_geometries.end();
 	}
 
-	StraightGeometryCollection<K, Data, Container> transform(const CGAL::Aff_transformation_2<K>& trans) const {
-		StraightGeometryCollection<K, Data, Container> transformed(*this);
-		using Geometry = StraightGeometry<K, Container>;
+	Straight_geometry_collection_2<K, Data, Container> transform(const CGAL::Aff_transformation_2<K>& trans) const {
+		Straight_geometry_collection_2<K, Data, Container> transformed(*this);
+		using Geometry = Straight_geometry_2<K, Container>;
 		for (auto& g : transformed.m_geometries) {
 			g = std::visit(
 			    overloaded{

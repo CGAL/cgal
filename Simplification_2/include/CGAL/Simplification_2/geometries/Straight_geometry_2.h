@@ -17,9 +17,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "polyline.h"
-#include "multi_polyline.h"
-#include "multi_point.h"
+#include "Polyline_2.h"
+#include "Multipolyline_2.h"
+#include "Multipoint_2.h"
 #include <CGAL/Multipolygon_with_holes_2.h>
 
 #include <CGAL/Point_2.h>
@@ -31,9 +31,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace CGAL {
 /// Type that serves as an internal representation of the straight (i.e. linear) features of the OGC Simple Feature Access.
-/// OGC name:                         MultiPolygon      Polygon              LinearRing
+/// Its alternatives correspond to the OGC types MultiPolygon, Polygon, LinearRing, MultiLineString, LineString, Point and MultiPoint.
 template <class K, class Container = std::vector<Point_2<K>>>
-using StraightGeometry = std::variant<Multipolygon_with_holes_2<K, Container>, Polygon_with_holes_2<K, Container>, Polygon_2<K, Container>,
-//                                    MultiLineString LineString   Point     MultiPoint
-                                      MultiPolyline<K>, Polyline_2<K>, Point_2<K>, MultiPoint<K>>;
+using Straight_geometry_2 = std::variant<Multipolygon_with_holes_2<K, Container>, Polygon_with_holes_2<K, Container>, Polygon_2<K, Container>,
+                                         Multipolyline_2<K>, Polyline_2<K>, Point_2<K>, Multipoint_2<K>>;
 }

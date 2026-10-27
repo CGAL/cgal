@@ -31,9 +31,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <vector>
 
 namespace CGAL {
+namespace internal {
+/// Returns the point of the segment closest to p.
 template <class K> 
-CGAL::Point_2<K> projection(const CGAL::Segment_2<K>& seg, const CGAL::Point_2<K>& p) {
-	Line_2<K> l = seg.supporting_line();
+CGAL::Point_2<K> closest_point_on_segment(const CGAL::Segment_2<K>& seg, const CGAL::Point_2<K>& p) {
+	CGAL::Line_2<K> l = seg.supporting_line();
 	auto q = l.projection(p);
 	auto s = (q - seg.source()) * (seg.target() - seg.source()) / seg.squared_length();
 	if (s < 0)
@@ -44,17 +46,17 @@ CGAL::Point_2<K> projection(const CGAL::Segment_2<K>& seg, const CGAL::Point_2<K
 }
 
 template <class Segment_>
-class Polyline_Segment_ptr
+class Polyline_segment_ptr
 {
   public:
 	typedef Segment_ Segment;
-	Polyline_Segment_ptr(Segment const &seg) :m_seg(seg){}
+	Polyline_segment_ptr(Segment const &seg) :m_seg(seg){}
 	Segment* operator->() {return &m_seg;}
   private:
 	Segment m_seg;
 };
 
-template <class K, class InputIterator> class SegmentIterator {
+template <class K, class InputIterator> class Polyline_segment_iterator {
   public:
 	using iterator_category = std::input_iterator_tag;
 	using value_type = CGAL::Segment_2<K>;
@@ -65,9 +67,9 @@ template <class K, class InputIterator> class SegmentIterator {
 	InputIterator m_first_vertex;
 
   public:
-	typedef SegmentIterator<K, InputIterator> Self;
+	typedef Polyline_segment_iterator<K, InputIterator> Self;
 
-	SegmentIterator(InputIterator first_vertex): m_first_vertex(first_vertex) {};
+	Polyline_segment_iterator(InputIterator first_vertex): m_first_vertex(first_vertex) {};
 
 	CGAL::Segment_2<K> operator*() const {
 		auto second_vertex = m_first_vertex;
@@ -75,8 +77,8 @@ template <class K, class InputIterator> class SegmentIterator {
 		return { *m_first_vertex, *second_vertex };
 	}
 
-	Polyline_Segment_ptr<CGAL::Segment_2<K>> operator->() const
-	{return Polyline_Segment_ptr<CGAL::Segment_2<K>>(operator*());}
+	Polyline_segment_ptr<CGAL::Segment_2<K>> operator->() const
+	{return Polyline_segment_ptr<CGAL::Segment_2<K>>(operator*());}
 
 	Self& operator++() {
 		++m_first_vertex;
@@ -98,11 +100,13 @@ template <class K, class InputIterator> class SegmentIterator {
 	}
 };
 
+} // namespace internal
+
 template <class K> class Polyline_2 {
   public:
 	typedef typename std::vector<CGAL::Point_2<K>>::const_iterator Vertex_iterator;
 	typedef typename std::vector<CGAL::Point_2<K>>::const_reverse_iterator Vertex_reverse_iterator;
-	typedef SegmentIterator<K, typename std::vector<typename CGAL::Point_2<K>>::const_iterator> Edge_iterator;
+	typedef internal::Polyline_segment_iterator<K, typename std::vector<typename CGAL::Point_2<K>>::const_iterator> Edge_iterator;
 	Polyline_2() = default;
 
 	// Container typedefs and functions so that a polyline is a range of points: e.g. std::back_inserter can be used
@@ -179,7 +183,7 @@ template <class K> class Polyline_2 {
 		typename K::FT minDist2 = std::numeric_limits<typename K::FT>::infinity();
 
 		for (auto eit = edges_begin(); eit != edges_end(); ++eit) {
-			auto proj = projection(*eit, p);
+			auto proj = internal::closest_point_on_segment(*eit, p);
 			auto dist2 = CGAL::squared_distance(p, proj);
 			if (dist2 < minDist2) {
 				minDist2 = dist2;
