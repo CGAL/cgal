@@ -26,7 +26,7 @@ typedef CGAL::Zp<5, char, true> Coefficient_ring;
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
-using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits,CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> > ;
+using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits,CGAL::OSM::Sparse_matrix_structure<CGAL::OSM::Sparse_chain> > ;
 using HDVF_type = HDVF::Hdvf<Complex> ;
 
 template<typename ChainComplex>

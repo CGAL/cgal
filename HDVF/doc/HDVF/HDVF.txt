@@ -805,7 +805,7 @@ The `OSM` library provides an implementation of the `SparseMatrix` and `SparseCh
 
 The structure is based on a mapped matrix implementation, hence, matrices and chains are either column or row major (`CGAL::OSM::COLUMN` or `CGAL::OSM::ROW` type).
 
-In order to speed up both block operations and iterators (over non empty columns or row according to the type), a **bitboard** structure is used (inherited from chess programming community). Hence, in order to iterate over the major dimension of a matrix, one should actually iterate a bitboard (providing indices of non empty columns / rows). See `Sparse_matrix` documentation for more details.
+In order to speed up both block operations and iterators (over non empty columns or row according to the type), a **bitboard** structure is used (inherited from chess programming community). Hence, in order to iterate over the major dimension of a matrix, one should actually iterate a bitboard (providing indices of non empty columns / rows). See `Sparse_matrix_structure` documentation for more details.
 
 Iterating over sparse chains them comes to iterate over a map.
 

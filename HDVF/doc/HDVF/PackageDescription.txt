@@ -82,8 +82,10 @@ The package provides an implementation of Homological Discrete %Vector Fields, a
 - `CGAL::Homological_discrete_vector_field::Mesh_object_io`
 - `CGAL::Homological_discrete_vector_field::Sub_chain_complex_mask`
 - `CGAL::Homological_discrete_vector_field::Sub_sparse_matrix`
+- `CGAL::Homological_discrete_vector_field::Sub_sparse_matrix_strcture`
 - `CGAL::OSM::OSM`
 - `CGAL::OSM::Sparse_matrix`
+- `CGAL::OSM::Sparse_matrix_strcture`
 - `CGAL::OSM::Sparse_chain`
 - `CGAL::OSM::Bitboard`
 - `CGAL::OSM::Full_lu`

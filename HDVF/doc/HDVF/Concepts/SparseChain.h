@@ -41,7 +41,7 @@ public:
 
     /** \brief Type of derived sparse matrices. */
     template <typename CR, int SF>
-    using Sparse_matrix_derived = OSM::Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<CR, SF>;
+    using Sparse_matrix_derived = OSM::Sparse_matrix_structure<OSM::Sparse_chain>::Sparse_matrix_type<CR, SF>;
 
     /*!
      * \brief Sparse chain iterator type.

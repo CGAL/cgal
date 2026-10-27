@@ -12,7 +12,7 @@
 //typedef int Coefficient_ring;
 typedef CGAL::Zp<5, char, true> Coefficient_ring;
 
-typedef CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_base;
+typedef CGAL::OSM::Sparse_matrix_structure<CGAL::OSM::Sparse_chain> Sparse_matrix_base;
 
 typedef Sparse_matrix_base::Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
 typedef Sparse_matrix_base::Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;

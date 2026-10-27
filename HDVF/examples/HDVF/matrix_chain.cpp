@@ -3,7 +3,7 @@
 
 #include <CGAL/OSM/OSM.h>
 
-typedef CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_structure;
+typedef CGAL::OSM::Sparse_matrix_strcture<CGAL::OSM::Sparse_chain> Sparse_matrix_structure;
 typedef typename Sparse_matrix_structure::template Sparse_chain_type<int, CGAL::OSM::COLUMN> Column_chain;
 typedef typename Sparse_matrix_structure::template Sparse_matrix_type<int, CGAL::OSM::COLUMN> Column_matrix;
 

@@ -5,8 +5,8 @@
  The concept `SparseMatrixStructure` describes the requirements for a class providing a model of `SparseChain` and an associated model of `SparseMatrix`.
 
  \cgalHasModelsBegin
- \cgalHasModelsBare{`CGAL::OSM::Sparse_matrix<SparseChain>`}
- \cgalHasModelsBare{`CGAL::OSM::Sub_sparse_matrix<SparseChain>`}
+ \cgalHasModelsBare{`CGAL::OSM::Sparse_matrix_structure<SparseChain>`}
+ \cgalHasModelsBare{`CGAL::OSM::Sub_sparse_matrix_structure<SparseChain>`}
  \cgalHasModelsEnd
 
  \sa `IntegralDomainWithoutDivision`

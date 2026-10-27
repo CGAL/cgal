@@ -22,7 +22,7 @@
 
 
  \cgalHasModelsBegin
- \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_core<IntegralDomainWithoutDivision, AbstractChainComplex, SparseChain, Sparse_matrix>`}
+ \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_core<IntegralDomainWithoutDivision, AbstractChainComplex, SparseChain, Sparse_matrix_structure>`}
  \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf<IntegralDomainWithoutDivision, AbstractChainComplex>`}
  \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_persistence<IntegralDomainWithoutDivision, AbstractChainComplex>`}
  \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_duality<IntegralDomainWithoutDivision, AbstractChainComplex>`}
@@ -33,7 +33,9 @@
  \sa `SparseChain`
  \sa `SparseMatrix`
 
- *How to describe constants declared in the namespace Homological_discrete_vector_field and used everywhere? PSC_flag, options, exporttype*
+ \warning How to describe constants declared in the namespace Homological_discrete_vector_field and used everywhere? PSC_flag, options, exporttype*
+
+ \warning How mention more clearly the export functions from Geometric_chain_complex_tools which provide write_VTK functions ?
 
  [AGL, 2017] Aldo Gonzalez-Lorenzo, Alexandra Bac, Jean-Luc Mari, Pedro Real. Allowing cycles in discrete Morse theory, Topology and its Applications, Volume 228, 2017, Pages 1-35.
 
@@ -104,6 +106,8 @@ public:
         int dim;
         /// Comparison operator
         inline bool operator==(const Cell_pair& pair2);
+        /// Output operator
+        friend std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>& pairs);
     };
 
     /*!
@@ -119,12 +123,12 @@ public:
     /*!
      Type of column-major sparse matrices
      */
-    typedef Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
+    typedef Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN, Sparse_chain> Column_matrix;
 
     /*!
      Type of row-major sparse matrices
      */
-    typedef Sparse_matrix<CoefficientType, CGAL::OSM::ROW> Row_matrix;
+    typedef Sparse_matrix<CoefficientType, CGAL::OSM::ROW, Sparse_chain> Row_matrix;
 
     /// @}
 
@@ -186,6 +190,17 @@ public:
      * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     virtual std::vector<Cell_pair> find_pairs_A(int q, size_t gamma, bool &found) const;
+
+    /** \brief Checks if the pair of cells \f$(\gamma, \gamma')\f$, of dimensions q / q+1, is valid for A.
+     *
+     * The pair is valid if \f$\langle \mathrm d(\gamma),\gamma' \rangle\f$ is invertible.
+     *
+     * \param gamma Index of the first cell (dimension `q`).
+     * \param gamma_prime Index of the second cell (dimension `q+1`).
+     * \param q Lower dimension of cells.
+     */
+
+    bool is_valid_pair_for_A(size_t gamma, size_t gamma_prime, int q);
 
 
     /// @}
@@ -253,6 +268,22 @@ public:
      */
     bool is_perfect_hdvf();
 
+    /** \brief Comparison operator (with a HDVF over the same underlying complex).
+     *
+     * Compares the HDVF with `other` HDVF (fast comparison, testing only HDVF flags).
+     *
+     * \param other Other HDVF to compare.
+     */
+    bool operator==(const Hdvf_core& other);
+
+    /** \brief Compares the HDVF with another HDVF over the same underlying complex.
+     *
+     * \param other Other HDVF to compare.
+     * \param full_compare Turns on "in depth" HDVF comparison (reduction matrices).
+     */
+
+    bool compare(const Hdvf_core& other, bool full_compare = false) const;
+
     /// @}
 
     /// \name Getters
@@ -297,9 +328,16 @@ public:
     /**
      * \brief Gets the`PSC_flag` of all cells.
      *
-     * The function returns a vector which `qth element contains the vector of `PSC_flag` of cells of dimension `q`.
+     * The function returns a vector which `q`th element contains the vector of `PSC_flag` of cells of dimension `q`.
      */
     virtual const std::vector<std::vector<PSC_flag> >& psc_flags () const;
+
+    /** \brief Returns the number of cells with a given flag in dimension `q`.
+     *
+     * \param flag `PSC_flag` tested.
+     * \param q Dimension along which the number of cells is returned.
+     */
+    size_t number_of_cells_by_flag(PSC_flag flag, int q);
 
     /*!
      * \brief Gets HDVF option.
@@ -330,6 +368,45 @@ public:
      \brief Gets a constant reference over the underlying chain complex.
      */
     const Chain_complex& complex () const;
+
+    /*!
+     * \brief Returns a chain containing the homology generator associated to `cell_index` (critical cell) of dimension  `q`.
+     *
+     * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
+     *
+     * The complexity is in the number of (non zero) coefficients of the generator.
+     *
+     * \return A column-major chain.
+     */
+    Column_chain homology_chain (size_t cell_index, int q) const;
+
+    /*!
+     * \brief Returns a chain containing the cohomology generators associated to `cell_index` (critical cell) of dimension  `q`.
+     *
+     * The method exports:
+     * - the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`,
+     * - or the co-faces of this chain if `co_faces` is true (sometimes easier to visualize cohomology generators)
+     *
+     * The complexity is in the number of (non zero) coefficients of the generator.
+     *
+     * Below, a sample mesh with, (left) homology generators, (right) two examples of cohomology generators (corresponding generators/co-generators bear similar colours):
+     *
+     * <img src="HDVF_dtorus_homs.png" align="center" width=25%/>
+     * <img src="HDVF_dtorus_cohom1.png" align="center" width=25%/>
+     * <img src="HDVF_dtorus_cohom2.png" align="center" width=25%/>
+     *
+     * The same generators displayed through their co-faces:
+     *
+     * <img src="HDVF_dtorus_cohom1_co.png" align="center" width=25%/>
+     * <img src="HDVF_dtorus_cohom2_co.png" align="center" width=25%/>
+     *
+     * All homology / cohomology generators:
+     *
+     *<img src="HDVF_dtorus_all.png" align="center" width=30%/>
+     *
+     * \return A column-major chain.
+     */
+    virtual Column_chain cohomology_chain (size_t cell_index, int dim, bool co_faces = false) const;
 
     /// @}
 
@@ -363,7 +440,7 @@ public:
      * \param out Output stream (by default, writes the complex to `std::cout`).
      * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs matrices in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.
      */
-    std::ostream& write_matrices(std::ostream &out = std::cout) const;
+    std::ostream& write_matrices(std::ostream &out = std::cout, int dimension_restriction = -2) const;
 
     /*! \brief Writes the homology and cohomology reduction information.
      *
@@ -374,75 +451,78 @@ public:
      * \param out Output stream (by default, writes the complex to `std::cout`).
      * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs reductions in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.
      */
-    std::ostream& write_reduction(std::ostream &out = std::cout) const;
+    std::ostream& write_reduction(std::ostream &out = std::cout, int dimension_restriction = -2) const;
 
     /**
      * \brief Writes the PSC flags of cells along computed dimensions.
      *
-     * If `dimension_restriction` is -1, writes the reduction in any dimensions. If `dimension_restriction` is positive, restricts output to `dimension_restriction`. If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
+     * If `dimension_restriction` is -1, writes flags in any dimensions. If `dimension_restriction` is positive, restricts output to `dimension_restriction`. If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
      *
      * \param out Output stream (by default, writes the complex to `std::cout`).
      * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs reductions in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.
      */
     std::ostream& write_flags(std::ostream &out = std::cout, int dimension_restriction = -2) const;
 
-    /*!
-     *\brief Writes a HDVF and its reduction to a stream.
+    /*! \brief Writes a HDVF together with the associated reduction (f, g, h, d matrices)
      *
-     * Exports  them to a stream  in  `.hdvf` file format (see \ref secHDVFHDVF_format  for a specification).
+     * Exports a HDVF to a stream in %HDVF file format (a simple text file format, see %HDVF_file_format "user manual" for a specification).
+     *
+     * \param out Output stream.
+    */
+   std::ostream& write_hdvf_reduction(std::ostream& out) const ;
+
+    /** \brief Writes a HDVF together with the associated reduction to a file (f, g, h, d matrices).
+     *
+     * Exports a HDVF to a file in `hdvf` file format (a simple text file format, see %HDVF_file_format "user manual" for a specification).
+     *
+     * \param filename Output file name.
+     *
+     * \exception File_not_found If the file `filename` cannot be opened, raises a `%std::runtime_error`.
      */
-    std::ostream& write_hdvf_reduction(std::ostream& out) ;
+    void write_hdvf_reduction(std::string filename) const;
 
     /*!
-     * \brief Reads a HDVF and its reduction from a stream.
+     * \brief Reads a HDVF together with the associated reduction (f, g, h, d matrices)
      *
-     * Imports them from a `.hdvf` file format (see \ref secHDVFHDVF_format  for a specification).
+     * Loads a HDVF and its reduction from a stream in `hdvf` file format, a simple text file format (see %HDVF_file_format "user manual" for a specification).
+     * \warning The underlying complex is not stored in the file!
+     *
+     * \param in_stream Input stream.
+     *
+     * \exception Incompatible_prefix If the prefix of the stored HDVF is not 'HDVF_core' raises a `%std::runtime_error`.
+     *
+     * \exception Incompatible_type If the type of the stored HDVF is not 0 (HDVF and reduction storage) raises a `%std::runtime_error`.
+     *
+     * \exception Incompatible_dimension If the dimension of the HDVF stored does not match the dimension of the underlying complex, raises a `%std::runtime_error`.
+     *
+     * \exception Incoherent_number_of_cells If the number of cells loaded in a given dimension does not match that of the underlying complex, raises a `%std::runtime_error`.
      */
-    std::istream& read_hdvf_reduction(std::istream& in) ;
+    std::istream& read_hdvf_reduction(std::istream& in_stream) ;
+
+    /**
+     * \brief Reads a HDVF together with the associated reduction from a file (f, g, h, d matrices)
+     *
+     * Loads a HDVF and its reduction from a file in `hdvf` file format, a simple text file format (see %HDVF_file_format "user manual" for a specification).
+     * \warning The underlying complex is not stored in the file!
+     *
+     * \param filename Input file name.
+     *
+     * \exception File_not_found If the file `filename` cannot be opened, raises a `%std::runtime_error`.
+     */
+    void read_hdvf_reduction(std::string filename);
 
     /*!
-     * \brief Exports primary/secondary/critical labels (in particular for vtk export).
+     * \brief Exports an integer code for cells labels (in particular for vtk export).
      *
-     * The method exports the labels of every cell in each dimension.
+     * The method exports integers encoding cells labels for every cell in each dimension. Labels are encoded as follows:
+     * - `PRIMARY` is encoded as -1
+     * - `SECONDARY` is encoded as 1
+     * - `CRITICAL` is encoded as 0
+     * - `NONE` is encoded as -2
      *
-     * \return A vector containing, for each dimension, the vector of labels by cell index.
+     * \return A vector containing, for each dimension, the vector of encoded labels by cell index.
      */
     std::vector<std::vector<int> > psc_labels () const;
-
-    /*!
-     * \brief Returns a chain containing the homology generator associated to `cell_index` (critical cell) of dimension  `q` (in particular for vtk export).
-     *
-     * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
-     *
-     * \return A column-major chain.
-     */
-    Column_chain homology_chain (size_t cell_index, int q) const;
-
-    /*!
-     * \brief Returns a chain containing the cohomology generators associated to `cell_index` (critical cell) of dimension  `q` (in particular for vtk export).
-     *
-     * The method exports:
-     * - the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`,
-     * - or the co-faces of this chain if `co_faces` is true (sometimes easier to view cohomology generators)
-     *
-     * Below, a sample mesh with, (left) homology generators, (right) two examples of cohomology generators (corresponding generators/co-generators bear similar colours):
-     *
-     * <img src="HDVF_dtorus_homs.png" align="center" width=25%/>
-     * <img src="HDVF_dtorus_cohom1.png" align="center" width=25%/>
-     * <img src="HDVF_dtorus_cohom2.png" align="center" width=25%/>
-     *
-     * The same generators displayed through their co-faces:
-     *
-     * <img src="HDVF_dtorus_cohom1_co.png" align="center" width=25%/>
-     * <img src="HDVF_dtorus_cohom2_co.png" align="center" width=25%/>
-     *
-     * All homology / cohomology generators:
-     *
-     *<img src="HDVF_dtorus_all.png" align="center" width=30%/>
-     *
-     * \return A column-major chain.
-     */
-    virtual Column_chain cohomology_chain (size_t cell_index, int dim, bool co_faces = false) const;
 
     /// @}
 

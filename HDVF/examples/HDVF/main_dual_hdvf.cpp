@@ -36,7 +36,7 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Traits = HDVF::Hdvf_traits_3<Kernel>;
-using Sparse_matrix_structure = CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain>;
+using Sparse_matrix_structure = CGAL::OSM::Sub_sparse_matrix_structure<CGAL::OSM::Sparse_chain>;
 
 template <typename MeshType, typename Complex>
 void mesh_complex_output(const MeshType& mesh, const Complex& L, const HDVF::Sub_chain_complex_mask<Complex>& K, const Options& options)

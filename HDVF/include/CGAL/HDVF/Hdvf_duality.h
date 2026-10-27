@@ -54,7 +54,7 @@ namespace Homological_discrete_vector_field {
 
  \cgalModels{HDVF}
 
- \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used. The sparse matrix provided by `ChainComplex` must be an instance of the `Sub_sparse_matrix` template.
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used. The sparse matrix structure provided by `ChainComplex` must be an instance of the `Sub_sparse_matrix_structure` template.
 
  [Gonzalez and al. 2025] Gonzalez-Lorenzo, A., Bac, A. & Gazull, YS. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
  */

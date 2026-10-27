@@ -32,8 +32,8 @@
  - A row-major representation of \f$A\f$ is: \f$[0\mapsto c_0, 1\mapsto c_1, 2\mapsto c_2]\f$ with the row-chains: \f$c_0 = [0\mapsto 1]\f$ and \f$c_1 = [0\mapsto -1, 2\mapsto 2]\f$ and \f$c_2 = [2\mapsto 1]\f$.
 
  \cgalHasModelsBegin
- \cgalHasModelsBare{`CGAL::OSM::Sparse_matrix_core<IntegralDomainWithoutDivision, Storage_format, SparseChain>`}
- \cgalHasModelsBare{`CGAL::OSM::Sub_sparse_matrix_core<IntegralDomainWithoutDivision, Storage_format, SparseChain>`}
+ \cgalHasModelsBare{`CGAL::OSM::Sparse_matrix<IntegralDomainWithoutDivision, Storage_format, SparseChain>`}
+ \cgalHasModelsBare{`CGAL::OSM::Sub_sparse_matrix<IntegralDomainWithoutDivision, Storage_format, SparseChain>`}
  \cgalHasModelsEnd
 
  \sa `IntegralDomainWithoutDivision`
@@ -131,9 +131,9 @@ public:
     bool is_null();
 
     /**
-     * \brief Tests if a `Sparse_matrix_core` is empty.
+     * \brief Tests if a `Sparse_matrix` is empty.
      *
-     * The function return `true` is the `Sparse_matrix_core` is empty (that is, if the number of columns or rows is null) and `false` otherwise.
+     * The function return `true` is the `Sparse_matrix` is empty (that is, if the number of columns or rows is null) and `false` otherwise.
      */
     bool is_empty();
 
@@ -628,7 +628,7 @@ public:
      *
      * \return A reference over the modified matrix.
      */
-        friend Sparse_matrix_core& swap_columns(Sparse_matrix_core& matrix, size_t i, size_t j);
+        friend Sparse_matrix& swap_columns(Sparse_matrix& matrix, size_t i, size_t j);
 
     /**
     * \brief Swaps rows in a matrix.
@@ -641,7 +641,7 @@ public:
 
     \return A reference over the modified matrix.
     */
-   friend Sparse_matrix_core& swap_rows(Sparse_matrix_core& matrix, size_t i, size_t j);
+   friend Sparse_matrix& swap_rows(Sparse_matrix& matrix, size_t i, size_t j);
 
 
 

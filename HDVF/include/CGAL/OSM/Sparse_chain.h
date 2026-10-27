@@ -57,7 +57,7 @@ public:
 
     /** \brief Type of derived sparse matrices. */
     template <typename CT, int SF>
-    using Sparse_matrix_derived = OSM::Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<CT, SF>;
+    using Sparse_matrix_derived = OSM::Sparse_matrix_structure<OSM::Sparse_chain>::Sparse_matrix_type<CT, SF>;
 
     /*!
      Type of chains iterators.
@@ -75,10 +75,10 @@ public:
     friend class Sparse_chain;
 
     template <typename _CT, int _CTF, template <typename, int> typename _SCT>
-    friend class Sparse_matrix_core;
+    friend class Sparse_matrix;
 
     template <template <typename, int> typename _SCT>
-    friend struct Sparse_matrix;
+    friend struct Sparse_matrix_structure;
 
 protected:
     /* \brief Type of data stored in the chain: map between indices and coefficients. */
@@ -722,8 +722,8 @@ private:
 
 // COLUMN chain x ROW chain -> COLUMN matrix
 template <typename _CT>
-Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row) {
-    Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<_CT, COLUMN> matrix(column._upperBound, row._upperBound);
+Sparse_matrix_structure<OSM::Sparse_chain>::Sparse_matrix_type<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row) {
+    Sparse_matrix_structure<OSM::Sparse_chain>::Sparse_matrix_type<_CT, COLUMN> matrix(column._upperBound, row._upperBound);
 
     for (std::pair<size_t, _CT> pair : row._chainData) {
         Sparse_chain<_CT, COLUMN> tmp(pair.second * column);
@@ -735,8 +735,8 @@ Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<_CT, COLUMN> operator*(cons
 
 // COLUMN chain x ROW chain -> ROW matrix
 template <typename _CT>
-Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row) {
-    Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<_CT, ROW> matrix(column._upperBound, row._upperBound);
+Sparse_matrix_structure<OSM::Sparse_chain>::Sparse_matrix_type<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row) {
+    Sparse_matrix_structure<OSM::Sparse_chain>::Sparse_matrix_type<_CT, ROW> matrix(column._upperBound, row._upperBound);
 
     for (std::pair<size_t, _CT> pair : column._chainData) {
         Sparse_chain<_CT, ROW> tmp(row * pair.second);

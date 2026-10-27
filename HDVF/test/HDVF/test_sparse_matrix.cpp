@@ -11,7 +11,7 @@
 //typedef int Coefficient_ring;
 typedef CGAL::Zp<5, char, true> Coefficient_ring;
 
-typedef CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_base;
+typedef CGAL::OSM::Sparse_matrix_structure<CGAL::OSM::Sparse_chain> Sparse_matrix_base;
 
 typedef Sparse_matrix_base::Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
 typedef Sparse_matrix_base::Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
@@ -664,7 +664,7 @@ int main()
 
     {
         std::cout << "-------- row" << std::endl;
-        typedef CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_base;
+        typedef CGAL::OSM::Sparse_matrix_structure<CGAL::OSM::Sparse_chain> Sparse_matrix_base;
         typedef Sparse_matrix_base::template Sparse_matrix_type<Coefficient_ring, CGAL::OSM::ROW> SM_row;
         Row_matrix A(5, 5);
 
@@ -709,7 +709,7 @@ int main()
 
     {
         std::cout << "-------- column" << std::endl;
-        typedef CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_base;
+        typedef CGAL::OSM::Sparse_matrix_structure<CGAL::OSM::Sparse_chain> Sparse_matrix_base;
         typedef Sparse_matrix_base::Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> SM_col;
         SM_col A(5, 5);
 

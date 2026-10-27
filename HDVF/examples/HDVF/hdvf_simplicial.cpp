@@ -25,7 +25,7 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 int main(int argc, char **argv)
 {
 #if 1
-    using Sparse_matrix_structure = CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain>;
+    using Sparse_matrix_structure = CGAL::OSM::Sparse_matrix_structure<CGAL::OSM::Sparse_chain>;
     using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits,Sparse_matrix_structure> ;
     using HDVF_type = HDVF::Hdvf<Complex> ;
 

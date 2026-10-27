@@ -39,7 +39,7 @@ namespace Homological_discrete_vector_field {
  \tparam SparseMatrixStruct a model of  `SparseMatrixStructure`  providing templates of sparse chains and sparse matrices built over a given model of `SparseChain`.
  */
 
-template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain>>
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain>>
 class Cubical_chain_complex {
 public:
     /*! \brief Type of coefficients used to compute homology. */
@@ -1022,7 +1022,7 @@ namespace IO {
  *
  * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
  */
-template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain>>
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain>>
 void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct> &K, const std::string &filename, const typename Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>:: template Sparse_chain_type<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
     CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::chain_to_vtk(K, filename, chain, q, cellId);
 }
@@ -1043,7 +1043,7 @@ void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_comp
  *
  * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
  */
-template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain>, typename LabelType = int>
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain>, typename LabelType = int>
 static void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
     CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>chain_complex_to_vtk(K, filename, labels, label_type_name);
 }

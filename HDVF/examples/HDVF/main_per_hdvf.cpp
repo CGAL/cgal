@@ -35,7 +35,7 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Traits = HDVF::Hdvf_traits_3<Kernel>;
-typedef CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_structure;
+typedef CGAL::OSM::Sub_sparse_matrix_structure<CGAL::OSM::Sparse_chain> Sparse_matrix_structure;
 
 // ------- Filtration
 

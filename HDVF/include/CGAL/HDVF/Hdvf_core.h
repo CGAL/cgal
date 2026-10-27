@@ -108,13 +108,14 @@ public:
     /*! \brief Type of sparse matrix structure used to compute homology. */
     typedef typename ChainComplex::Sparse_matrix_structure Sparse_matrix_structure;
 
-/* \brief Template type of underlying sparse chains. */
+/** \brief Template type of underlying sparse chains. */
     template <typename CR, int SF>
     using Sparse_chain_base = typename Sparse_matrix_structure::template Sparse_chain_type<CR, SF>;
 
-    /* \brief Template type of underlying sparse matrices. */
+    /** \brief Template type of underlying sparse matrices. */
     template <typename CR, int SF>
     using Sparse_matrix_base = typename Sparse_matrix_structure::template Sparse_matrix_type<CR, SF>;
+
     /*!
      Type of column-major chains
      */
@@ -219,7 +220,7 @@ public:
     }
 
 public:
-    /*
+    /**
      * \brief Constructor from a chain complex.
      *
      * Builds an "empty" HDVF_core associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
@@ -232,12 +233,12 @@ public:
      */
     Hdvf_core(const ChainComplex& K, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) ;
 
-    /*
+    /**
      * \brief Copy constructor.
      */
     Hdvf_core(const Hdvf_core& hdvf) : _flag(hdvf._flag), _nb_P(hdvf._nb_P), _nb_S(hdvf._nb_S), _nb_C(hdvf._nb_C), _F_row(hdvf._F_row), _G_col(hdvf._G_col), _H_col(hdvf._H_col), _DD_col(hdvf._DD_col), _K(hdvf._K), _hdvf_opt(hdvf._hdvf_opt), _dimension_restriction(hdvf._dimension_restriction), _min_dimension(hdvf._min_dimension), _max_dimension(hdvf._max_dimension) { }
 
-    /*
+    /**
      * \brief Affectation operator.
      *
      * \exception Invalid_underlying_complex If `hdvf` does not share the same underlying complex, raises a `%std::runtime_error`.
@@ -261,7 +262,7 @@ public:
         return *this;
     }
 
-    /* \brief Constructor from the PRIMARY/SECONDARY/CRITICAL labels.
+    /** \brief Constructor from the PRIMARY/SECONDARY/CRITICAL labels.
      *
      * If `with_build_reduction` is `false` check the combinatorial coherence of labels. If `with_build_reduction` is `true` checks that labels describe a valid HDVF (ie. \f$\partial(S)\_P\f$ is invertible).
      *
@@ -493,7 +494,7 @@ protected:
 
     }
 
-public:
+protected:
     /* \brief Check the "combinatorial" coherence of a HDVF \f$X(P,S,C)\f$.
      *
      * Checks if for any dimension, \f$|S_q| = |P_{q-1}|\f$.
@@ -509,6 +510,7 @@ public:
         return res;
     }
 
+public:
     /* \brief Checks if the pair of cells \f$(\gamma, \gamma')\f$, of dimensions q / q+1, is valid for A.
      *
      * The pair is valid if \f$\langle \mathrm d(\gamma),\gamma' \rangle\f$ is invertible.
@@ -741,7 +743,7 @@ public:
     /*
      * \brief Writes the PSC flags of cells along each dimension.
      *
-     * If `dimension_restriction` is -1, writes the reduction in any dimensions. If `dimension_restriction` is positive, restricts output to `dimension_restriction`. If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
+     * If `dimension_restriction` is -1, writes flags in any dimensions. If `dimension_restriction` is positive, restricts output to `dimension_restriction`. If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
      *
      * \param out Output stream (by default, writes the complex to `std::cout`).
      * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs reductions in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.

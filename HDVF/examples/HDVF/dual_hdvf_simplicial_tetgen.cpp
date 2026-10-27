@@ -24,7 +24,7 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
 //typedef CGAL::Zp<5,int,true> Coefficient_ring;
 typedef CGAL::Z2 Coefficient_ring;
-typedef CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_structure;
+typedef CGAL::OSM::Sub_sparse_matrix_structure<CGAL::OSM::Sparse_chain> Sparse_matrix_structure;
 typedef HDVF::Simplicial_chain_complex<Coefficient_ring, Traits, Sparse_matrix_structure> Complex;
 typedef HDVF::Hdvf_duality<Complex> HDVF_type;
 typedef HDVF::Duality_simplicial_complex_tools<Coefficient_ring,Traits> Tools_type;

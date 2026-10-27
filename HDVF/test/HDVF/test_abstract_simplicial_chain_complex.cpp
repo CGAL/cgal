@@ -17,7 +17,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
 typedef CGAL::Z2 CoefficientType;
-typedef CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_structure;
+typedef CGAL::OSM::Sparse_matrix_structure<CGAL::OSM::Sparse_chain> Sparse_matrix_structure;
 typedef HDVF::Abstract_simplicial_chain_complex<CoefficientType, Sparse_matrix_structure> ChainComplexType;
 typedef Sparse_matrix_structure:: template Sparse_matrix_type<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 typedef Sparse_matrix_structure:: template Sparse_chain_type<CoefficientType, CGAL::OSM::COLUMN> Column_chain;

@@ -34,13 +34,13 @@ typedef int ZCoefficient;
 template <typename _CoefficientType = OSM::ZCoefficient, int _StorageFormat = OSM::COLUMN>
 class Sparse_chain;
 
-// Class Sparse_matrix_core
+// Class Sparse_matrix
 template <typename _CoefficientType = OSM::ZCoefficient, int _StorageFormat = OSM::COLUMN, template <typename, int> typename SparseChainType = OSM::Sparse_chain>
-class Sparse_matrix_core;
+class Sparse_matrix;
 
-// Template structure Sparse_matrix
+// Template structure Sparse_matrix_strcture
 template <template <typename, int> typename SparseChainType>
-struct Sparse_matrix;
+struct Sparse_matrix_strcture;
 
 // Class Bitboard
 

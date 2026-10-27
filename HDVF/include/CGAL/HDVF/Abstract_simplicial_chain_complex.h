@@ -51,7 +51,7 @@ namespace Homological_discrete_vector_field {
 //\f[ \partial_q\left( \langle v_0, \ldots, v_q \rangle\right) = \sum_{i=0}^q (-1)^i\cdot \langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f]
 //where \f$\langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f$ denotes the \f$q-1\f$-simplex with \f$v_i\f$ omitted. Hence, matrices of boundary maps are stored in each dimension using sparse matrices (in column-major mode).
 
-template<typename CoefficientRing, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain> >
+template<typename CoefficientRing, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain> >
 class Abstract_simplicial_chain_complex {
 public:
     /*! \brief Type of coefficients used to compute homology. */

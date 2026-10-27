@@ -374,10 +374,10 @@ public:
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
- \tparam SparseMatrixStruct a specialization of  `OSM::Sub_sparse_matrix` structure corresponding to that of the dualized complex.
+ \tparam SparseMatrixStruct a specialization of  `OSM::Sub_sparse_matrix_structure` corresponding to that of the dualized complex.
  */
 
-template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain> >
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = CGAL::OSM::Sub_sparse_matrix_structure<CGAL::OSM::Sparse_chain> >
 class Duality_simplicial_complex_tools {
 public:
     typedef typename Traits::Point Point ;
@@ -614,7 +614,7 @@ public:
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
 
-template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain>>
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = CGAL::OSM::Sub_sparse_matrix_structure<CGAL::OSM::Sparse_chain>>
 class Duality_cubical_complex_tools {
 public:
     /** \brief Type of cubical complexes used for the initial complex and \f$L\f$. */

@@ -293,7 +293,7 @@ public:
      * \param matrices A vector of  `OSM::Sub_sparse_matrix` (in each dimension).
      */
     template <typename CT, int SF, template <typename, int> typename SCT>
-    void screen_matrices(std::vector<OSM::Sub_sparse_matrix_core<CT, SF, SCT> >& matrices)
+    void screen_matrices(std::vector<OSM::Sub_sparse_matrix<CT, SF, SCT> >& matrices)
     {
         for (int q=0; q<=_K.dimension(); ++q)
         {
