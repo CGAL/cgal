@@ -218,7 +218,7 @@ int main(const int argc, const char** argv) {
     if (parameters.sequential)
       ksr.partition<CGAL::Sequential_tag>(parameters.k_intersections, param);
     else
-      ksr.partition<CGAL::Parallel_tag>(parameters.k_intersections, param);
+      ksr.partition<CGAL::Parallel_if_available_tag>(parameters.k_intersections, param);
 
     after_partition = timer.time();
 
