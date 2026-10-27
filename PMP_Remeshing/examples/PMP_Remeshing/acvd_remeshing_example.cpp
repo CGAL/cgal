@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
   Mesh smesh;
   std::cout << "Seed : " << CGAL::get_default_random().get_seed() << std::endl;
 
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
   const std::string stem = std::filesystem::path(filename).stem().string();
   const std::string extension = std::filesystem::path(filename).extension().string();
 

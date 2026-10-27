@@ -594,7 +594,7 @@ std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
 
 namespace internal {
 
-// Find the position of the (arbitrarily chose) first point of the canonical point
+// Find the position of the (arbitrarily chosen) first point of the canonical point
 // and whether we should order from left to right or the opposite
 template <typename Traits, typename PointRange, typename Polygon>
 void canonical_polygon_markers(const PointRange& points,
@@ -619,7 +619,7 @@ void canonical_polygon_markers(const PointRange& points,
             << " points[" << *min_id << "] = " << points[*min_id] << std::endl;
 #endif
 
-  // Decide arbitrarily whether we are reading from left to right or the opposite
+  // Observe the previous and next points to determine whether the polygon should be reversed or not
   const std::size_t last = polygon.size() - 1;
   std::size_t pos_prev = (first == 0) ? last : first - 1;
   std::size_t pos_next = (first == last) ? 0 : first + 1;
@@ -636,52 +636,33 @@ void canonical_polygon_markers(const PointRange& points,
 }
 
 template <typename Polygon>
-Polygon construct_canonical_polygon_with_markers(const Polygon& polygon,
-                                                 const std::size_t first,
-                                                 const bool reversed)
+void canonicalize_polygon_with_markers(Polygon& polygon,
+                                       const std::size_t first,
+                                       const bool reversed)
 {
   const std::size_t polygon_size = polygon.size();
 
-  Polygon canonical_polygon;
-  CGAL::internal::resize(canonical_polygon, polygon_size);
+  if(polygon_size < 2)
+    return;
+
+  std::rotate(polygon.begin(), polygon.begin() + first, polygon.end());
 
   if(reversed)
-  {
-    std::size_t rfirst = first + 1;
-    std::size_t pos = 0;
-    for(std::size_t i=rfirst; i --> 0 ;) // first to 0
-      canonical_polygon[pos++] = polygon[i];
-    for(std::size_t i=polygon_size; i --> rfirst ;) // polygon_size-1 to first+1
-      canonical_polygon[pos++] = polygon[i];
-  }
-  else
-  {
-    std::size_t pos = 0;
-    for(std::size_t i=first; i<polygon_size; ++i)
-      canonical_polygon[pos++] = polygon[i];
-    for(std::size_t i=0; i<first; ++i)
-      canonical_polygon[pos++] = polygon[i];
-  }
-
-  CGAL_postcondition(canonical_polygon[0] == polygon[first]);
-  CGAL_postcondition(canonical_polygon.size() == polygon_size);
-
-  return canonical_polygon;
+    std::reverse(polygon.begin() + 1, polygon.end());
 }
 
 // 'reversed' indicates whether the canonical polygon has the same order as input polygon.
 template <typename Traits, typename PointRange, typename Polygon>
-Polygon construct_canonical_polygon(const PointRange& points,
-                                    const Polygon& polygon,
-                                    bool& reversed,
-                                    const Traits& traits = Traits())
+void canonicalize_polygon(const PointRange& points,
+                          Polygon& polygon,
+                          bool& reversed,
+                          const Traits& traits = Traits())
 {
   if(polygon.size() < 2)
   {
     reversed = false;
-    return polygon;
+    return;
   }
-
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Input polygon:";
@@ -690,23 +671,22 @@ Polygon construct_canonical_polygon(const PointRange& points,
 
   std::size_t first;
   canonical_polygon_markers(points, polygon, first, reversed, traits);
-  Polygon canonical_polygon = construct_canonical_polygon_with_markers(polygon, first, reversed);
+
+  canonicalize_polygon_with_markers(polygon, first, reversed);
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Canonical polygon:";
-  internal::print_polygon(std::cout, canonical_polygon);
+  internal::print_polygon(std::cout, polygon);
 #endif
-
-  return canonical_polygon;
 }
 
 template <typename Traits, typename PointRange, typename Polygon>
-Polygon construct_canonical_polygon(const PointRange& points,
-                                    const Polygon& polygon,
-                                    const Traits& traits = Traits())
+void canonicalize_polygon(const PointRange& points,
+                          Polygon& polygon,
+                          const Traits& traits = Traits())
 {
   bool useless = false;
-  return construct_canonical_polygon(points, polygon, useless, traits);
+  canonicalize_polygon(points, polygon, useless, traits);
 }
 
 template <typename PointRange, typename PolygonRange>
@@ -849,8 +829,8 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
   for(P_ID polygon_index=0, end=polygons.size(); polygon_index!=end; ++polygon_index)
   {
     bool reversed;
-    canonical_polygons[polygon_index] =
-      internal::construct_canonical_polygon(points, polygons[polygon_index], reversed, traits);
+    canonical_polygons[polygon_index] = polygons[polygon_index];
+    internal::canonicalize_polygon(points, canonical_polygons[polygon_index], reversed, traits);
 
     if(reversed)
       is_reversed.set(polygon_index);

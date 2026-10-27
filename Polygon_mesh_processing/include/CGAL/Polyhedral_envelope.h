@@ -824,10 +824,7 @@ private:
       const Plane& plane_i = prism[cutp[i]];
 
       std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line, plane_i.eplane);
-      if(! op){
-        std::cout <<  "there must be an intersection 2" << std::endl;
-      }
-
+      CGAL_assertion_msg(op.has_value(), "There must be an intersection 2");
       const ePoint_3& ip = *op;
 
       for(unsigned int j = 0; j < cutp.size(); j++) {
@@ -1141,12 +1138,7 @@ private:
           const eLine_3& eline = *(seg[k]);
 
           std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline, plane_i.eplane);
-          if(! op){
-#ifdef CGAL_ENVELOPE_DEBUG
-            std::cout <<  "there must be an intersection 6" << std::endl;
-#endif
-          }
-
+          CGAL_assertion_msg(op.has_value(), "there must be an intersection 6");
           const ePoint_3& ip = *op;
 
           for (unsigned int j = 0; j < cutp.size(); j++){

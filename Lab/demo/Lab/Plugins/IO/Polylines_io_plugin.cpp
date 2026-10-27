@@ -1,4 +1,5 @@
 #include "Scene_polylines_item.h"
+#include "Scene_points_with_normal_item.h"
 
 #include <QMainWindow>
 #include <CGAL/Three/CGAL_Lab_io_plugin_interface.h>
@@ -9,11 +10,16 @@
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 
 #include <CGAL/Three/Three.h>
-#include <fstream>
+
 #include <QVariant>
 #include <QMessageBox>
 #include <QInputDialog>
+
+#include <fstream>
+#include <set>
+
 using namespace CGAL::Three;
+
 class CGAL_Lab_polylines_io_plugin :
   public QObject,
   public CGAL_Lab_io_plugin_interface,
@@ -54,15 +60,23 @@ public:
       actionSimplify_polylines->setProperty("subMenuName", "Operations on Polylines");
       actionSimplify_polylines->setObjectName("actionSimplifyPolylines");
 
+      actionCreate_point_set = new QAction(tr("Create Point Set from Selected Polylines"), mainWindow);
+      actionCreate_point_set->setProperty("subMenuName", "Operations on Polylines");
+      actionCreate_point_set->setObjectName("actionCreatePointSet");
+
       connect(actionSplit_polylines, &QAction::triggered, this, &CGAL_Lab_polylines_io_plugin::split);
       connect(actionSplit_polylines_graph, &QAction::triggered, this, &CGAL_Lab_polylines_io_plugin::split_graph);
       connect(actionJoin_polylines, &QAction::triggered, this, &CGAL_Lab_polylines_io_plugin::join);
       connect(actionSimplify_polylines, &QAction::triggered, this, &CGAL_Lab_polylines_io_plugin::simplify);
+      connect(actionCreate_point_set, &QAction::triggered, this, &CGAL_Lab_polylines_io_plugin::point_set_from_polyline);
 
 
     }
   QString name() const override{ return "polylines_io_plugin"; }
-  QString nameFilters() const override{ return "Polylines files (*.polylines.txt);; CGAL Polylines files (*.cgal)"; }
+  QString nameFilters() const override
+  {
+    return "Polylines files (*.polylines.txt);; CGAL Polylines files (*.cgal);; Txt polylines files (*.txt)";
+  }
   bool canLoad(QFileInfo fileinfo) const override;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 
@@ -87,15 +101,19 @@ public:
     else if(a==actionJoin_polylines)
       return (all_polylines_selected &&
               scene->selectionIndices().size() > 1);
+    else if(a==actionCreate_point_set)
+      return (all_polylines_selected &&
+              scene->selectionIndices().size() >= 1);
     else
       return false;
   }
   QList<QAction*> actions() const override{
 
-    return QList<QAction*>()<<actionSplit_polylines
-                            <<actionJoin_polylines
-                           <<actionSimplify_polylines
-                          <<actionSplit_polylines_graph;
+    return QList<QAction*>() << actionSplit_polylines
+                             << actionJoin_polylines
+                             << actionSimplify_polylines
+                             << actionSplit_polylines_graph
+                             << actionCreate_point_set;
   }
 
   bool isDefaultLoader(const Scene_item* item) const override{
@@ -110,12 +128,14 @@ public:
   //!Joins the selected Scene_polylines_items in a single item containing all their polylines.
   void join();
   void simplify();
+  void point_set_from_polyline();
 
 private:
   QAction* actionSplit_polylines;
   QAction* actionSplit_polylines_graph;
   QAction* actionJoin_polylines;
   QAction* actionSimplify_polylines;
+  QAction* actionCreate_point_set;
 };
 
 bool CGAL_Lab_polylines_io_plugin::canLoad(QFileInfo fileinfo) const{
@@ -135,7 +155,9 @@ bool CGAL_Lab_polylines_io_plugin::canLoad(QFileInfo fileinfo) const{
 
 QList<Scene_item*>
 CGAL_Lab_polylines_io_plugin::
-load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
+load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
+{
+  using Pt = Scene_polylines_item::Point_3;
 
   // Open file
   std::ifstream ifs(fileinfo.filePath().toUtf8());
@@ -158,42 +180,78 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
 
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
   QStringList polylines_metadata;
-
   int counter = 0;
-  std::size_t n;
-  while(ifs >> n) {
-    ++counter;
-    std::vector<Scene_polylines_item::Point_3> new_polyline;
-    polylines.push_back(new_polyline);
-    std::vector<Scene_polylines_item::Point_3>&polyline = polylines.back();
-    polyline.reserve(n);
-    while(n--){
-      Scene_polylines_item::Point_3 p;
-      ifs >> p;
-      polyline.push_back(p);
-      if(!ifs.good())
+
+  QString extension = fileinfo.completeSuffix();
+  if(extension == "polylines.txt" || extension == "cgal")
+  {
+    std::size_t n;
+    while(ifs >> n) {
+      ++counter;
+      std::vector<Scene_polylines_item::Point_3> new_polyline;
+      polylines.push_back(new_polyline);
+      std::vector<Scene_polylines_item::Point_3>&polyline = polylines.back();
+      polyline.reserve(n);
+      while(n--){
+        Scene_polylines_item::Point_3 p;
+        ifs >> p;
+        polyline.push_back(p);
+        if(!ifs.good())
+        {
+          ok = false;
+          return QList<Scene_item*>();
+        }
+      }
+      std::string line_remainder;
+      std::getline(ifs, line_remainder);
+      QString metadata(line_remainder.c_str());
+      if(!metadata.isEmpty() && metadata[0].isSpace()) {
+        metadata.remove(0, 1);
+      }
+      polylines_metadata << metadata;
+      if(!metadata.isEmpty()) {
+        std::cerr << " (metadata: \"" << qPrintable(metadata) << "\")\n";
+      } else {
+      }
+      if(ifs.bad() || ifs.fail())
       {
         ok = false;
         return QList<Scene_item*>();
       }
     }
-    std::string line_remainder;
-    std::getline(ifs, line_remainder);
-    QString metadata(line_remainder.c_str());
-    if(!metadata.isEmpty() && metadata[0].isSpace()) {
-      metadata.remove(0, 1);
-    }
-    polylines_metadata << metadata;
-    if(!metadata.isEmpty()) {
-      std::cerr << " (metadata: \"" << qPrintable(metadata) << "\")\n";
-    } else {
-    }
-    if(ifs.bad() || ifs.fail())
+  }
+  else if (extension == "txt")
+  {
+    std::string line;
+    while (std::getline(ifs, line))
     {
-      ok = false;
-      return QList<Scene_item*>();
+      ++counter;
+      //each line is : "x1, y1, z1, x2, y2, z2"
+      std::istringstream tokenizer(line);
+
+      std::array<std::string, 3> p_s; //point p as string
+      std::getline(tokenizer, p_s[0], ',');
+      std::getline(tokenizer, p_s[1], ',');
+      std::getline(tokenizer, p_s[2], ',');
+
+      std::array<std::string, 3> q_s; //point q as string
+      std::getline(tokenizer, q_s[0], ',');
+      std::getline(tokenizer, q_s[1], ',');
+      std::getline(tokenizer, q_s[2]);
+      if (tokenizer)
+      {
+        Pt p(std::stod(p_s[0]), std::stod(p_s[1]), std::stod(p_s[2]));
+        Pt q(std::stod(q_s[0]), std::stod(q_s[1]), std::stod(q_s[2]));
+        polylines.push_back({ p, q });
+      }
+      else
+      {
+        std::cerr << "Error reading line " << line << std::endl;
+        // There were fewer colons then expected in the line
+      }
     }
   }
+
   if(counter == 0)
   {
     ok = false;
@@ -360,6 +418,43 @@ void CGAL_Lab_polylines_io_plugin::simplify()
   }
   item->invalidateOpenGLBuffers();
   item->redraw();
+}
+
+void CGAL_Lab_polylines_io_plugin::point_set_from_polyline()
+{
+  std::set<Scene_polylines_item::Point_3> points;
+  QStringList names;
+  for(int index : scene->selectionIndices())
+  {
+    Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(scene->item(index));
+    if(item == nullptr)
+      continue;
+    names << item->name();
+    for(const Scene_polylines_item::Polyline& polyline : item->polylines)
+    {
+      if(polyline.empty())
+        continue;
+      const std::size_t last_index = polyline.size() - 1;
+      for(std::size_t i = 0; i < polyline.size(); ++i)
+      {
+        if(polyline.size() > 1 && i == last_index && polyline.front() == polyline.back())
+          continue;
+        points.insert(polyline[i]);
+      }
+    }
+  }
+
+  if(points.empty())
+    return;
+
+  Scene_points_with_normal_item* new_ps_item = new Scene_points_with_normal_item();
+  for(const Scene_polylines_item::Point_3& point : points)
+    new_ps_item->point_set()->insert(point);
+
+  new_ps_item->setName(tr("Points from %1").arg(names.isEmpty() ? tr("selected polylines") : names.join(", ")));
+  CGAL::Three::Three::scene()->addItem(new_ps_item);
+  new_ps_item->invalidateOpenGLBuffers();
+  new_ps_item->redraw();
 }
 
 void CGAL_Lab_polylines_io_plugin::join()

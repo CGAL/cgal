@@ -155,7 +155,7 @@ bool read_LAS(std::istream& is,
   \return `true` if the reading was successful, `false` otherwise.
 */
 template <typename Point, typename Vector>
-bool read_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
+bool read_LAS(const std::filesystem::path& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ifstream is(fname, std::ios::binary);
   CGAL::IO::set_mode(is, CGAL::IO::BINARY);
@@ -384,7 +384,7 @@ bool write_LAS(std::ostream& os,
   \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename Point, typename Vector>
-bool write_LAS(const std::string& fname,
+bool write_LAS(const std::filesystem::path& fname,
                CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ofstream os(fname, std::ios::binary);

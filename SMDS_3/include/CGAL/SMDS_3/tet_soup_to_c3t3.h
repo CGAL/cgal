@@ -20,9 +20,9 @@
 #include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/assertions.h>
-#include <CGAL/IO/MEDIT.h>
-#include <CGAL/IO/File_medit.h>
 #include <CGAL/Default.h>
+#include <CGAL/utility.h>
+#include <CGAL/value_type_traits.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -33,6 +33,41 @@
 #include <type_traits>
 
 namespace CGAL {
+
+namespace SMDS_3_internal {
+template <typename T, typename = void>
+struct Has_in_dimension : std::false_type
+{};
+
+template <typename T>
+struct Has_in_dimension<T, std::void_t<decltype(std::declval<T>().in_dimension())>>
+  : std::true_type
+{};
+
+template <typename T, typename = void>
+struct Has_is_corner : std::false_type
+{};
+
+template <typename T>
+struct Has_is_corner<T, std::void_t<decltype(std::declval<T>().is_corner())>>
+  : std::true_type
+{};
+
+template <typename Tr>
+bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
+{
+  using V = typename Tr::Triangulation_data_structure::Vertex;
+
+  if constexpr(Has_in_dimension<V>::value)
+    return v->in_dimension() == 0;
+  else if constexpr(Has_is_corner<V>::value)
+    return v->ccdt_3_data().is_corner();
+  else
+    return false;
+}
+
+} // namespace SMDS_3_internal
+
 namespace SMDS_3 {
 
 template<typename Vh>
@@ -366,22 +401,6 @@ bool is_infinite(const std::array<typename Tr::Vertex_handle, 3>& f,
   return false;
 }
 
-template <typename Iterator>
-struct output_iterator_value
-{
-  using type = void;
-};
-
-template <typename Container>
-struct output_iterator_value<std::back_insert_iterator<Container>>
-{
-  using type = typename Container::value_type;
-};
-
-template <typename Iterator>
-using output_iterator_value_t = typename output_iterator_value<std::decay_t<Iterator>>::type;
-
-
 template<class Tr>
 bool assign_neighbors(Tr& tr,
                       const boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
@@ -461,7 +480,7 @@ bool build_triangulation_impl(Tr& tr,
   // associate to a face the two (at most) incident tets and the id of the face in the cell
   typedef std::pair<Cell_handle, int>                   Incident_cell;
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> >  Incident_cells_map;
-  using CxEdgeAndId = output_iterator_value_t<decltype(cx_edges_out)>;
+  using CxEdgeAndId = value_type_traits_t<decltype(cx_edges_out)>;
 
   CGAL_precondition(!points.empty());
 
@@ -554,9 +573,9 @@ bool build_triangulation_impl(Tr& tr,
     {
       Vertex_handle vh0 = vertex_handle_vector[iv0 + 1];
       Vertex_handle vh1 = vertex_handle_vector[iv1 + 1];
-      if(vh0->in_dimension() != 0)
+      if(!CGAL::SMDS_3_internal::is_corner(vh0, tr))
         vh0->set_dimension(1);
-      if(vh1->in_dimension() != 0)
+      if(!CGAL::SMDS_3_internal::is_corner(vh1, tr))
         vh1->set_dimension(1);
 
       if constexpr(!std::is_same_v<CxEdgeAndId, void>)
@@ -679,68 +698,6 @@ bool build_triangulation_with_subdomains_range(Tr& tr,
                                   allow_negative_orientation);
 }
 
-template<class Tr,
-         class Curve_index,
-         class Corner_index,
-         class CxEdgesOutputIterator>
-bool build_triangulation_from_file(std::istream& is,
-                                   Tr& tr,
-                                   const bool verbose,
-                                   const bool replace_domain_0,
-                                   const bool allow_non_manifold,
-                                   const bool allow_negative_orientation,
-                                   CxEdgesOutputIterator cx_edges_oit)
-{
-  using Point_3 = typename Tr::Point;
-  using Subdomain_index = typename Tr::Cell::Subdomain_index;
-  using Surface_patch_index = typename Tr::Cell::Surface_patch_index;
-
-  using Facet        = std::array<int, 3>; // 3 = id
-  using Tet_with_ref = std::array<int, 4>; // 4 = id
-
-  using Edge_with_index = CGAL::IO::internal::Edge_with_index<Curve_index>;
-  using Corner_with_index = CGAL::IO::internal::Corner_with_index<Corner_index>;
-
-  std::vector<Tet_with_ref> finite_cells;
-  std::vector<Subdomain_index> subdomains;
-  std::vector<Point_3> points;
-  boost::unordered_map<Facet, Surface_patch_index> border_facets;
-  std::vector<Edge_with_index> edge_indices;
-  std::vector<Corner_with_index> corner_indices;
-
-  bool is_CGAL_mesh = false;
-
-  if(verbose)
-  {
-    std::cout << "Reading .mesh file..." << std::endl;
-    std::cout << "Replace domain #0 = " << replace_domain_0 << std::endl;
-    std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
-  }
-
-  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
-                                           border_facets, true,
-                                           edge_indices,
-                                           corner_indices,
-                                           verbose,
-                                           is_CGAL_mesh);
-
-  if(!ok){
-    return false;
-  }
-
-  if(!is_CGAL_mesh)
-    tr.may_have_badly_oriented_cells(true);
-
-  return build_triangulation_with_subdomains_range(tr,
-                                                   points, finite_cells, subdomains, border_facets,
-                                                   edge_indices,
-                                                   corner_indices,
-                                                   cx_edges_oit,
-                                                   verbose,
-                                                   replace_domain_0 && !is_CGAL_mesh,
-                                                   allow_non_manifold,
-                                                   allow_negative_orientation);
-}
 
 } // namespace SMDS_3
 } // namespace CGAL

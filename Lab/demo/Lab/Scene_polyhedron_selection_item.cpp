@@ -145,7 +145,7 @@ struct Scene_polyhedron_selection_item_priv{
   }
 
   Face_graph* polyhedron() { return poly; }
-  const Face_graph* polyhedron()const { return poly; }
+  const Face_graph* polyhedron() const { return poly; }
 
   void set_num_faces(const std::size_t n) { num_faces = n; }
 
@@ -205,7 +205,7 @@ struct Scene_polyhedron_selection_item_priv{
 };
 typedef Scene_polyhedron_selection_item_priv Priv;
 
-void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
+void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
 {
   item->getTriangleContainer(Facets)->initializeBuffers(viewer);
   item->getTriangleContainer(Facets)->setFlatDataSize(nb_facets);
@@ -227,7 +227,7 @@ void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer
   positions_points.shrink_to_fit();
 }
 
-void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::Viewer_interface *viewer)const
+void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::Viewer_interface *viewer) const
 {
   item->getTriangleContainer(Temp_facets)->initializeBuffers(viewer);
   item->getTriangleContainer(Temp_facets)->setFlatDataSize(nb_temp_facets);
@@ -250,7 +250,7 @@ void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::
 
 }
 
-void Scene_polyhedron_selection_item_priv::initialize_HL_buffers(CGAL::Three::Viewer_interface *viewer)const
+void Scene_polyhedron_selection_item_priv::initialize_HL_buffers(CGAL::Three::Viewer_interface *viewer) const
 {
   item->getTriangleContainer(HL_facets)->initializeBuffers(viewer);
   item->getTriangleContainer(HL_facets)->setFlatDataSize(positions_HL_facets.size());
@@ -308,8 +308,13 @@ Scene_polyhedron_selection_item_priv::triangulate_facet(fg_face_descriptor fit,c
 }
 
 
-void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<float>& p_facets, std::vector<float>& p_lines, std::vector<float>& p_points, std::vector<float>& p_normals,
-                                                           const Selection_set_vertex& p_sel_vertices, const Selection_set_facet& p_sel_facets, const Selection_set_edge& p_sel_edges)const
+void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<float>& p_facets,
+                                                                std::vector<float>& p_lines,
+                                                                std::vector<float>& p_points,
+                                                                std::vector<float>& p_normals,
+                                                                const Selection_set_vertex& p_sel_vertices,
+                                                                const Selection_set_facet& p_sel_facets,
+                                                                const Selection_set_edge& p_sel_edges) const
 {
     const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     p_facets.clear();
@@ -423,7 +428,8 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         }
     }
 }
-void Scene_polyhedron_selection_item_priv::computeElements()const
+
+void Scene_polyhedron_selection_item_priv::computeElements() const
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   compute_any_elements(positions_facets, positions_lines, positions_points, normals,
@@ -454,7 +460,8 @@ void Scene_polyhedron_selection_item_priv::computeElements()const
   nb_points = positions_points.size();
   QApplication::restoreOverrideCursor();
 }
-void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
+
+void Scene_polyhedron_selection_item_priv::compute_temp_elements() const
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   compute_any_elements(positions_temp_facets, positions_temp_lines, positions_temp_points, temp_normals,
@@ -527,7 +534,7 @@ void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
   QApplication::restoreOverrideCursor();
 }
 
-void Scene_polyhedron_selection_item_priv::compute_HL_elements()const
+void Scene_polyhedron_selection_item_priv::compute_HL_elements() const
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   compute_any_elements(positions_HL_facets, positions_HL_lines, positions_HL_points, HL_normals,
@@ -560,8 +567,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   GLfloat offset_units;
   if(!isInit(viewer))
     initGL(viewer);
-  if ( getBuffersFilled() &&
-       ! getBuffersInit(viewer))
+  if (getBuffersFilled() && ! getBuffersInit(viewer))
   {
     initializeBuffers(viewer);
     setBuffersInit(viewer, true);
@@ -598,8 +604,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
 
   if(!isInit(viewer))
     initGL(viewer);
-  if ( getBuffersFilled() &&
-       ! getBuffersInit(viewer))
+  if(getBuffersFilled() && ! getBuffersInit(viewer))
   {
     initializeBuffers(viewer);
     setBuffersInit(viewer, true);
@@ -641,7 +646,6 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
 
 void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
-
   viewer->setGlPointSize(5.0f);
 
   if(!d->are_HL_buffers_filled)
@@ -661,7 +665,6 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
 
   viewer->setGlPointSize(1.f);
 }
-
 
 void Scene_polyhedron_selection_item::inverse_selection()
 {
@@ -707,6 +710,7 @@ void Scene_polyhedron_selection_item::set_highlighting(bool b)
   setProperty("is_highlighting", b);
   k_ring_selector.setHighLighting(b);
 }
+
 void Scene_polyhedron_selection_item::set_operation_mode(int mode)
 {
   k_ring_selector.setEditMode(true);
@@ -808,30 +812,40 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
   }
   d->operation_mode = mode;
 }
+
 template<typename HandleRange>
 bool Scene_polyhedron_selection_item::treat_classic_selection(const HandleRange& selection)
 {
   typedef typename HandleRange::value_type HandleType;
   Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
   bool any_change = false;
-  if(is_insert) {
+  if(is_insert)
+  {
     for(HandleType h : selection)
-        any_change |= tr.container().insert(h).second;
+      any_change |= tr.container().insert(h).second;
   }
-  else{
+  else
+  {
     for(HandleType h : selection)
-        any_change |= (tr.container().erase(h)!=0);
+      any_change |= (tr.container().erase(h)!=0);
   }
-  if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+
+  if(any_change)
+  {
+    invalidateOpenGLBuffers();
+    Q_EMIT itemChanged();
+  }
   return any_change;
 }
 
-struct Index_updator{
+struct Index_updator
+{
   const SMesh::Halfedge_index& old_;
   SMesh::Halfedge_index& new_;
   Index_updator(const SMesh::Halfedge_index& _old,
                 SMesh::Halfedge_index& _new)
     :old_(_old), new_(_new){}
+
   template<class V, class H, class F>
   void operator()(const V&, const H& hmap, const F&)
   {
@@ -1096,8 +1110,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     }
       //Join vertex
     case 0:
-      if(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()), *polyhedron()).size() < 4
-           ||
+      if(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()), *polyhedron()).size() < 4 ||
          CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron()).size()< 4)
         {
           d->tempInstructions("Edge not selected: the incident facets must have a degree of at least 4.",
@@ -1540,6 +1553,7 @@ void Scene_polyhedron_selection_item_priv::addVertexToPath(fg_vertex_descriptor 
   path.append(source);
   first = source;
 }
+
 void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
 {
 
@@ -1855,8 +1869,9 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
 
 void Scene_polyhedron_selection_item::add_to_selection()
 {
-  for(fg_edge_descriptor ed : temp_selected_edges)
+  while (!temp_selected_edges.empty())
   {
+    fg_edge_descriptor ed = *temp_selected_edges.begin();
     selected_edges.insert(ed);
     temp_selected_edges.erase(ed);
   }
@@ -2242,7 +2257,7 @@ void Scene_polyhedron_selection_item::printAllIds()
   d->item->polyhedron_item()->printAllIds();
 }
 
-bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
+bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) const
 {
   return d->item->polyhedron_item()->testDisplayId(x, y, z, viewer);
 }

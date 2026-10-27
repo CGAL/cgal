@@ -329,7 +329,7 @@ public:
      * hyperbolic arc, both point should be located on the same branch of the
      * hyperbola).
      *
-     * \pre `o` is not `COLLINEAR` if the supporting conic is curves, and must
+     * \pre `o` is not `COLLINEAR` if the supporting conic is curved, and must
      * be `COLLINEAR` if it is not curved (a line or a line-pair).
      */
     Curve_2 operator()(const Rational& r, const Rational& s,
@@ -368,7 +368,7 @@ public:
      * bounded segment of the supporting curve (e.g. in case of a hyperbolic
      * arc, both point should be located on the same branch of the hyperbola).
      *
-     * \pre `o` is not `COLLINEAR` if the supporting conic is curves, and must
+     * \pre `o` is not `COLLINEAR` if the supporting conic is curved, and must
      * be `COLLINEAR` if it is not curved (a line or a line-pair).
      */
     Curve_2 operator()(const Rational& r, const Rational& s,
