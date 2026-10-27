@@ -1,9 +1,10 @@
+
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Surface_mesh.h>
+
 #include "CGAL/_cardinal_weights.h"
 #include "CGAL/_test_pipeline.h"
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/property_map.h>
 
 #include <algorithm>
