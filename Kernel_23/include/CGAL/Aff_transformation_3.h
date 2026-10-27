@@ -18,7 +18,6 @@
 
 #include <CGAL/Dimension.h>
 #include <CGAL/aff_transformation_tags.h>
-#include <CGAL/Kernel/Return_base_tag.h>
 
 #include <iostream>
 

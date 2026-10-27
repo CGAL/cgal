@@ -17,11 +17,13 @@
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_3_H
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_3_H
 
-#include <cmath>
 #include <CGAL/aff_transformation_tags.h>
 #include <CGAL/determinant.h>
+
 #include <ostream>
 #include <vector>
+#include <cmath>
+
 
 namespace CGAL {
 
@@ -39,6 +41,7 @@ class Aff_transformationC3
   enum Variant {identity = 0, scaling , translation, general};
   std::vector<FT> entries;
   Variant variant;
+
 public:
   typedef R_                               R;
 
@@ -228,13 +231,13 @@ public:
 
   bool is_odd() const { return  ! is_even(); }
 
-  bool is_identity() const { return variant == 0; }
+  bool is_identity() const { return variant == identity; }
 
-  bool is_scaling() const { return variant == 1; }
+  bool is_scaling() const { return variant == scaling; }
 
-  bool is_translation() const { return variant == 2; }
+  bool is_translation() const { return variant == translation; }
 
-  bool is_general() const { return variant == 3; }
+  bool is_general() const { return variant == general; }
 
   bool has_rotation() const {
     if(is_general())
