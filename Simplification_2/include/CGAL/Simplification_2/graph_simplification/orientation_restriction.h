@@ -4,6 +4,7 @@
 
 #include <functional>
 #include <initializer_list>
+#include <numbers>
 #include <optional>
 #include <string>
 #include <vector>
