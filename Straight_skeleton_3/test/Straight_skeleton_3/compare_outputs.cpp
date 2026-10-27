@@ -14,6 +14,7 @@
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 
@@ -146,7 +147,7 @@ int main(int argc, char** argv)
   CGAL::copy_face_graph(in_ours, ours);
   CGAL::copy_face_graph(in_theirs, theirs);
 
-  std::cout << "Ours: " << num_vertices(ours) << " NV " << num_faces(theirs) << " NF" << std::endl;
+  std::cout << "Ours: " << num_vertices(ours) << " NV " << num_faces(ours) << " NF" << std::endl;
   std::cout << "Theirs: " << num_vertices(theirs) << " NV " << num_faces(theirs) << " NF" << std::endl;
 
   std::filesystem::path save_path = (argc > 3) ? std::filesystem::path(argv[3]) : std::filesystem::current_path();
@@ -154,53 +155,79 @@ int main(int argc, char** argv)
   CGAL::IO::write_polygon_mesh(save_path / "ours.off", ours,
                                CGAL::parameters::stream_precision(std::numeric_limits<K::FT>::max_digits10));
 
+  bool closed_ours = CGAL::is_closed(ours);
+  bool has_degen_ours = has_degenerate_faces(ours);
+  bool SI_ours = PMP::does_self_intersect(ours);
+
+  std::cout << "Health checks (ours) " << closed_ours << " " << !has_degen_ours << " " << !SI_ours << std::endl;
+
 #define CGAL_SS3_ATTEMPT_REPAIR
 #ifdef CGAL_SS3_ATTEMPT_REPAIR
-  if (!CGAL::is_closed(ours) ||
-      has_degenerate_faces(ours) ||
-      PMP::does_self_intersect(ours))
-  {
-    std::cout << "attempting repair..." << std::endl;
+  for (int i=0; i<3; ++i) {
+    if (!closed_ours || has_degen_ours || SI_ours) {
+      std::cout << "attempting repair (" << i << ")" << std::endl;
 
-    CGAL::Bbox_3 bbox = PMP::bbox(ours);
-    const double diag_length = std::sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
-                                        CGAL::square(bbox.ymax() - bbox.ymin()) +
-                                        CGAL::square(bbox.zmax() - bbox.zmin()));
-    const double threshold = 1e-6 * diag_length;
+      CGAL::Bbox_3 bbox = PMP::bbox(ours);
+      const double diag_length = std::sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
+                                           CGAL::square(bbox.ymax() - bbox.ymin()) +
+                                           CGAL::square(bbox.zmax() - bbox.zmin()));
+      const double threshold = 1e-6 * diag_length;
 
-    PMP::remove_almost_degenerate_faces(ours, CGAL::parameters::collapse_length_threshold(threshold)
-                                                               .flip_triangle_height_threshold(threshold));
+      // remove almost degenerate faces
+      std::cout << "threshold(s) = " << threshold << std::endl;
+      PMP::remove_almost_degenerate_faces(ours, CGAL::parameters::collapse_length_threshold(threshold)
+                                                                 .flip_triangle_height_threshold(threshold));
+      std::cout << "Ours: " << vertices(ours).size() << " NV " << faces(ours).size() << " NF (after)" << std::endl;
 
-    std::vector<K::Point_3> ours_points;
-    std::vector<std::vector<std::size_t> > ours_polygons;
-    PMP::polygon_mesh_to_polygon_soup(ours, ours_points, ours_polygons);
-    bool is_sane = PMP::autorefine_triangle_soup(ours_points, ours_polygons, CGAL::parameters::apply_iterative_snap_rounding(true));
-    if (!is_sane) {
-      std::cout << "Still has SI after autoref" << std::endl;
+      std::vector<K::Point_3> ours_points;
+      std::vector<std::vector<std::size_t> > ours_polygons;
+      PMP::polygon_mesh_to_polygon_soup(ours, ours_points, ours_polygons);
+      bool ok = PMP::autorefine_triangle_soup(ours_points, ours_polygons, CGAL::parameters::apply_iterative_snap_rounding(true));
+      if (!ok) {
+        std::cout << "Still has SI after autoref" << std::endl;
+      }
+
+      PMP::orient_polygon_soup(ours_points, ours_polygons);
+      CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(ours_polygons));
+
+      clear(ours);
+      PMP::polygon_soup_to_polygon_mesh(ours_points, ours_polygons, ours);
+
+      // discard all but the largest CC
+      std::cout << PMP::internal::number_of_connected_components(ours) << " CCs (before)" << std::endl;
+      PMP::keep_largest_connected_components(ours, 1);
+      std::cout << PMP::internal::number_of_connected_components(ours) << " CCs (after)" << std::endl;
+
+      // stitch holes
+      std::cout << "is closed? " << CGAL::is_closed(ours) << " (before)" << std::endl;
+      PMP::stitch_borders(ours);
+      std::cout << "is closed? " << CGAL::is_closed(ours) << " (after stitch)" << std::endl;
+
+      // fill holes
+      using halfedge_descriptor = typename boost::graph_traits<CGAL::Surface_mesh<K::Point_3> >::halfedge_descriptor;
+      std::vector<halfedge_descriptor> border_cycles;
+      CGAL::extract_boundary_cycles(ours, std::back_inserter(border_cycles));
+
+      for(halfedge_descriptor h : border_cycles) {
+        PMP::triangulate_refine_and_fair_hole(ours, h);
+      }
+
+      std::cout << "is closed? " << CGAL::is_closed(ours) << " (after hole filling)" << std::endl;
+
+      CGAL::IO::write_polygon_mesh(save_path / std::string("ours_processed_" + std::to_string(i) + ".off"), ours,
+                                   CGAL::parameters::verbose(true).stream_precision(std::numeric_limits<K::FT>::max_digits10));
+
+      closed_ours = CGAL::is_closed(ours);
+      has_degen_ours = has_degenerate_faces(ours);
+      SI_ours = PMP::does_self_intersect(ours);
+    } else {
+      break;
     }
-
-    PMP::orient_polygon_soup(ours_points, ours_polygons);
-    CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(ours_polygons));
-
-    clear(ours);
-    PMP::polygon_soup_to_polygon_mesh(ours_points, ours_polygons, ours);
-
-    std::cout << PMP::internal::number_of_connected_components(ours) << " CCs" << std::endl;
-    PMP::keep_largest_connected_components(ours, 1);
-
-    std::cout << "is closed? " << CGAL::is_closed(ours) << std::endl;
-    PMP::stitch_borders(ours);
-
-    CGAL::IO::write_polygon_mesh(save_path / "ours_processed.off", ours,
-                                 CGAL::parameters::stream_precision(std::numeric_limits<K::FT>::max_digits10));
   }
 #endif
 
-  const bool closed_ours = CGAL::is_closed(ours);
   const bool closed_theirs = CGAL::is_closed(theirs);
-  const bool has_degen_ours = has_degenerate_faces(ours);
   const bool has_degen_theirs = has_degenerate_faces(theirs);
-  const bool SI_ours = PMP::does_self_intersect(ours);
   const bool SI_theirs = PMP::does_self_intersect(theirs);
 
   std::cout << "Health checks (ours) " << closed_ours << " " << !has_degen_ours << " " << !SI_ours << std::endl;
