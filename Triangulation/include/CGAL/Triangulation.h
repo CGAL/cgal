@@ -1430,7 +1430,6 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
     std::vector<Vertex_handle> vertices;
     vertices.resize(n+1);
     vertices[0] = tr.infinite_vertex();
-    is >> (*vertices[0]);
 
     // read the vertices:
     size_t i(1);
@@ -1442,7 +1441,13 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
     }
 
     // now, read the combinatorial information
-   return tr.tds().read_full_cells(is, vertices);
+    tr.tds().read_full_cells(is, vertices);
+    if(is && cd > 0 && cd < tr.maximal_dimension())
+    {
+        // Initialize the flat orientation from a finite cell.
+        tr.orientation(tr.finite_full_cells_begin().base());
+    }
+    return is;
 }
 
 template < class TT, class TDS >
@@ -1480,10 +1485,6 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
 
     // infinite vertex has index 0 (among all the vertices)
     index_of_vertex[tr.infinite_vertex()] = i++;
-    if(IO::is_ascii(os))
-      os << *tr.infinite_vertex() <<"\n";
-    else
-      write(os, *tr.infinite_vertex());
 
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it )
     {
