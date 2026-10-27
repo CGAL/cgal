@@ -446,16 +446,6 @@ struct Vertex_index_functor
   Vertex_index_functor(const std::unordered_map<VertexHandle, int>&)
   {}
 
-  int operator()(const VertexHandle& v)
-  { return -1; }
-};
-
-template <typename VertexHandle>
-struct Vertex_index_functor<VertexHandle, true>
-{
-  Vertex_index_functor(const std::unordered_map<VertexHandle, int>&)
-  {}
-
   auto operator()(const VertexHandle& v)
   { return v->meshing_info(); }
 };
@@ -469,10 +459,10 @@ struct Vertex_index_functor<VertexHandle, false>
   : V(V)
   {}
 
-
   int operator()(const VertexHandle& v)
   { return V.at(v); }
 };
+
 
 //-------------------------------------------------------
 // IO functions
