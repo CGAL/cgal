@@ -137,7 +137,7 @@ bool preprocess_input(const std::filesystem::path& mesh_filename,
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
-  if(!PMP::IO::read_polygon_mesh(mesh_filename, sm)) {
+  if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm)) {
     std::cerr << "Error: failed to read input " << mesh_filename << std::endl;
     return false;
   }
