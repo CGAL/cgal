@@ -77,7 +77,7 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,
     const Point_3& p1 = gpf(v1);
     const Point_3& p2 = gpf(v);
 #ifdef CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DISTANCE
-    FT dist = CGAL::min(squared_distance(p0, p2), squared_distance(p1, p2));
+    FT dist = (CGAL::min)(squared_distance(p0, p2), squared_distance(p1, p2));
     if( dist > max_depth ){
       v2 = v;
       max_depth = dist;
@@ -103,9 +103,9 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,
     const Point_3& p2 = gpf(v2);
     const Point_3& p3 = gpf(v);
 #ifdef CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DISTANCE
-    FT dist = CGAL::min( squared_distance(p0, p3),
-                  CGAL::min( squared_distance(p1, p3),
-                             squared_distance(p2, p3)));
+    FT dist = (CGAL::min)( squared_distance(p0, p3),
+                  (CGAL::min)( squared_distance(p1, p3),
+                               squared_distance(p2, p3)));
     if( dist > max_depth ){
       v3 = v;
       max_depth = dist;
@@ -328,7 +328,6 @@ kernel(const FaceRange& face_range,
                       to_double(p.y()),
                       to_double(p.z()));
     };
-    const auto& vrange = vertices(kernel);
 
     APoint_3 approx_centroid = find_intern_point<AK>(kernel, to_approx);
     EPoint_3 double_centroid(approx_centroid.x(),
