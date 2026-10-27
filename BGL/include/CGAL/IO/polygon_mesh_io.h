@@ -35,44 +35,6 @@ namespace IO {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
 
-//not for now : some readers will return "ok" despite not managing to read anything
-/*
-template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
-bool read_polygon_mesh(std::istream& is,
-                       Graph& g,
-                       const NamedParameters& np = parameters::default_values())
-{
-  bool ok = false;
-  ok = read_OFF(is, g, np, false);
-  if(ok)
-    return true;
-  clear(g);
-  is.clear();//reset the error state
-  is.seekg (0, is.beg);
-  ok = read_OBJ(is, g, np, false);
-  if(ok)
-    return true;
-  clear(g);
-  is.clear();
-  is.seekg (0, is.beg);
-  ok = read_PLY(is, g, np, false);
-  if(ok)
-    return true;
-  clear(g);
-  is.clear();
-  is.seekg (0, is.beg);
-  ok = read_STL(is, g, np, false);
-  if(ok)
-    return true;
-  clear(g);
-  is.clear();
-  is.seekg (0, is.beg);
-  ok = read_GOCAD(is, g, np, false);
-  return ok;
-}
-
-*/
-
 /*!
  * \ingroup PkgBGLIOFct
  *
