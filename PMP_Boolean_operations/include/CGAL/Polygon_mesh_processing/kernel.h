@@ -84,9 +84,9 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,
     }
 #else // CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DEPTH
     Point_3 c = centroid(p0, p1, p2);
-    FT centroid_depth = CGAL::max( squared_distance(c, Line_3(p0, p1)),
-                          CGAL::max( squared_distance(c, Line_3(p0, p2)),
-                                     squared_distance(c, Line_3(p1, p2))));
+    FT centroid_depth = (CGAL::max)( squared_distance(c, Line_3(p0, p1)),
+                          (CGAL::max)( squared_distance(c, Line_3(p0, p2)),
+                                       squared_distance(c, Line_3(p1, p2))));
     if(centroid_depth > max_depth){
       v2 = v;
       max_depth = centroid_depth;
@@ -112,11 +112,11 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,
     }
 #else // CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DEPTH
     Point_3 c = centroid(p0, p1, p2, p3);
-    FT centroid_depth = CGAL::max(
-                          CGAL::max( squared_distance(c, Plane_3(p0, p1, p2)),
-                                     squared_distance(c, Plane_3(p0, p1, p3))),
-                          CGAL::max( squared_distance(c, Plane_3(p0, p2, p3)),
-                                     squared_distance(c, Plane_3(p1, p2, p3))));
+    FT centroid_depth = (CGAL::max)(
+                          (CGAL::max)( squared_distance(c, Plane_3(p0, p1, p2)),
+                                       squared_distance(c, Plane_3(p0, p1, p3))),
+                          (CGAL::max)( squared_distance(c, Plane_3(p0, p2, p3)),
+                                       squared_distance(c, Plane_3(p1, p2, p3))));
     if(centroid_depth > max_depth){
       v3 = v;
       max_depth = centroid_depth;
