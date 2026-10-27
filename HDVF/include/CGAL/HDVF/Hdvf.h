@@ -44,7 +44,7 @@ namespace Homological_discrete_vector_field {
  Therefore, `are_same_cycles` will return `true` for \f$\alpha\f$  and \f$g(\sigma)\f$,  but `false` for \f$\beta\f$  and \f$g(\sigma)\f$.
  \cgalFigureEnd
 
- Besides construction operations and methods (using the `A()` operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate `find_pair_xxx()` functions (see user documentation for more details).
+ Besides construction operations and methods (using the `A()` operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate `find_pair_xxx()` functions (see \ref secHDVFcomput "user documentation" for more details).
 
  \cgalModels{HDVF}
 
@@ -512,7 +512,7 @@ public:
         }
     }
 
-protected:
+public:
     // Compute dh(sigma), hd(sigma) and <dh(sigma), tau> and <hd(sigma),tau>
     // dh and hd matrices are not stored
     // So we provide functions to get these values

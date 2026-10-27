@@ -35,30 +35,38 @@ namespace Homological_discrete_vector_field {
 
  \warning The ring of coefficients provided should be a **field**.
 
- In dimension \f$n\f$, given a complex \f$L\f$ homeomorphic to \f$\mathcal S^n\f$ and a sub-complex \f$K\subseteq L\f$, Alexander duality states that for all \f$q\leqslant n\f$:
- \f\[\tilde H_q(K) \simeq \tilde H^{n-q-1}(L-K)\f\]
- where \f$\tilde H_q\f$ and \f$\tilde H^q\f$ denote reduced homology and cohomology groups.
+ In dimension \f$n\f$, given a complex \f$L\f$ homeomorphic to \f$\mathscr S^n\f$ and a sub-complex \f$K\subseteq L\f$, Alexander duality states that for all \f$q\leqslant n\f$:
+ \f\[\overset{\thicksim}{H}_q(K) \simeq \overset{\thicksim}{H}^{n-q-1}(L-K)\f\]
+ where \f$\overset{\thicksim}{H}_q\f$ and \f$\overset{\thicksim}{H}^q\f$ denote reduced homology and cohomology groups.
 
- In [Gonzalez and al. 2025], the authors prove that, even if \f$L-K\f$ is not a sub-complex, it produces a valid chain complex (we call "co-complex" such a complementary of sub-complex). Hence, its homology/cohomology can be computed and for all \f$q\leqslant n\f$:
- \f\[\tilde H_q(K) \simeq \tilde H^{q+1}(L-K)\f\]
+ Combinatorial Alexander duality (see \ref secHDVFAlexander_package "user manual" and [Gonzalez and al. 2025]) is actually based on the following isomorphism for the co-complex \f$L-K\f$, for  all \f$q\leqslant n\f$:
+ \f\[\overset{\thicksim}{H}_q(K) \simeq \overset{\thicksim}{H}^{q+1}(L-K)\f\]
 
- HDVFs provide a fast and convenient mean to compute this isomorphism. In order to work with convenient finite complexes, the complex \f$L\f$ must be homeomorphic to a ball of dimension \f$n\f$ (thus \f$\mathcal S^n\f$ is actually homeomorphic to \f$L\f$ plus an infinite \f$n\f$-cell closing its boundary).
+ HDVFs provide a fast and convenient mean to compute this isomorphism. In this context, the complex \f$L\f$  must be homeomorphic to a ball of dimension \f$n\f$ (thus \f$\mathscr S^n\f$ is actually homeomorphic to \f$L\f$ plus an infinite \f$n\f$-cell closing its boundary).
 
  Perfect HDVFs are first computed over \f$K\f$ and \f$L-K\f$ (providing corresponding relative homology) respectively and Alexander isomorphism gives rise to a pairing between critical cells in \f$K\f$ and \f$L-K\f$, that is a pairing between homology/cohomology generators in \f$K\f$ and \f$L-K\f$.
 
- The class provides HDVF constuction operations: `compute_perfect_hdvf()` and `compute_rand_perfect_hdvf()`, which build perfect HDVFs over \f$K\f$ and \f$L-K\f$ respectively.
+ In order to compute relative homology, a sub chain complex mask is used to partially screen the complex `L` and thus restrict HDVF computation. This mask is called "current mask" (and can be set over `K` or `L-K`) and the corresponding sub chain complex is called the "current sub chain complex".
+
+ The class provides HDVF constuction operations: `compute_perfect_hdvf()` and `compute_rand_perfect_hdvf()`, which build perfect HDVFs over \f$K\f$ and \f$L-K\f$ respectively (actually, the package computes relative homology).
  Then, `compute_alexander_pairing()` computes Alexander isomorphism (and provides a pairing between homology/cohomology generators in \f$K\f$ and \f$L-K\f$).
-
-
- In order to compute relative homology, a sub chain complex mask is used to partially screen the complex `L` and thus restrict HDVF computation. This mask is called "current mask" (and can be set over `K` or `L-K`).
 
  \cgalModels{HDVF}
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used. The sparse matrix structure provided by `ChainComplex` must be an instance of the `Sub_sparse_matrix_structure` template.
 
+ \warning The sparse matrix provided by `ChainComplex` must be an instance of the `Sub_sparse_matrix_structure` template.
+
  [Gonzalez and al. 2025] Gonzalez-Lorenzo, A., Bac, A. & Gazull, YS. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
  */
+
 //
+//In [Gonzalez and al. 2025], the authors prove that, even if \f$L-K\f$ is not a sub-complex, it produces a valid chain complex (we call "co-complex" such a complementary of sub-complex). Hence, its homology/cohomology can be computed and for all \f$q\leqslant n\f$:
+//\f\[\tilde H_q(K) \simeq \tilde H^{q+1}(L-K)\f\]
+//
+//HDVFs provide a fast and convenient mean to compute this isomorphism. In order to work with convenient finite complexes, the complex \f$L\f$ must be homeomorphic to a ball of dimension \f$n\f$ (thus \f$\mathcal S^n\f$ is actually homeomorphic to \f$L\f$ plus an infinite \f$n\f$-cell closing its boundary).
+//
+//Perfect HDVFs are first computed over \f$K\f$ and \f$L-K\f$ (providing corresponding relative homology) respectively and Alexander isomorphism gives rise to a pairing between critical cells in \f$K\f$ and \f$L-K\f$, that is a pairing between homology/cohomology generators in \f$K\f$ and \f$L-K\f$.
 //<img src="HDVF_twirl_view1.png" align="center" width=35%/>
 //<img src="HDVF_twirl_view2.png" align="center" width=30%/>
 //
@@ -285,7 +293,7 @@ public:
     /**
      * \brief Gets cells with a given `PSC_flag` in any dimension *in the current sub chain complex*.
      *
-     * The function returns a vector containing, for each dimension, the vector of cells with a given `PSC_flag`.
+     * The function returns a vector containing, for each dimension, the vector of cells of the current sub chain complex with a given `PSC_flag`.
      *
      * \param flag PSC_flag to select.
      */
@@ -294,7 +302,7 @@ public:
     /**
      * \brief Gets cells with a given `PSC_flag` in dimension `q` *in the current sub chain complex*.
      *
-     * The function returns the vector of cells of dimension `q` with a given `PSC_flag`.
+     * The function returns the vector of cells of dimension `q` of the current sub chain complex  with a given `PSC_flag`.
      *
      * \param flag PSC_flag to select.
      * \param q Dimension visited.
@@ -310,84 +318,24 @@ public:
      *
      * By default, outputs the complex to `std::cout`.
     */
-    std::ostream& insert_reduction(std::ostream& out = std::cout)
+    std::ostream& write_reduction(std::ostream& out = std::cout)
     {
         // Print K
         out << "----> K" << std::endl ;
         _subCC = _KCC ;
         _subCC.screen_matrices(this->_DD_col);
-        print_reduction_sub(out) ;
+        write_reduction_sub(out) ;
 
         // Print L-K
+        out << "----> L-K" << std::endl ;
         _subCC = _KCC.complement() ;
         _subCC.screen_matrices(this->_DD_col);
-        print_reduction_sub(out) ;
+        write_reduction_sub(out) ;
 
         // Set back _subCC to K
         _subCC = _KCC ;
 
         return out ;
-    }
-
-    /**
-     * \brief Writes a `Hdvf_duality` together with the associated reduction (f, g, h, d matrices)
-     *
-     * Exports a `HDVF_duality` to a stream in `hdvf` file format (a simple text file format, see for a specification).
-     *
-     * \param out Output stream.
-     */
-    std::ostream& write_hdvf_reduction(std::ostream& out) const ;
-
-    /**
-     * \brief Writes a `Hdvf_duality` together with the associated reduction to a file (f, g, h, d matrices).
-     *
-     * Exports a `Hdvf_duality` to a file in `hdvf` file format (a simple text file format, see for a specification).
-     *
-     * \param filename Output file name.
-     *
-     * \exception File_not_found If the file `filename` cannot be opened, raises a `%std::runtime_error`.
-     */
-    void write_hdvf_reduction(std::string filename) const {
-        std::ofstream out_file ( filename, std::ios::out | std::ios::trunc);
-        if ( ! out_file . good () ) {
-            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
-            throw std::runtime_error("File Parsing Error: File not found");
-        }
-
-        write_hdvf_reduction(out_file) ;
-
-        out_file.close();
-    }
-
-    /**
-     * \brief Reads a `Hdvf_duality` together with the associated reduction (f, g, h, d matrices)
-     *
-     * Imports a `Hdvf_duality` from a stream in `hdvf` file format (a simple text file format, see for a specification).
-     *
-     * \param in Input stream.
-     */
-    std::istream& read_hdvf_reduction(std::istream& in) ;
-
-    /**
-     * \brief Loads a `Hdvf_duality` together with the associated reduction from a file (f, g, h, d matrices)
-     *
-     * Imports a `Hdvf_duality` and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
-     * \warning The underlying complex is not stored in the file!
-     *
-     * \param filename Input file name.
-     *
-     * \exception File_not_found If the file `filename` cannot be opened, raises a `%std::runtime_error`.
-     */
-    void read_hdvf_reduction(std::string filename) {
-        std::ifstream in_file (filename);
-        if ( ! in_file . good () ) {
-            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
-            throw std::runtime_error("File Parsing Error: File not found");
-        }
-
-        read_hdvf_reduction(in_file);
-
-        in_file.close();
     }
 
     /**
@@ -397,7 +345,7 @@ public:
      *
      * By default, outputs the complex to `std::cout`.
     */
-    std::ostream& print_reduction_sub(std::ostream& out = std::cout) // const;
+    std::ostream& write_reduction_sub(std::ostream& out = std::cout) // const;
     {
         // Print critical cells
         out << "----- critical cells:" << std::endl;
@@ -453,6 +401,69 @@ public:
         }
         return out ;
     }
+
+    /*
+     * \brief Writes a `Hdvf_duality` together with the associated reduction (f, g, h, d matrices)
+     *
+     * Exports a `HDVF_duality` to a stream in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param out Output stream.
+     */
+    std::ostream& write_hdvf_reduction(std::ostream& out) const ;
+
+    /*
+     * \brief Writes a `Hdvf_duality` together with the associated reduction to a file (f, g, h, d matrices).
+     *
+     * Exports a `Hdvf_duality` to a file in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param filename Output file name.
+     *
+     * \exception File_not_found If the file `filename` cannot be opened, raises a `%std::runtime_error`.
+     */
+    void write_hdvf_reduction(std::string filename) const {
+        std::ofstream out_file ( filename, std::ios::out | std::ios::trunc);
+        if ( ! out_file . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+
+        write_hdvf_reduction(out_file) ;
+
+        out_file.close();
+    }
+
+    /*
+     * \brief Reads a `Hdvf_duality` together with the associated reduction (f, g, h, d matrices)
+     *
+     * Imports a `Hdvf_duality` from a stream in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param in Input stream.
+     */
+    std::istream& read_hdvf_reduction(std::istream& in) ;
+
+    /*
+     * \brief Loads a `Hdvf_duality` together with the associated reduction from a file (f, g, h, d matrices)
+     *
+     * Imports a `Hdvf_duality` and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
+     * \warning The underlying complex is not stored in the file!
+     *
+     * \param filename Input file name.
+     *
+     * \exception File_not_found If the file `filename` cannot be opened, raises a `%std::runtime_error`.
+     */
+    void read_hdvf_reduction(std::string filename) {
+        std::ifstream in_file (filename);
+        if ( ! in_file . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+
+        read_hdvf_reduction(in_file);
+
+        in_file.close();
+    }
+
+
 
     /**
      * \brief Prints the reduced boundary over critical cells of `K` and `L-K`.
@@ -531,7 +542,7 @@ public:
     }
 
     /**
-     * \brief Exports homology generators *of the current sub chain complex* associated to `cell_index` (critical cell) of dimension  `q` (used by vtk export).
+     * \brief Exports the homology generator *of the current sub chain complex* associated to `cell_index` (critical cell) of dimension  `q`.
      *
      * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
      *
@@ -567,7 +578,7 @@ public:
     }
 
     /**
-     * \brief Exports cohomology generators *of the current sub chain complex* associated to `cell_index` (critical cell) of dimension  `q` (used by vtk export).
+     * \brief Exports the cohomology generator *of the current sub chain complex* associated to `cell_index` (critical cell) of dimension  `q`.
      *
      * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
      *
@@ -600,7 +611,7 @@ public:
         }
     }
 
-    /** \brief Compares the `HDVF_duality` with another `HDVF_duality` over the same underlying complex and sub-complex.
+    /* \brief Compares the `HDVF_duality` with another `HDVF_duality` over the same underlying complex and sub-complex.
      *
      * \param other Other `HDVF_duality` to compare.
      * \param full_compare Turns on "in depth" HDVF comparison (reduction matrices).

@@ -34,15 +34,23 @@ namespace Homological_discrete_vector_field {
 /*!
  \ingroup PkgHDVFHDVFClasses
 
- The class `Hdvf_persistence` computes persistent homology using HDVFs (over a ring of coefficients which should actually be a **field**). Hence, unlike other persistence algorithms, beside standard persistent intervals informations (birth/death indices, degrees, associated cells), `Hdvf_persistence` also provides **homology and cohomology generators for persistent pairs**. Intuitively, holes die when they are "filled" by a cell: associated homology and cohomology generators provide a representation of the hole and of the cells filling the hole.
+ The class `Hdvf_persistence` computes persistent homology using HDVFs.
 
- Given a `Filtration`, the `Hdvf_persistence` class computes persistent homology as a perfect HDVF adapted to the filtration (through the `compute_perfect_hdvf()` method). If the reduction \f$g\f$ map is computed (depending the the computation option), HDVFs also provide persistent homology generators, together with the corresponding "filling" chains (see user manual for more details).
+ \warning The ring of coefficients provided should be a **field**.
+
+ Unlike other persistence computation libraries, beside standard persistent intervals informations (birth/death indices, degrees, associated cells), `Hdvf_persistence` also provides **homology and cohomology generators for persistent pairs** (see \ref secHDVFpersistentHom_package "user manual" for details, including the link to cascades). Intuitively, holes die when they are "filled" by a cell: associated homology and cohomology generators provide a representation of the hole and of the cells filling the hole.
+
+ Given a `Filtration`, the `Hdvf_persistence` class computes persistent homology as a perfect HDVF adapted to the filtration (through the `compute_perfect_hdvf()` method). If the reduction \f$g\f$ map is computed (depending the the computation option), HDVFs also provide persistent homology generators, together with the corresponding "filling" chains.
 
  \cgalModels{HDVF}
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used (the underlying ring of coefficients must be a model of `Field`). The sparse matrix provided by `ChainComplex` must be an instance of the `Sub_sparse_matrix_structure` template.
  \tparam Degree a scalar data type used for the degrees of the filtration (a model of `RealEmbeddable` concept).
  \tparam Filtration_ a model of the `Filtration` concept, providing the filtration used to compute persistence.
+
+\warning
+ - The sparse matrix provided by `ChainComplex` must be an instance of the `Sub_sparse_matrix_structure` template.
+ - For persistent homology computation, the selection of cells paired by the `A()` operation is totally determined by the filtration. Hence, the `find_pair_A()` family of functions and `A()` operation are private to `Hdvf_persistence`.
 
  */
 
@@ -148,23 +156,23 @@ public:
         }
     };
 
-    // Matrices types
-    /*!
+    // Inherited types
+    /*
      Type of column-major chains
      */
     typedef typename Base::Column_chain Column_chain;
 
-    /*!
+    /*
      Type of row-major chains
      */
     typedef typename Base::Row_chain Row_chain;
 
-    /*!
+    /*
      Type of column-major sparse matrices
      */
     typedef typename Base::Column_matrix Column_matrix;
 
-    /*!
+    /*
      Type of row-major sparse matrices
      */
     typedef typename Base::Row_matrix Row_matrix;
@@ -238,12 +246,14 @@ public:
      * \brief Hdvf_persistence default constructor
      *
      * Builds an "empty" HDVF_persistence (with all cells critical) associated to the chain complex `K` and the filtration `f`.
-     * By default, the HDVF option is set to OPT_FULL (full reduction computed)
+     * By default, the HDVF option is set to OPT_FULL (full reduction computed).
+     *
+     * If the `with_export`parameter is set to `true`, homology and cohomology generators of persistent pairs, together with the corresponding HDVFs (see \ref secHDVFpersistentHom_package "user manual" for details) are stored along the computation; they can then be visited via the persistent pairs iterator.
      *
      * \param K A chain complex (a model of `AbstractChainComplex`).
      * \param f A filtration (a model of `Filtration`).
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
-     * \param with_export Boolean option to activate or not the export of PSC labels and homology/cohomology generators for of persistent intervals of positive duration. This information is used by vtk exporters.
+     * \param with_export Boolean option to activate or not the storage of the `Persistent_hole` informations (PSC labels and homology/cohomology generators) for persistent intervals of positive duration. This information is required for vtk exporters.
      * \param dimension_restriction Determines if persistence is computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
      *
      * \exception Empty_complex If the complex `K` is empty, raises a `%std::runtime_error`.
@@ -253,7 +263,7 @@ public:
     /**
      * \brief Computes a perfect persistent HDVF.
      *
-     * This method follows the filtration and considers cells one by one. For each of them, it searches the youngest possible cell valid for A (returned by `find_pair_A()`), and applies the corresponding `A()` operation.
+     * This method follows the filtration and considers cells one by one. For each of them, it searches the youngest possible cell valid for `A()` and applies the corresponding operation.
      * By definition of persistent homology, the `IntegralDomainWithoutDivision` of coefficients *must be* a `Field`.
      *
      * If `dimension_restriction` is a positive parameter (in the HDVF), then persistence is computed only in dimension `dimension_restriction`.
@@ -334,7 +344,7 @@ public:
 
     /** \brief Overload of `operator<<()` for `Hdvf_persistence`.
      *
-     * Prints out finite and infinite persistence intervals.
+     * Prints out finite and infinite persistence intervals in a user friendly way.
      *
      * \param out_stream Reference to an output stream.
      * \param per_hdvf Constant reference on the `Hdvf_persistence` to print.
@@ -379,7 +389,7 @@ public:
     }
 
 
-    /**
+    /*
      * \brief Exports primary/secondary/critical labels to integers (e.g.\ for vtk export).
      *
      * The method exports the labels of every cell in each dimension.
@@ -416,7 +426,7 @@ public:
         return labels ;
     }
 
-    /**
+    /*
      * \brief Exports homology generators associated to `cell_index` (critical cell) of dimension  `q` (e.g.\ for vtk export).
      *
      * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
@@ -446,7 +456,7 @@ public:
             throw std::runtime_error("Cannot export homology generators without proper HDVF option") ;
     }
 
-    /**
+    /*
      * \brief Exports cohomology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
      * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
@@ -590,13 +600,13 @@ public:
     iterator begin(bool discard_small = true) const { return iterator(*this, 0, discard_small) ; }
 
     /**
-     * \brief Iterator past-the-end of the chain indices.
+     * \brief Iterator past-the-end of persistent intervals.
      *
-     * \returns The past-the-end iterator of the chain indices.
+     * \returns The past-the-end iterator of  persistent intervals.
      */
     iterator end() const { return iterator(*this, _persist.size()) ; }
 
-    /**
+    /*
      * \brief Writes a `HDVF_persistence` together with the associated reduction (f, g, h, d matrices)
      *
      * Exports a `HDVF_persistence` to a stream in `hdvf` file format (a simple text file format, see for a specification).
@@ -605,7 +615,7 @@ public:
      */
     std::ostream& write_hdvf_reduction(std::ostream& out) const ;
 
-    /**
+    /*
      * \brief Writes a `HDVF_persistence` together with the associated reduction to a file (f, g, h, d matrices).
      *
      * Exports a `HDVF_persistence` to a file in `hdvf` file format (a simple text file format, see for a specification).
@@ -626,7 +636,7 @@ public:
         out_file.close();
     }
 
-    /**
+    /*
      * \brief Reads a `HDVF_persistence` together with the associated reduction (f, g, h, d matrices)
      *
      * Imports a `HDVF_persistence` from a stream in `hdvf` file format (a simple text file format, see for a specification).
@@ -635,7 +645,7 @@ public:
      */
     std::istream& read_hdvf_reduction(std::istream& in) ;
 
-    /**
+    /*
      * \brief Loads a `HDVF_persistence` together with the associated reduction from a file (f, g, h, d matrices)
      *
      * Imports a `HDVF_persistence` and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
@@ -657,13 +667,13 @@ public:
         in_file.close();
     }
 
-    /** \brief Compares the `HDVF_persistence` with another `HDVF_persistence` over the same underlying complex and filtration.
+    /* \brief Compares the `HDVF_persistence` with another `HDVF_persistence` over the same underlying complex and filtration.
      *
      * \param other Other `HDVF_persistence` to compare.
      * \param full_compare Turns on "in depth" HDVF comparison (reduction matrices).
      */
 
-    bool compare(const Hdvf_persistence& other, bool full_compare = false) const {
+    virtual bool compare(const Hdvf_persistence& other, bool full_compare = false) const {
         // Compare Hdvf_core structure of *this and other
         bool res(Base::compare(other, full_compare));
         if (!res)

@@ -841,7 +841,6 @@ The `.osm` file format is a simple text format to store OSM sparse matrices:
 [AGL, 2025] Aldo Gonzalez-Lorenzo, Alexandra Bac and Yann-Situ Gazull. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
 
 [YSG1,  2025] Yann-Situ Gazull, Aldo Gonzalez-Lorenzo and Alexandra Bac. Characterization of the computed homology and cohomology bases. DGMM 2025 (to appear).
-[YSG1,  2025] Yann-Situ Gazull, Aldo Gonzalez-Lorenzo and Alexandra Bac. Characterization of the computed homology and cohomology bases. DGMM 2025 (to appear).
 
 [YSG2,  2025] Yann-Situ Gazull, Aldo-Gonzalez-Lorenzo and Alexandra Bac. Space of homological computations: connectivity and paths (submitted to Journal of Applied and Computational Topology).
 

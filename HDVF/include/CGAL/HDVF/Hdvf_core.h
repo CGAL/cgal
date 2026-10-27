@@ -967,7 +967,7 @@ public:
      * \param full_compare Turns on "in depth" HDVF comparison (reduction matrices).
      */
 
-    bool compare(const Hdvf_core& other, bool full_compare = false) const {
+    virtual bool compare(const Hdvf_core& other, bool full_compare = false) const {
         bool res;
         int d = _flag.size(), d_other = other._flag.size();
         res = (d == d_other);
