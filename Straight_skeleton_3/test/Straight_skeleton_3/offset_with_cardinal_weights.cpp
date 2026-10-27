@@ -32,14 +32,15 @@ int main(int argc, char** argv)
   std::filesystem::path mesh_filename;
   std::filesystem::path weights_filename;
   std::filesystem::path save_path = std::filesystem::current_path();
+  std::filesystem::path config_path;
   std::vector<FT> save_times;
 
-  if (!SS3::utils::parse_args(argc, argv, mesh_filename, weights_filename, save_path, save_times)) {
+  if (!SS3::utils::parse_args(argc, argv, mesh_filename, weights_filename, save_path, config_path, save_times)) {
     return EXIT_FAILURE;
   }
 
   Mesh sm;
-  if (!SS3::utils::preprocess_input(mesh_filename, sm)) {
+  if (!SS3::utils::preprocess_input(mesh_filename, sm, save_times)) {
     return EXIT_FAILURE;
   }
 
@@ -72,7 +73,7 @@ int main(int argc, char** argv)
   }
 #endif
 
-  bool result = SS3::utils::run(sm, fwm, save_times, save_path);
+  bool result = SS3::utils::run(sm, fwm, save_times, save_path, config_path);
 
   std::cout << "Done" << std::endl;
   return result ? EXIT_SUCCESS : EXIT_FAILURE;

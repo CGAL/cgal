@@ -23,7 +23,8 @@ using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
 
 void test(const std::string& mesh_filename,
           const std::vector<FT>& save_times,
-          const std::filesystem::path& save_path,
+          const std::filesystem::path& save_path = std::filesystem::current_path(),
+          const std::filesystem::path& config_path = {},
           bool redict_stdout = true)
 {
   std::cout << "\n==== TEST: " << mesh_filename << " ====" << std::endl;
@@ -41,7 +42,7 @@ void test(const std::string& mesh_filename,
 
   // triangulate if necessary, and check if this is a sane input
   Mesh sm;
-  if (!SS3::utils::preprocess_input(mesh_filename, sm)) {
+  if (!SS3::utils::preprocess_input(mesh_filename, sm, save_times)) {
     std::cerr << mesh_filename << " is not a valid input" << std::endl;
     return;
   } else {
@@ -218,13 +219,14 @@ int main(int argc, char** argv)
     std::filesystem::path mesh_filename;
     std::filesystem::path weights_filename;
     std::filesystem::path save_path = std::filesystem::current_path();
+    std::filesystem::path config_path;
     std::vector<FT> save_times;
 
-    if (!SS3::utils::parse_args(argc, argv, mesh_filename, weights_filename, save_path, save_times)) {
+    if (!SS3::utils::parse_args(argc, argv, mesh_filename, weights_filename, save_path, config_path, save_times)) {
       return EXIT_FAILURE;
     }
 
-    test(mesh_filename, save_times, save_path, false /*do not redirect stdout*/);
+    test(mesh_filename, save_times, save_path, config_path, false /*do not redirect stdout*/);
   }
 
   std::cout << "Done" << std::endl;

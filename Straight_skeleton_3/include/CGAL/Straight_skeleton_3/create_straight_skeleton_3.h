@@ -61,11 +61,13 @@ construct_skeleton(const TriangleMesh& tmesh,
   config->load_default_values();
 
   if constexpr (!parameters::is_default_parameter<NamedParameters, internal_np::config_file_path_t>::value) {
-    std::string str_conf_file = parameters::get_parameter(np, internal_np::config_file_path);
-    CGAL_SS3_IO_TRACE_V(1, "Loading configuration from file: " << str_conf_file);
-    if (!config->load(str_conf_file)) {
-      CGAL_SS3_IO_TRACE_V(1, "Error: Failed to load configuration file: " << str_conf_file);
-      return { };
+    std::filesystem::path config_path = parameters::get_parameter(np, internal_np::config_file_path);
+    if (std::filesystem::exists(config_path) && std::filesystem::is_regular_file(config_path)) {
+      CGAL_SS3_IO_TRACE_V(1, "Loading configuration from file: " << config_path);
+      if (!config->load(config_path)) {
+        CGAL_SS3_IO_TRACE_V(1, "Error: Failed to load configuration file: " << config_path);
+        return { };
+      }
     }
   } else {
     CGAL_SS3_IO_TRACE_V(1, "Using default configuration values (no config file path provided)");

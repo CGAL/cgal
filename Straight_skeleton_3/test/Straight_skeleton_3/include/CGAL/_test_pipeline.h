@@ -28,14 +28,16 @@ bool parse_args(int argc, char** argv,
                 std::filesystem::path& mesh_filename,
                 std::filesystem::path& weights_filename,
                 std::filesystem::path& save_path,
+                std::filesystem::path& config_path,
                 std::vector<FT>& save_times)
 {
   if (argc == 1) {
-    std::cout << "Usage: " << argv[0] << " <input filename> [--weight-path <weights filename>] [--save-path <output directory>] [--save-times <time_0> <time_1> ...]" << std::endl;
+    std::cout << "Usage: " << argv[0] << " <input filename> [--weight-path <weights filename>] [--save-times <time_0> <time_1> ...] [--save-path <output directory>] [--config-path <config filename>]" << std::endl;
     std::cout << "  <input filename>                   Path to input mesh file (required)" << std::endl;
     std::cout << "  --weight-path <weights filename>   Path to weights file (optional)" << std::endl;
-    std::cout << "  --save-path <output directory>     Directory to save results (optional, defaults to current directory)" << std::endl;
     std::cout << "  --save-times <times>               List of times (optional, all must be non-zero and same sign)" << std::endl;
+    std::cout << "  --save-path <output directory>     Directory to save results (optional, defaults to current directory)" << std::endl;
+    std::cout << "  --config-path <config filename>    Path to configuration file (optional)" << std::endl;
     return false;
   }
 
@@ -67,6 +69,15 @@ bool parse_args(int argc, char** argv,
       } else {
         std::cerr << "Warning: '" << argv[i + 1] << "' is not a valid directory. Using current directory instead." << std::endl;
         save_path = std::filesystem::current_path();
+      }
+      ++i;
+    } else if (arg == "--config-path" && i + 1 < argc) {
+      std::filesystem::path candidate(argv[i + 1]);
+      if (std::filesystem::exists(candidate) && std::filesystem::is_regular_file(candidate)) {
+        config_path = candidate;
+      } else {
+        config_path.clear();
+        std::cerr << "Warning: '" << argv[i + 1] << "' is not a valid file. Using default configuration." << std::endl;
       }
       ++i;
     } else if (arg == "--save-times") {
@@ -121,7 +132,8 @@ bool parse_args(int argc, char** argv,
 
 template <typename Mesh>
 bool preprocess_input(const std::filesystem::path& mesh_filename,
-                      Mesh& sm)
+                      Mesh& sm,
+                      const SaveTimesRange& save_times)
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -183,7 +195,8 @@ template <typename Mesh,
 bool run(const Mesh& sm,
          const FaceWeightMap fwm,
          const std::vector<FT>& save_times,
-         const std::filesystem::path& save_path)
+         const std::filesystem::path& save_path,
+         const std::filesystem::path& config_path = {})
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace SS3 = CGAL::Straight_skeletons_3;
@@ -195,8 +208,9 @@ bool run(const Mesh& sm,
   CGAL::Real_timer timer;
   timer.start();
 
-  bool success = CGAL::create_straight_skeleton_and_offset_polyhedra_3(
-    sm, save_times, results, CGAL::parameters::face_weight_map(fwm));
+  bool success = CGAL::create_straight_skeleton_and_offset_polyhedra_3(sm, save_times, results,
+                   CGAL::parameters::face_weight_map(fwm)
+                                    .config_file_path(config_path.string()));
 
   timer.stop();
   std::cout << "Elapsed: " << timer.time() << std::endl;

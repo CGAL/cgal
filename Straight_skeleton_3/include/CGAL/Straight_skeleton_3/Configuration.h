@@ -27,6 +27,7 @@
 #include <CGAL/tss.h>
 
 #include <charconv>
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <sstream>
@@ -39,7 +40,8 @@ class Configuration;
 
 using ConfigurationSPtr = std::shared_ptr<Configuration>;
 
-/*
+/* <-- not documented at the moment -->
+ *
  * \ingroup PkgStraightSkeleton3Classes
  *
  * \class CGAL::Straight_skeletons_3::Configuration
@@ -151,10 +153,10 @@ public:
     // }
   }
 
-  bool load(const std::string& filename)
+  bool load(const std::filesystem::path& filename)
   {
     bool result = false;
-    std::ifstream input(filename.c_str());
+    std::ifstream input(filename);
     if (input.is_open()) {
       parse(input);
       result = true;
