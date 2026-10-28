@@ -393,6 +393,12 @@ different dimensional spaces and curve topologies:
   setting.  `Point_1 = GeomTraits_2::Point_2`.
   Both sides are `Identified_side_tag`.
 
+- `Direction_geom_traits_2_adaptor_1<GeomTraits_2>`: Adapts a 2D geometry
+  traits model (providing directions in the plane and the predicate
+  `Counterclockwise_in_between_2`, e.g., a kernel) to the 1D arrangement
+  on the circle of directions.  `Point_1 = GeomTraits_2::Direction_2`.
+  Both sides are `Identified_side_tag`; see \ref aoc_sec-circle.
+
 - `Circle_traits_1<Kernel>`: Supports arrangements on the unit circle
   \f$\mathbb{S}^1\f$, representing points as `Kernel::Direction_2`
   objects for exact arithmetic.  Both sides are `Identified_side_tag`;
@@ -563,6 +569,16 @@ order of two directions \f$d_1\f$ and \f$d_2\f$ is the order of their
 angles.  Otherwise, the directions whose angles are larger than the angle of
 \f$d_{\mathrm{ref}}\f$ precede the others, and within each of these two
 groups, the order is the order of the angles.
+
+### An axis-free alternative
+
+`Direction_geom_traits_2_adaptor_1<GeomTraits_2>` is an alternative to
+`Circle_traits_1<Kernel>` that refers to no axis.  It adapts a shared 2D
+geometry traits object, such as a kernel, and a given reference direction,
+which is required (no direction is constructed).  The order is determined by
+the predicate `Kernel::CounterclockwiseInBetween_2` alone: a direction
+\f$a\f$ precedes a direction \f$b\f$ if and only if \f$a\f$ is
+counterclockwise strictly in between \f$d_{\mathrm{ref}}\f$ and \f$b\f$.
 
 ### Usage example
 

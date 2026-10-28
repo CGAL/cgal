@@ -123,6 +123,7 @@ as free (global) functions.
 - `CGAL::Arrangement_on_curve_1::Closed_geom_traits_2_adaptor_1<GeomTraits_2>`
 - `CGAL::Arrangement_on_curve_1::Left_closed_geom_traits_2_adaptor_1<GeomTraits_2>`
 - `CGAL::Arrangement_on_curve_1::Right_closed_geom_traits_2_adaptor_1<GeomTraits_2>`
+- `CGAL::Arrangement_on_curve_1::Direction_geom_traits_2_adaptor_1<GeomTraits_2>`
 - `CGAL::Arrangement_on_curve_1::Identified_geom_traits_2_adaptor_1<GeomTraits_2>`
 - `CGAL::Arrangement_on_curve_1::Copy_overlay_visitor<ArrangementA, ArrangementB, ArrangementR>`
 - `CGAL::Arrangement_on_curve_1::Default_overlay_visitor<ArrangementA, ArrangementB, ArrangementR>`

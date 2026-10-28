@@ -8,6 +8,7 @@
 
 #include "test_utils.h"
 #include <CGAL/Arrangement_on_curve_1/overlay.h>
+#include <CGAL/Arrangement_on_curve_1/Direction_geom_traits_2_adaptor_1.h>
 
 // An overlay visitor that counts the reports of every result vertex and edge.
 template <typename ArrangementR>
@@ -91,6 +92,10 @@ void test_all(const std::string& mode, std::size_t& failures) {
   test<Test_arrangement<Identified_traits, UseVector>>(
     mode + " identified", std::make_shared<const Identified_traits>(),
     {Direction_2(1, 0), Direction_2(0, 1), Direction_2(-1, 0), Direction_2(0, -1), Direction_2(1, 1)}, failures);
+  using Direction_traits = Aoc::Direction_geom_traits_2_adaptor_1<Kernel>;
+  test<Test_arrangement<Direction_traits, UseVector>>(
+    mode + " identified (directions)", std::make_shared<const Direction_traits>(Kernel(), Direction_2(1, 2)),
+    {Direction_2(1, 2), Direction_2(0, 1), Direction_2(-1, -2), Direction_2(0, -1), Direction_2(1, 1)}, failures);
 }
 
 int main() {
