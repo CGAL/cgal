@@ -1743,7 +1743,7 @@ protected:
   void set_adjacency_between_3d_facets(Facet f1, Facet f2) const {
     // }
     tr().tds().set_adjacency(f1.first, f1.second, f2.first, f2.second);
-    if(dbg().move_Steiner_vertices_level() > 1) {
+    if(dbg().move_Steiner_vertices_level() > 2) {
       std::cerr << cdt_3_format("-> set adjacency between facets ({})=[{}]+{} and ({})=[{}]+{}\n",
                                 IO::oformat(f1), with_offset(tr().vertices(f1)),
                                 with_offset(f1.first->vertex(f1.second)),
@@ -2071,7 +2071,7 @@ protected:
       cells_in_other_components.clear(); // clear it here, and fill it again with the cells opposite to a constrained
                                          // facet during the exploration of the current component
 
-      if(dbg().move_Steiner_vertices_level() > 1) {
+      if(dbg().move_Steiner_vertices_level() > 2) {
         std::cerr << "  (starting a new component through face with id " << component_first_incident_face_id << ")\n";
       }
       // - `out.facets` is part of the result, and a queue as well, with `queue_head` as the index of
@@ -2130,7 +2130,7 @@ protected:
       out.nb_of_incident_facets_for_each_component.push_back(std::distance(begin_it, incident_facets_end));
       out.component_offsets.push_back(out.facets.size());
 
-      if(dbg().move_Steiner_vertices_level() > 1) {
+      if(dbg().move_Steiner_vertices_level() > 2) {
         std::cerr << "- Star component #" << out.nb_of_incident_facets_for_each_component.size()
                   << " has:\n  - "
                   << (out.facets.size() - component_offset) << " total facets,\n  - "
@@ -2191,7 +2191,7 @@ protected:
                                 New_CDT_2_face_handles_output_iterator new_face_handles_out,
                                 Run_mode run_mode = NORMAL_RUN)
   {
-    const bool debug = dbg().move_Steiner_vertices_level() > 1 && run_mode == NORMAL_RUN;
+    const bool debug = dbg().move_Steiner_vertices_level() > 2 && run_mode == NORMAL_RUN;
     const bool is_a_half_hole = vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE;
     if(debug) {
       std::cerr << cdt_3_format("Filling {}hole in CDT_2 with {} edges, is_outside_the_face = {}\n",
@@ -2480,7 +2480,7 @@ protected:
         }
         set_facet_constrained(facet_c, face_id, next);
         set_facet_constrained(facet_d, face_id, current);
-        CGAL_assertion(dbg().move_Steiner_vertices_level() < 2 || mutable_cdt_2.tds().is_valid(true));
+        CGAL_assertion(dbg().move_Steiner_vertices_level() < 3 || mutable_cdt_2.tds().is_valid(true));
         return true;
       }
     } while(face_circ != done);
@@ -2496,7 +2496,7 @@ protected:
                                    New_CDT_2_face_handles_output_iterator new_face_handles_out,
                                    Run_mode run_mode = NORMAL_RUN)
   {
-    const bool debug = dbg().move_Steiner_vertices_level() > 1 && run_mode == NORMAL_RUN;
+    const bool debug = dbg().move_Steiner_vertices_level() > 2 && run_mode == NORMAL_RUN;
     std::tuple<New_CDT_2_face_handles_output_iterator, Facet_pair, Facet_pair> result{
         new_face_handles_out, null_facet_pair(), null_facet_pair()};
     auto& [new_face_handles_out_it, half_hole_facet_pair, second_half_hole_facet_pair] = result;
@@ -2753,7 +2753,7 @@ protected:
       auto s = std::log10(n_steiner_vertices) + 1;
         std::cerr << "[" << std::setw(s) << (i+1) << "/" << n_steiner_vertices << "] Moving Steiner vertex " << display_vert(v) << " to the volume\n";
     }
-    auto indent_guards = CGAL::IO::make_indenting_guards(dbg().move_Steiner_vertices_level() > 1 ? "| " : "", std::cerr);
+    auto indent_guards = CGAL::IO::make_indenting_guards(dbg().move_Steiner_vertices_level() > 2 ? "| " : "", std::cerr);
 
     CGAL::unordered_flat_map<Face_index, CDT_2_vertex_handle> face_to_cdt_2_vertex_for_v;
     const auto v_type = vertex_type(v);
@@ -2780,7 +2780,7 @@ protected:
 
     const auto incident_constrained_facet = *incident_constrained_facet_opt;
 
-    if(dbg().move_Steiner_vertices_level() > 1) {
+    if(dbg().move_Steiner_vertices_level() > 2) {
       const auto nb_of_incident_cells = std::invoke([&]() {
         std::size_t nb_of_incident_cells{0};
         tr().incident_cells(v, CGAL::Counting_output_iterator(&nb_of_incident_cells));
@@ -2793,11 +2793,11 @@ protected:
     const auto star_components = collect_star_components_facets(v, incident_constrained_facet);
     const auto nb_of_star_components = star_components.component_incident_constraint_face_ids.size();
 
-    if(dbg().move_Steiner_vertices_level() > 1) {
+    if(dbg().move_Steiner_vertices_level() > 2) {
       std::cerr << "- Nb of components of the star: " << nb_of_star_components << '\n';
     }
     if(nb_of_star_components == 1) {
-      if(dbg().move_Steiner_vertices_level() > 1) {
+      if(dbg().move_Steiner_vertices_level() > 2) {
         auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
         std::cerr << "- Only one component in the star, cannot move the vertex to the volume, aborting\n";
       }
@@ -2839,7 +2839,7 @@ protected:
       for(std::size_t component_index = 1; component_index <= nb_of_star_components; ++component_index) {
         auto component_mesh = construct_star_component_mesh(component_index, star_components,
                                                             map_from_incident_constraint_face_id_to_new_triangles);
-        if(dbg().move_Steiner_vertices_level() > 1) {
+        if(dbg().move_Steiner_vertices_level() > 2) {
           std::ostringstream ss;
           ss << "dump_vertex_" << with_offset(v) << "_component_"  << component_index << ".ply";
           CGAL::IO::write_PLY(ss.str(), component_mesh, CGAL::parameters::stream_precision(17));
@@ -2848,12 +2848,12 @@ protected:
         auto opt_kernel_center_point = compute_center_point_if_possible(component_mesh);
         std::chrono::duration<double> elapsed_time = std::chrono::steady_clock::now() - start_time;
         auto at_exit = make_scope_exit([&] {
-          if(dbg().move_Steiner_vertices_level() > 0) {
+          if(dbg().move_Steiner_vertices_level() > 1) {
             std::cerr << "    computation time for kernel_point of component #" << component_index << ": "
                       << elapsed_time.count() << " s\n";
           }
         });
-        if(dbg().move_Steiner_vertices_level() > 0) {
+        if(dbg().move_Steiner_vertices_level() > 1) {
           std::cerr << "  - incident constraint faces ids of component #" << component_index << ": {"
                     << IO::oformat(star_components.component_incident_constraint_face_ids[component_index - 1])
                     << "}\n";
@@ -2862,13 +2862,13 @@ protected:
         if(opt_kernel_center_point.has_value()) {
           auto kernel_center_point = this->exact(*opt_kernel_center_point);
           central_points->push_back(kernel_center_point);
-          if(dbg().move_Steiner_vertices_level() > 0) {
+          if(dbg().move_Steiner_vertices_level() > 1) {
             std::cerr << *opt_kernel_center_point << " (distance to vertex: "
                       << CGAL::approximate_sqrt(CGAL::squared_distance(kernel_center_point, v->point())) << ")"
                       << "\n";
           }
         } else {
-          if(dbg().move_Steiner_vertices_level() > 0) {
+          if(dbg().move_Steiner_vertices_level() > 1) {
             auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
             std::cerr << "none (the component is either degenerate or open) ABORT\n";
             CGAL::Surface_mesh<Point_3> kernel;
@@ -2903,7 +2903,7 @@ protected:
       return central_points;
     }); // end compute central points for each component
 
-    if(dbg().move_Steiner_vertices_level() > 1) {
+    if(dbg().move_Steiner_vertices_level() > 2) {
       dump_link_mesh_of_vertex_to_ply(v, star_components, map_from_incident_constraint_face_id_to_new_triangles);
     }
 
@@ -2988,7 +2988,7 @@ protected:
            component_index < end; ++component_index)
       {
         const auto& [face_id, orientation] = star_components.face_ids_between_consecutive_components[component_index];
-        if(dbg().move_Steiner_vertices_level() > 1) {
+        if(dbg().move_Steiner_vertices_level() > 2) {
           std::cerr << "Component " << (component_index+1) << " with center "
                     << display_vert(new_center_vertices[component_index]) << "\n";
           if(this->debug().move_Steiner_vertices_level() > 2) {
@@ -3014,10 +3014,10 @@ protected:
         if(true == facet_pair_to_reconnect[0].first->has_vertex(new_center_vertices[component_index]) &&
            false == facet_pair_to_reconnect[1].first->has_vertex(new_center_vertices[component_index]))
         {
-          if(dbg().move_Steiner_vertices_level() > 1) { std::cerr << "SWAPPING facet pair to reconnect\n"; }
+          if(dbg().move_Steiner_vertices_level() > 2) { std::cerr << "SWAPPING facet pair to reconnect\n"; }
           std::swap(facet_pair_to_reconnect[0], facet_pair_to_reconnect[1]);
         }
-        if(dbg().move_Steiner_vertices_level() > 1) {
+        if(dbg().move_Steiner_vertices_level() > 2) {
           std::cerr << cdt_3_format("The facet ({}) to reconnect in the 3D triangulation is:{}\n",
                                     IO::oformat(facet_pair_to_reconnect[0]),
                                     display_facet("  - ", facet_pair_to_reconnect[0]));
@@ -3041,13 +3041,13 @@ protected:
                                       last_facet_to_reconnect_to_opt.value());
     }
 
-    if(dbg().move_Steiner_vertices_level() > 1) {
+    if(dbg().move_Steiner_vertices_level() > 2) {
       std::cerr << "- number of new 2D faces created in the CDT: " << nb_of_new_2d_faces << '\n';
     }
 
     tr().tds().delete_vertex(v);
 
-    CGAL_assertion(dbg().move_Steiner_vertices_level() < 2 || tr().tds().is_valid(true));
+    CGAL_assertion(dbg().move_Steiner_vertices_level() < 3 || tr().tds().is_valid(true));
 
     return true;
   } // end move_one_Steiner_vertex_to_the_volume(..)
