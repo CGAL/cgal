@@ -8,17 +8,24 @@ CUSTOMER=""
 DATA_PATH=/home/mrouxell/Data/Customers/${CUSTOMER}/offset_data_june_2024
 # script_test_folder
 # offset_data_june_2024
-# offset_data_july_2024 # everything is zero weight there
+# offset_data_july_2024 # everything has some zero weight there
+# offset_data_october_2026
 # high_degree_data
 ############## DO NOT COMMIT
 
 BUILD_DIR="build-release"
-TIMEOUT_VALUE=500
-MAX_ITEM_NUMBER=400
+TIMEOUT_VALUE=120
+MAX_ITEM_NUMBER=20
+NUMBER_OF_SEEDS=50
 NUMBER_OF_THREADS=2
 OFFSET_DIRECTION="out" # in / out
 
 cd "$BUILD_DIR" || exit 1
+CONFIG_TEMPLATE="$PWD/StraightSkel.ini"
+if [[ ! -r "$CONFIG_TEMPLATE" ]]; then
+  echo "Not found or unreadable: $CONFIG_TEMPLATE" >&2
+  exit 1
+fi
 
 PREPROCESS_FAILURES=()
 OFFSET_FAILURES=()
@@ -32,10 +39,10 @@ FILES=$(find ${DATA_PATH}/input_* -type f -name '*.ply' | sort | head -n "$MAX_I
 
 CURRENT_DATE=$(date +%Y-%m-%d)
 CURRENT_TIME=$(date +%H:%M)
-OUTPUT_DIRECTORY=compare_results-${CURRENT_DATE}_${CURRENT_TIME}-${MAX_ITEM_NUMBER}i_${TIMEOUT_VALUE}s
-mkdir -p $OUTPUT_DIRECTORY
+TOP_OUTPUT_DIRECTORY=compare_results-${CURRENT_DATE}_${CURRENT_TIME}-${MAX_ITEM_NUMBER}i_${TIMEOUT_VALUE}s_${NUMBER_OF_SEEDS}seeds
+mkdir -p "$TOP_OUTPUT_DIRECTORY"
 
-GLOBAL_LOG=${OUTPUT_DIRECTORY}/log.txt # /dev/stdout
+GLOBAL_LOG=${TOP_OUTPUT_DIRECTORY}/log.txt # /dev/stdout
 exec > ${GLOBAL_LOG} 2>&1
 
 echo "Build DIR = ${BUILD_DIR}"
@@ -58,13 +65,11 @@ function process_file_single_function {
   FULL_ID=$(echo ${BASE_NAME} | sed -E 's/^[^_]*_(.*\..*|.*)/\1/') # input_nnnnnn_n.ply to nnnnnn_n
   ID=$(echo "${BASE_NAME}" | sed 's/^[^_]*_\([^_]*\)_.*$/\1/') # input_nnnnnn_n.ply to nnnnnn, for the offset file
 
-  mkdir -p $OUTPUT_DIRECTORY/${FULL_ID}
+  LOCAL_OUTPUT_DIRECTORY="${TOP_OUTPUT_DIRECTORY}/${FULL_ID}"
+  mkdir -p "$LOCAL_OUTPUT_DIRECTORY"
 
-  # to write the result, concatenated later into the arrays
-  RESULT_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/result.txt
-
-  LOCAL_LOG=${OUTPUT_DIRECTORY}/${FULL_ID}/local_log.txt
-  exec > ${LOCAL_LOG} 2>&1
+  LOCAL_LOG="${LOCAL_OUTPUT_DIRECTORY}/local_log.txt"
+  exec > "$LOCAL_LOG" 2>&1
 
   echo "FILE: $FILE" | tee -a "${LOCAL_LOG}"
 
@@ -75,24 +80,33 @@ function process_file_single_function {
   WEIGHT_FILE="${DATA_PATH}/offsets_${ID}.txt"
   echo "WEIGHT_FILE: ${WEIGHT_FILE}"
 
-  LOG_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/log_offset.txt
-  CMD="./offset_with_cardinal_weights ${FILE} --weight-path ${WEIGHT_FILE} --save-times 1 --save-path ${OUTPUT_DIRECTORY}/${FULL_ID}"
+  for ((seed_index = 1; seed_index <= NUMBER_OF_SEEDS; seed_index++)); do
+    SEED=$RANDOM
+    OUTPUT_DIRECTORY="${LOCAL_OUTPUT_DIRECTORY}/seed_${seed_index}_${SEED}"
+    mkdir -p "$OUTPUT_DIRECTORY"
 
-  if [ ! -f $WEIGHT_FILE ]; then
-    echo "====== [ERROR]: missing offset file?! ======"
-    echo "$CMD" > $RESULT_FILE
-    echo "PREPROCESS FAILURE" >> $RESULT_FILE
-    return
-  fi
+    SEED_CONFIG="${OUTPUT_DIRECTORY}/StraightSkel.ini"
+    cp "$CONFIG_TEMPLATE" "$SEED_CONFIG"
+    sed -i -E "s/^([[:space:]]*seed[[:space:]]*=[[:space:]]*).*/\\1${SEED}/" "$SEED_CONFIG"
 
-  echo "---- Calling:"
-  echo "  $CMD"
-  echo "  $LOG_FILE"
+    RESULT_FILE="${OUTPUT_DIRECTORY}/result.txt"
+    LOG_FILE="${OUTPUT_DIRECTORY}/log_offset.txt"
+    RES_CODE_FILE="${OUTPUT_DIRECTORY}/res_code.txt"
+    TIMING_FILE="${OUTPUT_DIRECTORY}/timing.txt"
 
-  RES_CODE_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/res_code.txt
-  TIMING_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/timing.txt
+    if [ ! -f "$WEIGHT_FILE" ]; then
+      echo "====== [INFO]: missing offset file; using test_skeleton_3 ======"
+      CMD="./test_skeleton_3 ${FILE} --save-times 1 --save-path ${OUTPUT_DIRECTORY} --config-path ${SEED_CONFIG}"
+    else
+      CMD="./offset_with_cardinal_weights ${FILE} --weight-path ${WEIGHT_FILE} --save-times 1 --save-path ${OUTPUT_DIRECTORY} --config-path ${SEED_CONFIG}"
+    fi
 
-  time ( timeout --preserve-status $TIMEOUT_VALUE $CMD > "$LOG_FILE" 2>&1; echo $? > "$RES_CODE_FILE" ) 2> "$TIMING_FILE"
+    echo "Seed run ${seed_index}/${NUMBER_OF_SEEDS}: ${SEED}"
+    echo "---- Calling:"
+    echo "  $CMD"
+    echo "  $LOG_FILE"
+
+    time ( timeout --preserve-status $TIMEOUT_VALUE $CMD > "$LOG_FILE" 2>&1; echo $? > "$RES_CODE_FILE" ) 2> "$TIMING_FILE"
 
   # Extract runtime from the output of timeout
   runtime=$(cat "$TIMING_FILE" | grep "real" | awk '{print $2}')
@@ -106,7 +120,7 @@ function process_file_single_function {
     runtime=$(echo "$runtime" | sed 's/s//')
   fi
 
-  RUNTIME_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/runtime.txt
+  RUNTIME_FILE=${OUTPUT_DIRECTORY}/runtime.txt
   echo $runtime > ${RUNTIME_FILE}
 
   # Result of the main function
@@ -119,21 +133,21 @@ function process_file_single_function {
     OC_OUTPUT=${FILE/input/output}
     echo "OC_OUTPUT: ${OC_OUTPUT}"
 
-    if [ ! -f $OC_OUTPUT ]; then
-      echo "[ERROR]: missing OC output file?!"
+    if [ ! -f "$OC_OUTPUT" ]; then
+      echo "[ERROR]: missing output file?!"
       echo "$CMD" > $RESULT_FILE
       echo "PREPROCESS FAILURE" >> $RESULT_FILE
       return
     fi
 
-    cp ${OC_OUTPUT} ${OUTPUT_DIRECTORY}/${FULL_ID}
+    cp "${OC_OUTPUT}" "$OUTPUT_DIRECTORY"
 
     # ----------------------------------------------------------------
     # Compare
 
-    OUTPUT=${OUTPUT_DIRECTORY}/${FULL_ID}/result_1.obj
-    CMD="./compare_outputs ${OUTPUT} ${OC_OUTPUT} ${OUTPUT_DIRECTORY}/${FULL_ID}"
-    LOG_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/log_comparison.txt
+    OUTPUT=${OUTPUT_DIRECTORY}/result_1.obj
+    CMD="./compare_outputs ${OUTPUT} ${OC_OUTPUT} ${OUTPUT_DIRECTORY}"
+    LOG_FILE=${OUTPUT_DIRECTORY}/log_comparison.txt
 
     echo "---- Calling:"
     echo "  $CMD"
@@ -200,21 +214,24 @@ function process_file_single_function {
     fi
   fi
   echo ""
+  done
 }
 
 export DATA_PATH
 export TIMEOUT_VALUE
 export OFFSET_DIRECTION
-export OUTPUT_DIRECTORY
+export TOP_OUTPUT_DIRECTORY
+export CONFIG_TEMPLATE
+export NUMBER_OF_SEEDS
 export -f process_file_single_function
 
 # main call
-echo "$FILES" | parallel --wd $PWD --jobs "$NUMBER_OF_THREADS" --env DATA_PATH --env TIMEOUT_VALUE --env OFFSET_DIRECTION --env OUTPUT_DIRECTORY process_file_single_function '{}'
+echo "$FILES" | parallel --wd $PWD --jobs "$NUMBER_OF_THREADS" --env DATA_PATH --env TIMEOUT_VALUE --env OFFSET_DIRECTION --env TOP_OUTPUT_DIRECTORY --env CONFIG_TEMPLATE --env NUMBER_OF_SEEDS process_file_single_function '{}'
 
 exec >> ${GLOBAL_LOG} 2>&1
 
 # concatenate all local logs into the single global log
-find "$OUTPUT_DIRECTORY" -type f -name "local_log.txt" -exec sh -c 'for file do cat "$file"; echo ""; done' sh {} + >> "$GLOBAL_LOG"
+find "$TOP_OUTPUT_DIRECTORY" -type f -name "local_log.txt" -exec sh -c 'for file do cat "$file"; echo ""; done' sh {} + >> "$GLOBAL_LOG"
 
 # extract individual info into the arrays
 while IFS= read -r FILE; do
@@ -249,7 +266,7 @@ while IFS= read -r FILE; do
       echo "Unknown category: $SECOND_LINE in file $FILE"
       ;;
   esac
-done < <(find "$OUTPUT_DIRECTORY" -type f -name "result.txt")
+done < <(find "$TOP_OUTPUT_DIRECTORY" -type f -name "result.txt")
 
 echo ""
 echo "${#SUCCESSES[@]} SUCCESSES:"
