@@ -42,12 +42,42 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 template<typename GT, typename PolygonMesh, typename GetPointFunctor>
-typename GT::Point_3 find_intern_point(const PolygonMesh& pm,
-                                       const GetPointFunctor& gpf)
+auto barycenter_of_points(const PolygonMesh& pm, const GetPointFunctor& gpf)
 {
-#ifdef CGAL_PMP_KERNEL_POINT_USE_CENTROID
-  return approx_centroid = CGAL::centroid(boost::make_transform_iterator(vrange.begin(), gpf),
-                                          boost::make_transform_iterator(vrange.end(), gpf));
+  const auto vrange = vertices(pm);
+  return centroid(boost::make_transform_iterator(vrange.begin(), gpf),
+                  boost::make_transform_iterator(vrange.end(), gpf));
+}
+
+template<typename GT, typename PolygonMesh, typename GetPointFunctor>
+auto centroid(const PolygonMesh& pm, const GetPointFunctor& gpf)
+{
+  const auto vrange = vertices(pm);
+  const auto p0 = gpf(*vrange.begin());
+
+  typename GT::Vector_3 weighted_center = NULL_VECTOR;
+  typename GT::FT total_volume(0);
+
+  for(auto f : faces(pm)){
+    auto h = halfedge(f, pm);
+    const auto& p1 = gpf(source(h, pm));
+    const auto& p2 = gpf(target(h, pm));
+    const auto& p3 = gpf(target(next(h, pm), pm));
+    auto vol = CGAL::volume(p0, p1, p2, p3);
+    if(is_zero(vol)) continue;
+    total_volume = total_volume + vol;
+    auto tet_centroid = ((p0 - ORIGIN) + (p1 - ORIGIN) + (p2 - ORIGIN) + (p3 - ORIGIN))/4;
+    weighted_center = weighted_center + vol * tet_centroid;
+  }
+
+  return CGAL::ORIGIN + (weighted_center / total_volume);
+}
+
+template<typename GT, typename PolygonMesh, typename GetPointFunctor>
+typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunctor& gpf)
+{
+#ifdef CGAL_PMP_KERNEL_POINT_USE_BARYCENTER
+  return barycenter_of_points<GT>(pm, gpf);
 #else
   using Point_3 = typename GT::Point_3;
   using FT = typename GT::FT;
@@ -325,23 +355,7 @@ kernel(const FaceRange& face_range,
       return;
     }
 
-    // Get the centroid
-    using AK = Simple_cartesian<double>;
-    using APoint_3 = typename AK::Point_3;
-
-    auto to_approx = [&kvpm](vertex_descriptor v) {
-      auto &p = approx(get(kvpm, v));
-      return APoint_3(to_double(p.x()),
-                      to_double(p.y()),
-                      to_double(p.z()));
-    };
-
-    APoint_3 approx_centroid = find_intern_point<AK>(kernel, to_approx);
-    EPoint_3 double_centroid(approx_centroid.x(),
-                             approx_centroid.y(),
-                             approx_centroid.z());
-
-    // Check if the approximate_centroid is inside the kernel
+    // lambda-expression to check is a point is inside the kernel
     auto is_inside_kernel = [&](const EPoint_3& p) {
       bool inside = true;
       for(face_descriptor f: faces(kernel)){
@@ -357,11 +371,60 @@ kernel(const FaceRange& face_range,
       return inside;
     };
 
-    if(is_inside_kernel(double_centroid)) {
-      *p = from_exact(double_centroid);
+    auto test_a_method_to_construct_an_inside_point = [&](auto functor, std::string_view method_name) -> bool {
+      auto start_time = std::chrono::high_resolution_clock::now();
+      auto point = functor();
+      double x = to_double(point.x());
+      double y = to_double(point.y());
+      double z = to_double(point.z());
+      auto end_time = std::chrono::high_resolution_clock::now();
+      auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+      std::cerr << method_name << " computation time: " << duration.count() << " microseconds" << std::endl;
+
+      if(!is_valid(x) || !is_valid(y) || !is_valid(z)) { return false; } // check for NaN
+      EPoint_3 exact_point(x, y, z);
+
+      if(is_inside_kernel(exact_point)) {
+        *p = from_exact(exact_point);
+        return true;
+      }
+      return false;
+    };
+
+    // Get the centroid
+    using AK = Simple_cartesian<double>;
+    using APoint_3 = typename AK::Point_3;
+
+    auto to_approx = [&kvpm](vertex_descriptor v) {
+      auto &p = approx(get(kvpm, v));
+      return APoint_3(to_double(p.x()),
+                      to_double(p.y()),
+                      to_double(p.z()));
+    };
+
+    if(test_a_method_to_construct_an_inside_point([&] { return barycenter_of_points<AK>(kernel, to_approx); },
+                                                  "Approximate barycenter"))
+    {
       return;
     }
 
+    if(test_a_method_to_construct_an_inside_point([&] { return find_intern_point<AK>(kernel, to_approx); },
+                                                  "Approximate find_intern_point"))
+    {
+      return;
+    }
+
+    // triangulate the kernel, to be able to compute a centroid
+    bool triangulated = CGAL::Polygon_mesh_processing::triangulate_faces(kernel, CGAL::parameters::vertex_point_map(kvpm));
+
+    if(triangulated &&
+       test_a_method_to_construct_an_inside_point([&] { return centroid<AK>(kernel, to_approx); },
+                                                  "Approximate centroid"))
+    {
+      return;
+    }
+
+    // else switch to exact computation
     CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
     // If not, refine the centroid position
@@ -369,20 +432,31 @@ kernel(const FaceRange& face_range,
     using ExactPoint_3 = typename ExactK::Point_3;
 
     auto to_exact = [&](vertex_descriptor v) { return exact(get(kvpm, v)); };
-    ExactPoint_3 ecentroid = find_intern_point<ExactK>(kernel, to_exact);
-    double_centroid = EPoint_3(to_double(ecentroid.x()),
-                               to_double(ecentroid.y()),
-                               to_double(ecentroid.z()));
 
-    if(is_inside_kernel(double_centroid)){
-      *p = from_exact(double_centroid);
+    if(test_a_method_to_construct_an_inside_point([&] { return barycenter_of_points<ExactK>(kernel, to_exact); },
+                                                  "Exact barycenter"))
+    {
+      return;
+    }
+
+    if(test_a_method_to_construct_an_inside_point([&] { return find_intern_point<ExactK>(kernel, to_exact); },
+                                                  "Exact find_intern_point"))
+    {
+      return;
+    }
+
+    ExactPoint_3 exact_centroid;
+    if(triangulated &&
+       test_a_method_to_construct_an_inside_point([&] { return exact_centroid = centroid<ExactK>(kernel, to_exact); },
+                                                  "Exact centroid"))
+    {
       return;
     }
 
     CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
 
     // Not inside if the GT kernel is not EPECK
-    *p = from_exact(EPoint_3(ecentroid));
+    *p = from_exact(EPoint_3(exact_centroid));
     return;
   }
 
