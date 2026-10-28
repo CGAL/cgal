@@ -1298,13 +1298,12 @@ protected:
   //   - Second call with actual projected point allows distance-based checks
   template<typename LambdaComputer, typename MidpointCheck>
   Point compute_projected_point_with_threshold(const Point& start_pt, const Point& end_pt,
-                                                const Point& midpoint_start, const Point& midpoint_end,
-                                                LambdaComputer&& lambda_computer,
-                                                MidpointCheck&& use_midpoint_check) const
+                                               const Point& a, const Point& b,
+                                               LambdaComputer&& lambda_computer,
+                                               MidpointCheck&& use_midpoint_check) const
   {
     auto& gt = tr().geom_traits();
     auto vector_functor = gt.construct_vector_3_object();
-    auto midpoint_functor = gt.construct_midpoint_3_object();
     auto scaled_vector_functor = gt.construct_scaled_vector_3_object();
     auto translate_functor = gt.construct_translated_point_3_object();
 
@@ -1324,9 +1323,9 @@ protected:
         auto lambda = lambda_computer(exact_kernel, to_exact);
 
         auto exact_midpoint_point_fct = [&]() {
-          const auto midpoint_start_exact = to_exact(midpoint_start);
-          const auto midpoint_end_exact = to_exact(midpoint_end);
-          auto exact_result = exact_midpoint(midpoint_start_exact, midpoint_end_exact);
+          const auto a_exact = to_exact(a);
+          const auto b_exact = to_exact(b);
+          auto exact_result = exact_midpoint(a_exact, b_exact);
           this->exact(exact_result);
           return back_from_exact(exact_result);
         };
@@ -1356,27 +1355,30 @@ protected:
 
     // Check threshold before computing projection
     if(use_midpoint_check(lambda, std::nullopt)) {
-      return exact(midpoint_functor(midpoint_start, midpoint_end));
+      return midpoint_on_segment(start_pt, end_pt, a, b);
     }
 
     const auto vector_ab = vector_functor(start_pt, end_pt);
     const auto projected_pt = translate_functor(start_pt, scaled_vector_functor(vector_ab, lambda));
 
     // Second threshold check with actual projected point if needed
-    return exact(use_midpoint_check(lambda, projected_pt) ? midpoint_functor(midpoint_start, midpoint_end) : projected_pt);
+    return exact(use_midpoint_check(lambda, projected_pt) ? midpoint_on_segment(start_pt, end_pt, a, b) : projected_pt);
   }
 
   // Convenience wrapper for simple lambda-based threshold (lambda < 0.2 || lambda > 0.8)
   template<typename LambdaComputer>
   Point compute_projected_point(const Point& start_pt, const Point& end_pt,
+                                const Point& pa, const Point& pb,
                                 LambdaComputer&& lambda_computer) const
   {
     return compute_projected_point_with_threshold(
-        start_pt, end_pt, start_pt, end_pt,
+        start_pt, end_pt, pa, pb,
         std::forward<LambdaComputer>(lambda_computer),
-        [this](auto lambda, const std::optional<Point>&) {
+        [&](auto lambda, const std::optional<Point>&) {
           // Only need lambda for this threshold check
-          bool use_midpoint = lambda < 0.2 || lambda > 0.8;
+          auto [t_a, t_b] = parameters_along_segment(start_pt, end_pt, pa, pb);
+          if(t_a > t_b) std::swap(t_a, t_b);
+          bool use_midpoint = (lambda - t_a) < 0.2 * (t_b - t_a) || (lambda - t_a) > 0.8 * (t_b - t_a);
           if(this->debug().Steiner_points_construction()) {
             std::cerr << "  lambda = " << lambda << '\n';
             if(use_midpoint) {
@@ -1387,13 +1389,50 @@ protected:
         });
   }
 
+  auto parameters_along_segment(const Point& constrained_segment_source, const Point& constrained_segment_target,
+                                const Point& a, const Point& b) const
+  {
+    auto& gt = tr().geom_traits();
+    auto vector_functor = gt.construct_vector_3_object();
+    auto sq_length_functor = gt.compute_squared_length_3_object();
+    auto sc_prod_func = gt.compute_scalar_product_3_object();
+
+    const auto segment_vector = vector_functor(constrained_segment_source, constrained_segment_target);
+    const auto segment_length_squared = sq_length_functor(segment_vector);
+    const auto vector_to_a = vector_functor(constrained_segment_source, a);
+    const auto vector_to_b = vector_functor(constrained_segment_source, b);
+    const auto t_a = sc_prod_func(vector_to_a, segment_vector) / segment_length_squared;
+    const auto t_b = sc_prod_func(vector_to_b, segment_vector) / segment_length_squared;
+    exact(t_a);
+    exact(t_b);
+    return std::make_pair(to_double(t_a), to_double(t_b));
+  }
+
+  auto
+  point_on_segment(const Point& constrained_segment_source, const Point& constrained_segment_target, double t) const {
+    auto& gt = tr().geom_traits();
+    auto vector_functor = gt.construct_vector_3_object();
+    auto scaled_vector_functor = gt.construct_scaled_vector_3_object();
+    auto translate_functor = gt.construct_translated_point_3_object();
+
+    const auto segment_vector = vector_functor(constrained_segment_source, constrained_segment_target);
+    return translate_functor(constrained_segment_source, scaled_vector_functor(segment_vector, t));
+  }
+
+  auto midpoint_on_segment(const Point& constrained_segment_source, const Point& constrained_segment_target,
+                           const Point& a, const Point& b) const
+  {
+    auto [t_a, t_b] = parameters_along_segment(constrained_segment_source, constrained_segment_target, a, b);
+    return exact(point_on_segment(constrained_segment_source, constrained_segment_target, (t_a + t_b) / 2));
+  }
+
+
   Construct_Steiner_point_return_type
   construct_Steiner_point(Constrained_polyline_id constrained_polyline_id, Subconstraint subconstraint)
   {
     auto& gt = tr().geom_traits();
     auto compare_angle_functor = gt.compare_angle_3_object();
     auto vector_functor = gt.construct_vector_3_object();
-    auto midpoint_functor = gt.construct_midpoint_3_object();
     auto sq_length_functor = gt.compute_squared_length_3_object();
 
     const Vertex_handle va = subconstraint.first;
@@ -1401,17 +1440,19 @@ protected:
     const auto& pa = tr().point(va);
     const auto& pb = tr().point(vb);
     const auto [orig_va, orig_vb] = constraint_extremities(constrained_polyline_id);
-    const auto& orig_pa = tr().point(orig_va);
-    const auto& orig_pb = tr().point(orig_vb);
-
-    if(this->dimension() < 2) {
-      std::cerr << "dim < 2: midpoint\n";
-      return {exact(midpoint_functor(pa, pb)), va->cell(), va};
-    }
+    const auto& constrained_segment_source = tr().point(orig_va);
+    const auto& constrained_segment_target = tr().point(orig_vb);
 
     if(debug().Steiner_points_construction()) {
       std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
                 << display_vert(vb) << " )\n";
+    }
+
+    if(this->dimension() < 2) {
+      if(debug().Steiner_points_construction()) {
+        std::cerr << "  -> dim < 2: using midpoint\n";
+      }
+      return {midpoint_on_segment(constrained_segment_source, constrained_segment_target, pa, pb), va->cell(), va};
     }
 
     const auto vector_of_encroaching_vertices = encroaching_vertices(va, vb);
@@ -1419,7 +1460,7 @@ protected:
       if(debug().Steiner_points_construction()) {
         std::cerr << "  -> no encroaching vertices, using midpoint\n";
       }
-      return {exact(midpoint_functor(pa, pb)), va->cell(), va};
+      return {midpoint_on_segment(constrained_segment_source, constrained_segment_target, pa, pb), va->cell(), va};
     }
     CGAL_assertion(vector_of_encroaching_vertices.size() > 0);
 
@@ -1450,7 +1491,7 @@ protected:
                 << "  original constraint:              " << display_vert(orig_va)
                 << "    " << display_vert(orig_vb) << '\n';
       }
-      const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
+      const auto vector_orig_ab = vector_functor(constrained_segment_source, constrained_segment_target);
       const auto length_ab = CGAL::approximate_sqrt(sq_length_functor(vector_ab));
       auto return_orig_result_point = [&](auto lambda_val, Point orig_pa_param,
                                           Point orig_pb_param) -> Construct_Steiner_point_return_type {
@@ -1484,22 +1525,22 @@ protected:
 
       const auto length_orig_ab = CGAL::approximate_sqrt(sq_length_functor(vector_orig_ab));
       if(ref_va == orig_va || ref_vb == orig_va) {
-        const auto vector_orig_a_ref = vector_functor(orig_pa, reference_point);
+        const auto vector_orig_a_ref = vector_functor(constrained_segment_source, reference_point);
         const auto length_orig_a_ref = CGAL::approximate_sqrt(sq_length_functor(vector_orig_a_ref));
         const auto lambda = length_orig_a_ref / length_orig_ab;
-        return return_orig_result_point(lambda, orig_pa, orig_pb);
+        return return_orig_result_point(lambda, constrained_segment_source, constrained_segment_target);
       } else if(ref_va == orig_vb || ref_vb == orig_vb) {
-        const auto vector_orig_b_ref = vector_functor(orig_pb, reference_point);
+        const auto vector_orig_b_ref = vector_functor(constrained_segment_target, reference_point);
         const auto length_orig_b_ref = CGAL::approximate_sqrt(sq_length_functor(vector_orig_b_ref));
         const auto lambda = length_orig_b_ref / length_orig_ab;
-        return return_orig_result_point(lambda, orig_pb, orig_pa);
+        return return_orig_result_point(lambda, constrained_segment_target, constrained_segment_source);
       }
     } else {
       if(debug().segment_vertex_epsilon() > 0) {
         if(!max_bbox_edge_length) {
           update_max_bbox_edge_length();
         }
-        auto sq_dist = squared_distance(reference_point, Line{orig_pa, orig_pb});
+        auto sq_dist = squared_distance(reference_point, Line{constrained_segment_source, constrained_segment_target});
         check_segment_vertex_distance_or_throw(orig_va, orig_vb, reference_vertex, CGAL::to_double(sq_dist),
                                                Check_distance::SQUARED_DISTANCE);
       }
@@ -1507,18 +1548,19 @@ protected:
     // compute the projection of the reference point
 
     const auto result_point = compute_projected_point(
+        constrained_segment_source, constrained_segment_target,
         pa, pb,
         [&](auto&& kernel, auto&& converter) -> typename CGAL::cpp20::remove_cvref_t<decltype(kernel)>::FT{
           auto&& vec_func = kernel.construct_vector_3_object();
           auto&& sc_prod_func = kernel.compute_scalar_product_3_object();
           auto&& sq_len_func = kernel.compute_squared_length_3_object();
 
-          const auto pa_converted = converter(pa);
-          const auto pb_converted = converter(pb);
+          const auto orig_pa_converted = converter(constrained_segment_source);
+          const auto orig_pb_converted = converter(constrained_segment_target);
           const auto ref_pt_converted = converter(reference_point);
 
-          const auto vector_ab = vec_func(pa_converted, pb_converted);
-          const auto vector_a_ref = vec_func(pa_converted, ref_pt_converted);
+          const auto vector_ab = vec_func(orig_pa_converted, orig_pb_converted);
+          const auto vector_a_ref = vec_func(orig_pa_converted, ref_pt_converted);
           const auto denum = CGAL::approximate_sqrt(sq_len_func(vector_ab));
           const auto num = sc_prod_func(vector_a_ref, vector_ab);
           auto result = num / denum;
