@@ -9,6 +9,8 @@
 #include "test_utils.h"
 #include <CGAL/Arrangement_on_curve_1/overlay.h>
 #include <CGAL/Arrangement_on_curve_1/Direction_geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Identified_geom_traits_2_adaptor_1.h>
+#include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 
 // An overlay visitor that counts the reports of every result vertex and edge.
 template <typename ArrangementR>
@@ -96,6 +98,14 @@ void test_all(const std::string& mode, std::size_t& failures) {
   test<Test_arrangement<Direction_traits, UseVector>>(
     mode + " identified (directions)", std::make_shared<const Direction_traits>(Kernel(), Direction_2(1, 2)),
     {Direction_2(1, 2), Direction_2(0, 1), Direction_2(-1, -2), Direction_2(0, -1), Direction_2(1, 1)}, failures);
+  // Points of the equator of the sphere; (-1, 0, 0) is the identification point.
+  using Sphere_traits_2 = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
+  using Sphere_traits_1 = Aoc::Identified_geom_traits_2_adaptor_1<Sphere_traits_2>;
+  auto sphere_tr = std::make_shared<const Sphere_traits_2>();
+  auto ctr = sphere_tr->construct_point_2_object();
+  test<Test_arrangement<Sphere_traits_1, UseVector>>(
+    mode + " identified (equator)", std::make_shared<const Sphere_traits_1>(sphere_tr),
+    {ctr(-1, 0, 0), ctr(1, 0, 0), ctr(0, 1, 0), ctr(0, -1, 0), ctr(1, 1, 0)}, failures);
 }
 
 int main() {
