@@ -114,29 +114,6 @@ bool assign_cardinal_weights(const std::filesystem::path& weights_filename,
     return false;
   }
 
-  FT eps_weight = std::numeric_limits<double>::max(); // 'double' on purpose
-  if(x1_val > 0) eps_weight = (std::min)(eps_weight, x1_val);
-  if(x2_val > 0) eps_weight = (std::min)(eps_weight, x2_val);
-  if(y1_val > 0) eps_weight = (std::min)(eps_weight, y1_val);
-  if(y2_val > 0) eps_weight = (std::min)(eps_weight, y2_val);
-  if(bot_val > 0) eps_weight = (std::min)(eps_weight, bot_val);
-  if(top_val > 0) eps_weight = (std::min)(eps_weight, top_val);
-
-  CGAL_SS3_TRACE_V(8, "min_weight = " << eps_weight);
-
-  // @todo handle true zero
-  eps_weight = 1e-10 * eps_weight;
-
-  // std::cout << "WARNING: ZERO SPEED ENABLED" << std::endl;
-  // eps_weight = 0;
-
-  if(x1_val == 0) { CGAL_SS3_TRACE_V(16, "x1_val to eps weight " << eps_weight); x1_val = eps_weight; }
-  if(x2_val == 0) { CGAL_SS3_TRACE_V(16, "x2_val to eps weight " << eps_weight); x2_val = eps_weight; }
-  if(y1_val == 0) { CGAL_SS3_TRACE_V(16, "y1_val to eps weight " << eps_weight); y1_val = eps_weight; }
-  if(y2_val == 0) { CGAL_SS3_TRACE_V(16, "y2_val to eps weight " << eps_weight); y2_val = eps_weight; }
-  if(bot_val == 0) { CGAL_SS3_TRACE_V(16, "bot_val to eps weight " << eps_weight); bot_val = eps_weight; }
-  if(top_val == 0) { CGAL_SS3_TRACE_V(16, "top_val to eps weight " << eps_weight); top_val = eps_weight; }
-
   for (face_descriptor f : faces(pmesh))
   {
     // internal stuff, we don't need to normalize and introduce inexactness
@@ -193,7 +170,11 @@ bool assign_cardinal_weights(const std::filesystem::path& weights_filename,
     // and introduce inexactness anyway, so we might as well convert to double to avoid
     // expensive exact arithmetic operations in the skeleton algorithm and further tests.
     put(fwm, f, CGAL::to_double(weight));
-    CGAL_postcondition(get(fwm, f) > 0);
+  }
+
+  if (!clamp_weights(pmesh, fwm)) {
+    std::cerr << "Error: all face weights are zero" << std::endl;
+    return false;
   }
 
   CGAL_SS3_TRACE_V(8, "E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);

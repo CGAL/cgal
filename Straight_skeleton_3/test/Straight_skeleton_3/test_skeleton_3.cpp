@@ -82,6 +82,8 @@ void test(const std::string& mesh_filename,
       std::cout << "  " << f << ": " << get(inner_fwm.value(), f) << std::endl;
       put(fwm, f, get(inner_fwm.value(), f));
     }
+
+    SS3::utils::clamp_weights(sm, fwm);
   }
 
   bool result = SS3::utils::run(sm, fwm, save_times, save_path, config_path);

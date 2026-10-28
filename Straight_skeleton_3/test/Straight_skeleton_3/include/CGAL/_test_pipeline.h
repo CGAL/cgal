@@ -5,23 +5,72 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_TEST_OFFSET_PIPELINE_H
 #define CGAL_STRAIGHT_SKELETON_3_TEST_OFFSET_PIPELINE_H
 
+#include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/create_offset_polyhedra.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
-#include <CGAL/Real_timer.h>
+#include <CGAL/number_utils.h>
 
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Real_timer.h>
+#include <CGAL/Kernel_traits.h>
+
+#include <algorithm>
+#include <cstdlib>
 #include <filesystem>
+#include <iostream>
+#include <limits>
 #include <set>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace CGAL {
 namespace Straight_skeletons_3 {
 namespace utils {
+
+template <typename PolygonMesh, typename FaceWeightMap>
+bool clamp_weights(const PolygonMesh& pmesh, FaceWeightMap fwm)
+{
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using FT = typename boost::property_traits<FaceWeightMap>::value_type;
+
+  FT eps_weight = std::numeric_limits<double>::max(); // 'double' on purpose
+  for (face_descriptor f : faces(pmesh)) {
+    const FT& weight = get(fwm, f);
+    if (weight > 0) {
+      eps_weight = (std::min)(eps_weight, weight);
+    }
+  }
+
+  if(eps_weight == std::numeric_limits<double>::max())
+    return false;
+
+  CGAL_SS3_TRACE_V(8, "min_weight = " << eps_weight);
+
+  // @todo handle true zero
+  eps_weight = 1e-10 * eps_weight;
+
+  // std::cerr << "WARNING: ZERO SPEED ENABLED" << std::endl;
+  // eps_weight = 0;
+
+  for(face_descriptor f : faces(pmesh)) {
+    if(get(fwm, f) == 0) {
+      CGAL_SS3_TRACE_V(16, "face " << f << " weight set to eps weight " << eps_weight);
+      put(fwm, f, eps_weight);
+    }
+  }
+
+  for(face_descriptor f : faces(pmesh)) {
+    CGAL_postcondition(get(fwm, f) > 0);
+  }
+
+  return true;
+}
 
 template <typename FT>
 bool parse_args(int argc, char** argv,
