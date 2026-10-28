@@ -3891,6 +3891,8 @@ public:
   }
 
   auto move_Steiner_vertices_to_the_volume() {
+    const bool backup_allow_negative_tets = this->options().move_Steiner_vertices_allow_negative_tets();
+    this->options().move_Steiner_vertices_allow_negative_tets(false);
     if(dbg().move_Steiner_vertices_level() > 1) {
       std::cerr << "move_Steiner_vertices_to_the_volume()\n";
       dump_constrained_facets_to_off("dump_before_moving_steiner_vertices.off");
@@ -3899,9 +3901,29 @@ public:
     for(auto v : this->finite_vertex_handles()) {
       if(is_Steiner_vertex_on_surface(v)) steiner_vertices.push_back(v);
     }
-    const auto n_steiner_vertices = steiner_vertices.size();
-    for(auto i = 0u; i < n_steiner_vertices; ++i) {
-      move_one_Steiner_vertex_to_the_volume(steiner_vertices[i], i, n_steiner_vertices);
+
+    auto do_remove_Steiner_vertices = [&]() {
+      std::reverse(steiner_vertices.begin(), steiner_vertices.end());
+      auto non_movable_Steiner_vertices_end = steiner_vertices.begin();
+      const auto n_steiner_vertices = steiner_vertices.size();
+      for(auto i = 0u; i < n_steiner_vertices; ++i) {
+        if(!move_one_Steiner_vertex_to_the_volume(steiner_vertices[i], i, n_steiner_vertices))
+        {
+          std::swap(steiner_vertices[i], *non_movable_Steiner_vertices_end);
+          ++non_movable_Steiner_vertices_end;
+        }
+      }
+      if(dbg().move_Steiner_vertices_level() > 0) {
+        std::cerr << "Non-movable Steiner vertices: "
+                  << std::distance(steiner_vertices.begin(), non_movable_Steiner_vertices_end) << "\n";
+      }
+      steiner_vertices.erase(non_movable_Steiner_vertices_end, steiner_vertices.end());
+    };
+
+    do_remove_Steiner_vertices();
+    this->options().move_Steiner_vertices_allow_negative_tets(backup_allow_negative_tets);
+    if(backup_allow_negative_tets && !steiner_vertices.empty()) {
+      do_remove_Steiner_vertices(); // retry removing Steiner vertices with negative tets allowed
     }
     CGAL_warning(this->debug().move_Steiner_vertices_level() == 0 || !number_type_is_exact ||
                  check_if_constrained_faces_are_coplanar());
