@@ -70,11 +70,14 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,
     }
   }
 
+  CGAL_assertion(v1 != vertex_descriptor());
+  CGAL_assertion(v1 != v0);
+
+  const Point_3& p0 = gpf(v0);
+  const Point_3& p1 = gpf(v1);
   FT max_depth(0);
   vertex_descriptor v2;
   for(vertex_descriptor v: vertices(pm)){
-    const Point_3& p0 = gpf(v0);
-    const Point_3& p1 = gpf(v1);
     const Point_3& p2 = gpf(v);
 #ifdef CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DISTANCE
     FT dist = (CGAL::min)(squared_distance(p0, p2), squared_distance(p1, p2));
@@ -83,6 +86,7 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,
       max_depth = dist;
     }
 #else // CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DEPTH
+    if(v == v0 || v == v1) continue;
     Point_3 c = centroid(p0, p1, p2);
     FT centroid_depth = (CGAL::max)( squared_distance(c, Line_3(p0, p1)),
                           (CGAL::max)( squared_distance(c, Line_3(p0, p2)),
@@ -94,13 +98,15 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,
 #endif
   }
 
+  CGAL_assertion(v2 != vertex_descriptor());
+  CGAL_assertion(v2 != v0);
+  CGAL_assertion(v2 != v1);
+
+  const Point_3& p2 = gpf(v2);
+
   max_depth = 0;
   vertex_descriptor v3;
-  Point_3 result;
   for(vertex_descriptor v: vertices(pm)){
-    const Point_3& p0 = gpf(v0);
-    const Point_3& p1 = gpf(v1);
-    const Point_3& p2 = gpf(v2);
     const Point_3& p3 = gpf(v);
 #ifdef CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DISTANCE
     FT dist = (CGAL::min)( squared_distance(p0, p3),
@@ -111,6 +117,7 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,
       max_depth = dist;
     }
 #else // CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DEPTH
+    if(v == v0 || v == v1 || v == v2) continue;
     Point_3 c = centroid(p0, p1, p2, p3);
     FT centroid_depth = (CGAL::max)(
                           (CGAL::max)( squared_distance(c, Plane_3(p0, p1, p2)),
@@ -120,11 +127,11 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,
     if(centroid_depth > max_depth){
       v3 = v;
       max_depth = centroid_depth;
-      result = c;
     }
 #endif
   }
-  return result;
+  CGAL_assertion(v3 != vertex_descriptor());
+  return centroid(p0, p1, p2, gpf(v3));;
 #endif
 }
 
