@@ -1,7 +1,7 @@
 // Tests the geometry traits that the other tests do not cover: the traits of
 // lines in 2D, 3D, and dD, the adaptors of a 2D geometry traits with an open,
-// a closed, a left-closed, and a right-closed parameter space, and the adaptor
-// of a 2D geometry traits to the circle of directions.  Every permutation of
+// a closed, a left-closed, a right-closed, and an identified parameter space,
+// and the adaptor of a 2D geometry traits to the circle of directions.  Every permutation of
 // every subset of a set of points is inserted, and then every vertex is
 // removed on its own.  The order of the adaptor to the circle of directions is
 // also compared with the order of `Circle_traits_1`.
@@ -12,6 +12,7 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 
 #include "test_utils.h"
 #include <CGAL/Arrangement_on_curve_1/Line_2_traits_1.h>
@@ -21,6 +22,7 @@
 #include <CGAL/Arrangement_on_curve_1/Closed_geom_traits_2_adaptor_1.h>
 #include <CGAL/Arrangement_on_curve_1/Left_closed_geom_traits_2_adaptor_1.h>
 #include <CGAL/Arrangement_on_curve_1/Right_closed_geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Identified_geom_traits_2_adaptor_1.h>
 #include <CGAL/Arrangement_on_curve_1/Direction_geom_traits_2_adaptor_1.h>
 
 using Point_2 = Kernel::Point_2;
@@ -113,6 +115,31 @@ int main() {
     test<Test_arrangement<Traits, false>>("Right_closed_geom_traits_2_adaptor_1",
                                           std::make_shared<const Traits>(tr_2, right),
                                           {Point_2(2, 1), Point_2(4, 2), Point_2(6, 3), right}, failures);
+  }
+
+  // The adaptor of a 2D geometry traits with an identified parameter space;
+  // the master curve is the equator of the sphere, which crosses the
+  // identification curve of the sphere at (-1, 0, 0), the identification
+  // point.  The points are ordered by their longitudes.
+  {
+    using Sphere_traits_2 = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
+    using Traits = Aoc::Identified_geom_traits_2_adaptor_1<Sphere_traits_2>;
+    auto sphere_tr = std::make_shared<const Sphere_traits_2>();
+    auto ctr = sphere_tr->construct_point_2_object();
+    auto tr = std::make_shared<const Traits>(sphere_tr);
+    const std::vector<Traits::Point_1> pts{ctr(-1, 0, 0), ctr(1, 0, 0), ctr(0, 1, 0), ctr(0, -1, 0), ctr(1, 1, 0)};
+    test<Test_arrangement<Traits, false>>("Identified_geom_traits_2_adaptor_1", tr, pts, failures);
+    test<Test_arrangement<Traits, true>>("Identified_geom_traits_2_adaptor_1 (vector)", tr, pts, failures);
+
+    // Only the point on the identification curve is the identification point,
+    // and the other points are ordered by their longitudes.
+    const auto is_on_id = tr->is_on_x_identification_1_object();
+    const auto cmp = tr->compare_x_1_object();
+    const bool ok = is_on_id(pts[0]) && ! is_on_id(pts[1]) && ! is_on_id(pts[2]) && ! is_on_id(pts[3]) &&
+      (cmp(pts[3], pts[1]) == CGAL::SMALLER) && (cmp(pts[1], pts[4]) == CGAL::SMALLER) &&
+      (cmp(pts[4], pts[2]) == CGAL::SMALLER) && (cmp(pts[2], pts[2]) == CGAL::EQUAL);
+    report(ok, "Identified_geom_traits_2_adaptor_1 order", "order", failures);
+    std::cout << (ok ? "PASS " : "FAIL ") << "Identified_geom_traits_2_adaptor_1 order" << std::endl;
   }
 
   // The adaptor to the circle of directions, of a kernel and of a 2D traits

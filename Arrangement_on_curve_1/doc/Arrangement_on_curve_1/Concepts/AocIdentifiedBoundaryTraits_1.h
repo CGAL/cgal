@@ -22,6 +22,8 @@
  *
  * \cgalHasModelsBegin
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Circle_traits_1<Kernel>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Identified_geom_traits_2_adaptor_1<GeomTraits_2>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Direction_geom_traits_2_adaptor_1<GeomTraits_2>}
  * \cgalHasModelsEnd
  */
 class AocIdentifiedBoundaryTraits_1 {

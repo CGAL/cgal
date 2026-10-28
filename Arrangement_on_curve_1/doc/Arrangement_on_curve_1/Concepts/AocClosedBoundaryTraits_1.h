@@ -24,6 +24,9 @@
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Segment_traits_1<Kernel>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Left_ray_traits_1<Kernel>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Right_ray_traits_1<Kernel>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Closed_geom_traits_2_adaptor_1<GeomTraits_2>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Left_closed_geom_traits_2_adaptor_1<GeomTraits_2>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Right_closed_geom_traits_2_adaptor_1<GeomTraits_2>}
  * \cgalHasModelsEnd
  */
 class AocClosedBoundaryTraits_1 {
