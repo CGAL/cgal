@@ -85,7 +85,7 @@ bool run_test(
 }
 
 template<typename Kernel, typename IntersectionKernel, typename Concurrency_tag>
-void run_all_tests() {
+bool run_all_tests() {
   different = 0;
   no_input = 0;
   failed = 0;
@@ -333,37 +333,44 @@ void run_all_tests() {
   std::cout << "\ntotal time: " << timer.time() << std::endl;
 
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
+  bool success = true;
   if (no_input != 0) {
     std::cout << kernel_name << " " << no_input << " TESTS failed due to missing input files!\n";
+    success = false;
   }
 
   if (failed != 0) {
     std::cout << kernel_name << " " << failed << " TESTS failed! The space partition was empty!\n";
+    success = false;
   }
 
   if (different != 0) {
     std::cout << kernel_name << " " << different << " TESTS differ from typical values!\n";
+    success = false;
   }
 
   if (passed != 0)
     std::cout << kernel_name << " " << passed << " TESTS passed!\n";
 
   std::cout << "\n" << kernel_name << " TESTS FINISHED!" << std::endl;
+
+  return success;
 }
 
 int main(const int /* argc */, const char** /* argv */) {
   CGAL::Real_timer timer;
   timer.start();
-  run_all_tests<SCD, EPECK, CGAL::Sequential_tag>();
-  run_all_tests<EPICK, EPECK, CGAL::Sequential_tag>();
+  bool success = true;
+  success &= run_all_tests<SCD, EPECK, CGAL::Sequential_tag>();
+  success &= run_all_tests<EPICK, EPECK, CGAL::Sequential_tag>();
   if constexpr (!std::is_same_v<CGAL::Parallel_if_available_tag, CGAL::Sequential_tag>) {
-    run_all_tests<SCD, EPECK, CGAL::Parallel_tag>();
-    run_all_tests<EPICK, EPECK, CGAL::Parallel_tag>();
+    success &= run_all_tests<SCD, EPECK, CGAL::Parallel_tag>();
+    success &= run_all_tests<EPICK, EPECK, CGAL::Parallel_tag>();
   }
     //run_all_tests<EPECK, EPECK>();
   //run_all_tests<GMPQ, GMPQ>();
   timer.stop();
   std::cout << "all tests time: " << timer.time() << std::endl;
 
-  return EXIT_SUCCESS;
+  return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
