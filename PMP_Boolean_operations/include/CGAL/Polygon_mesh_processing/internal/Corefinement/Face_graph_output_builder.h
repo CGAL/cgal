@@ -846,7 +846,7 @@ public:
     bool input_have_coplanar_faces,
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&,
-    const std::vector<std::pair<face_descriptor, face_descriptor>>& identical_patches)
+    const std::vector<std::pair<halfedge_descriptor, halfedge_descriptor>>& identical_patches)
   {
     const bool used_to_classify_patches =  requested_output[UNION]==std::nullopt &&
                                            requested_output[TM1_MINUS_TM2]==std::nullopt &&
@@ -1808,8 +1808,10 @@ public:
         }
     }
 
-    for (auto [f1, f2] : identical_patches)
+    for (auto [h1, h2] : identical_patches)
     {
+      face_descriptor f1=face(h1, tm1), f2=face(h2, tm2);
+
       std::size_t pid1 = tm1_patch_ids[ get(fids1, f1) ];
       std::size_t pid2 = tm2_patch_ids[ get(fids2, f2) ];
 
@@ -2570,33 +2572,56 @@ public:
             }
             if (!to_rm.empty())
             {
-              // Here there are an assumption that edges in to_rm are necessarly the last of shared edges
+              // We will suppress from the last to the first so that the erase of one does not invalidate another
               std::reverse(to_rm.begin(), to_rm.end());
+              // Move edges to rm from shared edges to interiors and borders
+              std::vector<halfedge_descriptor> new_borders;
+              new_borders.reserve(to_rm.size());
               for(Hedge_iterator it : to_rm)
               {
+                new_borders.push_back(opposite(*it, tm1));
                 patches_of_tm1[i].interior_edges.push_back(*it);
+                patches_of_tm1[i].border_edges.emplace(opposite(*it, tm1));
                 if (it!=std::prev(patches_of_tm1[i].shared_edges.end()))
                   std::swap(patches_of_tm1[i].shared_edges.back(), *it);
                 patches_of_tm1[i].shared_edges.pop_back();
+                patches_of_tm1[i].border_edges.emplace(opposite(*it, tm1));
               }
 
-              //now update interior vertices
-              std::set<vertex_descriptor> border_vertices;
+              // compute new shared vertices
+              std::set<vertex_descriptor> shared_vertices;
               for(halfedge_descriptor h : patches_of_tm1[i].shared_edges)
               {
-                border_vertices.insert( target(h,tm1) );
-                border_vertices.insert( source(h,tm1) );
+                shared_vertices.insert( target(h,tm1) );
+                shared_vertices.insert( source(h,tm1) );
               }
 
-              std::set<vertex_descriptor> vertices_to_add;
-              for(halfedge_descriptor h : patches_of_tm1[i].interior_edges)
+              // update interior_vertices and border with shared vertices
+              for(halfedge_descriptor h : new_borders)
               {
-                if ( !border_vertices.count( target(h,tm1) ) )
-                  vertices_to_add.insert(target(h, tm1));
-                if ( !border_vertices.count( source(h,tm1) ) )
-                  vertices_to_add.insert(source(h, tm1));
+                if ( shared_vertices.count( target(h, tm1) ) )
+                  patches_of_tm1[i].border_with_shared_target.emplace(h);
+                else
+                  patches_of_tm1[i].interior_vertices.push_back( target(h, tm1) );
+
+                if ( shared_vertices.count( source(h, tm1) ) )
+                  patches_of_tm1[i].border_with_shared_source.emplace(h);
               }
-              patches_of_tm1[i].interior_vertices.insert(patches_of_tm1[i].interior_vertices.end(), vertices_to_add.begin(), vertices_to_add.end() );
+
+              // Remove elements from borders_with_shared_vertices if the vertices are no longer shared
+              std::vector<halfedge_descriptor> border_targets_to_erase;
+              for (halfedge_descriptor h : patches_of_tm1[i].border_with_shared_target)
+                if (!shared_vertices.count(target(h, tm1)))
+                  border_targets_to_erase.push_back(h);
+              for (halfedge_descriptor h : border_targets_to_erase)
+                patches_of_tm1[i].border_with_shared_target.erase(h);
+
+              std::vector<halfedge_descriptor> border_sources_to_erase;
+              for (halfedge_descriptor h : patches_of_tm1[i].border_with_shared_source)
+                if (!shared_vertices.count(source(h, tm1)))
+                  border_sources_to_erase.push_back(h);
+              for (halfedge_descriptor h : border_sources_to_erase)
+                patches_of_tm1[i].border_with_shared_source.erase(h);
             }
           }
 

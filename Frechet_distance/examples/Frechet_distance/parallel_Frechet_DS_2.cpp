@@ -19,9 +19,9 @@ int main()
     Curves curves;
 
     const std::filesystem::path data{"./data_2d"};
-    std::vector<std::string> filenames;
+    std::vector<std::filesystem::path> filenames;
     for (auto const& dir_entry : std::filesystem::directory_iterator{data}) {
-        filenames.push_back(dir_entry.path().string());
+        filenames.push_back(dir_entry.path());
     }
     std::sort(filenames.begin(), filenames.end());
 

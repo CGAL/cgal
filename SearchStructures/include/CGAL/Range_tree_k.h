@@ -96,8 +96,7 @@ public:
 
   ~Range_tree_1()
   {
-    if (range_tree_1!=0)
-      delete range_tree_1;
+    delete range_tree_1;
   }
 
 };
@@ -182,10 +181,8 @@ public:
 
   ~Range_tree_2()
   {
-    if (range_tree_2!=0)
-      delete range_tree_2;
-    if (range_tree_1!=0)
-      delete range_tree_1;
+    delete range_tree_2;
+    delete range_tree_1;
   }
 };
 
@@ -278,12 +275,9 @@ public:
 
   ~Range_tree_3()
   {
-    if (range_tree_3!=0)
-      delete range_tree_3;
-    if (range_tree_2!=0)
-      delete range_tree_2;
-    if (range_tree_1!=0)
-      delete range_tree_1;
+    delete range_tree_3;
+    delete range_tree_2;
+    delete range_tree_1;
   }
 };
 
@@ -393,14 +387,10 @@ public:
 
   ~Range_tree_4()
   {
-    if (range_tree_4!=0)
-      delete range_tree_4;
-    if (range_tree_3!=0)
-      delete range_tree_3;
-    if (range_tree_2!=0)
-      delete range_tree_2;
-    if (range_tree_1!=0)
-      delete range_tree_1;
+    delete range_tree_4;
+    delete range_tree_3;
+    delete range_tree_2;
+    delete range_tree_1;
   }
 };
 

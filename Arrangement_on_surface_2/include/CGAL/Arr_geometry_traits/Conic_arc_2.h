@@ -1480,7 +1480,7 @@ public:
 
   /*! destructs.
    */
-  virtual ~Conic_arc_2() { if (m_extra_data != nullptr) delete m_extra_data; }
+  virtual ~Conic_arc_2() { delete m_extra_data; }
 
   /*! assigns.
    * \param arc The copied arc.
@@ -1489,7 +1489,7 @@ public:
     if (this == &arc) return (*this);
 
     // Free any existing data.
-    if (m_extra_data != nullptr) delete m_extra_data;
+    delete m_extra_data;
 
     // Copy the arc's attributes.
     m_r = arc.m_r;

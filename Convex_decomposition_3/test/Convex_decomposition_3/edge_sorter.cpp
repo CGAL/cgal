@@ -23,8 +23,7 @@ public:
 
   ~LEdge()
   {
-    if(v != nullptr)
-      delete v;
+    delete v;
     v = nullptr;
   }
 

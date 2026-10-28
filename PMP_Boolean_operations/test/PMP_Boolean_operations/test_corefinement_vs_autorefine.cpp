@@ -23,8 +23,8 @@ namespace CFR = PMP::Corefinement;
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
 using Mesh = CGAL::Surface_mesh<Point_3>;
-using Polygon = std::vector<std::size_t>;
-using Polygons = std::vector<Polygon>;
+using Polygon_3 = std::vector<std::size_t>;
+using Polygons = std::vector<Polygon_3>;
 using Points = std::vector<Point_3>;
 using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 

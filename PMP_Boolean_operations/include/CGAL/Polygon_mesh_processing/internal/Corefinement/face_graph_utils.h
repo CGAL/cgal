@@ -15,9 +15,6 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
-#include <CGAL/AABB_trees/intersection.h>
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
@@ -584,7 +581,7 @@ triangulate_a_face(
     typename CDT::Vertex_handle cdt_v1=it->vertex(1);
     typename CDT::Vertex_handle cdt_v2=it->vertex(2);
 
-    if (orientation_flipped)
+    if(orientation_flipped)
       std::swap(cdt_v0, cdt_v2);
 
     Node_id i0=cdt_v0->info(), i1=cdt_v1->info(), i2=cdt_v2->info();
@@ -1211,7 +1208,10 @@ auto append_patches_to_triangle_mesh(
   const EdgeCstMapIn& edge_cst_map_in, const EdgeMarkMapIn& edge_mark_map_in,
   EdgetoEdgeMap& tm_to_output_edges,
   VertextoVertexMap& tm_to_output_vertices,
-  UserVisitor& user_visitor) -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+  UserVisitor& user_visitor)
+#ifndef CGAL_DO_NOT_USE_SURFACE_MESH_SPECIALIZATIONS
+  -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+#endif
 {
   using GT = boost::graph_traits<TriangleMesh>;
   using halfedge_descriptor = typename GT::halfedge_descriptor;
@@ -1352,7 +1352,10 @@ auto append_patches_to_triangle_mesh(
   const EdgeCstMapIn& edge_cst_map_in, const EdgeMarkMapIn& edge_mark_map_in,
   EdgetoEdgeMap& tm_to_output_edges,
   VertextoVertexMap& tm_to_output_vertices,
-  UserVisitor& user_visitor) -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+  UserVisitor& user_visitor)
+#ifndef CGAL_DO_NOT_USE_SURFACE_MESH_SPECIALIZATIONS
+  -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+#endif
 {
   append_patches_to_triangle_mesh<Sequential_tag, reverse_patch_orientation>(output,
                                                                              patches_to_append,
@@ -1398,7 +1401,10 @@ auto fill_new_triangle_mesh(
         EdgeCstMapOut& edge_cst_map_out, EdgeMarkMapOut& edge_mark_map_out,
   std::vector< typename boost::graph_traits<TriangleMesh>::edge_descriptor>&
                                                             output_shared_edges,
-  UserVisitor& user_visitor) -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+  UserVisitor& user_visitor)
+#ifndef CGAL_DO_NOT_USE_SURFACE_MESH_SPECIALIZATIONS
+  -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+#endif
 {
   using GT = boost::graph_traits<TriangleMesh>;
   using vertex_descriptor = typename GT::vertex_descriptor;
