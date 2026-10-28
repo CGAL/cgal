@@ -536,7 +536,7 @@ public:
       std::cout << "queue sanity = " << queue_ok << std::endl;
 #endif
 
-      Abstract_event_sptr event = nextEvent(queue, polyhedron, current_time);
+      Abstract_event_sptr event = next_event(queue, polyhedron, current_time);
       if (!event) {
         CGAL_SS3_CORE_TRACE_V(2, "No more events to treat");
         break;
@@ -4408,9 +4408,9 @@ public:
   /**
     * determines the next event.
     */
-  Abstract_event_sptr nextEvent(PQ& queue,
-                                const PolyhedronSPtr& polyhedron,
-                                const FT& current_time)
+  Abstract_event_sptr next_event(PQ& queue,
+                                 const PolyhedronSPtr& polyhedron,
+                                 const FT& current_time)
   {
     // We could "break" directly in run(), but like this, the save events
     // that are farther than the last event are still processed (arbitrarily decision).
