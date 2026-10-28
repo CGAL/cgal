@@ -22,23 +22,22 @@ namespace Arrangement_on_curve_1 {
  * with `Identified_topology_traits`.
  *
  * The order is determined by the predicate
- * `Kernel::CounterclockwiseInBetween_2` alone; unlike `Circle_traits_1`, it
- * refers to no axis, and no direction is constructed. A direction \f$a\f$
- * precedes a direction \f$b\f$ if and only if \f$a\f$ is counterclockwise
- * strictly in between \f$s\f$ and \f$b\f$; \f$a\f$ and \f$b\f$ are equal if
- * and only if neither precedes the other. A direction \f$a\f$ is the
- * identification point if and only if it is equal to \f$s\f$, that is, if
- * and only if \f$a\f$ is not counterclockwise strictly in between \f$s\f$ and
- * \f$s\f$ (the open range from \f$s\f$ to \f$s\f$ is the entire circle except
- * for \f$s\f$).
+ * `Kernel::CounterclockwiseInBetween_2`; unlike `Circle_traits_1`, it refers
+ * to no axis, and no direction is constructed. A direction \f$a\f$ precedes a
+ * direction \f$b\f$ if and only if \f$a\f$ is counterclockwise strictly in
+ * between \f$s\f$ and \f$b\f$. The equality of directions is determined by
+ * the predicate `Kernel::Equal_2`; a direction is the identification point if
+ * and only if it is equal to \f$s\f$.
  *
  * \tparam GeomTraits_2 a geometry traits class that provides the type
- *   `Direction_2`, a model of `Kernel::Direction_2`, and the functor type
+ *   `Direction_2`, a model of `Kernel::Direction_2`, the functor type
  *   `Counterclockwise_in_between_2`, a model of
- *   `Kernel::CounterclockwiseInBetween_2`, along with the member function
- *   `counterclockwise_in_between_2_object()`. Every model of `Kernel` is
- *   such a class, and so are the geometry traits classes derived from a
- *   kernel, such as `Arr_segment_traits_2<Kernel>`.
+ *   `Kernel::CounterclockwiseInBetween_2`, and the functor type `Equal_2`, a
+ *   model of `Kernel::Equal_2` (only the operator that determines whether two
+ *   directions are equal is used), along with the member functions
+ *   `counterclockwise_in_between_2_object()` and `equal_2_object()`. Every
+ *   model of `Kernel` is such a class, and so is
+ *   `Arr_segment_traits_2<Kernel>`, whose `Equal_2` extends `Kernel::Equal_2`.
  *
  * \cgalModels{AocIdentifiedBoundaryTraits_1}
  *
