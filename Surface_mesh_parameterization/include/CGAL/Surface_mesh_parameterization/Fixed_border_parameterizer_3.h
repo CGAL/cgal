@@ -40,7 +40,7 @@
 
 /// \file Fixed_border_parameterizer_3.h
 
-#ifdef __GNUC__
+#if defined (__GNUC__) && ! defined(__clang__)
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wdangling-reference"
 #endif
@@ -430,7 +430,7 @@ private:
 
 } // namespace CGAL
 
-#ifdef __GNUC__
+#if defined (__GNUC__) && ! defined(__clang__)
 #  pragma GCC diagnostic pop
 #endif
 
