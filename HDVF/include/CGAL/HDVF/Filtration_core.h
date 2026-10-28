@@ -40,23 +40,7 @@ typedef std::pair<std::size_t, int> Cell ;
  \ingroup PkgHDVFFiltrationsClasses
 
  The class `Filtration_core` implements data structures and methods required by the `Filtration` concept.
-
- By definition, a filtration over a chain complex `K` is a sequence of sub complexes \f$\{K_t\,;\, t\in[d_1, \ldots, d_N]\}\f$, where \f$d_i\f$ are scalars, such that:
-
- - \f$\forall d\leqslant d'\f$, \f$K_d\subseteq K_{d'}\f$.
- - \f$|K_{d_{i+1}}| = |K_{d_{i}}|+1\f$.
-    - As a consequence, any cell \f$\sigma\in K\f$, is "added" at a given *time* \f$i\f$ and the corresponding \f$d_i\f$ is called its *degree* (denoted by \f$\mathrm{deg}(\sigma)\f$).
- - \f$K_{d_1}\f$ is an empty complex.
- - \f$K_{d_N} = K\f$.
- - For any cell \f$\sigma\in K\f$, if \f$\tau\f$ is a proper face of \f$\sigma\f$, then \f$\mathrm{deg}(\tau)\leqslant \mathrm{deg}(\sigma)\f$.
-
- In consequence, a filtration associated to a complex `K`:
- - maps each cell to a scalar called its degree
- - orders the cells of `K` (each cell has a unique index along the filtration called *time* along the filtration) such that:
-    - the index of a cell is larger that the indices of its faces,
-    - the degree map is increasing along the filtration.
-
- The class `Filtration_core` provides elementary constructors and methods used in derived filtrations.
+ It provides elementary constructors and methods used in derived filtrations.
 
  \cgalModels{Filtration}
 
@@ -69,6 +53,9 @@ template <typename ChainComplex, typename Degree>
 class Filtration_core
 {
 public:
+    /*! \brief Type of the underlying complex. */
+    typedef ChainComplex Chain_complex;
+
     /*! \brief Type of coefficients used to compute homology. */
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
 
@@ -141,12 +128,12 @@ public:
             throw ("Invalid filtration, Filtration_core constructor failed");
     }
 
-    /**
+    /*
      * \brief Copy constructor.
      */
     Filtration_core(const Filtration_core& f) : _K(f._K), _filtration(f._filtration), _cell_to_t(f._cell_to_t) {}
 
-    /** \brief Iterator over a filtration.
+    /* \brief Iterator over a filtration.
      *
      * Iterate the cells of the filtration by increasing index (and hence increasing degree).
      */
@@ -157,14 +144,14 @@ public:
         using difference_type   = std::ptrdiff_t;
         using value_type        = Filtration_iter_value;
 
-        /** \brief Iterator constructor
+        /* \brief Iterator constructor
          *
          * \param f Constant reference on the `Filtration_core` iterated.
          * \param i The initial index.
          */
         iterator(const Filtration_core& f, std::size_t i=0) : _i(i), _f(f) {}
 
-        /*! \brief Iterator dereference
+        /* \brief Iterator dereference
          *
          * \returns A `Filtration_iter_value` structure containing the information of the current cell and its degree.
          */
@@ -177,7 +164,7 @@ public:
             return res ;
         }
 
-        /*!
+        /*
          * \brief Prefix incrementation. Moves to next cell in the filtration.
          *
          * \returns The reference to the current iterator.
@@ -188,19 +175,19 @@ public:
             return *this;
         }
 
-        /*!
+        /*
          * \brief Postfix incrementation. Moves to next cell in the filtration.
          * \returns The pre-incremented iterator.
          */
         iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
 
-        /*!
+        /*
          * \brief Equality check.
          * \returns `true` if the indices are equal.
          */
         friend bool operator== (const iterator& a, const iterator& b)  { return a._i == b._i; };
 
-        /*!
+        /*
          * \brief Inequality check.
          * \returns `true` if the indices are different.
          */
@@ -211,14 +198,14 @@ public:
         const Filtration_core& _f ; // Filtration_core iterated
     };
 
-    /**
+    /*
      * \brief Iterator to the beginning of the filtration.
      *
      * \return The iterator to the beginning of the filtration.
      */
     iterator begin() { return iterator(*this, 0) ; }
 
-    /**
+    /*
      * \brief Iterator past-the-end of the filtration.
      *
      * \return The iterator past-the-end of the filtration.
@@ -226,24 +213,24 @@ public:
     iterator end() { return iterator(*this, _filtration.size()) ; }
 
     // getters
-    /*! \brief Gets the filtration size.
+    /* \brief Gets the filtration size.
      */
     std::size_t size () const { return _filtration.size(); }
 
-    /*! \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
+    /* \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
     Cell cell (std::size_t i) const { return _filtration.at(i); }
 
-    /*! \brief Gets the degree of the `i`th element of the filtration.
+    /* \brief Gets the degree of the `i`th element of the filtration.
      */
     Degree degree (std::size_t i) const { return _deg.at(i); }
 
     // Output filtration
-    /*! \brief Overload of the `<<`operator for filtrations.
+    /* \brief Overload of the `<<`operator for filtrations.
      */
-    friend std::ostream & operator<<(std::ostream & out, const Filtration_core &f)
-    {
+    friend std::ostream & operator<<(std::ostream & out, const Filtration_core &f) {
         const std::size_t N(f._filtration.size()) ;
+        out << N << std::endl;
         for (std::size_t i=0; i<N; ++i)
             // Filtration_core
         {
@@ -252,7 +239,48 @@ public:
         return out ;
     }
 
-    /**
+    /*
+     \brief Extracts a filtration from a stream.
+     */
+    friend std::istream & operator>>(std::istream & in, Filtration_core &f) {
+        // Read the size of the filtration
+        size_t N, tmp ;
+        char tmps[20];
+        in >> N;
+        for (int i=0; i<N; ++i) {
+            Cell c;
+            Degree d;
+            // Read leading time
+            in >> tmp;
+            assert (i == tmp);
+            in.read(tmps,5); // Discard " -> ("
+            // Read cell index
+            in >> c.first;
+            in.read(tmps,6); // Discart "- dim "
+            // Read cell dimension
+            in >> c.second;
+            in.read(tmps,3); // Discart " , "
+            // Read degree
+            in >> d ;
+            in.read(tmps,3); // Discart ")"
+
+            // Insert in _filtration
+            size_t n(f._filtration.size());
+            f._filtration.push_back(c);
+            // Insert correponding degree
+            f._deg.push_back(d);
+            // Insert in _cell_to_t
+            f._cell_to_t[c] = i;
+        }
+        return in;
+    }
+
+    /* Comparison operator */
+    bool operator==(const Filtration_core& f) const {
+        return (_filtration == f._filtration) && (_deg == f._deg);
+    }
+
+    /*
      * \brief Exports the filtration time indices.
      *
      * The method exports the time index of every cells in each dimension.
@@ -274,7 +302,7 @@ public:
         return labels ;
     }
 
-    /*! \brief Checks if a filtration is valid.
+    /* \brief Checks if a filtration is valid.
      * Checks that cells are ordered in increasing degrees and all cells have indices larger than their faces.
      * \returns `true` if the filtration is valid, `false` otherwise
      */

@@ -64,7 +64,32 @@ int main(int argc, char **argv) {
 
     // -- Second: build the associated lower star filtration
     FiltrationType filtration(complex, f);
+    HDVF::Filtration_core<Complex, Degree> filtration2(complex);
 
+    // Write filtration
+    std::string file("tmp/filtration.filtr");
+    std::ofstream out_file ( file, std::ios::out | std::ios::trunc);
+    if ( ! out_file . good () ) {
+        std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+        throw std::runtime_error("File Parsing Error: File not found");
+    }
+
+    out_file << filtration;
+
+    out_file.close();
+
+    // Reload filtration
+    std::ifstream in_file (file);
+    if ( ! in_file . good () ) {
+        std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+        throw std::runtime_error("File Parsing Error: File not found");
+    }
+
+    in_file >> filtration2;
+
+    in_file.close();
+
+    std::cout << "write/read compare: " << (filtration == filtration2) << std::endl;
 
     // Build empty persistent HDVF (with vtk export activated)
     HDVF_type hdvf(complex, filtration, HDVF::OPT_FULL, true);

@@ -96,16 +96,16 @@ template <typename ChainComplex, typename Degree>
 class Filtration_lower_star : public Filtration_core<ChainComplex, Degree>
 {
 private:
-    /*! \brief Type of coefficients used to compute homology. */
+    /* \brief Type of coefficients used to compute homology. */
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
     /*! Type of parent filtration instance. */
     typedef Filtration_core<ChainComplex, Degree> Filtration_parent;
     /*! Type of value returned by the iterator. */
     typedef typename Filtration_parent::Filtration_iter_value Filtration_iter_value;
 public:
-    /*! \brief chain complex type. */
+    /* \brief chain complex type. */
     typedef ChainComplex Chain_complex;
-    /*!
+    /*
      * \brief Copy constructor.
      */
     Filtration_lower_star(const Filtration_lower_star& f) : Filtration_parent(f) {}
@@ -137,11 +137,11 @@ public:
 
 protected:
     // Build lower-star filtration
-    /*! \brief Function building the filtration from the vector of vertex degrees.
+    /* \brief Function building the filtration from the vector of vertex degrees.
      */
     void star_filtration(const std::vector<Degree>& deg) ;
 
-    /*! \brief Function building the filtration from a function mapping vertices to their degree.
+    /* \brief Function building the filtration from a function mapping vertices to their degree.
      */
     void star_filtration(std::function<Degree(size_t)>& degree) ;
 };

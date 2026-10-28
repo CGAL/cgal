@@ -304,6 +304,15 @@ More precisely, given a complex \f$K\f$, a **discrete gradient vector field** (c
 
 \subsection secHDVFpersist_hom Persistent homology
 
+\subsubsection secHDVFfiltr_file_format The ".filtr" file format
+
+The %FILTR file format is a very simple text format encoding filtrations:
+
+- Size of the filtration
+- For each cell in the filtration:
+    time -> (cell index - dim q , degree)
+
+
 \subsection secHDVFrelative_hom Relative homology
 
 \subsection secHDVFAlexander Alexander duality
