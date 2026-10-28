@@ -1223,6 +1223,29 @@ public:
     CGAL_postcondition(edge_merge && edge_on_facet_1 && edge_on_facet_2);
   }
 
+  static FacetSPtr get_third_facet(const VertexSPtr& vertex,
+                                   const FacetSPtr& facet_1,
+                                   const FacetSPtr& facet_2)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_SS3_DEBUG_SPTR(facet_1);
+    CGAL_SS3_DEBUG_SPTR(facet_2);
+    CGAL_precondition(facet_1 != facet_2);
+    CGAL_precondition(vertex->facets().size() == 3);
+
+    FacetSPtr third_facet;
+    for (const FacetWPtr& facet_wptr : vertex->facets()) {
+      FacetSPtr facet = facet_wptr.lock();
+      if (facet && facet != facet_1 && facet != facet_2) {
+        CGAL_assertion(!third_facet);
+        third_facet = facet;
+      }
+    }
+
+    CGAL_SS3_DEBUG_SPTR(third_facet);
+    return third_facet;
+  }
+
   static Abstract_event_sptr is_actual_vanish_event(const Vanish_event_sptr& event)
   {
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
@@ -1681,18 +1704,10 @@ public:
       }
     }
 
-    bool conv_split_event = false;
-    FacetSPtr facet_1b = facet_2->next(vertex_1);
-    FacetSPtr facet_2b = facet_1->next(vertex_2);
-    EdgeSPtr edge_cur = edge_11->next(facet_1b);
-    while (edge_cur != edge_11) {
-      if ((edge_cur->get_facet_L() == facet_1b && edge_cur->get_facet_R() == facet_2b) ||
-          (edge_cur->get_facet_R() == facet_1b && edge_cur->get_facet_L() == facet_2b)) {
-        conv_split_event = true;
-        break;
-      }
-      edge_cur = edge_cur->next(facet_1b);
-    }
+    const FacetSPtr facet_1b = get_third_facet(vertex_1, facet_1, facet_2);
+    const FacetSPtr facet_2b = get_third_facet(vertex_2, facet_1, facet_2);
+    const std::list<EdgeSPtr> common_edges = facet_1b->find_edges(facet_2b);
+    const bool conv_split_event = !common_edges.empty();
 
     if (conv_split_event) {
       CGAL_SS3_CORE_TRACE_V(8, "Vertex event: convex split detected");
@@ -1756,18 +1771,10 @@ public:
       }
     }
 
-    bool conv_split_event = false;
-    FacetSPtr facet_1b = facet_2->next(vertex_1);
-    FacetSPtr facet_2b = facet_1->next(vertex_2);
-    EdgeSPtr edge_cur = edge_11->next(facet_1b);
-    while (edge_cur != edge_11) {
-      if ((edge_cur->get_facet_L() == facet_1b && edge_cur->get_facet_R() == facet_2b) ||
-          (edge_cur->get_facet_R() == facet_1b && edge_cur->get_facet_L() == facet_2b)) {
-        conv_split_event = true;
-        break;
-      }
-      edge_cur = edge_cur->next(facet_1b);
-    }
+    const FacetSPtr facet_1b = get_third_facet(vertex_1, facet_1, facet_2);
+    const FacetSPtr facet_2b = get_third_facet(vertex_2, facet_1, facet_2);
+    const std::list<EdgeSPtr> common_edges = facet_1b->find_edges(facet_2b);
+    const bool conv_split_event = !common_edges.empty();
 
     if (conv_split_event) {
       CGAL_SS3_CORE_TRACE_V(8, "Flip vertex event: convex split detected");
@@ -1932,22 +1939,10 @@ public:
       }
     }
 
-    bool conv_split_event = false;
-    FacetSPtr facet_1b = facet_2->next(vertex_1);
-    FacetSPtr facet_2b = facet_1->next(vertex_2);
-    if (facet_2b == facet_2) {
-      facet_2b = facet_2b->next(vertex_2);
-    }
-
-    EdgeSPtr edge_cur = edge_11->next(facet_1b);
-    while (edge_cur != edge_11) {
-      if ((edge_cur->get_facet_L() == facet_1b && edge_cur->get_facet_R() == facet_2b) ||
-          (edge_cur->get_facet_R() == facet_1b && edge_cur->get_facet_L() == facet_2b)) {
-        conv_split_event = true;
-        break;
-      }
-      edge_cur = edge_cur->next(facet_1b);
-    }
+    const FacetSPtr facet_1b = get_third_facet(vertex_1, facet_1, facet_2);
+    const FacetSPtr facet_2b = get_third_facet(vertex_2, facet_1, facet_2);
+    const std::list<EdgeSPtr> common_edges = facet_1b->find_edges(facet_2b);
+    const bool conv_split_event = !common_edges.empty();
 
     if (!conv_split_event) {
       CGAL_SS3_CORE_TRACE_V(8, "Split merge event: non-convex split event detected");
@@ -5540,41 +5535,25 @@ public:
     identify_incident_edges(vertex_1, facet_1, facet_2, edge_merge_1, edge_11, edge_12);
     identify_incident_edges(vertex_2, facet_1, facet_2, edge_merge_2, edge_21, edge_22);
 
-    auto other_facet = [](const EdgeSPtr& edge, const FacetSPtr& f1, const FacetSPtr& f2)
-    {
-      FacetSPtr facet = edge->get_facet_L();
-      if (facet == f1 || facet == f2) {
-        facet = edge->get_facet_R();
-      }
-      CGAL_postcondition(facet != f1 && facet != f2);
-      return facet;
-    };
-
     // The third facet at each vertex
-    const FacetSPtr facet_1b = other_facet(edge_11, facet_1, facet_2);
-    const FacetSPtr facet_2b = other_facet(edge_21, facet_1, facet_2);
-    CGAL_assertion(facet_1b == other_facet(edge_12, facet_1, facet_2));
-    CGAL_assertion(facet_2b == other_facet(edge_22, facet_1, facet_2));
+    const FacetSPtr facet_1b = get_third_facet(vertex_1, facet_1, facet_2);
+    const FacetSPtr facet_2b = get_third_facet(vertex_2, facet_1, facet_2);
+    std::cout << "event facets: " << facet_1->id() << " " << facet_2->id() << std::endl;
+    std::cout << "third facets: " << facet_1b->id() << " " << facet_2b->id() << std::endl;
     // vertex_1 and vertex_2 share exactly two facets
     CGAL_assertion(facet_1b != facet_2b);
 
     // determines which specialized event the generic vertex event supported by (vertex_1,
     // vertex_2, facet_1, facet_2) resolves into.
 
-    // do we actually need to check all edges?...
     bool is_split_merge_event = false;
-    EdgeSPtr edge_cur = edge_11->next(facet_1b);
-    while (edge_cur != edge_11) {
-      // check if facet_1b and facet_2b share an edge
-      if ((edge_cur->get_facet_L() == facet_1b && edge_cur->get_facet_R() == facet_2b) ||
-          (edge_cur->get_facet_R() == facet_1b && edge_cur->get_facet_L() == facet_2b)) {
-        if (is_event_point_on_edge(event, edge_cur)) {
-          CGAL_SS3_CORE_TRACE_V(16, "Generic vertex event is a split-merge event");
-          is_split_merge_event = true;
-          break;
-        }
+    std::list<EdgeSPtr> common_edges = facet_1b->find_edges(facet_2b);
+    for (const EdgeSPtr& edge : common_edges) {
+      if (is_event_point_on_edge(event, edge)) {
+        CGAL_SS3_CORE_TRACE_V(16, "Generic vertex event is a split-merge event");
+        is_split_merge_event = true;
+        break;
       }
-      edge_cur = edge_cur->next(facet_1b);
     }
 
     auto initialize_specialized_event = [](const Generic_vertex_event_sptr& event,
@@ -5686,14 +5665,8 @@ public:
         }
       }
     }
-    FacetSPtr facet_1b = edge_11->get_facet_L();
-    if (facet_1b == facet_1 || facet_1b == facet_2) {
-      facet_1b = edge_11->get_facet_R();
-    }
-    FacetSPtr facet_2b = edge_21->get_facet_L();
-    if (facet_2b == facet_1 || facet_2b == facet_2) {
-      facet_2b = edge_21->get_facet_R();
-    }
+    FacetSPtr facet_1b = get_third_facet(vertex_1, facet_1, facet_2);
+    FacetSPtr facet_2b = get_third_facet(vertex_2, facet_1, facet_2);
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
@@ -6341,29 +6314,18 @@ public:
         }
       }
     }
-    FacetSPtr facet_1b = edge_11->get_facet_L();
-    if (facet_1b == facet_1 || facet_1b == facet_2) {
-      facet_1b = edge_11->get_facet_R();
-    }
-    FacetSPtr facet_2b = edge_21->get_facet_L();
-    if (facet_2b == facet_1 || facet_2b == facet_2) {
-      facet_2b = edge_21->get_facet_R();
-    }
+    FacetSPtr facet_1b = get_third_facet(vertex_1, facet_1, facet_2);
+    FacetSPtr facet_2b = get_third_facet(vertex_2, facet_1, facet_2);
 
-    EdgeSPtr edge_tosplit = EdgeSPtr();
-    // edge_tosplit = facet_1b->find_edge(facet_2b);
-    EdgeSPtr edge_cur = edge_11->next(facet_1b);
-    while (edge_cur != edge_11) {
-      if ((edge_cur->get_facet_L() == facet_1b && edge_cur->get_facet_R() == facet_2b) ||
-          (edge_cur->get_facet_R() == facet_1b && edge_cur->get_facet_L() == facet_2b)) {
-        if (is_event_point_on_edge(event, edge_cur)) {
-          edge_tosplit = edge_cur;
-          break;
-        }
+    EdgeSPtr edge_to_split = EdgeSPtr();
+    std::list<EdgeSPtr> common_edges = facet_1b->find_edges(facet_2b);
+    for (const EdgeSPtr& edge : common_edges) {
+      if (is_event_point_on_edge(event, edge)) {
+        edge_to_split = edge;
+        break;
       }
-      edge_cur = edge_cur->next(facet_1b);
     }
-    CGAL_SS3_DEBUG_SPTR(edge_tosplit);
+    CGAL_SS3_DEBUG_SPTR(edge_to_split);
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
@@ -6377,7 +6339,7 @@ public:
     for (EdgeSPtr e : {edge_11, edge_12, edge_21, edge_22}) {
       Hds_utils::get_sheet(e)->add_node(node);
     }
-    Hds_utils::get_sheet(edge_tosplit)->add_node(node);
+    Hds_utils::get_sheet(edge_to_split)->add_node(node);
     Hds_utils::get_sheet(edge_tomerge_1)->add_node(node);
 
     merge_sheets(edge_tomerge_1, edge_tomerge_2);
@@ -6410,19 +6372,19 @@ public:
     facet_2->remove_vertex(vertex_1);
     facet_1b->add_vertex(vertex_2);
     facet_2b->add_vertex(vertex_1);
-    if (edge_tosplit->get_facet_L() == facet_1b &&
-        edge_tosplit->get_facet_R() == facet_2b) {
-      edge_tomerge_2->replace_vertex_src(edge_tosplit->source());
+    if (edge_to_split->get_facet_L() == facet_1b &&
+        edge_to_split->get_facet_R() == facet_2b) {
+      edge_tomerge_2->replace_vertex_src(edge_to_split->source());
       edge_tomerge_2->replace_vertex_tgt(vertex_2);
-      edge_tosplit->replace_vertex_src(vertex_1);
-    } else if (edge_tosplit->get_facet_L() == facet_2b &&
-               edge_tosplit->get_facet_R() == facet_1b) {
-      edge_tomerge_2->replace_vertex_tgt(edge_tosplit->target());
+      edge_to_split->replace_vertex_src(vertex_1);
+    } else if (edge_to_split->get_facet_L() == facet_2b &&
+               edge_to_split->get_facet_R() == facet_1b) {
+      edge_tomerge_2->replace_vertex_tgt(edge_to_split->target());
       edge_tomerge_2->replace_vertex_src(vertex_2);
-      edge_tosplit->replace_vertex_tgt(vertex_1);
+      edge_to_split->replace_vertex_tgt(vertex_1);
     }
-    edge_tomerge_2->replace_facet_L(edge_tosplit->get_facet_L());
-    edge_tomerge_2->replace_facet_R(edge_tosplit->get_facet_R());
+    edge_tomerge_2->replace_facet_L(edge_to_split->get_facet_L());
+    edge_tomerge_2->replace_facet_R(edge_to_split->get_facet_R());
 
     if (time_future_bound.has_value()) {
       Hds_utils::set_final_point(vertex_1, std::nullopt);
@@ -6438,7 +6400,7 @@ public:
     ArcSPtr arc_2 = create_arc(vertex_2);
     skeleton_->add_arc(arc_2);
 
-    set_sheet(edge_tomerge_2, Hds_utils::get_sheet(edge_tosplit));
+    set_sheet(edge_tomerge_2, Hds_utils::get_sheet(edge_to_split));
 
     for (VertexSPtr vertex : { vertex_1, vertex_2 }) {
       for (EdgeWPtr edge_w : vertex->edges()) {
