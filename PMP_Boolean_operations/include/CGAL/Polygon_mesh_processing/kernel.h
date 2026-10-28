@@ -371,15 +371,19 @@ kernel(const FaceRange& face_range,
       return inside;
     };
 
+    bool debug = choose_parameter(get_parameter(np, internal_np::debug), false);
+
     auto test_a_method_to_construct_an_inside_point = [&](auto functor, std::string_view method_name) -> bool {
       auto start_time = std::chrono::high_resolution_clock::now();
       auto point = functor();
       double x = to_double(point.x());
       double y = to_double(point.y());
       double z = to_double(point.z());
-      auto end_time = std::chrono::high_resolution_clock::now();
-      auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-      std::cerr << method_name << " computation time: " << duration.count() << " microseconds" << std::endl;
+      if(debug) {
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+        std::cerr << method_name << " computation time: " << duration.count() << " microseconds" << std::endl;
+      }
 
       if(!is_valid(x) || !is_valid(y) || !is_valid(z)) { return false; } // check for NaN
       EPoint_3 exact_point(x, y, z);
