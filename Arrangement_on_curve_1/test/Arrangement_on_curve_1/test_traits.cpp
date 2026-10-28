@@ -1,8 +1,10 @@
 // Tests the geometry traits that the other tests do not cover: the traits of
-// lines in 2D, 3D, and dD, and the adaptors of a 2D geometry traits with an
-// open, a closed, a left-closed, and a right-closed parameter space.  Every
-// permutation of every subset of a set of points is inserted, and then every
-// vertex is removed on its own.
+// lines in 2D, 3D, and dD, the adaptors of a 2D geometry traits with an open,
+// a closed, a left-closed, and a right-closed parameter space, and the adaptor
+// of a 2D geometry traits to the circle of directions.  Every permutation of
+// every subset of a set of points is inserted, and then every vertex is
+// removed on its own.  The order of the adaptor to the circle of directions is
+// also compared with the order of `Circle_traits_1`.
 
 #include <cstdlib>
 
@@ -19,6 +21,7 @@
 #include <CGAL/Arrangement_on_curve_1/Closed_geom_traits_2_adaptor_1.h>
 #include <CGAL/Arrangement_on_curve_1/Left_closed_geom_traits_2_adaptor_1.h>
 #include <CGAL/Arrangement_on_curve_1/Right_closed_geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Direction_geom_traits_2_adaptor_1.h>
 
 using Point_2 = Kernel::Point_2;
 using Point_3 = Kernel::Point_3;
@@ -110,6 +113,55 @@ int main() {
     test<Test_arrangement<Traits, false>>("Right_closed_geom_traits_2_adaptor_1",
                                           std::make_shared<const Traits>(tr_2, right),
                                           {Point_2(2, 1), Point_2(4, 2), Point_2(6, 3), right}, failures);
+  }
+
+  // The adaptor to the circle of directions, of a kernel and of a 2D traits
+  // derived from a kernel, with a reference direction on an axis and off the
+  // axes; the directions include the reference direction and its opposite.
+  {
+    const std::vector<Direction_2> refs{Direction_2(1, 0), Direction_2(1, 2), Direction_2(-3, -1)};
+    for (const auto& ref : refs) {
+      std::vector<Direction_2> dirs{ref, -ref, Direction_2(1, 0), Direction_2(0, 1), Direction_2(-1, 0),
+                                    Direction_2(0, -1), Direction_2(1, 1), Direction_2(2, 4), Direction_2(-1, 3)};
+      const std::string suffix = " (reference " + std::to_string(&ref - refs.data()) + ")";
+      {
+        using Traits = Aoc::Direction_geom_traits_2_adaptor_1<Kernel>;
+        test<Test_arrangement<Traits, false>>("Direction_geom_traits_2_adaptor_1<Kernel>" + suffix,
+                                              std::make_shared<const Traits>(std::make_shared<const Kernel>(), ref),
+                                              {ref, -ref, Direction_2(1, 1), Direction_2(-1, 3)}, failures);
+        test<Test_arrangement<Traits, true>>("Direction_geom_traits_2_adaptor_1<Kernel> (vector)" + suffix,
+                                             std::make_shared<const Traits>(Kernel(), ref),
+                                             {ref, -ref, Direction_2(0, -1), Direction_2(2, -4)}, failures);
+      }
+      {
+        using Traits = Aoc::Direction_geom_traits_2_adaptor_1<Geom_traits_2>;
+        test<Test_arrangement<Traits, false>>("Direction_geom_traits_2_adaptor_1<Arr_segment_traits_2>" + suffix,
+                                              std::make_shared<const Traits>(tr_2, ref),
+                                              {ref, -ref, Direction_2(0, 1), Direction_2(1, 1)}, failures);
+      }
+
+      // The order, the identification point, and the equality agree with
+      // those of `Circle_traits_1` with the same reference direction.
+      using Traits = Aoc::Direction_geom_traits_2_adaptor_1<Kernel>;
+      const Traits tr(Kernel(), ref);
+      const Aoc::Circle_traits_1<Kernel> circle_tr(ref);
+      const auto is_on_id = tr.is_on_x_identification_1_object();
+      const auto circle_is_on_id = circle_tr.is_on_x_identification_1_object();
+      const auto cmp = tr.compare_x_1_object();
+      const auto circle_cmp = circle_tr.compare_x_1_object();
+      const auto equal = tr.equal_1_object();
+      bool ok = (tr.reference_direction() == ref);
+      for (const auto& d1 : dirs) {
+        ok = ok && (is_on_id(d1) == circle_is_on_id(d1));
+        for (const auto& d2 : dirs) {
+          ok = ok && (equal(d1, d2) == (d1 == d2));
+          if (! is_on_id(d1) && ! is_on_id(d2)) ok = ok && (cmp(d1, d2) == circle_cmp(d1, d2));
+        }
+      }
+      report(ok, "Direction_geom_traits_2_adaptor_1 vs. Circle_traits_1" + suffix, "order", failures);
+      std::cout << (ok ? "PASS " : "FAIL ") << "Direction_geom_traits_2_adaptor_1 vs. Circle_traits_1" << suffix
+                << std::endl;
+    }
   }
 
   return (failures == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
