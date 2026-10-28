@@ -437,16 +437,16 @@ kernel(const FaceRange& face_range,
     using ExactK = typename EK::Exact_kernel;
     using ExactPoint_3 = typename ExactK::Point_3;
 
-    auto to_exact = [&](vertex_descriptor v) { return exact(get(kvpm, v)); };
+    auto to_exactk = [&](vertex_descriptor v) { return exact(get(kvpm, v)); };
 
-    if(test_a_method_to_construct_an_inside_point([&] { return barycenter_of_points<ExactK>(kernel, to_exact); },
+    if(test_a_method_to_construct_an_inside_point([&] { return barycenter_of_points<ExactK>(kernel, to_exactk); },
                                                   "Exact barycenter"))
     {
       return;
     }
 
     if(triangulated &&
-       test_a_method_to_construct_an_inside_point([&] { return find_intern_point<ExactK>(kernel, to_exact); },
+      test_a_method_to_construct_an_inside_point([&] { return find_intern_point<ExactK>(kernel, to_exactk); },
                                                   "Exact find_intern_point"))
     {
       return;
@@ -454,7 +454,7 @@ kernel(const FaceRange& face_range,
 
     ExactPoint_3 exact_centroid;
     if(triangulated &&
-       test_a_method_to_construct_an_inside_point([&] { return exact_centroid = centroid<ExactK>(kernel, to_exact); },
+      test_a_method_to_construct_an_inside_point([&] { return exact_centroid = centroid<ExactK>(kernel, to_exactk); },
                                                   "Exact centroid"))
     {
       return;
@@ -463,8 +463,11 @@ kernel(const FaceRange& face_range,
     CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
 
     // Not inside if the GT kernel is not EPECK
-    *p = from_exact(EPoint_3(exact_centroid));
-    return;
+    auto result = from_exact(EPoint_3(exact_centroid));
+    if(is_inside_kernel(to_exact(result))) {
+      *p = result;
+      return;
+    }
   }
 
   // Convert points of the kernel to the type of the input mesh
