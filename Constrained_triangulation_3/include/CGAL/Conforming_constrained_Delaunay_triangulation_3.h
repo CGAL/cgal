@@ -1462,27 +1462,28 @@ public:
       out << prefix << "  - " << nb(CDT_3_vertex_type::STEINER_IN_FACE) << " Steiner vertices in faces\n";
       out << prefix << "  - " << nb(CDT_3_vertex_type::STEINER_IN_VOLUME) << " Steiner vertices in volume\n";
       out << prefix << "  - " << nb(CDT_3_vertex_type::FREE) << " free vertices\n";
-      if(impl().options().move_Steiner_vertices_allow_negative_tets()) {
-        std::size_t nb_of_negative_tets = 0;
-        auto point = [this](typename Triangulation::Vertex_handle vh) {
-          return triangulation().point(vh);
-        };
-        CGAL::unordered_flat_set<typename Triangulation::Vertex_handle> vertices_with_negative_tets;
-        for(auto c: triangulation().finite_cell_handles()) {
-          const auto verts
-           = triangulation().vertices(c);
-          if(triangulation().orientation(point(verts[0]), point(verts[1]), point(verts[2]), point(verts[3])) < 0) {
-            ++nb_of_negative_tets;
-            for(auto v : verts) {
-              if(v->ccdt_3_data().vertex_type() == CDT_3_vertex_type::STEINER_IN_VOLUME) {
-                vertices_with_negative_tets.insert(v);
-              }
+
+      std::size_t nb_of_negative_tets = 0;
+      auto point = [this](typename Triangulation::Vertex_handle vh) {
+        return triangulation().point(vh);
+      };
+      CGAL::unordered_flat_set<typename Triangulation::Vertex_handle> vertices_with_negative_tets;
+      for(auto c: triangulation().finite_cell_handles()) {
+        const auto verts
+          = triangulation().vertices(c);
+        if(triangulation().orientation(point(verts[0]), point(verts[1]), point(verts[2]), point(verts[3])) < 0) {
+          ++nb_of_negative_tets;
+          for(auto v : verts) {
+            if(v->ccdt_3_data().vertex_type() == CDT_3_vertex_type::STEINER_IN_VOLUME) {
+              vertices_with_negative_tets.insert(v);
             }
           }
         }
-        out << prefix << "  - " << nb_of_negative_tets << " negative tetrahedra\n";
-        out << prefix << "  - " << vertices_with_negative_tets.size() << " Steiner vertices with negative tetrahedra around\n";
       }
+
+      out << prefix << "  - " << nb_of_negative_tets << " negative tetrahedra\n";
+      out << prefix << "  - " << vertices_with_negative_tets.size() << " Steiner vertices with negative tetrahedra around\n";
+
       return out;
     }, IO_manip_tag{});
   }
