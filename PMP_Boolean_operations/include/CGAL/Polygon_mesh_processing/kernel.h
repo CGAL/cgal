@@ -412,14 +412,16 @@ kernel(const FaceRange& face_range,
       return;
     }
 
-    if(test_a_method_to_construct_an_inside_point([&] { return find_intern_point<AK>(kernel, to_approx); },
+    // triangulate the kernel, to be able to compute a centroid
+    bool triangulated =
+        CGAL::Polygon_mesh_processing::triangulate_faces(kernel, CGAL::parameters::vertex_point_map(kvpm));
+
+    if(!triangulated &&
+       test_a_method_to_construct_an_inside_point([&] { return find_intern_point<AK>(kernel, to_approx); },
                                                   "Approximate find_intern_point"))
     {
       return;
     }
-
-    // triangulate the kernel, to be able to compute a centroid
-    bool triangulated = CGAL::Polygon_mesh_processing::triangulate_faces(kernel, CGAL::parameters::vertex_point_map(kvpm));
 
     if(triangulated &&
        test_a_method_to_construct_an_inside_point([&] { return centroid<AK>(kernel, to_approx); },
@@ -443,7 +445,8 @@ kernel(const FaceRange& face_range,
       return;
     }
 
-    if(test_a_method_to_construct_an_inside_point([&] { return find_intern_point<ExactK>(kernel, to_exact); },
+    if(triangulated &&
+       test_a_method_to_construct_an_inside_point([&] { return find_intern_point<ExactK>(kernel, to_exact); },
                                                   "Exact find_intern_point"))
     {
       return;
