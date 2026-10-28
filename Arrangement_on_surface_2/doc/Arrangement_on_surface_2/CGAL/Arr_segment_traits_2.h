@@ -122,8 +122,24 @@ public:
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, const Point_2& src, const Point_2& trg) const;
   };
 
+  /// \name Functor Types
+  /// @{
+
+  /*! a functor that determines whether two objects are equal. It models the
+   * concept `Kernel::Equal_2` as well; that is, it also determines whether
+   * two objects of any other type that `Kernel::Equal_2` accepts (e.g.,
+   * `Kernel::Direction_2`) are equal. (As `Arr_segment_traits_2` derives from
+   * `Kernel`, this functor hides `Kernel::Equal_2`; thus, it extends it.)
+   */
+  typedef unspecified_type Equal_2;
+
+  /// @}
+
   /// \name Accessing Functor Objects
   /// @{
+
+  /*! obtains an `Equal_2` functor. */
+  Equal_2 equal_2_object() const;
 
   /*! obtains a `Trim_2` functor. */
   Trim_2 trim_2_object() const;
