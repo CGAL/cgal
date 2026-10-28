@@ -2694,10 +2694,11 @@ protected:
     return result;
   } // end of `remove_Steiner_vertex_from_cdt_2`
 
-  bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
+  bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v, std::size_t i, std::size_t n_steiner_vertices) {
     if(dbg().move_Steiner_vertices()) {
       auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightGreen>(std::cerr);
-      std::cerr << "Moving Steiner vertex " << display_vert(v) << " to the volume\n";
+      auto s = std::log10(n_steiner_vertices) + 1;
+        std::cerr << "[" << std::setw(s) << (i+1) << "/" << n_steiner_vertices << "] Moving Steiner vertex " << display_vert(v) << " to the volume\n";
     }
     auto indent_guards = CGAL::IO::make_indenting_guards(dbg().move_Steiner_vertices_level() > 1 ? "| " : "", std::cerr);
 
@@ -3798,8 +3799,9 @@ public:
     for(auto v : this->finite_vertex_handles()) {
       if(is_Steiner_vertex_on_surface(v)) steiner_vertices.push_back(v);
     }
-    for(auto v : steiner_vertices) {
-      move_one_Steiner_vertex_to_the_volume(v);
+    const auto n_steiner_vertices = steiner_vertices.size();
+    for(auto i = 0u; i < n_steiner_vertices; ++i) {
+      move_one_Steiner_vertex_to_the_volume(steiner_vertices[i], i, n_steiner_vertices);
     }
     CGAL_warning(this->debug().move_Steiner_vertices_level() == 0 || !number_type_is_exact ||
                  check_if_constrained_faces_are_coplanar());
