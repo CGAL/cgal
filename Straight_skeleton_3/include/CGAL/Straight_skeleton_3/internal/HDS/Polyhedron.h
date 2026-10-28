@@ -2323,11 +2323,11 @@ public:
       VertexSPtr vertex = *it_v++;
       const Point_3& point = vertex->point();
       VertexSPtr vertex_c = Vertex::create(point);
-      vertex_c->set_id(vertex->id());
       if (vertex->has_data()) {
         vertex_c->set_data(vertex->get_data()->clone());
       }
       result->add_vertex(vertex_c);
+      vertex_c->set_id(vertex->id()); // after the add_vertex(), otherwise it'll get a new ID
       vertices_c[vertex] = vertex_c;
     }
     typename std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
@@ -2336,11 +2336,11 @@ public:
       VertexSPtr src = vertices_c[edge->source()];
       VertexSPtr tgt = vertices_c[edge->target()];
       EdgeSPtr edge_c = Edge::create(src, tgt);
-      edge_c->set_id(edge->id());
       if (edge->has_data()) {
         edge_c->set_data(edge->get_data()->clone());
       }
       result->add_edge(edge_c);
+      edge_c->set_id(edge->id());
       edges_c[edge] = edge_c;
     }
     typename std::list<FacetSPtr>::const_iterator it_f = facets_.begin();
@@ -2348,7 +2348,6 @@ public:
       FacetSPtr facet = *it_f++;
       FacetSPtr facet_c = Facet::create();
       facet_c->set_plane(facet->get_plane());
-      facet_c->set_id(facet->id());
       typename std::list<VertexSPtr>::const_iterator it_v = facet->vertices().begin();
       while (it_v != facet->vertices().end()) {
         VertexSPtr vertex = *it_v++;
@@ -2370,6 +2369,7 @@ public:
         facet_c->set_data(facet->get_data()->clone(facet));
       }
       result->add_facet(facet_c);
+      facet_c->set_id(facet->id());
     }
     return result;
   }
