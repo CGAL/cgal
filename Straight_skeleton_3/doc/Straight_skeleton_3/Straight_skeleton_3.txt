@@ -305,16 +305,7 @@ into real-world coordinates could suffer from self-intersections.
 
 However, it can also have a visible effect in some degenerate cases where numerical errors
 do not absorb the effect. For example, offsetting two parallel faces that are living in canonical
-planes by half their distance creates a merge. If the result is asked precisely at that time,
-a thin wedge may be observed.
-
-\cgalFigureAnchor{SPS3Perturbation}
-<center>
-<img src="sps_perturbation.png" style="max-width:100%;"/>
-</center>
-\cgalFigureCaptionBegin{SPS3Perturbation}
-Perturbation leaves wedges and slivers
-\cgalFigureCaptionEnd
+planes by half their distance creates a merge.
 
 The goal of this package is thus to provide valid results that are arbitrarily close to the correct result.
 
