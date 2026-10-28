@@ -1939,7 +1939,8 @@ protected:
   }
 
   std::optional<Point_3> compute_center_point_if_possible(const CGAL::Surface_mesh<Point_3>& component_mesh) const {
-    return CGAL::Polygon_mesh_processing::kernel_point(component_mesh);
+    bool debug = (this->debug().move_Steiner_vertices_level() > 1);
+    return CGAL::Polygon_mesh_processing::kernel_point(component_mesh, CGAL::parameters::debug(debug));
   }
 
   template <typename Components, typename Map>
