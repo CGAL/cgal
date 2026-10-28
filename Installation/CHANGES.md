@@ -74,6 +74,11 @@ Release date: December 2026
 - Added new multithreading compatible functions operating directly on triangle soups, enabling the handling of non-manifold input and output volumes:
   `CGAL::Polygon_mesh_processing::compute_union()`, `CGAL::Polygon_mesh_processing::compute_intersection()`, and
   `CGAL::Polygon_mesh_processing::compute_difference()`.
+- `corefine()` and its variants now have a named parameter `concurrency_tag`, specifying whether the task should be performed using a single or multiple threads.
+- The running time of `corefine()`, `autorefine()` and their variants has been improved.
+- Added new multithreading compatible functions operating directly on triangle soups, enabling the handling of non-manifold input and output volumes:
+  `CGAL::Polygon_mesh_processing::compute_union()`, `CGAL::Polygon_mesh_processing::compute_intersection()`, and
+  `CGAL::Polygon_mesh_processing::compute_difference()`.
 
 ### [Stream Support](https://doc.cgal.org/6.3/Manual/packages.html#PkgStreamSupport)
 
