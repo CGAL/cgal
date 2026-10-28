@@ -61,6 +61,7 @@
  * The Kernel must provide:
  * - `Kernel::Direction_2`
  * - `Kernel::Compare_angle_with_x_axis_2`
+ * - `Kernel::Equal_2`
  */
 
 #include <CGAL/enum.h>
@@ -124,7 +125,7 @@ public:
   public:
     explicit Is_on_x_identification_1(const Circle_traits_1& tr) : m_tr(tr) {}
 
-    bool operator()(const Point_1& d) const { return d == m_tr.m_ref; }
+    bool operator()(const Point_1& d) const { return m_tr.equal_2_object()(d, m_tr.m_ref); }
 
   private:
     const Circle_traits_1& m_tr;

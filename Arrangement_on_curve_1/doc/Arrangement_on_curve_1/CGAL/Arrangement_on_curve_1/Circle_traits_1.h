@@ -60,7 +60,8 @@ namespace Arrangement_on_curve_1 {
  *
  * \tparam Kernel must be a standard \cgal `Kernel` model (e.g.,
  *   `Exact_predicates_exact_constructions_kernel`) providing
- *   `Direction_2` and the `Compare_angle_with_x_axis_2` predicate.
+ *   `Direction_2` and the `Compare_angle_with_x_axis_2` and `Equal_2`
+ *   predicates.
  *
  * \cgalModels{AocIdentifiedBoundaryTraits_1}
  */

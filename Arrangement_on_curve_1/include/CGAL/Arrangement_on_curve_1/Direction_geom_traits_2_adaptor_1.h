@@ -20,17 +20,17 @@ namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
 // Adapts a 2D geometry traits class that provides directions in the plane and
-// the predicate `Counterclockwise_in_between_2` (e.g., any kernel) into a 1D
-// geometry traits class of the circle of directions, whose parameter space is
-// identified.  The identification point is a given reference direction s, and
-// the directions are ordered counterclockwise, starting right after s.
+// the predicates `Counterclockwise_in_between_2` and `Equal_2` (e.g., any
+// kernel) into a 1D geometry traits class of the circle of directions, whose
+// parameter space is identified.  The identification point is a given
+// reference direction s, and the directions are ordered counterclockwise,
+// starting right after s.
 //
-// The order is determined by `Counterclockwise_in_between_2` alone, which
-// refers to no axis: a direction a precedes a direction b if and only if a is
-// counterclockwise strictly in between s and b; a and b are equal if and only
-// if neither precedes the other, and a is equal to s if and only if a is not
-// counterclockwise strictly in between s and s (the open range from s to s is
-// the entire circle except for s).  Pair with `Identified_topology_traits`.
+// The order is determined by `Counterclockwise_in_between_2`, which refers to
+// no axis: a direction a precedes a direction b if and only if a is
+// counterclockwise strictly in between s and b.  The equality of directions,
+// and in particular the test whether a direction is the identification point,
+// is determined by `Equal_2`.  Pair with `Identified_topology_traits`.
 template <typename GeomTraits_2>
 class Direction_geom_traits_2_adaptor_1 {
 public:
@@ -41,10 +41,6 @@ public:
   using Left_side_category = Identified_side_tag;
   using Right_side_category = Identified_side_tag;
 
-private:
-  using Ccw_in_between_2 = typename Geom_traits_2::Counterclockwise_in_between_2;
-
-public:
   /*! constructs from a shared 2D traits object and a reference direction,
    * which is the identification point.
    */
@@ -78,16 +74,13 @@ public:
    */
   class Is_on_x_identification_1 {
   public:
-    explicit Is_on_x_identification_1(const Direction_geom_traits_2_adaptor_1& traits) :
-      m_ccw_in_between(traits.m_traits_2->counterclockwise_in_between_2_object()),
-      m_reference(traits.m_reference)
-    {}
+    explicit Is_on_x_identification_1(const Direction_geom_traits_2_adaptor_1& traits) : m_traits(traits) {}
 
-    bool operator()(const Point_1& d) const { return ! m_ccw_in_between(d, m_reference, m_reference); }
+    bool operator()(const Point_1& d) const
+    { return m_traits.geom_traits_2().equal_2_object()(d, m_traits.reference_direction()); }
 
   private:
-    Ccw_in_between_2 m_ccw_in_between;
-    const Point_1& m_reference;
+    const Direction_geom_traits_2_adaptor_1& m_traits;
   };
 
   /*! obtains an `Is_on_x_identification_1` functor.
@@ -100,21 +93,19 @@ public:
    */
   class Compare_x_1 {
   public:
-    explicit Compare_x_1(const Direction_geom_traits_2_adaptor_1& traits) :
-      m_ccw_in_between(traits.m_traits_2->counterclockwise_in_between_2_object()),
-      m_reference(traits.m_reference)
-    {}
+    explicit Compare_x_1(const Direction_geom_traits_2_adaptor_1& traits) : m_traits(traits) {}
 
     Comparison_result operator()(const Point_1& d1, const Point_1& d2) const {
-      CGAL_precondition(m_ccw_in_between(d1, m_reference, m_reference));
-      CGAL_precondition(m_ccw_in_between(d2, m_reference, m_reference));
-      if (m_ccw_in_between(d1, m_reference, d2)) return SMALLER;
-      return m_ccw_in_between(d2, m_reference, d1) ? LARGER : EQUAL;
+      CGAL_precondition(! m_traits.is_on_x_identification_1_object()(d1));
+      CGAL_precondition(! m_traits.is_on_x_identification_1_object()(d2));
+      const auto& ref = m_traits.reference_direction();
+      auto ccw_in_between = m_traits.geom_traits_2().counterclockwise_in_between_2_object();
+      if (ccw_in_between(d1, ref, d2)) return SMALLER;
+      return ccw_in_between(d2, ref, d1) ? LARGER : EQUAL;
     }
 
   private:
-    Ccw_in_between_2 m_ccw_in_between;
-    const Point_1& m_reference;
+    const Direction_geom_traits_2_adaptor_1& m_traits;
   };
 
   /*! obtains a `Compare_x_1` functor.
@@ -125,14 +116,13 @@ public:
    */
   class Equal_1 {
   public:
-    explicit Equal_1(const Direction_geom_traits_2_adaptor_1& traits) :
-      m_ccw_in_between(traits.m_traits_2->counterclockwise_in_between_2_object())
-    {}
+    explicit Equal_1(const Direction_geom_traits_2_adaptor_1& traits) : m_traits(traits) {}
 
-    bool operator()(const Point_1& d1, const Point_1& d2) const { return ! m_ccw_in_between(d1, d2, d2); }
+    bool operator()(const Point_1& d1, const Point_1& d2) const
+    { return m_traits.geom_traits_2().equal_2_object()(d1, d2); }
 
   private:
-    Ccw_in_between_2 m_ccw_in_between;
+    const Direction_geom_traits_2_adaptor_1& m_traits;
   };
 
   /*! obtains an `Equal_1` functor.
