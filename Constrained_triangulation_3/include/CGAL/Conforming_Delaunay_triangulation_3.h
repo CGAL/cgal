@@ -337,6 +337,9 @@ public:
   using Line = typename T_3::Geom_traits::Line_3;
   using Locate_type = typename T_3::Locate_type;
 
+  static constexpr bool number_type_is_exact = Algebraic_structure_traits<typename Geom_traits::FT>::Is_exact::value;
+
+
   inline static With_offset_tag with_offset_tag{ -1 };
   With_point_tag<T_3> with_point_tag{ {-1}, this };
   With_point_and_info_tag<T_3> with_point_and_info_tag{ { {-1}, this } };

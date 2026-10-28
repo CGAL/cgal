@@ -1509,6 +1509,7 @@ public:
   static Facet_pair null_facet_pair() { return{Facet{}, Facet{}}; };
 
   using Geom_traits = typename T_3::Geom_traits;
+  using Conforming_Dt::number_type_is_exact;
   using Point_3 = typename T_3::Point;
   using Segment_3 = typename Geom_traits::Segment_3;
   using Triangle_3 = typename Geom_traits::Triangle_3;
@@ -1780,6 +1781,40 @@ protected:
       ++head;
     } while(head != tail);
     return std::nullopt;
+  }
+
+  bool check_if_constrained_faces_are_coplanar() const {
+    CGAL::unordered_flat_map<Face_index, std::optional<typename Geom_traits::Vector_3>> incident_polygon_normals;
+    bool result = true;
+    for(auto f: this->constrained_facets()) {
+      auto face_id = tr().face_constraint_index(f);
+      auto& normal_opt = incident_polygon_normals[face_id];
+      const auto& facet_vertices = tr().vertices(f);
+      const auto& p0 = facet_vertices[0]->point();
+      const auto& p1 = facet_vertices[1]->point();
+      const auto& p2 = facet_vertices[2]->point();
+      const auto normal = CGAL::cross_product(p1 - p0, p2 - p0);
+      if(normal_opt.has_value()) {
+        // check if the new normal is consistent with the existing one
+        const auto& existing_normal = normal_opt.value();
+        if(CGAL::cross_product(existing_normal, normal) != NULL_VECTOR) {
+          auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
+          std::cerr << "Inconsistent normals for face " << face_id << "\n";
+          result = false;
+          auto n = existing_normal / CGAL::approximate_sqrt(existing_normal.squared_length());
+          auto n2 = normal / CGAL::approximate_sqrt(normal.squared_length());
+          if constexpr(number_type_is_exact) {
+            n.exact();
+            n2.exact();
+          }
+          std::cerr << "  - existing normal: " << n << "\n"
+                    << "  -      new normal: " << n2 << "\n";
+        }
+      } else {
+        normal_opt = normal;
+      }
+    }
+    return result;
   }
 
   template <typename Components, typename Map>
@@ -3766,6 +3801,8 @@ public:
     for(auto v : steiner_vertices) {
       move_one_Steiner_vertex_to_the_volume(v);
     }
+    CGAL_warning(this->debug().move_Steiner_vertices_level() == 0 || !number_type_is_exact ||
+                 check_if_constrained_faces_are_coplanar());
     CGAL_assertion(tr().tds().is_valid(true));
   }
 
