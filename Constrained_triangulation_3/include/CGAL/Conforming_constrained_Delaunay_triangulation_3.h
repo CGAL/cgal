@@ -4002,8 +4002,7 @@ private:
         }
         std::cerr << counter << " triangles(s) in the face\n";
       }
-      if(this->debug().input_faces() &&
-         Algebraic_structure_traits<typename Geom_traits::FT>::Is_exact::value &&
+      if(this->debug().input_faces() && number_type_is_exact &&
          !std::all_of(cdt_2.finite_face_handles().begin(), cdt_2.finite_face_handles().end(), [=](const auto fh) {
            const auto p0 = cdt_2.point(fh->vertex(0));
            const auto v1 = cdt_2.point(fh->vertex(1)) - p0;
