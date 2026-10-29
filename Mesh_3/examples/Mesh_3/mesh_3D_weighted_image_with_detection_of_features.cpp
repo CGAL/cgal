@@ -54,9 +54,9 @@ int main(int argc, char* argv[])
 
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
-                                                    CGAL::parameters::weights = std::ref(img_weights),
-                                                    CGAL::parameters::relative_error_bound = 1e-6,
-                                                    CGAL::parameters::features_detector = CGAL::Mesh_3::Detect_features_in_image());
+                                                    params::weights = std::ref(img_weights),
+                                                    params::relative_error_bound = 1e-6,
+                                                    params::features_detector = CGAL::Mesh_3::Detect_features_in_image());
   /// [Domain creation]
 
   CGAL::Bbox_3 bbox = domain.bbox();
@@ -75,8 +75,8 @@ int main(int argc, char* argv[])
 
   // Meshing
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      CGAL::parameters::no_exude(),
-                                      CGAL::parameters::no_perturb());
+                                      params::no_exude(),
+                                      params::no_perturb());
 
   // Output
   CGAL::dump_c3t3(c3t3, "out");
