@@ -25,6 +25,7 @@
  */
 
 #include <iterator>
+#include <optional>
 #include <type_traits>
 #include <tuple>
 
@@ -2335,12 +2336,17 @@ protected:
    * operations.
    * \param cv the polycurve curve.
    * \param q the point.
+   * \param end Output: the end of `cv[i]` that \f$q\f$ coincides with (as
+   *        determined by `compare`), or empty if \f$q\f$ is in the interior of
+   *        the \f$x\f$-range of `cv[i]`.
    * \return an index \f$i\f$ such that \f$q\f$ is in the \f$x\f$-range of
    *         `cv[i]`. If \f$q\f$ is not in the \f$x\f$-range of `cv`, returns
    *         `INVALID_INDEX`.
    */
   template <typename Compare>
-  std::size_t locate_gen(const X_monotone_curve_2& cv, Compare compare) const {
+  std::size_t locate_gen(const X_monotone_curve_2& cv, Compare compare, std::optional<Arr_curve_end>& end) const {
+    end.reset();
+
     // The direction of cv. SMALLER means left-to-right and
     // otherwise right-to-left
     Comparison_result direction = subcurve_traits_2()->compare_endpoints_xy_2_object()(cv[0]);
@@ -2356,15 +2362,22 @@ protected:
 
     // Test if q is one of cv's end points
     Comparison_result res_from = compare(cv[from], ARR_MIN_END);
-    if (res_from == EQUAL) return from;
+    if (res_from == EQUAL) {
+      end = ARR_MIN_END;
+      return from;
+    }
 
     Comparison_result res_to = compare(cv[to], ARR_MAX_END);
-    if (res_to == EQUAL) return to;
+    if (res_to == EQUAL) {
+      end = ARR_MAX_END;
+      return to;
+    }
 
     if (res_to == res_from) return INVALID_INDEX;
 
     // Perform a binary search to locate the subcurve that contains q in its
-    // range:
+    // range. Invariant: q lies strictly between the left end of cv[from] and
+    // the right end of cv[to].
     while (((direction == SMALLER) && (to > from)) || ((direction == LARGER) && (to < from))) {
       std::size_t mid = (from + to) / 2;
       if (((direction == SMALLER) && (mid > from)) || ((direction == LARGER) && (mid < from))) {
@@ -2372,8 +2385,15 @@ protected:
         if (res_mid == EQUAL) {
           // Ensure that the returned subcurve contains the query point
           // on its right end (if possible)
-          if ((direction == SMALLER) && (mid > 0)) --mid;
-          else if ((direction == LARGER) && ((mid + 1) < cv.number_of_subcurves())) ++mid;
+          if ((direction == SMALLER) && (mid > 0)) {
+            end = ARR_MAX_END;
+            return mid - 1;
+          }
+          if ((direction == LARGER) && ((mid + 1) < cv.number_of_subcurves())) {
+            end = ARR_MAX_END;
+            return mid + 1;
+          }
+          end = ARR_MIN_END;
           return mid;
         }
         if (res_mid == res_from) from = mid;
@@ -2382,14 +2402,27 @@ protected:
       else {
         CGAL_assertion(((direction == SMALLER) && (mid < to)) || ((direction == LARGER) && (mid > to)));
         Comparison_result res_mid = compare(cv[mid], ARR_MAX_END);
-        if (res_mid == EQUAL) return mid;
+        if (res_mid == EQUAL) {
+          end = ARR_MAX_END;
+          return mid;
+        }
         if (res_mid == res_to) to = mid;
         else from = (direction == SMALLER) ? mid + 1 : mid - 1;
       }
     }
-    // In case (from == to), and we know that the polycurve contains the q:
+    // In case (from == to), and we know that the polycurve contains the q.
+    // By the invariant, q lies in the interior of the x-range of cv[from].
     CGAL_assertion(from == to);
     return from;
+  }
+
+  /*! obtains the index of the subcurve in the polycurve that contains a point
+   * \f$q\f$ in its \f$x\f$-range.
+   */
+  template <typename Compare>
+  std::size_t locate_gen(const X_monotone_curve_2& cv, Compare compare) const {
+    std::optional<Arr_curve_end> end;
+    return locate_gen(cv, compare, end);
   }
 
   // A utility class that compare a curve-end with a point.
@@ -2538,8 +2571,14 @@ protected:
   std::size_t locate_impl(const X_monotone_curve_2& xcv, const Point_2& p, Arr_all_sides_oblivious_tag) const
   { return locate(xcv, p); }
 
-  //
-  std::size_t locate(const X_monotone_curve_2& xcv, const Point_2& q) const {
+  /*! locates the index of a curve in a polycurve that contains a point.
+   * \param(in) xcv the given polycurve.
+   * \param(in) q the query point.
+   * \param(out) end the end of the located curve that `q` coincides with (if
+   *             `xcv` is vertical) or whose \f$x\f$-coordinate is that of `q`
+   *             (otherwise), or empty if there is no such end.
+   */
+  std::size_t locate(const X_monotone_curve_2& xcv, const Point_2& q, std::optional<Arr_curve_end>& end) const {
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     if (geom_traits->is_vertical_2_object()(xcv[0])) {
       CGAL_precondition_code
@@ -2552,11 +2591,17 @@ protected:
          );
 
       Compare_points<Compare_xy_2> compare(*geom_traits, compare_xy_2_object(), q);
-      return locate_gen(xcv, compare);
+      return locate_gen(xcv, compare, end);
     }
 
     Compare_points<Compare_x_2> compare(*geom_traits, compare_x_2_object(), q);
-    return locate_gen(xcv, compare);
+    return locate_gen(xcv, compare, end);
+  }
+
+  //
+  std::size_t locate(const X_monotone_curve_2& xcv, const Point_2& q) const {
+    std::optional<Arr_curve_end> end;
+    return locate(xcv, q, end);
   }
 
   /*! finds the index of the subcurve in the polycurve that is defined to the
@@ -2569,21 +2614,19 @@ protected:
    *         to the right) of `q`, or `INVALID_INDEX` if no such subcurve exists.
    */
   std::size_t locate_side(const X_monotone_curve_2& cv, const Point_2& q, const bool& to_right) const {
-    // First locate a subcurve subcurves[i] that contains q in its x-range.
-    std::size_t i = locate(cv, q);
+    // First locate a subcurve subcurves[i] that contains q in its x-range;
+    // obtain also whether q is an endpoint of subcurves[i] (in which case,
+    // the comparison of q with the endpoint is already known).
+    std::optional<Arr_curve_end> end;
+    std::size_t i = locate(cv, q, end);
     if (i == INVALID_INDEX) return INVALID_INDEX;
 
-    auto equal = subcurve_traits_2()->equal_2_object();
-    auto cmp_endpts = subcurve_traits_2()->compare_endpoints_xy_2_object();
-    auto cmp_x = subcurve_traits_2()->compare_x_2_object();
-    auto is_vert = subcurve_traits_2()->is_vertical_2_object();
-    auto get_max_v = subcurve_traits_2()->construct_max_vertex_2_object();
-    auto get_min_v = subcurve_traits_2()->construct_min_vertex_2_object();
+    // In case q is in cv[i]'s interior:
+    if (! end) return i;
 
-    Comparison_result direction = cmp_endpts(cv[i]);
+    Comparison_result direction = subcurve_traits_2()->compare_endpoints_xy_2_object()(cv[i]);
 
-    if ((! is_vert(cv[0]) && (cmp_x(get_min_v(cv[i]), q) == EQUAL)) ||
-        (is_vert(cv[0]) && equal(get_min_v(cv[i]), q))) {
+    if (*end == ARR_MIN_END) {
       // q is the left endpoint of the i-th subcurve:
       if (to_right) return i;
 
@@ -2596,20 +2639,14 @@ protected:
       return i+1;
     }
 
-    if ((! is_vert(cv[0]) && (cmp_x(get_max_v(cv[i]), q) == EQUAL)) ||
-        (is_vert(cv[0]) && equal(get_max_v(cv[i]), q))) {
-      // q is the right endpoint of the i-th subcurve:
-      if (! to_right) return i;
-      if (direction == SMALLER) {
-        if (i == (cv.number_of_subcurves() - 1)) return INVALID_INDEX;
-        return i + 1;
-      }
-      if (i == 0) return INVALID_INDEX;
-      return i-1;
+    // q is the right endpoint of the i-th subcurve:
+    if (! to_right) return i;
+    if (direction == SMALLER) {
+      if (i == (cv.number_of_subcurves() - 1)) return INVALID_INDEX;
+      return i + 1;
     }
-
-    // In case q is in cv[i]'s interior:
-    return i;
+    if (i == 0) return INVALID_INDEX;
+    return i-1;
   }
 };
 
