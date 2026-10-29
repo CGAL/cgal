@@ -29,6 +29,8 @@ if(CGAL_SetupCGALDependencies_included)
 endif()
 set(CGAL_SetupCGALDependencies_included TRUE)
 
+option(CGAL_ENABLE_EXPENSIVE_ASSERTIONS "Enable expensive CGAL checks" OFF)
+
 #.rst:
 # Used Modules
 # ^^^^^^^^^^^^
@@ -95,6 +97,10 @@ function(CGAL_setup_CGAL_dependencies target)
   endif()
   if (RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     target_compile_definitions(${target} INTERFACE CGAL_TEST_SUITE=1)
+  endif()
+
+  if(CGAL_ENABLE_EXPENSIVE_ASSERTIONS)
+    target_compile_definitions(${target} INTERFACE CGAL_CHECK_EXPENSIVE)
   endif()
 
   use_CGAL_Boost_support(${target} INTERFACE)

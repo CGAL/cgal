@@ -85,7 +85,12 @@ and will serverly limit performances.
 | Variable              | Description                                                           | Type        | %Default Value |
 | :-                    | :-                    | :-   |  :-            |
 | `CGAL_DIR`            | Full-path to the binary directory where \cgal was configured          |Either CMake or Environment | none |
+| `CGAL_ENABLE_EXPENSIVE_ASSERTIONS` | Enables expensive checks by defining `CGAL_CHECK_EXPENSIVE` for targets linked to `CGAL::CGAL` | CMake | OFF |
 | `Qt6_DIR`             | Full-path to the Qt cmake directory  |CMake| platform-dependent|
+
+Expensive assertions, preconditions, and postconditions can be enabled with
+`-DCGAL_ENABLE_EXPENSIVE_ASSERTIONS=ON`. As with other checks, they are disabled
+when `NDEBUG` is defined, unless `CGAL_DEBUG` is also defined. See \ref devman_checks.
 
 
 \subsection installation_variables_third_party Variables Providing Information About 3rd-Party Libraries
