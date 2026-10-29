@@ -23,6 +23,8 @@
 #include <array>
 #include <atomic>
 #include <numeric>
+#include <type_traits>
+#include <map>
 #include <cmath>
 #include <algorithm>
 
@@ -31,6 +33,8 @@
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Convex_hull_traits_adapter_2.h>
 #include <CGAL/property_map.h>
+#include <CGAL/type_traits.h>
+#include <boost/property_map/property_map.hpp>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_diagonalize_traits.h>
@@ -267,9 +271,15 @@ private:
     std::vector<Point_3> points; // Vertices of the first polygon of the group.
     Plane_3 first_plane; // Plane fitted to the first polygon of the group.
     Plane_3 plane; // Plane fitted to the vertices of the polygons inserted together with the first polygon of the group.
+    std::size_t plane_index = std::size_t(-1); // Index of the exact plane of the group into m_planes.
   };
   std::vector<Coplanar_group> m_coplanar_groups;
-  std::vector<typename Intersection_kernel::Plane_3> m_planes; // Plane of each group in m_coplanar_groups.
+  std::vector<typename Intersection_kernel::Plane_3> m_planes; // Distinct planes of the inserted polygons, see input_planes().
+
+  // The polygons are either all inserted by insert() or all by insert_exact().
+  enum class Input_mode { none, inexact, exact };
+  Input_mode m_input_mode = Input_mode::none;
+  std::map<std::array<typename Intersection_kernel::FT, 4>, std::size_t> m_exact_plane_indices; // Normalized planes of insert_exact() and their index into m_planes.
   std::vector<std::size_t> m_input_plane_indices; // Index into m_planes for each inserted polygon, std::size_t(-1) for dropped degenerate polygons.
   std::vector<std::size_t> m_input2regularized; // Mapping from inserted polygons to the input polygons of the partition, std::size_t(-1) for dropped degenerate polygons.
   std::vector<std::vector<std::size_t> > m_regularized2input; // Mapping from partitioning planes to original input polygons.
@@ -443,6 +453,9 @@ public:
 
     static_assert(std::is_same_v<typename NP_helper::Geom_traits, Kernel>);
 
+    CGAL_precondition_msg(m_input_mode != Input_mode::exact, "Polygons inserted by insert() and by insert_exact() cannot be mixed.");
+    m_input_mode = Input_mode::inexact;
+
     PointMap point_map = NP_helper::get_point_map(np);
 
     std::size_t offset = m_input2regularized.size();
@@ -483,33 +496,127 @@ public:
       if (group[p] != std::size_t(-1) && group[p] >= first_new_group)
         std::copy(polygon_points[p].begin(), polygon_points[p].end(), std::back_inserter(group_points[group[p] - first_new_group]));
 
-    To_exact to_exact;
     for (std::size_t g = 0; g < group_points.size(); g++) {
-      fit_plane(group_points[g], m_coplanar_groups[first_new_group + g].plane);
-      m_planes.push_back(reproducible_plane(group_points[g], m_coplanar_groups[first_new_group + g].plane));
+      Coplanar_group& cg = m_coplanar_groups[first_new_group + g];
+      fit_plane(group_points[g], cg.plane);
+      cg.plane_index = m_planes.size();
+      m_planes.push_back(reproducible_plane(group_points[g], cg.plane));
     }
 
+    To_exact to_exact;
     for (std::size_t p = 0; p < polygons.size(); p++) {
       if (group[p] == std::size_t(-1)) {
-        m_input2regularized.push_back(std::size_t(-1));
-        m_input_plane_indices.push_back(std::size_t(-1));
+        add_dropped_input_polygon();
         continue;
       }
 
-      std::vector<IkPoint_3> ch;
-      process_input_polygon(polygon_points[p], m_planes[group[p]], ch);
+      std::vector<IkPoint_3> exact_points(polygon_points[p].size());
+      for (std::size_t i = 0; i < polygon_points[p].size(); i++)
+        exact_points[i] = to_exact(polygon_points[p][i]);
 
-      // Coplanar input polygons are inserted separately. They share a support plane in the kinetic partition.
-      m_input2regularized.push_back(m_input_planes.size());
-      m_regularized2input.push_back(std::vector<std::size_t>());
-      m_regularized2input.back().push_back(p + offset);
-      m_input_planes.push_back(m_planes[group[p]]);
-      m_input_plane_indices.push_back(group[p]);
-      From_exact from_exact;
-      m_input_polygons.push_back(std::vector<Point_3>(ch.size()));
-      for (std::size_t i = 0; i < ch.size(); i++)
-        m_input_polygons.back()[i] = from_exact(ch[i]);
-      m_input_polygons_exact.push_back(std::move(ch));
+      const std::size_t plane_index = m_coplanar_groups[group[p]].plane_index;
+      std::vector<IkPoint_3> ch;
+      process_input_polygon(exact_points, m_planes[plane_index], ch);
+      add_input_polygon(std::move(ch), plane_index, p + offset);
+    }
+  }
+
+  /*!
+  \brief inserts polygons together with their exact support planes, requires `initialize()` or `init_and_partition()` afterwards to have effect.
+
+  In contrast to `insert()`, the planes are used as given. No plane is fitted, no polygons are grouped and nothing is rounded.
+  Thus, exact relations between the planes, e.g., parallelism or orthogonality, are preserved and the partition
+  does not depend on floating-point computations.
+
+  The vertices of each polygon are projected exactly and orthogonally onto its plane, and the polygon is replaced by the convex hull
+  of the projected vertices. Polygons whose projected vertices are collinear or that have less than three vertices are dropped.
+
+  Polygons with the same plane, with the same or the opposite orientation, share a support plane in the partition and expand separately,
+  as coplanar polygons inserted by `insert()`.
+
+  \tparam PointRange
+  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is `GeomTraits::Point_3` or `IntersectionKernel::Point_3`.
+
+  \tparam PolygonRange
+  contains index ranges to form polygons by providing indices into PointRange
+
+  \tparam PlaneRange
+  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is `IntersectionKernel::Plane_3`.
+
+  \tparam NamedParameters
+  a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param points
+  an instance of `PointRange` with 3D points
+
+  \param polygons
+  a range of polygons defined by a range of indices into `points`
+
+  \param planes
+  the support plane of each polygon, i.e., `planes[i]` is the plane of `polygons[i]`
+
+  \param np
+  a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3` or `IntersectionKernel::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<GeomTraits::Point_3>`}
+     \cgalParamNEnd
+  \cgalNamedParamsEnd
+
+  \pre `planes` has the same size as `polygons` and contains no degenerate plane.
+  \pre `insert()` has not been called before. The polygons are either all inserted by `insert()` or all by `insert_exact()`.
+  */
+  template<typename PointRange, typename PolygonRange, typename PlaneRange, typename NamedParameters = parameters::Default_named_parameters>
+  void insert_exact(
+    const PointRange& points,
+    const PolygonRange& polygons,
+    const PlaneRange& planes,
+    const NamedParameters& np = CGAL::parameters::default_values()) {
+
+    using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
+    using PointMap = typename NP_helper::Point_map;
+    using Input_point = CGAL::cpp20::remove_cvref_t<typename boost::property_traits<PointMap>::value_type>;
+
+    static_assert(std::is_same_v<Input_point, Point_3> || std::is_same_v<Input_point, IkPoint_3>,
+      "The points must be of type GeomTraits::Point_3 or IntersectionKernel::Point_3.");
+
+    CGAL_precondition_msg(m_input_mode != Input_mode::inexact, "Polygons inserted by insert() and by insert_exact() cannot be mixed.");
+    CGAL_precondition(std::size_t(std::distance(planes.begin(), planes.end())) == std::size_t(polygons.size()));
+    m_input_mode = Input_mode::exact;
+
+    PointMap point_map = NP_helper::get_point_map(np);
+    const std::size_t offset = m_input2regularized.size();
+
+    auto exact_point = [](const Input_point& p) -> IkPoint_3 {
+      if constexpr (std::is_same_v<Input_point, IkPoint_3>)
+        return p;
+      else
+        return To_exact()(p);
+    };
+
+    for (std::size_t p = 0; p < polygons.size(); p++) {
+      const typename Intersection_kernel::Plane_3& plane = *(planes.begin() + p);
+      CGAL_precondition(!plane.is_degenerate());
+
+      std::vector<IkPoint_3> exact_points;
+      exact_points.reserve(polygons[p].size());
+      for (auto it : polygons[p])
+        exact_points.push_back(exact_point(get(point_map, *(points.begin() + it))));
+
+      std::vector<IkPoint_3> ch;
+      if (exact_points.size() >= 3)
+        process_input_polygon(exact_points, plane, ch, true);
+
+      // Polygons with less than three vertices or collinear vertices after the projection are dropped.
+      if (ch.size() < 3) {
+        add_dropped_input_polygon();
+        continue;
+      }
+
+      add_input_polygon(std::move(ch), exact_plane_index(plane), p + offset);
     }
   }
 
@@ -756,7 +863,8 @@ public:
   /*!
   \brief provides the planes of the input polygons.
 
-  Polygons that are coplanar up to a small tolerance share a plane. Thus, each plane occurs only once.
+  Polygons inserted by `insert()` that are coplanar up to a small tolerance share a plane. Polygons inserted by `insert_exact()` share a plane if their
+  given planes are equal, with the same or the opposite orientation. Thus, each plane occurs only once.
   The planes are indexed by `input_plane_indices()` and by the input plane index stored in the face attributes of the linear cell complex, see `get_linear_cell_complex()`.
 
   @return
@@ -771,7 +879,7 @@ public:
   /*!
   \brief provides the index of the plane of each input polygon into `input_planes()`.
 
-  Polygons that are coplanar up to a small tolerance share a plane and thus have the same index.
+  Polygons that share a plane, see `input_planes()`, have the same index.
   Degenerate polygons, i.e., polygons with less than three vertices or with collinear vertices, are dropped when inserted. Their index is `std::size_t(-1)`.
 
   @return
@@ -1156,19 +1264,59 @@ private:
     return typename Intersection_kernel::Plane_3(a * num, b * num, c * num, -(a * cx + b * cy + c * cz));
   }
 
+  // Registers an input polygon that is dropped as it is degenerate.
+  void add_dropped_input_polygon() {
+    m_input2regularized.push_back(std::size_t(-1));
+    m_input_plane_indices.push_back(std::size_t(-1));
+  }
+
+  // Registers an input polygon, given by its exact vertices on the plane m_planes[plane_index].
+  void add_input_polygon(std::vector<IkPoint_3>&& vertices, std::size_t plane_index, std::size_t input_index) {
+    // Coplanar input polygons are inserted separately. They share a support plane in the kinetic partition.
+    m_input2regularized.push_back(m_input_planes.size());
+    m_regularized2input.push_back(std::vector<std::size_t>());
+    m_regularized2input.back().push_back(input_index);
+    m_input_planes.push_back(m_planes[plane_index]);
+    m_input_plane_indices.push_back(plane_index);
+    From_exact from_exact;
+    m_input_polygons.push_back(std::vector<Point_3>(vertices.size()));
+    for (std::size_t i = 0; i < vertices.size(); i++)
+      m_input_polygons.back()[i] = from_exact(vertices[i]);
+    m_input_polygons_exact.push_back(std::move(vertices));
+  }
+
+  // Provides the index of the plane into m_planes for insert_exact(). Planes that are equal up to a non-zero factor,
+  // i.e., with the same or the opposite orientation, get the same index. The plane is added if it is new.
+  std::size_t exact_plane_index(const typename Intersection_kernel::Plane_3& plane) {
+    using IFT = typename Intersection_kernel::FT;
+    // The coefficients are normalized by the first non-zero coefficient of the normal.
+    const IFT& f = !CGAL::is_zero(plane.a()) ? plane.a() : (!CGAL::is_zero(plane.b()) ? plane.b() : plane.c());
+    std::array<IFT, 4> key = { plane.a() / f, plane.b() / f, plane.c() / f, plane.d() / f };
+    auto it = m_exact_plane_indices.find(key);
+    if (it != m_exact_plane_indices.end())
+      return it->second;
+
+    const std::size_t idx = m_planes.size();
+    m_planes.push_back(plane);
+    m_exact_plane_indices.insert(std::make_pair(std::move(key), idx));
+    return idx;
+  }
+
   // Projects the vertices of the polygon exactly onto the plane and provides their convex hull.
-  void process_input_polygon(const std::vector<Point_3>& poly, const typename Intersection_kernel::Plane_3& pl, std::vector<IkPoint_3>& ch) const {
+  // The vertices are projected orthogonally if `orthogonal` is true and along the coordinate axis that is most orthogonal to the plane otherwise, see project_along_axis().
+  void process_input_polygon(const std::vector<IkPoint_3>& poly, const typename Intersection_kernel::Plane_3& pl, std::vector<IkPoint_3>& ch, bool orthogonal = false) const {
     using IkPoint_2 = typename Intersection_kernel::Point_2;
     const double ax = CGAL::abs(CGAL::to_double(pl.a())), ay = CGAL::abs(CGAL::to_double(pl.b())), az = CGAL::abs(CGAL::to_double(pl.c()));
-    // The coordinate that is changed by project_along_axis() is dropped. The other two are taken in cyclic order.
+    // The hull is computed in the coordinate plane of the two coordinates that are not along the axis most orthogonal to the plane.
+    // The projection of the plane onto that coordinate plane is bijective. The two coordinates are taken in cyclic order.
     const int axis = (az >= ax && az >= ay) ? 2 : ((ay >= ax) ? 1 : 0);
     const int u = (axis + 1) % 3, v = (axis + 2) % 3;
 
-    To_exact to_exact;
     std::vector<IkPoint_3> pts3d(poly.size());
     std::vector<IkPoint_2> pts2d(poly.size());
     for (std::size_t i = 0; i < poly.size(); i++) {
-      pts3d[i] = project_along_axis(pl, to_exact(poly[i]));
+      pts3d[i] = orthogonal ? pl.projection(poly[i]) : project_along_axis(pl, poly[i]);
+      CGAL_assertion(pl.has_on(pts3d[i]));
       pts2d[i] = IkPoint_2(pts3d[i][u], pts3d[i][v]);
     }
 
@@ -1222,7 +1370,7 @@ private:
     const FT tolerance = FT(1e-6);
 
     FT min[3], max[3];
-    for (std::size_t d = 0; d < 3; d++) {
+    for (int d = 0; d < 3; d++) {
       min[d] = max[d] = a[0][d];
       for (const Point_3& p : a) {
         min[d] = (std::min)(min[d], p[d]);
@@ -2682,7 +2830,7 @@ private:
     }
 
     // The bounding box, which is dilated per dimension, needs a positive extent in each dimension.
-    for (std::size_t d = 0; d < 3; d++) {
+    for (int d = 0; d < 3; d++) {
       auto cmp = [d](const typename Intersection_kernel::Point_3& a, const typename Intersection_kernel::Point_3& b) { return a[d] < b[d]; };
       auto mm = std::minmax_element(pts.begin(), pts.end(), cmp);
       if (mm.first == pts.end() || (*mm.first)[d] == (*mm.second)[d]) {
