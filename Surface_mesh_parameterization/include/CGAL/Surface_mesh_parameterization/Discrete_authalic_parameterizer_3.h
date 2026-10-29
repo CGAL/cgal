@@ -176,16 +176,19 @@ protected:
                           Vertex_around_target_circulator<Triangle_mesh> neighbor_vertex_v_j) const
   {
     const PPM ppmap = get(vertex_point, mesh);
+    vertex_descriptor v = *neighbor_vertex_v_j;
     const Point_3& position_v_i = get(ppmap, main_vertex_v_i);
-    const Point_3& position_v_j = get(ppmap, *neighbor_vertex_v_j);
+    const Point_3& position_v_j = get(ppmap, v);
 
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     --previous_vertex_v_k;
-    const Point_3& position_v_k = get(ppmap, *previous_vertex_v_k);
+    v = *previous_vertex_v_k;
+    const Point_3& position_v_k = get(ppmap, v);
 
     vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
     ++next_vertex_v_l;
-    const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
+    v = *next_vertex_v_l;
+    const Point_3& position_v_l = get(ppmap, v);
 
     return CGAL::Weights::authalic_weight(position_v_l, position_v_j, position_v_k, position_v_i) / NT(2);
   }

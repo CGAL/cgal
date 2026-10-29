@@ -822,7 +822,8 @@ public:
 
       // get the halfedge uv
       // Write constant in Bu and Bv
-      const Point_2& uv = get(uvmap, target(hd, tmesh));
+      vertex_descriptor vt = target(hd, tmesh);
+      const Point_2& uv = get(uvmap, vt);
       Bu[index] = uv.x();
       Bv[index] = uv.y();
     }
