@@ -23,11 +23,18 @@
 #include <array>
 #include <atomic>
 #include <numeric>
+#include <cmath>
+#include <algorithm>
 
 // CGAL includes.
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/convex_hull_2.h>
+#include <CGAL/Convex_hull_traits_adapter_2.h>
+#include <CGAL/property_map.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_diagonalize_traits.h>
+#endif
 #include <CGAL/Real_timer.h>
 #include <CGAL/tags.h>
 #ifdef CGAL_LINKED_WITH_TBB
@@ -252,6 +259,7 @@ private:
   std::vector<Point_3> m_points;
   std::vector<std::vector<std::size_t> > m_polygons;
   std::vector<std::vector<Point_3> > m_input_polygons;
+  std::vector<std::vector<IkPoint_3> > m_input_polygons_exact; // Exact vertices of m_input_polygons, lying exactly on their support plane.
   std::vector<typename Intersection_kernel::Plane_3> m_input_planes;
 
   // Polygons that are coplanar up to a tolerance share a plane.
@@ -458,7 +466,7 @@ public:
         continue;
 
       Plane_3 pl;
-      CGAL::linear_least_squares_fitting_3(polygon_points[p].begin(), polygon_points[p].end(), pl, CGAL::Dimension_tag<0>());
+      fit_plane(polygon_points[p], pl);
 
       for (std::size_t g = 0; g < m_coplanar_groups.size() && group[p] == std::size_t(-1); g++)
         if (nearly_coplanar(polygon_points[p], pl, m_coplanar_groups[g].points, m_coplanar_groups[g].first_plane))
@@ -477,8 +485,8 @@ public:
 
     To_exact to_exact;
     for (std::size_t g = 0; g < group_points.size(); g++) {
-      CGAL::linear_least_squares_fitting_3(group_points[g].begin(), group_points[g].end(), m_coplanar_groups[first_new_group + g].plane, CGAL::Dimension_tag<0>());
-      m_planes.push_back(to_exact(m_coplanar_groups[first_new_group + g].plane));
+      fit_plane(group_points[g], m_coplanar_groups[first_new_group + g].plane);
+      m_planes.push_back(reproducible_plane(group_points[g], m_coplanar_groups[first_new_group + g].plane));
     }
 
     for (std::size_t p = 0; p < polygons.size(); p++) {
@@ -488,10 +496,8 @@ public:
         continue;
       }
 
-      const Plane_3& pl = m_coplanar_groups[group[p]].plane;
-
-      std::vector<Point_2> ch;
-      process_input_polygon(polygon_points[p], pl, ch);
+      std::vector<IkPoint_3> ch;
+      process_input_polygon(polygon_points[p], m_planes[group[p]], ch);
 
       // Coplanar input polygons are inserted separately. They share a support plane in the kinetic partition.
       m_input2regularized.push_back(m_input_planes.size());
@@ -499,10 +505,11 @@ public:
       m_regularized2input.back().push_back(p + offset);
       m_input_planes.push_back(m_planes[group[p]]);
       m_input_plane_indices.push_back(group[p]);
+      From_exact from_exact;
       m_input_polygons.push_back(std::vector<Point_3>(ch.size()));
-
       for (std::size_t i = 0; i < ch.size(); i++)
-        m_input_polygons.back()[i] = pl.to_3d(ch[i]);
+        m_input_polygons.back()[i] = from_exact(ch[i]);
+      m_input_polygons_exact.push_back(std::move(ch));
     }
   }
 
@@ -1102,13 +1109,83 @@ private:
   }
 
   // Computes the convex hull of the polygon projected onto the plane pl.
-  void process_input_polygon(const std::vector<Point_3>& poly, const Plane_3& pl, std::vector<Point_2>& ch) const {
-    std::vector<Point_2> pts2d(poly.size());
-    for (std::size_t i = 0; i < poly.size(); i++)
-      pts2d[i] = pl.to_2d(poly[i]);
+  // Least-squares plane of the points. The diagonalization uses Eigen if available. Otherwise, KSP::internal::Jacobi_diagonalize_traits_3
+  // is used instead of the deprecated CGAL::Diagonalize_traits, which is too inaccurate. The fitted planes agree up to rounding
+  // errors with and without Eigen.
+  void fit_plane(const std::vector<Point_3>& pts, Plane_3& pl) const {
+#ifdef CGAL_EIGEN3_ENABLED
+    using Diagonalize_traits = CGAL::Eigen_diagonalize_traits<FT, 3>;
+#else
+    using Diagonalize_traits = KSP::internal::Jacobi_diagonalize_traits_3<FT>;
+#endif
+    Point_3 centroid;
+    CGAL::linear_least_squares_fitting_3(pts.begin(), pts.end(), pl, centroid, CGAL::Dimension_tag<0>(), Kernel(), Diagonalize_traits());
+  }
+
+  // Computes the exact support plane of a group of coplanar polygons from the plane fitted to their vertices.
+  // The fitted plane is computed with floating-point arithmetic and its last bits depend on the platform, e.g., on the
+  // contraction of multiplications and additions into fused multiply-add instructions, on vectorization, and on the
+  // eigen solver (Eigen or not). Using it directly as exact support plane makes the partition platform dependent.
+  // Thus, the normal is normalized and rounded to a coarse grid and the plane passes through the exact centroid of the vertices.
+  typename Intersection_kernel::Plane_3 reproducible_plane(const std::vector<Point_3>& pts, const Plane_3& fitted) const {
+    using IFT = typename Intersection_kernel::FT;
+    double n[3] = { CGAL::to_double(fitted.a()), CGAL::to_double(fitted.b()), CGAL::to_double(fitted.c()) };
+    const double m = (std::max)({ std::abs(n[0]), std::abs(n[1]), std::abs(n[2]) });
+    CGAL_assertion(m > 0);
+
+    // Rounding of the normal with a scale of 2^-30. Platform-dependent deviations of the fitting are many orders of magnitude smaller.
+    for (std::size_t i = 0; i < 3; i++)
+      n[i] = std::ldexp(std::round(std::ldexp(n[i] / m, 30)), -30);
+
+    // The orientation of the fitted normal depends on the eigen solver. The first non-zero coordinate is made positive.
+    const double sign = (n[0] != 0) ? n[0] : ((n[1] != 0) ? n[1] : n[2]);
+    if (sign < 0)
+      for (std::size_t i = 0; i < 3; i++)
+        n[i] = -n[i];
+
+    To_exact to_exact;
+    IFT cx = 0, cy = 0, cz = 0;
+    for (const Point_3& p : pts) {
+      const IkPoint_3 q = to_exact(p);
+      cx += q.x();
+      cy += q.y();
+      cz += q.z();
+    }
+    const IFT a(n[0]), b(n[1]), c(n[2]);
+    const IFT num = IFT(static_cast<double>(pts.size()));
+    return typename Intersection_kernel::Plane_3(a * num, b * num, c * num, -(a * cx + b * cy + c * cz));
+  }
+
+  // Projects the vertices of the polygon exactly onto the plane and provides their convex hull.
+  void process_input_polygon(const std::vector<Point_3>& poly, const typename Intersection_kernel::Plane_3& pl, std::vector<IkPoint_3>& ch) const {
+    using IkPoint_2 = typename Intersection_kernel::Point_2;
+    const double ax = CGAL::abs(CGAL::to_double(pl.a())), ay = CGAL::abs(CGAL::to_double(pl.b())), az = CGAL::abs(CGAL::to_double(pl.c()));
+    // The coordinate that is changed by project_along_axis() is dropped. The other two are taken in cyclic order.
+    const int axis = (az >= ax && az >= ay) ? 2 : ((ay >= ax) ? 1 : 0);
+    const int u = (axis + 1) % 3, v = (axis + 2) % 3;
+
+    To_exact to_exact;
+    std::vector<IkPoint_3> pts3d(poly.size());
+    std::vector<IkPoint_2> pts2d(poly.size());
+    for (std::size_t i = 0; i < poly.size(); i++) {
+      pts3d[i] = project_along_axis(pl, to_exact(poly[i]));
+      pts2d[i] = IkPoint_2(pts3d[i][u], pts3d[i][v]);
+    }
+
+    std::vector<std::size_t> idx(poly.size()), hull;
+    std::iota(idx.begin(), idx.end(), 0);
+    using Pmap = typename CGAL::Pointer_property_map<IkPoint_2>::type;
+    using Hull_traits = CGAL::Convex_hull_traits_adapter_2<Intersection_kernel, Pmap>;
+    CGAL::convex_hull_2(idx.begin(), idx.end(), std::back_inserter(hull), Hull_traits(CGAL::make_property_map(pts2d)));
 
     ch.clear();
-    CGAL::convex_hull_2(pts2d.begin(), pts2d.end(), std::back_inserter(ch));
+    for (std::size_t i : hull)
+      ch.push_back(pts3d[i]);
+
+    // The hull is counterclockwise in the coordinate plane. It is reversed if the normal points to the negative side.
+    const auto& coeff = (axis == 0) ? pl.a() : ((axis == 1) ? pl.b() : pl.c());
+    if (CGAL::is_negative(coeff))
+      std::reverse(ch.begin(), ch.end());
   }
 
   // Provides three points of the polygon that are not collinear. The points are chosen to span a large triangle.
@@ -2578,11 +2655,11 @@ private:
       for (std::size_t i = 0; i < m_input_polygons.size(); i++) {
         const auto& p = m_input_polygons[i];
         std::size_t idx = m_points.size();
-        for (const Point_3& pt : p) {
-          m_points.push_back(trans.transform(pt));
-          // Project exactly onto the support plane, so that the clipped polygons are exactly
+        for (std::size_t j = 0; j < p.size(); j++) {
+          m_points.push_back(trans.transform(p[j]));
+          // The exact vertices lie exactly on the support plane, so that the clipped polygons are exactly
           // incident to the intersection lines of their support plane and the octree box planes.
-          pts.push_back(m_transform.transform(project_along_axis(m_input_planes[i], to_exact(pt))));
+          pts.push_back(m_transform.transform(m_input_polygons_exact[i][j]));
         }
 
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
@@ -2596,10 +2673,9 @@ private:
         const auto& p = m_input_polygons[i];
         std::size_t idx = m_points.size();
         std::copy(p.begin(), p.end(), std::back_inserter(m_points));
-        // Project exactly onto the support plane, so that the clipped polygons are exactly
+        // The exact vertices lie exactly on the support plane, so that the clipped polygons are exactly
         // incident to the intersection lines of their support plane and the octree box planes.
-        for (const auto &pt : p)
-          pts.push_back(project_along_axis(m_input_planes[i], to_exact(pt)));
+        std::copy(m_input_polygons_exact[i].begin(), m_input_polygons_exact[i].end(), std::back_inserter(pts));
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
         std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
       }
