@@ -740,7 +740,7 @@ public:
     CGAL_For_all(circ, end) {
       //        std::cerr << s << std::endl;
       //        std::cerr << point(source(circ)) << "->" << point(target(circ)) << std::endl;
-      Object o = intersection(s, Segment(point(source(circ)),
+      auto o = intersection(s, Segment(point(source(circ)),
                                          point(target(circ))));
 
       if(assign(i,o)) {
