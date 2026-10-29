@@ -149,7 +149,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
       const halfedge_descriptor prev_oh = prev(opposite(h, tm), tm);
 
       // check that the border has at least 4 edges not to create degenerate volumes
-      if(border_size(h, tm) >= 4)
+      if(CGAL::internal::border_size(h, tm) >= 4)
       {
         const FT lambda = tol_s / (tol_s + tol_t);
         const Point new_p = ps + lambda * (pt - ps);
@@ -431,8 +431,8 @@ public:
     // only a single candidate that is in a direction we don't like, we still take it.
     //
     // @todo should the construct_projected_point_3 be anisotropic too?
-    const Point new_closest_point = m_gt.construct_projected_point_3_object()(
-      CGAL::internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits), query);
+    const Point new_closest_point = m_gt.has_on_3_object()(s, query) ? query :
+      m_gt.construct_projected_point_3_object()(s, query);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "closest point to primitive: " << new_closest_point << std::endl;
@@ -767,7 +767,8 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
         // @todo really shouldn't compute the position before here, then
         // @todo and avoid recomputing it if nothing has moved
         Segment s { get(vpm_T, source(h_to_split, tm_T)), get(vpm_T, target(h_to_split, tm_T)) };
-        tentative_new_position = gt.construct_projected_point_3_object()(s, tentative_new_position);
+        if(!gt.has_on_3_object()(s, tentative_new_position))
+          tentative_new_position = gt.construct_projected_point_3_object()(s, tentative_new_position);
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
         std::cout << "Tentative snapping position updated to: " << tentative_new_position << std::endl;
 #endif
