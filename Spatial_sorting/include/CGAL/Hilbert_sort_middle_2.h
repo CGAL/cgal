@@ -94,6 +94,39 @@ public:
   {}
 
   template <int x, bool upx, bool upy, class RandomAccessIterator>
+  void skip_empty_cells (RandomAccessIterator begin, RandomAccessIterator end,
+                         double xmin, double ymin, double xmax, double ymax, Bbox_2 bb) const
+  {
+    const int y = (x + 1) % 2;
+    double xmed= (xmin+xmax)/2;
+    double ymed= (ymin+ymax)/2;
+    const bool x_lower = (x==0) ? xmed<bb.xmin() : xmed<bb.ymin();
+    const bool x_upper = (x==0) ? xmed>bb.xmax() : xmed>bb.ymax();
+    const bool y_lower = (x==0) ? ymed<bb.ymin() : ymed<bb.xmin();
+    const bool y_upper = (x==0) ? ymed>bb.ymax() : ymed>bb.xmax();
+    if( (!x_lower && !x_upper) || (!y_lower && !y_upper)){
+      // Not contain in one quarter
+      sort<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax);
+      return;
+    }
+
+    if( x_upper != upx )
+    {
+      if( y_upper != upy )
+        skip_empty_cells<y, upy, upx> (begin, end, ymin, xmin, ymed, xmed, bb);
+      else
+        skip_empty_cells<x, upx, upy> (begin, end, xmin, ymed, xmed, ymax, bb);
+    }
+    else
+    {
+      if( y_upper != upy )
+        skip_empty_cells<y, !upx, !upy> (begin, end, ymed, xmax, ymin, xmed, bb);
+      else
+        skip_empty_cells<x, upx, upy> (begin, end, xmed, ymed, xmax, ymax, bb);
+    }
+  }
+
+  template <int x, bool upx, bool upy, class RandomAccessIterator>
   void sort (RandomAccessIterator begin, RandomAccessIterator end,
              double xmin, double ymin, double xmax, double ymax) const
   {
@@ -109,39 +142,33 @@ public:
     RandomAccessIterator m1 = internal::fixed_hilbert_split (m0, m2, Cmp< y,  upy> (ymed,_k));
     RandomAccessIterator m3 = internal::fixed_hilbert_split (m2, m4, Cmp< y, !upy> (ymed,_k));
 
-    if (m1!=m4)
+    if( ((m2 == m4) && ((m1 == m0) || (m1 == m2))) ||
+        ((m2 == m0) && ((m3 == m2) || (m3 == m4))) )
+    {
+      // All elements are in one quarter
+      if(_k.equal_2_object()(*begin, *end))
+        return; // Return if all elements are equal
+      Bbox_2 bb=bbox_2(begin, end, _k);
+      if constexpr(x == 0)
+        skip_empty_cells<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax, bb);
+      else
+        skip_empty_cells<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax, bb);
+    }
+    else
+    {
       sort<y, upy, upx> (m0, m1, ymin, xmin, ymed, xmed);
-    if (m1!=m0 || m2!=m4)
       sort<x, upx, upy> (m1, m2, xmin, ymed, xmed, ymax);
-    if (m2!=m0 || m3!=m4)
       sort<x, upx, upy> (m2, m3, xmed, ymed, xmax, ymax);
-    if (m3!=m0)
       sort<y,!upy,!upx> (m3, m4, ymed, xmax, ymin, xmed);
+    }
   }
 
   template <class RandomAccessIterator>
   void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
   {
     if (begin == end) return;
-
-    //Bbox_2 box=bbox_2(begin, end); BUG: WE NEED TO FIX THIS
-    double xmin=to_double(_k.compute_x_2_object()(*begin)),
-           ymin=to_double(_k.compute_y_2_object()(*begin)),
-           xmax=xmin,
-           ymax=ymin;
-
-    for(RandomAccessIterator it=begin+1; it<end; ++it){
-      if ( to_double(_k.compute_x_2_object()(*it)) < xmin)
-        xmin = to_double(_k.compute_x_2_object()(*it));
-      if ( to_double(_k.compute_y_2_object()(*it)) < ymin)
-        ymin = to_double(_k.compute_y_2_object()(*it));
-      if ( to_double(_k.compute_x_2_object()(*it)) > xmax)
-        xmax = to_double(_k.compute_x_2_object()(*it));
-      if ( to_double(_k.compute_y_2_object()(*it)) > ymax)
-        ymax = to_double(_k.compute_y_2_object()(*it));
-    }
-
-    sort <0, false, false> (begin, end, xmin, ymin, xmax, ymax);
+    Bbox_2 box=bbox_2(begin, end, _k);
+    sort <0, false, false> (begin, end, box.xmin(), box.ymin(), box.xmax(), box.ymax());
   }
 };
 
