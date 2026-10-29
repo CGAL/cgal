@@ -29,6 +29,9 @@ Release date: December 2026
 ### [2D Arrangements](https://doc.cgal.org/6.3/Manual/packages.html#PkgArrangementOnSurface2)
 
 - **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherit from it. In addition one can get and set a smart pointer to the class being decorated.
+- The functor `Equal_2` of `CGAL::Arr_segment_traits_2`, which hides the functor `Equal_2` of the kernel it derives from, also
+  determines whether two objects of any other type that `Kernel::Equal_2` accepts (e.g., two directions) are equal; that is,
+  it models the concept `Kernel::Equal_2` as well.
 
 ### [2D Envelopes](https://doc.cgal.org/6.3/Manual/packages.html#PkgEnvelope2)
 
