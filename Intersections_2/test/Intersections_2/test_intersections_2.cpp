@@ -853,6 +853,10 @@ struct Test
     check_intersection<P>  (Rec(p( 0,  0), p(1, 1)), T(p(   0,  0), p( -1,  0), p( 0,  -1))); // inversed triangle
     check_intersection<P>  (Rec(p( 0,  0), p(1, 1)), T(p(  -1,  0), p(  2,  3), p(-4,   6))); // intersection on an edge of the triangle
     check_intersection     (Rec(p( 0,  0), p(3, 3)), T(p( -10,  0), p(  0,  2), p(-1,   4)), p(0, 2)); // intersection on an edge of the iso rectangle
+    // a vertex of the triangle on a corner of the iso rectangle, the edges going away from it
+    check_intersection     (Rec(p(-3, -1), p(-2, 1)), T(p(   0, -3), p( -2,  1), p( 2,   3)), p(-2, 1));
+    check_intersection     (Rec(p(-2, -2), p(-1, 0)), T(p(   0,  3), p( -1,  0), p( 3,   0)), p(-1, 0));
+    check_intersection     (Rec(p(-3, -3), p(-2,-1)), T(p(  -1,  1), p( -1,  2), p(-2,  -1)), p(-2, -1));
 
     // segment intersection
     check_intersection<S>  (Rec(p( 0,  0), p(3, 3)), T(p( -10,  0), p(  0,  0), p(  0, 3)));
@@ -865,6 +869,9 @@ struct Test
     check_intersection<T>  (Rec(p( 0,  0), p(1, 1)), T(p(  -1,  0), p(  2,  2), p( -1,  2)));
     check_intersection<T>  (Rec(p( 0,  0), p(2, 2)), T(p(   0,  0), p(  1,  0), p(  0,  1)));
     check_intersection<T>  (Rec(p( 0,  0), p(3, 3)), T(p(   1,  1), p(  2,  1), p(  1,  2)));
+    // an edge of the triangle leaving or entering through a corner of the iso rectangle
+    check_intersection<T>  (Rec(p( 0,  0), p(2, 2)), T(p(   1,  1), p(  3,  3), p(  1,  3)));
+    check_intersection<T>  (Rec(p( 0,  0), p(2, 2)), T(p(   1,  1), p(  3,  1), p(  3,  3)));
 
     // polygon intersection
     check_intersection<Pol>(Rec(p(   0,   0), p(  1,   1)), T(p( -1, -2), p( -1,   2), p( 5,   2)));
