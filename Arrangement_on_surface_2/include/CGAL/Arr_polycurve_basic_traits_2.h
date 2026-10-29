@@ -188,7 +188,7 @@ public:
     Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1, const Point_2& p2,
                                  Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
-      auto p1 = (ce1 == ARR_MAX_END) ?
+      const auto& p1 = (ce1 == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs1) :
         geom_traits->construct_min_vertex_2_object()(xs1);
       return geom_traits->compare_x_2_object()(p1, p2);
@@ -209,7 +209,7 @@ public:
       auto ps_y = geom_traits->parameter_space_in_y_2_object();
       const Arr_parameter_space ps_y1 = ps_y(xs1, ce1);
       if (ps_y1 == ARR_INTERIOR) {
-        auto p1 = (ce1 == ARR_MAX_END) ?
+        const auto& p1 = (ce1 == ARR_MAX_END) ?
           geom_traits->construct_max_vertex_2_object()(xs1) :
           geom_traits->construct_min_vertex_2_object()(xs1);
         return geom_traits->compare_x_2_object()(p1, p2);
@@ -223,10 +223,10 @@ public:
                                  const X_monotone_subcurve_2& xs2, Arr_curve_end ce2,
                                  Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
-      auto p1 = (ce1 == ARR_MAX_END) ?
+      const auto& p1 = (ce1 == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs1) :
         geom_traits->construct_min_vertex_2_object()(xs1);
-      auto p2 = (ce2 == ARR_MAX_END) ?
+      const auto& p2 = (ce2 == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs2) :
         geom_traits->construct_min_vertex_2_object()(xs2);
       return geom_traits->compare_x_2_object()(p1, p2);
@@ -255,11 +255,11 @@ public:
       const Arr_parameter_space ps_y1 = ps_y(xs1, ce1);
       const Arr_parameter_space ps_y2 = ps_y(xs2, ce2);
       if (ps_y1 == ARR_INTERIOR) {
-        auto p1 = (ce1 == ARR_MAX_END) ?
+        const auto& p1 = (ce1 == ARR_MAX_END) ?
           geom_traits->construct_max_vertex_2_object()(xs1) :
           geom_traits->construct_min_vertex_2_object()(xs1);
         if (ps_y2 == ARR_INTERIOR) {
-          auto p2 = (ce2 == ARR_MAX_END) ?
+          const auto& p2 = (ce2 == ARR_MAX_END) ?
             geom_traits->construct_max_vertex_2_object()(xs2) :
             geom_traits->construct_min_vertex_2_object()(xs2);
           return geom_traits->compare_x_2_object()(p1, p2);
@@ -268,7 +268,7 @@ public:
         return cmp_x_on_bnd(p1, xs2, ce2);
       }
       if (ps_y2 == ARR_INTERIOR) {
-        auto p2 = (ce2 == ARR_MAX_END) ?
+        const auto& p2 = (ce2 == ARR_MAX_END) ?
           geom_traits->construct_max_vertex_2_object()(xs2) :
           geom_traits->construct_min_vertex_2_object()(xs2);
         auto cmp_x_on_bnd = geom_traits->compare_x_on_boundary_2_object();
@@ -344,7 +344,7 @@ public:
     Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1, const Point_2& p2,
                                  Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
-      auto p1 = (ce1 == ARR_MAX_END) ?
+      const auto& p1 = (ce1 == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs1) :
         geom_traits->construct_min_vertex_2_object()(xs1);
       return geom_traits->compare_xy_2_object()(p1, p2);
@@ -365,7 +365,7 @@ public:
       }
 
       if (ps_y1 == ARR_INTERIOR) {
-        auto p1 = (ce1 == ARR_MAX_END) ?
+        const auto& p1 = (ce1 == ARR_MAX_END) ?
           geom_traits->construct_max_vertex_2_object()(xs1) :
           geom_traits->construct_min_vertex_2_object()(xs1);
         return geom_traits->compare_xy_2_object()(p1, p2);
@@ -385,10 +385,10 @@ public:
                                  const X_monotone_subcurve_2& xs2, Arr_curve_end ce2,
                                  Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
-      auto p1 = (ce1 == ARR_MAX_END) ?
+      const auto& p1 = (ce1 == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs1) :
         geom_traits->construct_min_vertex_2_object()(xs1);
-      auto p2 = (ce2 == ARR_MAX_END) ?
+      const auto& p2 = (ce2 == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs2) :
         geom_traits->construct_min_vertex_2_object()(xs2);
       return geom_traits->compare_xy_2_object()(p1, p2);
@@ -414,13 +414,13 @@ public:
       }
 
       if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR)) {
-        auto p1 = (ce1 == ARR_MAX_END) ?
+        const auto& p1 = (ce1 == ARR_MAX_END) ?
           geom_traits->construct_max_vertex_2_object()(xs1) :
           geom_traits->construct_min_vertex_2_object()(xs1);
         // ps1 == ARR_INTERIOR
 
         if ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
-          auto p2 = (ce2 == ARR_MAX_END) ?
+          const auto& p2 = (ce2 == ARR_MAX_END) ?
             geom_traits->construct_max_vertex_2_object()(xs2) :
             geom_traits->construct_min_vertex_2_object()(xs2);
 
@@ -446,7 +446,7 @@ public:
 
       // ps1 != ARR_INTERIOR
       if ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
-        auto p2 = (ce2 == ARR_MAX_END) ?
+        const auto& p2 = (ce2 == ARR_MAX_END) ?
           geom_traits->construct_max_vertex_2_object()(xs2) :
           geom_traits->construct_min_vertex_2_object()(xs2);
 
@@ -478,10 +478,10 @@ public:
       }
 
       CGAL_assertion(ce1 == ce2);
-      auto p1 = (ce1 == ARR_MAX_END) ?
+      const auto& p1 = (ce1 == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs1) :
         geom_traits->construct_min_vertex_2_object()(xs1);
-      auto p2 = (ce2 == ARR_MAX_END) ?
+      const auto& p2 = (ce2 == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs2) :
         geom_traits->construct_min_vertex_2_object()(xs2);
       return geom_traits->compare_y_on_boundary_2_object()(p1, p2);
@@ -609,7 +609,7 @@ public:
     Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1,
                                  const X_monotone_subcurve_2& xs2, Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
-      auto p = (ce1 == ARR_MAX_END) ?
+      const auto& p = (ce1 == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs1) : geom_traits->construct_min_vertex_2_object()(xs1);
       return geom_traits->compare_y_at_x_2_object()(p, xs2);
     }
@@ -630,7 +630,7 @@ public:
                      ((ce1 == ARR_MIN_END) && (ps_x1 != ARR_RIGHT_BOUNDARY)));
 
       if (ps_x1 == ARR_INTERIOR) {
-        auto p = (ce1 == ARR_MAX_END) ? max_vertex(xs1) : min_vertex(xs1);
+        const auto& p = (ce1 == ARR_MAX_END) ? max_vertex(xs1) : min_vertex(xs1);
         if (ps_y1 == ARR_TOP_BOUNDARY) {
           auto equal = geom_traits->equal_2_object();
           if (equal(p, max_vertex(xs2))) return EQUAL;
@@ -647,8 +647,8 @@ public:
         return geom_traits->compare_y_at_x_2_object()(p, xs2);
       }
       // ps_x1 == ARR_RIGHT_BOUNDARY || ARR_LEFT_BOUNDARY
-      auto p1 = (ce1 == ARR_MAX_END) ? max_vertex(xs1) : min_vertex(xs1);
-      auto p2 = (ce1 == ARR_MAX_END) ? max_vertex(xs2) : min_vertex(xs2);
+      const auto& p1 = (ce1 == ARR_MAX_END) ? max_vertex(xs1) : min_vertex(xs1);
+      const auto& p2 = (ce1 == ARR_MAX_END) ? max_vertex(xs2) : min_vertex(xs2);
       return geom_traits->compare_y_on_boundary_2_object()(p1, p2);
     }
 
@@ -917,9 +917,9 @@ public:
 
       while ((i < (n1-1)) || (j < (n2-1))) {
         std::size_t cv1_seg_ind = (SMALLER == is_cv1_left_to_right) ? i :  n1 - 1 - i;
-        auto point1 = max_vertex(cv1[cv1_seg_ind]);
+        const auto& point1 = max_vertex(cv1[cv1_seg_ind]);
         std::size_t cv2_seg_ind = (SMALLER == is_cv2_left_to_right) ? j :  n2 - 1 - j;
-        auto point2 = max_vertex(cv2[cv2_seg_ind]);
+        const auto& point2 = max_vertex(cv2[cv2_seg_ind]);
         bool res = equal(point1, point2);
         // Easy case - the two points are equal
         if (res) {
@@ -2264,7 +2264,7 @@ public:
                           (m_poly_traits.compare_x_2_object()(source, target) == SMALLER)) ||
                          ((m_poly_traits.compare_endpoints_xy_2_object()(xcv) == SMALLER) &&
                           (m_poly_traits.compare_x_2_object()(source, target) == LARGER))) ?
-        std::make_tuple(target, source) : std::make_tuple(source, target);
+        std::tie(target, source) : std::tie(source, target);
 
       // std::cout << "**************the new source: " << source
       //           << "the new target: " << target << std::endl;
@@ -2284,10 +2284,10 @@ public:
       Comparison_result orientation =
         m_poly_traits.compare_endpoints_xy_2_object()(xcv);
 
-      auto src_max_vertex = max_vertex(xcv[src_id]);
-      auto src_min_vertex = min_vertex(xcv[src_id]);
-      auto trg_min_vertex = min_vertex(xcv[trg_id]);
-      auto trg_max_vertex = max_vertex(xcv[trg_id]);
+      const auto& src_max_vertex = max_vertex(xcv[src_id]);
+      const auto& src_min_vertex = min_vertex(xcv[src_id]);
+      const auto& trg_min_vertex = min_vertex(xcv[trg_id]);
+      const auto& trg_max_vertex = max_vertex(xcv[trg_id]);
 
       // Push the trimmed version of the source subcurve.
       // if (sorientation == SMALLER && source != src_max_vertex)
@@ -2445,7 +2445,7 @@ protected:
 
     // Compare the given curve-end with the stored point.
     Comparison_result operator()(const X_monotone_subcurve_2& xs, Arr_curve_end ce) {
-      auto p = (ce == ARR_MAX_END) ?
+      const auto& p = (ce == ARR_MAX_END) ?
         m_subcurve_traits.construct_max_vertex_2_object()(xs) :
         m_subcurve_traits.construct_min_vertex_2_object()(xs);
       return m_compare(p, m_point);
@@ -2532,7 +2532,7 @@ protected:
   std::size_t locate_impl(const X_monotone_curve_2& xcv, const X_monotone_subcurve_2& xs, Arr_curve_end ce,
                           Arr_all_sides_oblivious_tag) const {
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
-    auto p = (ce == ARR_MAX_END) ?
+    const auto& p = (ce == ARR_MAX_END) ?
       geom_traits->construct_max_vertex_2_object()(xs) : geom_traits->construct_min_vertex_2_object()(xs);
     return locate(xcv, p);
   }
