@@ -131,7 +131,7 @@ public:
     /*
      * \brief Copy constructor.
      */
-    Filtration_core(const Filtration_core& f) : _K(f._K), _filtration(f._filtration), _cell_to_t(f._cell_to_t) {}
+    Filtration_core(const Filtration_core& f) = default; 
 
     /* \brief Iterator over a filtration.
      *

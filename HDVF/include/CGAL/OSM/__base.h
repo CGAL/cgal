@@ -38,9 +38,9 @@ class Sparse_chain;
 template <typename _CoefficientType = OSM::ZCoefficient, int _StorageFormat = OSM::COLUMN, template <typename, int> typename SparseChainType = OSM::Sparse_chain>
 class Sparse_matrix;
 
-// Template structure Sparse_matrix_strcture
+// Template structure Sparse_matrix_structure
 template <template <typename, int> typename SparseChainType>
-struct Sparse_matrix_strcture;
+struct Sparse_matrix_structure;
 
 // Class Bitboard
 

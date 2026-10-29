@@ -51,7 +51,7 @@ namespace Homological_discrete_vector_field {
 //\f[ \partial_q\left( \langle v_0, \ldots, v_q \rangle\right) = \sum_{i=0}^q (-1)^i\cdot \langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f]
 //where \f$\langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f$ denotes the \f$q-1\f$-simplex with \f$v_i\f$ omitted. Hence, matrices of boundary maps are stored in each dimension using sparse matrices (in column-major mode).
 
-template<typename CoefficientRing, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain> >
+template<typename CoefficientRing, typename SparseMatrixStruct = OSM::Sparse_matrix_structure<OSM::Sparse_chain> >
 class Abstract_simplicial_chain_complex {
 public:
     /*! \brief Type of coefficients used to compute homology. */
@@ -60,13 +60,21 @@ public:
     /** \brief Type of sparse matrix structure used to compute homology. */
     typedef SparseMatrixStruct Sparse_matrix_structure;
 
-    /** \brief Type of sparse chain used to compute homology. */
-    template <typename _CT, int _SF>
-    using Sparse_chain_type = typename SparseMatrixStruct::template Sparse_chain_type<_CT, _SF>;
+    /** \brief Type of sparse chain used to compute homology (derived from `SparseMatrixStruct`).
+     *
+     * \tparam _CR Coefficient ring of the matrix coefficients (a model of `IntegralDomainWithoutDivision`).
+     * \tparam _SF Storage format (one of the constants `CGAL::OSM::COLUM` or `CGAL::OSM::ROW`).
+     */
+    template <typename _CR, int _SF>
+    using Sparse_chain_type = typename SparseMatrixStruct::template Sparse_chain_type<_CR, _SF>;
 
-    /* \brief Type of sparse matrix used to compute homology. */
-    template <typename _CT, int _SF>
-    using Sparse_matrix_type = typename SparseMatrixStruct::template Sparse_matrix_type<_CT, _SF>;
+    /** \brief Type of sparse matrix used to compute homology (derived from `SparseMatrixStruct`).
+     *
+     * \tparam _CR Coefficient ring of the matrix coefficients (a model of `IntegralDomainWithoutDivision`).
+     * \tparam _SF Storage format (one of the constants `CGAL::OSM::COLUM` or `CGAL::OSM::ROW`).
+     */
+    template <typename _CR, int _SF>
+    using Sparse_matrix_type = typename SparseMatrixStruct::template Sparse_matrix_type<_CR, _SF>;
 
     /**
      * \brief %Default constructor (empty simplicial complex of dimension `q`).
@@ -97,7 +105,7 @@ public:
     inline bool is_valid_cell_dimension(int q) const { return ((q>=0) && (q<=_dim)); }
     /* \brief Checks if a cell of index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
     inline bool is_valid_cell(size_t id, int q) const { return is_valid_cell_dimension(q) && (id < number_of_cells(q)); }
-    /** \brief Checks if a simplex `simplex` of dimension `q` belongs to the complex. */
+    /** \brief Checks if simplex `simplex` of dimension `q` belongs to the complex. */
     inline bool is_valid_simplex(const Simplex& simplex, int q) const { return _simp2ind.at(q).find(simplex) != _simp2ind.at(q).end(); }
 
     /**
@@ -224,16 +232,16 @@ public:
     }
 
     /**
-     * \brief Returns 0-simplex indices included in the cell with index id_cell of dimension q.
+     * \brief Returns the 0-simplices of a given simplex (that is, the indices of its 0-simplices).
      *
-     * Returns the 0-simplex indices included in the cell with index id_cell of dimension q.
+     * Returns the indices of the 0-simplices included in the simplex of index `id_cell` and dimension `q`.
      *
      * \warning This does not come to return vertex indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is built from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
      *  id0: 3, id1 : 2, id2: 1
      * then the bottom_faces of the 1-simplex {1,2} are two 0-simplices with id 2 and 1.
      *
-     * \param id_cell %Index of the cell.
-     * \param q Dimension of the cell.
+     * \param id_cell %Index of the simplex.
+     * \param q Dimension of the simplex.
      *
      * \return A vector of 0-simplex indices.
      */

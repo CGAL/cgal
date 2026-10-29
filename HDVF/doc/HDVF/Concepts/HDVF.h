@@ -79,7 +79,7 @@ public:
      */
     typedef unspecified_type Complex;
 
-    /*! \brief Type of coefficients used to compute homology. */
+    /*! \brief Type of coefficients used to compute homology (a model of `IntegralDomainWithoutDivision`). */
     typedef Complex::Coefficient_ring Coefficient_ring;
 
     /*!

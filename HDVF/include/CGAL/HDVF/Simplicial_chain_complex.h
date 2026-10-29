@@ -39,7 +39,7 @@ namespace Homological_discrete_vector_field {
  \tparam SparseMatrixStruct a model of `SparseMatrixStructure`  providing templates of sparse chains and sparse matrices built over a given model of `SparseChain`.
  */
 
-template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain> >
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_structure<OSM::Sparse_chain> >
 class Simplicial_chain_complex : public Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct> {
 public:
 
@@ -52,11 +52,11 @@ public:
     typedef Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct> Base;
 
 protected:
-    /** \brief Vector of vertex coordinates */
+    /* \brief Vector of vertex coordinates */
     std::vector<Point> _coords ;
 
 private:
-    /** \brief Vector of VTK types associated to cells in each dimension
+    /* \brief Vector of VTK types associated to cells in each dimension
      e.g. {1, 3, 5, 10} */
     static const std::vector<int> VTK_simptypes ;
 
@@ -82,7 +82,7 @@ public:
         }
     } ;
 
-    /**
+    /*
      * \brief Assignment
      */
     Simplicial_chain_complex& operator= (const Simplicial_chain_complex& complex)
@@ -350,7 +350,7 @@ void Simplicial_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::chain_
 } /* end namespace Homological_discrete_vector_field */
 
 namespace IO {
-/*!
+/*
  * \brief Exports a column chain `chain` to %VTK files.
  *
  * Exports cells of `chain` with a non null coefficient to a %VTK file, with a distinguished cell (for instance the underlying critical cell to a generator). Two properties are exported:
@@ -365,12 +365,12 @@ namespace IO {
  *
  * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
  */
-template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain>>
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_structure<OSM::Sparse_chain>>
 void write_VTK(const CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits,SparseMatrixStruct> &K, const std::string &filename, const typename Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::Base:: template Sparse_chain_type<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
     CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing,Traits>::chain_to_vtk(K, filename, chain, q, cellId);
 }
 
-/**
+/*
  * \brief Exports a simplicial chain complex (plus, optionally, labels) to a %VTK file.
  *
  * The method generates legacy text %VTK files. Labels are exported as such in a %VTK property, together with CellID property, containing the index of each cell.
@@ -386,7 +386,7 @@ void write_VTK(const CGAL::Homological_discrete_vector_field::Simplicial_chain_c
  *
  * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
  */
-template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain>, typename LabelType = int>
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_structure<OSM::Sparse_chain>, typename LabelType = int>
 static void write_VTK(const CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits,SparseMatrixStruct> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
     CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits,SparseMatrixStruct>chain_complex_to_vtk(K, filename, labels, label_type_name);
 }

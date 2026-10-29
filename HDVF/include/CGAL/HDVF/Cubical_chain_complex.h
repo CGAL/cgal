@@ -39,7 +39,7 @@ namespace Homological_discrete_vector_field {
  \tparam SparseMatrixStruct a model of  `SparseMatrixStructure`  providing templates of sparse chains and sparse matrices built over a given model of `SparseChain`.
  */
 
-template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain>>
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_structure<OSM::Sparse_chain>>
 class Cubical_chain_complex {
 public:
     /*! \brief Type of coefficients used to compute homology. */
@@ -201,16 +201,16 @@ public:
         return _size_bb;
     }
 
-    /** \brief Returns the total size of the complex.
+    /** \brief Returns the total size of the complex (size of its boolean vector representation).
      *
-     * Khalimsky coordinates in dimension `q` are bounded above by `size_bb().at(q)`; the total memory size of the complex is the product of these sizes.
+     * Khalimsky coordinates in dimension `q` are bounded above by `size_bb().at(q)`; the size of the boolean vector representing the complex is the product of these sizes.
      */
     size_t size() const {
         return _P.at(dimension());
     }
 
     /** \brief Returns Khalimsky coordinates of the cell of "basis index" i in dimension q.
-     * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "Boolean index", see above).
+     * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "Boolean index", see \ref secHDVFcubical_chain_complex "user manual" for details).
      *
      * \param i "basis index" of a cell.
      * \param q dimension of the cell.
@@ -224,12 +224,12 @@ public:
 
     /** \brief Returns the "basis index" of a cell given by its Khalimsky coordinates.
      *
-     * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "Boolean index", see above).
+     * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "Boolean index", see \ref secHDVFcubical_chain_complex "user manual" for details).
      *
      * \param cell Khalimsky coordinates of a cell (of dimension \f$q\f$).
      * \returns The "basis index" of the cell among \f$q\f$-cells.
      */
-    size_t cell_to_index (std::vector<size_t> cell) const {
+    size_t cell_to_index (const std::vector<size_t>& cell) const {
         CGAL_precondition(is_valid_cell(cell));
         const size_t id_bool(cell_to_bindex(cell));
         const int q(dimension(cell));
@@ -244,7 +244,7 @@ public:
 
     /** \brief Returns Khalimsky coordinates of the cell of Boolean index i.
      *
-     * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "Boolean index" (see above).
+     * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "Boolean index" (see \ref secHDVFcubical_chain_complex "user manual" for details).
      *
      * \param i The "Boolean" index of a cell.
      * \returns Khalimsky coordinates of the cell.
@@ -261,12 +261,12 @@ public:
 
     /** \brief Returns the Boolean index of a cell given by its Khalimsky coordinates.
      *
-     * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "Boolean index" (see above).
+     * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "Boolean index" (see \ref secHDVFcubical_chain_complex "user manual" for details).
      *
      * \param cell Khalimsky coordinates of a cell.
      * \returns The "Boolean" index of the cell.
      */
-    size_t cell_to_bindex (std::vector<size_t> cell) const {
+    size_t cell_to_bindex (const std::vector<size_t>& cell) const {
         CGAL_precondition(is_valid_cell(cell));
         size_t cell_index = 0;
         for (size_t i = 0; i < _dim; ++i) {
@@ -426,7 +426,7 @@ public:
         return _points;
     }
 
-    /// END Methods of the Cubical_chain_complex concept
+    // END Methods of the Cubical_chain_complex concept
 
     // VTK export
 
@@ -1007,7 +1007,7 @@ std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<Coeffici
 } /* end namespace Homological_discrete_vector_field */
 
 namespace IO {
-/*!
+/*
  * \brief Exports a column chain `chain` to %VTK files.
  *
  * Exports cells of `chain` with a non null coefficient to a %VTK file, with a distinguished cell (for instance the underlying critical cell to a generator). Two properties are exported:
@@ -1022,7 +1022,7 @@ namespace IO {
  *
  * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
  */
-template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain>>
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_structure<OSM::Sparse_chain>>
 void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct> &K, const std::string &filename, const typename Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>:: template Sparse_chain_type<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
     CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::chain_to_vtk(K, filename, chain, q, cellId);
 }
@@ -1043,8 +1043,8 @@ void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_comp
  *
  * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
  */
-template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_strcture<OSM::Sparse_chain>, typename LabelType = int>
-static void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix_structure<OSM::Sparse_chain>, typename LabelType = int>
+void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
     CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>chain_complex_to_vtk(K, filename, labels, label_type_name);
 }
 

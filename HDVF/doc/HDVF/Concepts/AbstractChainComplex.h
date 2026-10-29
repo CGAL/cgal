@@ -74,13 +74,14 @@ public:
     /*!
      \brief Returns the dimension of the complex.
      *
-     * Returns the dimension of the simplicial complex (i.e. largest dimension of cells).
+     * This dimension is the largest dimension of cells.
      *
      * \return The dimension of the complex.
      */
     int dimension();
 
     /** \brief Get (unique) object Id.
+     *
      * For comparison of constant references to the complex.
      */
     size_t id () const;
@@ -97,7 +98,7 @@ public:
     /*!
      \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
      *
-     * Returns a constant reference to the vector of boundary matrices along each dimension. The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
+     * The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
      *
      * \return A constant reference to the vector of column-major boundary matrices along each dimension.
      */
@@ -117,12 +118,10 @@ public:
     /*!
      * \brief Returns the boundary of the cell `id_cell` in dimension `q`.
      *
-     * Returns a copy of the column-major chain stored in the boundary matrix of dimension dim: boundary of the cell `id_cell` in dimension `q`.
-     *
      * \param id_cell %Index of the cell.
      * \param q Dimension of the cell.
      *
-     * \return The column-major chain containing the boundary of the cell id_cell in dimension `q`. If `q` is  not in the interval `[0,d]` with `d` the dimension of the complex, the function returns an empty column chain.
+     * \return A copy of the column-major chain containing the boundary of the cell id_cell in dimension `q`. If `q` is  not in the interval `[0,d]` with `d` the dimension of the complex, the function returns an empty column chain.
      */
     Column_chain d(size_t id_cell, int q);
 
@@ -130,7 +129,7 @@ public:
     /*!
      \brief Returns the co-boundary of the cell `id_cell` in dimension `q`.
      *
-     * Returns a row-major chain containing the co-boundary of the cell `id_cell` in dimension `q` (so actually a row of the boundary matrix).
+     * This chain is actually a row of the boundary matrix in dimension `q`.
      *
      * \warning As the boundary matrix is stored column-major, this entails crossing the full matrix to extract the row coefficients (O(number of non empty columns))
      *
