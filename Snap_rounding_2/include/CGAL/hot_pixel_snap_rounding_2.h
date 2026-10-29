@@ -84,11 +84,11 @@ private:
   Point_2 p_down;
   Point_2 p_up;
   Traits_ m_gt;
-  NT pixel_size;
-  Segment_2 *right_seg;
-  Segment_2 *left_seg;
-  Segment_2 *top_seg;
-  Segment_2 *bot_seg;
+  NT pixel_size = 0;
+  Segment_2 *right_seg = nullptr;
+  Segment_2 *left_seg = nullptr;
+  Segment_2 *top_seg = nullptr;
+  Segment_2 *bot_seg = nullptr;
 
   static SEG_Direction& direction()
   {
