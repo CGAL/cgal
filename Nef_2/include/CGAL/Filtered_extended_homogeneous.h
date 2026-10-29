@@ -1180,9 +1180,8 @@ Point_2 construct_point(const Standard_line_2& l, Point_type& t) const
                      break;
     case BOTTOMFRAME: res = epoint( l.b(), -l.c(), -l.a(), 0, l.a());
                      break;
-    case TOPFRAME: res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a());
-                     break;
-    default: CGAL_error_msg("EPoint type not correct!");
+    default :        CGAL_assertion(t == TOPFRAME);
+                     res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a());
   }
   return res;
 }
