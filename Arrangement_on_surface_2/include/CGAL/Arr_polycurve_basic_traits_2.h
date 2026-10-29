@@ -59,8 +59,7 @@ public:
                                               Top_side_category,
                                               Right_side_category>::result;
 
-  using Bottom_or_top_sides_category =
-    typename Arr_two_sides_category<Bottom_side_category, Top_side_category>::result;
+  using Bottom_or_top_sides_category = typename Arr_two_sides_category<Bottom_side_category, Top_side_category>::result;
 
   using Point_2 = typename Subcurve_traits_2::Point_2;
   using X_monotone_subcurve_2 = typename Subcurve_traits_2::X_monotone_curve_2;
@@ -573,8 +572,7 @@ public:
   /*! A functor that checks whether an \f$x\f$-monotone curve is a vertical. */
   class Is_vertical_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -611,8 +609,7 @@ public:
                                  const X_monotone_subcurve_2& xs2, Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto p = (ce1 == ARR_MAX_END) ?
-        geom_traits->construct_max_vertex_2_object()(xs1) :
-        geom_traits->construct_min_vertex_2_object()(xs1);
+        geom_traits->construct_max_vertex_2_object()(xs1) : geom_traits->construct_min_vertex_2_object()(xs1);
       return geom_traits->compare_y_at_x_2_object()(p, xs2);
     }
 
@@ -676,8 +673,11 @@ public:
     // Compare non_vertical
     Comparison_result compare_non_vertical(const Point_2& p, const X_monotone_curve_2& xcv) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
-      // Get the index of the subcurve in xcv containing p.
-      auto i = m_poly_traits.locate_impl(xcv, p, All_sides_oblivious_category());
+      // Get the index of the subcurve in xcv containing p. By the
+      // precondition, p is in the x-range of xcv; thus, if xcv consists of a
+      // single subcurve, it is the one.
+      std::size_t i = (xcv.number_of_subcurves() == 1) ? 0 :
+        m_poly_traits.locate_impl(xcv, p, All_sides_oblivious_category());
       CGAL_precondition(i != INVALID_INDEX);
 
       // Compare the subcurve xcv[i] and p.
@@ -767,9 +767,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Compare_y_at_x_left_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Compare_y_at_x_left_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! compares the y value of two \f$x\f$-monotone curves immediately to the
@@ -784,9 +782,10 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, const Point_2& p) const {
       // Get the indices of the subcurves in cv1 and cv2 containing p and
-      // defined to its left.
-      std::size_t i1 = m_poly_traits.locate_side(cv1, p, false);
-      std::size_t i2 = m_poly_traits.locate_side(cv2, p, false);
+      // defined to its left. By the precondition, if a curve consists of a
+      // single subcurve, it is the one.
+      std::size_t i1 = (cv1.number_of_subcurves() == 1) ? 0 : m_poly_traits.locate_side(cv1, p, false);
+      std::size_t i2 = (cv2.number_of_subcurves() == 1) ? 0 : m_poly_traits.locate_side(cv2, p, false);
 
       CGAL_precondition(i1 != INVALID_INDEX);
       CGAL_precondition(i2 != INVALID_INDEX);
@@ -815,9 +814,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Compare_y_at_x_right_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Compare_y_at_x_right_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! compares the \f$y\f$-value of two \f$x\f$-monotone curves immediately to
@@ -832,9 +829,10 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, const Point_2& p) const {
       // Get the indices of the subcurves in cv1 and cv2 containing p and
-      // defined to its right.
-      std::size_t i1 = m_poly_traits.locate_side(cv1, p, true);
-      std::size_t i2 = m_poly_traits.locate_side(cv2, p, true);
+      // defined to its right. By the precondition, if a curve consists of a
+      // single subcurve, it is the one.
+      std::size_t i1 = (cv1.number_of_subcurves() == 1) ? 0 : m_poly_traits.locate_side(cv1, p, true);
+      std::size_t i2 = (cv2.number_of_subcurves() == 1) ? 0 : m_poly_traits.locate_side(cv2, p, true);
 
       CGAL_precondition(i1 != INVALID_INDEX);
       CGAL_precondition(i2 != INVALID_INDEX);
@@ -954,8 +952,7 @@ public:
   /*! A functor that lexicographically compares the endpoints of a curve. */
   class Compare_endpoints_xy_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! The traits (in case it has state). */
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -1461,8 +1458,7 @@ public:
    */
   class Parameter_space_in_x_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -1470,9 +1466,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Parameter_space_in_x_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Parameter_space_in_x_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! obtains the parameter space at the end of a curve along the
@@ -1499,8 +1493,7 @@ public:
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
       Comparison_result direction = cmp_endpt(xcv[0]);
       const X_monotone_subcurve_2& xs =
-        (((direction == SMALLER) && (ce == ARR_MIN_END)) ||
-         ((direction == LARGER) && (ce == ARR_MAX_END))) ?
+        (((direction == SMALLER) && (ce == ARR_MIN_END)) || ((direction == LARGER) && (ce == ARR_MAX_END))) ?
         xcv[0] : xcv[xcv.number_of_subcurves()-1];
       return geom_traits->parameter_space_in_x_2_object()(xs, ce);
     }
@@ -1560,8 +1553,7 @@ public:
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
       Comparison_result direction = cmp_endpt(xcv[0]);
       const X_monotone_subcurve_2& xs =
-        (((direction == SMALLER) && (ce == ARR_MIN_END)) ||
-         ((direction == LARGER) && (ce == ARR_MAX_END))) ?
+        (((direction == SMALLER) && (ce == ARR_MIN_END)) || ((direction == LARGER) && (ce == ARR_MAX_END))) ?
         xcv[0] : xcv[xcv.number_of_subcurves()-1];
       return geom_traits->parameter_space_in_y_2_object()(xs, ce);
     }
@@ -1667,13 +1659,11 @@ public:
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
       Comparison_result direction1 = cmp_endpt(xcv1[0]);
       const X_monotone_subcurve_2& xs1 =
-        (((direction1 == SMALLER) && (ce1 == ARR_MIN_END)) ||
-         ((direction1 == LARGER) && (ce1 == ARR_MAX_END))) ?
+        (((direction1 == SMALLER) && (ce1 == ARR_MIN_END)) || ((direction1 == LARGER) && (ce1 == ARR_MAX_END))) ?
         xcv1[0] : xcv1[xcv1.number_of_subcurves()-1];
       Comparison_result direction2 = cmp_endpt(xcv2[0]);
       const X_monotone_subcurve_2& xs2 =
-        (((direction2 == SMALLER) && (ce2 == ARR_MIN_END)) ||
-         ((direction2 == LARGER) && (ce2 == ARR_MAX_END))) ?
+        (((direction2 == SMALLER) && (ce2 == ARR_MIN_END)) || ((direction2 == LARGER) && (ce2 == ARR_MAX_END))) ?
         xcv2[0] : xcv2[xcv2.number_of_subcurves()-1];
       return geom_traits->compare_x_on_boundary_2_object()(xs1, ce1, xs2, ce2);
     }
@@ -2383,8 +2373,7 @@ protected:
           // Ensure that the returned subcurve contains the query point
           // on its right end (if possible)
           if ((direction == SMALLER) && (mid > 0)) --mid;
-          else if ((direction == LARGER) && ((mid + 1) < cv.number_of_subcurves()))
-            ++mid;
+          else if ((direction == LARGER) && ((mid + 1) < cv.number_of_subcurves())) ++mid;
           return mid;
         }
         if (res_mid == res_from) from = mid;
@@ -2415,16 +2404,14 @@ protected:
 
   public:
     // Constructor
-    Compare_points(const Subcurve_traits_2& traits, Comparer compare,
-                   const Point_2& p) :
+    Compare_points(const Subcurve_traits_2& traits, Comparer compare, const Point_2& p) :
       m_subcurve_traits(traits),
       m_point(p),
       m_compare(compare)
     {}
 
     // Compare the given curve-end with the stored point.
-    Comparison_result operator()(const X_monotone_subcurve_2& xs,
-                                 Arr_curve_end ce) {
+    Comparison_result operator()(const X_monotone_subcurve_2& xs, Arr_curve_end ce) {
       auto p = (ce == ARR_MAX_END) ?
         m_subcurve_traits.construct_max_vertex_2_object()(xs) :
         m_subcurve_traits.construct_min_vertex_2_object()(xs);
@@ -2513,8 +2500,7 @@ protected:
                           Arr_all_sides_oblivious_tag) const {
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     auto p = (ce == ARR_MAX_END) ?
-      geom_traits->construct_max_vertex_2_object()(xs) :
-      geom_traits->construct_min_vertex_2_object()(xs);
+      geom_traits->construct_max_vertex_2_object()(xs) : geom_traits->construct_min_vertex_2_object()(xs);
     return locate(xcv, p);
   }
 
@@ -2600,33 +2586,26 @@ protected:
         (is_vert(cv[0]) && equal(get_min_v(cv[i]), q))) {
       // q is the left endpoint of the i-th subcurve:
       if (to_right) return i;
-      else {
-        // to_left
-        if (direction == SMALLER) {
-          if (i == 0) return INVALID_INDEX;
-          else return i - 1;
-        }
-        else {
-          if (i == cv.number_of_subcurves()-1) return INVALID_INDEX;
-          else return i+1;
-        }
+
+      // to_left
+      if (direction == SMALLER) {
+        if (i == 0) return INVALID_INDEX;
+        return i - 1;
       }
+      if (i == cv.number_of_subcurves()-1) return INVALID_INDEX;
+      return i+1;
     }
 
     if ((! is_vert(cv[0]) && (cmp_x(get_max_v(cv[i]), q) == EQUAL)) ||
         (is_vert(cv[0]) && equal(get_max_v(cv[i]), q))) {
       // q is the right endpoint of the i-th subcurve:
       if (! to_right) return i;
-      else {
-        if (direction == SMALLER) {
-          if (i == (cv.number_of_subcurves() - 1)) return INVALID_INDEX;
-          else return i + 1;
-        }
-        else {
-          if (i == 0) return INVALID_INDEX;
-          else return i-1;
-        }
+      if (direction == SMALLER) {
+        if (i == (cv.number_of_subcurves() - 1)) return INVALID_INDEX;
+        return i + 1;
       }
+      if (i == 0) return INVALID_INDEX;
+      return i-1;
     }
 
     // In case q is in cv[i]'s interior:
