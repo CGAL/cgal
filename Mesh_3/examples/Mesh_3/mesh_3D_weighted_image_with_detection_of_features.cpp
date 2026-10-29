@@ -33,7 +33,7 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 /// [Add 1D features]
 
@@ -54,9 +54,9 @@ int main(int argc, char* argv[])
 
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
-                                                    weights = std::ref(img_weights),
-                                                    relative_error_bound = 1e-6,
-                                                    features_detector = CGAL::Mesh_3::Detect_features_in_image());
+                                                    params::weights = std::ref(img_weights),
+                                                    params::relative_error_bound = 1e-6,
+                                                    params::features_detector = CGAL::Mesh_3::Detect_features_in_image());
   /// [Domain creation]
 
   CGAL::Bbox_3 bbox = domain.bbox();
@@ -66,20 +66,19 @@ int main(int argc, char* argv[])
   double sizing_default = diag * 0.05;
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
-  Mesh_criteria criteria(edge_size = sizing_default,
-      facet_angle = 30, facet_size = sizing_default, facet_distance = sizing_default / 10,
+  Mesh_criteria criteria(params::edge_size = sizing_default,
+      params::facet_angle = 30, params::facet_size = sizing_default, params::facet_distance = sizing_default / 10,
       //facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH,
-      cell_radius_edge_ratio = 0, cell_size = 0
+      params::cell_radius_edge_ratio = 0, params::cell_size = 0
   );
   /// [Mesh criteria]
 
   // Meshing
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      CGAL::parameters::no_exude(),
-                                      CGAL::parameters::no_perturb());
+                                      params::no_exude(),
+                                      params::no_perturb());
 
   // Output
   CGAL::dump_c3t3(c3t3, "out");
-
   return 0;
 }
