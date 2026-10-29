@@ -29,6 +29,11 @@
 
 /// \file Discrete_authalic_parameterizer_3.h
 
+#if defined (__GNUC__) && ! defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+
 namespace CGAL {
 
 namespace Surface_mesh_parameterization {
@@ -194,6 +199,10 @@ protected:
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#if defined (__GNUC__) && ! defined(__clang__)
+#  pragma GCC diagnostic pop
+#endif
 
 #include <CGAL/enable_warnings.h>
 
