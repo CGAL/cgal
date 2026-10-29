@@ -2327,7 +2327,7 @@ public:
         vertex_c->set_data(vertex->get_data()->clone());
       }
       result->add_vertex(vertex_c);
-      vertex_c->set_id(vertex->id()); // after the add_vertex(), otherwise it'll get a new ID
+      vertex_c->set_id(vertex->id()); // after the add_vertex(), otherwise it might get a different ID
       vertices_c[vertex] = vertex_c;
     }
     typename std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
@@ -2371,6 +2371,11 @@ public:
       result->add_facet(facet_c);
       facet_c->set_id(facet->id());
     }
+
+    result->next_vertex_id_ = next_vertex_id_;
+    result->next_edge_id_ = next_edge_id_;
+    result->next_facet_id_ = next_facet_id_;
+
     return result;
   }
 
