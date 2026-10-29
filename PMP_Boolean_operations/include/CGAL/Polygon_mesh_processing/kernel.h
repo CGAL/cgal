@@ -445,7 +445,7 @@ kernel(const FaceRange& face_range,
       return;
     }
 
-    if(triangulated &&
+    if(!triangulated &&
       test_a_method_to_construct_an_inside_point([&] { return find_intern_point<ExactK>(kernel, to_exactk); },
                                                   "Exact find_intern_point"))
     {
