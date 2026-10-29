@@ -19,7 +19,10 @@
 /// \defgroup PkgHDVFFiltrationsClasses Filtrations Classes
 /// \ingroup PkgHDVFRef
 
-/// \defgroup PkgHDVFToolsClasses Tools Classes
+/// \defgroup PkgHDVFToolsClasses Tools Classes and Functions
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFDualityClasses Duality Classes
 /// \ingroup PkgHDVFRef
 
 /// \defgroup PkgHDVFIOClasses IO Classes and Functions

@@ -317,6 +317,8 @@ The %FILTR file format is a very simple text format encoding filtrations:
 
 \subsection secHDVFAlexander Alexander duality
 
+\subsubsection secHDVFTetgen Tetgen version
+
 \section secHDVF The HDVF framework
 
 This section presents a brief introduction to HDVFs, see [AGL, 2016] for more details.

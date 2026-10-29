@@ -51,9 +51,9 @@ namespace IO {
 /*!
  *\ingroup PkgHDVFIOClasses
  *
- * \brief Exports all the `Hdvf` information of a geometric chain complex to vtk files.
+ * \brief Exports all the `Hdvf` information of a geometric chain complex to %VTK files.
  *
- * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each critical cell to vtk files.
+ * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each critical cell to %VTK files.
  *
  * \param hdvf Reference to the HDVF exported.
  * \param complex Underlying geometric chain complex.
@@ -129,9 +129,9 @@ void write_VTK (const Homological_discrete_vector_field::Hdvf_core<ChainComplex>
 /**
  * \ingroup PkgHDVFIOClasses
  *
- * \brief Exports all the `HDVF_persistence` information of a geometric chain complex to vtk files.
+ * \brief Exports all the `HDVF_persistence` information of a geometric chain complex to %VTK files.
  *
- * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
+ * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to %VTK files.
  *
  * \param per_hdvf Reference to the persistent HDVF exported.
  * \param complex Underlying geometric chain complex.
@@ -230,9 +230,9 @@ void write_VTK (const Homological_discrete_vector_field::Hdvf_persistence<ChainC
 /**
  * \ingroup PkgHDVFIOClasses
  *
- * \brief Exports all the `HDVF_duality` information of a geometric chain complex to vtk files.
+ * \brief Exports all the `HDVF_duality` information of a geometric chain complex to %VTK files.
  *
- * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
+ * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to %VTK files.
  *
  * \param hdvf Reference to the HDVF exported.
  * \param complex Underlying geometric chain complex.
@@ -330,7 +330,7 @@ namespace Homological_discrete_vector_field {
 
 
 /**
- *\ingroup PkgHDVFToolsClasses
+ *\ingroup PkgHDVFDualityClasses
  * \brief Type returned by `dualize_complex()`.
  *
  * \tparam ChainComplex Type of the underlying chain complex.
@@ -364,13 +364,15 @@ public:
 // Build K sub-chain complex of L (homeomorphic to B^n)
 
 /*!
- \ingroup PkgHDVFToolsClasses
+ \ingroup PkgHDVFDualityClasses
 
  The class `Duality_simplicial_complex_tools` is dedicated to Alexander duality for 3D surface meshes. Starting from a simplicial chain complex (encoding a 3D surface mesh), it provides methods to embed the complex into a larger icosphere and generate a 3D constrained Delaunay triangulation.
 
- Technically, starting from a Simplicial_chain_complex `K_init`, the method `dualize_complex()` builds a `Simplicial_chain_complex`  `L` and a `Sub_chain_complex_mask`  `K`.
- - L : complex built out of K_init together with a closing icosphere, meshed by tetgen (constrained Delaunay triangulation)
+ Technically, starting from a Simplicial_chain_complex `K_init`, the methods `dualize_complex()` builds a `Simplicial_chain_complex`  `L` and a `Sub_chain_complex_mask`  `K`.
+ - L : complex built out of K_init together with a closing icosphere
  - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying K_init inside L
+ 
+ Two `dualize_complex()` methods are provided, based repsectively on tetgen and `CGAL::Conforming_constrained_Delaunay_triangulation_3`.
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
@@ -408,7 +410,7 @@ private:
     }
 
 public:
-    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a set of simplices `mesh_io`.
+    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a set of simplices `mesh_io` (based on tetgen).
      *
      * On the one hand, a `Simplicial_chain_complex` is built from `mesh_io` (let us call if `_K`); on the other hand, this complex is embedded into a larger icosphere and a 3D constrained Delaunay tetraedrization is generated.
      * Then \f$K\f$, \f$L\f$ and vertex coordinates are extracted and stored in a `Complex_duality_data` structure.
@@ -423,6 +425,8 @@ public:
      * \param BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
      * \param subdiv Subdivision level of the bounding icosphere.
+     *
+     * \warning Replace the path to tetgen by an environment variable...
      */
     static Complex_duality_data dualize_complex (Mesh_object_io<Traits>& mesh_io, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2) {
 
@@ -472,7 +476,7 @@ public:
         return dualized_complex;
     }
 
-    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a `Surface_mesh`.
+    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a `Surface_mesh` (based on `CGAL::Conforming_constrained_Delaunay_triangulation_3`).
      *
      * On the one hand, a `Simplicial_chain_complex` is built from the `Surface_mesh` (let us call it `_K`); on the other hand, this complex is embedded into a larger icosphere and a 3D constrained Delaunay tetraedrization is generated.
      * Then \f$K\f$, \f$L\f$ and vertex coordinates are built and extracted (from both previous computation) and stored in a `Complex_duality_data` structure.
@@ -599,7 +603,7 @@ public:
 // Adjust L size
 
 /*!
- *\ingroup PkgHDVFToolsClasses
+ *\ingroup PkgHDVFDualityClasses
 
  The class `Duality_cubical_complex_tools` is dedicated to Alexander duality for 3D binary volumes.
 

@@ -30,13 +30,19 @@
 namespace CGAL {
 namespace Homological_discrete_vector_field {
 
-/** \brief Type of cells of Mesh_object_io.
+/**
+ * \relates Mesh_object_io
+ *
+ * \brief Type of cells of Mesh_object_io.
  *
  * *Sorted* vector of the vertex indices.
  */
 typedef std::vector<size_t> Io_cell_type ;
-/** \brief Type of pre-chains in Mesh_object_io (list of cells without coefficients). */
-typedef std::vector<Io_cell_type> Io_chain_type ;
+
+/** \relates Mesh_object_io
+
+ \brief Type respresenting sets of cells. */
+typedef std::vector<Io_cell_type> Io_cells_type ;
 
 
 // ----- VTK format -----
@@ -69,9 +75,11 @@ inline bool get_next_uncommented_line(std::ifstream &infile, std::string &result
     return false;
 }
 
-/** \brief Load nodes from a .nodes file.
+/** \relates Mesh_object_io
  *
- * Load vertices coordinates from a .nodes file.
+ * \brief Loads vertices coordinates from a .nodes file.
+ *
+ * Reads nodes (ie.\ vertices coordinates) from a .nodes file (tetgen format, see \ref secHDVFTetgen "user manual" for details) .
  *
  * \param filename Name of the input file.
  * \param nodes Pointer to a vector of points into which nodes are outputed.
@@ -164,7 +172,9 @@ inline size_t read_nodes(const std::string &filename, std::vector<typename Trait
 /*!
  \ingroup PkgHDVFIOClasses
 
- The class `Mesh_object_io` is an intermediate IO class, used to load triangular/tetraedral meshes and produce simplicial complexes.
+ The class `Mesh_object_io` is an intermediate IO class, used to load simplices and produce simplicial complexes.
+
+ The set of simplices stored in a `Mesh_object_io` is arbitrary. It is neither a simplicial complex (closed under the face operation), nor a proper mesh (including only cells of maximal dimension) and requires no manifold property. The collection of simplices stored in a `Mesh_object_io` are simply considered as maximal simplices when generating an associated simplicial complex.
 
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
@@ -174,7 +184,9 @@ template <typename Traits>
 class Mesh_object_io
 {
 public:
+    /** \brief Underlying point type. */
     typedef typename Traits::Point Point ;
+    /** \brief Bounding box type. */
     typedef typename Traits::Bbox Bbox ;
 protected:
     // The variable `_dim` is used to encode both the dimension of the object loaded and whether it encodes a complex (with cells of various dimensions) or a mesh (a collection of triangles)
@@ -187,7 +199,7 @@ protected:
 
     // Write vtk file
     template <typename CoefficientRing>
-    void write_vtk(const std::string &filename, const std::vector<Point> &nodes, const std::vector<Io_chain_type> &chains, const std::vector<CoefficientRing> *labels=NULL, const std::string scalar_type="none") {
+    void write_vtk(const std::string &filename, const std::vector<Point> &nodes, const std::vector<Io_cells_type> &chains, const std::vector<CoefficientRing> *labels=NULL, const std::string scalar_type="none") {
         bool with_scalars = (labels != NULL) ;
         // Load ...
         std::ofstream out ( filename, std::ios::out | std::ios::trunc);
@@ -230,7 +242,7 @@ protected:
         std::vector<size_t> types ;
         std::vector<CoefficientRing> scalars ;
         for (size_t i = 0; i<chains.size(); ++i) {
-            const Io_chain_type cc = chains.at(i) ;
+            const Io_cells_type cc = chains.at(i) ;
 
             for (Io_cell_type c : cc) {
                 const int d = c.size() ;
@@ -273,9 +285,11 @@ public:
      */
     int dimension() const { return _dim; }
 
-    /* \brief %Default constructor.
+    /** \brief %Default constructor.
      *
-     * Create an empty `Mesh_object_io`.
+     * Create an empty `Mesh_object_io` of dimension `d`.
+     *
+     * \param d Dimension of the `Mesh_object_io` (the default is 0).
      */
     Mesh_object_io(int d = 0) : _dim(d), _nvertices(0), _ncells(0), _nedges(0) {}
 
@@ -290,8 +304,8 @@ public:
      * Vertices are described by their index; this index must be unique (vertices with similar underlying points and different vertex indices will be considered as different).
      *
      * \param vnodes Vector of vertex coordinates.
-     * \param vcells Vector of cells (described by a sorted vector of indices)
-     * \param sort_data If `true` the vectors of vertex indices are sorted, if `false` they are assumed to be sorted (faster).
+     * \param vcells Vector of cells (each cell is described by a vector of vertices index)
+     * \param sort_data If `true` the vectors of vertices index are sorted, if `false` they are assumed to be sorted (faster).
      *
      * \exception Traits_dimension_mismatch If the %dimension `d` provided does not match the %dimension of the Traits, raises a `%std::runtime_error`.
      *
@@ -309,7 +323,11 @@ public:
         }
     }
 
-    /** \brief Build a Mesh_object_io for the bounding box of diagonal `BB_min` - `BBmax`. */
+    /** \brief Build a Mesh_object_io representing the bounding box of diagonal `BB_min` - `BBmax`.
+     *
+     * \param BBmin coordinates of the lower corner of the bounding box.
+     * \param BBmax coordinates of the higher corner of the bounding box.
+     */
     Mesh_object_io(const Point &BBmin, const Point &BBmax)
     : _dim(3), _nvertices(8), _ncells(12), _nedges(0) {
         std::vector points = {BBmin, BBmax} ;
@@ -354,16 +372,18 @@ public:
         return _cells;
     }
 
-    /** \brief Update the coordinates of a node (ie vertex). */
+    /** \brief Updates the coordinates of the `i`th node (ie vertex). */
     void set_node(size_t i, const Point &P) {
         _nodes[i] = P;
     }
 
     // Mesh operations
 
-    /** Add a `Mesh_object_io` to the current  `Mesh_object_io`.
+    /** \brief Adds a `Mesh_object_io` to the current  `Mesh_object_io`.
      *
-     * In order to concatenate objects, the function updates indices of the simplices of `mesh` (such that the numbering of `mesh` vertices starts after vertices of `this`).
+     * In order to concatenate objects (ie.\ compute their disjoint union), the function updates indices of the simplices of `mesh` (such that the numbering of `mesh` vertices starts after vertices of `this`).
+     *
+     * \param mesh Set of simplices to concatenate to the current mesh.
      */
     void push_back(const Mesh_object_io &mesh) {
         size_t off = _nvertices ; // The index of all the cells of mesh has to be incremented by off
@@ -382,20 +402,33 @@ public:
         }
     }
 
-    void add_node(const Point &v) {_nodes.push_back(v); ++_nvertices ;}
+    /** \brief Adds a node (vertex).
 
+     \return The index of the added node.
+     */
+    size_t add_node(const Point &v) {_nodes.push_back(v); return ++_nvertices ;}
+
+    /** \brief Removes all cells (simplices). */
     void clear_cells() { _cells.clear() ; _ncells = 0 ; }
 
+    /** \brief Removes all nodes (vertices). */
     void clear_nodes() { _nodes.clear() ; _nvertices = 0 ; }
 
+    /** \brief Removes all nodes and cells. */
     void clear() { clear_nodes() ; clear_cells() ;}
 
+    /** \brief Adds a cells (simplex).
+
+     * \param c Cell (simplex) added (vector of indices).
+     * \param sort_indices If `true` the vector of indices is sorted, if `false` it is assumed to be sorted (faster).
+     */
     void add_cell(Io_cell_type &c, bool sort_indices = false) {
         if (sort_indices)
             std::sort(c.begin(), c.end());
         _cells.push_back(c); ++_ncells ;
     }
 
+    /** \brief Number of cells (simplices) of %dimension `q`. */
     size_t cells_of_dim (int q) const {
         size_t n = 0 ;
         for (Io_cell_type c : _cells)
@@ -406,6 +439,8 @@ public:
         return n ;
     }
     // OFF
+
+    /** \brief Imports a mesh stored in an %OFF file. */
     bool read_off(const std::string &filename) {
         _dim = 0 ;
         // 0 - open input file
@@ -470,6 +505,7 @@ public:
         return true;
     }
 
+    /** \brief Exports triangles (simplices of dimension 2) of the current object to an %OFF file. */
     bool write_off(const std::string &filename) const {
         // 0 - open input file
         std::ofstream outfile(filename);
@@ -503,13 +539,23 @@ public:
     }
 
     // VTK
-    void write_to_vtk(const std::string &filename)
+    /** \brief Exports cells of the current object to an %VTK file.
+     *
+     * \exception Invalid_dimension If the %dimension is larger than 3, raises a `%std::invalid_argument` error.
+     */
+    void write_vtk(const std::string &filename)
     {
-        std::vector<Io_chain_type> chains{_cells} ;
+        if (abs(_dim) > 3) {
+            std::cerr << "Mesh_object_io cannot be exported to VTK: dimension larger than 3";
+            throw std::invalid_argument("Mesh_object_io cannot be exported to VTK: dimension larger than 3");
+        }
+
+        std::vector<Io_cells_type> chains{_cells} ;
         write_vtk<int>(filename, _nodes, chains) ;
     }
 
     // SIMP
+    /** \brief Exports cells to a %SIMP file. */
     bool write_simp(const std::string &filename) {
         // 0 - open input file
         std::ofstream outfile(filename);
@@ -529,6 +575,7 @@ public:
         return true;
     }
 
+    /** \brief Imports cells from a %SIMP file. */
     bool read_simp(const std::string &filename) {
         int d = 0 ;
         // 0 - open input file
@@ -574,8 +621,19 @@ public:
         return true ;
     }
 
-    bool read_nodes_file(const std::string &filename) ;
+    /** \brief Reads nodes from a file in tetgen %NODES format.
+     *
+     * See \ref secHDVFTetgen "user manual" for details on the file format.
+     */
+    bool read_nodes_file(const std::string &filename) {
+        _nvertices = read_nodes<Traits>(filename, &_nodes) ;
+        return true;
+    }
 
+    /** \brief Prints compact informations on the object into a stream.
+     *
+     * Prints the dimension, number of nodes, number of cells and number or cells by dimension.
+     */
     std::ostream& print_infos (std::ostream& out_stream = std::cout) const {
         out_stream << "Mesh_object_io infos - dimension : "<< _dim << ", nodes : " << _nodes.size() << ", cells : " << _cells.size() << std::endl ;
         for (int q = 0; q <= _dim; ++q)
@@ -583,16 +641,22 @@ public:
         return out_stream;
     }
 
-
+    /** \brief Prints compact informations on the object into a stream.
+     *
+     * Prints the dimension, number of nodes, number of cells and number or cells by dimension.
+     */
     friend std::ostream& operator<<(std::ostream& out_stream, const Mesh_object_io& mesh_io) {
         return mesh_io.print_infos(out_stream);
     }
 
     // Mesh computations
+
+    /** \brief Returns the centroid of the object's nodes. */
     Point centroid() const {
         return CGAL::centroid(_nodes.begin(), _nodes.end()) ;
     }
 
+    /** \brief Returns maximum distance from a point `bary` to the object's nodes. */
     double radius(const Point &bary) const {
         double r = 0 ;
         for (Point v : _nodes)
@@ -602,6 +666,7 @@ public:
         return r ;
     }
 
+    /** \brief Returns the bounding box of the object's nodes. */
     Bbox bbox(double ratio=1.) const {
         return bounding_box(_nodes.begin(), _nodes.end()) .bbox();
         // @todo deal with ratio

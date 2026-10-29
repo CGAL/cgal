@@ -22,10 +22,9 @@ typedef HDVF::Hdvf_traits_d<Kernel> Traits;
 
 int main(int argc, char **argv)
 {
-#if 1
-    using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
+    using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits, CGAL::OSM::Sparse_matrix_structure<CGAL::OSM::Sparse_chain> > ;
     using HDVF_type = HDVF::Hdvf<Complex> ;
-
+#if 1
     std::string nodes_filename, simp_filename ;
     if (argc > 3) std::cerr << "usage: hdvf_simplicial_4 nodes_file simp_file" << std::endl;
     else if (argc == 1) {
