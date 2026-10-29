@@ -2666,10 +2666,21 @@ public:
   bool is_consistent() const
   {
     bool result = true;
+    CGAL::unordered_flat_set<int> vertex_ids;
+    CGAL::unordered_flat_set<int> edge_ids;
+    CGAL::unordered_flat_set<int> facet_ids;
 
     typename std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
     while (it_v != vertices_.end()) {
       VertexSPtr vertex = *it_v++;
+      if (!vertex_ids.insert(vertex->id()).second) {
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
+        result = false;
+      }
+      if (vertex->id() >= next_vertex_id_) {
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
+        result = false;
+      }
       if (vertex->get_polyhedron() != this->shared_from_this()) {
         CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
         result = false;
@@ -2731,6 +2742,14 @@ public:
     typename std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
     while (it_e != edges_.end()) {
       EdgeSPtr edge = *it_e++;
+      if (!edge_ids.insert(edge->id()).second) {
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        result = false;
+      }
+      if (edge->id() >= next_edge_id_) {
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        result = false;
+      }
       if (edge->get_polyhedron() != this->shared_from_this()) {
         CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
         result = false;
@@ -2861,6 +2880,14 @@ public:
     typename std::list<FacetSPtr>::const_iterator it_f = facets_.begin();
     while (it_f != facets_.end()) {
       FacetSPtr facet = *it_f++;
+      if (!facet_ids.insert(facet->id()).second) {
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+        result = false;
+      }
+      if (facet->id() >= next_facet_id_) {
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+        result = false;
+      }
       if (facet->get_polyhedron() != this->shared_from_this()) {
         CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
         result = false;
