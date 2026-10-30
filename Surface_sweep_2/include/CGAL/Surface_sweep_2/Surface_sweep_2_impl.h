@@ -155,7 +155,8 @@ void Surface_sweep_2<Vis>::_handle_left_curves() {
       this->m_traits->split_2_object()(lastCurve, this->m_currentEvent->point(),
                                        m_sub_cv1, m_sub_cv2);
       this->m_visitor->add_subcurve(m_sub_cv1, leftCurve);
-      leftCurve->set_last_curve(m_sub_cv2);
+      // Swap rather than copy; m_sub_cv2 is auxiliary.
+      leftCurve->swap_last_curve(m_sub_cv2);
     }
     ++left_iter;
 
@@ -183,7 +184,8 @@ void Surface_sweep_2<Vis>::_clip_non_active_curve_at_current_event(Subcurve* sub
     const X_monotone_curve_2& lastCurve = subcurve->last_curve();
     this->m_traits->split_2_object()(lastCurve, this->m_currentEvent->point(),
                                      m_sub_cv1, m_sub_cv2);
-    subcurve->set_last_curve(m_sub_cv2);
+    // Swap rather than copy; m_sub_cv2 is auxiliary.
+    subcurve->swap_last_curve(m_sub_cv2);
 
     this->m_currentEvent->set_weak_intersection();
     this->m_visitor->update_event(this->m_currentEvent, subcurve);

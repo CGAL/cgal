@@ -17,6 +17,8 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
+#include <utility>
+
 /*! \file
  *
  * Definition of the No_overlap_subcurve class, which is an
@@ -194,6 +196,14 @@ public:
   /*! Set the last intersecting curve so far.
    */
   void set_last_curve(const X_monotone_curve_2& cv) { m_last_curve = cv; }
+
+  /*! Swap the last intersecting curve so far with the given curve. This
+   * avoids copying the curve when the given curve is no longer needed, and
+   * it hands over the storage of the replaced curve (e.g., the subcurve
+   * container of a polycurve) for reuse.
+   * \param cv Input: the new last curve; Output: the replaced last curve.
+   */
+  void swap_last_curve(X_monotone_curve_2& cv) { std::swap(m_last_curve, cv); }
 
 #ifdef CGAL_SS_VERBOSE
   void Print() const;
