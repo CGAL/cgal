@@ -190,6 +190,23 @@ public:
   /*! records that an overlap has been found */
   void found_overlap(Subcurve* /* sc1 */, Subcurve* /* sc2 */, Subcurve* /* ov_sc */) {}
 
+  /*! records that an intersection point of two subcurves has been found. It
+   * is invoked for every intersection point the sweep processes, whether the
+   * event associated with it is new, already exists, or is the current event.
+   * (In the latter case the visitor is not notified otherwise.) The given
+   * point is the one constructed by the traits; it may carry data that the
+   * point of the event lacks.
+   * \param e the event associated with the intersection point.
+   * \param xp the intersection point.
+   * \param sc1 the first subcurve.
+   * \param sc2 the second subcurve.
+   * \param is_new whether the event has been created for the intersection
+   *        point, in which case its point is `xp`.
+   */
+  void found_intersection_point(Event* /* e */, const Point_2& /* xp */, Subcurve* /* sc1 */,
+                                Subcurve* /* sc2 */, bool /* is_new */)
+  {}
+
   /*! obtains the first subcurve in the status line. */
   Status_line_iterator status_line_begin() { return m_surface_sweep->status_line_begin(); }
 
