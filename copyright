@@ -20,6 +20,7 @@ R = RU Groningen
  Apollonius_graph_2                      I
  Approximate_min_ellipsoid_d             E
  Arithmetic_kernel                       M
+ Arrangement_on_curve_1                  T
  Arrangement_on_surface_2                T
  Barycentric_coordinates_2               IG; Università della Svizzera italiana (Switzerland)
  BGL                                     G
