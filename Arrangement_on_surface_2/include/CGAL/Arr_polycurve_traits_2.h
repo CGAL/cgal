@@ -545,13 +545,10 @@ public:
 
       // Make sure the split point is not one of the curve endpoints.
       CGAL_precondition_code(auto equal = geom_traits->equal_2_object());
-      CGAL_precondition((! equal(m_poly_traits.
-                                 construct_min_vertex_2_object()(xcv), p)));
-      CGAL_precondition((! equal(m_poly_traits.
-                                 construct_max_vertex_2_object()(xcv), p)));
+      CGAL_precondition((! equal(m_poly_traits.construct_min_vertex_2_object()(xcv), p)));
+      CGAL_precondition((! equal(m_poly_traits.construct_max_vertex_2_object()(xcv), p)));
 
-      CGAL_precondition_msg(xcv.number_of_subcurves() > 0,
-                            "Cannot split a polycurve of length zero.");
+      CGAL_precondition_msg(xcv.number_of_subcurves() > 0, "Cannot split a polycurve of length zero.");
 
       const std::size_t n = xcv.number_of_subcurves();
       const Comparison_result dir = cmp_seg_endpts(xcv[0]);
@@ -571,8 +568,7 @@ public:
       // where the scan terminates early.
       std::size_t k = 0;
       Comparison_result res = SMALLER;
-      for (; k + 1 < n; ++k)
-        if ((res = cmp_xy(p, max_vertex(xcv[index(k)]))) != LARGER) break;
+      for (; k + 1 < n; ++k) if ((res = cmp_xy(p, max_vertex(xcv[index(k)]))) != LARGER) break;
       if (k + 1 == n) res = SMALLER;
       const std::size_t i = index(k);
 
