@@ -55,9 +55,9 @@ namespace CGAL::internal::Hexmeshing
     // First iteration
 
     // faces_of_plane will grow, we only want to examine only faces that existed right now
-    int faces_end = rdata.faces_of_plane.size();
+    std::size_t faces_end = rdata.faces_of_plane.size();
 
-    for (int i = 0; i < faces_end; i++){
+    for (std::size_t i = 0; i < faces_end; i++){
       Dart_descriptor face = rdata.faces_of_plane[i];
       auto& face_attr = hdata.lcc.template attribute<2>(face)->info();
 
