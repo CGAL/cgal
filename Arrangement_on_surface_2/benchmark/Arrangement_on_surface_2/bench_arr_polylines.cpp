@@ -104,6 +104,7 @@ struct Options {
   std::string method = "sweep";
   bool count = false;
   bool check = false;
+  std::size_t insert_points = 0;
 
   // Functors
   std::vector<std::string> functors;
@@ -167,7 +168,11 @@ bool parse_options(int argc, char* argv[], Options& opts, int& status) {
       "arrangement)\n"
       "  the others are incremental insertion with the respective point location").c_str())
     ("count,c", po::bool_switch(&opts.count), "count the traits-functor calls during the construction")
-    ("check", po::bool_switch(&opts.check), "check the validity of the arrangement");
+    ("check", po::bool_switch(&opts.check), "check the validity of the arrangement")
+    ("insert-points", po::value<std::size_t>(&opts.insert_points)->default_value(opts.insert_points),
+     "insert points into the interiors of (up to) the given number of edges of the arrangement constructed by the "
+     "sweep, one point in the interior of a random subcurve of every edge; every insertion splits the curve of the "
+     "edge into new output polylines");
 
   po::options_description functor_opts("Functor options");
   functor_opts.add_options()
@@ -409,6 +414,59 @@ void bench_construction(const Options& opts, const Traits& traits, const std::ve
     construct(arr, polylines, opts.method);
     std::cout << "Traits-functor calls (" << opts.method << "):" << std::endl << cnt_traits;
   }
+}
+
+//! A point location that reports a given halfedge; it isolates the cost of
+//! splitting edges by insert_point() from the cost of point location.
+template <typename Arrangement>
+class Given_halfedge_point_location {
+public:
+  using Halfedge_const_handle = typename Arrangement::Halfedge_const_handle;
+  using Result_type = typename CGAL::Arr_point_location_result<Arrangement>::Type;
+
+  Halfedge_const_handle he;
+
+  Result_type locate(const Point&) const { return Result_type(he); }
+};
+
+//! Benchmarks the insertion of points into the interiors of edges.
+void bench_point_insertion(const Options& opts, const Traits& traits, const std::vector<Polyline>& polylines) {
+  using Arrangement = CGAL::Arrangement_2<Traits>;
+  double best = std::numeric_limits<double>::max();
+  std::size_t num_points = 0, num_subcurves = 0, nv = 0;
+  bool valid = true;
+  for (std::size_t r = 0; r < opts.repeats; ++r) {
+    Arrangement arr(&traits);
+    construct(arr, polylines, "sweep");
+
+    // Select the edges and the points; the same ones in every repetition.
+    std::mt19937 gen(opts.seed + 2);
+    std::vector<std::pair<typename Arrangement::Halfedge_const_handle, Point>> targets;
+    for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
+      if (targets.size() == opts.insert_points) break;
+      const auto& xcv = eit->curve();
+      const auto& seg = xcv[std::uniform_int_distribution<std::size_t>(0, xcv.number_of_subcurves() - 1)(gen)];
+      targets.emplace_back(eit, CGAL::midpoint(seg.source(), seg.target()));
+    }
+    num_points = targets.size();
+    num_subcurves = 0;
+    for (const auto& [he, p] : targets) num_subcurves += he->curve().number_of_subcurves();
+
+    Given_halfedge_point_location<Arrangement> pl;
+    auto start = Clock::now();
+    for (const auto& [he, p] : targets) {
+      pl.he = he;
+      CGAL::insert_point(arr, p, pl);
+    }
+    std::chrono::duration<double> d = Clock::now() - start;
+    best = std::min(best, d.count());
+    nv = arr.number_of_vertices();
+    if (opts.check) valid = arr.is_valid();
+  }
+  std::cout << "Point insertion: " << best << " s" << std::endl
+            << "  # points: " << num_points << ", avg. # subcurves of a split edge: "
+            << (num_points ? double(num_subcurves) / double(num_points) : 0.0) << ", V = " << nv << std::endl;
+  if (opts.check) std::cout << "  Validity: " << (valid ? "OK" : "INVALID") << std::endl;
 }
 
 //! The data derived from the polylines used by the functor benchmarks.
@@ -717,6 +775,7 @@ int main(int argc, char* argv[]) {
   std::cout << "# polylines: " << polylines.size() << ", # segments: " << num_subcurves << std::endl;
 
   if (opts.method != "none") bench_construction(opts, traits, polylines);
+  if (opts.insert_points > 0) bench_point_insertion(opts, traits, polylines);
   if (! opts.functors.empty()) bench_functors(opts, traits, polylines);
   return 0;
 }
