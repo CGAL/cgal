@@ -778,23 +778,6 @@ OutputIterator parse_doubles(const std::string& line, OutputIterator it)
   return it;
 }
 
-inline bool parse_double(const std::string& line, double& d)
-{
-  const char* p   = line.data();
-  const char* end = p + line.size();
-
-  while (p != end &&
-         std::isspace(static_cast<unsigned char>(*p)))
-    ++p;
-
-  auto r =  CGAL_FROM_CHARS_NAMESPACE::from_chars(p, end, d);
-
-  if (r.ec != std::errc{})
-    return false;
-
-  return true;
-}
-
 #else
 template <typename OutputIterator>
 OutputIterator parse_doubles(const std::string& line, OutputIterator it)
@@ -805,12 +788,6 @@ OutputIterator parse_doubles(const std::string& line, OutputIterator it)
     *it++ = d;
   }
   return it;
-}
-
-inline bool parse_double(const std::string& line, double& d)
-{
-   d = strtod(line.c_str(),NULL);
-   return true;   // undefined behavior if the string does not contain a double
 }
 
 #endif
