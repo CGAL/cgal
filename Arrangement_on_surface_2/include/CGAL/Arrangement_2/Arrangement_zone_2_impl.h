@@ -1082,7 +1082,7 @@ _zone_in_face(Face_handle face, bool on_boundary) {
     // Set m_cv to be the remaining portion.
     m_has_left_pt = true;
     m_left_pt = m_intersect_p;
-    m_cv = m_sub_cv2;
+    std::swap(m_cv, m_sub_cv2);         // swap rather than copy; m_sub_cv2 is auxiliary
 
     auto psx = m_geom_traits->parameter_space_in_x_2_object();
     auto psy = m_geom_traits->parameter_space_in_y_2_object();
@@ -1367,7 +1367,7 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap() {
   auto ps_y = psy(m_left_pt);
   m_left_on_boundary = (ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
 
-  m_cv = m_sub_cv2;
+  std::swap(m_cv, m_sub_cv2);           // swap rather than copy; m_sub_cv2 is auxiliary
 
   // Move to the remaining portion of the curve, whose left endpoint is the
   // same as the right endpoint of the overlapping curve. Note that we check
