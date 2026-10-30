@@ -1060,6 +1060,28 @@ function(test_polyline_traits)
 endfunction()
 
 #---------------------------------------------------------------------#
+# polyline traits that always construct curves directed left to right
+#---------------------------------------------------------------------#
+function(test_polyline_traits_left_to_right)
+  set(nt ${CGAL_GMPQ_NT})
+  set(kernel ${CARTESIAN_KERNEL})
+  set(geom_traits ${POLYLINE_GEOM_TRAITS})
+  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DCGAL_ALWAYS_LEFT_TO_RIGHT")
+
+  compile_test_with_flags(test_traits polylines_left_to_right "${flags}")
+
+  # Curves that differ only in direction become identical, which changes the
+  # expected results of some of the are_mergeable cases of the merge test.
+  execute_commands_old_structure(polylines polyline_traits
+    APPROXIMATE ARE_MERGEABLE
+    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
+    DO_INTERSECT MERGE)
+  run_trapped_test(test_traits
+    data/empty.zero data/polylines/merge.xcv
+    data/empty.zero data/polylines/merge_left_to_right polyline_traits)
+endfunction()
+
+#---------------------------------------------------------------------#
 # non-caching polyline traits
 #---------------------------------------------------------------------#
 function(test_non_caching_polyline_traits)
@@ -1420,6 +1442,7 @@ compile_and_run(construction_test_suite_generator)
 test_segment_traits()
 test_non_caching_segment_traits()
 test_polyline_traits()
+test_polyline_traits_left_to_right()
 test_polycurve_conic_traits()
 test_polycurve_circular_arc_traits()
 test_polycurve_bezier_traits()
