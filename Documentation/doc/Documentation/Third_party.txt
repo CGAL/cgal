@@ -147,6 +147,11 @@ The \fast_float library provides fast header-only implementations for the \cpp `
 
 The \fast_float web site is <A HREF="https://github.com/fastfloat/fast_float">`https://github.com/fastfloat/fast_float`</A>.
 
+In order to use FastFloat in \cgal programs, the executables should be linked with the CMake imported target
+`CGAL::FastFloat_support` provided in `CGAL_FastFloat_support.cmake`. It is also possible to automate this
+even further by making it a dependency of the target `CGAL::CGAL` by setting the environment or cmake variable
+CGAL_WITH_FASTFLOAT to ON.
+
 
 \subsection thirdpartyOpenGR OpenGR
 

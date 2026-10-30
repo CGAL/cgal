@@ -213,9 +213,6 @@ and library files must be specified by using environment variables.
 The cmake config mode shall be used for configuring the FastFloat library.
 You can either set the environment or cmake variable `FastFloat_DIR` to the path of the directory containing
 `FastFloatConfig.cmake`.
-The configuration can be done either at the level of the compilation unit or directly when CGAL is found.
-In the latter case, you must set the environment or cmake variable `CGAL_WITH_FASTFLOAT` to `ON`, and
-if FastFloat is found, it will be added as a dependency of the target `CGAL::CGAL`.
 
 \subsection installation_eigen Eigen Library
 
