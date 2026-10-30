@@ -359,7 +359,7 @@ bool read_MEDIT(std::istream& is,
           facet[3] = offset + n[3] - 1;
 
           if(verbose)
-            std::cout << "Looking at face #" << i << ": " << n[0] << " " << n[1] << " " << n[2] << " " << n[4] << std::endl;
+            std::cout << "Looking at face #" << i << ": " << n[0] << " " << n[1] << " " << n[2] << " " << n[3] << std::endl;
 
           CGAL_warning_code(
           for(int j=0; j<4; ++j)
