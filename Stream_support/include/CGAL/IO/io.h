@@ -39,6 +39,7 @@
 #include <locale>
 #include <iostream>
 #include <optional>
+#include <type_traits>
 #include <variant>
 
 #ifdef CGAL_USE_FASTFLOAT
@@ -288,7 +289,7 @@ Output_rep<T,F> oformat( const T& t, F format) {
 
 The definition of `Input_rep` is completely symmetric to `Output_rep`.
 */
-template <class T>
+template <class T, class Enable = void>
 class Input_rep
   : public IO_rep_is_not_specialized
 {
@@ -321,182 +322,97 @@ public:
 
 #ifndef CGAL_DISABLE_FROM_CHARS
 
-  template <>
-class Input_rep<int>
-  : public IO_rep_is_specialized
+namespace internal {
+
+// Characters that may be part of a number; reading stops at any other
+// character, which is left in the stream.
+inline bool is_number_char(char c, bool allow_dot)
 {
-  int& t;
+  return (c >= '0' && c <= '9') ||
+         (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F') ||
+         c == '-' || c == '+' || c == 'x' || c == 'X' ||
+         (allow_dot && c == '.');
+}
 
-public:
-  //! initialize with a reference to \a t.
-  Input_rep( int& tt) : t(tt) {}
+// Reads a number of type T with from_chars, skipping leading whitespace.
+template <class T, bool allow_dot>
+std::istream& from_chars_input(std::istream& is, T& t)
+{
+  using Iterator = std::istreambuf_iterator<char>;
 
-  std::istream& operator()( std::istream& is) const
-  {
-    using Traits = std::char_traits<char>;
+  Iterator it(is);
+  Iterator end;
 
-    std::streambuf* sb = is.rdbuf();
+  while (it != end && std::isspace(static_cast<unsigned char>(*it))) {
+    ++it;
+  }
 
-    auto c = sb->sgetc();
+  if (it == end) {
+    is.setstate(std::ios_base::failbit);
+    return is;
+  }
 
-    while (!Traits::eq_int_type(c, Traits::eof()) &&
-           std::isspace(static_cast<unsigned char>(
-             Traits::to_char_type(c))))
-    {
-      c = sb->snextc();
-    }
+  char buffer[256]; // far too big for any int or double (precision 17), but on the safe side
+  char* p = buffer;
+  char* const end_buffer = buffer + sizeof(buffer);
 
-    if (Traits::eq_int_type(c, Traits::eof())){
+  while (it != end && is_number_char(*it, allow_dot)) {
+    if (p == end_buffer) {
       is.setstate(std::ios_base::failbit);
       return is;
     }
 
-    char buffer[256]; // far too big as doubles have only precision 17, but to be on the safe side
-    char* p = buffer;
-    char* const end = buffer + sizeof(buffer);
+    *p++ = *it;
+    ++it;
+  }
 
-    while (!Traits::eq_int_type(c, Traits::eof()) &&
-           !std::isspace(static_cast<unsigned char>(
-              Traits::to_char_type(c))))
-    {
-      if (p == end){
-        is.setstate(std::ios_base::failbit);
-        return is;
-      }
+  auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(buffer, p, t);
 
-      *p++ = Traits::to_char_type(c);
-      c = sb->snextc();
-    }
+  if (ec != std::errc{} || ptr != p) {
+    is.setstate(std::ios_base::failbit);
+  }
 
-    auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(buffer, p, t);
+  return is;
+}
 
+template <class T, bool allow_dot>
+class From_chars_input_rep
+  : public IO_rep_is_specialized
+{
+  T& t;
 
-    if (ec != std::errc{} || ptr != p){
-      is.setstate(std::ios_base::failbit);
-    }
+public:
+  //! initialize with a reference to \a t.
+  From_chars_input_rep(T& tt) : t(tt) {}
 
-    return is;
+  std::istream& operator()(std::istream& is) const
+  {
+    return from_chars_input<T, allow_dot>(is, t);
   }
 };
 
+// Character types and bool are excluded: `is >> c` reads a character, not a number.
+template <class T>
+inline constexpr bool is_from_chars_type_v =
+  (std::is_integral_v<T> || std::is_same_v<T, float> || std::is_same_v<T, double>) &&
+  !std::is_same_v<T, bool> && !std::is_same_v<T, char> &&
+  !std::is_same_v<T, signed char> && !std::is_same_v<T, unsigned char> &&
+  !std::is_same_v<T, wchar_t> && !std::is_same_v<T, char16_t> &&
+  !std::is_same_v<T, char32_t>
+#ifdef __cpp_char8_t
+  && !std::is_same_v<T, char8_t>
+#endif
+  ;
 
+} // namespace internal
 
-
-template <>
-class Input_rep<double>
-  : public IO_rep_is_specialized
+template <class T>
+class Input_rep<T, std::enable_if_t<internal::is_from_chars_type_v<T>>>
+  : public internal::From_chars_input_rep<T, std::is_floating_point_v<T>>
 {
-  double& t;
-
 public:
-  //! initialize with a reference to \a t.
-  Input_rep( double& tt) : t(tt) {}
-
-  std::istream& operator()( std::istream& is) const
-  {
-    using Traits = std::char_traits<char>;
-
-    std::streambuf* sb = is.rdbuf();
-
-    auto c = sb->sgetc();
-
-    while (!Traits::eq_int_type(c, Traits::eof()) &&
-           std::isspace(static_cast<unsigned char>(
-             Traits::to_char_type(c))))
-    {
-      c = sb->snextc();
-    }
-
-    if (Traits::eq_int_type(c, Traits::eof())){
-      is.setstate(std::ios_base::failbit);
-      return is;
-    }
-
-    char buffer[256]; // far too big as doubles have only precision 17, but to be on the safe side
-    char* p = buffer;
-    char* const end = buffer + sizeof(buffer);
-
-    while (!Traits::eq_int_type(c, Traits::eof()) &&
-           !std::isspace(static_cast<unsigned char>(
-              Traits::to_char_type(c))))
-    {
-      if (p == end){
-        is.setstate(std::ios_base::failbit);
-        return is;
-      }
-
-      *p++ = Traits::to_char_type(c);
-      c = sb->snextc();
-    }
-
-    auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(buffer, p, t);
-
-
-    if (ec != std::errc{} || ptr != p){
-      is.setstate(std::ios_base::failbit);
-    }
-
-    return is;
-  }
-};
-
-
-template <>
-class Input_rep<float>
-  : public IO_rep_is_specialized
-{
-  float& t;
-
-public:
-  //! initialize with a reference to \a t.
-  Input_rep( float& tt) : t(tt) {}
-
-  std::istream& operator()( std::istream& is) const
-  {
-    using Traits = std::char_traits<char>;
-
-    std::streambuf* sb = is.rdbuf();
-
-    auto c = sb->sgetc();
-
-    while (!Traits::eq_int_type(c, Traits::eof()) &&
-           std::isspace(static_cast<unsigned char>(
-             Traits::to_char_type(c))))
-    {
-      c = sb->snextc();
-    }
-
-    if (Traits::eq_int_type(c, Traits::eof())){
-      is.setstate(std::ios_base::failbit);
-      return is;
-    }
-
-    char buffer[256]; // far too big as doubles have only precision 17, but to be on the safe side
-    char* p = buffer;
-    char* const end = buffer + sizeof(buffer);
-
-    while (!Traits::eq_int_type(c, Traits::eof()) &&
-           !std::isspace(static_cast<unsigned char>(
-              Traits::to_char_type(c))))
-    {
-      if (p == end){
-        is.setstate(std::ios_base::failbit);
-        return is;
-      }
-
-      *p++ = Traits::to_char_type(c);
-      c = sb->snextc();
-    }
-
-    auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(buffer, p, t);
-
-
-    if (ec != std::errc{} || ptr != p){
-      is.setstate(std::ios_base::failbit);
-    }
-
-    return is;
-  }
+  Input_rep(T& tt)
+    : internal::From_chars_input_rep<T, std::is_floating_point_v<T>>(tt) {}
 };
 
 #endif
