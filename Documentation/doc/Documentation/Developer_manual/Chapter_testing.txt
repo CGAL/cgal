@@ -1,14 +1,60 @@
-/*!
-
 \page devman_testing Running a Testsuite Locally
 \authors \cgal developers
 
-\section pkgTestsuite Running the Testsuite Locally of a Single Package
+\section pkgTestsuite Running the Testsuite Locally
 
 Before submitting a change for integration into \cgal it is good style
 to run the testsuite of the modified package and all packages that
 could be impacted.
 
-For details see <a href="https://github.com/CGAL/cgal/wiki/Testing">Testing</a> on the CGAL wiki on github.
+The recommended way to run tests locally is <b>CTest</b>, a testing
+tool that ships with CMake and can compile and run tests in parallel.
 
-*/
+\subsection devman_testing_configure Configuring the Build
+
+Create a build directory outside the source tree and enable testing,
+examples and tests:
+
+\code
+cd /path/to/cgal
+mkdir build && cd build
+cmake -DBUILD_TESTING=ON -DWITH_examples=ON -DWITH_tests=ON ..
+\endcode
+
+To choose a build type, add for example `-DCMAKE_BUILD_TYPE=Release`
+to the \c cmake command.
+
+CMake searches for third-party libraries such as Boost, GMP, MPFR and
+Eigen. The configure output shows whether each one was found.
+
+\subsection devman_testing_run Running the Tests
+
+To test a single package, go to its subdirectory of the <em>build</em>
+directory (not the source directory):
+
+\code
+cd build/test/Kernel_23
+ctest -j4
+\endcode
+
+To test all of \cgal, run \c ctest at the root of the build directory.
+The option \c -j sets the maximal number of parallel jobs, so set it
+according to your number of CPU cores.
+
+\subsection devman_testing_select Selecting Tests
+
+\code
+ctest -R <pattern>          # tests whose name matches a regular expression
+ctest -L Triangulation_2_Tests   # tests of one package, by label
+ctest -N                    # list the tests without running them
+ctest -V                    # show the command lines and test output
+ctest --output-on-failure   # show output only for failing tests
+\endcode
+
+Without \c -V, the output is stored in
+\c Testing/Temporary/LastTest.log in the build directory. With a
+multi-configuration generator, add \c -C Release (or \c -C Debug).
+
+For more details, see
+<a href="https://github.com/CGAL/cgal/wiki/Testing">Testing</a>
+on the \cgal wiki.
