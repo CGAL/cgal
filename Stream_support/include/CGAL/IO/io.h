@@ -52,7 +52,6 @@ namespace CGAL {
 
 namespace IO {
 
-
 class Static
 {
 public:
@@ -1004,9 +1003,6 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 }
 
 } // namespace internal
-
-
-
 
 } // namespace CGAL
 
