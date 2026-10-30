@@ -202,7 +202,7 @@ public:
       // If the polycurve consists of a single x-monotone subcurve, return.
       if (x_seg_objects.size() == 1) {
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-        if (cmp_seg_endpts(x_seg) == LARGER)
+        if (cmp_seg_endpts(*x_seg_p) == LARGER)
           *oi++ = Make_x_monotone_result(ctr_x_curve(ctr_seg_opposite(*x_seg_p)));
         else *oi++ = Make_x_monotone_result(ctr_x_curve(*x_seg_p));
 #else
@@ -236,7 +236,7 @@ public:
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       Push_front_2 push_front = m_poly_traits.push_front_2_object();
-      X_monotone_curve_2 x_polycurve = (cmp_seg_endpts(x_seg) == LARGER) ?
+      X_monotone_curve_2 x_polycurve = (cmp_seg_endpts(*x_seg_p) == LARGER) ?
         ctr_x_curve(ctr_seg_opposite(*x_seg_p)) : ctr_x_curve(*x_seg_p);
 #else
       X_monotone_curve_2 x_polycurve = ctr_x_curve(*x_seg_p);
@@ -335,7 +335,7 @@ public:
       // If the polycurve consists of a single x-monotone subcurve, return.
       if (x_seg_objects.size() == 1) {
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-        if (cmp_seg_endpts(x_seg) == LARGER)
+        if (cmp_seg_endpts(*x_seg_p) == LARGER)
           *oi++ = Make_x_monotone_result(ctr_x_curve(ctr_seg_opposite(*x_seg_p)));
         else *oi++ = Make_x_monotone_result(ctr_x_curve(*x_seg_p));
 #else
@@ -366,7 +366,7 @@ public:
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       Push_front_2 push_front = m_poly_traits.push_front_2_object();
-      X_monotone_curve_2 x_polycurve = (cmp_seg_endpts(x_seg) == LARGER) ?
+      X_monotone_curve_2 x_polycurve = (cmp_seg_endpts(*x_seg_p) == LARGER) ?
         ctr_x_curve(ctr_seg_opposite(*x_seg_p)) : ctr_x_curve(*x_seg_p);
 #else
       X_monotone_curve_2 x_polycurve = ctr_x_curve(*x_seg_p);
@@ -405,7 +405,7 @@ public:
           is_start_vertical = is_seg_vertical(*x_seg_p);
           start_dir = cmp_seg_endpts(*x_seg_p);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-          x_polycurve (cmp_seg_endpts(*x_seg_p) == LARGER) ?
+          x_polycurve = (cmp_seg_endpts(*x_seg_p) == LARGER) ?
             ctr_x_curve(ctr_seg_opposite(*x_seg_p)) : ctr_x_curve(*x_seg_p);
 #else
           x_polycurve = ctr_x_curve(*x_seg_p);
@@ -417,9 +417,10 @@ public:
           *oi++ = Make_x_monotone_result(x_polycurve);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
           x_polycurve = (cmp_seg_endpts(*x_seg_p) == LARGER) ?
-            ctr_seg_opposite(*x_seg_p) : ctr_x_curve(*x_seg_p);
-#endif
+            ctr_x_curve(ctr_seg_opposite(*x_seg_p)) : ctr_x_curve(*x_seg_p);
+#else
           x_polycurve = ctr_x_curve(*x_seg_p);
+#endif
         }
 
         else {
@@ -941,18 +942,6 @@ public:
       if (xcv_saved) spit_saved_xcv();
       else if (point_saved) spit_saved_point();
 
-      return oi;
-    }
-
-  private:
-    template <typename OutputIterator>
-    inline OutputIterator output_ocv(std::vector<X_monotone_subcurve_2>& ocv,
-                                     bool invert_ocv, OutputIterator oi) const {
-      X_monotone_curve_2 curve;
-      if (invert_ocv) std::reverse(ocv.begin(), ocv.end());
-      for (X_monotone_subcurve_2& sc : ocv) curve.push_back(sc);
-      *oi++ = curve;
-      ocv.clear();
       return oi;
     }
   };
