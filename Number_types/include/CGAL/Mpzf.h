@@ -509,10 +509,17 @@ struct Mpzf {
     init_from_mpz_t(z.mpz());
   }
   void init_from_mpz_t(mpz_t const z){
+    if (mpz_sgn(z) == 0) {
+      init();
+      size=0;
+      exp=0;
+      return;
+    }
     exp=Exponent_type(mpz_scan1(z,0)/GMP_NUMB_BITS);
     size=Size_type(mpz_size(z)-exp);
     init(size);
     mpn_copyi(data(),z->_mp_d+exp,size);
+    if (mpz_sgn(z) < 0) size=-size;
   }
 
 #if 0
