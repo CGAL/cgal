@@ -613,9 +613,14 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
         Intersection_vector xections;
         auto intersector = this->m_traits->intersect_2_object();
         intersector(xc, (*sc_it)->last_curve(), vector_inserter(xections));
-        CGAL_assertion(xections.size() == 1);
-        auto& item = xections.front();
-        xc = *std::get_if<X_monotone_curve_2>(&item);
+        // The curves overlap starting at the current event, and they may
+        // intersect again to the right of this overlap. Keep only the
+        // overlap, which is the first (leftmost) intersection; the other
+        // intersections are computed later on.
+        CGAL_assertion(! xections.empty());
+        const auto* ovl = std::get_if<X_monotone_curve_2>(&xections.front());
+        CGAL_assertion(ovl != nullptr);
+        xc = *ovl;
       }
 
       CGAL_assertion
