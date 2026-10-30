@@ -109,6 +109,8 @@ struct Options {
   std::vector<std::string> functors;
   std::size_t max_pairs = 100000;
   std::size_t queries = 4;
+  std::string split_at = "random";
+  bool fresh_outputs = false;
   std::size_t repeats = 3;
   bool verbose = false;
 };
@@ -125,7 +127,8 @@ std::string join(const T& names) {
 }
 
 const std::vector<std::string> generator_types = { "walk", "random", "monotone" };
-const std::vector<std::string> methods = { "sweep", "naive", "walk", "landmarks", "trapezoid", "none" };
+const std::vector<std::string> methods = { "sweep", "sweep2", "naive", "walk", "landmarks", "trapezoid", "none" };
+const std::vector<std::string> split_positions = { "random", "left", "middle", "right" };
 const std::vector<std::string> functor_names = {
   "make_x_monotone", "min_vertex", "max_vertex", "is_vertical", "compare_endpoints_xy", "construct_opposite",
   "compare_y_at_x", "compare_y_at_x_left", "compare_y_at_x_right", "equal", "split_joint", "split_interior",
@@ -136,17 +139,21 @@ const std::vector<std::string> functor_names = {
 bool parse_options(int argc, char* argv[], Options& opts, int& status) {
   po::options_description input_opts("Input options");
   input_opts.add_options()
-    ("input,i", po::value<std::string>(&opts.input_filename), "read the polylines from the given file instead of generating them")
+    ("input,i", po::value<std::string>(&opts.input_filename),
+     "read the polylines from the given file instead of generating them")
     ("output,o", po::value<std::string>(&opts.output_filename), "write the polylines to the given file")
     ("type,t", po::value<std::string>(&opts.type)->default_value(opts.type),
      ("generator type; one of: " + join(generator_types) + "\n"
       "  walk     -- random walk with steps of random direction and length in (0, step]\n"
       "  random   -- vertices uniformly distributed in the box (long edges)\n"
       "  monotone -- x-monotone random walk").c_str())
-    ("polylines,n", po::value<std::size_t>(&opts.num_polylines)->default_value(opts.num_polylines), "number of polylines")
-    ("points,p", po::value<std::size_t>(&opts.num_points)->default_value(opts.num_points), "number of points per polyline")
+    ("polylines,n", po::value<std::size_t>(&opts.num_polylines)->default_value(opts.num_polylines),
+     "number of polylines")
+    ("points,p", po::value<std::size_t>(&opts.num_points)->default_value(opts.num_points),
+     "number of points per polyline")
     ("size", po::value<double>(&opts.size)->default_value(opts.size), "the vertices lie in the box [-size, size]^2")
-    ("step", po::value<double>(&opts.step)->default_value(opts.step), "maximum step length of the walk and monotone generators")
+    ("step", po::value<double>(&opts.step)->default_value(opts.step),
+     "maximum step length of the walk and monotone generators")
     ("snap", po::value<double>(&opts.snap)->default_value(opts.snap),
      "if positive, round the coordinates to multiples of the given value (induces degeneracies)")
     ("seed,s", po::value<unsigned int>(&opts.seed)->default_value(opts.seed), "random seed");
@@ -155,7 +162,10 @@ bool parse_options(int argc, char* argv[], Options& opts, int& status) {
   arr_opts.add_options()
     ("method,m", po::value<std::string>(&opts.method)->default_value(opts.method),
      ("construction method; one of: " + join(methods) + "\n"
-      "  sweep -- aggregated insertion; the others are incremental insertion with the respective point location").c_str())
+      "  sweep  -- aggregated insertion\n"
+      "  sweep2 -- aggregated insertion of the first half of the polylines, and then of the second half (into a non-empty "
+      "arrangement)\n"
+      "  the others are incremental insertion with the respective point location").c_str())
     ("count,c", po::bool_switch(&opts.count), "count the traits-functor calls during the construction")
     ("check", po::bool_switch(&opts.check), "check the validity of the arrangement");
 
@@ -167,6 +177,12 @@ bool parse_options(int argc, char* argv[], Options& opts, int& status) {
      "maximum number of x-monotone polyline pairs used by pair functors")
     ("queries", po::value<std::size_t>(&opts.queries)->default_value(opts.queries),
      "number of query points per x-monotone polyline for compare_y_at_x")
+    ("split-at", po::value<std::string>(&opts.split_at)->default_value(opts.split_at),
+     ("position of the split point along the x-monotone polyline (by rank of the subcurve, from left to right); "
+      "one of: " + join(split_positions)).c_str())
+    ("fresh-outputs", po::bool_switch(&opts.fresh_outputs),
+     "split into new output polylines in every call (by default, the output polylines are reused, retaining their "
+     "capacity, like the surface sweep does)")
     ("repeats,r", po::value<std::size_t>(&opts.repeats)->default_value(opts.repeats),
      "number of repetitions of each timed operation; the minimum time is reported");
 
@@ -200,7 +216,8 @@ bool parse_options(int argc, char* argv[], Options& opts, int& status) {
     std::cerr << "Invalid " << what << ": " << value << " (valid: " << join(valid) << ")" << std::endl;
     return false;
   };
-  if (! check(opts.type, generator_types, "generator type") || ! check(opts.method, methods, "method")) {
+  if (! check(opts.type, generator_types, "generator type") || ! check(opts.method, methods, "method") ||
+      ! check(opts.split_at, split_positions, "split position")) {
     status = 1;
     return false;
   }
@@ -337,6 +354,12 @@ void construct(Arrangement& arr, const std::vector<Polyline>& polylines, const s
     CGAL::insert(arr, polylines.begin(), polylines.end());
     return;
   }
+  if (method == "sweep2") {
+    auto mid = polylines.begin() + polylines.size() / 2;
+    CGAL::insert(arr, polylines.begin(), mid);
+    CGAL::insert(arr, mid, polylines.end());
+    return;
+  }
   auto insert_all = [&](auto& pl) { for (const auto& cv : polylines) CGAL::insert(arr, cv, pl); };
   if (method == "naive") {
     CGAL::Arr_naive_point_location<Arrangement> pl(arr);
@@ -446,16 +469,22 @@ void prepare(const Options& opts, const Traits& traits, const std::vector<Polyli
     }
   }
 
-  // Split points: interior joints and subcurve interior points.
+  // Split points: interior joints and subcurve interior points. The subcurve
+  // is selected by its rank in left-to-right order, in [first, n-1].
+  auto rank = [&](std::size_t first, std::size_t n) -> std::size_t {
+    if (opts.split_at == "left") return first;
+    if (opts.split_at == "right") return n - 1;
+    if (opts.split_at == "middle") return std::max(first, n / 2);
+    std::uniform_int_distribution<std::size_t> idx(first, n - 1);
+    return idx(gen);
+  };
   for (std::size_t i = 0; i < data.xcvs.size(); ++i) {
     const auto& xcv = data.xcvs[i];
     auto n = xcv.number_of_subcurves();
-    if (n > 1) {
-      std::uniform_int_distribution<std::size_t> idx(1, n - 1);
-      data.joints.emplace_back(xcv[idx(gen)].source(), i);
-    }
-    std::uniform_int_distribution<std::size_t> idx(0, n - 1);
-    const auto& seg = xcv[idx(gen)];
+    auto index = [&](std::size_t r) { return xcv[0].is_directed_right() ? r : n - 1 - r; };
+    // The left endpoint of the subcurve of rank r > 0 is an interior joint.
+    if (n > 1) data.joints.emplace_back(xcv[index(rank(1, n))].left(), i);
+    const auto& seg = xcv[index(rank(0, n))];
     data.interiors.emplace_back(CGAL::midpoint(seg.source(), seg.target()), i);
   }
 
@@ -610,6 +639,12 @@ void bench_functors(const Options& opts, const Traits& traits, const std::vector
         std::size_t s = 0;
         X_monotone_polyline xcv1, xcv2;
         for (const auto& [p, i] : queries) {
+          if (opts.fresh_outputs) {
+            X_monotone_polyline fresh1, fresh2;
+            split(xcvs[i], p, fresh1, fresh2);
+            s += fresh1.number_of_subcurves();
+            continue;
+          }
           split(xcvs[i], p, xcv1, xcv2);
           s += xcv1.number_of_subcurves();
         }
@@ -677,8 +712,7 @@ int main(int argc, char* argv[]) {
   std::size_t num_subcurves = 0;
   for (const auto& pl : polylines) num_subcurves += pl.number_of_subcurves();
   std::cout << "Kernel: " << kernel_name << std::endl;
-  if (opts.input_filename.empty())
-    std::cout << "Generator: " << opts.type << ", seed: " << opts.seed << std::endl;
+  if (opts.input_filename.empty()) std::cout << "Generator: " << opts.type << ", seed: " << opts.seed << std::endl;
   else std::cout << "Input: " << opts.input_filename << std::endl;
   std::cout << "# polylines: " << polylines.size() << ", # segments: " << num_subcurves << std::endl;
 
