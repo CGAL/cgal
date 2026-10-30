@@ -327,8 +327,6 @@ is_valid(bool verbose = false, int level = 0) const;
 
 /// @}
 
-}; /* end Constrained_triangulation_2 */
-
 /*!
 writes the triangulation as for `Triangulation_2<Traits,Tds>` and, for each face `f`, and integers `i=0,1,2`,
 writes "C" or "N" depending whether edge
@@ -336,7 +334,7 @@ writes "C" or "N" depending whether edge
 \relates Constrained_triangulation_2
 */
 template <typename  Traits, typename Tds, typename Itag>
-std::ostream & operator<<(std::ostream& os, const Constrained_triangulation_2<Traits,Tds,Itag> &ct);
+friend std::ostream & operator<<(std::ostream& os, const Constrained_triangulation_2<Traits,Tds,Itag> &ct);
 
 /*!
 reads a triangulation from stream `is` and assigns it to c`t`. Data in the stream must have the same format `operator<<` uses.
@@ -344,11 +342,20 @@ Note that `ct` is first cleared.
 \relates Constrained_triangulation_2
 */
 template <typename  Traits, typename Tds, typename Itag>
-std::istream& operator>>(std::istream& is,Constrained_triangulation_2<Traits,Tds,Itag> Ct& ct);
+friend std::istream& operator>>(std::istream& is,Constrained_triangulation_2<Traits,Tds,Itag> Ct& ct);
 
-/*! Exception used by constrained triangulations configured with
+}; /* end Constrained_triangulation_2 */
+
+/*!
+\ingroup PkgTriangulation2TriangulationClasses
+
+Exception used by constrained triangulations configured with
 the tags `No_constraint_intersection_tag` or `No_constraint_intersection_requiring_constructions_tag`
 when the insertion of a new constraint would break the respective conditions associated to each tag.
+
+\inherit std::runtime_error
+\relates Constrained_triangulation_2
 */
-class Intersection_of_constraints_exception;
+class Intersection_of_constraints_exception{};
+
 } /* end namespace CGAL */
