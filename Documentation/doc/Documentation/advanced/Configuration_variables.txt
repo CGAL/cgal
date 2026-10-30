@@ -294,14 +294,14 @@ environment variable is sufficient.
 
 Some BGL examples require the \metis library in order to partition \metis meshes.
 
-If \metis is not automatically found, setting the `METIS_INCLUDE_DIR` and `METIS_LIBRARY`
+If \metis is not automatically found, setting the `METIS_INCLUDE_DIR` and `METIS_LIBRARY_DIR`
 cmake variables is necessary.
 
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
 | `METIS_INCLUDE_DIR` | Directory of \metis default installation | CMAKE |
-| `METIS_LIBRARY` | Directory containing the `libmetis.so or .lib` file | CMAKE |
+| `METIS_LIBRARY_DIR` | Directory containing the `libmetis.so or .lib` file | CMAKE |
 
 
 \subsection installation_tbb TBB Library
