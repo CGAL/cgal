@@ -99,43 +99,14 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex, const Point_2& p,
     return (_walk_from_face(fh, vh->point(), p, crossed_edges));
   }
 
-  // if we walk from a vertex this means we are crossing the
-  // halfedges that form a corridor in which seg is going through
-  Halfedge_around_vertex_const_circulator first = vh->incident_halfedges();
-  // Create an x-monotone curve connecting the point associated with the
-  // vertex vp and the query point p.
-  const Point_2& vp = vh->point();
-  X_monotone_curve_2 seg;
-  Comparison_result res;
-  std::tie(seg, res) = construct_segment(vp, p, *m_traits, 0);
-  bool seg_dir_right = (res == SMALLER);
-  Halfedge_around_vertex_const_circulator curr_iter = first;
-  Halfedge_around_vertex_const_circulator next_iter = curr_iter;
-  ++next_iter;
-  auto is_between_cw = m_traits->is_between_cw_2_object();
-  // Traverse the halfedges around vp until we find the pair of adjacent
-  // halfedges such as seg is located clockwise in between them.
-  do {
-    bool eq_curr_iter, eq_next_iter;
-    if (is_between_cw(seg, seg_dir_right, curr_iter->curve(),
-                      (curr_iter->direction() == ARR_RIGHT_TO_LEFT),
-                      next_iter->curve(),
-                      (next_iter->direction() == ARR_RIGHT_TO_LEFT),
-                      vp, eq_curr_iter, eq_next_iter)) {
-      // the assumption is that each edge is crossed at most twice
-      CGAL_assertion_msg(crossed_edges.count(curr_iter) < 2,
-        "crossed_edges should contain each halfedge at most twice.");
-      CGAL_assertion_msg(crossed_edges.count(next_iter) < 2,
-        "crossed_edges should contain each halfedge at most twice.");
-      crossed_edges.insert(curr_iter);
-      crossed_edges.insert(curr_iter->twin());
-      crossed_edges.insert(next_iter);
-      crossed_edges.insert(next_iter->twin());
-      break;
-    }
-    ++curr_iter;
-    ++next_iter;
-  } while (curr_iter != first);
+  // Walking from a vertex starts a new walk along the curve that connects
+  // the vertex and the query point. The vertex lies on the curve, along which
+  // we have walked so far (unless it is the first vertex we walk from), and
+  // it is closer to the query point; thus, the walk progresses. The edges
+  // crossed so far are irrelevant to the new curve. In particular, an edge
+  // that has been crossed may cross the new curve, and so may an edge
+  // incident to the vertex, unless the edges are line segments.
+  crossed_edges.clear();
 
   // Locate the face around the vertex that contains the curve connecting
   // the vertex and the query point.
@@ -605,23 +576,41 @@ _intersection_with_ccb(Ccb_halfedge_const_circulator circ,
       if (is_on_edge)
         return _in_case_p_is_on_edge(he,crossed_edges,p,is_target);
 
+      // The endpoint of seg that is not p, from which we walk. (The curve of
+      // the halfedge may be incident to it and still cross seg an odd number
+      // of times elsewhere, unless it is a line segment.)
+      const Point_2& np = p_is_left ?
+        m_traits->construct_max_vertex_2_object()(seg) :
+        m_traits->construct_min_vertex_2_object()(seg);
+      auto equal = m_traits->equal_2_object();
       if ((!curr->target()->is_at_open_boundary()) &&
           is_in_x_range(seg, curr->target()->point())) {
-        // if the target point of curr is located on seg
-        // we should walk from it to the query point
-        if (m_traits->compare_y_at_x_2_object()
-            (curr->target()->point(), seg) == EQUAL) {
+        // if the target point of curr is located on seg (and it is not the
+        // point we walk from) we should walk from it to the query point
+        if ((m_traits->compare_y_at_x_2_object()
+             (curr->target()->point(), seg) == EQUAL) &&
+            ! equal(curr->target()->point(), np)) {
           new_vertex = curr->target();
         }
       }
       else if ((!curr->source()->is_at_open_boundary()) &&
                is_in_x_range(seg , curr->source()->point())) {
-        // if the source point of curr is located on seg
-        // we should walk from it to the query point
-        if (m_traits->compare_y_at_x_2_object()
-            (curr->source()->point(), seg) == EQUAL) {
+        // if the source point of curr is located on seg (and it is not the
+        // point we walk from) we should walk from it to the query point
+        if ((m_traits->compare_y_at_x_2_object()
+             (curr->source()->point(), seg) == EQUAL) &&
+            ! equal(curr->source()->point(), np)) {
           new_vertex = curr->source();
         }
+      }
+
+      // If the halfedge belongs to an antenna, namely its incident face is
+      // the same as its twin's, crossing it does not lead out of the face.
+      // Thus, unless we walk from one of its end vertices, continue to search
+      // the CCB; in particular, p may lie on another halfedge of the CCB.
+      if ((he->twin()->face() == he->face()) && (new_vertex == Vertex_const_handle())) {
+        ++curr;
+        continue;
       }
 
       // Return the halfedge we found, and mark that we have already crossed
@@ -746,6 +735,10 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
           p_on_curve = true;
           return true;
         }
+        // cv meets the supporting line of seg at a single point. If this point
+        // is the endpoint of seg we walk from, it is not a crossing.
+        if ((p_is_left && res_r == EQUAL) || (! p_is_left && res_l == EQUAL))
+          return false;
         return (res_l != res_r);
       }
       return false;
@@ -769,6 +762,10 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
           p_on_curve = true;
           return true;
         }
+        // cv meets the supporting line of seg at a single point. If this point
+        // is the endpoint of seg we walk from, it is not a crossing.
+        if ((p_is_left && res_r == EQUAL) || (! p_is_left && res_l == EQUAL))
+          return false;
         return (res_l != res_r);
       }
       return false;
