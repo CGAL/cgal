@@ -479,7 +479,9 @@ public:
       const std::size_t n2 = cv2.number_of_subcurves();
 
       Point_2 saved_point;
-      X_monotone_curve_2 saved_xcv;
+      // The subcurves of the saved x-monotone curve in the order of the
+      // traversal, that is, from left to right.
+      std::vector<X_monotone_subcurve_2> saved_subcurves;
       bool point_saved = false;
       bool xcv_saved = false;
 
@@ -495,8 +497,8 @@ public:
         point_saved = false;
       };
 
-      // Add a subcurve to the saved x-monotone curve
-      auto update_saved_xcv = [&](const X_monotone_subcurve_2& sxcv) {
+      // Add a subcurve (by moving it) to the saved x-monotone curve
+      auto update_saved_xcv = [&](X_monotone_subcurve_2&& sxcv) {
         xcv_saved = true;
         // We maintain the invariant that if the input curves have opposite
         // directions (! consistent), the overalpping curves are directed
@@ -504,32 +506,28 @@ public:
         // subcurves. (It is guaranteed by some traits, but this is
         // insufficient.)  Therefore, we need to enforce it. That is, we make
         // sure the subcurves are also directed left=>right in this case.
-        if (! consistent && (cmp_endpts(sxcv) == LARGER)) {
-          if (invert_ocv) {
-            saved_xcv.push_front(ctr_opposite(sxcv));
-            return;
-          }
-          saved_xcv.push_back(ctr_opposite(sxcv));
-          return;
-        }
-        if (invert_ocv) {
-          saved_xcv.push_front(sxcv);
-          return;
-        }
-        saved_xcv.push_back(sxcv);
+        if (! consistent && (cmp_endpts(sxcv) == LARGER)) saved_subcurves.push_back(ctr_opposite(sxcv));
+        else saved_subcurves.push_back(std::move(sxcv));
       };
 
-      // Spit out the saved x-monotone curve
+      // Spit out the saved x-monotone curve. If both input curves are
+      // directed right=>left (invert_ocv), so is the saved curve; thus, its
+      // subcurves, saved from left to right, are moved in reverse order.
       auto spit_saved_xcv = [&]() {
-        *oi++ = std::move(saved_xcv);
-        saved_xcv.clear();
+        if (invert_ocv)
+          *oi++ = X_monotone_curve_2(std::make_move_iterator(saved_subcurves.rbegin()),
+                                     std::make_move_iterator(saved_subcurves.rend()));
+        else
+          *oi++ = X_monotone_curve_2(std::make_move_iterator(saved_subcurves.begin()),
+                                     std::make_move_iterator(saved_subcurves.end()));
+        saved_subcurves.clear();
         xcv_saved = false;
       };
 
       // Spit out an overlapping subcurve (as an x-monotone curve).
-      auto spit_xcv = [&](const X_monotone_subcurve_2& sxcv) {
+      auto spit_xcv = [&](X_monotone_subcurve_2&& sxcv) {
         CGAL_assertion(! xcv_saved);
-        update_saved_xcv(sxcv);
+        update_saved_xcv(std::move(sxcv));
         spit_saved_xcv();
       };
 
@@ -568,7 +566,7 @@ public:
               *oi++ = std::make_pair(xp_p->first, 0);
             else *oi++ = *xp_p;
           }
-          else spit_xcv(std::get<X_monotone_subcurve_2>(*it));
+          else spit_xcv(std::move(std::get<X_monotone_subcurve_2>(*it)));
         }
         return oi;
       }
@@ -668,7 +666,7 @@ public:
           const bool pending = xcv_saved || point_saved;
 
           auto it = xsecs.begin();
-          const auto& xsec = *it++;
+          auto& xsec = *it++;
           if (it == xsecs.end()) {
             // There is exactly one intersection
             if (const auto* xp_p = std::get_if<Intersection_point>(&xsec)) {
@@ -683,11 +681,11 @@ public:
             }
             else {
               // The intersection is an x-monotone curve
-              const auto& sxcv = std::get<X_monotone_subcurve_2>(xsec);
+              auto& sxcv = std::get<X_monotone_subcurve_2>(xsec);
               point_saved = false;
               const bool at_right = is_at_right();
-              if (at_right || pending) update_saved_xcv(sxcv);
-              else spit_xcv(sxcv);
+              if (at_right || pending) update_saved_xcv(std::move(sxcv));
+              else spit_xcv(std::move(sxcv));
               if (pending && ! at_right) spit_saved_xcv();
             }
           }
@@ -703,19 +701,19 @@ public:
               else *oi++ = std::get<Intersection_point>(xsec);
             }
             else {
-              const auto& sxcv = std::get<X_monotone_subcurve_2>(xsec);
+              auto& sxcv = std::get<X_monotone_subcurve_2>(xsec);
               point_saved = false;
               if (pending) {
-                update_saved_xcv(sxcv);
+                update_saved_xcv(std::move(sxcv));
                 spit_saved_xcv();
               }
-              else spit_xcv(sxcv);
+              else spit_xcv(std::move(sxcv));
             }
 
             // Handle all but the last intersection
             for (; it != std::prev(xsecs.end()); ++it) {
               if (const auto* xp_p = std::get_if<Intersection_point>(&*it)) *oi++ = *xp_p;
-              else spit_xcv(std::get<X_monotone_subcurve_2>(*it));
+              else spit_xcv(std::move(std::get<X_monotone_subcurve_2>(*it)));
             }
 
             // Handle the last intersection
@@ -725,9 +723,9 @@ public:
               else *oi++ = *xp_p;
             }
             else {
-              const auto& sxcv = std::get<X_monotone_subcurve_2>(*it);
-              if (at_right) update_saved_xcv(sxcv);
-              else spit_xcv(sxcv);
+              auto& sxcv = std::get<X_monotone_subcurve_2>(*it);
+              if (at_right) update_saved_xcv(std::move(sxcv));
+              else spit_xcv(std::move(sxcv));
             }
           }
         }
