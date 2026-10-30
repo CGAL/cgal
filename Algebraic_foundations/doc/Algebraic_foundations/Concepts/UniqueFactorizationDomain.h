@@ -27,7 +27,6 @@ derived from `CGAL::Unique_factorization_domain_tag`
 
 \sa `IntegralDomainWithoutDivision`
 \sa `IntegralDomain`
-\sa `UniqueFactorizationDomain`
 \sa `EuclideanRing`
 \sa `Field`
 \sa `FieldWithSqrt`
