@@ -851,6 +851,7 @@ public:
         const std::size_t n1 = cv1.number_of_subcurves();
         const std::size_t n2 = cv2.number_of_subcurves();
         std::size_t i;
+        c.reserve(n1 + n2);
 
         // cv2 extends cv1 to the right:
         for (i = 0; i < n1 - 1; ++i) c.push_back(cv1[i]);
@@ -860,7 +861,7 @@ public:
           X_monotone_subcurve_2 seg;
           m_poly_traits.subcurve_traits_2()->
             merge_2_object()(cv1[n1 - 1], cv2[0], seg);
-          c.push_back(seg);
+          c.push_back(std::move(seg));
         }
         else {
           c.push_back(cv1[n1 - 1]);

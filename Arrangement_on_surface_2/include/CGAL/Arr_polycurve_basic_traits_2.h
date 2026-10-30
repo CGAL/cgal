@@ -2283,7 +2283,8 @@ public:
       //           << target_id << std::endl;
       // std::cout << "target subcurve: " << xcv[target_id] << std::endl;
 
-      std::vector<X_monotone_subcurve_2> trimmed_subcurves;
+      X_monotone_curve_2 trimmed_xcv;
+      trimmed_xcv.reserve(trg_id - src_id + 1);
 
       Comparison_result orientation =
         m_poly_traits.compare_endpoints_xy_2_object()(xcv);
@@ -2296,30 +2297,30 @@ public:
       // Push the trimmed version of the source subcurve.
       // if (sorientation == SMALLER && source != src_max_vertex)
       if ((orientation == SMALLER) && ! geom_traits->equal_2_object()(src, src_max_vertex)) {
-        if (src_id != trg_id) trimmed_subcurves.push_back(trim(xcv[src_id], src, src_max_vertex));
-        else trimmed_subcurves.push_back(trim(xcv[src_id], src, trg));
+        if (src_id != trg_id) trimmed_xcv.push_back(trim(xcv[src_id], src, src_max_vertex));
+        else trimmed_xcv.push_back(trim(xcv[src_id], src, trg));
       }
       // else if(orientation == LARGER && source != src_min_vertex)
       else if ((orientation == LARGER) && ! geom_traits->equal_2_object()(src, src_min_vertex)) {
-        if (src_id != trg_id) trimmed_subcurves.push_back(trim(xcv[src_id], src, src_min_vertex));
-        else trimmed_subcurves.push_back(trim(xcv[src_id], src, trg));
+        if (src_id != trg_id) trimmed_xcv.push_back(trim(xcv[src_id], src, src_min_vertex));
+        else trimmed_xcv.push_back(trim(xcv[src_id], src, trg));
       }
 
       // Push the middle subcurves as they are.
-      for (size_t i = src_id+1; i < trg_id; ++i) trimmed_subcurves.push_back(xcv[i]);
+      for (size_t i = src_id+1; i < trg_id; ++i) trimmed_xcv.push_back(xcv[i]);
 
       // Push the appropriately trimmed target subcurve.
       if (src_id != trg_id) {
         // if (orientation == SMALLER && target != trg_min_vertex)
         if ((orientation == SMALLER) && ! geom_traits->equal_2_object()(trg, trg_min_vertex))
-          trimmed_subcurves.push_back(trim(xcv[trg_id], trg_min_vertex, trg));
+          trimmed_xcv.push_back(trim(xcv[trg_id], trg_min_vertex, trg));
 
         // else if (orientation == LARGER && target != trg_max_vertex)
         else if ((orientation == LARGER) && ! geom_traits->equal_2_object()(trg, trg_max_vertex))
-          trimmed_subcurves.push_back(trim(xcv[trg_id], trg_max_vertex, trg));
+          trimmed_xcv.push_back(trim(xcv[trg_id], trg_max_vertex, trg));
       }
 
-      return X_monotone_curve_2(trimmed_subcurves.begin(), trimmed_subcurves.end());
+      return trimmed_xcv;
     }
   };
 
