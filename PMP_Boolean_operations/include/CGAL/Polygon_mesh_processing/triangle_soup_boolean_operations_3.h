@@ -1187,10 +1187,10 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   * \cgalNamedParamsEnd
   */
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
-void compute_union(const PointRange& points_1, const TriangleRange& triangles_1,
-                   const PointRange& points_2, const TriangleRange& triangles_2,
-                         PointRange& out_points,     TriangleRange& out_triangles,
-                   const NamedParameters& np = parameters::default_values())
+void compute_union_of_triangle_soups(const PointRange& points_1, const TriangleRange& triangles_1,
+                                     const PointRange& points_2, const TriangleRange& triangles_2,
+                                           PointRange& out_points,     TriangleRange& out_triangles,
+                                     const NamedParameters& np = parameters::default_values())
 {
   CGAL_USE(np);
 
@@ -1255,13 +1255,13 @@ void compute_union(const PointRange& points_1, const TriangleRange& triangles_1,
 /**
   * \ingroup PMP_boolop_soup_grp
   * computes the intersection of two volumes, each bounded by a triangle soup.
-  * \copydetails CGAL::Polygon_mesh_processing::compute_union()
+  * \copydetails CGAL::Polygon_mesh_processing::compute_union_of_triangle_soups()
   */
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
-void compute_intersection(const PointRange& points_1, const TriangleRange& triangles_1,
-                          const PointRange& points_2, const TriangleRange& triangles_2,
-                                PointRange& out_points,     TriangleRange& out_triangles,
-                          const NamedParameters& np = parameters::default_values())
+void compute_intersection_of_triangle_soups(const PointRange& points_1, const TriangleRange& triangles_1,
+                                            const PointRange& points_2, const TriangleRange& triangles_2,
+                                                  PointRange& out_points,     TriangleRange& out_triangles,
+                                            const NamedParameters& np = parameters::default_values())
 {
   CGAL_USE(np);
 
@@ -1313,13 +1313,13 @@ void compute_intersection(const PointRange& points_1, const TriangleRange& trian
 /**
   * \ingroup PMP_boolop_soup_grp
   * computes the difference of two volumes, each bounded by a triangle soup.
-  * \copydetails CGAL::Polygon_mesh_processing::compute_union()
+  * \copydetails CGAL::Polygon_mesh_processing::compute_union_of_triangle_soups()
   */
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
-void compute_difference(const PointRange& points_1, const TriangleRange& triangles_1,
-                        const PointRange& points_2, const TriangleRange& triangles_2,
-                              PointRange& out_points,     TriangleRange& out_triangles,
-                        const NamedParameters& np = parameters::default_values())
+void compute_difference_of_triangle_soups(const PointRange& points_1, const TriangleRange& triangles_1,
+                                          const PointRange& points_2, const TriangleRange& triangles_2,
+                                                PointRange& out_points,     TriangleRange& out_triangles,
+                                          const NamedParameters& np = parameters::default_values())
 {
   CGAL_USE(np);
 
