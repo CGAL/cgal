@@ -74,16 +74,21 @@ void test(const std::string& mesh_filename,
   // weights
   auto fwm = get(CGAL::dynamic_face_property_t<FT>{}, sm);
 
-  auto inner_fwm = sm.template property_map<face_descriptor, double>("f:weight");
-  if (inner_fwm.has_value())
+  auto inner_fwm = sm.template add_property_map<face_descriptor, double>("f:weight");
+  if (!inner_fwm.second)
   {
     std::cout << "Input mesh had an inner f:weight property map" << std::endl;
     for (face_descriptor f : faces(sm)) {
-      std::cout << "  " << f << ": " << get(inner_fwm.value(), f) << std::endl;
-      put(fwm, f, get(inner_fwm.value(), f));
+      std::cout << "  " << f << ": " << get(inner_fwm.first, f) << std::endl;
+      put(fwm, f, get(inner_fwm.first, f));
     }
 
     SS3::utils::clamp_weights(sm, fwm);
+  } else {
+    // constant property map
+    for (face_descriptor f : faces(sm)) {
+      put(fwm, f, 1);
+    }
   }
 
   bool result = SS3::utils::run(sm, fwm, save_times, save_path, config_path);
