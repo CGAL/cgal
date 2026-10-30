@@ -509,10 +509,13 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   using Point_3 = typename GT::Point_3;
 
   constexpr bool update_bbox = !is_default_parameter<NamedParameters, internal_np::bounding_box_t>::value;
-  std::array<vertex_descriptor, 6>* bbox_pointer = nullptr;
+  Bbox_3* bbox_pointer = nullptr;
+  std::array<vertex_descriptor, 6>* bbox_vertices_pointer = nullptr;
 
-  if constexpr (update_bbox)
-    bbox_pointer = get_parameter(np, internal_np::bounding_box);
+  if constexpr (update_bbox){
+    bbox_pointer = get_parameter(np, internal_np::bounding_box).first;
+    bbox_vertices_pointer = get_parameter(np, internal_np::bounding_box).second;
+  }
 
   Default_visitor default_visitor;
   Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
@@ -565,37 +568,45 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
 
   if constexpr (update_bbox)
   {
+    // Update the bounding box of the result and store the vertices realizing its boundaries.
+    // A bounding-box boundary changes if and only if the vertex realizing it is deleted.
+    // In that case, the new boundary in that direction is realized by a vertex on the border.
+    // (Proof idea: Otherwise, consider the intersection of the cutting plane with the segment connecting the old vertex to the new one.)
+    // Updating the bbox complexity is proportional to the size of the border (O(sqrt(n)) under the appropriate assumptions)
+    // ** Remark ** The computation are done using the approximation of the vertices that may changed in further computations
+    CGAL_assertion(bbox_pointer!=nullptr && bbox_vertices_pointer!=nullptr);
     auto &bbox = *bbox_pointer;
-    struct BBox_entry {
-      std::size_t index;
+    auto &bbox_vertices = *bbox_vertices_pointer;
+    struct Bbox_entry {
+      int index;
       std::function<double(const Point_3&)> bound;
       bool take_min;
     };
 
-    std::array<BBox_entry,6> entries {{
-        {0, [](const Point_3& p){ return to_interval(p.x()).first;  }, true},  // xmin
-        {1, [](const Point_3& p){ return to_interval(p.x()).second; }, false}, // xmax
-        {2, [](const Point_3& p){ return to_interval(p.y()).first;  }, true},  // ymin
-        {3, [](const Point_3& p){ return to_interval(p.y()).second; }, false}, // ymax
-        {4, [](const Point_3& p){ return to_interval(p.z()).first;  }, true},  // zmin
-        {5, [](const Point_3& p){ return to_interval(p.z()).second; }, false}  // zmax
+    std::array<Bbox_entry,6> entries {{
+        {0, [](const Point_3& p){ return approx(p).x().inf();  }, true},  // xmin
+        {1, [](const Point_3& p){ return approx(p).y().inf();  }, true},  // ymin
+        {2, [](const Point_3& p){ return approx(p).z().inf();  }, true},  // zmin
+        {3, [](const Point_3& p){ return approx(p).x().sup();  }, false}, // xmax
+        {4, [](const Point_3& p){ return approx(p).y().sup();  }, false}, // ymax
+        {5, [](const Point_3& p){ return approx(p).z().sup();  }, false}  // zmax
     }};
 
     for (vertex_descriptor v : vertices_to_remove){
       for (const auto& e : entries){
         // Only update this bbox entry if the removed vertex *was* this extremum
-        std::size_t i = e.index;
-        if (v == bbox[i]){
+        int i = e.index;
+        if (v == bbox_vertices[i]){
           auto it = boundary_vertices.begin();
-          bbox[i] = *it;
-          double bound = e.bound(get(vpm, bbox[i]));
+          bbox_vertices[i] = *it;
+          bbox.set_value(i, e.bound(get(vpm, bbox_vertices[i])));
           for (++it; it != boundary_vertices.end(); ++it){
             vertex_descriptor v = *it;
             double val = e.bound(get(vpm, v));
-            if ((e.take_min && val < bound) ||
-              (!e.take_min && val > bound)){
-              bound = val;
-              bbox[i] = v;
+            if (( e.take_min && val < bbox.get_value(i)) ||
+                (!e.take_min && val > bbox.get_value(i))){
+              bbox.set_value(i, val);
+              bbox_vertices[i] = v;
             }
           }
         }

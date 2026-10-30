@@ -96,9 +96,9 @@ std::size_t peel_slivers(C3T3& c3t3,
     for (int i = 0; i < 4; ++i)
     {
       if (f_on_surface[i])
-        c3t3.remove_from_complex(c, i);
+        c3t3.remove_from_complex({c, i});
       else
-        c3t3.add_to_complex(c, i, patch.value());
+        c3t3.add_to_complex({c, i}, patch.value());
     }
 
     c3t3.remove_from_complex(c);

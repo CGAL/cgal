@@ -28,6 +28,12 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/Iterator_range.h>
+#include <CGAL/enum.h>
+#include <CGAL/tags.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
@@ -46,13 +52,16 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Spatial_lock_grid_3.h>
 
+#include <boost/container/small_vector.hpp>
+#include <boost/container_hash/hash.hpp>
+#include <boost/property_map/function_property_map.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/property_map/function_property_map.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/unordered/unordered_map_fwd.hpp>
 #include <boost/utility/result_of.hpp>
-#include <boost/container/small_vector.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/STL_Extension/internal/info_check.h>
@@ -69,14 +78,19 @@
 # include <tbb/scalable_allocator.h>
 #endif
 
+#include <array>
+#include <cstddef>
 #include <iostream>
+#include <iterator>
 #include <list>
-#include <set>
 #include <map>
+#include <optional>
+#include <set>
+#include <stack>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
-#include <stack>
-#include <array>
+#include <vector>
 
 #define CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
 
@@ -1110,6 +1124,9 @@ public:
     // c will be replaced by one of the new cells
     return flip(f.first, f.second);
   }
+  std::optional<int> edge_preventing_the_flip(Cell_handle c, int i) const;
+  bool is_flippable(const Facet& f) const { return is_flippable(f.first, f.second); }
+  bool is_flippable(Cell_handle c, int i) const;
   bool flip(Cell_handle c, int i);
   void flip_flippable(const Facet& f) { flip_flippable(f.first, f.second); }
   void flip_flippable(Cell_handle c, int i);
@@ -1667,15 +1684,47 @@ protected:
   }
 
 protected:
-  typedef Facet Edge_2D;
-  typedef std::array<Vertex_handle, 3> Vertex_triple;
-  typedef typename Base::template Vertex_triple_Facet_map_generator<
-  Vertex_triple, Facet>::type Vertex_triple_Facet_map;
-  typedef typename Base::template Vertex_handle_unique_hash_map_generator<
-  Vertex_handle>::type Vertex_handle_unique_hash_map;
+  using Edge_2D = Facet;
+  using Vertex_triple = std::array<Vertex_handle, 3>;
+
+  using Vertex_triple_Facet_map = typename Base::template Vertex_triple_Facet_map_generator<Vertex_triple, Facet>::type;
+  using Vertex_handle_unique_hash_map = typename Base::template Vertex_handle_unique_hash_map_generator<Vertex_handle>::type;
 
   static Vertex_triple make_vertex_triple(const Facet& f);
   static void make_canonical_oriented_triple(Vertex_triple& t);
+
+  static Vertex_triple make_canonical_oriented_triple(Vertex_triple&& t) {
+    make_canonical_oriented_triple(t);
+    return t;
+  }
+
+  static Vertex_triple make_canonical_oriented_triple(const Facet& f) {
+    Vertex_triple t = make_vertex_triple(f);
+    make_canonical_oriented_triple(t);
+    return t;
+  }
+
+  static Vertex_triple make_canonical_oriented_triple(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2) {
+    Vertex_triple t{v0, v1, v2};
+    make_canonical_oriented_triple(t);
+    return t;
+  }
+
+  template <class Map>
+  static Vertex_triple apply_map(Map& m, const Vertex_triple& t) {
+    return Vertex_triple{m[t[0]], m[t[1]], m[t[2]]};
+  }
+
+  template <class Functor, class Triple>
+  static Vertex_triple apply_functor(Functor& f, const Triple& t) {
+    const auto& [t0, t1, t2] = t;
+    return Vertex_triple{f(t0), f(t1), f(t2)};
+  }
+
+  template <class Map>
+  static Vertex_triple make_canonical_oriented_mapped_triple(Map& m, const Facet& f) {
+    return make_canonical_oriented_triple(apply_map(m, make_vertex_triple(f)));
+  }
 
   template < class VertexRemover >
   VertexRemover& make_hole_2D(Vertex_handle v, std::list<Edge_2D>& hole,
@@ -3725,57 +3774,51 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 flip(Cell_handle c, int i)
 {
+  if(!is_flippable(c, i))
+    return false;
+
+  _tds.flip_flippable(c, i);
+  return true;
+}
+
+template < class GT, class Tds, class Lds >
+std::optional<int>
+Triangulation_3<GT,Tds,Lds>::
+edge_preventing_the_flip(Cell_handle c, int i) const
+{
   CGAL_precondition((dimension() == 3) && (0<=i) && (i<4) &&
                     (number_of_vertices() >= 5));
 
   Cell_handle n = c->neighbor(i);
   int in = n->index(c);
   if(is_infinite(c) || is_infinite(n))
-    return false;
+    return { -1 };
 
-  if(i%2 == 1)
-  {
-    if(orientation(c->vertex((i+1)&3)->point(),
-                   c->vertex((i+2)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
+  Vertex_handle va = c->vertex(i);
+  Vertex_handle vb = n->vertex(in);
+  auto face_vert = vertices(Facet{c, i});
 
-    if(orientation(c->vertex((i+2)&3)->point(),
-                   c->vertex((i+3)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
+  if(orientation(face_vert[0]->point(),
+                 face_vert[1]->point(),
+                 vb->point(),
+                 va->point()) != POSITIVE) return {2};
+  if(orientation(face_vert[1]->point(),
+                 face_vert[2]->point(),
+                 vb->point(),
+                 va->point()) != POSITIVE) return {0};
+  if(orientation(face_vert[2]->point(),
+                 face_vert[0]->point(),
+                 vb->point(),
+                 va->point()) != POSITIVE) return {1};
+  return std::nullopt;
+}
 
-    if(orientation(c->vertex((i+3)&3)->point(),
-                   c->vertex((i+1)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
-  }
-  else
-  {
-    if(orientation(c->vertex((i+2)&3)->point(),
-                   c->vertex((i+1)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
-
-    if(orientation(c->vertex((i+3)&3)->point(),
-                   c->vertex((i+2)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
-
-    if(orientation(c->vertex((i+1)&3)->point(),
-                   c->vertex((i+3)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
-  }
-
-  _tds.flip_flippable(c, i);
-  return true;
+template < class GT, class Tds, class Lds >
+bool
+Triangulation_3<GT,Tds,Lds>::
+is_flippable(Cell_handle c, int i) const
+{
+  return edge_preventing_the_flip(c, i) == std::nullopt;
 }
 
 template < class GT, class Tds, class Lds >
@@ -3783,43 +3826,7 @@ void
 Triangulation_3<GT,Tds,Lds>::
 flip_flippable(Cell_handle c, int i)
 {
-  CGAL_precondition((dimension() == 3) && (0<=i) && (i<4) &&
-                    (number_of_vertices() >= 5));
-  CGAL_precondition_code(Cell_handle n = c->neighbor(i););
-  CGAL_precondition_code(int in = n->index(c););
-  CGAL_precondition((! is_infinite(c)) &&(! is_infinite(n)));
-
-  if(i%2 == 1)
-  {
-    CGAL_precondition(orientation(c->vertex((i+1)&3)->point(),
-                                  c->vertex((i+2)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-    CGAL_precondition(orientation(c->vertex((i+2)&3)->point(),
-                                  c->vertex((i+3)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-    CGAL_precondition(orientation(c->vertex((i+3)&3)->point(),
-                                  c->vertex((i+1)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-  }
-  else
-  {
-    CGAL_precondition(orientation(c->vertex((i+2)&3)->point(),
-                                  c->vertex((i+1)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-    CGAL_precondition(orientation(c->vertex((i+3)&3)->point(),
-                                  c->vertex((i+2)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-    CGAL_precondition(orientation(c->vertex((i+1)&3)->point(),
-                                  c->vertex((i+3)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-  }
-
+  CGAL_precondition(is_flippable(c, i));
   _tds.flip_flippable(c, i);
 }
 
@@ -4511,7 +4518,7 @@ test_dim_down(Vertex_handle v) const
   }
   else // dimension() == 1 or 0
   {
-    return number_of_vertices() == (size_type) dimension() + 1;
+    return number_of_vertices() == static_cast<size_type>(dimension()) + 1;
   }
 
   return true;
@@ -4966,19 +4973,17 @@ create_hole_outer_map(Vertex_handle v, const std::vector<Cell_handle>& incident_
   CGAL_expensive_precondition(! test_dim_down(v));
 
   Vertex_triple_Facet_map outer_map;
-  for(auto cit = incident_cells.begin(), end = incident_cells.end();
-      cit != end; ++cit)
+  for(auto ch: incident_cells)
   {
-    int indv = (*cit)->index(v);
-    Cell_handle opp_cit = (*cit)->neighbor(indv);
-    Facet f(opp_cit, opp_cit->index(*cit));
-    Vertex_triple vt = make_vertex_triple(f);
-    make_canonical_oriented_triple(vt);
+    int indv = ch->index(v);
+    Cell_handle opp_cit = ch->neighbor(indv);
+    Facet f(opp_cit, opp_cit->index(ch));
+    Vertex_triple vt = make_canonical_oriented_triple(f);
     outer_map[vt] = f;
     for(int i=0; i<4; i++)
     {
       if(i != indv)
-        (*cit)->vertex(i)->set_cell(opp_cit);
+        ch->vertex(i)->set_cell(opp_cit);
     }
   }
   return outer_map;
@@ -4995,9 +5000,10 @@ create_triangulation_inner_map(const Triangulation& t,
   auto create_triangulation_inner_map_aux = [&](const auto& cells_range) {
     for(auto ch : cells_range) {
       for(unsigned int index = 0; index < 4; index++) {
-        Facet f = std::pair<Cell_handle, int>(ch, index);
-        Vertex_triple vt_aux = make_vertex_triple(f);
-        Vertex_triple vt{vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]};
+        const Facet f{ch, index};
+        Vertex_triple vt = apply_map(vmap, make_vertex_triple(f));
+        using std::swap;
+        swap(vt[1], vt[2]); // reverse the orientation of the triplet
         make_canonical_oriented_triple(vt);
         inner_map[vt] = f;
       }
@@ -5137,14 +5143,13 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
 
     *cit++ = new_ch;
 
-    // For the other faces check, if they can also be glued
+    // For the other faces, check if they can also be glued
     for(unsigned int index = 0; index < 4; index++)
     {
       if(index != i_i)
       {
         Facet f{new_ch, index};
-        Vertex_triple vt = make_vertex_triple(f);
-        make_canonical_oriented_triple(vt);
+        Vertex_triple vt = make_canonical_oriented_triple(f);
         std::swap(vt[1], vt[2]);
 
         typename Vertex_triple_Facet_map::iterator oit2 = outer_map.find(vt);
@@ -6119,13 +6124,7 @@ _make_big_hole_3D(Vertex_handle v,
         vstates[v0] = PROCESSED;
       }
 
-      int i1 = vertex_triple_index(k, 0);
-      int i2 = vertex_triple_index(k, 1);
-      int i3 = vertex_triple_index(k, 2);
-
-      Vertex_handle v1 = c->vertex(i1);
-      Vertex_handle v2 = c->vertex(i2);
-      Vertex_handle v3 = c->vertex(i3);
+      auto [v1, v2, v3] = this->vertices(Facet{c, k});
 
       Cell_handle opp_cit = c->neighbor(k);
       int opp_i = tds().mirror_index(c, k);
@@ -6168,8 +6167,7 @@ _make_big_hole_3D(Vertex_handle v,
       }
 
       Facet f(opp_cit, opp_i);
-      Vertex_triple vt = make_vertex_triple(f);
-      make_canonical_oriented_triple(vt);
+      Vertex_triple vt = make_canonical_oriented_triple(f);
       outer_map[vt] = f;
       v1->set_cell(opp_cit);
       v2->set_cell(opp_cit);

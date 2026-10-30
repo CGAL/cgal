@@ -13,17 +13,23 @@
 #ifndef CGAL_POLYLINE_CONSTRAINT_HIERARCHY_2_H
 #define CGAL_POLYLINE_CONSTRAINT_HIERARCHY_2_H
 
+#include <CGAL/IO/io_tags.h>
 #include <CGAL/license/Triangulation_2.h>
 
 
 #include <CGAL/basic.h>
+#include <boost/container_hash/hash.hpp>
+#include <boost/stl_interfaces/config.hpp>
+#include <boost/version.hpp>
+#include <cstddef>
+#include <limits>
+#include <ostream>
 #include <utility>
 #include <stack>
-#include <map>
 #include <list>
 #include <array>
-#include <queue>
 #include <iterator>
+#include <vector>
 
 #include <boost/container/flat_set.hpp>
 #include <boost/stl_interfaces/iterator_interface.hpp>
@@ -34,6 +40,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/IO/io.h>
+#include <CGAL/type_traits.h>
+#include <CGAL/use.h>
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
 #  define CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2 CGAL_CDT_2_DEBUG_INTERSECTIONS
@@ -578,6 +586,9 @@ public:
 
   // Query
   bool is_subconstraint(T va, T vb) const;
+  bool is_valid_constraint(Constraint_id cid) const {
+    return priv.constraints_set.find(cid) != priv.constraints_set.end();
+  }
 
   Vertex_it vertices_in_constraint_begin(Constraint_id cid) const
   { return cid.begin(); }
