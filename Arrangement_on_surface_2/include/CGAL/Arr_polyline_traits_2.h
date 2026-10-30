@@ -23,7 +23,7 @@
 #include <CGAL/disable_warnings.h>
 
 /*! \file
- * The traits-class for the linear piece-wiese(polyline) type of curves of the
+ * The traits-class for the linear piecewise (polyline) type of curves of the
  * arrangement package.
  */
 
@@ -31,17 +31,8 @@
 #include <type_traits>
 #include <vector>
 
-#include <CGAL/basic.h>
-#include <CGAL/tags.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polycurve_traits_2.h>
-#include <CGAL/Arr_tags.h>
-#include <CGAL/Arr_enums.h>
-#include <CGAL/Single.h>
-
-#include <boost/iterator/zip_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
-#include <boost/range/join.hpp>
 
 namespace CGAL {
 
@@ -119,7 +110,7 @@ public:
   Arr_polyline_traits_2() : Base() {}
 
   /*! constructs from a segment traits
-   * \param geom_traits an already existing segment tarits which is passed will
+   * \param geom_traits an already existing segment traits which is passed will
    *        be used by the class.
    */
   Arr_polyline_traits_2(const Segment_traits_2* geom_traits) : Base(geom_traits) {}
@@ -140,7 +131,7 @@ public:
     // Normally, the moment the compiler finds a name, it stops looking. In
     // other words, the compiler first finds the operator() in the current
     // class and stops looking, never finding the one in the base class.
-    // Explicitly bring the base operator() into scope, unnecesitating the
+    // Explicitly bring the base operator() into scope, unnecessitating the
     // code below.
     using Base::Push_back_2::operator();
 
@@ -238,7 +229,7 @@ public:
     // Normally, the moment the compiler finds a name, it stops looking. In
     // other words, the compiler first finds the operator() in the current
     // class and stops looking, never finding the one in the base class.
-    // Explicitly bring the base operator() into scope, unnecesitating the
+    // Explicitly bring the base operator() into scope, unnecessitating the
     // code below.
     using Base::Push_front_2::operator();
 
