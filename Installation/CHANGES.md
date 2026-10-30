@@ -26,6 +26,8 @@ Release date: December 2026
 ### [2D Arrangements](https://doc.cgal.org/6.3/Manual/packages.html#PkgArrangementOnSurface2)
 
 - **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherit from it. In addition one can get and set a smart pointer to the class being decorated.
+- Speed up the polyline and polycurve traits (`Arr_polyline_traits_2`, `Arr_polycurve_traits_2`) and the surface sweep on long polylines, reducing construction time by up to 38%.
+- Fixed the surface sweep, which could produce invalid arrangements or crash on overlapping polylines, and the landmarks point location, which could fail to terminate on curves that cross the walk segment more than once or on antennas.
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
 
