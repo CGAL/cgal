@@ -584,6 +584,12 @@ public:
       X_monotone_curve_2& head = (dir == SMALLER) ? xcv1 : xcv2;
       X_monotone_curve_2& tail = (dir == SMALLER) ? xcv2 : xcv1;
 
+      // Reserve storage for the output curves; the reservation is idle when
+      // the capacity suffices, and as the curves are empty, it moves nothing
+      // otherwise.
+      head.reserve(i + 1);
+      tail.reserve(n - i);
+
       for (std::size_t j = 0; j < i; ++j) head.push_back(xcv[j]);
       if (res == EQUAL) {
         // p is the right endpoint of xcv[i], which therefore belongs, as a
