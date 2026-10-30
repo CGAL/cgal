@@ -334,11 +334,15 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
     res_target = compare_xy(p, curr->vertex());
 
     // In case the current halfedge belongs to an "antenna", namely its
-    // incident face is the same as its twin's, we can simply skip it
-    // (in order not to count it twice).
+    // incident face is the same as its twin's, we skip it (in order not to
+    // count it twice). However, if p lies on the antenna, it is obviously not
+    // contained in the interior of the component.
     if (! curr->opposite()->is_on_inner_ccb() &&
         curr->outer_ccb()->face() == curr->opposite()->outer_ccb()->face())
     {
+      if ((res_target == EQUAL) ||
+          ((res_source != res_target) && (compare_y_at_x(p, curr) == EQUAL)))
+        return false;
       curr = curr->next();
       res_source = res_target;
       continue;
