@@ -805,6 +805,17 @@ function(test_point_location_circle_segments)
 endfunction()
 
 #---------------------------------------------------------------------#
+# point location with polylines
+#---------------------------------------------------------------------#
+function(test_point_location_polylines)
+  set(nt ${CGAL_GMPQ_NT})
+  set(kernel ${CARTESIAN_KERNEL})
+  set(geom_traits ${POLYLINE_GEOM_TRAITS})
+  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
+  compile_and_run_with_flags(test_point_location polylines "${flags}")
+endfunction()
+
+#---------------------------------------------------------------------#
 # point location with linear objects
 #---------------------------------------------------------------------#
 function(test_point_location_linear)
@@ -1453,6 +1464,7 @@ test_point_location_segments()
 test_point_location_segments_conversion()
 test_point_location_circle_segments()
 test_point_location_linear()
+test_point_location_polylines()
 
 test_point_location_dynamic_segments()
 
