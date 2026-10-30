@@ -118,7 +118,7 @@ private:
   typedef C3t3::Vertex_handle                       Vertex_handle;
 
   typedef C3t3::Triangulation                       Tr;
-  typedef CGAL::Mesh_criteria_3<Tr>                 Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3>                 Mesh_criteria;
   typedef Mesh_criteria::Edge_criteria              Edge_criteria;
   typedef Mesh_criteria::Facet_criteria             Facet_criteria;
   typedef Mesh_criteria::Cell_criteria              Cell_criteria;
@@ -409,10 +409,8 @@ launch()
                        0,
                        &stop_);
 
-#ifdef CGAL_MESH_3_PROFILING
   CGAL::Real_timer t;
   t.start();
-#endif
 
 #if CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   mesher_->initialize();
@@ -430,7 +428,8 @@ launch()
 
   // Ensure c3t3 is ok (useful if process has been stop by the user)
   mesher_->fix_c3t3();
-  std::cerr<<"Done."<<std::endl;
+  t.stop();
+  std::cerr<<"Done. (in " << t.time() << " seconds, wall-clock)" << std::endl;
 }
 
 
@@ -438,7 +437,7 @@ template < typename D_, typename Tag >
 void
 Mesh_function<D_,Tag>::
 tweak_criteria(Mesh_criteria& c, Mesh_fnt::Polyhedral_domain_tag) {
-  typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<Tr,
+  typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<C3t3,
        Domain, typename Facet_criteria::Visitor> New_topo_adj_crit;
 
   if(((int(c.facet_criteria_object().topology()) &

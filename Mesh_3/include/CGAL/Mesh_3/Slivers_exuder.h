@@ -18,9 +18,9 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>
+
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
-
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_exuder_visitor.h>
@@ -37,9 +37,9 @@
 #include <CGAL/Real_timer.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-
 #include <CGAL/number_type_config.h>
 #include <CGAL/tags.h>
+
 #include <boost/format.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 
@@ -353,6 +353,8 @@ private: // Types
   typedef Slivers_exuder<C3T3, SliverCriteria, Visitor_>     Self;
 
   typedef typename C3T3::Triangulation                       Tr;
+  typedef Triangulation_helpers<Tr>                          Th;
+
   typedef typename Tr::Weighted_point                        Weighted_point;
   typedef typename Tr::Bare_point                            Bare_point;
   typedef typename Tr::Cell_handle                           Cell_handle;
@@ -678,9 +680,7 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const FT value = sliver_criteria_(cit);
-
-      if( value < sliver_criteria_.sliver_bound() )
+      if (sliver_criteria_.is_sliver(cit))
         return false;
     }
 
@@ -1089,9 +1089,9 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
     const Facet opposite_facet = tr_.mirror_facet(f);
 
     // Sliver criterion values initialization
-    if( c3t3_.is_in_complex(c) )
-    {
-      criterion_values[f] = sliver_criteria_(c);
+    if( c3t3_.is_in_complex(c) ) {
+      if (sliver_criteria_.is_sliver(c))
+        criterion_values[f] = sliver_criteria_(c);
     }
 
     // Pre_star initialization
@@ -1104,7 +1104,7 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
     const Cell_handle opposite_cell = opposite_facet.first;
     const int index_in_opposite = opposite_cell->index(c);
     FT power_distance_to_power_sphere =
-      tr_.compute_power_distance_to_power_sphere(opposite_facet.first, index_in_opposite);
+      Th().compute_power_distance_to_power_sphere(tr_, opposite_facet.first, index_in_opposite);
     pre_star.insert(f, power_distance_to_power_sphere);
   }
 }
@@ -1180,7 +1180,7 @@ expand_prestar(const Cell_handle& cell_to_add,
       if ( ! tr_.is_infinite(current_mirror_cell) )
       {
         new_power_distance_to_power_sphere =
-          tr_.compute_power_distance_to_power_sphere(current_mirror_cell, pumped_vertex);
+          Th().compute_power_distance_to_power_sphere(tr_, current_mirror_cell, pumped_vertex);
 
         pre_star.insert(current_facet, new_power_distance_to_power_sphere);
 
@@ -1222,7 +1222,7 @@ expand_prestar(const Cell_handle& cell_to_add,
           // We can't use 'new_power_distance_to_power_sphere' because 'current_mirror_cell'
           // is infinite. So we compute the power distance to 'cell_to_add' instead.
           CGAL_assertion(!tr_.is_infinite(cell_to_add));
-          new_weight += tr_.compute_power_distance_to_power_sphere(cell_to_add, pumped_vertex);
+          new_weight += Th().compute_power_distance_to_power_sphere(tr_, cell_to_add, pumped_vertex);
           curr_f = current_facet;
         }
 
@@ -1236,7 +1236,7 @@ expand_prestar(const Cell_handle& cell_to_add,
         Tetrahedron_3 tet = tr_.tetrahedron(curr_f, ncr_pwp);
 
         FT new_value = sliver_criteria_(tet);
-        criterion_values.insert(std::make_pair(current_facet, new_value));
+        criterion_values.emplace(current_facet, new_value);
       }
     }
   }
@@ -1363,9 +1363,10 @@ get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
   typename Facet_vector::const_iterator fit = facets.begin();
   for ( ; fit != facets.end() ; ++fit )
   {
-    if ( c3t3_.is_in_complex(*fit) )
+    const Facet f = *fit;
+    Surface_patch_index pid = c3t3_.surface_patch_index(f);
+    if ( !(pid == Surface_patch_index()) )
     {
-      Facet f = *fit;
       Vertex_handle v1 = f.first->vertex((f.second+1)%4);
       Vertex_handle v2 = f.first->vertex((f.second+2)%4);
       Vertex_handle v3 = f.first->vertex((f.second+3)%4);
@@ -1377,22 +1378,13 @@ get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
 
       for(std::size_t i = 0; i < 3; ++i)
       {
-        Ordered_edge oe = edges[i];
-        typename Umbrella::iterator uit = umbrella.find(oe);
-        if(uit == umbrella.end()) //umbrella does not contain oe yet
-        {
-          umbrella.insert(std::make_pair(oe,
-            std::make_pair(c3t3_.surface_patch_index(f), 1)));
-        }
-        else //umbrella already contains oe. Increment counter or return
-        {
-          std::size_t count = (*uit).second.second;
-          if(count == 2) //there will be more than 3 after insertion
-            return std::nullopt; //non-manifold configuration
-
-          umbrella.insert(uit,
-            std::make_pair(oe,
-              std::make_pair(c3t3_.surface_patch_index(f), count + 1)));
+        const Ordered_edge& oe = edges[i];
+        auto result = umbrella.emplace(oe, std::make_pair(pid, 1));
+        if(!result.second) { // already existed
+          auto& value = result.first->second;
+          if(value.second == 2) // there will be more than 3 after insertion
+            return std::nullopt; // non-manifold configuration
+          ++value.second;
         }
       }
     }
@@ -1460,12 +1452,11 @@ restore_cells_and_boundary_facets(
     if ( !( it->second.second == Subdomain_index() ) )
       c3t3_.add_to_complex(*cit, it->second.second);
 
-    // if the new cell is in the domain, and it criterion value is less that
+    // if the new cell is in the domain, and its criterion value is less that
     // the maximum, push it in the cells queue.
     if( c3t3_.is_in_complex(*cit) )
     {
       FT criterion_value = sliver_criteria_(*cit);
-
       if( criterion_value < sliver_criteria_.sliver_bound() )
         add_cell_to_queue<pump_vertices_on_surfaces>(*cit, criterion_value);
     }
@@ -1571,6 +1562,10 @@ update_mesh(const Weighted_point& new_point,
   // Delete old cells from queue (they aren't in the triangulation anymore)
   this->delete_cells_from_queue(deleted_cells);
 
+  // Purge the cache
+  for (const Cell_handle& dc : deleted_cells)
+    sliver_criteria_.reset_cache(dc);
+
   // Delete old cells & facets from c3t3
   remove_from_c3t3(deleted_cells.begin(),deleted_cells.end());
   remove_from_c3t3(boundary_facets.begin(),boundary_facets.end());
@@ -1660,7 +1655,7 @@ check_pre_star(const Pre_star& pre_star,
       if(! tr_.is_infinite(opposite_facet.first) )
       {
         pre_star2.insert(
-          *fit, tr_.compute_power_distance_to_power_sphere(opposite_facet.first, v));
+          *fit, Th().compute_power_distance_to_power_sphere(tr_, opposite_facet.first, v));
       }
     }
 
@@ -1789,8 +1784,8 @@ template <typename C3T3, typename SC, typename V_>
 bool
 Slivers_exuder<C3T3,SC,V_>::
 check_ratios(const Sliver_values& criterion_values,
-                  const Weighted_point& wp,
-                  const Vertex_handle& vh) const
+             const Weighted_point& wp,
+             const Vertex_handle& vh) const
 {
   Cell_vector deleted_cells;
   Facet_vector internal_facets;
@@ -1822,6 +1817,9 @@ check_ratios(const Sliver_values& criterion_values,
 
     Tetrahedron_3 tet = tr_.tetrahedron(*it, wp);
     FT ratio = sliver_criteria_(tet);
+    if (ratio > sliver_criteria_.sliver_bound())
+      continue;
+
     expected_ratios.push_back(ratio);
 
     bool found = false;

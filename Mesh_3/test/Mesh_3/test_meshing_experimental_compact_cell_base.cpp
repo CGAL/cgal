@@ -1,0 +1,3 @@
+#define CGAL_MESH_3_USE_EXPERIMENTAL_COMPACT_MESH_CELL_BASE_3 1
+#define CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
+#include "test_meshing_polyhedron_with_features.cpp"

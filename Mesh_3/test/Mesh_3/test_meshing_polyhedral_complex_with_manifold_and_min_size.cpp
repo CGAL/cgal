@@ -28,7 +28,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 namespace params = CGAL::parameters;
 
@@ -84,6 +84,8 @@ int main()
   std::ofstream medit_file("out.mesh");
   CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
+
+  std::cout << "Done" << std::endl;
 
   return EXIT_SUCCESS;
 }
