@@ -70,7 +70,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::surface_intersection()` (deprecated)
 - `CGAL::Polygon_mesh_processing::intersection_polylines()`
 
-\cgalCRPSection{General Boolean Operations}
+\cgalCRPSection{Boolean Operations on Triangle Soups (possibly non-manifold)}
 - `CGAL::Polygon_mesh_processing::compute_union()`
 - `CGAL::Polygon_mesh_processing::compute_difference()`
 - `CGAL::Polygon_mesh_processing::compute_intersection()`

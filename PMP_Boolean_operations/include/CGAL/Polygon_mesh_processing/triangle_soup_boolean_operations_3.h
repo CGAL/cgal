@@ -1151,7 +1151,7 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   * computes the union of two volumes, each bounded by a triangle soup.
   *
   * The definition given of triangle mesh \link coref_def_subsec bounding \endlink a volume can be extended to a triangle soup, allowing non-manifold edges and vertices.
-  * As for a triangle mesh, the orientation of the soup triangles must be coherent and consistant with the volume bounded.
+  * As for a triangle mesh, the orientation of the soup triangles must be coherent and consistent with the volume bounded.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect() `!CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points_1, triangles_1)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect() `!CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points_2, triangles_2)` \endlink
