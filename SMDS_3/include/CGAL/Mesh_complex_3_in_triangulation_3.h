@@ -725,6 +725,16 @@ public:
   {
     return number_of_cells_in_complex();
   }
+
+  /// returns the number of cells in the complex with subdomain index `index`.
+  size_type number_of_cells_in_subdomain(const Subdomain_index& index) const
+  {
+    size_type count = 0;
+    for(Cell_handle cell : cells_in_complex())
+      if(subdomain_index(cell) == index)
+        ++count;
+    return count;
+  }
   /**
   * returns the number of surface facets of the complex
   */
@@ -735,6 +745,16 @@ public:
   size_type number_of_facets() const
   {
     return number_of_facets_in_complex();
+  }
+
+  /// returns the number of facets in the complex with surface patch index `index`.
+  size_type number_of_facets_in_patch(const Surface_patch_index& index) const
+  {
+    size_type count = 0;
+    for(Facet facet : facets_in_complex())
+      if(surface_patch_index(facet) == index)
+        ++count;
+    return count;
   }
   /**
    * returns the number of edges of the complex
