@@ -410,6 +410,11 @@ public:
 
   /*! clears the polycurve. */
   inline void clear() { m_subcurves.clear(); }
+
+  /*! reserves storage for (at least) a given number of subcurves.
+   * \param[in] n The number of subcurves.
+   */
+  inline void reserve(size_type n) { m_subcurves.reserve(n); }
 };
 
 /*! \class
