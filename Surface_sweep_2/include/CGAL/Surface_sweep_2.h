@@ -120,6 +120,10 @@ protected:
                                      // Contains all of the new sub-curves
                                      // created by an overlap.
 
+  std::vector<Subcurve*> m_overlaps_with_left_event;
+                                     // The overlap subcurves whose left
+                                     // events have not been handled yet.
+
   Intersection_vector m_x_objects;   // Auxiliary vector for storing the
                                      // intersection objects.
 
@@ -157,7 +161,7 @@ protected:
   void _handle_overlaps_in_right_curves();
 
   /*! clip the last curve of a subcurve if it is not in the status line and with a left end not being the current event*/
-  void _clip_non_active_curve_at_current_event(Subcurve*);
+  bool _clip_non_active_curve_at_current_event(Subcurve*);
 
   /*! Handle the subcurves to the right of the current event point. */
   virtual void _handle_right_curves();
