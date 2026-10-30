@@ -55,7 +55,7 @@ used in conjunction with those for the specific build type.
 \subsection installation_additional_flags Additional Compiler and Linker Flags
 
 The following variables can be used to <I>add</I> flags without overriding the ones
-defined by cmake.
+defined by CMake.
 
 
 | Program               | Both Debug and Release      |  Release Only                        |  Debug Only  |
@@ -85,7 +85,7 @@ and will serverly limit performances.
 | Variable              | Description                                                           | Type        | %Default Value |
 | :-                    | :-                    | :-   |  :-            |
 | `CGAL_DIR`            | Full-path to the binary directory where \cgal was configured          |Either CMake or Environment | none |
-| `Qt6_DIR`             | Full-path to the Qt cmake directory  |CMake| platform-dependent|
+| `Qt6_DIR`             | Full-path to the Qt CMake directory  |CMake| platform-dependent|
 
 
 \subsection installation_variables_third_party Variables Providing Information About 3rd-Party Libraries
@@ -103,7 +103,7 @@ other but never both.
 
 \subsection installation_boost Boost Libraries
 
-Starting from \boost 1.72, the cmake config mode can be used for configuring the \boost version
+Starting from \boost 1.72, the CMake config mode can be used for configuring the \boost version
 to use by setting the environment variable `Boost_DIR` to the path containing the file
 `BoostConfig.cmake`. For example if you manually installed \boost 1.77 with `--prefix=<path>`,
 then you should set `Boost_DIR=<path>/lib/cmake/Boost-1.77.0`.
@@ -210,8 +210,8 @@ and library files must be specified by using environment variables.
 
 
 \subsection installation_fastfloat FastFloat Library
-The cmake config mode shall be used for configuring the FastFloat library.
-You can either set the environment or cmake variable `FastFloat_DIR` to the path of the directory containing
+The CMake config mode shall be used for configuring the FastFloat library.
+You can either set the environment or CMake variable `FastFloat_DIR` to the path of the directory containing
 `FastFloatConfig.cmake`.
 
 \subsection installation_eigen Eigen Library
@@ -244,7 +244,7 @@ environment variable is sufficient.
 Some BGL examples require the \metis library in order to partition \metis meshes.
 
 If \metis is not automatically found, setting the `METIS_INCLUDE_DIR` and `METIS_LIBRARY`
-cmake variables is necessary.
+CMake variables is necessary.
 
 
 | Variable             | Description           | Type        |
