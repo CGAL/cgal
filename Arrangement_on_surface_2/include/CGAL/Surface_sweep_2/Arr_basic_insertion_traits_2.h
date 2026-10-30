@@ -144,7 +144,7 @@ public:
 
     bool is_overlapping() const { return m_overlap; }
 
-    void set_overlapping() { m_overlap = true; }
+    void set_overlapping(bool overlap = true) { m_overlap = overlap; }
   };
 
   typedef Ex_x_monotone_curve_2                     X_monotone_curve_2;
