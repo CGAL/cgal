@@ -351,6 +351,7 @@ struct Mpzf {
       if(size!=0) mpn_copyi(data(),x.data(),std::abs(size));
     }
     x.size = 0;
+    x.exp = 0;
   }
   Mpzf& operator=(Mpzf&& x)noexcept{
     if (this == &x) return *this; // is this needed?
@@ -374,6 +375,7 @@ struct Mpzf {
       if(size!=0) mpn_copyi(data(),x.data(),std::abs(size));
     }
     x.size = 0;
+    x.exp = 0;
     return *this;
   }
 #else
