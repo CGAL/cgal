@@ -56,7 +56,6 @@ public:
   using IkLine_2 = typename Intersection_kernel::Line_2;
   using IkPoint_2 = typename Intersection_kernel::Point_2;
   using IkSegment_2 = typename Intersection_kernel::Segment_2;
-  using IkTriangle_2 = typename Intersection_kernel::Triangle_2;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
   using Intersection_graph = CGAL::KSP_3::internal::Intersection_graph<Kernel, Intersection_kernel>;
@@ -73,16 +72,11 @@ public:
   using Edge_index = typename Mesh::Edge_index;
   using Halfedge_index = typename Mesh::Halfedge_index;
 
-  using V_vector_map = typename Mesh::template Property_map<Vertex_index, Vector_2>;
   using V_ivertex_map = typename Mesh::template Property_map<Vertex_index, IVertex>;
   using V_iedge_map = typename Mesh::template Property_map<Vertex_index, IEdge>;
-  using V_bool_map = typename Mesh::template Property_map<Vertex_index, bool>;
   using E_iedge_map = typename Mesh::template Property_map<Edge_index, IEdge>;
   using F_index_map = typename Mesh::template Property_map<Face_index, std::vector<std::size_t> >;
-  using F_uint_map = typename Mesh::template Property_map<Face_index, unsigned int>;
   using F_bool_map = typename Mesh::template Property_map<Face_index, bool>;
-  using V_original_map = typename Mesh::template Property_map<Vertex_index, bool>;
-  using V_time_map = typename Mesh::template Property_map<Vertex_index, std::vector<FT> >;
 
   struct Cached_event {
     IkFT t;
@@ -139,6 +133,14 @@ public:
     int queued_events;
   };
 
+  // A polygon expanding with a homothety about its centroid, i.e., the vertex p moves with the velocity p - centroid.
+  struct Input_polygon {
+    std::vector<typename Intersection_kernel::Point_2> vertices; // Counterclockwise around the centroid.
+    std::vector<typename Intersection_kernel::Vector_2> velocities;
+    typename Intersection_kernel::Point_2 centroid;
+    std::size_t input; // Index of the input polygon. For merged polygons, the index of one of the merged input polygons.
+  };
+
   struct Data {
     Data(std::vector<Vertex> &vertices)
       : mesh(),
@@ -147,7 +149,6 @@ public:
       e_iedge_map(mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first),
       input_map(mesh.template add_property_map<Face_index, std::vector<std::size_t> >("f:input", std::vector<std::size_t>()).first),
       f_initial_map(mesh.template add_property_map<Face_index, bool >("f:initial", false).first),
-      v_original_map(mesh.template add_property_map<Vertex_index, bool>("v:original", false).first),
       vertices(vertices) {}
 
     bool is_bbox;
@@ -162,40 +163,36 @@ public:
     E_iedge_map e_iedge_map;
     F_index_map input_map;
     F_bool_map f_initial_map;
-    V_original_map v_original_map;
     std::map<IEdge, std::pair<IFace, IFace> > iedge2ifaces;
-    std::unordered_map<std::size_t, typename Intersection_kernel::Line_2> lines, bbox_lines;
+    // Ordered containers: the iteration order of lines and polygons determines the order in which polygons are split
+    // and events are queued. An unordered container would make the result depend on the standard library.
+    std::map<std::size_t, typename Intersection_kernel::Line_2> lines, bbox_lines;
     std::set<IFace> ifaces; // All ifaces in the support plane
-    std::vector<IFace> initial_ifaces; // IFaces which intersect with the input polygon and are thus part of the mesh before the propagation starts.
-    std::vector<Face_index> initial_pfaces;
     std::map<IVertex, Vertex_index> ivertex2pvertex;
     IEdge_set iedges;
-    std::set<std::size_t> crossed_lines;
 
     std::vector<Point_2> original_vertices;
     std::vector<typename Intersection_kernel::Point_2> exact_vertices;
-    std::vector<Vector_2> original_vectors;
-    std::vector<Direction_2> original_directions;
     std::vector<typename Intersection_kernel::Direction_2> exact_directions;
-    std::vector<typename Intersection_kernel::Ray_2> original_rays;
-    std::unordered_map<IFace, std::list<std::size_t> > polygons;
+    std::map<IFace, std::list<std::size_t> > polygons;
+    // Input polygons of the support plane. Coplanar input polygons are propagated separately. Polygons sharing an iface
+    // at t = 0 are merged within the iface into the convex hull of their pieces, which is added as an additional polygon.
+    std::vector<Input_polygon> input_polygons;
+    std::map<IFace, std::size_t> piece_polygon; // Index into input_polygons of the polygon each piece in polygons originates from.
+    // Input polygons lying in a bbox support plane: index of the input polygon of the partition and vertices.
+    std::vector<std::pair<std::size_t, std::vector<typename Intersection_kernel::Point_2> > > coinciding_polygons;
     std::unordered_map<IFace, Face_index> iface2pface;
     std::unordered_map<IFace, std::list<IEdge>> borders;
     std::vector<Vertex> &vertices;
 
-    FT distance_tolerance;
-    FT angle_tolerance;
 
     std::size_t actual_input_polygon;
 
     int k;
   };
 public:
-  int active_polygons = 0;
-  int ea = 0, eb = 0, ec1 = 0, ec2 = 0, ed1 = 0, ed2 = 0;
 
 private:
-  static constexpr bool identical_kernel = !std::is_same_v<Kernel, Intersection_kernel>;
 
   std::shared_ptr<Data> m_data;
 
@@ -212,8 +209,6 @@ public:
     m_data->plane = from_exact(plane);
     m_data->exact_plane = plane;
     m_data->is_bbox = is_bbox;
-    m_data->distance_tolerance = 0;
-    m_data->angle_tolerance = 0;
     m_data->actual_input_polygon = static_cast<std::size_t>(- 1);
 
     std::vector<IkPoint_2> points;
@@ -238,8 +233,6 @@ public:
     m_data->exact_plane = typename Intersection_kernel::Plane_3(polygon[0], polygon[1], polygon[2]);
     m_data->plane = from_exact(m_data->exact_plane);
     m_data->is_bbox = is_bbox;
-    m_data->distance_tolerance = 0;
-    m_data->angle_tolerance = 0;
     m_data->actual_input_polygon = static_cast<std::size_t>(- 1);
 
     std::vector<IkPoint_2> points;
@@ -262,8 +255,16 @@ public:
     m_data->v_iedge_map = m_data->mesh.template add_property_map<Vertex_index, IEdge>("v:iedge", Intersection_graph::null_iedge()).first;
     m_data->e_iedge_map = m_data->mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first;
     m_data->input_map = m_data->mesh.template add_property_map<Face_index, std::vector<std::size_t> >("f:input", std::vector<std::size_t>()).first;
-    m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>("v:original", false).first;
     m_data->f_initial_map = m_data->mesh.template add_property_map<Face_index, bool >("f:initial", false).first;
+  }
+
+  // Returns a copy of the support plane that does not share its data with this one.
+  // The copy still refers to the same kinetic vertices and the same intersection graph.
+  Support_plane deep_copy() const {
+    Support_plane copy(*this);
+    copy.m_data = std::make_shared<Data>(*m_data);
+    copy.link_property_maps();
+    return copy;
   }
 
   void link_property_maps() {
@@ -271,7 +272,6 @@ public:
     m_data->v_iedge_map = m_data->mesh.template property_map<Vertex_index, IEdge>("v:iedge").value();
     m_data->e_iedge_map = m_data->mesh.template property_map<Edge_index, IEdge>("e:iedge").value();
     m_data->input_map = m_data->mesh.template property_map<Face_index, std::vector<std::size_t> >("f:input").value();
-    m_data->v_original_map = m_data->mesh.template property_map<Vertex_index, bool>("v:original").value();
     m_data->f_initial_map = m_data->mesh.template property_map<Face_index, bool >("f:initial").value();
   }
 
@@ -287,71 +287,7 @@ public:
     c = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
   }
 
-  void get_border(Intersection_graph& igraph, std::vector<IEdge>& border) {
-    border.clear();
-    auto m = mesh();
-
-    Vertex_index s = Mesh::null_vertex();
-
-    for (auto v : m_data->mesh.vertices()) {
-      if (m_data->mesh.is_border(v)) {
-        s = v;
-        break;
-      }
-    }
-
-    if (s == Mesh::null_vertex()) {
-      std::cout << "Support plane does not have border vertices" << std::endl;
-      return;
-    }
-
-    auto h = m.halfedge(s);
-    if (!m.is_border(h))
-      h = m.opposite(h);
-
-    auto n = h;
-    IVertex last = ivertex(s);
-    do {
-      n = m.next(n);
-      IVertex current = ivertex(m.target(n));
-      border.push_back(igraph.edge(last, current));
-      last = current;
-    } while (n != h && n != Mesh::null_halfedge());
-
-    if (n == Mesh::null_halfedge()) {
-      std::cout << " NULL_HALFEDGE!";
-    }
-  }
-
-  void get_border(Intersection_graph& igraph, const Face_index& fi, std::vector<IEdge>& border) {
-    border.clear();
-    auto m = mesh();
-
-    auto first = m.halfedge(fi);
-    auto h = first;
-    do {
-      auto o = m.opposite(h);
-
-      if (m.is_border(o))
-        border.push_back(igraph.edge(ivertex(m.target(h)), ivertex(m.target(o))));
-
-      h = m.next(h);
-    } while (h != first && h != Mesh::null_halfedge());
-
-    if (h == Mesh::null_halfedge()) {
-      std::cout << " NULL_HALFEDGE!";
-    }
-  }
-
   Data& data() { return *m_data; }
-
-  FT distance_tolerance() const {
-    return m_data->distance_tolerance;
-  }
-
-  FT angle_tolerance() const {
-    return m_data->angle_tolerance;
-  }
 
   void clear_pfaces() {
     m_data->mesh.clear();
@@ -452,12 +388,64 @@ public:
     return vertices;
   }
 
+  // Adds an input polygon to the support plane and returns its index in input_polygons().
+  // The first input polygon also defines the polygon data of the support plane (exact_vertices, centroid, ...).
   template<typename Pair>
-  void add_input_polygon(
+  std::size_t add_input_polygon(
+    const std::vector<Pair>& points, std::size_t input) {
+
+    std::vector<typename Intersection_kernel::Point_2> pts;
+    pts.reserve(points.size());
+    for (const auto& pair : points)
+      pts.push_back(pair.first);
+    const std::size_t idx = add_polygon(pts, input);
+    if (idx == 0)
+      set_polygon_data(points);
+    return idx;
+  }
+
+  // Adds a polygon expanding with a homothety about the centroid of its vertices and returns its index in input_polygons().
+  // The polygon has to be convex.
+  std::size_t add_polygon(const std::vector<typename Intersection_kernel::Point_2>& points, std::size_t input) {
+    using IkVector_2 = typename Intersection_kernel::Vector_2;
+    CGAL_assertion(points.size() >= 3);
+    Input_polygon poly;
+    poly.input = input;
+    poly.centroid = CGAL::centroid(points.begin(), points.end(), CGAL::Dimension_tag<0>());
+
+    std::vector<std::pair<std::size_t, typename Intersection_kernel::Direction_2> > dir_vec;
+    dir_vec.reserve(points.size());
+    for (std::size_t i = 0; i < points.size(); i++)
+      dir_vec.push_back(std::make_pair(i, typename Intersection_kernel::Direction_2(IkVector_2(poly.centroid, points[i]))));
+
+    std::sort(dir_vec.begin(), dir_vec.end(), [](const auto& a, const auto& b) { return a.second < b.second; });
+
+    for (const auto& d : dir_vec) {
+      poly.vertices.push_back(points[d.first]);
+      poly.velocities.push_back(IkVector_2(poly.centroid, points[d.first]));
+    }
+
+    m_data->input_polygons.push_back(std::move(poly));
+    return m_data->input_polygons.size() - 1;
+  }
+
+  std::size_t number_of_input_polygons() const { return m_data->input_polygons.size(); }
+  const Input_polygon& input_polygon(std::size_t idx) const { return m_data->input_polygons[idx]; }
+
+  // Index of the input polygon the piece in the iface originates from.
+  std::size_t piece_polygon(IFace face) const {
+    auto it = m_data->piece_polygon.find(face);
+    CGAL_assertion(it != m_data->piece_polygon.end());
+    return (it == m_data->piece_polygon.end()) ? 0 : it->second;
+  }
+
+  void set_piece_polygon(IFace face, std::size_t polygon) { m_data->piece_polygon[face] = polygon; }
+
+  template<typename Pair>
+  void set_polygon_data(
     const std::vector<Pair>& points) {
 
     CGAL_assertion(is_simple_polygon(points));
-    //CGAL_assertion(is_convex_polygon(points));
     CGAL_assertion(is_valid_polygon(points));
 
     From_exact from_exact;
@@ -470,10 +458,7 @@ public:
     vertices.reserve(n);
     m_data->original_vertices.resize(n);
     m_data->exact_vertices.resize(n);
-    m_data->original_vectors.resize(n);
-    m_data->original_directions.resize(n);
     m_data->exact_directions.resize(n);
-    m_data->original_rays.resize(n);
 
     for (std::size_t i = 0; i < n; ++i) {
       m_data->exact_vertices[i] = points[i].first;
@@ -507,29 +492,19 @@ public:
       const auto& point = points[dir_vec[i].first].first;
       m_data->original_vertices[i] = from_exact(point);
       m_data->exact_vertices[i] = point;
-      m_data->original_vectors[i] = from_exact(directions[dir_vec[i].first]);
-      m_data->original_directions[i] = Direction_2(from_exact(directions[dir_vec[i].first]));
       m_data->exact_directions[i] = dir_vec[i].second;
-      m_data->original_rays[i] = typename Intersection_kernel::Ray_2(point, directions[dir_vec[i].first]);
     }
 
+    // The exact directions are sorted. The approximated directions may coincide for small polygons.
     CGAL_assertion_code(
-    for (std::size_t i = 0; i < m_data->original_directions.size(); i++) {
-      for (std::size_t j = 0; j < m_data->original_directions.size(); j++) {
+    for (std::size_t i = 0; i < m_data->exact_directions.size(); i++) {
+      for (std::size_t j = 0; j < m_data->exact_directions.size(); j++) {
         if (j < i)
-          CGAL_assertion(m_data->original_directions[j] < m_data->original_directions[i]);
+          CGAL_assertion(m_data->exact_directions[j] < m_data->exact_directions[i]);
         if (j > i)
-          CGAL_assertion(m_data->original_directions[i] < m_data->original_directions[j]);
+          CGAL_assertion(m_data->exact_directions[i] < m_data->exact_directions[j]);
       }
     });
-  }
-
-  bool has_crossed_line(std::size_t line) const {
-    return m_data->crossed_lines.find(line) != m_data->crossed_lines.end();
-  }
-
-  void set_crossed_line(std::size_t line) {
-    m_data->crossed_lines.insert(line);
   }
 
   void set_input_polygon(std::size_t input_polygon_idx) {
@@ -542,7 +517,7 @@ public:
       const std::size_t ip = (i + 1) % polygon.size();
       const auto& p = polygon[i].first;
       const auto& q = polygon[ip].first;
-      const bool is_equal_zero = (KSP::internal::distance(p, q) == 0);
+      const bool is_equal_zero = (p == q);
       CGAL_assertion_msg(!is_equal_zero,
         "ERROR: WE HAVE EQUAL POINTS IN THE INPUT POLYGON!");
       if (is_equal_zero) return false;
@@ -552,24 +527,12 @@ public:
 
   template<typename Pair>
   bool is_simple_polygon(const std::vector<Pair>& points) const {
-    From_exact from_exact;
-    std::vector<Point_2> polygon;
+    // Decided with the exact points, as a small polygon may not be simple after rounding.
+    std::vector<typename Intersection_kernel::Point_2> polygon;
     polygon.reserve(points.size());
     for (const auto& pair : points)
-      polygon.push_back(from_exact(pair.first));
-    CGAL_assertion(polygon.size() == points.size());
-    return CGAL::is_simple_2(polygon.begin(), polygon.end());
-  }
-
-  template<typename Pair>
-  bool is_convex_polygon(const std::vector<Pair>& points) const {
-    From_exact from_exact;
-    std::vector<Point_2> polygon;
-    polygon.reserve(points.size());
-    for (const auto& pair : points)
-      polygon.push_back(from_exact(pair.first));
-    CGAL_assertion(polygon.size() == points.size());
-    return CGAL::is_convex_2(polygon.begin(), polygon.end());
+      polygon.push_back(pair.first);
+    return CGAL::is_simple_2(polygon.begin(), polygon.end(), Intersection_kernel());
   }
 
   const Plane_3& plane() const { return m_data->plane; }
@@ -580,10 +543,6 @@ public:
 
   const Mesh& mesh() const { return m_data->mesh; }
   Mesh& mesh() { return m_data->mesh; }
-
-  const Point_2& get_point(const Vertex_index& vi) const {
-    return m_data->mesh.point(vi);
-  }
 
   void set_point(const Vertex_index& vi, const Point_2& point) {
     m_data->mesh.point(vi) = point;
@@ -615,16 +574,6 @@ public:
       return it->second.second;
     else
       return it->second.first;
-  }
-
-  std::size_t has_ifaces(IEdge edge) const {
-    auto it = m_data->iedge2ifaces.find(edge);
-    if (it == m_data->iedge2ifaces.end())
-      return 0;
-    if (it->second.second != Intersection_graph::null_iface())
-      return 2;
-    else
-      return 1;
   }
 
   const Vertex_index prev(const Vertex_index& vi) const {
@@ -686,10 +635,6 @@ public:
     return to_3d(m_data->mesh.point(vi));
   }
 
-  const Segment_2 segment_2(const Edge_index& ei) const {
-    return Segment_2(m_data->mesh.point(m_data->mesh.source(m_data->mesh.halfedge(ei))), m_data->mesh.point(m_data->mesh.target(m_data->mesh.halfedge(ei))));
-  }
-
   const Segment_3 segment_3(const Edge_index& ei) const {
     return Segment_3(
       point_3(m_data->mesh.source(m_data->mesh.halfedge(ei))),
@@ -739,27 +684,8 @@ public:
     return (m_data->v_ivertex_map[vi] != Intersection_graph::null_ivertex());
   }
 
-  const Vector_2 original_edge_direction(std::size_t v1, std::size_t v2) const {
-    const Vector_2 edge = m_data->original_vertices[v1] - m_data->original_vertices[v2];
-    Vector_2 orth = Vector_2(-edge.y(), edge.x());
-    orth = (1.0 / (CGAL::approximate_sqrt(orth * orth))) * orth;
-    FT s1 = orth * m_data->original_vectors[v1];
-    FT s2 = orth * m_data->original_vectors[v2];
-
-    if (abs(s1 - s2) > 0.0001)
-      std::cout << "edge speed seems inconsistent" << std::endl;
-
-    return s1 * orth;
-  }
-
-  const FT speed(const Vertex_index& vi) const {
-    return static_cast<FT>(CGAL::approximate_sqrt((CGAL::abs(m_data->direction[vi].squared_length()))));
-  }
-
   const std::vector<std::size_t>& input(const Face_index& fi) const { return m_data->input_map[fi]; }
   std::vector<std::size_t>& input(const Face_index& fi) { return m_data->input_map[fi]; }
-
-  bool is_original(const Vertex_index& vi) const { return m_data->v_original_map[vi]; }
 
   bool is_initial(const Face_index& fi) const { return m_data->f_initial_map[fi]; }
 
@@ -842,25 +768,6 @@ public:
   const Vertex_index add_vertex(const Point_2& point) {
     return m_data->mesh.add_vertex(point);
   }
-
-  void remove_vertex(const Vertex_index& vi) {
-    m_data->mesh.remove_vertex(vi);
-  }
-
-  const Edge_index split_vertex(const Vertex_index& vi) {
-    return m_data->mesh.edge(
-      CGAL::Euler::split_vertex(
-        m_data->mesh.halfedge(vi),
-        m_data->mesh.opposite(m_data->mesh.next(m_data->mesh.halfedge(vi))),
-        m_data->mesh));
-  }
-
-  const Vertex_index split_edge(
-    const Vertex_index& v0, const Vertex_index& v1) {
-
-    return m_data->mesh.target(
-      CGAL::Euler::split_edge(m_data->mesh.halfedge(v0, v1), m_data->mesh));
-  }
 };
 
 template<typename GeomTraits, typename IntersectionKernel>
@@ -870,9 +777,8 @@ bool operator==(const Support_plane<GeomTraits, IntersectionKernel>& a, const Su
     return false;
   }
 
-  if (a.exact_plane() == b.exact_plane())
-    return true;
-  else return false;
+  // Coplanar input polygons share a support plane, independent of the orientation of their planes.
+  return (a.exact_plane() == b.exact_plane() || a.exact_plane() == b.exact_plane().opposite());
 }
 
 #endif //DOXYGEN_RUNNING
