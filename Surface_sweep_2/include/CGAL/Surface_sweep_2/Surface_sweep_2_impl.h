@@ -45,6 +45,7 @@ void Surface_sweep_2<Vis>::_complete_sweep() {
   }
 
   m_overlap_subcurves.clear();
+  m_overlaps_with_left_event.clear();
 
   CGAL_SS_PRINT_END_EOL("completing the sweep");
 }
@@ -170,11 +171,12 @@ void Surface_sweep_2<Vis>::_handle_left_curves() {
 
 /*! clips the last curve of a subcurve if it is not in the status line
  * and with a left end not being the current event
+ * \return `true` if the last curve has been clipped, and `false` otherwise.
  */
 template <typename Vis>
-void Surface_sweep_2<Vis>::_clip_non_active_curve_at_current_event(Subcurve* subcurve) {
+bool Surface_sweep_2<Vis>::_clip_non_active_curve_at_current_event(Subcurve* subcurve) {
   // ignore active curve (will be split at intersection point)
-  if (subcurve->hint() != this->m_statusLine.end() && subcurve->hint() != Status_line_iterator()) return;
+  if (subcurve->hint() != this->m_statusLine.end() && subcurve->hint() != Status_line_iterator()) return false;
 
   if (! subcurve->is_start_point(this->m_currentEvent)) {
     CGAL_SS_PRINT_TEXT("Splitting ");
@@ -189,7 +191,9 @@ void Surface_sweep_2<Vis>::_clip_non_active_curve_at_current_event(Subcurve* sub
 
     this->m_currentEvent->set_weak_intersection();
     this->m_visitor->update_event(this->m_currentEvent, subcurve);
+    return true;
   }
+  return false;
 }
 
 /*! handles the overlaps between subcurves to the right of the current event point.
@@ -197,6 +201,25 @@ void Surface_sweep_2<Vis>::_clip_non_active_curve_at_current_event(Subcurve* sub
 template <typename Vis>
 void Surface_sweep_2<Vis>::_handle_overlaps_in_right_curves() {
   const std::vector< std::pair<Subcurve*, Subcurve*> >& subcurve_pairs = this->m_currentEvent->overlaps_on_right;
+
+  // Clips a subcurve at the current event. A subcurve must be clipped at most
+  // once, as clipping does not update its left event; clipping it again would
+  // split its last curve at its left endpoint (and notify the visitor again).
+  // This happens, e.g., when a subcurve overlaps several curves on the right.
+  // Thus, the clipped subcurves are recorded.
+  std::vector<Subcurve*> clipped;
+  auto clip = [&](Subcurve* sc) {
+    if (std::find(clipped.begin(), clipped.end(), sc) != clipped.end()) return;
+    if (_clip_non_active_curve_at_current_event(sc)) clipped.push_back(sc);
+  };
+
+  // Clip the curves on the right that are not clipped yet, before they are
+  // used to compute overlaps below. When two curves have common ancestors,
+  // their overlap is computed from the last curve of one of them (see
+  // _intersect()), which must therefore start at the current event.
+  for (auto sc_it = this->m_currentEvent->right_curves_begin(); sc_it != this->m_currentEvent->right_curves_end();
+       ++sc_it)
+    clip(*sc_it);
 
   if (!subcurve_pairs.empty()) {
     // handling overlaps on the right of the current event.
@@ -241,8 +264,8 @@ void Surface_sweep_2<Vis>::_handle_overlaps_in_right_curves() {
       }
       CGAL_assertion( std::set<Subcurve*>(it->second.begin(), it->second.end()).size() == nbc);
 
-      //  clipping only one curve is sufficient since we compute an intersection
-      _clip_non_active_curve_at_current_event(it->second.front());
+      // Clip all the curves (and not only one of them; see above).
+      for (auto* sc : it->second) clip(sc);
 
       if ( nbc==1 )
         _intersect(it->second.front(), it->first, this->m_currentEvent);
@@ -259,10 +282,10 @@ void Surface_sweep_2<Vis>::_handle_overlaps_in_right_curves() {
     CGAL_SS_PRINT_END_EOL("handling overlaps on the right");
   }
 
-  // split curves not already split. TODO: this should be done above?
-  for (auto subcurve_it =  this->m_currentEvent->right_curves_begin();
-       subcurve_it != this->m_currentEvent->right_curves_end(); ++subcurve_it)
-    _clip_non_active_curve_at_current_event(*subcurve_it);
+  // Clip the curves that have become right curves while handling the overlaps.
+  for (auto sc_it = this->m_currentEvent->right_curves_begin(); sc_it != this->m_currentEvent->right_curves_end();
+       ++sc_it)
+    clip(*sc_it);
 }
 
 /*! handles the subcurves to the right of the current event point.
@@ -272,6 +295,20 @@ void Surface_sweep_2<Vis>::_handle_right_curves() {
   for (auto sc_it = this->m_currentEvent->right_curves_begin(), sc_it_end = this->m_currentEvent->right_curves_end();
        sc_it != sc_it_end; ++sc_it)
     (*sc_it)->reset_left_event();
+
+  // Reset the left event of the overlap subcurves that start at the current
+  // event, but are not reached above, as they are neither right curves of
+  // the current event nor (recursively) originating subcurves of right curves.
+  // (This happens, e.g., when an overlap subcurve is discarded, as a right
+  // curve containing it already exists.) Otherwise, their left events become
+  // dangling once the current event is deallocated.
+  auto it = std::remove_if(m_overlaps_with_left_event.begin(), m_overlaps_with_left_event.end(),
+                           [&](Subcurve* sc) {
+                             if (sc->left_event() == this->m_currentEvent)
+                               sc->set_left_event(static_cast<Event*>(nullptr));
+                             return sc->left_event() == nullptr;
+                           });
+  m_overlaps_with_left_event.erase(it, m_overlaps_with_left_event.end());
 
   CGAL_SS_PRINT_START("handling right curves at (");
   CGAL_SS_DEBUG(this->PrintEvent(this->m_currentEvent));
@@ -917,6 +954,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
       overlap_sc->set_left_event(left_event);
       overlap_sc->set_right_event(right_event);
       m_overlap_subcurves.push_back(overlap_sc);
+      m_overlaps_with_left_event.push_back(overlap_sc);
       // sets the two originating subcurves of overlap_sc
       overlap_sc->set_originating_subcurve1(c1);
       overlap_sc->set_originating_subcurve2(c2);
@@ -935,6 +973,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
       overlap_sc->set_left_event(left_event);
       overlap_sc->set_right_event(right_event);
       m_overlap_subcurves.push_back(overlap_sc);
+      m_overlaps_with_left_event.push_back(overlap_sc);
       // sets the two originating subcurves of overlap_sc
       overlap_sc->set_originating_subcurve1(first_parent);
       overlap_sc->set_originating_subcurve2(*sc_it);
