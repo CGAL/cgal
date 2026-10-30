@@ -951,30 +951,30 @@ struct Mpzf {
     int e = 64 * (asize - 1 + exp);
     mp_limb_t x = data()[asize-1];
     int lz = Mpzf_impl::clz(x);
+    bool exact;
     if (lz <= 11) {
-      if (lz != 11) {
-        e += (11 - lz);
-        x >>= (11 - lz);
-      }
-      dl = double(x);
-      dh = double(x + 1);
-      // Check for the few cases where dh=x works (asize==1 and the evicted
-      // bits from x were 0s)
+      // x has at least 53 significant bits, drop the s lowest ones.
+      int s = 11 - lz; // 0..11
+      mp_limb_t old_x = x;
+      x >>= s; // s == 0 is fine
+      // The lower limbs are non-zero as soon as asize > 1.
+      exact = (asize == 1) && (x << s) == old_x;
+      e += s;
     }
     else if (asize == 1) {
-      dl = dh = double(x); // conversion is exact
+      exact = true; // x has less than 53 significant bits
     }
     else {
+      int s = lz - 11; // 1..52
       mp_limb_t y = data()[asize-2];
-      e -= (lz - 11);
-      x <<= (lz - 11);
-      y >>= (75 - lz);
-      x |= y;
-      dl = double(x);
-      dh = double(x + 1);
-      // Check for the few cases where dh=x works (asize==2 and the evicted
-      // bits from y were 0s)
+      // The evicted bits are the 64-s lowest bits of y, and they are the
+      // only non-zero ones if asize==2 (data()[0] != 0 and is y).
+      exact = (asize == 2) && (y << s) == 0;
+      x = (x << s) | (y >> (64 - s)); // 12 <= 64-s <= 63: no UB
+      e -= s;
     }
+    dl = double(x);
+    dh = exact ? dl : double(x + 1); // x+1 <= 2^53 is exact
     typedef Interval_nt<> IA;
     IA res (dl, dh);
     res = ldexp (res, e);
