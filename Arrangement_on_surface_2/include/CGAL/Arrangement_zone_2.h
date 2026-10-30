@@ -32,6 +32,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <utility>
 
 namespace CGAL {
 
