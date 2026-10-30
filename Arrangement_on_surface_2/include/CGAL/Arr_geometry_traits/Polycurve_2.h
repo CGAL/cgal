@@ -103,8 +103,7 @@ public:
    * \pre The end of subcurve n should be the beginning of subcurve n+1.
    */
   template <typename InputIterator>
-  void construct_polycurve(InputIterator begin, InputIterator end, td::false_type)
-  { m_subcurves.assign(begin, end); }
+  void construct_polycurve(InputIterator begin, InputIterator end, std::false_type) { m_subcurves.assign(begin, end); }
 
   /*! constructs a polycurve from a range of points.
    * \param begin An iterator pointing to the first point in the range.
