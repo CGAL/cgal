@@ -44,7 +44,7 @@ namespace Surface_sweep_2 {
  * to the actual visitor type (the `Visitor_` template parameter) and in turn to
  * the correct base surface-sweep type.
  *
- * \tparam GeometryTraits_2 the* geometry traits trype.
+ * \tparam GeometryTraits_2 the geometry traits type.
  * \tparam Event_ the sweep event type.
  * \tparam Subcurve_ the sweep subcurve type.
  * \tparam Allocator_ the allocator used to allocate events and subcurves during the sweep.

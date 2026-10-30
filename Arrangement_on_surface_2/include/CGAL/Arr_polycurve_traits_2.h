@@ -26,7 +26,9 @@
 
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <variant>
+#include <vector>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -111,7 +113,7 @@ public:
   Arr_polycurve_traits_2() : Base() {}
 
   /*! constructs with given subcurve traits
-   * \param seg_traits an already existing subcurve tarits which is passed will
+   * \param seg_traits an already existing subcurve traits which is passed will
    *        be used by the class.
    */
   Arr_polycurve_traits_2(const Subcurve_traits_2* geom_traits) : Base(geom_traits) {}
@@ -279,7 +281,7 @@ public:
     // Normally, the moment the compiler finds a name, it stops looking. In
     // other words, the compiler first finds the operator() in the current
     // class and stops looking, never finding the one in the base class.
-    // Explicitly bring the base operator() into scope, unnecesitating the
+    // Explicitly bring the base operator() into scope, unnecessitating the
     // code below.
     using Base::Push_back_2::operator();
 
@@ -314,7 +316,7 @@ public:
     // Normally, the moment the compiler finds a name, it stops looking. In
     // other words, the compiler first finds the operator() in the current
     // class and stops looking, never finding the one in the base class.
-    // Explicitly bring the base operator() into scope, unnecesitating the
+    // Explicitly bring the base operator() into scope, unnecessitating the
     // code below.
     using Base::Push_front_2::operator();
 
@@ -382,7 +384,13 @@ public:
       // in the number of subcurves anyway, as they are copied, and the split
       // point is typically near the left end of the polycurve (e.g., the
       // surface-sweep splits off the part to the left of the current event),
-      // where the scan terminates early.
+      // where the scan terminates early. Measured on the polyline benchmarks
+      // (aggregated and incremental insertion), k <= 1 in 89%-100% of the
+      // splits, unless the polycurves are very long (about 50 subcurves). A
+      // binary search, which costs about log(n) comparisons wherever p lies,
+      // increased the instruction count by up to 2%, and gained only 0.2% on
+      // very long polycurves. A galloping search saves comparisons only on
+      // very long polycurves.
       std::size_t k = 0;
       Comparison_result res = SMALLER;
       for (; k + 1 < n; ++k) if ((res = cmp_xy(p, max_vertex(xcv[index(k)]))) != LARGER) break;
@@ -442,7 +450,7 @@ public:
     Intersect_2(const Polycurve_traits_2& traits) : m_poly_traits(traits) {}
 
     /*! finds the intersections of the two given curves and insert them into the
-     * given output iterator. As two subcurves may itersect only once, only a
+     * given output iterator. As two subcurves may intersect only once, only a
      * single intersection will be contained in the iterator.
      * Note: If the intersection yields an overlap then it will be oriented
      *       from left-to-right.
@@ -501,7 +509,7 @@ public:
       auto update_saved_xcv = [&](X_monotone_subcurve_2&& sxcv) {
         xcv_saved = true;
         // We maintain the invariant that if the input curves have opposite
-        // directions (! consistent), the overalpping curves are directed
+        // directions (! consistent), the overlapping curves are directed
         // left=>right. This, however, is not guaranteed by all traits for the
         // subcurves. (It is guaranteed by some traits, but this is
         // insufficient.)  Therefore, we need to enforce it. That is, we make

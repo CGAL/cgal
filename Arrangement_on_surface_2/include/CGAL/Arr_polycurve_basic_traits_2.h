@@ -28,6 +28,7 @@
 #include <optional>
 #include <type_traits>
 #include <tuple>
+#include <vector>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -89,7 +90,7 @@ public:
   {}
 
   /*! constructs from a subcurve traits.
-   * \param seg_traits an already existing subcurve tarits, which is passed in;
+   * \param seg_traits an already existing subcurve traits, which is passed in;
    *        it will be used by the class.
    */
   Arr_polycurve_basic_traits_2(const Subcurve_traits_2* geom_traits) :
@@ -107,7 +108,7 @@ public:
   }
 
   /* Destructor
-   * Deletes the subcurve tarits class in case it was constructed during the
+   * Deletes the subcurve traits class in case it was constructed during the
    * construction of this.
    */
   ~Arr_polycurve_basic_traits_2() { if (m_own_traits) delete m_subcurve_traits; }
@@ -132,8 +133,7 @@ public:
   //! Compare the \f$x\f$-coordinates of two points.
   class Compare_x_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -174,7 +174,7 @@ public:
      *            `ARR_MIN_END` - the minimal end of `xs1` or
      *            `ARR_MAX_END` - the maximal end of `xs1`.
      * \param xs2 the second curve.
-     * \param ce2 the curve-end indicator of the second \f$x\f$-monoton curve
+     * \param ce2 the curve-end indicator of the second \f$x\f$-monotone curve
      *        `xs2`:
      *            `ARR_MIN_END` - the minimal end of `xs2` or
      *            `ARR_MAX_END` - the maximal end of `xs2`.
@@ -281,11 +281,10 @@ public:
   /*! obtains a Compare_x_2 functor object. */
   Compare_x_2 compare_x_2_object() const { return Compare_x_2(*this); }
 
-  //! Compare two curve-ends or points lexigoraphically: by x, then by y.
+  //! Compare two curve-ends or points lexicographically: by x, then by y.
   class Compare_xy_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -296,7 +295,7 @@ public:
     Compare_xy_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
-    /*! compares two directional points lexigoraphically: by \f$x\f$, then by
+    /*! compares two directional points lexicographically: by \f$x\f$, then by
      * \f$y\f$.
      * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
@@ -330,7 +329,7 @@ public:
      *            `ARR_MIN_END` - the minimal end of `xs1` or
      *            `ARR_MAX_END` - the maximal end of `xs1`.
      * \param xs2 the second curve.
-     * \param ce2 the curve-end indicator of the second \f$x\f$-monoton curve
+     * \param ce2 the curve-end indicator of the second \f$x\f$-monotone curve
      *        `xs2`:
      *            `ARR_MIN_END` - the minimal end of `xs2` or
      *            `ARR_MAX_END` - the maximal end of `xs2`.
@@ -496,8 +495,7 @@ public:
    */
   class Construct_min_vertex_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -536,8 +534,7 @@ public:
    */
   class Construct_max_vertex_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -708,8 +705,7 @@ public:
     }
 
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -759,8 +755,7 @@ public:
    */
   class Compare_y_at_x_left_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -778,7 +773,7 @@ public:
      * \param p the intersection point.
      * \pre the point `p` lies on both curves, and both of them must be also be
      *      defined (lexicographically) to its left.
-     * \return the relative position of `cv1` with respect to `cv2` immdiately
+     * \return the relative position of `cv1` with respect to `cv2` immediately
      *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
     Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, const Point_2& p) const {
@@ -806,8 +801,7 @@ public:
    */
   class Compare_y_at_x_right_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -825,7 +819,7 @@ public:
      * \param p the intersection point.
      * \pre the point `p` lies on both curves, and both of them must be also be
      *      defined (lexicographically) to its right.
-     * \return the relative position of `cv1` with respect to `cv2` immdiately
+     * \return the relative position of `cv1` with respect to `cv2` immediately
      *         to the right of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
     Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, const Point_2& p) const {
@@ -853,8 +847,7 @@ public:
    */
   class Equal_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -989,8 +982,7 @@ public:
    */
   class Construct_opposite_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -1098,7 +1090,7 @@ public:
       auto [f1, l1, d1] = (dir1 == SMALLER) ? std::make_tuple(zero, n1-1, one) : std::make_tuple(n1-1, zero, mone);
       auto [f2, l2, d2] = (dir2 == SMALLER) ? std::make_tuple(zero, n2-1, one) : std::make_tuple(n2-1, zero, mone);
 
-      // Early ellimination
+      // Early elimination
       switch (cmp_xy(xcv1[l1], ARR_MAX_END, xcv2[f2], ARR_MIN_END)) {
        case SMALLER: return false;
        case EQUAL: return consider_common_endpoints;
@@ -1147,7 +1139,7 @@ public:
 
         // The open sub-curves do not intersect; however, there still might be a
         // valid intersection at the endpoints of the first subcurves, which is
-        // internal to the polycurve. We distinguich between 3 main cases. In all
+        // internal to the polycurve. We distinguish between 3 main cases. In all
         // cases we must compare the most left vertex of the most right subcurve.
         // 1. n1 == 1, n2 > 1
         if ((n1 == 1) && (n2 > 1)) {
@@ -1250,7 +1242,7 @@ public:
   /*! obtains an Approximate_2 functor object. */
   Approximate_2 approximate_2_object_impl(std::false_type) const { return subcurve_traits_2()->approximate_2_object(); }
 
-  Approximate_2 approximate_2_object_impl(std::true_type) const { }
+  Approximate_2 approximate_2_object_impl(std::true_type) const {}
 
   Approximate_2 approximate_2_object() const {
     using Is_void = typename std::is_same<void, Approximate_2>::type;
@@ -1522,8 +1514,7 @@ public:
    */
   class Parameter_space_in_y_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -1583,8 +1574,7 @@ public:
    */
   class Compare_x_on_boundary_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -1729,8 +1719,7 @@ public:
    */
   class Compare_x_near_boundary_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -1761,8 +1750,7 @@ public:
    */
   class Compare_y_on_boundary_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -1797,8 +1785,7 @@ public:
    */
   class Compare_y_near_boundary_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -1848,8 +1835,7 @@ public:
    */
   class Is_on_y_identification_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -1949,8 +1935,7 @@ public:
    */
   class Push_back_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -2099,8 +2084,7 @@ public:
    */
   class Push_front_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -2225,11 +2209,10 @@ public:
   /*! obtains a Push_front_2 functor object. */
   Push_front_2 push_front_2_object() const { return Push_front_2(*this); }
 
-  //! A functor that trimps an \f$x\f$-monotone curve.
+  //! A functor that trims an \f$x\f$-monotone curve.
   class Trim_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;

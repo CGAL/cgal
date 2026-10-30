@@ -82,9 +82,8 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const {
  */
 template <typename Arr, typename Gen>
 typename Arr_landmarks_point_location<Arr, Gen>::result_type
-Arr_landmarks_point_location<Arr, Gen>::
-_walk_from_vertex(Vertex_const_handle nearest_vertex, const Point_2& p,
-                  Halfedge_set& crossed_edges) const {
+Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex(Vertex_const_handle nearest_vertex, const Point_2& p,
+                                                          Halfedge_set& crossed_edges) const {
   Vertex_const_handle vh = nearest_vertex;
   CGAL_assertion_msg(! vh->is_at_open_boundary(),
                      "_walk_from_vertex() from a vertex at infinity.");
@@ -144,9 +143,8 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex, const Point_2& p,
  */
 template <typename Arr, typename Gen>
 typename Arr_landmarks_point_location<Arr, Gen>::result_type
-Arr_landmarks_point_location<Arr, Gen>::
-_find_face_around_vertex(Vertex_const_handle vh, const Point_2& p,
-                         bool& new_vertex) const {
+Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex(Vertex_const_handle vh, const Point_2& p,
+                                                                 bool& new_vertex) const {
   new_vertex = false;
 
   // Create an x-monotone curve connecting the point associated with the
@@ -255,17 +253,14 @@ _find_face_around_vertex(Vertex_const_handle vh, const Point_2& p,
  */
 template <typename Arr, typename Gen>
 typename Arr_landmarks_point_location<Arr, Gen>::result_type
-Arr_landmarks_point_location<Arr, Gen>::
-_walk_from_edge(Halfedge_const_handle eh, const Point_2& np, const Point_2& p,
-                Halfedge_set& crossed_edges) const {
-  CGAL_assertion_msg(! eh->is_fictitious(),
-                     "_walk_from_edge() from a fictitious edge.");
+Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge(Halfedge_const_handle eh, const Point_2& np, const Point_2& p,
+                                                        Halfedge_set& crossed_edges) const {
+  CGAL_assertion_msg(! eh->is_fictitious(), "_walk_from_edge() from a fictitious edge.");
 
   const X_monotone_curve_2& cv = eh->curve() ;
   Comparison_result res;
 
-  X_monotone_curve_2 seg =
-    m_traits->construct_x_monotone_curve_2_object()(np, p);
+  X_monotone_curve_2 seg = m_traits->construct_x_monotone_curve_2_object()(np, p);
 
   // Create an initial set of edges that have been crossed, which currently
   // contains only the halfedge we are currently on (and its twin).
@@ -286,7 +281,7 @@ _walk_from_edge(Halfedge_const_handle eh, const Point_2& np, const Point_2& p,
     // the predecessor of the halfedge and its twin to crossed_edges
     Point_2 temp_p = eh->source()->point();
     if (m_traits->is_in_x_range_2_object()(seg, temp_p)) {
-      //we must make sure that eh is not a tip on an "antena"
+      //we must make sure that eh is not a tip on an "antenna"
       if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL &&
           eh->prev() != eh->twin()) {
         // the assumption is that each edge is crossed at most twice
@@ -307,7 +302,7 @@ _walk_from_edge(Halfedge_const_handle eh, const Point_2& np, const Point_2& p,
     // the successor of the halfedge and its twin to crossed_edges
     Point_2 temp_p = eh->target()->point();
     if (m_traits->is_in_x_range_2_object()(seg, temp_p)) {
-      //we must make sure that eh is not a tip on an "antena"
+      //we must make sure that eh is not a tip on an "antenna"
       if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL &&
           eh->next() != eh->twin()) {
         // the assumption is that each edge is crossed at most twice
@@ -345,7 +340,7 @@ _walk_from_edge(Halfedge_const_handle eh, const Point_2& np, const Point_2& p,
       break;
     }
 
-    // Now walk in the incdient face of eh toward p.
+    // Now walk in the incident face of eh toward p.
     return (_walk_from_face(eh->face(), np, p, crossed_edges));
   }
 
@@ -374,10 +369,9 @@ _walk_from_edge(Halfedge_const_handle eh, const Point_2& np, const Point_2& p,
  */
 template <typename Arr, typename Gen>
 typename Arr_landmarks_point_location<Arr, Gen>::result_type
-Arr_landmarks_point_location<Arr, Gen>::
-_deal_with_curve_contained_in_segment(Halfedge_const_handle he, bool p_is_left,
-                                      const Point_2& p,
-                                      Halfedge_set& crossed_edges) const {
+Arr_landmarks_point_location<Arr, Gen>::_deal_with_curve_contained_in_segment(Halfedge_const_handle he, bool p_is_left,
+                                                                              const Point_2& p,
+                                                                              Halfedge_set& crossed_edges) const {
   // in this case we want to walk from to the query point from the nearest
   // vertex either the halfedge's source or target
   auto cmp_xy = m_traits->compare_xy_2_object();
@@ -401,9 +395,8 @@ _deal_with_curve_contained_in_segment(Halfedge_const_handle he, bool p_is_left,
  */
 template <typename Arr, typename Gen>
 typename Arr_landmarks_point_location<Arr, Gen>::result_type
-Arr_landmarks_point_location<Arr, Gen>::
-_walk_from_face(Face_const_handle face, const Point_2& np, const Point_2& p,
-                Halfedge_set& crossed_edges) const {
+Arr_landmarks_point_location<Arr, Gen>::_walk_from_face(Face_const_handle face, const Point_2& np, const Point_2& p,
+                                                        Halfedge_set& crossed_edges) const {
   // Construct an x-monotone curve connecting the nearest landmark point np
   // to the query point p and check which CCB intersects this segment.
   X_monotone_curve_2 seg;
@@ -429,21 +422,15 @@ _walk_from_face(Face_const_handle face, const Point_2& np, const Point_2& p,
         bool is_on_edge;
         bool is_target;
         Vertex_const_handle new_vertex;
-        Halfedge_const_handle he =
-          _intersection_with_ccb(*inner_ccb_iter,seg, p, p_is_left,
-                                 crossed_edges, is_on_edge, is_target,
-                                 cv_is_contained_in_seg, new_vertex);
+        Halfedge_const_handle he = _intersection_with_ccb(*inner_ccb_iter,seg, p, p_is_left, crossed_edges, is_on_edge,
+                                                          is_target, cv_is_contained_in_seg, new_vertex);
         if (he == invalid_he && cv_is_contained_in_seg) {
-          return _deal_with_curve_contained_in_segment(*inner_ccb_iter,
-                                                       p_is_left,p,
-                                                       crossed_edges);
+          return _deal_with_curve_contained_in_segment(*inner_ccb_iter, p_is_left,p, crossed_edges);
         }
         if (he != invalid_he) {
           // Check if the query point is located on a vertex or on an edge.
-          if (is_target)
-            return make_result(he->target());
-          else if (is_on_edge)
-            return make_result(he);
+          if (is_target) return make_result(he->target());
+          else if (is_on_edge) return make_result(he);
           if (new_vertex != invalid_vertex) {
             // if we got here it means that a closer vertex then np was found
             return (_walk_from_vertex(new_vertex, p, crossed_edges));
@@ -473,21 +460,15 @@ _walk_from_face(Face_const_handle face, const Point_2& np, const Point_2& p,
         bool is_on_edge;
         bool is_target;
         Vertex_const_handle new_vertex;
-        Halfedge_const_handle he =
-          _intersection_with_ccb(*outer_ccb_iter,seg, p, p_is_left,
-                                 crossed_edges, is_on_edge, is_target,
-                                 cv_is_contained_in_seg, new_vertex);
+        Halfedge_const_handle he = _intersection_with_ccb(*outer_ccb_iter,seg, p, p_is_left, crossed_edges, is_on_edge,
+                                                          is_target, cv_is_contained_in_seg, new_vertex);
         if (he == invalid_he && cv_is_contained_in_seg) {
-          return _deal_with_curve_contained_in_segment(*outer_ccb_iter,
-                                                       p_is_left,p,
-                                                       crossed_edges);
+          return _deal_with_curve_contained_in_segment(*outer_ccb_iter, p_is_left,p, crossed_edges);
         }
         if (he != invalid_he) {
           // Check if the query point is located on a vertex or on an edge.
-          if (is_target)
-            return make_result(he->target());
-          else if (is_on_edge)
-            return make_result(he);
+          if (is_target) return make_result(he->target());
+          else if (is_on_edge) return make_result(he);
           if (new_vertex != invalid_vertex) {
             // if we got here it means that a closer vertex then np was found
             return (_walk_from_vertex(new_vertex, p, crossed_edges));
@@ -516,20 +497,19 @@ _walk_from_face(Face_const_handle face, const Point_2& np, const Point_2& p,
  */
 template <typename Arr, typename Gen>
 typename Arr_landmarks_point_location<Arr, Gen>::Halfedge_const_handle
-Arr_landmarks_point_location<Arr, Gen>::
-_intersection_with_ccb(Ccb_halfedge_const_circulator circ,
-                       const X_monotone_curve_2& seg,
-                       const Point_2& p, bool p_is_left,
-                       Halfedge_set& crossed_edges,
-                       bool& is_on_edge, bool& is_target,
-                       bool& cv_is_contained_in_seg,
-                       Vertex_const_handle& new_vertex) const {
+Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb(Ccb_halfedge_const_circulator circ,
+                                                               const X_monotone_curve_2& seg,
+                                                               const Point_2& p, bool p_is_left,
+                                                               Halfedge_set& crossed_edges,
+                                                               bool& is_on_edge, bool& is_target,
+                                                               bool& cv_is_contained_in_seg,
+                                                               Vertex_const_handle& new_vertex) const {
   is_on_edge = false;
   is_target = false;
 
   // Go over the CCB.
   auto is_in_x_range = m_traits->is_in_x_range_2_object();
-  Ccb_halfedge_const_circulator curr = circ , temp_circ;
+  Ccb_halfedge_const_circulator curr = circ, temp_circ;
   const Halfedge_const_handle invalid_he;
   Halfedge_const_handle he;
   bool cv_and_seg_overlap;
@@ -650,11 +630,8 @@ _intersection_with_ccb(Ccb_halfedge_const_circulator circ,
 //
 template <typename Arr, typename Gen>
 typename Arr_landmarks_point_location<Arr, Gen>::Halfedge_const_handle
-Arr_landmarks_point_location<Arr, Gen>::
-_in_case_p_is_on_edge(Halfedge_const_handle he,
-                      Halfedge_set& crossed_edges,
-                      const Point_2 & p,
-                      bool & is_target) const {
+Arr_landmarks_point_location<Arr, Gen>::_in_case_p_is_on_edge(Halfedge_const_handle he, Halfedge_set& crossed_edges,
+                                                              const Point_2 & p, bool & is_target) const {
   // cv and seg overlap, obviously we crossed it
   // the assumption is that each edge is crossed at most twice
   CGAL_assertion_msg(crossed_edges.count(he) < 2,
@@ -667,8 +644,7 @@ _in_case_p_is_on_edge(Halfedge_const_handle he,
     // p is the target of the current halfedge.
     is_target = true;
   }
-  else if (! he->source()->is_at_open_boundary() &&
-           m_traits->equal_2_object()(he->source()->point(), p)) {
+  else if (! he->source()->is_at_open_boundary() && m_traits->equal_2_object()(he->source()->point(), p)) {
     // Take the twin halfedge, so p equals its target.
     he = he->twin();
     is_target = true;
@@ -681,12 +657,11 @@ _in_case_p_is_on_edge(Halfedge_const_handle he,
  * the current landmark to the query point, an odd number of times.
  */
 template <typename Arr, typename Gen>
-bool Arr_landmarks_point_location<Arr, Gen>::
-_have_odd_intersections(const X_monotone_curve_2& cv,
-                        const X_monotone_curve_2& seg,
-                        bool p_is_left, bool& p_on_curve,
-                        bool& cv_and_seg_overlap,
-                        bool& cv_is_contained_in_seg) const {
+bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections(const X_monotone_curve_2& cv,
+                                                                     const X_monotone_curve_2& seg,
+                                                                     bool p_is_left, bool& p_on_curve,
+                                                                     bool& cv_and_seg_overlap,
+                                                                     bool& cv_is_contained_in_seg) const {
   auto is_in_x_range = m_traits->is_in_x_range_2_object();
   p_on_curve = false;
   cv_and_seg_overlap = false;
@@ -706,8 +681,7 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
   if (cv_left_is_closed && cv_right_is_closed) {
     if (is_in_x_range(seg,cv_left) && is_in_x_range(seg,cv_right)) {
       auto cmp_y_at_x = m_traits->compare_y_at_x_2_object();
-      if ((cmp_y_at_x(cv_left, seg) == EQUAL) &&
-          (cmp_y_at_x(cv_right, seg) == EQUAL)) {
+      if ((cmp_y_at_x(cv_left, seg) == EQUAL) && (cmp_y_at_x(cv_right, seg) == EQUAL)) {
         // cv is contained in seg non of the answer true or false is correct
         // we must set a special flag to distinguish this case
         cv_is_contained_in_seg = true;
@@ -783,8 +757,7 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
   else if (bx_l == ARR_RIGHT_BOUNDARY) {
     // The left end of cv lies to the right of seg_left.
     // Compare the left endpoint of cv to seg.
-    left_res = m_traits->compare_y_at_x_2_object()
-      (m_traits->construct_min_vertex_2_object()(cv), seg);
+    left_res = m_traits->compare_y_at_x_2_object()(m_traits->construct_min_vertex_2_object()(cv), seg);
     left_res = CGAL::opposite(left_res);
   }
   else {
@@ -817,19 +790,15 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
   }
   if (left_res == EQUAL) {
     // Compare the two curves to the right of their common left endpoint.
-    if (is_in_x_range(cv,seg_left))
-      left_res = m_traits->compare_y_at_x_right_2_object()(seg, cv, seg_left);
-    else if (is_in_x_range(seg,cv_left))
-      left_res = m_traits->compare_y_at_x_right_2_object()(seg, cv, cv_left);
-    else
-      CGAL_error();
+    if (is_in_x_range(cv,seg_left)) left_res = m_traits->compare_y_at_x_right_2_object()(seg, cv, seg_left);
+    else if (is_in_x_range(seg,cv_left)) left_res = m_traits->compare_y_at_x_right_2_object()(seg, cv, cv_left);
+    else CGAL_error();
     if (left_res == EQUAL) {
       // RWRW: In this case we have an overlap ...
       // cv and seg overlap non of the answer true or false is correct
       // we must set a special flag to distinguish this case
       if (is_in_x_range(cv,( p_is_left ? seg_left : seg_right)))
-        if (m_traits->compare_y_at_x_2_object()
-            ((p_is_left ? seg_left : seg_right), cv) == EQUAL) {
+        if (m_traits->compare_y_at_x_2_object() ((p_is_left ? seg_left : seg_right), cv) == EQUAL) {
           p_on_curve = true;
         }
       cv_and_seg_overlap = true;
@@ -838,8 +807,7 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
   }
   // Compare the two right ends of cv and seg.
   Comparison_result right_res;
-  const Arr_parameter_space bx_r =
-    m_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
+  const Arr_parameter_space bx_r = m_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
   if (bx_r == ARR_RIGHT_BOUNDARY) {
     // The right end of cv lies to the right of seg_right:
     // Compare this point to cv.
@@ -848,8 +816,7 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
   else if (bx_r == ARR_LEFT_BOUNDARY) {
     // The right end of cv lies to the left of seg_right.
     // Compare the right endpoint of cv to seg.
-    right_res = m_traits->compare_y_at_x_2_object()
-      (m_traits->construct_max_vertex_2_object()(cv), seg);
+    right_res = m_traits->compare_y_at_x_2_object()(m_traits->construct_max_vertex_2_object()(cv), seg);
     right_res = CGAL::opposite(right_res);
   }
   else {
@@ -884,21 +851,16 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
   }
   if (right_res == EQUAL) {
     // Compare the two curves to the left of their common right endpoint.
-    if (is_in_x_range(cv,seg_right))
-      right_res = m_traits->compare_y_at_x_left_2_object()(seg, cv, seg_right);
-    else if (is_in_x_range(seg,cv_right))
-      right_res = m_traits->compare_y_at_x_left_2_object()(seg, cv, cv_right);
-    else
-      CGAL_error();
+    if (is_in_x_range(cv,seg_right)) right_res = m_traits->compare_y_at_x_left_2_object()(seg, cv, seg_right);
+    else if (is_in_x_range(seg,cv_right)) right_res = m_traits->compare_y_at_x_left_2_object()(seg, cv, cv_right);
+    else CGAL_error();
     if (right_res == EQUAL) {
       // RWRW: In this case we have an overlap ...
       // cv and seg overlap non of the answer true or false is correct
       // we must set a special flag to distinguish this case
-      if (is_in_x_range(cv, (p_is_left ? seg_left : seg_right)))
-        if (m_traits->compare_y_at_x_2_object()
-            ((p_is_left ? seg_left : seg_right), cv) == EQUAL) {
-          p_on_curve = true;
-        }
+      if (is_in_x_range(cv, (p_is_left ? seg_left : seg_right))) {
+        if (m_traits->compare_y_at_x_2_object()((p_is_left ? seg_left : seg_right), cv) == EQUAL) p_on_curve = true;
+      }
       cv_and_seg_overlap = true;
       return true;
     }
