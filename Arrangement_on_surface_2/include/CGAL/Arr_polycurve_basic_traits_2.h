@@ -1010,12 +1010,16 @@ public:
      *         `xcv` only with a reverse orientation.
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) const {
-      const auto* geom_traits = m_poly_traits.subcurve_traits_2();
-      auto const_op = geom_traits->construct_opposite_2_object();
-      std::vector<X_monotone_subcurve_2> rev_segs(xcv.number_of_subcurves());;
-      auto tit = rev_segs.begin();
-      for (auto sit = xcv.subcurves_begin(); sit != xcv.subcurves_end(); ++sit) *tit++ = const_op(*sit);
-      return X_monotone_curve_2(rev_segs.rbegin(), rev_segs.rend());
+      auto ctr_opposite = m_poly_traits.subcurve_traits_2()->construct_opposite_2_object();
+      // Construct the opposite subcurves while traversing xcv in its order,
+      // which is cache friendly, and move them in reverse order into the
+      // result.
+      std::vector<X_monotone_subcurve_2> opp_subcurves;
+      opp_subcurves.reserve(xcv.number_of_subcurves());
+      for (auto it = xcv.subcurves_begin(); it != xcv.subcurves_end(); ++it)
+        opp_subcurves.push_back(ctr_opposite(*it));
+      return X_monotone_curve_2(std::make_move_iterator(opp_subcurves.rbegin()),
+                                std::make_move_iterator(opp_subcurves.rend()));
     }
   };
 
@@ -1271,7 +1275,7 @@ public:
      * Apply perfect forwarding.
      */
     template <typename ... Args>
-    Point_2 operator()(Args ... args) const {
+    Point_2 operator()(Args&& ... args) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto ctr_point = geom_traits->construct_point_2_object();
       return ctr_point(std::forward<Args>(args)...);
@@ -1504,7 +1508,7 @@ public:
      * \return the parameter space at `p`.
      * \pre `p` does not lie on the vertical identification curve.
      */
-    Arr_parameter_space operator()(const Point_2 p) const {
+    Arr_parameter_space operator()(const Point_2& p) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       return geom_traits->parameter_space_in_x_2_object()(p);
     }
@@ -1565,7 +1569,7 @@ public:
      * \pre p does not lie on the horizontal identification curve.
      * There are no horizontal identification curves!
      */
-    Arr_parameter_space operator()(const Point_2 p) const {
+    Arr_parameter_space operator()(const Point_2& p) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       return geom_traits->parameter_space_in_y_2_object()(p);
     }
