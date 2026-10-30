@@ -24,6 +24,7 @@
 #include <math.h>
 #include <cmath>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 #ifdef CGAL_USE_GMPXX
@@ -434,27 +435,22 @@ struct Mpzf {
   Mpzf(double d){
     init();
     using std::uint64_t;
-    union {
-#ifdef CGAL_LITTLE_ENDIAN
-      struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s;
-#else /* CGAL_BIG_ENDIAN */
-      //WARNING: untested!
-      struct { uint64_t sig:1; uint64_t exp:11; uint64_t man:52; } s;
-#endif
-      double d;
-    } u;
-    u.d = d;
+    static_assert(sizeof(double) == sizeof(uint64_t));
+    uint64_t bits;
+    // Assumes same endianness for integers and floats
+    std::memcpy(&bits, &d, sizeof(bits));
+    const uint64_t man = bits & ((uint64_t(1) << 52) - 1);
     uint64_t m;
-    uint64_t dexp = u.s.exp;
+    uint64_t dexp = (bits >> 52) & 0x7ff;
     CGAL_assertion_msg(dexp != 2047, "Creating an Mpzf from infinity or NaN.");
     if (dexp == 0) {
       if (d == 0) { size=0; exp=0; return; }
       else { // denormal number
-        m = u.s.man;
+        m = man;
         ++dexp;
       }
     } else {
-      m = (1LL<<52) | u.s.man;
+      m = (uint64_t(1) << 52) | man;
     }
     int e1 = (int)dexp+13;
     // FIXME: make it more general! But not slower...
@@ -498,7 +494,7 @@ struct Mpzf {
       }
     }
 #endif
-    if(u.s.sig) size=-size;
+    if(bits >> 63) size=-size;
     //CGAL_assertion(to_double()==IA_force_to_double(d));
   }
 
