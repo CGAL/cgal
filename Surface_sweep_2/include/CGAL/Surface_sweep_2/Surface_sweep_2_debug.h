@@ -96,7 +96,7 @@ template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::PrintSubCurves()
 {
   print_text("Sub curves: ", true);
-  for (size_t i = 0; i < m_num_of_subCurves; ++i) m_subCurves[i].Print();
+  for (size_t i = 0; i < m_num_subcurves; ++i) m_subcurves[i].Print();
   print_eol();
 }
 
