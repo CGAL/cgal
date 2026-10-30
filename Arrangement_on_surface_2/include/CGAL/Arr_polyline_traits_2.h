@@ -27,9 +27,9 @@
  * arrangement package.
  */
 
-#include <list>
 #include <iterator>
 #include <type_traits>
+#include <vector>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -383,25 +383,24 @@ public:
       // The range must not contain a single point.
       CGAL_precondition_msg(std::distance(begin, end) != 1,
                             "Range of points must not contain a single point");
-
-      using Point_iterator = ForwardIterator;
-      using Zip_iterator = boost::zip_iterator<boost::tuple<Point_iterator, Point_iterator>>;
-      using boost::make_zip_iterator;
-      using Zip_iterator_ref = typename Zip_iterator::reference;
+      // The range must contain at least one segment.
+      CGAL_precondition(begin != end);
 
       CGAL_precondition_code(auto equal = this->m_poly_traits.equal_2_object());
-      auto point_pair_to_segment = [&](const Zip_iterator_ref& t)->Subcurve_2 {
-        CGAL_precondition_msg(! equal(boost::get<0>(t), boost::get<1>(t)),
-                              "Cannot construct a degenerated segment");
-        const Segment_traits_2* seg_traits = this->m_poly_traits.subcurve_traits_2();
-        return seg_traits->construct_curve_2_object()(boost::get<0>(t), boost::get<1>(t));
-      };
-      auto begin_next = std::next(begin);
-      auto end_prev = std::prev(end);
-      return operator()(boost::make_transform_iterator(make_zip_iterator(boost::make_tuple(begin, begin_next)),
-                         point_pair_to_segment),
-                        boost::make_transform_iterator(make_zip_iterator(boost::make_tuple(end_prev, end)),
-                         point_pair_to_segment));
+      auto ctr_seg = this->m_poly_traits.subcurve_traits_2()->construct_curve_2_object();
+
+      // Construct the segments directly in the polyline, which is reserved
+      // in advance.
+      Curve_2 cv;
+      if (begin == end) return cv;
+      using Category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+      if constexpr (std::is_base_of_v<std::forward_iterator_tag, Category>)
+        cv.reserve(std::distance(begin, end) - 1);
+      for (auto curr = begin, next = std::next(begin); next != end; curr = next++) {
+        CGAL_precondition_msg(! equal(*curr, *next), "Cannot construct a degenerated segment");
+        cv.push_back(ctr_seg(*curr, *next));
+      }
+      return cv;
     }
   };
 
@@ -495,7 +494,10 @@ public:
                             "Range of points must not contain a single point");
 
       // Container of the segments to be constructed from the range of points
-      std::list<X_monotone_subcurve_2> segs;
+      std::vector<X_monotone_subcurve_2> segs;
+      using Category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+      if constexpr (std::is_base_of_v<std::forward_iterator_tag, Category>)
+        segs.reserve(std::distance(begin, end) - 1);
       // Make sure the range of points contains at least two points.
       ForwardIterator next = begin;
       ForwardIterator curr = next++;
@@ -522,20 +524,13 @@ public:
         CGAL_precondition(compare_xy(*curr, *next) == cmp_xy_res);
         CGAL_precondition(compare_x(*curr, *next) == cmp_x_res);
 
-        segs.push_back(X_monotone_subcurve_2(*curr, *next));
+        segs.emplace_back(*curr, *next);
         curr = next++;
       }
 
-#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-      if (this->m_poly_traits.subcurve_traits_2()->
-          compare_endpoints_xy_2_object()(*segs.begin()) == LARGER)
-      {
-        X_monotone_curve_2 xcv(segs.begin(), segs.end());
-        return this->m_poly_traits.construct_opposite_2_object()(xcv);
-      }
-#endif
-
-      return operator()(segs.begin(), segs.end());
+      // Move the segments into the polyline; the construction from a range of
+      // segments also handles CGAL_ALWAYS_LEFT_TO_RIGHT.
+      return operator()(std::make_move_iterator(segs.begin()), std::make_move_iterator(segs.end()));
     }
   };
 
