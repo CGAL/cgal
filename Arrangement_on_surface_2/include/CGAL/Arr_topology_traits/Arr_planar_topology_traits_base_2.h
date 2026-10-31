@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s) : Ron Wein <wein@post.tau.ac.il>
+//             Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_PLANAR_TOPOLOGY_TRAITS_BASE_2_H
 #define CGAL_ARR_PLANAR_TOPOLOGY_TRAITS_BASE_2_H
@@ -37,35 +37,32 @@ namespace CGAL {
  * A base topology-traits class that encapsulates the embedding of 2D
  * arrangements of bounded or unbounded curves on the plane.
  */
-template <typename GeomTraits_,
-          typename Dcel_ = Arr_default_dcel<GeomTraits_> >
-class Arr_planar_topology_traits_base_2
-{
+template <typename GeomTraits_, typename Dcel_ = Arr_default_dcel<GeomTraits_>>
+class Arr_planar_topology_traits_base_2 {
 public:
   ///! \name The geometry-traits types.
   //@{
-  typedef GeomTraits_                                     Geometry_traits_2;
-  typedef typename Geometry_traits_2::Point_2             Point_2;
-  typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
+  using Geometry_traits_2 = GeomTraits_;
+  using Point_2 = typename Geometry_traits_2::Point_2;
+  using X_monotone_curve_2 = typename Geometry_traits_2::X_monotone_curve_2;
   //@}
 
   ///! \name The DCEL types.
   //@{
-  typedef Dcel_                                           Dcel;
-  typedef typename Dcel::Size                             Size;
-  typedef typename Dcel::Vertex                           Vertex;
-  typedef typename Dcel::Halfedge                         Halfedge;
-  typedef typename Dcel::Face                             Face;
-  typedef typename Dcel::Outer_ccb                        Outer_ccb;
-  typedef typename Dcel::Inner_ccb                        Inner_ccb;
-  typedef typename Dcel::Isolated_vertex                  Isolated_vertex;
+  using Dcel = Dcel_;
+  using Size = typename Dcel::Size;
+  using Vertex = typename Dcel::Vertex;
+  using Halfedge = typename Dcel::Halfedge;
+  using Face = typename Dcel::Face;
+  using Outer_ccb = typename Dcel::Outer_ccb;
+  using Inner_ccb = typename Dcel::Inner_ccb;
+  using Isolated_vertex = typename Dcel::Isolated_vertex;
   //@}
 
-  typedef Arr_planar_topology_traits_base_2<Geometry_traits_2, Dcel>
-                                                          Self;
+  using Self = Arr_planar_topology_traits_base_2<Geometry_traits_2, Dcel>;
 
 protected:
-  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
+  using Traits_adaptor_2 = Arr_traits_basic_adaptor_2<Geometry_traits_2>;
 
   // Data members:
   Dcel m_dcel;                           // The DCEL.
@@ -96,8 +93,7 @@ public:
   void assign(const Self& other);
 
   /*! destructs. */
-  virtual ~Arr_planar_topology_traits_base_2()
-  {
+  virtual ~Arr_planar_topology_traits_base_2() {
     // Clear the DCEL.
     m_dcel.delete_all();
 
@@ -152,21 +148,20 @@ public:
     return;
   }
 
-  /*! determines whether the function should decide on swapping the predecssor
+  /*! determines whether the function should decide on swapping the predecessor
    * halfedges that imply two ccb (and whose signs are given here).
    * If true, swap_predecessors will be correctly set. If false,
    * generic way of searching for lexicographically minimal point and checking
    * its incident halfedges will do the job to decide on swapping
    * \param signs1 signs of first implied ccb in x- and y-direction
    * \param signs2 signs of second implied ccb in x- and y-direction
-   * \param swap_predecessors Output swap predeccesors or not;
+   * \param swap_predecessors Output swap predecessors or not;
    *        set correctly only if true is returned
    */
   bool
   let_me_decide_the_outer_ccb(std::pair<CGAL::Sign, CGAL::Sign> /* signs1 */,
                               std::pair<CGAL::Sign, CGAL::Sign> /* signs2 */,
-                              bool& swap_predecessors) const
-  {
+                              bool& swap_predecessors) const {
     swap_predecessors = false;
     return false;
   }
@@ -174,17 +169,14 @@ public:
   /*! given signs of two ccbs that show up when splitting upon insertion of
    * curve into two, determines what happens to the face(s).
    * \param signs1 signs in x and y of the first implied ccb
-   * \param signs2 signs in x and y of the secondd implied ccb
+   * \param signs2 signs in x and y of the second implied ccb
    * \return A pair indicating whether the insertion will cause the face
    *         to split (the first flag), and if so - whether the split face
    *         will form a hole in the original face.
    */
   std::pair<bool, bool>
-  face_split_after_edge_insertion(std::pair<CGAL::Sign,
-                                            CGAL::Sign > /* signs1 */,
-                                  std::pair<CGAL::Sign,
-                                            CGAL::Sign > /* signs2 */) const
-  {
+  face_split_after_edge_insertion(std::pair<CGAL::Sign, CGAL::Sign > /* signs1 */,
+                                  std::pair<CGAL::Sign, CGAL::Sign > /* signs2 */) const {
     // In case of a planar topology, connecting two vertices on the same
     // inner CCB closes a new face that becomes a hole in the original face:
     return std::make_pair(true, true);
@@ -216,16 +208,14 @@ public:
    * \param v The vertex.
    * \return The result of the comparison of the x-coordinates of p and v.
    */
-  virtual Comparison_result compare_x(const Point_2& p,
-                                      const Vertex* v) const = 0;
+  virtual Comparison_result compare_x(const Point_2& p, const Vertex* v) const = 0;
 
   /*! compares the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the xy-lexicographic comparison of p and v.
    */
-  virtual Comparison_result compare_xy(const Point_2& p,
-                                       const Vertex* v) const = 0;
+  virtual Comparison_result compare_xy(const Point_2& p, const Vertex* v) const = 0;
 
   /*! compares the relative y-position of the given point and the given edge
    * (which may be fictitious).
@@ -234,8 +224,7 @@ public:
    * \pre p should lie in the x-range of the given edge.
    * \return The relative y-position of the point p and the edge.
    */
-  virtual Comparison_result compare_y_at_x(const Point_2& p,
-                                           const Halfedge* he) const = 0;
+  virtual Comparison_result compare_y_at_x(const Point_2& p, const Halfedge* he) const = 0;
   //@}
 };
 
@@ -247,9 +236,7 @@ public:
 // Assign the contents of another topology-traits class.
 //
 template <typename GeomTraits, typename Dcel_>
-void
-Arr_planar_topology_traits_base_2<GeomTraits, Dcel_>::assign(const Self& other)
-{
+void Arr_planar_topology_traits_base_2<GeomTraits, Dcel_>::assign(const Self& other) {
   // Clear the current DCEL and duplicate the other DCEL.
   m_dcel.delete_all();
   m_dcel.assign(other.m_dcel);
@@ -271,11 +258,9 @@ Arr_planar_topology_traits_base_2<GeomTraits, Dcel_>::assign(const Self& other)
 //
 template <typename GeomTraits, typename Dcel_>
 bool Arr_planar_topology_traits_base_2<GeomTraits, Dcel_>::
-is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
-{
+is_in_face(const Face* f, const Point_2& p, const Vertex* v) const {
   CGAL_precondition((v == nullptr) || ! v->has_null_point());
-  CGAL_precondition((v == nullptr) ||
-                    m_geom_traits->equal_2_object()(p, v->point()));
+  CGAL_precondition((v == nullptr) || m_geom_traits->equal_2_object()(p, v->point()));
 
   // In case the face is unbounded and has no outer ccbs, this is the single
   // unbounded face of an arrangement of bounded curves. This face obviously
@@ -285,7 +270,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
   // Keep a counter of the number of x-monotone curves that intersect an upward
   // vertical emanating from p (except for some degenerate cases that are
   // explained below).
-  unsigned int       n_ray_intersections = 0;
+  unsigned int n_ray_intersections = 0;
 
   // Get a halfedge along the outer CCB of the given face, go over all curves
   // of the boundary component, and count those which are above p.
@@ -300,12 +285,10 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
   // We advance first until we find a comparable vertex to start with.
   // We always find such a vertex since on the ccb there is at least one
   // interior vertex or a vertex at LEFT/RIGHT which are comparable.
-  while( first->vertex()->parameter_space_in_x()==ARR_INTERIOR
-      && first->has_null_curve()
-      && first->next()->has_null_curve()){
+  while(first->vertex()->parameter_space_in_x()==ARR_INTERIOR && first->has_null_curve() &&
+        first->next()->has_null_curve()) {
     first = first->next();
   }
-
 
   const Halfedge* curr = first;
   Comparison_result res_source;
@@ -334,11 +317,11 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
     res_target = compare_xy(p, curr->vertex());
 
     // In case the current halfedge belongs to an "antenna", namely its
-    // incident face is the same as its twin's, we can simply skip it
-    // (in order not to count it twice).
-    if (! curr->opposite()->is_on_inner_ccb() &&
-        curr->outer_ccb()->face() == curr->opposite()->outer_ccb()->face())
-    {
+    // incident face is the same as its twin's, we skip it (in order not to
+    // count it twice). However, if p lies on the antenna, it is obviously not
+    // contained in the interior of the component.
+    if (! curr->opposite()->is_on_inner_ccb() && curr->outer_ccb()->face() == curr->opposite()->outer_ccb()->face()) {
+      if ((res_target == EQUAL) || ((res_source != res_target) && (compare_y_at_x(p, curr) == EQUAL))) return false;
       curr = curr->next();
       res_source = res_target;
       continue;

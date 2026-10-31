@@ -169,6 +169,9 @@ public:
       m_base_split(cv.base(), p.base(), c1.base(), c2.base());
       c1.set_halfedge_handle(cv.halfedge_handle());
       c2.set_halfedge_handle(cv.halfedge_handle());
+      // The parts of an overlapping curve are overlapping, and vice versa.
+      c1.set_overlapping(cv.is_overlapping());
+      c2.set_overlapping(cv.is_overlapping());
     }
   };
 
