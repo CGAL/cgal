@@ -34,30 +34,28 @@ namespace algorithm {
 
 enum class Event_type : int {
   NON_EVENT = -1,
-  SAVE_EVENT = 0,
-  CONST_TIME_EVENT = 1,
-  VANISH_EVENT = 2,
-  EDGE_EVENT = 3,
-  EDGE_MERGE_EVENT = 4,
-  TRIANGLE_EVENT = 5,
-  DBL_EDGE_MERGE_EVENT = 6,
-  DBL_TRIANGLE_EVENT = 7,
-  TETRAHEDRON_EVENT = 8,
-  GENERIC_VERTEX_EVENT = 9,
-  VERTEX_EVENT = 10,
-  FLIP_VERTEX_EVENT = 11,
-  SURFACE_EVENT = 12,
-  POLYHEDRON_SPLIT_EVENT = 13,
-  SPLIT_MERGE_EVENT = 14,
-  EDGE_SPLIT_EVENT = 15,
-  PIERCE_EVENT = 16
+  CONST_TIME_EVENT = 0,
+  VANISH_EVENT = 1,
+  EDGE_EVENT = 2,
+  EDGE_MERGE_EVENT = 3,
+  TRIANGLE_EVENT = 4,
+  DBL_EDGE_MERGE_EVENT = 5,
+  DBL_TRIANGLE_EVENT = 6,
+  TETRAHEDRON_EVENT = 7,
+  GENERIC_VERTEX_EVENT = 8,
+  VERTEX_EVENT = 9,
+  FLIP_VERTEX_EVENT = 10,
+  SURFACE_EVENT = 11,
+  POLYHEDRON_SPLIT_EVENT = 12,
+  SPLIT_MERGE_EVENT = 13,
+  EDGE_SPLIT_EVENT = 14,
+  PIERCE_EVENT = 15
 };
 
 inline std::string event_type_to_string(const Event_type type)
 {
   switch (type) {
     case Event_type::CONST_TIME_EVENT: return "Const_time_event";
-    case Event_type::SAVE_EVENT: return "Save_event";
     case Event_type::VANISH_EVENT: return "Vanish_event";
     case Event_type::EDGE_EVENT: return "Edge_event";
     case Event_type::EDGE_MERGE_EVENT: return "Edge_merge_event";

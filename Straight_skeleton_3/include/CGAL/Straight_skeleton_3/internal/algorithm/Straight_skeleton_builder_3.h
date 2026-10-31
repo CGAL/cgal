@@ -240,8 +240,6 @@ private:
 
   using Const_time_event = algorithm::Const_time_event<GeomTraits>;
   using Const_time_event_sptr = std::shared_ptr<Const_time_event>;
-  using Save_event = algorithm::Save_event<GeomTraits>;
-  using Save_event_sptr = std::shared_ptr<Save_event>;
 
   using Vanish_event = algorithm::Vanish_event<GeomTraits>;
   using Vanish_event_sptr = std::shared_ptr<Vanish_event>;
@@ -472,6 +470,12 @@ public:
       return false;
     }
 
+// #define CGAL_SS3_SAVE_ON_STABLE_TIMES
+#ifdef CGAL_SS3_SAVE_ON_STABLE_TIMES
+    // @todo what should this value be? 't=d/v', so '1e-7 / fastest speed'? facet-dependent?
+    const FT min_event_time_delta = 1e-7;
+#endif
+
     // If we stop immediately at the last save event, there is no point investigating events
     // that are farther away than the last save event's time
     std::optional<FT> time_future_bound;
@@ -479,23 +483,16 @@ public:
       ConfigurationSPtr config = Configuration::get_instance();
       if (config->get_Boolean("Algorithm", "stop_after_last_save_event")) {
         time_future_bound = save_times_.back();
-#ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
-        // @fixme workaround to actually detect events after the target
-        time_future_bound = save_times_.back() - 1;
+#ifdef CGAL_SS3_SAVE_ON_STABLE_TIMES
+        // 1% should be far enough in general: unstability has the amplitude of perturbation nudges
+        // @todo this should then be based on perturbation value?...
+        time_future_bound = 1.01 * time_future_bound.value();
 #endif
       }
     }
 
     // note that we can still have an empty result if the polyhedron collapses
     CGAL_assertion_code(const bool is_emptiness_expected = save_times_.empty();)
-
-#ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
-    // whether the visitor or the "stop on last save event" told us to stop
-    bool asked_to_stop = false;
-
-    // difficult to say what this value should be, 't=d/v' so '1e-6 / fastest speed'?
-    const FT min_event_time_delta = 1e-6;
-#endif
 
     step_id_ = -1;
 
@@ -513,12 +510,8 @@ public:
 
       if (visitor_) {
         if (!visitor_->go_further(step_id_, polyhedron, current_time)) {
-          CGAL_SS3_CORE_TRACE_V(2, "Visitor requested a stop");
-#ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
-          asked_to_stop = true;
-#else
+          CGAL_SS3_CORE_TRACE_V(2, "Visitor requested a stop -- stopping.");
           break;
-#endif
         }
       }
 
@@ -530,41 +523,95 @@ public:
       CGAL_assertion(facet->get_plane().d() == Hds_utils::get_base_plane(facet).d() - speed * current_time);
       CGAL_assertion_code(})
 
-#ifdef CGAL_SS3_DEBUG_PRINT_QUEUE
-      print_queue(queue);
-      bool queue_ok = check_queue_correctness(queue, polyhedron, current_time, time_future_bound);
-      std::cout << "queue sanity = " << queue_ok << std::endl;
+      Abstract_event_sptr event = next_event(queue, polyhedron, current_time, time_future_bound);
+
+      if (event) {
+        CGAL_SS3_CORE_TRACE_V(2, "Popped E" << event->id() << " Type [" << event->getType() << "]");
+        CGAL_SS3_CORE_TRACE_V(2, event->to_string());
+      } else {
+        CGAL_SS3_CORE_TRACE_V(2, "No event");
+      }
+
+      auto save_at_time = [&](const FT& save_time) {
+        Transformation::shift_facets_from_base(polyhedron, save_time);
+        if (visitor_) {
+          visitor_->on_save_event(polyhedron, save_time);
+        }
+        Transformation::shift_facets_from_base(polyhedron, current_time); // @todo shouldn't be needed
+      };
+
+      if (!save_times_.empty()) {
+        CGAL_SS3_CORE_TRACE_V(16, "Next save is @ " << save_times_.front());
+      }
+
+      bool did_save = false;
+#ifndef CGAL_SS3_SAVE_ON_STABLE_TIMES
+      while (!save_times_.empty() &&
+             (!event || save_times_.front() >= event->time())) {
+        const FT save_time = save_times_.front();
+        CGAL_assertion(current_time > save_time);
+        save_at_time(save_time);
+        save_times_.erase(save_times_.begin());
+        did_save = true;
+      }
+#else
+      // If the upcoming event is at more than delta, save and move on.
+      // Otherwise, delay the save time till event - delta (i.e., further in the future)
+
+      // do not C++11 this loop: there is an erase()
+      auto save_time_it = std::begin(save_times_);
+      while (save_time_it != std::end(save_times_)) {
+        FT& save_time = *save_time_it;
+        CGAL_assertion(current_time > save_time);
+        if (!event || save_time > event->time() + min_event_time_delta) {
+          save_at_time(save_time);
+          did_save = true;
+          save_time_it = save_times_.erase(save_time_it);
+          continue;
+        }
+
+        // Here, we know there is an event, and we know the save is later than upcoming + delta.
+        // We need to know if we need to nudge the save time, i.e. distinguish between
+        // "before but close to the event" and "after the event (and close or not)"
+        if (save_time > event->time()) {
+          // before but close ==> kick the save down the road hoping to find a stable point
+          CGAL_SS3_CORE_TRACE_V(1, "Save time at " << save_time << " is too close to event time at " << event->time());
+          CGAL_SS3_CORE_TRACE_V(1, "Delay save from " << save_time << " to " << current_time - min_event_time_delta);
+          save_time = event->time() - min_event_time_delta;
+          // we should never move farther in the future than the time_future_bound because
+          // we do not know events after that time
+          if (time_future_bound.has_value() && save_time < time_future_bound.value()) {
+            CGAL_SS3_CORE_TRACE_V(1, "Warning: save time at " << save_time << " was clamed by future bound at " << time_future_bound.value());
+            save_time = time_future_bound.value();
+          }
+        }
+
+        ++save_time_it;
+      }
 #endif
 
-      Abstract_event_sptr event = next_event(queue, polyhedron, current_time);
+      // If we are only interested in specific offset times, there is no point going further
+      if (did_save && save_times_.empty()) {
+        ConfigurationSPtr config = Configuration::get_instance();
+        if (config->get_Boolean("Algorithm", "stop_after_last_save_event")) {
+          CGAL_SS3_CORE_TRACE_V(2, "Last save -- stopping.");
+          break;
+        }
+      }
+
       if (!event) {
-        CGAL_SS3_CORE_TRACE_V(2, "No more events to treat");
+        CGAL_SS3_CORE_TRACE_V(2, "No more events to treat -- stopping.");
         break;
       }
 
-      CGAL_SS3_CORE_TRACE_V(2, "popped E" << event->id() << " Type [" << event->getType() << "]");
-      CGAL_SS3_CORE_TRACE_V(2, event->to_string());
-
       upcoming_event_time = event->time();
-
-      // the next event should be at a time that is further away than the current one
       CGAL_assertion(upcoming_event_time < current_time);
 
 #ifdef CGAL_SS3_RUN_TIMERS
       CGAL_SS3_CORE_TRACE_V(2, "current elapsed time: " << timer.time());
 #endif
 
-#ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
-      if (asked_to_stop) {
-        const FT event_time_delta = CGAL::abs(upcoming_event_time - current_time);
-        CGAL_SS3_CORE_TRACE_V(2, "Event delta: " << event_time_delta);
-        if (event_time_delta > min_event_time_delta) {
-          CGAL_SS3_CORE_TRACE_V(2, "Next event is far-enough away; finally stopping.");
-          IO::write_OBJ("future_peek.obj", polyhedron);
-          break;
-        }
-      }
-#endif
+      // <-- SI debug code comes here -->
 
       if (visitor_) {
         visitor_->before_event(polyhedron, current_time, event);
@@ -589,10 +636,6 @@ public:
 
       current_time = upcoming_event_time;
 
-      if (visitor_ && event->getType() == Event_type::SAVE_EVENT) {
-        visitor_->on_save_event(polyhedron, current_time);
-      }
-
 #ifndef CGAL_SS3_NO_SKELETON_DS
       CGAL_postcondition(skeleton_->is_consistent());
 #endif
@@ -604,18 +647,8 @@ public:
 
       if (!outwards_) {
         CGAL_assertion(Transformation::is_inside_bbox(polyhedron, p_box_min, p_box_max));
-      }
-
-      // If we are only interested in specific offset times, there is no point going further
-      if (event->getType() == Event_type::SAVE_EVENT && save_times_.empty()) {
-        ConfigurationSPtr config = Configuration::get_instance();
-        if (config->get_Boolean("Algorithm", "stop_after_last_save_event")) {
-#ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
-          asked_to_stop = true;
-#else
-          break;
-#endif
-        }
+      } else {
+        // @todo cache the previous polyhedron; no point should be within.
       }
 
       // Update the event priority queue
@@ -628,6 +661,25 @@ public:
       post_op_vertices_VV_.clear();
       post_op_vertices_pierce_.clear();
       post_op_edges_edgesplit_.clear();
+
+#if 0//def CGAL_SS3_SAVE_ON_STABLE_TIMES
+      // if the next save event is too close to the last event's time, move the save events away
+      for (FT& save_time : save_times_) {
+        CGAL_assertion(current_time > save_time);
+        if (current_time - save_time < min_event_time_delta) {
+          // too close to the previous event, kick the save down the road hoping to find a stable point
+          CGAL_SS3_CORE_TRACE_V(1, "Next save time at " << save_time << " is too close to current time at " << event->time());
+          CGAL_SS3_CORE_TRACE_V(1, "Delay save from " << save_time << " to " << current_time - min_event_time_delta);
+          save_time = current_time - min_event_time_delta;
+          // we should never move farther in the future than the time_future_bound because
+          // we do not know events after that time
+          if (time_future_bound.has_value() && save_time < time_future_bound.value()) {
+            CGAL_SS3_CORE_TRACE_V(1, "Warning: save time at " << save_time << " was clamed by future bound at " << time_future_bound.value());
+            save_time = time_future_bound.value();
+          }
+        }
+      }
+#endif
     }
 
     CGAL_SS3_CORE_TRACE_V(2, "== Straight Skeleton 3D finished ==");
@@ -4213,11 +4265,6 @@ public:
       }
 
       switch (event_1->getType()) {
-        case Event_type::SAVE_EVENT: {
-          auto save_event_1 = std::dynamic_pointer_cast<Save_event>(event_1);
-          auto save_event_2 = std::dynamic_pointer_cast<Save_event>(event_2);
-          return *save_event_1 == *save_event_2;
-        }
         case Event_type::CONST_TIME_EVENT: {
           auto const_event_1 = std::dynamic_pointer_cast<Const_time_event>(event_1);
           auto const_event_2 = std::dynamic_pointer_cast<Const_time_event>(event_2);
@@ -4405,8 +4452,15 @@ public:
     */
   Abstract_event_sptr next_event(PQ& queue,
                                  const PolyhedronSPtr& polyhedron,
-                                 const FT& current_time)
+                                 const FT& current_time,
+                                 const std::optional<FT>& time_future_bound)
   {
+#ifdef CGAL_SS3_DEBUG_PRINT_QUEUE
+    print_queue(queue);
+    bool queue_ok = check_queue_correctness(queue, polyhedron, current_time, time_future_bound);
+    std::cout << "queue sanity = " << queue_ok << std::endl;
+#endif
+
     // We could "break" directly in run(), but like this, the save events
     // that are farther than the last event are still processed (arbitrarily decision).
     if (polyhedron->empty()) {
@@ -4417,73 +4471,66 @@ public:
     Abstract_event_sptr event;
     FT time = 0;
 
-    // If a save event is closest, delay building it in case a const event is even closer
-    bool is_save_event = false;
+    // @todo we revalidate the top event every time when we use const events
+    while (!queue.empty()) {
+      event = queue.top();
+      time = event->time();
 
-    while (!queue.empty() || !save_times_.empty()) {
-      // purge the queue lazily as to avoid wasting time if we stop on the last save event
-      if (save_times_.empty()) {
-        event = queue.top();
-        time = event->time();
-        is_save_event = false;
-      } else {
-        // If we have upcoming save events, compare
-        const FT& next_save_time = save_times_.front();
+      CGAL_SS3_CORE_TRACE_V(8, "Top event E" << event->id() << " Type [" << event->getType() << "]");
 
-        if (queue.empty()) {
-          // queue is empty but save_times_ cannot be empty as well
-          is_save_event = true;
-          time = save_times_.front();
-        } else {
-          // neither queue nor save_times_ are empty, take the earliest
-          if (next_save_time > queue.top()->time()) { // save is strictly earlier
-            is_save_event = true;
-            time = next_save_time;
-          } else {
-            // save times exist, but are farther in the future than the next event
-            event = queue.top();
-            time = event->time();
-          }
-        }
+      if (!event->is_valid()) {
+        CGAL_SS3_CORE_TRACE_V(8, "Skipping invalid event E" << event->id());
+        event = {};
+        queue.pop();
+        continue;
       }
 
-      // Tentative next event is not a save event, test its sanity.
-      // Do this here because we don't want a const event to get created
-      // because it's before a zombie event.
-      if (!is_save_event) {
-        if (!event->is_valid()) {
-          CGAL_SS3_CORE_TRACE_V(16, "Skipping invalid event E" << event->id());
-          event = {};
-          queue.pop();
-          continue;
-        }
+      if (is_event_in_the_past(event, current_time)) {
+        CGAL_SS3_CORE_TRACE_V(8, "Skipping event-in-the-past E" << event->id());
+        event = {};
+        queue.pop();
+        continue;
+      }
 
-        if (is_event_in_the_past(event, current_time)) {
-          CGAL_SS3_CORE_TRACE_V(16, "Skipping event-in-the-past E" << event->id());
-          event = {};
-          queue.pop();
-          continue;
-        }
+      // This "is_obsolete()" function is only a sufficient condition: if the neighborhoods
+      // have changed, then the event should be discarded.
+      // "is_actual_..._event()" takes care of the other checks.
+      if (is_event_obsolete(event)) {
+        CGAL_SS3_CORE_TRACE_V(8, "Skipping obsolete event E" << event->id());
+        event = {};
+        queue.pop();
+        continue;
+      }
 
-        // This "is_obsolete()" function is only a sufficient condition: if the neighborhoods
-        // have changed, then the event should be discarded.
-        // "is_actual_..._event()" takes care of the other checks.
-        if (is_event_obsolete(event)) {
-          CGAL_SS3_CORE_TRACE_V(16, "Skipping obsolete event E" << event->id());
-          event = {};
-          queue.pop();
-          continue;
-        }
+      // The point of these checks being here and not in the collect is two-fold:
+      // - Some of them perform geometric or combinatorial checks that would be difficult
+      //   to perform at collect time *when using local updates*. For example, to know
+      //   if we do have a pierce event, we need to check if the vertex and the facet do not share
+      //   an edge. But combinatorial information can evolve with events between the moment
+      //   we first try to collect (locally) the event, and the moment where we pop it.
+      // - Some events become irrelevant by the time they pop, and performing the checks at collect
+      //   time can be a significant waste of time. Taking the same pierce event example: we need
+      //   to check if the movement of the vertex would actually touch the polygon facet, which
+      //   is costly. Thus, it's cheaper to delay the check, even if that means computing the event time.
+      //
+      // "event = ..." is because is_actual_event can change the event type
+      event = is_actual_event(event, time_future_bound);
+      if (!event) {
+        CGAL_SS3_CORE_TRACE_V(8, "Skipping non-event");
+        event = {};
+        queue.pop();
+        continue;
       }
 
       break;
     }
 
-    if (queue.empty() && save_times_.empty()) {
+    if (queue.empty()) {
+      CGAL_SS3_CORE_TRACE_V(4, "Main queue is empty.");
       return { };
     }
 
-    CGAL_assertion(is_save_event || bool(event));
+    CGAL_assertion(bool(event));
     CGAL_assertion(time != 0);
 
     // Check if the next const event would be (strictly) closer
@@ -4492,25 +4539,16 @@ public:
     if (pulse != 0) {
       FT next_const_time = floor(CGAL::to_double(current_time / pulse) + 1.0) * pulse;
       if (current_time > next_const_time && next_const_time > time) {
-        is_save_event = false;
         Const_time_event_sptr const_event = Const_time_event::create();
         const_event->set_time(next_const_time);
         return const_event;
       }
     }
 
-    if (is_save_event) {
-      save_times_.erase(save_times_.begin());
-      Save_event_sptr save_event = Save_event::create();
-      save_event->set_time(time);
-      return save_event;
-    }
-
-    CGAL_SS3_DEBUG_SPTR(event);
-
-    // if here, the topmost is neither a const nor save event
+    // if here, the next event is not a const event, but a real event from the queue
     queue.pop();
 
+    CGAL_SS3_DEBUG_SPTR(event);
     return event;
   }
 
@@ -4575,34 +4613,6 @@ public:
     return IO::write_OBJ(ss_filename.str(), skeleton);
   }
 
-  Event_status handle_save_event(const Save_event_sptr& event,
-                                 const PolyhedronSPtr& polyhedron)
-  {
-    CGAL_SS3_CORE_TRACE_V(4, "########################################");
-    CGAL_SS3_CORE_TRACE_V(4, "#########  Handle Save Event  ##########");
-    CGAL_SS3_CORE_TRACE_V(4, "########################################");
-
-    CGAL_SS3_DEBUG_SPTR(event);
-
-    CGAL_SS3_CORE_TRACE_V(4, event->to_string());
-
-    const FT& event_time = event->time();
-    shit_to_event_time(polyhedron, event_time);
-
-    bool res = true;
-
-#ifdef CGAL_SS3_DUMP_FILES
-    res = save_polyhedron(polyhedron, event_time);
-    res = save_skeleton(skeleton_, event_time) && res;
-#endif
-
-    if (res) {
-      add_event(event);
-    }
-
-    return (res ? Event_status::EVENT_HANDLED : Event_status::EVENT_NOT_HANDLED);
-  }
-
   // This 'handle' is in fact more akin to a collect, but the interesting point
   // is that it happens after pop time
   Event_status handle_const_time_event(Const_time_event_sptr event,
@@ -4618,6 +4628,11 @@ public:
 
     const FT& event_time = event->time();
     shit_to_event_time(polyhedron, event_time);
+
+#ifdef CGAL_SS3_DUMP_FILES
+    save_polyhedron(polyhedron, event_time);
+    save_skeleton(skeleton_, event_time);
+#endif
 
     add_event(event);
 
@@ -6743,27 +6758,9 @@ public:
   {
     Event_status result = Event_status::NON_EVENT;
 
-    // The point of these checks being here and not in the collect is two-fold:
-    // - Some of them perform geometric or combinatorial checks that would be difficult
-    //   to perform at collect time *when using local updates*. For example, to know
-    //   if we do have a pierce event, we need to check if the vertex and the facet do not share
-    //   an edge. But combinatorial information can evolve with events between the moment
-    //   we first try to collect (locally) the event, and the moment where we pop it.
-    // - Some events become irrelevant by the time they pop, and performing the checks at collect
-    //   time can be a significant waste of time. Taking the same pierce event example: we need
-    //   to check if the movement of the vertex would actually touch the polygon facet, which
-    //   is costly. Thus, it's cheaper to delay the check, even if that means computing the event time.
-    Abstract_event_sptr validated_event = is_actual_event(event, time_future_bound);
-    if (!validated_event) {
-      return result;
-    }
-    event = validated_event;
-
     CGAL_assertion(event->getType() != Event_type::VANISH_EVENT);
 
-    if (event->getType() == Event_type::SAVE_EVENT) {
-      result = handle_save_event(std::dynamic_pointer_cast<Save_event>(event), polyhedron);
-    } else if (event->getType() == Event_type::CONST_TIME_EVENT) {
+    if (event->getType() == Event_type::CONST_TIME_EVENT) {
       result = handle_const_time_event(std::dynamic_pointer_cast<Const_time_event>(event), polyhedron);
     } else if (event->getType() == Event_type::EDGE_EVENT) {
       result = handle_edge_event(std::dynamic_pointer_cast<Edge_event>(event),
@@ -6815,13 +6812,6 @@ public:
 
     CGAL_SS3_CORE_TRACE_V(4, "-- Finished handling Event --");
 
-    CGAL_postcondition_code(for (const VertexSPtr& v : polyhedron->vertices()))
-    CGAL_postcondition(v->id() != -1);
-    CGAL_postcondition_code(for (const EdgeSPtr& e : polyhedron->edges()))
-    CGAL_postcondition(e->id() != -1);
-    CGAL_postcondition_code(for (const FacetSPtr& f : polyhedron->facets()))
-    CGAL_postcondition(f->id() != -1);
-
 #ifndef CGAL_SS3_NO_SKELETON_DS
     CGAL_postcondition_code(for (const VertexSPtr& v : polyhedron->vertices()) {)
     CGAL_postcondition(Hds_utils::get_node(v) != NodeSPtr());
@@ -6830,6 +6820,8 @@ public:
     CGAL_postcondition_code(for (const EdgeSPtr& e : polyhedron->edges()))
     CGAL_postcondition(Hds_utils::get_sheet(e) != SheetSPtr());
 #endif
+
+    CGAL_postcondition(polyhedron->is_consistent());
 
     return result;
   }
@@ -6865,7 +6857,6 @@ public:
     std::stringstream sstr;
     sstr << "Events: " << events_.size() << std::endl;
     sstr << "    ConstTimeEvents:       " << count_events(Event_type::CONST_TIME_EVENT) << std::endl;
-    sstr << "    SaveEvents:            " << count_events(Event_type::SAVE_EVENT) << std::endl;
     sstr << "  VanishEvents:" << std::endl;
     sstr << "    GenericVanishEvents:   " << count_events(Event_type::VANISH_EVENT) << std::endl;
     sstr << "    EdgeEvents:            " << count_events(Event_type::EDGE_EVENT) << std::endl;

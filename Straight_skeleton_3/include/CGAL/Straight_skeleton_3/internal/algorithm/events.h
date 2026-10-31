@@ -15,8 +15,6 @@
 
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Const_time_event.h>
-#include <CGAL/Straight_skeleton_3/internal/algorithm/events/Save_event.h>
-#include <CGAL/Straight_skeleton_3/internal/algorithm/events/Generic_vertex_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Vanish_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Edge_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Edge_merge_event.h>
@@ -24,6 +22,7 @@
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Dbl_edge_merge_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Dbl_triangle_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Tetrahedron_event.h>
+#include <CGAL/Straight_skeleton_3/internal/algorithm/events/Generic_vertex_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Vertex_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Flip_vertex_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Surface_event.h>

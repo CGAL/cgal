@@ -280,6 +280,7 @@ bool run(const Mesh& sm,
     }
 
     std::stringstream out_ss;
+    out_ss.precision(17);
     out_ss << save_path.string() << "/result_" << save_time << ".obj";
 
     // this writes 'double', not FT (aka EPECK::FT), but this is what we want
