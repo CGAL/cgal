@@ -766,8 +766,8 @@ void Surface_sweep_2<Vis>::_create_intersection_point(const Point_2& xp, Multipl
   // insert the event and check if an event at this point already exists.
   auto [event, is_new, overlap] = this->_push_event(xp, Event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR);
 
-  // Notify the visitor in any case, including when the event is the current
-  // one (and it is not notified otherwise), as the point may carry data.
+  // Notify the visitor whether the event is new or already exists, as the
+  // point may carry data. Points skipped by _intersect() do not get here.
   this->m_visitor->found_intersection_point(event, xp, c1, c2, is_new);
 
   if (is_new) {
