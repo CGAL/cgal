@@ -59,7 +59,8 @@ private:
 public:
 
   /*! Default constructor. */
-  _Curve_data_ex ()
+  _Curve_data_ex () :
+    m_data ()
   {}
 
   /*!
@@ -67,7 +68,8 @@ public:
    * \param cv The base curve.
    */
   _Curve_data_ex (const BaseCurveType& cv) :
-    BaseCurveType (cv)
+    BaseCurveType (cv),
+    m_data ()
   {}
 
   /*!
