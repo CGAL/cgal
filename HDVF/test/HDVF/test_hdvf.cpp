@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
         bool foundA;
         std::vector<HDVF::Cell_pair> pairsA(hdvfA.find_pairs_A(1, foundA)), pairsA2;
         pairsA2.push_back(HDVF::Cell_pair({2,0,1}));
-        bool test_find_pairs_A(pairsA == pairsA2);
+        bool test_find_pairs_A = (pairsA == pairsA2);
         std::cerr << "-- Test find_pairs_A(1,foundA): " << test_find_pairs_A << std::endl;
         assert(test_find_pairs_A);
 

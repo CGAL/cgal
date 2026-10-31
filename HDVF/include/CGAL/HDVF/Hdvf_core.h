@@ -59,7 +59,7 @@ struct Cell_pair {
     int dim;
 
     // Comparison operator
-    inline bool operator==(const Cell_pair& pair2) {
+    inline bool operator==(const Cell_pair& pair2) const {
         return ((sigma==pair2.sigma) && (tau==pair2.tau) && (dim==pair2.dim));
     }
 };
