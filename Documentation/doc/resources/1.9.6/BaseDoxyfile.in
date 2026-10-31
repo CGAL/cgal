@@ -90,6 +90,7 @@ ALIASES                = "cgal=%CGAL" \
                          "qt6=Qt6" \
                          "eigen=Eigen" \
                          "opengr=OpenGR" \
+                         "fast_float=fast_float" \
                          "libpointmatcher=libpointmatcher" \
                          "core=Core" \
                          "mpfi=MPFI" \

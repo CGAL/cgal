@@ -19,7 +19,7 @@
 #define CGAL_IO_H
 
 #include <CGAL/disable_warnings.h>
-
+#include <CGAL/config.h>
 #include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/Color.h>
 
@@ -27,13 +27,36 @@
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/tags.h>
 
+#ifdef CGAL_USE_FASTFLOAT
+#include <fast_float/fast_float.h>
+#else
+#include <charconv>
+#endif
+
 #include <cstdio>
 #include <cctype>
 #include <string>
 #include <locale>
 #include <iostream>
 #include <optional>
+#include <type_traits>
 #include <variant>
+
+#ifdef CGAL_USE_FASTFLOAT
+#define CGAL_FROM_CHARS_NAMESPACE fast_float
+#else
+#define CGAL_FROM_CHARS_NAMESPACE  std
+#endif
+
+// Apple clang does not have std::from_chars
+#if !defined(CGAL_USE_FASTFLOAT) && !defined(CGAL_DISABLE_FROM_CHARS)
+#if defined(__APPLE__) && defined(__clang__)
+#if __clang_major__ < 17
+  #define CGAL_DISABLE_FROM_CHARS
+#endif
+#endif
+#endif
+
 
 namespace CGAL {
 
@@ -170,7 +193,7 @@ struct Output_rep< Some_type, F > {
 You can also specialize for a formatting tag `F`.
 
 The constant `is_specialized` can be tested by meta-programming tools to
-verify that a given type can be used with `oformat()`. Its value has to be
+verify that a given type can be used with `IO::oformat()`. Its value has to be
 `true` in a specialization of `Output_rep`. When there is no specialization
 for a type, the class template `Output_rep` defines `is_specialized` to the
 default value `false`.
@@ -236,7 +259,7 @@ public:
   \cgal defines output operators for classes that are derived from the class `std::ostream`.
   This enables to write to output streams as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
   and `std::ofstream`.
-  The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
+  The output operator is defined for all classes in the \cgal `Kernel` and for the class `IO::Color` as well.
 */
 template <class T, class F>
 std::ostream& operator<<( std::ostream& os, Output_rep<T,F> rep) { return rep(os); }
@@ -275,7 +298,7 @@ Output_rep<T,F> oformat( const T& t, F format) {
 
 The definition of `Input_rep` is completely symmetric to `Output_rep`.
 */
-template <class T>
+template <class T, class Enable = void>
 class Input_rep
   : public IO_rep_is_not_specialized
 {
@@ -306,149 +329,101 @@ public:
   }
 };
 
-#if CGAL_FORCE_IFORMAT_DOUBLE || \
-  ( ( _MSC_VER > 1600 ) && ( _MSC_VER < 1910 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
+#ifndef CGAL_DISABLE_FROM_CHARS
 
-template <>
-class Input_rep<double>
+namespace internal {
+
+// Characters that may be part of a number; reading stops at any other
+// character, which is left in the stream.
+inline bool is_number_char(char c, bool allow_dot)
+{
+  return (c >= '0' && c <= '9') ||
+         (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F') ||
+         c == '-' || c == '+' || c == 'x' || c == 'X' ||
+         (allow_dot && c == '.');
+}
+
+// Reads a number of type T with from_chars, skipping leading whitespace.
+template <class T, bool allow_dot>
+std::istream& from_chars_input(std::istream& is, T& t)
+{
+  using Iterator = std::istreambuf_iterator<char>;
+
+  Iterator it(is);
+  Iterator end;
+
+  while (it != end && std::isspace(static_cast<unsigned char>(*it))) {
+    ++it;
+  }
+
+  if (it == end) {
+    is.setstate(std::ios_base::failbit);
+    return is;
+  }
+
+  char buffer[256]; // far too big for any int or double (precision 17), but on the safe side
+  char* p = buffer;
+  char* const end_buffer = buffer + sizeof(buffer);
+
+  while (it != end && is_number_char(*it, allow_dot)) {
+    if (p == end_buffer) {
+      is.setstate(std::ios_base::failbit);
+      return is;
+    }
+
+    *p++ = *it;
+    ++it;
+  }
+
+  auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(buffer, p, t);
+
+  if (ec != std::errc{} || ptr != p) {
+    is.setstate(std::ios_base::failbit);
+  }
+
+  return is;
+}
+
+template <class T, bool allow_dot>
+class From_chars_input_rep
   : public IO_rep_is_specialized
 {
-  double& t;
+  T& t;
 
 public:
   //! initialize with a reference to \a t.
-  Input_rep( double& tt) : t(tt) {}
+  From_chars_input_rep(T& tt) : t(tt) {}
 
-  std::istream& operator()( std::istream& is) const
+  std::istream& operator()(std::istream& is) const
   {
-    typedef std::istream istream;
-    typedef istream::char_type char_type;
-    typedef istream::int_type int_type;
-    typedef istream::traits_type traits_type;
-
-    std::string buffer;
-    buffer.reserve(32);
-
-    char_type c;
-    do
-    {
-      const int_type i = is.get();
-      if(i == traits_type::eof())
-        return is;
-
-      c = static_cast<char_type>(i);
-    }
-    while (std::isspace(c));
-
-    if(c == '-')
-    {
-      buffer += '-';
-    }
-    else if(c != '+')
-    {
-      is.unget();
-    }
-
-    for(;;)
-    {
-      const int_type i = is.get();
-      if(i == traits_type::eof())
-      {
-        is.clear(is.rdstate() & ~std::ios_base::failbit);
-        break;
-      }
-
-      c = static_cast<char_type>(i);
-      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-'))
-      {
-        buffer += c;
-      }
-      else
-      {
-        is.unget();
-        break;
-      }
-    }
-
-    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1)
-    {
-      // if a 'buffer' does not contain a double, set the fail bit.
-      is.setstate(std::ios_base::failbit);
-    }
-
-    return is;
+    return from_chars_input<T, allow_dot>(is, t);
   }
 };
 
-template <>
-class Input_rep<float>
+// Character types and bool are excluded: `is >> c` reads a character, not a number.
+template <class T>
+inline constexpr bool is_from_chars_type_v =
+  (std::is_integral_v<T> || std::is_same_v<T, float> || std::is_same_v<T, double>) &&
+  !std::is_same_v<T, bool> && !std::is_same_v<T, char> &&
+  !std::is_same_v<T, signed char> && !std::is_same_v<T, unsigned char> &&
+  !std::is_same_v<T, wchar_t> && !std::is_same_v<T, char16_t> &&
+  !std::is_same_v<T, char32_t>
+#ifdef __cpp_char8_t
+  && !std::is_same_v<T, char8_t>
+#endif
+  ;
+
+} // namespace internal
+
+template <class T>
+class Input_rep<T, std::enable_if_t<internal::is_from_chars_type_v<T>>>
+  : public internal::From_chars_input_rep<T, std::is_floating_point_v<T>>
 {
-  float& t;
-
 public:
-  //! initialize with a reference to \a t.
-  Input_rep( float& tt) : t(tt) {}
-
-  std::istream& operator()( std::istream& is) const
-  {
-    typedef std::istream istream;
-    typedef istream::char_type char_type;
-    typedef istream::int_type int_type;
-    typedef istream::traits_type traits_type;
-
-    std::string buffer;
-    buffer.reserve(32);
-
-    char_type c;
-    do
-    {
-      const int_type i = is.get();
-      if(i == traits_type::eof())
-        return is;
-
-      c = static_cast<char_type>(i);
-    }
-    while (std::isspace(c));
-
-    if(c == '-')
-    {
-      buffer += '-';
-    }
-    else if(c != '+')
-    {
-      is.unget();
-    }
-
-    for(;;)
-    {
-      const int_type i = is.get();
-      if(i == traits_type::eof())
-      {
-        is.clear(is.rdstate() & ~std::ios_base::failbit);
-        break;
-      }
-
-      c = static_cast<char_type>(i);
-      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-'))
-      {
-        buffer += c;
-      }
-      else
-      {
-        is.unget();
-        break;
-      }
-    }
-
-    if(sscanf_s(buffer.c_str(), "%f", &t) != 1)
-    {
-      // if a 'buffer' does not contain a double, set the fail bit.
-      is.setstate(std::ios_base::failbit);
-    }
-
-    return is;
-  }
+  Input_rep(T& tt)
+    : internal::From_chars_input_rep<T, std::is_floating_point_v<T>>(tt) {}
 };
+
 #endif
 
 /*! \relates Input_rep
@@ -779,6 +754,53 @@ serialize(const P& p) {
     return p;
   }
 }
+
+
+namespace internal {
+
+#if !defined(CGAL_DISABLE_FROM_CHARS)
+template <typename OutputIterator>
+OutputIterator parse_doubles(const std::string& line, OutputIterator it)
+{
+  const char* p   = line.data();
+  const char* end = p + line.size();
+
+  auto parse = [&](double& v)
+  {
+    while (p != end &&
+          std::isspace(static_cast<unsigned char>(*p)))
+      ++p;
+
+    auto r =  CGAL_FROM_CHARS_NAMESPACE::from_chars(p, end, v);
+
+    if (r.ec != std::errc{})
+      return false;
+
+    p = r.ptr;
+    return true;
+  };
+
+  double d;
+  while (parse(d)){
+        *it++ = d;
+  }
+  return it;
+}
+
+#else
+template <typename OutputIterator>
+OutputIterator parse_doubles(const std::string& line, OutputIterator it)
+{
+  std::istringstream issline(line);
+  double d;
+  while(issline >> CGAL::IO::iformat(d)){
+    *it++ = d;
+  }
+  return it;
+}
+
+#endif
+} // namespace internal
 
 
 
