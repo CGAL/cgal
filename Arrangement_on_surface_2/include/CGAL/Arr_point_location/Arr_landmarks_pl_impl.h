@@ -101,7 +101,8 @@ Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex(Vertex_const_handle ne
   // Walking from a vertex starts a new walk along the curve that connects
   // the vertex and the query point. The vertex lies on the curve, along which
   // we have walked so far (unless it is the first vertex we walk from), and
-  // it is closer to the query point; thus, the walk progresses. The edges
+  // it is closer to the query point; thus, the walk progresses. The same holds
+  // for every vertex _find_face_around_vertex() moves to. The edges
   // crossed so far are irrelevant to the new curve. In particular, an edge
   // that has been crossed may cross the new curve, and so may an edge
   // incident to the vertex, unless the edges are line segments.
@@ -111,7 +112,7 @@ Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex(Vertex_const_handle ne
   // the vertex and the query point.
   while (true) {
     bool new_vertex;
-    result_type obj = _find_face_around_vertex(vh, p, new_vertex);
+    result_type obj = _find_face_around_vertex(vh, p, new_vertex, crossed_edges);
     if (new_vertex) {
       // We found a vertex closer to p; Continue using this vertex.
       const auto* p_vh = std::get_if<Vertex_const_handle>(&obj);
@@ -144,7 +145,8 @@ Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex(Vertex_const_handle ne
 template <typename Arr, typename Gen>
 typename Arr_landmarks_point_location<Arr, Gen>::result_type
 Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex(Vertex_const_handle vh, const Point_2& p,
-                                                                 bool& new_vertex) const {
+                                                                 bool& new_vertex,
+                                                                 Halfedge_set& crossed_edges) const {
   new_vertex = false;
 
   // Create an x-monotone curve connecting the point associated with the
@@ -230,23 +232,48 @@ Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex(Vertex_const_ha
   // If we reached here, seg overlaps the curve associated with curr next to
   // the vertex v. We first check if p equals the other end-vertex of this
   // halfedge.
-  if (m_traits->equal_2_object()(p, curr->source()->point())) {
+  Vertex_const_handle other = curr->source();
+  if (! other->is_at_open_boundary() && m_traits->equal_2_object()(p, other->point())) {
     // In this case p equals the source point of the edge.
-    return make_result(curr->source());
+    return make_result(other);
   }
 
   // Check whether p lies on the curve associated with the edge.
-  if (m_traits->is_in_x_range_2_object()(curr->curve(), p) &&
-      m_traits->compare_y_at_x_2_object()(p, curr->curve()) == EQUAL) {
-    // p is located on the interior of the edge.
-    Halfedge_const_handle he = curr;
-    return make_result(he);
+  auto is_in_x_range = m_traits->is_in_x_range_2_object();
+  auto cmp_y_at_x = m_traits->compare_y_at_x_2_object();
+  Comparison_result side = EQUAL;
+  const bool p_in_x_range = is_in_x_range(curr->curve(), p);
+  if (p_in_x_range) {
+    side = cmp_y_at_x(p, curr->curve());
+    if (side == EQUAL) {
+      // p is located on the interior of the edge.
+      Halfedge_const_handle he = curr;
+      return make_result(he);
+    }
   }
 
-  // In this case, the source vertex of the current edge is closer
-  // to the query point p.
-  new_vertex = true;
-  return make_result(curr->source());
+  if (! other->is_at_open_boundary() && is_in_x_range(seg, other->point())) {
+    // If the source vertex of the current edge lies on seg, it is closer to
+    // the query point p.
+    const Comparison_result res = cmp_y_at_x(other->point(), seg);
+    if (res == EQUAL) {
+      new_vertex = true;
+      return make_result(other);
+    }
+    if (! p_in_x_range) side = CGAL::opposite(res);
+  }
+  CGAL_assertion(side != EQUAL);
+
+  // In this case, seg leaves the curve, which is not a line segment, for good
+  // before reaching p, and the source vertex is not necessarily closer to p.
+  // Beyond the last common point of seg and the curve, seg lies on one side of
+  // the curve. Walk in the face on this side. Moving seg off the curve to this
+  // side, it crosses the curve an even number of times, so the curve is skipped.
+  Halfedge_const_handle he = curr;
+  if ((side == LARGER) == (he->direction() == ARR_RIGHT_TO_LEFT)) he = he->twin();
+  crossed_edges.insert(he);
+  crossed_edges.insert(he->twin());
+  return make_result(he->face());
 }
 
 /*! walks from the edge to the query point.
