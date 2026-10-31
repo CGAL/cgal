@@ -36,7 +36,7 @@ namespace CGAL {
  \tparam IsPrime a `bool` encoding wether `p` is a prime number or not.
  */
 
-template <size_t p, typename T = unsigned int, bool IsPrime = true>
+template <std::size_t p, typename T = unsigned int, bool IsPrime = true>
 class Zp {
     T _i ;
 public:
@@ -239,7 +239,7 @@ public:
 
 
 // Specialization for p being prime number
-template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, true> >
+template <std::size_t p, typename T> class Algebraic_structure_traits< Zp<p, T, true> >
 : public Algebraic_structure_traits_base< Zp<p, T, true>, Field_tag >  {
 public:
     typedef Tag_true            Is_exact;
@@ -262,7 +262,7 @@ public:
     };
 };
 
-template <int p, typename T, bool IsPrime> class Real_embeddable_traits< Zp<p, T, IsPrime> >
+template <std::size_t p, typename T, bool IsPrime> class Real_embeddable_traits< Zp<p, T, IsPrime> >
 : public INTERN_RET::Real_embeddable_traits_base< Zp<p, T, IsPrime> , CGAL::Tag_true > {
     typedef Zp<p, T, IsPrime> Type;
 public:
