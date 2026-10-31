@@ -9,7 +9,12 @@
 //    construction (using Arr_counting_traits_2), and
 // 3. measure individual traits functors applied to inputs derived from the
 //    polylines (e.g., pairs of x-monotone polylines with overlapping bounding
-//    boxes for Intersect_2).
+//    boxes for Intersect_2), and
+// 4. verify the construction instead of timing it (--verify): the arrangement
+//    must not depend on the construction method, on the direction or the order
+//    of the polylines, or on a reflection of the input; it must match the
+//    arrangement of the segments of the polylines; and all point locations must
+//    agree.  The exit status is 2 if a check fails.  See stress_arr_polylines.py.
 //
 // Run with --help for the list of options.
 //
@@ -59,6 +64,7 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_counting_traits_2.h>
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_landmarks_point_location.h>
@@ -104,6 +110,7 @@ struct Options {
   std::string method = "sweep";
   bool count = false;
   bool check = false;
+  bool verify = false;
   std::size_t insert_points = 0;
 
   // Functors
@@ -169,6 +176,8 @@ bool parse_options(int argc, char* argv[], Options& opts, int& status) {
       "  the others are incremental insertion with the respective point location").c_str())
     ("count,c", po::bool_switch(&opts.count), "count the traits-functor calls during the construction")
     ("check", po::bool_switch(&opts.check), "check the validity of the arrangement")
+    ("verify", po::bool_switch(&opts.verify),
+     "verify the construction with all methods instead of benchmarking; exit with status 2 if a check fails")
     ("insert-points", po::value<std::size_t>(&opts.insert_points)->default_value(opts.insert_points),
      "insert points into the interiors of (up to) the given number of edges of the arrangement constructed by the "
      "sweep, one point in the interior of a random subcurve of every edge; every insertion splits the curve of the "
@@ -467,6 +476,235 @@ void bench_point_insertion(const Options& opts, const Traits& traits, const std:
             << "  # points: " << num_points << ", avg. # subcurves of a split edge: "
             << (num_points ? double(num_subcurves) / double(num_points) : 0.0) << ", V = " << nv << std::endl;
   if (opts.check) std::cout << "  Validity: " << (valid ? "OK" : "INVALID") << std::endl;
+}
+
+//! The canonical form of an arrangement. Two arrangements of the same curves
+//! may partition an overlap into subcurves differently, so the edges are
+//! compared without their collinear joints.
+struct Arr_signature {
+  std::vector<Point> vertices;            // sorted
+  std::vector<std::vector<Point>> edges;  // sorted; every edge is directed from left to right
+  std::size_t num_faces = 0;
+
+  bool operator==(const Arr_signature& other) const {
+    return (num_faces == other.num_faces) && (vertices == other.vertices) && (edges == other.edges);
+  }
+};
+
+bool less_xy(const Point& p, const Point& q) { return CGAL::lexicographically_xy_smaller(p, q); }
+
+//! Directs a chain of points from left to right and removes its collinear joints.
+std::vector<Point> normalize_chain(std::vector<Point> pts) {
+  if (less_xy(pts.back(), pts.front())) std::reverse(pts.begin(), pts.end());
+  std::vector<Point> res;
+  res.reserve(pts.size());
+  for (std::size_t i = 0; i < pts.size(); ++i) {
+    if (! res.empty() && (i + 1 < pts.size()) &&
+        CGAL::collinear_are_strictly_ordered_along_line(res.back(), pts[i], pts[i + 1]))
+      continue;
+    res.push_back(pts[i]);
+  }
+  return res;
+}
+
+//! Sorts the vertices and the edges of a signature.
+void sort_signature(Arr_signature& sig) {
+  auto less_chain = [](const std::vector<Point>& c1, const std::vector<Point>& c2) {
+    return std::lexicographical_compare(c1.begin(), c1.end(), c2.begin(), c2.end(), less_xy);
+  };
+  std::sort(sig.vertices.begin(), sig.vertices.end(), less_xy);
+  std::sort(sig.edges.begin(), sig.edges.end(), less_chain);
+}
+
+//! Computes the signature of an arrangement of polylines after applying `map`
+//! to its points.
+template <typename Arrangement, typename Map>
+Arr_signature polyline_signature(const Arrangement& arr, Map map) {
+  Arr_signature sig;
+  sig.num_faces = arr.number_of_faces();
+  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) sig.vertices.push_back(map(vit->point()));
+  for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
+    const auto& xcv = eit->curve();
+    std::vector<Point> pts;
+    pts.reserve(xcv.number_of_subcurves() + 1);
+    for (auto it = xcv.points_begin(); it != xcv.points_end(); ++it) pts.push_back(map(*it));
+    sig.edges.push_back(normalize_chain(std::move(pts)));
+  }
+  sort_signature(sig);
+  return sig;
+}
+
+//! Computes the signature of the arrangement of the segments of the polylines.
+//! Its vertices that are not vertices of the arrangement of the polylines
+//! (given sorted) lie in the interiors of edges of the latter, so they must be
+//! of degree 2 and the chains between the other vertices are its edges.
+Arr_signature segment_signature(const std::vector<Polyline>& polylines, const std::vector<Point>& vertices) {
+  using Arrangement = CGAL::Arrangement_2<Segment_traits>;
+  std::vector<Segment_traits::Curve_2> segments;
+  for (const auto& pl : polylines) {
+    for (std::size_t i = 0; i < pl.number_of_subcurves(); ++i)
+      segments.emplace_back(pl[i].source(), pl[i].target());
+  }
+  Arrangement arr;
+  CGAL::insert(arr, segments.begin(), segments.end());
+
+  auto is_chain_end = [&](Arrangement::Vertex_const_handle v) {
+    return (v->degree() != 2) || std::binary_search(vertices.begin(), vertices.end(), v->point(), less_xy);
+  };
+  Arr_signature sig;
+  sig.num_faces = arr.number_of_faces();
+  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    if (! is_chain_end(vit)) continue;
+    sig.vertices.push_back(vit->point());
+    auto first = vit->incident_halfedges();
+    auto circ = first;
+    do {
+      // Every chain is traversed in both directions; keep one.
+      Arrangement::Halfedge_const_handle he = circ->twin();
+      std::vector<Point> pts{he->source()->point(), he->target()->point()};
+      while (! is_chain_end(he->target())) {
+        he = he->next();
+        pts.push_back(he->target()->point());
+      }
+      if (less_xy(pts.front(), pts.back())) sig.edges.push_back(normalize_chain(std::move(pts)));
+    } while (++circ != first);
+  }
+  sort_signature(sig);
+  return sig;
+}
+
+//! Applies `map` to the points of the polylines and optionally reverses them.
+template <typename Map>
+std::vector<Polyline> transform_polylines(const std::vector<Polyline>& polylines, const Traits& traits,
+                                          Map map, bool reverse) {
+  auto ctr_curve = traits.construct_curve_2_object();
+  std::vector<Polyline> res;
+  res.reserve(polylines.size());
+  std::vector<Point> pts;
+  for (const auto& pl : polylines) {
+    pts.clear();
+    for (auto it = pl.points_begin(); it != pl.points_end(); ++it) pts.push_back(map(*it));
+    if (reverse) std::reverse(pts.begin(), pts.end());
+    res.push_back(ctr_curve(pts.begin(), pts.end()));
+  }
+  return res;
+}
+
+//! Generates query points: the vertices, the joints, and the midpoints of the
+//! subcurves of the edges, and random points. The latter include points that
+//! share the x-coordinate of a vertex and, if the input is snapped, grid points.
+template <typename Arrangement>
+std::vector<Point> generate_queries(const Arrangement& arr, const Options& opts) {
+  std::vector<Point> queries;
+  double x_min = std::numeric_limits<double>::max(), y_min = x_min;
+  double x_max = -x_min, y_max = -x_min;
+  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    const auto& p = vit->point();
+    queries.push_back(p);
+    x_min = std::min(x_min, CGAL::to_double(p.x()));
+    x_max = std::max(x_max, CGAL::to_double(p.x()));
+    y_min = std::min(y_min, CGAL::to_double(p.y()));
+    y_max = std::max(y_max, CGAL::to_double(p.y()));
+  }
+  const std::size_t num_vertices = queries.size();
+  if (num_vertices == 0) return queries;
+  for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
+    const auto& xcv = eit->curve();
+    for (std::size_t i = 0; i < xcv.number_of_subcurves(); ++i) {
+      queries.push_back(xcv[i].source());
+      queries.push_back(CGAL::midpoint(xcv[i].source(), xcv[i].target()));
+    }
+  }
+
+  std::mt19937 gen(opts.seed + 3);
+  const double margin = 1 + (x_max - x_min + y_max - y_min) / 16;
+  std::uniform_real_distribution<double> x_coord(x_min - margin, x_max + margin);
+  std::uniform_real_distribution<double> y_coord(y_min - margin, y_max + margin);
+  std::uniform_int_distribution<std::size_t> vertex(0, num_vertices - 1);
+  auto snap = [&](double v) { return std::round(v / opts.snap) * opts.snap; };
+  for (std::size_t i = 0; i < 4 * arr.number_of_edges(); ++i) {
+    queries.emplace_back(x_coord(gen), y_coord(gen));
+    queries.emplace_back(queries[vertex(gen)].x(), y_coord(gen));
+    if (opts.snap > 0) queries.emplace_back(snap(x_coord(gen)), snap(y_coord(gen)));
+  }
+  return queries;
+}
+
+//! Determines whether two point-location results are the same feature.
+template <typename Arrangement, typename Result = typename CGAL::Arr_point_location_result<Arrangement>::Type>
+bool same_location(const Result& res1, const Result& res2) {
+  using Vertex = typename Arrangement::Vertex_const_handle;
+  using Halfedge = typename Arrangement::Halfedge_const_handle;
+  using Face = typename Arrangement::Face_const_handle;
+  if (res1.index() != res2.index()) return false;
+  if (const auto* v = std::get_if<Vertex>(&res1)) return *v == std::get<Vertex>(res2);
+  if (const auto* f = std::get_if<Face>(&res1)) return *f == std::get<Face>(res2);
+  const auto& he1 = std::get<Halfedge>(res1);
+  const auto& he2 = std::get<Halfedge>(res2);
+  return (he1 == he2) || (he1->twin() == he2);
+}
+
+//! Verifies the arrangement of the polylines; see the top of this file.
+int verify(const Options& opts, const Traits& traits, const std::vector<Polyline>& polylines) {
+  using Arrangement = CGAL::Arrangement_2<Traits>;
+  std::size_t num_failures = 0;
+  auto report = [&](const std::string& name, bool ok) {
+    std::cout << "Verify " << name << ": " << (ok ? "OK" : "FAIL") << std::endl;
+    if (! ok) ++num_failures;
+  };
+  auto identity = [](const Point& p) { return p; };
+
+  // Compare the construction methods.
+  Arrangement arr(&traits);
+  construct(arr, polylines, "sweep");
+  report("valid:sweep", arr.is_valid());
+  const auto sig = polyline_signature(arr, identity);
+  std::cout << "  V = " << sig.vertices.size() << ", E = " << sig.edges.size() << ", F = " << sig.num_faces << std::endl;
+  for (const auto& method : methods) {
+    if ((method == "sweep") || (method == "none")) continue;
+    Arrangement other(&traits);
+    construct(other, polylines, method);
+    report("valid:" + method, other.is_valid());
+    report("method:" + method, polyline_signature(other, identity) == sig);
+  }
+
+  // Compare the transformed inputs.
+  auto reflect = [](const Point& p) { return Point(-p.x(), p.y()); };
+  auto check_transformed = [&](const std::string& name, const std::vector<Polyline>& input, auto map) {
+    Arrangement other(&traits);
+    construct(other, input, "sweep");
+    report("valid:" + name, other.is_valid());
+    report("transform:" + name, polyline_signature(other, map) == sig);
+  };
+  check_transformed("reverse", transform_polylines(polylines, traits, identity, true), identity);
+  auto shuffled = polylines;
+  std::shuffle(shuffled.begin(), shuffled.end(), std::mt19937(opts.seed + 1));
+  check_transformed("shuffle", shuffled, identity);
+  check_transformed("reflect", transform_polylines(polylines, traits, reflect, false), reflect);
+
+  // Compare the arrangement of the segments.
+  report("segments", segment_signature(polylines, sig.vertices) == sig);
+
+  // Compare the point locations.
+  const auto queries = generate_queries(arr, opts);
+  std::cout << "  # queries: " << queries.size() << std::endl;
+  CGAL::Arr_naive_point_location<Arrangement> naive(arr);
+  auto check_locations = [&](const std::string& name, const auto& pl) {
+    bool ok = true;
+    for (const auto& q : queries) {
+      if (same_location<Arrangement>(pl.locate(q), naive.locate(q))) continue;
+      std::cout << "  " << name << " differs from naive at (" << q << ")" << std::endl;
+      ok = false;
+      break;
+    }
+    report("locate:" + name, ok);
+  };
+  check_locations("walk", CGAL::Arr_walk_along_line_point_location<Arrangement>(arr));
+  check_locations("landmarks", CGAL::Arr_landmarks_point_location<Arrangement>(arr));
+  check_locations("trapezoid", CGAL::Arr_trapezoid_ric_point_location<Arrangement>(arr));
+
+  std::cout << "Verification " << (num_failures ? "FAILED" : "passed") << std::endl;
+  return num_failures ? 2 : 0;
 }
 
 //! The data derived from the polylines used by the functor benchmarks.
@@ -774,6 +1012,7 @@ int main(int argc, char* argv[]) {
   else std::cout << "Input: " << opts.input_filename << std::endl;
   std::cout << "# polylines: " << polylines.size() << ", # segments: " << num_subcurves << std::endl;
 
+  if (opts.verify) return verify(opts, traits, polylines);
   if (opts.method != "none") bench_construction(opts, traits, polylines);
   if (opts.insert_points > 0) bench_point_insertion(opts, traits, polylines);
   if (! opts.functors.empty()) bench_functors(opts, traits, polylines);
