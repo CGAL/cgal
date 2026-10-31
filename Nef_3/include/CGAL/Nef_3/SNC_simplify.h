@@ -418,6 +418,20 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     }
 
     update_facets = vertex_simplification() || update_facets;
+    // Edge simplification may have created spherical loops whose incident
+    // faces were merged during facet removal. Rebind them before those faces
+    // are deleted, including any boundary entry created by convert_edge_to_loop.
+    SHalfloop_iterator sl;
+    CGAL_forall_shalfloops(sl, *this->sncp()) {
+      SFace_handle old_face = sl->incident_sface();
+      SFace_handle face = *(uf_sface.find(hash_sface[old_face]));
+      if(old_face != face) {
+        SM_decorator SD(&*old_face->center_vertex());
+        if(SD.is_sm_boundary_object(sl))
+          SD.undo_sm_boundary_object(sl, old_face);
+        SD.set_face(sl, face);
+      }
+    }
     purge_no_find_objects(hash_volume, hash_facet, hash_sface, uf_volume,
                           uf_facet, uf_sface);
     create_boundary_links_forall_sfaces( hash_sface, uf_sface);
