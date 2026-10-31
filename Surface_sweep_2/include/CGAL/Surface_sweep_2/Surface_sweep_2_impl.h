@@ -886,8 +886,11 @@ void Surface_sweep_2<Vis>::_create_overlapping_curve(const X_monotone_curve_2& o
     }
     else {
       auto left_end = this->m_traits->construct_min_vertex_2_object()(overlap_cv);
-      std::tie(left_event, std::ignore, std::ignore) =
+      bool is_new;
+      std::tie(left_event, is_new, std::ignore) =
         this->_push_event(left_end, Event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR);
+      // The end of the overlap may carry data that the point of the event lacks.
+      this->m_visitor->found_intersection_point(left_event, left_end, c1, c2, is_new);
     }
   }
 
@@ -906,8 +909,11 @@ void Surface_sweep_2<Vis>::_create_overlapping_curve(const X_monotone_curve_2& o
   else {
     auto max_vertex = this->m_traits->construct_max_vertex_2_object();
     auto right_end = max_vertex(overlap_cv);
-    std::tie(right_event, std::ignore, std::ignore) =
+    bool is_new;
+    std::tie(right_event, is_new, std::ignore) =
       this->_push_event(right_end, Event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR);
+    // The end of the overlap may carry data that the point of the event lacks.
+    this->m_visitor->found_intersection_point(right_event, right_end, c1, c2, is_new);
   }
 
   if (! c1->is_start_point(left_event)) {
