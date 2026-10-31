@@ -5,6 +5,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_TEST_CARDINAL_WEIGHTS_H
 #define CGAL_STRAIGHT_SKELETON_3_TEST_CARDINAL_WEIGHTS_H
 
+#include "CGAL/_test_pipeline.h"
+
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/IO/Face_graph_IO.h>
 

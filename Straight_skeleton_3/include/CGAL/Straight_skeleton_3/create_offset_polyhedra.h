@@ -255,7 +255,6 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
 {
   namespace SS3i = CGAL::Straight_skeletons_3::internal;
   namespace SS3io = CGAL::Straight_skeletons_3::IO;
-  namespace PMP = CGAL::Polygon_mesh_processing;
 
   using parameters::get_parameter;
   using parameters::get_parameter_reference;

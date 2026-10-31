@@ -1183,7 +1183,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(16, "Facet R2 = " << facet_r2->id());
 
     // It is pointless to check for contact events that are farther in time than any of the two
-    // involved edges as either they will be gone, or new events will be computed
+    // involved edges' vanish time as either they will be gone, or events will have happened
+    // and new events will be computed with the modified edges
     std::optional<FT> tight_future_bound = time_future_bound;
     for (const EdgeSPtr& edge : {edge_1, edge_2}) {
       const std::optional<FT>& vanish_time = Hds_utils::get_vanish_time(edge);
@@ -1904,7 +1905,7 @@ public:
 
     if (!check_bisectors(edge_1, point, event_time) ||
         !check_bisectors(edge_2, point, event_time)) {
-      CGAL_SS3_CORE_TRACE_V(8, "Surface event: bisector check failure");
+      CGAL_SS3_CORE_TRACE_V(16, "Surface event: bisector check failure");
       return Abstract_event_sptr();
     }
 
@@ -4125,6 +4126,7 @@ public:
     timer.stop();
     CGAL_SS3_CORE_TRACE_V(2, "Sought All Local Events in: " << timer.time());
 #endif
+    CGAL_SS3_CORE_TRACE_V(2, "Queue size: " << queue.size());
   }
 
   /**
@@ -4185,6 +4187,7 @@ public:
     timer.stop();
     CGAL_SS3_CORE_TRACE_V(2, "Sought All Events in: " << timer.time());
 #endif
+    CGAL_SS3_CORE_TRACE_V(2, "Queue size: " << queue.size());
   }
 
   void print_queue(const PQ& queue)
@@ -4573,7 +4576,7 @@ public:
 
     Transformation::shift_facets_from_base(polyhedron, event_time);
 
-#if 0//def CGAL_SS3_DUMP_FILES
+#ifdef CGAL_SS3_DUMP_FILES
     // below will have degeneracies since we have not yet treated the event
     static int shift_id = -1;
     IO::write_OBJ("results/shift_" + std::to_string(++shift_id) + ".obj", polyhedron,
@@ -4887,7 +4890,8 @@ public:
       post_op_vertices_VV_.insert(vertex_tgt->prev(facets[2]));
       CGAL_assertion(post_op_vertices_VV_.size() == 6);
     } else {
-      // not flipped, but the convexity might change, so invalidate the cache
+      // the edge is not flipped, and the incident facets are not changed,
+      // but its convexity however might still change, so invalidate the cache
       Hds_utils::set_reflex_status(edge, std::nullopt);
     }
 
@@ -6652,7 +6656,6 @@ public:
     }
 
     CGAL_postcondition(post_op_vertices_pierce_.size() == 3);
-
 
     std::array<FacetSPtr, 3> facets;
     std::array<EdgeSPtr, 3> edges;

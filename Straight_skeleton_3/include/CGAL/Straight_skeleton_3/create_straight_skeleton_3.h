@@ -68,6 +68,8 @@ construct_skeleton(const TriangleMesh& tmesh,
         CGAL_SS3_IO_TRACE_V(1, "Error: Failed to load configuration file: " << config_path);
         return { };
       }
+    } else {
+      CGAL_SS3_IO_TRACE_V(1, "Warning: provided config path leads nowhere: " << config_path);
     }
   } else {
     CGAL_SS3_IO_TRACE_V(1, "Using default configuration values (no config file path provided)");
