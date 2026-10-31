@@ -48,6 +48,14 @@
 #define CGAL_FROM_CHARS_NAMESPACE  std
 #endif
 
+// Apple clang does not have std::from_chars
+#if !defined(CGAL_USE_FASTFLOAT) && !defined(CGAL_DISABLE_FROM_CHARS)
+#if defined(__APPLE__) && defined(__clang__)
+#define CGAL_DISABLE_FROM_CHARS
+#endif
+#endif
+
+
 namespace CGAL {
 
 namespace IO {
@@ -748,7 +756,7 @@ serialize(const P& p) {
 
 namespace internal {
 
-#if defined(CGAL_USE_STD_FROM_CHARS) || defined(CGAL_USE_FASTFLOAT)
+#if !defined(CGAL_DISABLE_FROM_CHARS)
 template <typename OutputIterator>
 OutputIterator parse_doubles(const std::string& line, OutputIterator it)
 {
