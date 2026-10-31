@@ -51,7 +51,9 @@
 // Apple clang does not have std::from_chars
 #if !defined(CGAL_USE_FASTFLOAT) && !defined(CGAL_DISABLE_FROM_CHARS)
 #if defined(__APPLE__) && defined(__clang__)
-#define CGAL_DISABLE_FROM_CHARS
+#if __clang_major__ < 17
+  #define CGAL_DISABLE_FROM_CHARS
+#endif
 #endif
 #endif
 
