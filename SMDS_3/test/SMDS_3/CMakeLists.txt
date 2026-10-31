@@ -8,6 +8,7 @@ find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program( "test_simplicial_cb_vb.cpp")
 create_single_source_cgal_program( "test_tet_soup_to_c3t3.cpp")
+create_single_source_cgal_program( "test_read_MEDIT_replace_domain_0.cpp")
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
