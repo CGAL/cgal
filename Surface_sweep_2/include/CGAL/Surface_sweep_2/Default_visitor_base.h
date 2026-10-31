@@ -194,8 +194,10 @@ public:
    * is invoked for every intersection point the sweep processes, whether the
    * event associated with it is new or already exists. It is not invoked for
    * an intersection point that the sweep skips, because the point does not lie
-   * after the current event. The given point is the one constructed by the
-   * traits; it may carry data that the point of the event lacks.
+   * after the current event. It is also invoked for the closed ends of an
+   * overlap of the two subcurves whose events the sweep pushes. The given point
+   * is the one constructed by the traits; it may carry data that the point of
+   * the event lacks.
    * \param e the event associated with the intersection point.
    * \param xp the intersection point.
    * \param sc1 the first subcurve.
