@@ -64,6 +64,44 @@ using CDT_3_signed_index = int; // must be signed
    std::vector<CDT_3_signed_index> m_failed_faces;
  };
 
+/**
+ * @ingroup PkgConstrainedTriangulation3Classes
+ * \brief Exception type thrown when a piecewise linear complex (PLC) facet
+ * is not coplanar.
+ */
+class Non_planar_plc_facet_exception : public std::exception
+{
+public:
+  /** \brief Default constructor.
+   */
+  Non_planar_plc_facet_exception() = default;
+
+  /** \brief Constructor taking the index of the faulty PLC facet.
+   * \param polygon_id the index of the non-planar PLC facet.
+   */
+  explicit Non_planar_plc_facet_exception(CDT_3_signed_index polygon_id)
+      : m_polygon_id(polygon_id),
+        m_msg("ERROR: PLC facet #" + std::to_string(polygon_id) + " is not coplanar")
+  {}
+
+  /** \brief Returns the error message.
+   */
+  const char* what() const noexcept override
+  {
+    return m_msg.empty() ? "ERROR: PLC facet is not coplanar" : m_msg.c_str();
+  }
+
+  /** \brief Returns the index of the faulty PLC facet if available, or `-1` otherwise.
+   */
+  CDT_3_signed_index polygon_id() const noexcept {
+    return m_polygon_id;
+  }
+
+private:
+  CDT_3_signed_index m_polygon_id = -1;
+  std::string m_msg;
+};
+
 } // namespace CGAL
 
 #endif // CGAL_CT_3_TYPES_H
