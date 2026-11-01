@@ -274,7 +274,7 @@ public:
 };
 
 /* This predicates tests the orientation of (k+1) points that span a
- * k-dimensional affine subspace of the ambiant d-dimensional space. We
+ * k-dimensional affine subspace of the ambient d-dimensional space. We
  * greedily search for an orthogonal projection on a k-dim axis aligned
  * subspace on which the (full k-dim) predicates answers POSITIVE or NEGATIVE.
  * If no such subspace is found, return COPLANAR.
@@ -314,7 +314,7 @@ public:
         TUPLE_DIM_CHECK(first,last,Coaffine_orientation_d);
         // |k| is the dimension of the affine subspace
         const int k = std::distance(first,last) - 1;
-        // |d| is the dimension of the ambiant space
+        // |d| is the dimension of the ambient space
         const int d = first->dimension();
         CGAL_assertion_msg(k <= d, "Coaffine_orientation_d: needs less that (first->dimension() + 1) points.");
         if( false == state_.axes_found_ )
