@@ -101,20 +101,20 @@ public:
   {
     // Data that we'll use to know which plane/cc we are looking for, while iterating on attributes
     using DartRef = std::reference_wrapper<Dart_descriptor>;
-    using CCIdToFace = std::unordered_map<size_t, DartRef>;
-    using InvalidPlaneSet = std::unordered_map<size_t, CCIdToFace>;
+    using CCIdToFace = std::unordered_map<std::size_t, DartRef>;
+    using InvalidPlaneSet = std::unordered_map<std::size_t, CCIdToFace>;
     std::array<InvalidPlaneSet, 3> plane_non_valid_faces;
 
-    const auto valid_face = [&](Dart_descriptor& face, char p, size_t cc_id){
+    const auto valid_face = [&](Dart_descriptor& face, char p, std::size_t cc_id){
       auto face_attr = lcc.attribute<2>(face);
       auto& face_info = face_attr->info();
       return lcc.is_dart_used(face) && face_attr != nullptr && face_attr->is_valid() && face_info.plane[p] == true && face_info.cc_id == cc_id;
     };
 
     bool should_fix = false;
-    for (size_t p = 0; p < 3; p++){
+    for (std::size_t p = 0; p < 3; p++){
       PlaneSet& plane_set = first_face_of_planes[p];
-      for (size_t plane_id = 0; plane_id < plane_set.size(); plane_id++){
+      for (std::size_t plane_id = 0; plane_id < plane_set.size(); plane_id++){
         PlaneCC& plane_cc = plane_set[plane_id];
         CCIdToFace non_valid_face;
 
