@@ -1,0 +1,14 @@
+OFF
+# Single partition. Diamond with two vertices on the line x=0.5 (from the vertical polygon x=0.5).
+# The line passes through the centroid, so both vertices move along the line (sign is zero at t=0 and t=0+).
+8 2 0
+0.5 0.25 0.5
+0.75 0.5 0.5
+0.5 0.75 0.5
+0.25 0.5 0.5
+0.5 0.0 0.015625
+0.5 1.0 0.0
+0.5 0.96875 1.0
+0.5 0.0625 0.9921875
+4 0 1 2 3
+4 4 5 6 7

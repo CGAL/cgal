@@ -17,6 +17,7 @@
 
 // STL includes.
 #include <set>
+#include <algorithm>
 #include <cmath>
 #include <array>
 #include <string>
@@ -27,6 +28,7 @@
 #include <deque>
 #include <queue>
 #include <map>
+#include <iostream>
 
 // CGAL includes.
 #include <CGAL/Iterator_range.h>
@@ -45,6 +47,141 @@ namespace internal {
 
 #ifdef DOXYGEN_RUNNING
 #else
+
+// Diagonalization of 3x3 covariance matrices for the plane fitting of the input polygons if Eigen is not available.
+// The cyclic Jacobi method iterates until the off-diagonal entries vanish in floating-point precision. Thus, the result
+// agrees with the one of Eigen up to rounding errors. The deprecated CGAL::Diagonalize_traits, the fallback of
+// CGAL::Default_diagonalize_traits if Eigen is not available, stops at a fixed tolerance and its results deviate
+// considerably from the ones of Eigen.
+// The model of `DiagonalizeTraits` is restricted to the dimension 3.
+template<typename FT>
+struct Jacobi_diagonalize_traits_3 {
+  using Vector = std::array<FT, 3>;
+  using Matrix = std::array<FT, 9>;
+  using Covariance_matrix = std::array<FT, 6>;
+
+  // Eigenvalues are sorted by increasing order. The eigenvector of eigenvalues[k] is stored in eigenvectors[3 * k + i], i = 0, 1, 2.
+  static bool diagonalize_selfadjoint_covariance_matrix(const Covariance_matrix& cov, Vector& eigenvalues, Matrix& eigenvectors) {
+    // The covariance matrix stores the upper triangle row-wise: (0,0), (0,1), (0,2), (1,1), (1,2), (2,2).
+    double a[3][3] = {
+      { CGAL::to_double(cov[0]), CGAL::to_double(cov[1]), CGAL::to_double(cov[2]) },
+      { CGAL::to_double(cov[1]), CGAL::to_double(cov[3]), CGAL::to_double(cov[4]) },
+      { CGAL::to_double(cov[2]), CGAL::to_double(cov[4]), CGAL::to_double(cov[5]) } };
+    double v[3][3] = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
+
+    for (int sweep = 0; sweep < 64; sweep++) {
+      if (a[0][1] == 0 && a[0][2] == 0 && a[1][2] == 0)
+        break;
+
+      for (int p = 0; p < 2; p++)
+        for (int q = p + 1; q < 3; q++) {
+          const double apq = a[p][q];
+          if (apq == 0)
+            continue;
+
+          // The entry is negligible compared to both diagonal entries.
+          const double g = 100 * std::abs(apq);
+          if (sweep > 3 && std::abs(a[p][p]) + g == std::abs(a[p][p]) && std::abs(a[q][q]) + g == std::abs(a[q][q])) {
+            a[p][q] = a[q][p] = 0;
+            continue;
+          }
+
+          // Rotation in the (p, q) plane annihilating a[p][q].
+          const double h = a[q][q] - a[p][p];
+          double t;
+          if (std::abs(h) + g == std::abs(h))
+            t = apq / h;
+          else {
+            const double theta = 0.5 * h / apq;
+            t = 1 / (std::abs(theta) + std::sqrt(1 + theta * theta));
+            if (theta < 0)
+              t = -t;
+          }
+          const double c = 1 / std::sqrt(1 + t * t);
+          const double s = t * c;
+
+          for (int k = 0; k < 3; k++) {
+            const double akp = a[k][p], akq = a[k][q];
+            a[k][p] = c * akp - s * akq;
+            a[k][q] = s * akp + c * akq;
+          }
+          for (int k = 0; k < 3; k++) {
+            const double apk = a[p][k], aqk = a[q][k];
+            a[p][k] = c * apk - s * aqk;
+            a[q][k] = s * apk + c * aqk;
+          }
+          a[p][q] = a[q][p] = 0;
+
+          for (int k = 0; k < 3; k++) {
+            const double vkp = v[k][p], vkq = v[k][q];
+            v[k][p] = c * vkp - s * vkq;
+            v[k][q] = s * vkp + c * vkq;
+          }
+        }
+    }
+
+    std::array<int, 3> order = { 0, 1, 2 };
+    std::sort(order.begin(), order.end(), [&](int i, int j) { return a[i][i] < a[j][j] || (a[i][i] == a[j][j] && i < j); });
+    for (int k = 0; k < 3; k++) {
+      eigenvalues[k] = FT(a[order[k]][order[k]]);
+      for (int i = 0; i < 3; i++)
+        eigenvectors[3 * k + i] = FT(v[i][order[k]]);
+    }
+    return true;
+  }
+
+  static bool diagonalize_selfadjoint_covariance_matrix(const Covariance_matrix& cov, Vector& eigenvalues) {
+    Matrix eigenvectors;
+    return diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues, eigenvectors);
+  }
+
+  static bool extract_largest_eigenvector_of_covariance_matrix(const Covariance_matrix& cov, Vector& normal) {
+    Vector eigenvalues;
+    Matrix eigenvectors;
+    diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues, eigenvectors);
+    for (int i = 0; i < 3; i++)
+      normal[i] = eigenvectors[6 + i];
+    return true;
+  }
+};
+
+// Collects the output of one line and writes it, including the line break, into the stream
+// with a single output operation when going out of scope, e.g.:
+//   Log_line("[P3] ") << "number of events: " << n;
+// A single output operation is not interleaved with output of other threads by the standard
+// stream implementations. Thus, lines written in parallel stay intact without additional locking.
+class Log_line {
+public:
+  explicit Log_line(const std::string& prefix = std::string(), std::ostream& os = std::cout) : m_os(os) {
+    m_buffer.precision(os.precision());
+    m_buffer << prefix;
+  }
+
+  Log_line(const Log_line&) = delete;
+  Log_line& operator=(const Log_line&) = delete;
+
+  ~Log_line() {
+    m_buffer << '\n';
+    m_os << m_buffer.str();
+    m_os.flush();
+  }
+
+  template<typename T>
+  Log_line& operator<<(const T& t) {
+    m_buffer << t;
+    return *this;
+  }
+
+  // Manipulators, e.g., std::setprecision.
+  Log_line& operator<<(std::ostream& (*manipulator)(std::ostream&)) {
+    m_buffer << manipulator;
+    return *this;
+  }
+
+private:
+  std::ostringstream m_buffer;
+  std::ostream& m_os;
+};
 
 // Convert point to string.
 template<typename Point_d>

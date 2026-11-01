@@ -1,0 +1,24 @@
+OFF
+# Single partition. Square crossed by the lines x=0.5, y=0.5 and x+y=1, which all pass through (0.5,0.5):
+# the third line passes through a fixed vertex created by the first two.
+16 4 0
+0.25 0.25 0.5
+0.75 0.25 0.5
+0.75 0.75 0.5
+0.25 0.75 0.5
+0.5 0.0 0.015625
+0.5 1.0 0.0
+0.5 0.96875 1.0
+0.5 0.0625 0.9921875
+0.0 0.5 0.015625
+1.25 0.5 0.0
+1.21875 0.5 1.0
+0.0625 0.5 0.9921875
+1.0 0.0 0.0
+0.0 1.0 0.0
+0.0 1.0 1.0
+1.0 0.0 1.0
+4 0 1 2 3
+4 4 5 6 7
+4 8 9 10 11
+4 12 13 14 15
