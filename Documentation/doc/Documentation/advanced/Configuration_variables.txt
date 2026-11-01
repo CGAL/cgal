@@ -8,15 +8,13 @@ This page lists CMake variables which you can use to help CMake find missing dep
 while using the command line. We however recommend using the graphical interface (`cmake-gui`).
 \cgalAdvancedEnd
 
-\section installation_summary Summary of CGAL's Configuration Variables
-
 Most configuration variables are not environment variables but
 <I>CMake variables</I>. They are given in the command line to CMake
 via the `-D` option, or passed from the interactive interface
 of `cmake-gui`. Unless indicated differently, all the variables
 summarized below are CMake variables.
 
-\subsection installation_component_selection Component Selection
+\section installation_component_selection Component Selection
 
 The following boolean variables indicate which \cgal components to
 configure and/or build. Their values can be ON or OFF.
@@ -30,7 +28,7 @@ configure and/or build. Their values can be ON or OFF.
 | `WITH_CGAL_Qt6`     | ON    |
 | `WITH_CGAL_ImageIO` | ON    |
 
-\subsection installation_flags Compiler and Linker Flags
+\section installation_flags Compiler and Linker Flags
 
 The following variables specify compiler and linker flags. Each variable holds a
 space-separated list of command-line switches for the compiler and linker and
@@ -52,7 +50,7 @@ used in conjunction with those for the specific build type.
 | Linker (programs)     | `CMAKE_EXE_LINKER_FLAGS`    | `CMAKE_EXE_LINKER_FLAGS_RELEASE`     | `CMAKE_EXE_LINKER_FLAGS_DEBUG`|
 
 
-\subsection installation_additional_flags Additional Compiler and Linker Flags
+\section installation_additional_flags Additional Compiler and Linker Flags
 
 The following variables can be used to <I>add</I> flags without overriding the ones
 defined by cmake.
@@ -65,7 +63,7 @@ defined by cmake.
 | Linker (static libs)  | `CGAL_MODULE_LINKER_FLAGS`  | `CGAL_MODULE_LINKER_FLAGS_RELEASE`   | `CGAL_MODULE_LINKER_FLAGS_DEBUG` |
 | Linker (programs)     | `CGAL_EXE_LINKER_FLAGS`     | `CGAL_EXE_LINKER_FLAGS_RELEASE`      | `CGAL_EXE_LINKER_FLAGS_DEBUG` |
 
-\subsection installation_misc Miscellaneous Variables
+\section installation_misc Miscellaneous Variables
 
 Note that the default build type is <b>`Debug`</b>, which should only be used to debug
 and will serverly limit performances.
@@ -79,7 +77,7 @@ and will serverly limit performances.
 | `CXX`                 | Idem                                                                  | Environment | Idem |
 | `BUILD_SHARED_LIBS`   | Whether to build shared or static libraries.                          | CMake       | ON |
 
-\subsection installation_variables_building Variables Used Only When Building Programs (Such as Demos or Examples)
+\section installation_variables_building Variables Used Only When Building Programs (Such as Demos or Examples)
 
 
 | Variable              | Description                                                           | Type        | %Default Value |
@@ -88,7 +86,7 @@ and will serverly limit performances.
 | `Qt6_DIR`             | Full-path to the Qt cmake directory  |CMake| platform-dependent|
 
 
-\subsection installation_variables_third_party Variables Providing Information About 3rd-Party Libraries
+\section installation_variables_third_party Variables Providing Information About 3rd-Party Libraries
 \anchor sec3partysoftwareconfig
 
 The following variables provide information about the availability and
@@ -101,7 +99,7 @@ Since 3rd-party libraries are system wide, many of the CMake variables listed be
 be given as similarly-named environment variables instead. Keep in mind that you must provide one or the
 other but never both.
 
-\subsection installation_boost Boost Libraries
+\section installation_boost Boost Libraries
 
 Starting from \boost 1.72, the cmake config mode can be used for configuring the \boost version
 to use by setting the environment variable `Boost_DIR` to the path containing the file
@@ -118,7 +116,7 @@ the `.dll` files are found by the dynamic linker, at run time.
 For example, you can add the path to the \boost `.dll` to the
 `PATH` environment variable.
 
-\subsection installation_gmp GMP and MPFR Libraries
+\section installation_gmp GMP and MPFR Libraries
 
 Under Windows, auto-linking is used, so only the <I>directory</I>
 containing the libraries is needed and you would specify `GMP|MPFR_LIBRARY_DIR` rather than
@@ -157,13 +155,13 @@ Under Linux, the \gmpxx is also searched for, and you may specify the following 
 
 
 
-\subsection installation_qt6 Qt6 Library
+\section installation_qt6 Qt6 Library
 
 You must set the cmake or environment variable `Qt6_DIR` to point to the path
 to the directory containing the file `Qt6Config.cmake` created by your \qt6 installation. If you are
 using the open source edition it should be `<path>/qt-everywhere-opensource-src-<version>/qtbase/lib/cmake/Qt6`.
 
-\subsection installation_leda LEDA Library
+\section installation_leda LEDA Library
 
 When the \leda libraries are not automatically found, yet they are installed on the system
 with base names 'leda' and 'ledaD' (for the release and debug versions resp.), it might
@@ -189,7 +187,7 @@ The variables specifying definitions and flags can be left undefined if they are
 | `LEDA_LINKER_FLAGS`    | Linker flags | CMake |
 
 
-\subsection installation_mpfi MPFI Library
+\section installation_mpfi MPFI Library
 
 \cgal provides a number type based on this library, but the \cgal library
 itself does not depend on \mpfi. This means that this library must be
@@ -210,7 +208,7 @@ and library files must be specified by using environment variables.
 
 
 
-\subsection installation_rs RS and RS3 Library
+\section installation_rs RS and RS3 Library
 
 As said before, only the \cgal univariate algebraic kernel depends on the
 library Rs. As the algebraic kernel is not compiled as a part of the \cgal
@@ -244,7 +242,7 @@ Similar variables exist for \rs3.
 | `RS3_LIB_DIR` | Idem | Environment |
 | `RS3_LIBRARIES` | Full pathname of the compiled \rs3 library | CMake |
 
-\subsection installation_eigen Eigen Library
+\section installation_eigen Eigen Library
 
 \eigen is a header-only template library.
 Only the <I>directory</I> containing the header files of \eigen 3.1 (or greater) is needed.
@@ -255,7 +253,7 @@ Only the <I>directory</I> containing the header files of \eigen 3.1 (or greater)
 | `EIGEN3_INCLUDE_DIR` | Directory containing the file `signature_of_eigen3_matrix_library` | CMake |
 | `EIGEN3_INC_DIR` | Idem | Environment |
 
-\subsection installation_esbtl ESBTL Library
+\section installation_esbtl ESBTL Library
 
 One skin surface example requires the \esbtl library in order to read \pdb files.
 
@@ -269,7 +267,7 @@ environment variable is sufficient.
 | `ESBTL_INC_DIR` | Directory containing the `ESBTL/default.h` file | Environment |
 | `ESBTL_INCLUDE_DIR` | Directory containing the `ESBTL/default.h` file | CMake |
 
-\subsection installation_metis METIS Library
+\section installation_metis METIS Library
 
 Some BGL examples require the \metis library in order to partition \metis meshes.
 
@@ -283,11 +281,11 @@ cmake variables is necessary.
 | `METIS_LIBRARY` | Directory containing the `libmetis.so or .lib` file | CMAKE |
 
 
-\subsection installation_tbb TBB Library
+\section installation_tbb TBB Library
 
 If \tbb is not automatically found, the user must set some variables, depending on the used version of TBB.
 
-\subsubsection installation_old_tbb TBB 2020 or before
+\subsection installation_old_tbb TBB 2020 or before
 The `TBB_ROOT` and `TBB_ARCH_PLATFORM=<arch>/<compiler>` environment variables must be set.
 `<arch>` is `ia32` or `intel64`. `<compiler>` describes the Linux kernel, gcc version or Visual Studio version
 used. It should be set to what is used in `$TBB_ROOT/lib/<arch>`.
@@ -309,7 +307,7 @@ Note that the variables in the table below are being used.
 | `TBB_MALLOCPROXY_DEBUG_LIBRARY` | Full pathname of the compiled TBB debug malloc_proxy library (optional) | CMake |
 | `TBB_MALLOCPROXY_RELEASE_LIBRARY` | Full pathname of the compiled TBB release malloc_proxy library (optional) | CMake |
 
-\subsubsection installation_new_tbb OneTBB
+\subsection installation_new_tbb OneTBB
 Since OneAPI \tbb version 2021, Intel provides CMake scripts of their own, and the user only have to set the `TBB_DIR`
 CMake variable at configuration time. A typical value for `TBB_DIR` is
 `/opt/intel/oneapi/tbb/latest/lib/cmake/tbb` on Unix systems, and `C:/dev/OneAPI/tbb/latest/lib/cmake/tbb` on Windows.
@@ -317,7 +315,7 @@ Alternatively, the user can instead source the `setvars` script that can be foun
 `C:/dev/OneAPI/setvars.bat` on Windows. It will setup the PATH and all Intel internal variables to be able to easily use
 any library of the OneAPI.
 
-\subsection installation_laslib LASlib library
+\section installation_laslib LASlib library
 
 If LASLIB is not automatically found, the following variables must be set:
 
@@ -327,17 +325,17 @@ If LASLIB is not automatically found, the following variables must be set:
 | `LASZIP_INCLUDE_DIR` | Directory containing the file `mydefs.hpp` | CMake |
 | `LASLIB_LIBRARIES` | Full pathname of the compiled LASLIB library | CMake |
 
-\subsection installation_OpenCV OpenCV library
+\section installation_OpenCV OpenCV library
 
 The environment variable `OPENCV_DIR` should be set to the directory
 containing the file `OpenCVConfig.cmake` provided by OpenCV.
 
-\subsection installation_SCIP SCIP library
+\section installation_SCIP SCIP library
 
 The environment variable `SCIP_DIR` should be set to the directory
 containing the file `scip-config.cmake` provided by SCIP.
 
-\subsection installation_GLPK GLPK library
+\section installation_GLPK GLPK library
 
 If GLPK is not automatically found, the following variables must be set:
 
