@@ -13,9 +13,17 @@ create_single_source_cgal_program("shortest_path.cpp")
 
 find_package(METIS QUIET)
 include(CGAL_METIS_support)
+
+if(NOT TARGET CGAL::METIS_support)
+  include(CGAL_Scotch_support)
+endif()
+
 if(TARGET CGAL::METIS_support)
   create_single_source_cgal_program("surface_mesh_partition.cpp")
   target_link_libraries(surface_mesh_partition PRIVATE CGAL::METIS_support)
+elseif(TARGET CGAL::Scotch_support)
+  create_single_source_cgal_program("surface_mesh_partition.cpp")
+  target_link_libraries(surface_mesh_partition PRIVATE CGAL::Scotch_support)
 else()
-  message(STATUS "NOTICE: Examples that use the METIS library will not be compiled.")
+  message(STATUS "NOTICE: Examples that use the METIS or Scotch library will not be compiled.")
 endif()
