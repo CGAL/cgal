@@ -35,6 +35,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Default.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/enum.h>
@@ -532,6 +533,10 @@ private:
     return c3t3_.triangulation().point(vh);
   }
 
+  auto with_point_tag() const {
+    return With_point_tag<const Tr>{{-1}, &tr()};
+  }
+
 protected:
 
   using get_curve_output_type = Mesh_domain_get_curves_output_type_t<MeshDomain>;
@@ -727,7 +732,7 @@ protected:
       std::cerr << "Register corner #" << key.first
                 << " on curve " << curve_index
                 << " with position_on_curve=" << (position_on_curve - start_position) << "\n"
-                << "  vp: " << IO::oformat(corner_vertices_.at(key.first), With_point_tag{}) << "\n";
+                << "  vp: " << IO::oformat(corner_vertices_.at(key.first), with_point_tag()) << "\n";
 #endif
       [[maybe_unused]] auto [_, inserted] = corners_on_curves_.try_emplace(key, position_on_curve);
       CGAL_assertion(true == inserted);
@@ -746,7 +751,7 @@ protected:
                            std::invoke([&] {
                              std::ostringstream ss;
                              ss.copyfmt(std::cerr);
-                             ss << "position_on_curve(v=" << IO::oformat(v, With_point_tag{})
+                             ss << "position_on_curve(v=" << IO::oformat(v, with_point_tag())
                                 << " (corner index: " << corner_index
                                 << ", curve_index=" << curve_index << "): v is a corner but its position is not found!";
                              return ss.str();
@@ -1126,7 +1131,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 16
     std::cerr << "Nearest power vertex of (" << p << ") is "
-              << IO::oformat(nearest_vh, With_point_tag{})
+              << IO::oformat(nearest_vh, with_point_tag())
               << "at distance: " << sq_d << std::endl;
 #endif
 
@@ -1362,7 +1367,7 @@ insert_balls_on_edges()
         if(tr().is_vertex(cwp(p), vp))
         {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 128
-          std::cerr << "vp: " << IO::oformat(vp, With_point_tag{}) << "\n";
+          std::cerr << "vp: " << IO::oformat(vp, with_point_tag()) << "\n";
           std::cerr << "vp.in_dimension(): " << vp->in_dimension() << "\n";
           std::cerr << "p_dim: " << p_dim << "\n";
           std::cerr << "p_index: " << IO::oformat(p_index) << "\n";
