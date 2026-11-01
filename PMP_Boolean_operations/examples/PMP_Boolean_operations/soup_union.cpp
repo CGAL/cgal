@@ -37,10 +37,10 @@ int main(int argc, char* argv[])
   std::vector<Point> points_output;
   std::vector<std::array<std::size_t, 3>> triangles_output;
 
-  PMP::compute_union(points1, triangles1,
-                     points2, triangles2,
-                     points_output, triangles_output,
-                    CGAL::parameters::concurrency_tag(CGAL::Parallel_if_available_tag()));
+  PMP::compute_union_of_triangle_soups(points1, triangles1,
+                                       points2, triangles2,
+                                       points_output, triangles_output,
+                                       CGAL::parameters::concurrency_tag(CGAL::Parallel_if_available_tag()));
 
   std::cout << "Union was successfully computed\n";
 
