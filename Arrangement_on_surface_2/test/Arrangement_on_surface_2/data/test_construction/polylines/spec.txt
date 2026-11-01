@@ -1,1 +1,2 @@
 test06 covers the case "Overlap with common ancestors"
+test11 covers the case "Overlap with common ancestors", where an originating curve intersects the overlap again to the right of the common overlap

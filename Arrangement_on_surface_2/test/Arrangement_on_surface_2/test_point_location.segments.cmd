@@ -7,3 +7,5 @@ data/empty.zero data/empty.zero data/point_location/segments/curves/test06.txt d
 data/empty.zero data/empty.zero data/point_location/segments/curves/test07.txt data/point_location/segments/queries/test07.txt
 data/empty.zero data/empty.zero data/point_location/segments/curves/test08.txt data/point_location/segments/queries/test08.txt
 data/empty.zero data/empty.zero data/point_location/segments/curves/test09.txt data/point_location/segments/queries/test09.txt
+data/empty.zero data/empty.zero data/point_location/segments/curves/test11.txt data/point_location/segments/queries/test11.txt
+data/empty.zero data/empty.zero data/point_location/segments/curves/test12.txt data/point_location/segments/queries/test12.txt
