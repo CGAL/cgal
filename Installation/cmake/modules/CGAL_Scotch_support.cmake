@@ -27,7 +27,6 @@ if(NOT TARGET CGAL::Scotch_support)
       add_library(CGAL::Scotch_support INTERFACE IMPORTED)
       set_target_properties(CGAL::Scotch_support PROPERTIES
         INTERFACE_COMPILE_DEFINITIONS "CGAL_SCOTCH_ENABLED"
-        INTERFACE_COMPILE_OPTIONS "-include;scotch.h"
         INTERFACE_INCLUDE_DIRECTORIES "${SCOTCH_INCLUDE_DIRS}"
         INTERFACE_LINK_LIBRARIES "${SCOTCH_LIBRARIES}")
     endif()
