@@ -35,7 +35,7 @@ struct No_mark
 {
   friend
   constexpr bool get(No_mark<G>,
-                  typename boost::graph_traits<G>::edge_descriptor)
+                  typename boost::graph_traits<G>::edge_descriptor&)
   {
     return false;
   }
