@@ -16,6 +16,7 @@
 #include <functional>
 #include <cstddef>
 #include <CGAL/Hilbert_sort_middle_base.h>
+#include <CGAL/Bbox_2.h>
 #include <CGAL/number_utils.h>
 
 namespace CGAL {
@@ -93,6 +94,12 @@ public:
     : _k(k), _limit (limit)
   {}
 
+  // Hilbert sort use double representations so two points not strictly equal will treat identically by hilbert sort
+  bool have_equal_representations(Point a, Point b) const{
+    return (to_double(_k.compute_x_2_object()(a)) == to_double(_k.compute_x_2_object()(b))) &&
+           (to_double(_k.compute_y_2_object()(a)) == to_double(_k.compute_y_2_object()(b)));
+  }
+
   template <int x, bool upx, bool upy, class RandomAccessIterator>
   void skip_empty_cells (RandomAccessIterator begin, RandomAccessIterator end,
                          double xmin, double ymin, double xmax, double ymax, Bbox_2 bb) const
@@ -146,13 +153,15 @@ public:
         ((m2 == m0) && ((m3 == m2) || (m3 == m4))) )
     {
       // All elements are in one quarter
-      if(_k.equal_2_object()(*begin, *end))
-        return; // Return if all elements are equal
-      Bbox_2 bb=bbox_2(begin, end, _k);
-      if constexpr(x == 0)
-        skip_empty_cells<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax, bb);
-      else
-        skip_empty_cells<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax, bb);
+      bool all_equal = true;
+      for(auto it=begin; it!=end-1; ++it)
+        if(!have_equal_representations(*it, *(it+1))){
+          all_equal = false;
+          break;
+        }
+      if(all_equal) return;
+      Bbox_2 bb=bbox_2(begin, end, Kernel_wrapper(_k));
+      skip_empty_cells<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax, bb);
     }
     else
     {
