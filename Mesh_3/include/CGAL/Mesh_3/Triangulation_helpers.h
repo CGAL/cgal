@@ -35,6 +35,7 @@
 #include <limits>
 #include <vector>
 #include <type_traits>
+#include <boost/mpl/eval_if.hpp>
 
 
 namespace CGAL {
