@@ -38,7 +38,7 @@ public:
   //! models the concept `AocTraits::Point_1`.
   typedef unspecified_type Point_1;
 
-  //! Describes the topological behaviour of the left boundary of the parameter
+  //! Describes the topological behavior of the left boundary of the parameter
   //! space.  Must be one of `CGAL::Arrangement_on_curve_1::Open_side_tag`,
   //! `CGAL::Arrangement_on_curve_1::Closed_side_tag`, or
   //! `CGAL::Arrangement_on_curve_1::Identified_side_tag`.
