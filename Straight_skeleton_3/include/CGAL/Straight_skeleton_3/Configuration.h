@@ -101,6 +101,9 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  *                     %Default is `convex`.
  * - **`const_offset`** Positive floating-point value used to insert periodic events at fixed time intervals.
  *                      %Default is `0` (disabled).
+ * - **`save_at_stable_times`:** Non-negative time delta used to avoid saving too close to an event.
+ *                               A value of `0` disables this behavior.
+ *                               %Default is `0`.
  * - **`stop_after_last_save_event`:** Boolean to enable or disable stopping immediately as soon as the
  *                                     last save event has been reached.
  *                                     %Default is `TRUE`.
@@ -162,7 +165,7 @@ public:
       result = true;
       input.close();
     } else {
-      CGAL_SS3_IO_TRACE_V(1, "Error: Configuration file not found.");
+      CGAL_SS3_IO_TRACE_V(1, "Warning: Configuration file not found.");
     }
     return result;
   }
@@ -184,6 +187,7 @@ public:
     properties_["Algorithm.convex_split_optimization"] = "max";
     properties_["Algorithm.edge_event"] = "convex";
     properties_["Algorithm.const_offset"] = "0";
+    properties_["Algorithm.save_at_stable_times"] = "0";
     properties_["Algorithm.stop_after_last_save_event"] = "TRUE";
   }
 
@@ -207,7 +211,7 @@ public:
     std::string mapkey = section + "." + key;
     if (properties_.find(mapkey) == properties_.end()) {
       // map does not contain this key
-      CGAL_SS3_IO_TRACE_V(1, "Error: key=" << mapkey << " not found.");
+      CGAL_SS3_IO_TRACE_V(1, "Warning: key=" << mapkey << " not found.");
     } else {
       result = properties_[mapkey];
     }

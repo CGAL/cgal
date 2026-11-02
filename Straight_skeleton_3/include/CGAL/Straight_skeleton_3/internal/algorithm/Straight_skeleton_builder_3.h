@@ -470,24 +470,21 @@ public:
       return false;
     }
 
-// #define CGAL_SS3_SAVE_ON_STABLE_TIMES
-#ifdef CGAL_SS3_SAVE_ON_STABLE_TIMES
-    // @todo what should this value be? 't=d/v', so '1e-7 / fastest speed'? facet-dependent?
-    const FT min_event_time_delta = 1e-7;
-#endif
+  ConfigurationSPtr config = Configuration::get_instance();
+  const FT min_event_time_delta = config->get_FT<FT>("Algorithm", "save_at_stable_times");
+  const bool save_at_stable_times = min_event_time_delta > FT(0);
 
     // If we stop immediately at the last save event, there is no point investigating events
     // that are farther away than the last save event's time
     std::optional<FT> time_future_bound;
     if (!save_times_.empty()) {
-      ConfigurationSPtr config = Configuration::get_instance();
       if (config->get_Boolean("Algorithm", "stop_after_last_save_event")) {
         time_future_bound = save_times_.back();
-#ifdef CGAL_SS3_SAVE_ON_STABLE_TIMES
-        // 1% should be far enough in general: unstability has the amplitude of perturbation nudges
-        // @todo this should then be based on perturbation value?...
-        time_future_bound = 1.01 * time_future_bound.value();
-#endif
+        if (save_at_stable_times) {
+          // 1% should be far enough in general: unstability has the amplitude of perturbation nudges
+          // @todo this should then be based on perturbation value?...
+          time_future_bound = 1.01 * time_future_bound.value();
+        }
       }
     }
 
@@ -533,11 +530,13 @@ public:
       }
 
       auto save_at_time = [&](const FT& save_time) {
+        CGAL_assertion(current_time > save_time);
+        CGAL_assertion(!event || save_time >= event->time());
         Transformation::shift_facets_from_base(polyhedron, save_time);
+        current_time = save_time;
         if (visitor_) {
           visitor_->on_save_event(polyhedron, save_time);
         }
-        Transformation::shift_facets_from_base(polyhedron, current_time); // @todo shouldn't be needed
       };
 
       if (!save_times_.empty()) {
@@ -545,50 +544,49 @@ public:
       }
 
       bool did_save = false;
-#ifndef CGAL_SS3_SAVE_ON_STABLE_TIMES
-      while (!save_times_.empty() &&
-             (!event || save_times_.front() >= event->time())) {
-        const FT save_time = save_times_.front();
-        CGAL_assertion(current_time > save_time);
-        save_at_time(save_time);
-        save_times_.erase(save_times_.begin());
-        did_save = true;
-      }
-#else
-      // If the upcoming event is at more than delta, save and move on.
-      // Otherwise, delay the save time till event - delta (i.e., further in the future)
-
-      // do not C++11 this loop: there is an erase()
-      auto save_time_it = std::begin(save_times_);
-      while (save_time_it != std::end(save_times_)) {
-        FT& save_time = *save_time_it;
-        CGAL_assertion(current_time > save_time);
-        if (!event || save_time > event->time() + min_event_time_delta) {
+      if (!save_at_stable_times) {
+        while (!save_times_.empty() &&
+               (!event || save_times_.front() >= event->time())) {
+          const FT& save_time = save_times_.front();
           save_at_time(save_time);
+          save_times_.erase(save_times_.begin());
           did_save = true;
-          save_time_it = save_times_.erase(save_time_it);
-          continue;
         }
+      } else {
+        // If the upcoming event is at more than delta, save and move on.
+        // Otherwise, delay the save time till event - delta (i.e., further in the future)
 
-        // Here, we know there is an event, and we know the save is later than upcoming + delta.
-        // We need to know if we need to nudge the save time, i.e. distinguish between
-        // "before but close to the event" and "after the event (and close or not)"
-        if (save_time > event->time()) {
-          // before but close ==> kick the save down the road hoping to find a stable point
-          CGAL_SS3_CORE_TRACE_V(1, "Save time at " << save_time << " is too close to event time at " << event->time());
-          CGAL_SS3_CORE_TRACE_V(1, "Delay save from " << save_time << " to " << current_time - min_event_time_delta);
-          save_time = event->time() - min_event_time_delta;
-          // we should never move farther in the future than the time_future_bound because
-          // we do not know events after that time
-          if (time_future_bound.has_value() && save_time < time_future_bound.value()) {
-            CGAL_SS3_CORE_TRACE_V(1, "Warning: save time at " << save_time << " was clamed by future bound at " << time_future_bound.value());
-            save_time = time_future_bound.value();
+        // do not C++11 this loop: there is an erase()
+        auto save_time_it = std::begin(save_times_);
+        while (save_time_it != std::end(save_times_)) {
+          FT& save_time = *save_time_it;
+          CGAL_assertion(current_time > save_time);
+          if (!event || save_time > event->time() + min_event_time_delta) {
+            save_at_time(save_time);
+            did_save = true;
+            save_time_it = save_times_.erase(save_time_it);
+            continue;
           }
-        }
 
-        ++save_time_it;
+          // Here, we know there is an event, and we know the save is later than upcoming + delta.
+          // We need to know if we need to nudge the save time, i.e. distinguish between
+          // "before but close to the event" and "after the event (and close or not)"
+          if (save_time > event->time()) {
+            // before but close ==> kick the save down the road hoping to find a stable point
+            CGAL_SS3_CORE_TRACE_V(1, "Save time at " << save_time << " is too close to event time at " << event->time());
+            CGAL_SS3_CORE_TRACE_V(1, "Delay save from " << save_time << " to " << event->time() - min_event_time_delta);
+            save_time = event->time() - min_event_time_delta;
+            // we should never move farther in the future than the time_future_bound because
+            // we do not know events taking place after that time
+            if (time_future_bound.has_value() && save_time < time_future_bound.value()) {
+              CGAL_SS3_CORE_TRACE_V(1, "Warning: save time at " << save_time << " was clamped by future bound at " << time_future_bound.value());
+              save_time = time_future_bound.value();
+            }
+          }
+
+          ++save_time_it;
+        }
       }
-#endif
 
       // If we are only interested in specific offset times, there is no point going further
       if (did_save && save_times_.empty()) {
@@ -662,24 +660,29 @@ public:
       post_op_vertices_pierce_.clear();
       post_op_edges_edgesplit_.clear();
 
-#if 0//def CGAL_SS3_SAVE_ON_STABLE_TIMES
-      // if the next save event is too close to the last event's time, move the save events away
-      for (FT& save_time : save_times_) {
-        CGAL_assertion(current_time > save_time);
-        if (current_time - save_time < min_event_time_delta) {
-          // too close to the previous event, kick the save down the road hoping to find a stable point
-          CGAL_SS3_CORE_TRACE_V(1, "Next save time at " << save_time << " is too close to current time at " << event->time());
-          CGAL_SS3_CORE_TRACE_V(1, "Delay save from " << save_time << " to " << current_time - min_event_time_delta);
-          save_time = current_time - min_event_time_delta;
-          // we should never move farther in the future than the time_future_bound because
-          // we do not know events after that time
-          if (time_future_bound.has_value() && save_time < time_future_bound.value()) {
-            CGAL_SS3_CORE_TRACE_V(1, "Warning: save time at " << save_time << " was clamed by future bound at " << time_future_bound.value());
-            save_time = time_future_bound.value();
+      if (save_at_stable_times) {
+        // Move saves too close to the last processed event away from it.
+        //
+        // The point isn't that much to avoid being stuck in the middle of a complex chain of events,
+        // because the check with the next upcoming event might delay the save, but it is
+        // to move a little away from the last event (either a single event or a complex chain
+        // of events) with the idea of making the embedding into floating point more likely
+        // to not create any issues.
+        for (FT& upcoming_save_time : save_times_) {
+          CGAL_assertion(current_time > upcoming_save_time);
+          if (current_time - upcoming_save_time < min_event_time_delta) {
+            CGAL_SS3_CORE_TRACE_V(1, "Next save time at " << upcoming_save_time << " is too close to current time at " << event->time());
+            CGAL_SS3_CORE_TRACE_V(1, "Delay save from " << upcoming_save_time << " to " << current_time - min_event_time_delta);
+            upcoming_save_time = current_time - min_event_time_delta;
+            // we should never move farther in the future than the time_future_bound because
+            // we do not know events after that time
+            if (time_future_bound.has_value() && upcoming_save_time < time_future_bound.value()) {
+              CGAL_SS3_CORE_TRACE_V(1, "Warning: save time at " << upcoming_save_time << " was clamped by future bound at " << time_future_bound.value());
+              upcoming_save_time = time_future_bound.value();
+            }
           }
         }
       }
-#endif
     }
 
     CGAL_SS3_CORE_TRACE_V(2, "== Straight Skeleton 3D finished ==");
