@@ -11,6 +11,11 @@ Given a range of `n` points:
 stopping when there are fewer than `threshold` points.
 </OL>
 
+\tparam Sort must be a function object type with a const call operator
+that sorts a range of points given by two random access iterators.
+The range may be empty. For example, `Hilbert_sort_2`,
+`Hilbert_sort_3`, or `Hilbert_sort_d` can be used.
+
 */
 template< typename Sort >
 class Multiscale_sort {

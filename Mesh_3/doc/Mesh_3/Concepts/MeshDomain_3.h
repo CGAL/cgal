@@ -122,11 +122,11 @@ following operators:
 
 `template<typename OutputIterator>`
 <br>
-`OutputIterator operator()(OutputIterator pts)`
+`OutputIterator operator()(OutputIterator pts) const`
 
 `template<typename OutputIterator>`
 <br>
-`OutputIterator operator()(OutputIterator pts, int n)`
+`OutputIterator operator()(OutputIterator pts, int n) const`
 
 Those two operators output a set of (`n`) surface points to the
 output iterator `pts`, as objects of type `std::pair<Point_3,
@@ -194,12 +194,12 @@ Bbox_3 bbox() const;
 /*!
 
 */
-Construct_initial_points construct_initial_points_object();
+Construct_initial_points construct_initial_points_object() const;
 
 /*!
 
 */
-Is_in_domain is_in_domain_object();
+Is_in_domain is_in_domain_object() const;
 
 /*!
 
@@ -209,7 +209,7 @@ Do_intersect_surface do_intersect_surface_object();
 /*!
 
 */
-Construct_intersection construct_intersection_object();
+Construct_intersection construct_intersection_object() const;
 
 /// @}
 
@@ -227,19 +227,19 @@ Index index_from_surface_patch_index(Surface_patch_index surface_patch_index);
 Returns
 the index to be stored at a vertex lying in the subdomain identified by `subdomain_index`.
 */
-Index index_from_subdomain_index(Subdomain_index subdomain_index);
+Index index_from_subdomain_index(Subdomain_index subdomain_index) const;
 
 /*!
 Returns the `Surface_patch_index` of the surface patch
 where lies a vertex with dimension 2 and index `index`.
 */
-Surface_patch_index surface_patch_index(Index index);
+Surface_patch_index surface_patch_index(Index index) const;
 
 /*!
 Returns the index
 of the subdomain containing a vertex with dimension 3 and index `index`.
 */
-Subdomain_index subdomain_index(Index index);
+Subdomain_index subdomain_index(Index index) const;
 
 /// @}
 

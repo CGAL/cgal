@@ -93,7 +93,6 @@ ALIASES                = "cgal=%CGAL" \
                          "libpointmatcher=libpointmatcher" \
                          "core=Core" \
                          "mpfi=MPFI" \
-                         "ntl=NTL" \
                          "pdb=PDB" \
                          "esbtl=ESBTL" \
                          "tbb=TBB" \
@@ -113,6 +112,7 @@ ALIASES                = "cgal=%CGAL" \
                          "api=API" \
                          "vtk=VTK" \
                          "itk=ITK" \
+                         "medit=MEDIT" \
                          "visualstudio=Visual Studio" \
                          "taucs=TAUCS" \
                          "lapack=LAPACK" \

@@ -22,6 +22,7 @@
 
 #include <CGAL/IO/File_medit.h>
 
+#include <vector>
 #include <stack>
 #include <ostream>
 
@@ -31,10 +32,9 @@ namespace IO
 {
 /*!
  * @ingroup PkgCDT3IOFunctions
- * @brief outputs a conforming constrained Delaunay triangulation to
- * the MEDIT (`.mesh`) file format.
- *        See \cgalCite{frey:inria-00069921} for a comprehensive description of this
- *        file format.
+ * @brief outputs a conforming constrained Delaunay triangulation
+ *  using the \ref IOStreamMedit (`.mesh`).
+ *
  * @param os the output stream
  * @param ccdt the conforming constrained Delaunay triangulation to be written
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -98,9 +98,11 @@ void write_MEDIT(std::ostream& os,
   auto plc_patch_map = boost::make_function_property_map<Facet>([&](const Facet& f)
     { return has_plc_face_id ? f.first->ccdt_3_data().face_constraint_index(f.second) + 1 : 1; });
 
+  std::vector<typename Tr_::Edge> edges;
   return SMDS_3::output_to_medit(os,
                                  tr,
                                  tr.finite_vertex_handles(),
+                                 edges,
                                  ccdt.constrained_facets(),
                                  tr.finite_cell_handles(),
                                  boost::make_function_property_map<Vertex_handle>([](Vertex_handle) { return 0; }),

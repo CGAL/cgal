@@ -502,7 +502,7 @@ public Q_SLOTS:
     if (points_item->point_set()->has_property_map<int> ("shape"))
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(nullptr, "Point Set Classification",
+        = QMessageBox::question(CGAL::Three::Three::mainWindow(), "Point Set Classification",
                                 "This point set is divided in clusters. Do you want to classify clusters instead of points?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1049,7 +1049,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(nullptr, "Classification",
+        = QMessageBox::question(CGAL::Three::Three::mainWindow(), "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1076,7 +1076,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(nullptr, "Classification",
+        = QMessageBox::question(CGAL::Three::Three::mainWindow(), "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1104,7 +1104,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(nullptr, "Classification",
+        = QMessageBox::question(CGAL::Three::Three::mainWindow(), "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1145,7 +1145,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(nullptr, "Classification",
+        = QMessageBox::question(CGAL::Three::Three::mainWindow(), "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 

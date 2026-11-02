@@ -1590,7 +1590,7 @@ std::pair<typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle,
           ErasedVeOutIt>
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
-                   Vertex_handle prev, const Curve_index_container& curve_indices,
+                   Vertex_handle locate_hint_vh, const Curve_index_container& curve_indices,
                    ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
@@ -1615,7 +1615,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   // Check that new point will not be inside a power sphere
   typename Tr::Locate_type lt;
   int li, lj;
-  Cell_handle ch = tr().locate(wp0, lt, li, lj, prev);
+  Cell_handle ch = tr().locate(wp0, lt, li, lj, locate_hint_vh);
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 2
   std::cerr << "locate returns: " << &*ch << " lt: " << lt << " lilj: " << li << " " << lj << std::endl;
@@ -1669,7 +1669,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "Moved dummy point, calling smart_insert() again" << std::endl;
 #endif
-      return smart_insert_point(p, w, dim, index, prev, curve_indices, out);
+      return smart_insert_point(p, w, dim, index, locate_hint_vh, curve_indices, out);
     }
     else
     {
@@ -1883,6 +1883,8 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_balls_on_edges()
 {
+  Vertex_handle locate_hint_vh{};
+
   // Get features
   using Feature_tuple = typename MD::Get_curves_output_type;
   std::vector<Feature_tuple> input_features;
@@ -1930,7 +1932,7 @@ insert_balls_on_edges()
                                   CGAL::square(p_size),
                                   1 /*dim*/,
                                   p_index,
-                                  Vertex_handle(),
+                                  locate_hint_vh,
                                   curve_index,
                                   CGAL::Emptyset_iterator()).first;
 
@@ -1941,6 +1943,7 @@ insert_balls_on_edges()
         // the variable 'vp'.
         vq = vp;
       }
+      locate_hint_vh = vp;
 
       // Insert balls and set treated
 //      if(do_balls_intersect(vp, vq))
@@ -2115,16 +2118,22 @@ insert_balls(const Vertex_handle& vp,
 #endif
       const Bare_point new_point =
         domain_.construct_point_on_curve(vpp, curve_index, d_signF * d / 2);
-      const int dim = 1; // new_point is on edge
+      const int dim_1 = 1; // new_point is on edge
       const Index index = domain_.index_from_curve_index(curve_index);
-      const FT point_weight = CGAL::square(size_(new_point, dim, index));
+      const FT point_weight = CGAL::square(size_(new_point, dim_1, index));
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "  middle point: " << new_point << std::endl;
       std::cerr << "  new weight: " << point_weight << std::endl;
 #endif
       std::pair<Vertex_handle, ErasedVeOutIt> pair =
-        smart_insert_point(new_point, point_weight, dim, index, Vertex_handle(), curve_index, out);
+        smart_insert_point(new_point,
+                           point_weight,
+                           dim_1,
+                           index,
+                           vp,
+                           curve_index,
+                           out);
       Vertex_handle new_vertex = pair.first;
 
       out = pair.second;

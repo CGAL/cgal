@@ -490,9 +490,9 @@ protected:
   /// Sets index and dimension of vertex `v`.
   void set_vertex_properties(Vertex_handle& v, const Index& index)
   {
-    r_c3t3_.set_index(v, index);
     // Set dimension of v: v is on surface by construction, so dimension=2
     v->set_dimension(2);
+    r_c3t3_.set_index(v, index);
   }
 
   /// Returns true if point encroaches facet

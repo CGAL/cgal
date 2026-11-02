@@ -379,10 +379,10 @@ namespace Segments {
     using Segment_2 = typename SegmentMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
 
-    const SegmentMap segment_map = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::segment_map), SegmentMap());
-    const GeomTraits traits = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
+    const SegmentMap segment_map = parameters::choose_parameter<SegmentMap>(
+      parameters::get_parameter(np, internal_np::segment_map));
+    const GeomTraits traits = parameters::choose_parameter<GeomTraits>(
+      parameters::get_parameter(np, internal_np::geom_traits));
 
     CGAL_precondition(input_range.size() >= 1);
     using Parallel_groups_2 = internal::Parallel_groups_2<
@@ -472,10 +472,10 @@ namespace Segments {
     using Segment_2 = typename SegmentMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
 
-    const SegmentMap segment_map = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::segment_map), SegmentMap());
-    const GeomTraits traits = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
+    const SegmentMap segment_map = parameters::choose_parameter<SegmentMap>(
+      parameters::get_parameter(np, internal_np::segment_map));
+    const GeomTraits traits = parameters::choose_parameter<GeomTraits>(
+      parameters::get_parameter(np, internal_np::geom_traits));
 
     CGAL_precondition(input_range.size() >= 1);
     using Collinear_groups_2 = internal::Collinear_groups_2<
@@ -565,10 +565,10 @@ namespace Segments {
     using Segment_2 = typename SegmentMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
 
-    const SegmentMap segment_map = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::segment_map), SegmentMap());
-    const GeomTraits traits = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
+    const SegmentMap segment_map = parameters::choose_parameter<SegmentMap>(
+      parameters::get_parameter(np, internal_np::segment_map));
+    const GeomTraits traits = parameters::choose_parameter<GeomTraits>(
+      parameters::get_parameter(np, internal_np::geom_traits));
 
     CGAL_precondition(input_range.size() >= 1);
     using Orthogonal_groups_2 = internal::Orthogonal_groups_2<
@@ -657,10 +657,10 @@ namespace Segments {
     using Segment_2 = typename SegmentMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
 
-    const SegmentMap segment_map = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::segment_map), SegmentMap());
-    const GeomTraits traits = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
+    const SegmentMap segment_map = parameters::choose_parameter<SegmentMap>(
+      parameters::get_parameter(np, internal_np::segment_map));
+    const GeomTraits traits = parameters::choose_parameter<GeomTraits>(
+      parameters::get_parameter(np, internal_np::geom_traits));
 
     CGAL_precondition(input_range.size() >= 1);
     using Unique_segments_2 = internal::Unique_segments_2<

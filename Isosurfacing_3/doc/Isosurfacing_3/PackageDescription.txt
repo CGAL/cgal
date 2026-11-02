@@ -53,7 +53,7 @@ The output is a polygon soup (i.e., a container of 3D point coordinates and inde
 \cgalPkgSince{6.1}
 \cgalPkgBib{cgal:sz-mc}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

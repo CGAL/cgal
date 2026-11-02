@@ -8,7 +8,6 @@ namespace Surface_mesh_simplification {
 \deprecated This class is deprecated since \cgal 5.3 and the use of
 `Bounded_normal_change_filter` should be preferred.
 
-
 The class `Bounded_normal_change_placement` is a model for the `GetPlacement` concept
 which serves as a filter for another placement. It rejects the placement if any
 triangle in the profile changes the normal by more than 90 degree.

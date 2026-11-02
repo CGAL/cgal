@@ -1,0 +1,6 @@
+Writing an arrangement of 6 input segments:
+The arrangement size:
+   |V| = 11,  |E| = 12,  |F| = 3
+Read an arrangement of 6 input segments:
+The arrangement size:
+   |V| = 11,  |E| = 12,  |F| = 3

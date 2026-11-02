@@ -1,0 +1,6 @@
+The point (1 4) is located on an edge: 0 3 2 5
+The point (4 3) is located inside a bounded face.
+The point (6 3) is located on a vertex: 6 3
+The point (3 2) is located on an isolated vertex: 3 2
+The point (5 2) is located on an edge: 6 3 3 0
+The point (1 0) is located inside the unbounded face.

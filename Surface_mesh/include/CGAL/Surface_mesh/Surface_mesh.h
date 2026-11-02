@@ -65,7 +65,10 @@ namespace CGAL {
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
         /// as `size_type` is an unsigned type.
-        explicit SM_Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
+        constexpr
+        SM_Index() : idx_((std::numeric_limits<size_type>::max)()) {}
+
+        explicit SM_Index(size_type _idx) : idx_(_idx) {}
 
         /// Get the underlying index of this index
         operator size_type() const { return idx_; }
@@ -126,7 +129,7 @@ namespace CGAL {
     {
     public:
 
-        SM_Vertex_index() : SM_Index<SM_Vertex_index>((std::numeric_limits<size_type>::max)()) {}
+        SM_Vertex_index() = default;
 
         explicit SM_Vertex_index(size_type _idx) : SM_Index<SM_Vertex_index>(_idx) {}
 
@@ -162,7 +165,7 @@ namespace CGAL {
     {
     public:
 
-        SM_Halfedge_index() : SM_Index<SM_Halfedge_index>((std::numeric_limits<size_type>::max)()) {}
+        SM_Halfedge_index() = default;
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
 
@@ -197,7 +200,7 @@ namespace CGAL {
     {
     public:
 
-        SM_Face_index() : SM_Index<SM_Face_index>((std::numeric_limits<size_type>::max)()) {}
+        SM_Face_index() = default;
 
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
 
@@ -232,7 +235,7 @@ namespace CGAL {
     public:
         typedef std::uint32_t size_type;
 
-        SM_Edge_index() : halfedge_((std::numeric_limits<size_type>::max)()) { }
+        SM_Edge_index() = default;
 
         explicit SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
@@ -600,7 +603,7 @@ public:
 
     /// \brief The range over all vertex indices.
     ///
-    /// A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Vertex_index`.
+    /// A model of <a href="https://www.boost.org/doc/libs/latest/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Vertex_index`.
     /// \sa `vertices()`
     /// \sa `Halfedge_range`, `Edge_range`, `Face_range`
 #ifdef DOXYGEN_RUNNING
@@ -615,7 +618,7 @@ public:
 
     /// \brief The range over all halfedge indices.
     ///
-    /// A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Halfedge_index`.
+    /// A model of <a href="https://www.boost.org/doc/libs/latest/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Halfedge_index`.
     /// \sa `halfedges()`
     /// \sa `Vertex_range`, `Edge_range`, `Face_range`
 #ifdef DOXYGEN_RUNNING
@@ -630,7 +633,7 @@ public:
 
     /// \brief The range over all edge indices.
     ///
-    /// A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Edge_index`.
+    /// A model of <a href="https://www.boost.org/doc/libs/latest/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Edge_index`.
     /// \sa `edges()`
     /// \sa `Halfedge_range`, `Vertex_range`, `Face_range`
 #ifdef DOXYGEN_RUNNING
@@ -645,7 +648,7 @@ public:
 #endif
     /// \brief The range over all face indices.
     ///
-    /// A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Face_index`.
+    /// A model of <a href="https://www.boost.org/doc/libs/latest/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Face_index`.
     /// \sa `faces()`
     /// \sa `Vertex_range`, `Halfedge_range`, `Edge_range`
  #ifdef DOXYGEN_RUNNING
@@ -1000,7 +1003,6 @@ public:
     /// adds a new edge, and resizes edge and halfedge properties if necessary.
     Halfedge_index add_edge()
     {
-      Halfedge_index h0, h1;
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (edges_freelist_ != inf)){
         size_type idx = edges_freelist_;
@@ -2212,17 +2214,17 @@ private: //------------------------------------------------------- private data
 
     Property_map<Vertex_index, Point>   vpoint_;
 
-    size_type removed_vertices_;
-    size_type removed_edges_;
-    size_type removed_faces_;
+    size_type removed_vertices_ = 0;
+    size_type removed_edges_ = 0;
+    size_type removed_faces_ = 0;
 
-    size_type vertices_freelist_;
-    size_type edges_freelist_;
-    size_type faces_freelist_;
-    bool garbage_;
-    bool recycle_;
+    size_type vertices_freelist_ = (std::numeric_limits<size_type>::max)();
+    size_type edges_freelist_ = (std::numeric_limits<size_type>::max)();
+    size_type faces_freelist_ = (std::numeric_limits<size_type>::max)();
+    bool garbage_ = false;
+    bool recycle_ = true;
 
-    size_type anonymous_property_;
+    size_type anonymous_property_ = 0;
 };
 
   /*! \addtogroup PkgSurface_mesh
@@ -2282,12 +2284,6 @@ Surface_mesh()
     vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
     eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
     fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
-
-    removed_vertices_ = removed_edges_ = removed_faces_ = 0;
-    vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
-    garbage_ = false;
-    recycle_ = true;
-    anonymous_property_ = 0;
 }
 
 

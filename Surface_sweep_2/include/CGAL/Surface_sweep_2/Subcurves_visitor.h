@@ -7,9 +7,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
-//            Efi Fogel       <efif@post.tau.ac.il>
-//            (based on old version by Tali Zvi)
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Efi Fogel       <efif@post.tau.ac.il>
+//             (based on old version by Tali Zvi)
 
 #ifndef CGAL_SURFACE_SWEEP_2_SUBCURVES_VISITOR_H
 #define CGAL_SURFACE_SWEEP_2_SUBCURVES_VISITOR_H
@@ -36,80 +36,61 @@ namespace Surface_sweep_2 {
  * non-intersecting x-monotone curves induced by a set of input curves. Used by
  * compute_subcurves().
  */
-template <typename GeometryTraits_2, typename OutputIerator,
-          typename Allocator_ = CGAL_ALLOCATOR(int)>
+template <typename GeometryTraits_2, typename OutputIerator, typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Subcurves_visitor :
-  public Default_visitor<Subcurves_visitor<GeometryTraits_2, OutputIerator,
-                                           Allocator_>,
-                         GeometryTraits_2, Allocator_>
-{
+  public Default_visitor<Subcurves_visitor<GeometryTraits_2, OutputIerator, Allocator_>, GeometryTraits_2, Allocator_> {
 public:
-  typedef GeometryTraits_2                              Geometry_traits_2;
-  typedef OutputIerator                                 Output_ierator;
-  typedef Allocator_                                    Allocator;
+  using Geometry_traits_2 = GeometryTraits_2;
+  using Output_ierator = OutputIerator;
+  using Allocator = Allocator_;
 
 private:
-  typedef Geometry_traits_2                             Gt2;
-  typedef Subcurves_visitor<Gt2, Output_ierator, Allocator>
-                                                        Self;
-  typedef Default_visitor<Self, Gt2, Allocator>         Base;
+  using Gt2 = Geometry_traits_2;
+  using Self = Subcurves_visitor<Gt2, Output_ierator, Allocator>;
+  using Base = Default_visitor<Self, Gt2, Allocator>;
 
 public:
-  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
-  typedef typename Gt2::Point_2                         Point_2;
+  using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
+  using Point_2 = typename Gt2::Point_2;
 
-  typedef typename Base::Event                          Event;
-  typedef typename Base::Subcurve                       Subcurve;
+  using Event = typename Base::Event;
+  using Subcurve = typename Base::Subcurve;
 
-  typedef typename Subcurve::Status_line_iterator       Status_line_iterator;
+  using Status_line_iterator = typename Subcurve::Status_line_iterator;
 
-  typedef typename Base::Surface_sweep_2                Surface_sweep_2;
+  using Surface_sweep_2 = typename Base::Surface_sweep_2;
 
 protected:
   // Data members:
-  Output_ierator m_out;           // The output curves.
-  bool m_overlapping;             // Should we report overlapping curves twice.
+  Output_ierator m_out;           // the output curves.
+  bool m_overlapping;             // should we report overlapping curves twice.
 
 public:
+  /*! constructs.
+   */
   Subcurves_visitor(Output_ierator out, bool overlapping) :
     m_out(out),
     m_overlapping(overlapping)
   {}
 
-  template <typename CurveIterator>
-  void sweep(CurveIterator begin, CurveIterator end)
-  {
-    std::vector<X_monotone_curve_2> curves_vec;
-    std::vector<Point_2> points_vec;
-
-    curves_vec.reserve(std::distance(begin,end));
-    make_x_monotone(begin, end,
-                    std::back_inserter(curves_vec),
-                    std::back_inserter(points_vec),
-                    this->traits());
-
-    // Perform the sweep.
-    Surface_sweep_2* sl = this->surface_sweep();
-    sl->sweep(curves_vec.begin(), curves_vec.end(),
-              points_vec.begin(), points_vec.end());
-  }
-
-  void add_subcurve(const X_monotone_curve_2& cv, Subcurve *sc)
-  {
-    if (!m_overlapping) {
+  /*!
+   */
+  void add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc) {
+    if (! m_overlapping) {
       // Report the curve once, whether it represents an overlap or not.
       *m_out = cv;
       ++m_out;
+      return;
     }
-    else {
-      unsigned int overlap_depth = sc->overlap_depth();
-      for (unsigned int i = 0; i < overlap_depth; ++i) {
-        *m_out = cv;
-        ++m_out;
-      }
+    std::size_t overlap_depth = sc->overlap_depth();
+    for (std::size_t i = 0; i < overlap_depth; ++i) {
+      *m_out = cv;
+      ++m_out;
     }
   }
 
+  /*!
+   */
   Output_ierator output_iterator() { return m_out; }
 };
 

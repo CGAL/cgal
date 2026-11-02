@@ -527,7 +527,7 @@ int main(int, char**)
       return EXIT_FAILURE;
     }
     else {
-      std::cout << "Parameterized with Barycentric (SM)!" << std::endl;
+      std::cout << "Parameterized with Iterative Authalic (SM)!" << std::endl;
     }
   }
 #endif // DAC_SM_SEAM_MESH

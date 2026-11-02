@@ -12,6 +12,12 @@
 
 #ifndef QGLVIEWER_MANIPULATED_CAMERA_FRAME_H
 #define QGLVIEWER_MANIPULATED_CAMERA_FRAME_H
+
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 16
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wsfinae-incomplete"
+#endif
+
 #include <QTimer>
 
 #include <CGAL/export/Qt.h>
@@ -234,7 +240,12 @@ private:
 
 }} // namespace CGAL::qglviewer
 
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 16
+#  pragma GCC diagnostic pop
+#endif
+
 #ifdef CGAL_HEADER_ONLY
 //#include <CGAL/Qt/qglviewer_impl_list.h>
 #endif // CGAL_HEADER_ONLY
+
 #endif // QGLVIEWER_MANIPULATED_CAMERA_FRAME_H

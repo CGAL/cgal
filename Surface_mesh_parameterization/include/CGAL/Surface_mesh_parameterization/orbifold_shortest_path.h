@@ -38,11 +38,7 @@ class Dijkstra_end_exception : public std::exception
 {
   const char* what() const throw ()
   {
-#ifdef CGAL_SMP_ORBIFOLD_DEBUG
-    return "Dijkstra: reached the target vertex";
-#else
-    return "";
-#endif
+    return "Dijkstra: reached the target vertex\n";
   }
 };
 
@@ -104,7 +100,7 @@ public:
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// computes the shortest path between `source` and `target` over `mesh`, using
-/// <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/dijkstra_shortest_paths.html">
+/// <a href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/algorithms/shortest_paths/dijkstra_shortest_paths.html">
 /// boost::dijkstra_shortest_paths()</a>.
 ///
 /// \tparam TriangleMesh A triangle mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
@@ -143,8 +139,10 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
 
   try {
     boost::dijkstra_shortest_paths(mesh, source, boost::predecessor_map(pred_pmap).visitor(vis));
-  } catch (const std::exception& e) {
-    std::cerr << e.what() << std::endl;
+  } catch ([[maybe_unused]] const internal::Dijkstra_end_exception& e) {
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
+    std::cout  << e.what();
+#endif
   }
 
   // Draw the path from target to source and collect the edges along the way

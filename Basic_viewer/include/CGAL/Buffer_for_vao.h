@@ -487,6 +487,20 @@ public:
     m_face_started=false;
   }
 
+  /// The points accumulated for the face currently being built (before
+  /// triangulation). Used to de-duplicate a face before it is committed.
+  const std::vector<Local_point>& get_points_of_current_face() const
+  { return m_points_of_face; }
+
+  /// Discards the face currently being built without committing its geometry.
+  void cancel_face()
+  {
+    m_face_started=false;
+    m_points_of_face.clear();
+    m_vertex_normals_for_face.clear();
+    m_indices_of_points_of_face.clear();
+  }
+
   /// adds `kp` coordinates to `buffer`
   template<typename KPoint>
   static void add_point_in_buffer(const KPoint& kp, std::vector<BufferType>& buffer)

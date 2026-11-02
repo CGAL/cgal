@@ -1,12 +1,13 @@
 namespace CGAL {
 
+// ############################################## INTERIOR #########################################
+
 /*!
 \ingroup PkgStraightSkeleton2OffsetFunctions
 
-\brief returns a container with all the inner offset polygons <I>with holes</I> at distance `offset`
-of the 2D polygon with holes `poly_with_holes`.
+\brief returns a container with all the inner offset polygons <I>with holes</I> at distance `offset` of the 2D polygon `poly`.
 
-This is equivalent to `arrange_offset_polygons_2(create_interior_skeleton_and_offset_polygons_2(offset, poly_with_holes, ofk, ssk))`.
+This is equivalent to `arrange_offset_polygons_2(create_interior_skeleton_and_offset_polygons_2(offset, poly, ofk, ssk))`.
 
 \tparam OfKPolygon is a polygon without holes type determined by `OfK` and `InKPolygon`,
                    see Section \ref SLSOffsetPolygonReturnType.
@@ -25,25 +26,29 @@ This is equivalent to `arrange_offset_polygons_2(create_interior_skeleton_and_of
 \sa `CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
+template <class OfKPolygon,
+          class FT,
+          class InKPolygon,
+          class OfK = CGAL::Exact_predicates_inexact_constructions_kernel,
+          class SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector< std::shared_ptr< OfKPolygon > >
-create_interior_skeleton_and_offset_polygons_with_holes_2(FT offset,
-                                                          const InKPolygon& poly_with_holes,
-                                                          OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
-                                                          SsK ssk = CGAL::Exact_predicates_inexact_constructions_kernel);
+create_interior_skeleton_and_offset_polygons_with_holes_2(const FT& offset,
+                                                          const InKPolygon& poly,
+                                                          const OfK& ofk = OfK(),
+                                                          const SsK& ssk = SsK());
 
 
-// ---------------------------------------------- EXTERIOR -----------------------------------------
+// ############################################## EXTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2OffsetFunctions
 
 \brief returns a container with all the outer offset polygons <I>with holes</I>
-at distance `offset` of the 2D polygon `poly_with_holes`. Note that the
+at distance `offset` of the 2D polygon `poly`. Note that the
 offset of the outer frame is ignored.
 
 This is equivalent to a call to `CGAL::arrange_offset_polygons_2()` on the
-output of \link CGAL::create_exterior_skeleton_and_offset_polygons_2() `create_exterior_skeleton_and_offset_polygons_2(offset, poly_with_holes, ofk, ssk)` \endlink
+output of \link CGAL::create_exterior_skeleton_and_offset_polygons_2() `create_exterior_skeleton_and_offset_polygons_2(offset, poly, ofk, ssk)` \endlink
 after having filtered out the polygon corresponding to the offset of the outer frame and
 having reversed the orientation of all other polygons.
 
@@ -63,11 +68,15 @@ having reversed the orientation of all other polygons.
 \sa `CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
+template <class OfKPolygon,
+          class FT,
+          class InKPolygon,
+          class OfK = CGAL::Exact_predicates_inexact_constructions_kernel,
+          class SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector<std::shared_ptr<OfKPolygon> >
-create_exterior_skeleton_and_offset_polygons_with_holes_2(FT offset,
-                                                          const InKPolygon& poly_with_holes,
-                                                          OfK ofk = Exact_predicates_inexact_constructions_kernel(),
-                                                          SsK ssk = Exact_predicates_inexact_constructions_kernel());
+create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& offset,
+                                                          const InKPolygon& poly,
+                                                          const OfK& ofk = OfK(),
+                                                          const SsK& ssk = SsK());
 
 } /* namespace CGAL */

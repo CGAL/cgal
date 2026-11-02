@@ -36,7 +36,7 @@ struct Custom_VPM
 };
 
 template< class Mesh>
-void test(const std::string& filename, const bool is_pm)
+void test(const std::filesystem::path& filename, const bool is_pm)
 {
   std::cout << "Test " << filename << " with Mesh = " << typeid(Mesh).name() << " is PM? " << is_pm << std::endl;
 
@@ -49,7 +49,7 @@ void test(const std::string& filename, const bool is_pm)
   g.clear();
   success = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, g,
                                                                  CGAL::parameters::verbose(true)
-                                                                                  .erase_all_duplicates(true));
+                                                                                  .erase_policy(CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::ERASE_ALL));
   std::cout<<"2"<<std::endl;
   assert(success);
   assert(is_valid(g));
@@ -62,7 +62,7 @@ std::cout<<"4"<<std::endl;
   Mesh g2;
   success = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, g2,
                                                                  CGAL::parameters::vertex_point_map(cvpm)
-                                                                                  .erase_all_duplicates(true));
+                                                                                  .erase_policy(CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::ERASE_ALL));
   std::cout<<"5"<<std::endl;
   assert(success);
   assert(num_vertices(g) == num_vertices(g2));

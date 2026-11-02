@@ -225,7 +225,7 @@ public:
       {
         if(!CGAL::is_triangle_mesh(*poly_item->polyhedron()))
         {
-          QMessageBox::warning(0, "Error",
+          QMessageBox::warning(CGAL::Three::Three::mainWindow(), "Error",
                                "Cannot save a mesh in vtu format if "
                                "it is not pure triangle.");
           return false;
@@ -445,10 +445,15 @@ public:
         }
       }
 
+      std::vector<std::array<int, 3>> feature_edges;
+      std::vector<std::array<int, 2>> corners;
+
       CGAL::SMDS_3::build_triangulation_with_subdomains_range(
         c3t3_item->c3t3().triangulation(),
         points, finite_cells, subdomains, border_facets,
-        false, false, true);
+        feature_edges, corners,
+        CGAL::Emptyset_iterator(),
+        false, false, true, true);
 
       for( C3t3::Triangulation::Finite_cells_iterator
            cit = c3t3_item->c3t3().triangulation().finite_cells_begin();

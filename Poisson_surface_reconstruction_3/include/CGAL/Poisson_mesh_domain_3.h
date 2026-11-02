@@ -226,8 +226,8 @@ public:
 
     FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
-    auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
-    auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+    auto null_subdomain_index_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::null_subdomain_index_param));
+    auto construct_surface_patch_index_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::surface_patch_index));
 
     return Poisson_mesh_domain_3(function,
              bounding_object,

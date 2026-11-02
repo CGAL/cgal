@@ -27,6 +27,7 @@ pushd Triangulation_2_Demo_with_dlls;
   zip -r ../regular_triangulation_2.zip Regular_triangulation_2.exe *.dll platforms;
   zip -r ../constrained_delaunay_triangulation_2.zip Constrained_Delaunay_triangulation_2.exe *.dll platforms;
   zip -r ../delaunay_triangulation_2.zip Delaunay_triangulation_2.exe *.dll platforms;
+  zip -r ../mesh_2.zip mesh_2_demo.exe *.dll platforms;
 popd
 
 # CGAL-3.8
@@ -80,6 +81,9 @@ pushd Arrangement_on_surface_2_earth_Demo_with_dlls; zip -r ../arrangements_2_ea
 
 # CGAL-6.1
 pushd Triangulation_on_hyperbolic_surface_2_Demo_with_dlls; zip -r ../triangulation_on_hyperbolic_surface_2.zip *; popd
+
+# CGAL-6.2
+pushd Alpha_wrap_2_Demo_with_dlls; zip -r ../alpha_wrap_2.zip *; popd
 
 # check
 echo CHECK now. The following lines should be empty.

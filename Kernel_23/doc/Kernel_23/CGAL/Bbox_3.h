@@ -113,6 +113,7 @@ Bbox_3& operator+=(const Bbox_3 &c);
 
 /*!
 dilates the bounding box by a specified number of ULP.
+\warning the user is in charge to check that the box does not get inverted.
 */
 void dilate(int dist);
 
@@ -121,6 +122,12 @@ scales the bounding box by `factor`, while keeping its center fixed.
 \pre `factor > 0`
 */
 void scale(double factor);
+
+/*!
+pads the bounding box by `offset`.
+\warning the user is in charge to check that the box does not get inverted.
+*/
+void pad(double offset);
 
 /// @}
 

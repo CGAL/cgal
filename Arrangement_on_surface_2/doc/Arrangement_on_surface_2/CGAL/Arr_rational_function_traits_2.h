@@ -143,7 +143,7 @@ public:
 
     /*! constructs a curve representing the polynomial function \f$y = P(x)\f$.
      * The function is defined over the interval \f$[x,+\infty)\f$ if \f$right\f$
-     * is true and \f$(-\infty,x]\f$ otherwise.
+     * is `true` and \f$(-\infty,x]\f$ otherwise.
      */
     Curve_2 operator()(Polynomial_1 P, const Algebraic_real_1& x,
                        bool right) const;
@@ -160,7 +160,7 @@ public:
 
     /*! constructs a curve representing the rational function \f$y = P(x)/Q(x)\f$.
      * The function is defined over the interval
-     * \f$I=[x,+\infty)\f$ if \f$right\f$ is true and
+     * \f$I=[x,+\infty)\f$ if \f$right\f$ is `true` and
      * \f$I=(-\infty,x]\f$ otherwise.
      */
     Curve_2 operator()(Polynomial_1 P, Polynomial_1 Q,
@@ -182,7 +182,7 @@ public:
     /*! constructs a curve representing the polynomial function \f$y = P(x)\f$,
      * where the coefficients of \f$P\f$ are given in the range `[begin,end)`.
      * The function is defined over the interval
-     * \f$[x,+\infty)\f$ if \f$right\f$ is true and \f$(-\infty,x]\f$ otherwise.
+     * \f$[x,+\infty)\f$ if \f$right\f$ is `true` and \f$(-\infty,x]\f$ otherwise.
      */
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin, InputIterator end,
@@ -209,7 +209,7 @@ public:
      * where the coefficients of \f$P\f$ and \f$Q\f$ are given in the ranges
      * `[begin_numer,end_numer)` and `[begin_denom,end_denom)`, respectively.
      * The function is defined over the interval \f$I=[x,+\infty)\f$
-     * if \f$right\f$ is true and \f$I=(-\infty,x]\f$ otherwise.
+     * if \f$right\f$ is `true` and \f$I=(-\infty,x]\f$ otherwise.
      */
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
@@ -271,7 +271,7 @@ public:
 
     /*! constructs an \f$x\f$-monotone curve supported by the polynomial function
      * \f$y = P(x)\f$. The function is defined over the interval
-     * \f$[x,+\infty)\f$ if \f$right\f$ is true and \f$(-\infty,x]\f$
+     * \f$[x,+\infty)\f$ if \f$right\f$ is `true` and \f$(-\infty,x]\f$
      * otherwise.
      */
     X_monotone_curve_2 operator()(Polynomial_1 P,
@@ -295,7 +295,7 @@ public:
 
     /*! constructs an \f$x\f$-monotone curve supported by the rational function
      * \f$y = P(x)/Q(x)\f$. The function is defined over the interval
-     * \f$I=[x,+\infty)\f$ if \f$right\f$ is true and \f$I=(-\infty,x]\f$
+     * \f$I=[x,+\infty)\f$ if \f$right\f$ is `true` and \f$I=(-\infty,x]\f$
      * otherwise.
      *
      * \pre \f$Q\f$ has no real roots in the interior of \f$I\f$.
@@ -323,7 +323,7 @@ public:
     /*! constructs an \f$x\f$-monotone curve supported by the polynomial function
      * \f$y = P(x)\f$, where the coefficients of \f$P\f$ are given in the range
      * `[begin,end)`. The function is defined over the interval \f$[x,+\infty)\f$
-     * if \f$right\f$ is true and \f$(-\infty,x]\f$ otherwise.
+     * if \f$right\f$ is `true` and \f$(-\infty,x]\f$ otherwise.
      */
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end,
@@ -355,7 +355,7 @@ public:
      * \f$y = P(x)/Q(x)\f$, where the coefficients of \f$P\f$ and \f$Q\f$ are
      * given in the ranges `[begin_numer,end_numer)` and
      * `[begin_denom,end_denom)`, respectively. The function is defined over the
-     * interval \f$I=[x,+\infty)\f$ if \f$right\f$ is true and
+     * interval \f$I=[x,+\infty)\f$ if \f$right\f$ is `true` and
      * \f$I=(-\infty,x]\f$ otherwise.
      *
      * \pre \f$Q\f$ has no real roots in the interior of \f$I\f$.
