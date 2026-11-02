@@ -170,9 +170,10 @@ class Arr_approximate_traits {
   };
 
 public:
-  using Approx_point = typename Geom_traits::Approximate_point_2;
-  using Approx_nt = typename Geom_traits::Approximate_number_type;
-  using Approx_kernel = typename Geom_traits::Approximate_kernel;
+  using Gt_approximate_2 = typename Geom_traits::Approximate_2;
+  using Approx_point = typename Gt_approximate_2::Approximate_point_2;
+  using Approx_nt = typename Gt_approximate_2::Approximate_number_type;
+  using Approx_kernel = typename Gt_approximate_2::Approximate_kernel;
 
   // 2D parameter space point
   using Point = typename Approx_kernel::Point_2;
@@ -182,7 +183,7 @@ public:
 
   // A null point with NaN coordinates. Use ::is_null(pt) to check if a point is null.
   inline static const Point Null_point =
-      Point(std::numeric_limits<Approx_nt>::signaling_NaN(), std::numeric_limits<Approx_nt>::signaling_NaN());
+    Point(std::numeric_limits<Approx_nt>::signaling_NaN(), std::numeric_limits<Approx_nt>::signaling_NaN());
   static bool is_null(Point pt) { return std::isnan(pt.x()) || std::isnan(pt.y()); }
 };
 
@@ -220,4 +221,4 @@ public:
 } // namespace draw_aos
 } // namespace CGAL
 
-#endif // CGAL_DRAW_AOS_TYPE_UTILS_H
+#endif

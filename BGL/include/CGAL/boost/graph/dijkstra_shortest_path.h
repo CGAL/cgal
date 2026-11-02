@@ -89,7 +89,7 @@ namespace internal {
 *                          The weights must all be non-negative.}
 *    \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
 *                   as key type and a value type which as specified in the named parameter `distance_map`of the function
-                    <A href="https://www.boost.org/doc/libs/release/libs/graph/doc/dijkstra_shortest_paths.html">`boost::graph::dijkstra_shortest_paths()`</A>,
+                    <A href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/algorithms/shortest_paths/dijkstra_shortest_paths.html">`boost::graph::dijkstra_shortest_paths()`</A>,
                     with any model of `RingNumberType` fulfilling the requirements. }
 *    \cgalParamDefault{`get(boost::edge_weight, mesh)`}
 *   \cgalParamNEnd

@@ -4,6 +4,7 @@
 //#define CGAL_AW3_DEBUG_STEINER_COMPUTATION
 //#define CGAL_AW3_DEBUG_INITIALIZATION
 //#define CGAL_AW3_DEBUG_QUEUE
+#define CGAL_AW3_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
 
 #include <CGAL/alpha_wrap_3.h>
 #include <CGAL/Alpha_wrap_3/internal/validation.h>

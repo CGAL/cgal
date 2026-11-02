@@ -82,7 +82,6 @@ bool alpha_wrap_point_set(Points& input_points,
                           const double offset)
 {
   namespace AW2 = CGAL::Alpha_wraps_2;
-  namespace PMP = CGAL::Polygon_mesh_processing;
 
   bool result = true;
 

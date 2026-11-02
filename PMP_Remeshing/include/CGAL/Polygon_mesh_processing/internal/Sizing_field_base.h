@@ -13,7 +13,7 @@
 #ifndef CGAL_PMP_REMESHING_SIZING_FIELD_H
 #define CGAL_PMP_REMESHING_SIZING_FIELD_H
 
-#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+#include <CGAL/license/Polygon_mesh_processing/remeshing.h>
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/boost/graph/properties.h>

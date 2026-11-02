@@ -153,7 +153,7 @@ private:
     return b;
   }
 
-  Nef_polyhedron load_off(const char* name) {
+  Nef_polyhedron load_off(const std::filesystem::path& name) {
     Polyhedron poly;
     std::ifstream off_file(name);
     assert(off_file.good());

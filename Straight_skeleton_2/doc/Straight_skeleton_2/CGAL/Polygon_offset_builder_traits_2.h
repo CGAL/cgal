@@ -14,7 +14,8 @@ required by the `Polygon_offset_builder_2` algorithm class.
 \sa `Polygon_offset_builder_2`
 */
 template< typename Kernel >
-class Polygon_offset_builder_traits_2 {
+class Polygon_offset_builder_traits_2
+{
 public:
 
 }; /* end Polygon_offset_builder_traits_2 */

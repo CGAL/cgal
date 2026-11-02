@@ -123,11 +123,11 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef typename SFace_list::iterator                     SFace_iterator;
   typedef typename SFace_list::const_iterator               SFace_const_iterator;
 
-  typedef CGAL::Object_handle Object_handle;
-  typedef std::list<Object_handle>    Object_list;
-  typedef Object_list::iterator       Object_iterator;
-  typedef Object_list::const_iterator Object_const_iterator;
-  typedef Object_list::const_iterator Object_const_handle;
+  typedef typename SNC_structure::Object_handle             Object_handle;
+  typedef typename SNC_structure::Object_list               Object_list;
+  typedef typename SNC_structure::Object_iterator           Object_iterator;
+  typedef typename SNC_structure::Object_const_iterator     Object_const_iterator;
+  typedef typename SNC_structure::Object_const_handle       Object_const_handle;
 
   typedef Vertex_handle       Constructor_parameter;
   typedef Vertex_const_handle Constructor_const_parameter;

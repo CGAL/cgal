@@ -133,7 +133,7 @@ int main(int argc, char * argv[])
     double average_spacing_ratio = 5;
 
     // decode parameters
-    std::string input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz");
+    std::string input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz").string();
     std::string output_filename = (argc > 2) ? argv[2] : "kitten_poisson-20-100-0.5.off";
     for (int i=3; i+1<argc ; ++i)
     {
@@ -169,7 +169,7 @@ int main(int argc, char * argv[])
     if (extension == ".off" || extension == ".OFF")
     {
       // Reads the mesh file in a polyhedron
-      std::ifstream stream(input_filename.c_str());
+      std::ifstream stream(input_filename);
       Polyhedron input_mesh;
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
       if(!stream || !input_mesh.is_valid() || input_mesh.empty())
@@ -194,7 +194,7 @@ int main(int argc, char * argv[])
       // Reads the point set file in points[].
       // Note: read_points() requires an iterator over points
       // + property maps to access each point's position and normal.
-      if (!CGAL::IO::read_points(input_filename.c_str(), std::back_inserter(points),
+      if (!CGAL::IO::read_points(input_filename, std::back_inserter(points),
                                   CGAL::parameters::point_map(CGAL::make_first_of_pair_property_map(Point_with_normal()))
                                                     .normal_map(CGAL::make_second_of_pair_property_map(Point_with_normal()))))
       {

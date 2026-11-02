@@ -44,7 +44,7 @@ int main(int argc, char** argv)
   CGAL::Timer task_timer;
   task_timer.start();
 
-  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/bear.off");
+  const std::filesystem::path filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/bear.off");
 
   SurfaceMesh sm;
   if(!CGAL::IO::read_polygon_mesh(filename, sm))

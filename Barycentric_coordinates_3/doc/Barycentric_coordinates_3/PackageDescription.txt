@@ -42,13 +42,13 @@ defined for convex simplicial polytopes.}
 - `BarycentricTraits_3`
 
 ## Analytic Coordinates ##
-- `CGAL::Barycentric_coordinates::Wachspress_coordinates_3<TriangleMesh, GeomTraits, VertexPointMap>`
-- `CGAL::Barycentric_coordinates::Mean_value_coordinates_3<TriangleMesh, GeomTraits, VertexPointMap>`
-- `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<TriangleMesh, GeomTraits, VertexPointMap>`
+- `CGAL::Barycentric_coordinates::Wachspress_coordinates_3<TriangleMesh, VertexPointMap, GeomTraits>`
+- `CGAL::Barycentric_coordinates::Mean_value_coordinates_3<TriangleMesh, VertexPointMap, GeomTraits>`
+- `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<TriangleMesh, VertexPointMap, GeomTraits>`
 
 ## Free Functions ##
-- `CGAL::Barycentric_coordinates::apply_barycentric_coordinates()`
-- `CGAL::Barycentric_coordinates::tetrahedron_coordinates()`
+- `CGAL::Barycentric_coordinates::apply_barycentric_coordinates_3()`
+- `CGAL::Barycentric_coordinates::tetrahedron_coordinates_3()`
 - `CGAL::Barycentric_coordinates::wachspress_coordinates_3()`
 - `CGAL::Barycentric_coordinates::mean_value_coordinates_3()`
 - `CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_3()`

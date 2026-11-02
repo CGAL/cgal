@@ -34,12 +34,9 @@ namespace Surface_sweep_2 {
  * A simple sweep-line visitor that determines whether the curves in a given set
  * intersect in their interiors.
  */
-template <typename GeometryTraits_2,
-          typename Allocator_ = CGAL_ALLOCATOR(int)>
+template <typename GeometryTraits_2, typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Do_interior_intersect_visitor :
-  public Default_visitor<Do_interior_intersect_visitor<GeometryTraits_2,
-                                                       Allocator_>,
-                         GeometryTraits_2, Allocator_> {
+  public Default_visitor<Do_interior_intersect_visitor<GeometryTraits_2, Allocator_>, GeometryTraits_2, Allocator_> {
 public:
   using Geometry_traits_2 = GeometryTraits_2;
   using Allocator = Allocator_;
@@ -74,61 +71,32 @@ public:
     std::vector<Point_2> points_vec;
 
     curves_vec.reserve(std::distance(begin,end));
-    make_x_monotone(begin, end,
-                    std::back_inserter(curves_vec),
-                    std::back_inserter(points_vec),
-                    this-> traits());
+    make_x_monotone(begin, end, std::back_inserter(curves_vec), std::back_inserter(points_vec), this-> traits());
 
     // Perform the sweep.
     Surface_sweep_2* sl = this->surface_sweep();
-    sl->sweep(curves_vec.begin(), curves_vec.end(),
-              points_vec.begin(), points_vec.end());
+    sl->sweep(curves_vec.begin(), curves_vec.end(), points_vec.begin(), points_vec.end());
   }
 
-  void update_event(Event* /* e */,
-                    Subcurve* /* sc1 */,
-                    Subcurve* /* sc2 */,
-                    bool /* is_new */,
-                    Multiplicity /* multiplicity */)
-  { m_found_x = true; }
-
-  void update_event(Event* /* e */,
-                    Subcurve* /* sc1 */)
-  { m_found_x = true; }
-
-  void update_event(Event* /* e */,
-                    const Point_2& /* end_point */,
-                    const X_monotone_curve_2& /* cv */,
-                    Arr_curve_end /* cv_end */,
-                    bool /* is_new */)
-  {}
-
-  void update_event(Event* /* e */,
-                    const X_monotone_curve_2& /* cv */,
-                    Arr_curve_end /* cv_end */,
-                    bool /* is_new */)
-  {}
-
-  void update_event(Event* /* e */,
-                    const Point_2& /* pt */,
-                    bool /* is_new */)
-  {}
-
+  /*!
+   */
   template <typename XCurveIterator>
   void sweep_xcurves(XCurveIterator begin, XCurveIterator end) {
-    // Perform the sweep.
-    Surface_sweep_2* sl = this->surface_sweep();
+    Surface_sweep_2* sl = this->surface_sweep();        // perform the sweep
     sl->sweep(begin, end);
   }
 
-  void found_overlap(Subcurve* /* sc1 */,
-                     Subcurve* /* sc2 */,
-                     Subcurve* /* ov_sc */)
-  { m_found_x = true; }
+  /*!
+   */
+  void update_event(Event*, Subcurve*, Subcurve*, bool, Multiplicity) { m_found_x = true; }
+  void update_event(Event*, Subcurve*) { m_found_x = true; }
+  void update_event(Event*, const Point_2&, const X_monotone_curve_2&, Arr_curve_end, bool) {}
+  void update_event(Event*, const X_monotone_curve_2&, Arr_curve_end, bool) {}
+  void update_event(Event*, const Point_2&, bool) {}
 
-  bool after_handle_event(Event* /* event */,
-                          Status_line_iterator /* iter */,
-                          bool /* flag */) {
+  /*!
+   */
+  bool after_handle_event(Event*, Status_line_iterator, bool) {
     if (m_found_x) {
       Surface_sweep_2* sl = this->surface_sweep();
       sl->stop_sweep();
@@ -136,7 +104,13 @@ public:
     return true;
   }
 
-  bool found_intersection() { return m_found_x; }
+  /*!
+   */
+  void found_overlap(Subcurve*, Subcurve*, Subcurve*) { m_found_x = true; }
+
+  /*!
+   */
+  bool do_intersect() { return m_found_x; }
 };
 
 } // namespace Surface_sweep_2

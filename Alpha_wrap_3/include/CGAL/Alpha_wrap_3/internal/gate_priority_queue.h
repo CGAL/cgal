@@ -30,13 +30,13 @@ namespace internal {
 
 enum class Steiner_status
 {
-  UNKONWN = 0,
+  UNKNOWN = 0,
   NO_STEINER_POINT,
   RULE_1,
   RULE_2
 };
 
-#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+#ifdef CGAL_AW3_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
 template <typename Tr>
 struct Gate_steiner_info
 {
@@ -60,7 +60,7 @@ struct Gate_steiner_info
 // Represents an alpha-traversable facet in the mutable priority queue
 template <typename Tr>
 class Gate
-#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+#ifdef CGAL_AW3_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
   : public Gate_steiner_info<Tr>
 #endif
 {
@@ -128,7 +128,7 @@ struct Less_gate
 // Represents an alpha-traversable facet in the mutable priority queue
 template <typename Tr>
 class Gate
-#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+#ifdef CGAL_AW3_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
   : public Gate_steiner_info<Tr>
 #endif
 {

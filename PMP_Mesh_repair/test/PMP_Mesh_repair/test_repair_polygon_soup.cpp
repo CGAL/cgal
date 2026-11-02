@@ -1,9 +1,5 @@
-#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
-
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
-
 #include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <algorithm>
@@ -15,11 +11,12 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = CGAL::parameters;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
-typedef K::Point_3                                              Point_3;
+using Erase_policy = PMP::Duplicate_polygon_erase_policy;
 
-typedef CGAL::Surface_mesh<Point_3>                             Mesh;
-typedef std::vector<std::size_t>                                CGAL_polygon;
+using K       = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Point_3 = K::Point_3;
+using Mesh    = CGAL::Surface_mesh<Point_3>;
+using CGAL_polygon = std::vector<std::size_t>;
 
 void test_polygon_canonicalization(const bool verbose = false)
 {
@@ -35,48 +32,56 @@ void test_polygon_canonicalization(const bool verbose = false)
 
   // empty
   CGAL_polygon polygon;
-  CGAL_polygon canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon.empty());
+  PMP::internal::canonicalize_polygon(points, polygon, K());
+  assert(polygon.empty());
 
   // 1 point
   polygon.push_back(5);
 
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon == polygon);
+  PMP::internal::canonicalize_polygon(points, polygon, K());
+  assert(polygon.size() == 1 && polygon[0] == 5);
 
   // 2 points
   polygon.clear();
   polygon.push_back(4); polygon.push_back(3);
 
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon[0] == 3 && canonical_polygon[1] == 4);
+  CGAL_polygon canonical_polygon = polygon;
+  PMP::internal::canonicalize_polygon(points, canonical_polygon, K());
+  assert(canonical_polygon.size() == 2 && canonical_polygon[0] == 3 && canonical_polygon[1] == 4);
+
   std::swap(polygon[0], polygon[1]);
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon[0] == 3 && canonical_polygon[1] == 4);
+  canonical_polygon = polygon;
+  PMP::internal::canonicalize_polygon(points, canonical_polygon, K());
+  assert(canonical_polygon.size() == 2 && canonical_polygon[0] == 3 && canonical_polygon[1] == 4);
 
   // 3 points
   polygon.clear();
   polygon.push_back(4); polygon.push_back(1); polygon.push_back(3);
 
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon[0] == 1 && canonical_polygon[1] == 3 && canonical_polygon[2] == 4);
+  canonical_polygon = polygon;
+  PMP::internal::canonicalize_polygon(points, canonical_polygon, K());
+  assert(canonical_polygon.size() == 3 && canonical_polygon[0] == 1 && canonical_polygon[1] == 3 && canonical_polygon[2] == 4);
+
   std::swap(polygon[0], polygon[2]);
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon[0] == 1 && canonical_polygon[1] == 3 && canonical_polygon[2] == 4);
+  canonical_polygon = polygon;
+  PMP::internal::canonicalize_polygon(points, canonical_polygon, K());
+  assert(canonical_polygon.size() == 3 && canonical_polygon[0] == 1 && canonical_polygon[1] == 3 && canonical_polygon[2] == 4);
 
   // Generic case
   polygon.clear();
   polygon.push_back(0); polygon.push_back(2); polygon.push_back(5); polygon.push_back(4); polygon.push_back(1);
 
   // Whether reversed or with cyclic permutations, it should always yield the same canonical polygon
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
+  canonical_polygon = polygon;
+  PMP::internal::canonicalize_polygon(points, canonical_polygon, K());
   assert(canonical_polygon.size() == 5);
   assert(canonical_polygon[0] == 0);
 
   // all cyclic permutations
   for(std::size_t i=0, end=polygon.size(); i<end; ++i)
   {
-    CGAL_polygon cpol = PMP::internal::construct_canonical_polygon(points, polygon, K());
+    CGAL_polygon cpol = polygon;
+    PMP::internal::canonicalize_polygon(points, cpol, K());
     if(verbose)
     {
       std::cout << "Input polygon:";
@@ -93,7 +98,8 @@ void test_polygon_canonicalization(const bool verbose = false)
   std::reverse(polygon.begin(), polygon.end());
   for(std::size_t i=0, end=polygon.size(); i<end; ++i)
   {
-    CGAL_polygon cpol = PMP::internal::construct_canonical_polygon(points, polygon, K());
+    CGAL_polygon cpol = polygon;
+    PMP::internal::canonicalize_polygon(points, cpol, K());
     if(verbose)
     {
       std::cout << "Input polygon:";
@@ -265,15 +271,48 @@ void test_merge_duplicate_polygons(const bool /*verbose*/ = false)
   // Remove all duplicates
   polygons_copy = polygons;
   res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
-                                                      params::erase_all_duplicates(true)
+                                                      params::erase_policy(Erase_policy::ERASE_ALL)
                                                              .require_same_orientation(false));
   assert(res == 5 && polygons_copy.size() == 1);
 
   // Remove all duplicates but different orientations are different polygons
-  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons,
-                                                      params::erase_all_duplicates(true)
+  polygons_copy = polygons;
+  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
+                                                      params::erase_policy(Erase_policy::ERASE_ALL)
                                                              .require_same_orientation(true));
-  assert(res == 2 && polygons.size() == 4);
+  assert(res == 2 && polygons_copy.size() == 4);
+
+  // Remove even duplicates
+  polygons_copy = polygons;
+  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
+                                                      params::erase_policy(Erase_policy::KEEP_ONE_IF_ODD)
+                                                             .require_same_orientation(false));
+  assert(res == 4 && polygons_copy.size() == 2);
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  // Remove all duplicates (Deprecated parameter)
+  polygons_copy = polygons;
+  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
+                                                      params::erase_all_duplicates(true)
+                                                             .require_same_orientation(false));
+  assert(res == 5 && polygons_copy.size() == 1);
+
+  // Contradiction between erase_policy KEEP_ONE and the deprecated parameter
+  polygons_copy = polygons;
+  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
+                                                      params::erase_all_duplicates(true)
+                                                             .erase_policy(Erase_policy::KEEP_ONE)
+                                                             .require_same_orientation(false));
+  assert(res == 3 && polygons_copy.size() == 3);
+
+  // Contradiction between erase_policy KEEP_ONE_IF_ODD and the deprecated parameter
+  polygons_copy = polygons;
+  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
+                                                      params::erase_all_duplicates(true)
+                                                             .erase_policy(Erase_policy::KEEP_ONE_IF_ODD)
+                                                             .require_same_orientation(false));
+  assert(res == 4 && polygons_copy.size() == 2);
+#endif
 }
 
 void test_simplify_polygons(const bool /*verbose*/ = false)

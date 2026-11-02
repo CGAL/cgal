@@ -328,9 +328,11 @@ void CGAL_Lab_orient_soup_plugin::cleanSoup()
   RepairDialog dlg;
   if(!dlg.exec())
     return;
-  bool b1 = dlg.eadCheckbox->isChecked(), b2 = dlg.rsoCheckBox->isChecked();
+  CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy b1 =    (dlg.keepOneRadio->isChecked()) ?      CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE
+                                                                     :( (dlg.keepOneIfOddRadio->isChecked()) ? CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE_IF_ODD
+                                                                     :/* dlg.eraseAllRadio->isChecked()) ? */  CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::ERASE_ALL);
+  bool b2 = dlg.rsoCheckBox->isChecked();
   item->repair(b1, b2);
-
   item->invalidateOpenGLBuffers();
   item->itemChanged();
 }

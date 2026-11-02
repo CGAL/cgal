@@ -46,6 +46,15 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
+ /*!
+ * \ingroup PMP_combinatorial_repair_grp
+ *
+ * \brief Policies controlling how duplicate polygons are handled in polygon soup repair functions.
+ */
+enum class Duplicate_polygon_erase_policy {
+  ERASE_ALL, KEEP_ONE, KEEP_ONE_IF_ODD
+};
+
 namespace internal {
 
 template <typename Stream, typename Polygon>
@@ -585,7 +594,7 @@ std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
 
 namespace internal {
 
-// Find the position of the (arbitrarily chose) first point of the canonical point
+// Find the position of the (arbitrarily chosen) first point of the canonical point
 // and whether we should order from left to right or the opposite
 template <typename Traits, typename PointRange, typename Polygon>
 void canonical_polygon_markers(const PointRange& points,
@@ -610,7 +619,7 @@ void canonical_polygon_markers(const PointRange& points,
             << " points[" << *min_id << "] = " << points[*min_id] << std::endl;
 #endif
 
-  // Decide arbitrarily whether we are reading from left to right or the opposite
+  // Observe the previous and next points to determine whether the polygon should be reversed or not
   const std::size_t last = polygon.size() - 1;
   std::size_t pos_prev = (first == 0) ? last : first - 1;
   std::size_t pos_next = (first == last) ? 0 : first + 1;
@@ -627,52 +636,33 @@ void canonical_polygon_markers(const PointRange& points,
 }
 
 template <typename Polygon>
-Polygon construct_canonical_polygon_with_markers(const Polygon& polygon,
-                                                 const std::size_t first,
-                                                 const bool reversed)
+void canonicalize_polygon_with_markers(Polygon& polygon,
+                                       const std::size_t first,
+                                       const bool reversed)
 {
   const std::size_t polygon_size = polygon.size();
 
-  Polygon canonical_polygon;
-  CGAL::internal::resize(canonical_polygon, polygon_size);
+  if(polygon_size < 2)
+    return;
+
+  std::rotate(polygon.begin(), polygon.begin() + first, polygon.end());
 
   if(reversed)
-  {
-    std::size_t rfirst = first + 1;
-    std::size_t pos = 0;
-    for(std::size_t i=rfirst; i --> 0 ;) // first to 0
-      canonical_polygon[pos++] = polygon[i];
-    for(std::size_t i=polygon_size; i --> rfirst ;) // polygon_size-1 to first+1
-      canonical_polygon[pos++] = polygon[i];
-  }
-  else
-  {
-    std::size_t pos = 0;
-    for(std::size_t i=first; i<polygon_size; ++i)
-      canonical_polygon[pos++] = polygon[i];
-    for(std::size_t i=0; i<first; ++i)
-      canonical_polygon[pos++] = polygon[i];
-  }
-
-  CGAL_postcondition(canonical_polygon[0] == polygon[first]);
-  CGAL_postcondition(canonical_polygon.size() == polygon_size);
-
-  return canonical_polygon;
+    std::reverse(polygon.begin() + 1, polygon.end());
 }
 
 // 'reversed' indicates whether the canonical polygon has the same order as input polygon.
 template <typename Traits, typename PointRange, typename Polygon>
-Polygon construct_canonical_polygon(const PointRange& points,
-                                    const Polygon& polygon,
-                                    bool& reversed,
-                                    const Traits& traits = Traits())
+void canonicalize_polygon(const PointRange& points,
+                          Polygon& polygon,
+                          bool& reversed,
+                          const Traits& traits = Traits())
 {
   if(polygon.size() < 2)
   {
     reversed = false;
-    return polygon;
+    return;
   }
-
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Input polygon:";
@@ -681,23 +671,22 @@ Polygon construct_canonical_polygon(const PointRange& points,
 
   std::size_t first;
   canonical_polygon_markers(points, polygon, first, reversed, traits);
-  Polygon canonical_polygon = construct_canonical_polygon_with_markers(polygon, first, reversed);
+
+  canonicalize_polygon_with_markers(polygon, first, reversed);
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Canonical polygon:";
-  internal::print_polygon(std::cout, canonical_polygon);
+  internal::print_polygon(std::cout, polygon);
 #endif
-
-  return canonical_polygon;
 }
 
 template <typename Traits, typename PointRange, typename Polygon>
-Polygon construct_canonical_polygon(const PointRange& points,
-                                    const Polygon& polygon,
-                                    const Traits& traits = Traits())
+void canonicalize_polygon(const PointRange& points,
+                          Polygon& polygon,
+                          const Traits& traits = Traits())
 {
   bool useless = false;
-  return construct_canonical_polygon(points, polygon, useless, traits);
+  canonicalize_polygon(points, polygon, useless, traits);
 }
 
 template <typename PointRange, typename PolygonRange>
@@ -840,8 +829,8 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
   for(P_ID polygon_index=0, end=polygons.size(); polygon_index!=end; ++polygon_index)
   {
     bool reversed;
-    canonical_polygons[polygon_index] =
-      internal::construct_canonical_polygon(points, polygons[polygon_index], reversed, traits);
+    canonical_polygons[polygon_index] = polygons[polygon_index];
+    internal::canonicalize_polygon(points, canonical_polygons[polygon_index], reversed, traits);
 
     if(reversed)
       is_reversed.set(polygon_index);
@@ -900,12 +889,13 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 ///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 ///   \cgalParamNEnd
 ///
-///   \cgalParamNBegin{erase_all_duplicates}
-///     \cgalParamDescription{Parameter to indicate, when multiple polygons are duplicates,
-///                           whether all the duplicate polygons should be removed
-///                           or if one (arbitrarily chosen) face should be kept.}
-///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`false`}
+///   \cgalParamNBegin{erase_policy}
+///     \cgalParamDescription{specifies the policy applied when multiple polygons are duplicates:
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::ERASE_ALL` removes all duplicates.
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE` keeps one arbitrarily chosen polygon.
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE_IF_ODD` keeps one polygon if the number of duplicate polygons is odd, and removes all of them otherwise.}
+///     \cgalParamType{`CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy`}
+///     \cgalParamDefault{`CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE`}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{require_same_orientation}
@@ -927,15 +917,31 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+
+  using Policy = Duplicate_polygon_erase_policy;
 
   typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::P_ID                         P_ID;
 
-  const bool erase_all_duplicates = choose_parameter(get_parameter(np, internal_np::erase_all_duplicates), false);
+  Policy erase_policy = choose_parameter(get_parameter(np, internal_np::erase_policy), Policy::KEEP_ONE);
+#ifndef CGAL_NO_DEPRECATED_CODE
+  if constexpr(parameters::is_default_parameter<NamedParameters, internal_np::erase_policy_t>::value)
+    if(choose_parameter(get_parameter(np, internal_np::erase_all_duplicates), false)){
+      // CGAL_warning_msg(false, "The named parameter 'erase_all_duplicates' is deprecated. Use 'erase_policy' instead.");
+      erase_policy = Policy::ERASE_ALL;
+    }
+#endif // CGAL_NO_DEPRECATED_CODE
+
   const bool same_orientation = choose_parameter(get_parameter(np, internal_np::require_same_orientation), false);
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Only polygons with the same orientation are duplicates: " << std::boolalpha << same_orientation << std::endl;
-  std::cout << "Erase all duplicate polygons: " << std::boolalpha << erase_all_duplicates << std::endl;
+  if(erase_policy == Policy::ERASE_ALL)
+    std::cout << "Erase policy: ERASE_ALL" << std::endl;
+  else if(erase_policy == Policy::KEEP_ONE)
+    std::cout << "Erase policy: KEEP_ONE" << std::endl;
+  else if(erase_policy == Policy::KEEP_ONE_IF_ODD)
+    std::cout << "Erase policy: KEEP_ONE_IF_ODD" << std::endl;
 #endif
 
   typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
@@ -972,7 +978,9 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
     const std::vector<P_ID>& duplicate_polygons = all_duplicate_polygons.back();
     CGAL_assertion(duplicate_polygons.size() >= 2);
 
-    std::size_t i = erase_all_duplicates ? 0 : 1;
+    std::size_t i = (erase_policy == Policy::ERASE_ALL) ? 0 :
+                    (erase_policy == Policy::KEEP_ONE) ? 1 :
+                 /* (erase_policy == Policy::KEEP_ONE_IF_ODD) ?*/ duplicate_polygons.size() % 2;
     for(; i<duplicate_polygons.size(); ++i)
     {
       const P_ID polygon_to_remove_id = duplicate_polygons[i];
@@ -1122,12 +1130,13 @@ struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
 ///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 ///   \cgalParamNEnd
 ///
-///   \cgalParamNBegin{erase_all_duplicates}
-///     \cgalParamDescription{Parameter to indicate, when multiple polygons are duplicates,
-///                           whether all the duplicate polygons should be removed
-///                           or if one (arbitrarily chosen) face should be kept.}
-///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`false`}
+///   \cgalParamNBegin{erase_policy}
+///     \cgalParamDescription{specifies the policy applied when multiple polygons are duplicates:
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::ERASE_ALL` removes all duplicates.
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE` keeps one arbitrarily chosen polygon.
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE_IF_ODD` keeps one polygon if the number of duplicate polygons is odd, and removes all of them otherwise.}
+///     \cgalParamType{`CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy`}
+///     \cgalParamDefault{`CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE`}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{require_same_orientation}

@@ -50,7 +50,7 @@ Datum reference type returned by the function `datum()`. It is convertible to th
 typedef unspecified_type Datum_reference;
 
 /*!
-Type of identifiers through which the input objects are referred to. It must be a model of the concepts DefaultConstructible and Assignable.
+Type of identifiers through which the input objects are referred to. It must be a model of the concepts DefaultConstructible, Assignable, LessThanComparable and EqualityComparable.
 */
 typedef unspecified_type Id;
 

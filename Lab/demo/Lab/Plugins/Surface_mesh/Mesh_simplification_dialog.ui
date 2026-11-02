@@ -6,145 +6,156 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>311</width>
-    <height>171</height>
+    <width>632</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Stop Predicate</string>
+   <string>Surface Mesh Simplification</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Stop simplification as soon as:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QCheckBox" name="m_use_nb_edges">
-       <property name="text">
-        <string>Number of edges =</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="label_Strategy">
+         <property name="text">
+          <string>Cost &amp; Placement</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <widget class="QSpinBox" name="m_nb_edges">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>400000000</number>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QRadioButton" name="radio_GH">
+         <property name="text">
+          <string>Garland-Heckbert</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radio_LT">
+         <property name="text">
+          <string>Lindstrom-Turk</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radio_EL">
+         <property name="text">
+          <string>Edge Length / Midpoint</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer name="verticalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Vertical</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>20</width>
+         <height>40</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <widget class="QComboBox" name="m_combinatorial">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <property name="text">
-         <string>AND</string>
-        </property>
+        <widget class="QLabel" name="label_Stop">
+         <property name="text">
+          <string>Stop Criterion</string>
+         </property>
+        </widget>
        </item>
-       <item>
-        <property name="text">
-         <string>OR</string>
-        </property>
-       </item>
-      </widget>
+      </layout>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QRadioButton" name="radio_EdgeLength">
+           <property name="text">
+            <string>Edge Length</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radio_EdgeCount">
+           <property name="text">
+            <string>Edge Count</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radio_FacetCount">
+           <property name="text">
+            <string>Facet Count</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QDoubleSpinBox" name="spin_EdgeLength"/>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spin_EdgeCount"/>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spin_FacetCount"/>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Vertical</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>20</width>
+         <height>40</height>
         </size>
        </property>
       </spacer>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QCheckBox" name="m_use_edge_length">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Minimum edge length =</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="DoubleEdit" name="m_edge_length">
-       <property name="text">
-        <string>0.000</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QCheckBox" name="useBoundedPlacement">
+         <property name="text">
+          <string>Bound Placement</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>DoubleEdit</class>
-   <extends>QLineEdit</extends>
-   <header>CGAL_double_edit.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>

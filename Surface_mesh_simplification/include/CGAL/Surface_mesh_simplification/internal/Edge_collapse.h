@@ -22,6 +22,7 @@
 #include <CGAL/use.h>
 
 #include <boost/scoped_array.hpp>
+#include <boost/scoped_ptr.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -1132,6 +1133,8 @@ is_collapse_geometrically_valid(const Profile& profile, Placement_type k0)
       }
     }
   }
+
+  CGAL_SMS_TRACE(3,"collapse validity: " << res);
 
   return res;
 }

@@ -4,6 +4,7 @@
 #include <CGAL/IO/STL.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
+#include <array>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -12,7 +13,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef K::Point_3                                            Point;
 typedef std::vector<std::size_t>                              Face;
 
-template <typename Point_type, typename Polygon_type>
+template <typename PointType, typename PolygonType>
 void read(const char* fname, std::size_t v, std::size_t f,
           bool is_binary = false, bool should_fail = false)
 {
@@ -20,13 +21,13 @@ void read(const char* fname, std::size_t v, std::size_t f,
   std::ifstream input(fname, std::ios::in | std::ios::binary);
 
   std::cout << "Types: " << std::endl;
-  std::cout << typeid(Point_type).name() << std::endl;
-  std::cout << typeid(Polygon_type).name() << std::endl;
+  std::cout << typeid(PointType).name() << std::endl;
+  std::cout << typeid(PolygonType).name() << std::endl;
 
   std::cout << "Expecting " << v << " vertices and " << f << " triangles" << std::endl;
 
-  std::vector<Point_type> points;
-  std::vector<Polygon_type> faces;
+  std::vector<PointType> points;
+  std::vector<PolygonType> faces;
   bool ok = CGAL::IO::read_STL(input, points, faces, CGAL::parameters::use_binary_mode(is_binary));
   assert(ok != should_fail);
   if(!should_fail)
@@ -45,7 +46,7 @@ void read(const char* fname, std::size_t v, std::size_t f,
   }
 }
 
-void further_tests()
+void test_types()
 {
   // bunch of types to test
   typedef std::array<double, 3>                                       Point_type_1;
@@ -56,16 +57,42 @@ void further_tests()
   typedef std::vector<int>                                            Polygon_type_2;
   typedef std::basic_string<int>                                      Polygon_type_3;
 
-  read<Point_type_1, Polygon_type_1>("data/cube.stl", 8, 12, true);
-  read<Point_type_1, Polygon_type_2>("data/triangle.stl", 3, 1);
+  auto test_all_combinations = [](const char* fname, std::size_t v, std::size_t f,
+                                  bool is_binary = false, bool should_fail = false)
+  {
+    read<Point_type_1, Polygon_type_1>(fname, v, f, is_binary, should_fail);
+    read<Point_type_1, Polygon_type_2>(fname, v, f, is_binary, should_fail);
+    read<Point_type_1, Polygon_type_3>(fname, v, f, is_binary, should_fail);
 
-  read<Point_type_1, Polygon_type_3>("data/ascii-tetrahedron.stl", 4, 4);
-  read<Point_type_2, Polygon_type_1>("data/binary-tetrahedron-nice-header.stl", 4, 4, true);
-  read<Point_type_2, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4, true);
-  read<Point_type_2, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-2.stl", 4, 4, true);
-  read<Point_type_3, Polygon_type_1>("data/binary-tetrahedron-non-standard-header-3.stl", 4, 4, true);
-  read<Point_type_3, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-4.stl", 4, 4, true);
-  read<Point_type_3, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-5.stl", 4, 4, true);
+    read<Point_type_2, Polygon_type_1>(fname, v, f, is_binary, should_fail);
+    read<Point_type_2, Polygon_type_2>(fname, v, f, is_binary, should_fail);
+    read<Point_type_2, Polygon_type_3>(fname, v, f, is_binary, should_fail);
+
+    read<Point_type_3, Polygon_type_1>(fname, v, f, is_binary, should_fail);
+    read<Point_type_3, Polygon_type_2>(fname, v, f, is_binary, should_fail);
+    read<Point_type_3, Polygon_type_3>(fname, v, f, is_binary, should_fail);
+  };
+
+  test_all_combinations("data/cube.stl", 8, 12, true);
+  test_all_combinations("data/triangle.stl", 3, 1);
+
+  test_all_combinations("data/ascii-tetrahedron.stl", 4, 4);
+
+  test_all_combinations("data/binary-tetrahedron-nice-header.stl", 4, 4, true);
+  test_all_combinations("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4, true);
+  test_all_combinations("data/binary-tetrahedron-non-standard-header-2.stl", 4, 4, true);
+  test_all_combinations("data/binary-tetrahedron-non-standard-header-3.stl", 4, 4, true);
+  test_all_combinations("data/binary-tetrahedron-non-standard-header-4.stl", 4, 4, true);
+  test_all_combinations("data/binary-tetrahedron-non-standard-header-5.stl", 4, 4, true);
+}
+
+void test_6374()
+{
+  std::vector<Point> points;
+  std::vector<Face> polygons;
+  bool ok = CGAL::IO::read_STL("data/binary-issue-6374.stl", points, polygons, CGAL::parameters::verbose(true));
+  assert(ok);
+  assert(points.size() == 8 && polygons.size() == 12);
 }
 
 int main(int argc, char** argv)
@@ -127,17 +154,9 @@ int main(int argc, char** argv)
     assert(CGAL::squared_distance(points[i], pts_backup[i]) < 1e-6);
   assert(polygons == pls_backup);
 
-  further_tests();
+  test_types();
 
-  // issue 6374
-  if(argc == 1)
-  {
-    points.clear();
-    polygons.clear();
-    bool ok = CGAL::IO::read_STL("data/binary-issue-6374.stl", points, polygons, CGAL::parameters::verbose(true));
-    assert(ok);
-    assert(points.size()==8 && polygons.size()==12);
-  }
+  test_6374();
 
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;

@@ -525,9 +525,6 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
                                  VertexLabelMap vertex_label_map,
                                  const NamedParameters& np = parameters::default_values())
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
   typedef boost::graph_traits<InputGraph> GT;
   typedef typename GT::edge_descriptor input_edge_descriptor;
   typedef typename GT::vertex_descriptor input_vertex_descriptor;
@@ -686,9 +683,6 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
       VertexLabelMap vertex_label_map,
       const NamedParameters& np)
   {
-    using parameters::choose_parameter;
-    using parameters::get_parameter;
-
     typedef boost::graph_traits<InputGraph> GT;
     typedef typename GT::edge_descriptor input_edge_descriptor;
     typedef typename GT::vertex_descriptor input_vertex_descriptor;

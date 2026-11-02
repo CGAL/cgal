@@ -37,6 +37,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
+#include <CGAL/Arrangement_2/do_segments_intersect.h>
 
 namespace CGAL {
 
@@ -98,9 +99,6 @@ public:
   /*! checks if two segments or if two points are identical. */
   using Equal_2 = typename Kernel::Equal_2;
 
-  /*! checks if two segments intersect. */
-  using Do_intersect_2 = typename Kernel::Do_intersect_2;
-
   //@}
 
   /// \name Functor introduced here (based on the kernel)
@@ -121,8 +119,7 @@ public:
      * \return The relative position of `cv1` with respect to `cv2` immdiately
      *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
                                  const Point_2& CGAL_precondition_code(p)) const {
       Kernel kernel;
 
@@ -137,16 +134,13 @@ public:
           kernel.construct_vertex_2_object();
         const Point_2& source1 = construct_vertex(cv1, 0);
         const Point_2& target1 = construct_vertex(cv1, 1);
-        const Point_2& left1 =
-          (kernel.less_xy_2_object()(source1, target1)) ? source1 : target1;
+        const Point_2& left1 = (kernel.less_xy_2_object()(source1, target1)) ? source1 : target1;
         const Point_2& source2 = construct_vertex(cv2, 0);
         const Point_2& target2 = construct_vertex(cv2, 1);
-        const Point_2& left2 =
-          (kernel.less_xy_2_object()(source2, target2)) ? source2 : target2;
+        const Point_2& left2 = (kernel.less_xy_2_object()(source2, target2)) ? source2 : target2;
         );
 
-      CGAL_precondition(compare_xy(left1, p) == SMALLER &&
-                        compare_xy(left2, p) == SMALLER);
+      CGAL_precondition(compare_xy(left1, p) == SMALLER && compare_xy(left2, p) == SMALLER);
 
       // Compare the slopes of the two segments to determine thir relative
       // position immediately to the left of q.
@@ -157,8 +151,7 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_left_2` functor object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(); }
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const { return Compare_y_at_x_left_2(); }
 
   /*! \class
    * A functor for comparing two segments to the right of a point.
@@ -176,8 +169,7 @@ public:
      *         to the right of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
 
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
                                  const Point_2& CGAL_precondition_code(p)) const {
       Kernel kernel;
 
@@ -192,16 +184,13 @@ public:
           kernel.construct_vertex_2_object();
         const Point_2& source1 = construct_vertex(cv1, 0);
         const Point_2& target1 = construct_vertex(cv1, 1);
-        const Point_2& right1 =
-          (kernel.less_xy_2_object()(source1, target1)) ? target1 : source1;
+        const Point_2& right1 = (kernel.less_xy_2_object()(source1, target1)) ? target1 : source1;
         const Point_2& source2 = construct_vertex(cv2, 0);
         const Point_2& target2 = construct_vertex(cv2, 1);
-        const Point_2& right2 =
-          (kernel.less_xy_2_object()(source2, target2)) ? target2 : source2;
+        const Point_2& right2 = (kernel.less_xy_2_object()(source2, target2)) ? target2 : source2;
         );
 
-      CGAL_precondition(compare_xy(right1, p) == LARGER &&
-                        compare_xy(right2, p) == LARGER);
+      CGAL_precondition(compare_xy(right1, p) == LARGER && compare_xy(right2, p) == LARGER);
 
       // Compare the slopes of the two segments to determine thir relative
       // position immediately to the left of q.
@@ -210,16 +199,46 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_right_2` functor object. */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(); }
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const { return Compare_y_at_x_right_2(); }
+
+  /*! \class Do_intersect
+   * A functor for intersection detection
+   */
+  class Do_intersect_2 {
+  protected:
+    using Traits = Arr_non_caching_segment_basic_traits_2<Kernel>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs
+     * \param traits the traits (in case it has state)
+     */
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_non_caching_segment_basic_traits_2<Kernel>;
+
+  public:
+    /*! determines whether two given \f$x\f$-monotone curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \param consider_common_endpoints indicates whether common endpoints should be counted as intersections.
+     * \return `true` if `consider_common_endpoints` is true and `xcv1` and `xcv2` intersect or if
+     *  `consider_common_endpoints` is `false and at least one of the interiors of `xcv1` and `xcv2` intersect,
+     *   and `false` otherwise.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                    bool consider_common_endpoints = true) const
+    { return Aos_2::internal::do_segment_intersect(xcv1, xcv2, consider_common_endpoints, m_traits); }
+  };
+
+  /*! obtains a `Do_intersect_2` functor object. */
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
+
   //@}
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  using Approximate_number_type = double;
-  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
-  using Approximate_point_2 = Approximate_kernel::Point_2;
-
   class Approximate_2 {
   protected:
     using Traits = Arr_non_caching_segment_basic_traits_2<Kernel>;
@@ -235,6 +254,10 @@ public:
     friend class Arr_non_caching_segment_basic_traits_2<Kernel>;
 
   public:
+    using Approximate_number_type = double;
+    using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
+    using Approximate_point_2 = Approximate_kernel::Point_2;
+
     /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).

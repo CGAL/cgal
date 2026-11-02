@@ -117,7 +117,13 @@ public:
   typedef SHalfloop*                                    SHalfloop_iterator;
   typedef const SHalfloop*                              SHalfloop_const_iterator;
 
-  typedef CGAL::Object_handle Object_handle;
+  typedef typename CGAL::Type_pack<SVertex_handle,      SVertex_const_handle,
+                                   SHalfedge_handle,    SHalfedge_const_handle,
+                                   SHalfloop_handle,    SHalfloop_const_handle,
+                                   SFace_handle,        SFace_const_handle>
+                                                        Object;
+
+  typedef typename CGAL::Object_handle<Object>          Object_handle;
   /*{\Mtypemember a generic handle to an object of |\Mvar|.
   The kind of the object can be determined and the object assigned
   by the function:\\
@@ -125,11 +131,12 @@ public:
   where the function returns |true| iff the assignment of |o| to
   |h| was valid.}*/
 
-  typedef std::list<Object_handle>                     Object_list;
-  typedef typename Object_list::iterator               Object_iterator;
-  typedef typename Object_list::const_iterator         Object_const_iterator;
-  typedef std::optional<Object_iterator>             Optional_object_iterator ;
-  typedef Generic_handle_map<Optional_object_iterator> Handle_to_iterator_map;
+  typedef typename std::list<Object_handle>             Object_list;
+  typedef typename Object_list::iterator                Object_iterator;
+  typedef typename Object_list::const_iterator          Object_const_iterator;
+  typedef typename Object_list::const_iterator          Object_const_handle;
+  typedef std::optional<Object_iterator>                Optional_object_iterator;
+  typedef Generic_handle_map<Optional_object_iterator>  Handle_to_iterator_map;
 
   typedef Sphere_map*       Constructor_parameter;
   typedef const Sphere_map* Constructor_const_parameter;
@@ -558,13 +565,13 @@ pointer_update(const Sphere_map<K, I, M>& D)
         fci != f->boundary_entry_objects().end(); ++fci) {
       if ( fci.is_svertex() )
       { v = SVertex_handle(fci);
-        *fci = make_object(VM[v]); store_sm_boundary_item(v,fci); }
+        *fci = Object_handle(VM[v]); store_sm_boundary_item(v,fci); }
       else if ( fci.is_shalfedge() )
       { e = SHalfedge_handle(fci);
-        *fci = make_object(EM[e]); store_sm_boundary_item(e,fci); }
+        *fci = Object_handle(EM[e]); store_sm_boundary_item(e,fci); }
       else if ( fci.is_shalfloop() )
       { l = SHalfloop_handle(fci);
-        *fci = make_object(LM[l]); store_sm_boundary_item(l,fci); }
+        *fci = Object_handle(LM[l]); store_sm_boundary_item(l,fci); }
       else CGAL_error_msg("damn wrong boundary item in face.");
     }
   }

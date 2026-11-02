@@ -416,29 +416,16 @@ public:
   // This function is public only because it is used in the tests
   SC_Iso_cuboid_3 construct_bbox(const double offset)
   {
+    CGAL_precondition(offset > 0.);
     // Input axis-aligned bounding box
-    SC_Iso_cuboid_3 bbox = m_oracle.bbox();
-    const SC_Point_3 bbox_centroid = midpoint((bbox.min)(), (bbox.max)());
-
+    // SC_Iso_cuboid_3 bbox = m_oracle.bbox();
+    Bbox_3 bbox = m_oracle.bbox();
     // Scale a bit to create the initial points not too close to the input
     double scaling = 1.2;
-    CGAL::Aff_transformation_3<SC> scale(SCALING, scaling);
-    bbox = SC_Iso_cuboid_3(scale.transform((bbox.min)()), scale.transform((bbox.max)()));
+    bbox.scale(scaling);
+    bbox.pad(std::sqrt(3.) * offset);
 
-    // Translate bbox back to initial centroid
-    const SC_Point_3 bbox_transformed_centroid = midpoint((bbox.min)(), (bbox.max)());
-    const SC_Vector_3 diff_centroid = bbox_centroid - bbox_transformed_centroid;
-    CGAL::Aff_transformation_3<SC> centroid_translate(TRANSLATION, diff_centroid);
-    bbox = SC_Iso_cuboid_3(centroid_translate.transform((bbox.min)()),
-                           centroid_translate.transform((bbox.max)()));
-
-    // Add the offset
-    SC_Vector_3 offset_ext = std::sqrt(3.) * offset * SC_Vector_3(1, 1, 1);
-    CGAL::Aff_transformation_3<SC> translate_m(TRANSLATION, - offset_ext);
-    CGAL::Aff_transformation_3<SC> translate_M(TRANSLATION,   offset_ext);
-    bbox = SC_Iso_cuboid_3(translate_m.transform((bbox.min)()), translate_M.transform((bbox.max)()));
-
-    return bbox;
+    return {bbox};
   }
 
 private:
@@ -1141,12 +1128,15 @@ private:
     Gate new_gate(f, m_tr);
 #endif
 
-#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
-    Point_3 steiner_point;
-    Steiner_status steiner_status = compute_steiner_point(new_gate, steiner_point);
-    new_gate.m_steiner_status = steiner_status;
-    if(steiner_status == Steiner_status::RULE_1 || steiner_status == Steiner_status::RULE_2)
-      new_gate.m_steiner_point = steiner_point;
+#ifdef CGAL_AW3_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+    if(status != Facet_status::HAS_INFINITE_NEIGHBOR)
+    {
+      Point_3 steiner_point;
+      Steiner_status steiner_status = compute_steiner_point(new_gate, steiner_point);
+      new_gate.m_steiner_status = steiner_status;
+      if(steiner_status == Steiner_status::RULE_1 || steiner_status == Steiner_status::RULE_2)
+        new_gate.m_steiner_point = steiner_point;
+    }
 #endif
 
 #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE

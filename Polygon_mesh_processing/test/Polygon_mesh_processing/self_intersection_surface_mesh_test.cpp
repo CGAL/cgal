@@ -20,7 +20,7 @@ namespace PMP = ::CGAL::Polygon_mesh_processing;
 namespace CP = ::CGAL::parameters;
 
 template <typename K>
-int test_self_intersections(const std::string filename,
+int test_self_intersections(const std::filesystem::path& filename,
                             const bool expected)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
@@ -84,7 +84,7 @@ int test_self_intersections(const std::string filename,
 }
 
 template <typename K>
-int test_limited_self_intersections(const std::string& filename)
+int test_limited_self_intersections(const std::filesystem::path& filename)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
   typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
@@ -138,7 +138,7 @@ int main(int argc, char** argv)
 
   // First test ----------------------------------------------------------------
   bool expected = false;
-  std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
   if(argc > 1) {
     assert(argc > 2);
     std::stringstream ss(argv[2]);
@@ -207,6 +207,21 @@ int main(int argc, char** argv)
 
   std::cout << "Test with maximum_number (EPECK):" << std::endl;
   r += test_limited_self_intersections<EPECK>(filename);
+
+  // test degenerate surface mesh
+  {
+    CGAL::Surface_mesh<EPICK::Point_3> mesh;
+
+    auto v0 = mesh.add_vertex(EPICK::Point_3(0.0, 0.0, 0.0));
+    auto v1 = mesh.add_vertex(EPICK::Point_3(1.0, 0.0, 0.0));
+    auto v2 = mesh.add_vertex(EPICK::Point_3(0.0, 1.0, 0.0));
+
+    mesh.add_face(v0, v1, v2);
+    mesh.add_face(v0, v2, v1);
+
+    assert(CGAL::Polygon_mesh_processing::does_self_intersect(mesh));
+  }
+
 
   return r;
 }

@@ -930,7 +930,7 @@ protected:
   {
     // std::cout<<"************************************************"<<std::endl;
     Dart_descriptor initdart, curdart;
-    Original_dart_const_descriptor d1, d2;
+    Original_dart_const_descriptor d1;
     for (typename Local_map::Dart_range::iterator
          it=get_local_map().darts().begin();
          it!=get_local_map().darts().end(); ++it)

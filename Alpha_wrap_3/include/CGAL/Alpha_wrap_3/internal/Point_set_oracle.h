@@ -130,11 +130,11 @@ public:
     // So if one wanted to bench the flood fill runtime, it would be skewed by the time it takes
     // to accelerate the tree.
     this->tree().accelerate_distance_queries();
-  }
 
-#ifdef CGAL_AW2_DEBUG
+#ifdef CGAL_AW3_DEBUG
     std::cout << "PS Tree: " << this->tree().size() << " primitives" << std::endl;
 #endif
+  }
 };
 
 } // namespace internal

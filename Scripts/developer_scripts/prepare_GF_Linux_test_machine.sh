@@ -324,6 +324,7 @@ if command -v dnf5 &>/dev/null; then
   $SUDO_OR_PRINT tee /etc/systemd/system/dnf5-automatic.timer.d/time.conf >/dev/null <<EOF
 [Timer]
 OnBootSec=
+RandomizedDelaySec=5m
 OnCalendar= 20:00
 EOF
   color_echo "Reloading systemd and enabling dnf5-automatic.timer."
@@ -355,5 +356,54 @@ color_echo "Reloading systemd and enabling podman.socket."
 $SUDO_OR_PRINT systemctl daemon-reload
 $SUDO_OR_PRINT systemctl enable --now podman.socket
 $SUDO_OR_PRINT systemctl restart podman.socket
+
+color_echo "Configure GRUB to use the serial console"
+$SUDO_OR_PRINT sed -i -E '/^GRUB_CMDLINE_LINUX="/{
+  /console=ttyS0,115200n8/! s/"$/ console=ttyS0,115200n8"/
+  /console=tty0/! s/"$/ console=tty0"/
+}' /etc/default/grub
+# shellcheck disable=SC2016
+$SUDO_OR_PRINT sed -i -E '
+  /^GRUB_TERMINAL_INPUT=/ {
+    s|^GRUB_TERMINAL_INPUT=.*$|GRUB_TERMINAL_INPUT="console serial"|
+    x
+    s/.*/found/
+    x
+  }
+  ${
+    x
+    /found/! a GRUB_TERMINAL_INPUT="console serial"
+    x
+  }
+' /etc/default/grub
+# shellcheck disable=SC2016
+$SUDO_OR_PRINT sed -i -E '
+  /^GRUB_SERIAL_COMMAND=/ {
+    s|^GRUB_SERIAL_COMMAND=.*$|GRUB_SERIAL_COMMAND="serial --unit=0 --speed=115200"|
+    x
+    s/.*/found/
+    x
+  }
+  ${
+    x
+    /found/! a GRUB_SERIAL_COMMAND="serial --unit=0 --speed=115200"
+    x
+  }
+' /etc/default/grub
+# shellcheck disable=SC2016
+$SUDO_OR_PRINT sed -i -E '
+  /^GRUB_TERMINAL_OUTPUT=/ {
+    s|^GRUB_TERMINAL_OUTPUT=.*$|GRUB_TERMINAL_OUTPUT="console serial"|
+    x
+    s/.*/found/
+    x
+  }
+  ${
+    x
+    /found/! a GRUB_TERMINAL_OUTPUT="console serial"
+    x
+  }
+' /etc/default/grub
+$SUDO_OR_PRINT grub2-mkconfig -o /boot/grub2/grub.cfg
 
 color_echo "All done!"

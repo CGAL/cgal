@@ -20,8 +20,8 @@ int main() {
   segments.push_back(s2);
 
   Geom_traits traits;
-  traits.disable_all_traces();
-  traits.enable_trace(Tracing_traits::INTERSECT_2_OP);
+  traits.traits().disable_all_traces();
+  traits.traits().enable_trace(Tracing_traits::INTERSECT_2_OP);
 
   // Construct an arrangement using aggregated insertion:
   My_arrangement arr1(&traits);

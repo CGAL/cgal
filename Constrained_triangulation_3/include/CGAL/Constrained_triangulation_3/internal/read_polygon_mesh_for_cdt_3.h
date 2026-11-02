@@ -30,6 +30,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <filesystem>
 
 namespace CGAL {
 
@@ -64,7 +65,7 @@ namespace CGAL {
     auto traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
     auto verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
     bool do_repair = choose_parameter(get_parameter(np, internal_np::repair_polygon_soup), true);
-    const auto& return_error = parameters::get_parameter_reference(np, internal_np::callback);
+    auto return_error = parameters::get_parameter_reference(np, internal_np::callback);
 
     namespace PMP = CGAL::Polygon_mesh_processing;
     namespace PMP_internal = PMP::internal;
@@ -103,7 +104,7 @@ namespace CGAL {
 
   template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
   CDT_3_read_polygon_mesh_output<PolygonMesh>
-  read_polygon_mesh_for_cdt_3(const std::string &fname,
+  read_polygon_mesh_for_cdt_3(const std::filesystem::path& fname,
                               const NamedParameters &np = parameters::default_values())
   {
     CDT_3_read_polygon_mesh_output<PolygonMesh> result;

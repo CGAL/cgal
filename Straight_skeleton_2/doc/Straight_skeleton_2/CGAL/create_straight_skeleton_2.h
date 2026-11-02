@@ -1,14 +1,14 @@
 namespace CGAL {
 
-// ---------------------------------------------- INTERIOR -----------------------------------------
+// ############################################## INTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2SkeletonFunctions
 
 \brief creates a straight skeleton in the interior of the 2D polygon with holes.
 
-The outer boundary of the polygon is given by the point sequence `[outer_contour_vertices_begin,outer_contour_vertices_end[`
-and its holes given by `[holes_begin, holes_end[`.
+The outer boundary of the polygon is given by the point sequence `[outer_contour_vertices_begin,outer_contour_vertices_end)`
+and its holes given by `[holes_begin, holes_end)`.
 
 \tparam PointIterator must be a model of `InputIterator` with value type `InK::Point_2`.
 \tparam HoleIterator must be a model of `InputIterator` with `value_type` a model of `SequenceContainer`
@@ -17,45 +17,48 @@ and its holes given by `[holes_begin, holes_end[`.
 
 \note `Cartesian_converter` is used to convert from `InK::Point_2` to `SsK::Point_2`, if they differ.
 
-\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end[` describes a weakly simple polygon
+\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end)` describes a weakly simple polygon
       that is oriented counterclockwise.
-\\pre the range `[holes_begin, holes_end[` describes a sequence of weakly simple polygons that are oriented clockwise.
+\\pre the range `[holes_begin, holes_end)` describes a sequence of weakly simple polygons that are oriented clockwise.
 \pre Holes neither intersect each other nor the outer boundary.
 
 \sa `CGAL::create_exterior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename PointIterator, typename HoleIterator, typename SsK>
+template <typename PointIterator,
+          typename HoleIterator,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
                                     PointIterator outer_contour_vertices_end,
                                     HoleIterator holes_begin,
                                     HoleIterator holes_end,
-                                    SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                    const SsK& k = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2SkeletonFunctions
 
 \brief creates a straight skeleton in the interior of the 2D polygon.
 
-The outer boundary of the polygon is given by the point sequence `[outer_contour_vertices_begin,outer_contour_vertices_end[`.
+The outer boundary of the polygon is given by the point sequence `[outer_contour_vertices_begin,outer_contour_vertices_end)`.
 
 \tparam PointIterator must be a model of `InputIterator` with value type `InK::Point_2`.
 \tparam SsK must be a model of `Kernel`.
 
 \note `Cartesian_converter` is used to convert from `InK::Point_2` to `SsK::Point_2`, if they differ.
 
-\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end[` describes a weakly simple polygon
+\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end)` describes a weakly simple polygon
       that is oriented counterclockwise.
 
 \sa `CGAL::create_exterior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename PointIterator, typename SsK>
+template <typename PointIterator,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
                                     PointIterator outer_contour_vertices_end,
-                                    SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                    const SsK& k = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2SkeletonFunctions
@@ -78,12 +81,13 @@ create_interior_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
 \sa `CGAL::create_exterior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename Polygon, typename SsK>
+template <typename Polygon,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_straight_skeleton_2(const Polygon& polygon,
-                                    SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                    const SsK& k = SsK());
 
-// ---------------------------------------------- EXTERIOR -----------------------------------------
+// ############################################## EXTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2SkeletonFunctions
@@ -91,7 +95,7 @@ create_interior_straight_skeleton_2(const Polygon& polygon,
 \brief creates a straight skeleton in the exterior of a 2D polygon with holes.
 
 The function returns a straight skeleton in the <I>limited exterior</I> of the 2D polygon `P`
-given by the point sequence `[vertices_begin,vertices_end[`.
+given by the point sequence `[vertices_begin,vertices_end)`.
 The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q`
 with `P` as its hole and a rectangular frame `F` as outer boundary.
 The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`.
@@ -109,12 +113,14 @@ from this exterior skeleton, as computed by the function `compute_outer_frame_ma
 \sa `CGAL::create_interior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename FT, typename PointIterator, typename SsK>
+template <typename FT,
+          typename PointIterator,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
-create_exterior_straight_skeleton_2(FT max_offset,
+create_exterior_straight_skeleton_2(const FT& max_offset,
                                     PointIterator vertices_begin,
                                     PointIterator vertices_end,
-                                    SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                    const SsK& k = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2SkeletonFunctions
@@ -143,10 +149,12 @@ from this exterior skeleton, as computed by the function `compute_outer_frame_ma
 \sa `CGAL::create_interior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename FT, typename Polygon, typename SsK>
+template <typename FT,
+          typename Polygon,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
-create_exterior_straight_skeleton_2(FT max_offset,
+create_exterior_straight_skeleton_2(const FT& max_offset,
                                     const Polygon& P,
-                                    SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                    const SsK& k = SsK());
 
 } /* namespace CGAL */

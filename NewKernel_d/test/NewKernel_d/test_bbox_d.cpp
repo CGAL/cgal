@@ -37,5 +37,9 @@ int main()
 
   CGAL::Bbox_3 bb_3(0,0, 0, 1, 1,1);
   BBox3 bb_d3(bb_3);
+  bb_3.pad(1.0);
+  BBox3 bb_d3_padded(bb_3);
+  bb_d3.pad(1.0);
+  assert(bb_d3 == bb_d3_padded);
 
 }

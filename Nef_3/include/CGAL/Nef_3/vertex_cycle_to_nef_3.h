@@ -65,7 +65,7 @@ class Compare_face {
 template<typename Items,
   typename Edge, typename CompareEdges> class Index_matcher {
  public:
-  Index_matcher() {}
+  Index_matcher(bool /*withTwin*/) {}
   template<typename Handle>
   void set_index(Handle /*h*/, Edge /*e*/) {}
 };

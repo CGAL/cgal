@@ -51,8 +51,7 @@ int main(int argc, char **argv) {
   // Build the octree using our custom split predicate
   octree.refine(Split_by_ratio(2));
 
-  // Print out the tree
-  std::cout << octree;
+  std::cout << "The depth of the octree is " << octree.depth() << std::endl;
 
   return EXIT_SUCCESS;
 }

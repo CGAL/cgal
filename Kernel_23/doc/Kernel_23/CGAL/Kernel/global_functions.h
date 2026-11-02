@@ -862,45 +862,27 @@ const CGAL::Point_3<Kernel>& t);
 
 /// @}
 
-/// \defgroup compare_scalar_product_grp CGAL::compare_scalar_product()
 /// \ingroup kernel_global_function
-/// \sa `compare_distance_to_point_grp`
-/// \sa `compare_signed_distance_to_line_grp`
-/// \sa `compare_signed_distance_to_plane_grp`
-/// \sa `has_larger_distance_to_point_grp`
-/// \sa `has_larger_signed_distance_to_line_grp`
-/// \sa `has_larger_signed_distance_to_plane_grp`
-/// \sa `has_smaller_distance_to_point_grp`
-/// \sa `has_smaller_signed_distance_to_line_grp`
-/// \sa `has_smaller_signed_distance_to_plane_grp`
-/// @{
 
 /*!
-returns `CGAL::LARGER`
-iff the scalar product of `u` and
-`v` is larger than the scalar product `sp`, `CGAL::SMALLER`, iff it is smaller,
-and `CGAL::EQUAL` iff both are equal.
+returns `CGAL::SMALLER`, `CGAL::EQUAL`, or `CGAL::LARGER` if the projection of `p` onto
+a line with direction `dir` precedes, coincides, or follows that of `q` in the direction pointed by `dir`.
+
+\sa `compare_distance_to_point_grp`
+\sa `compare_signed_distance_to_line_grp`
+\sa `compare_signed_distance_to_plane_grp`
+\sa `has_larger_distance_to_point_grp`
+\sa `has_larger_signed_distance_to_line_grp`
+\sa `has_larger_signed_distance_to_plane_grp`
+\sa `has_smaller_distance_to_point_grp`
+\sa `has_smaller_signed_distance_to_line_grp`
+\sa `has_smaller_signed_distance_to_plane_grp`
 */
 template <typename Kernel>
 Comparison_result
-compare_scalar_product(const CGAL::Vector_3<Kernel> &u,
-                       const CGAL::Vector_3<Kernel> &v,
-                       const CGAL::FT<Kernel> &sp);
-
-/*!
-returns `CGAL::LARGER`
-iff the scalar product of `u` and
-`v` is larger than the scalar product of `w` and `x`, `CGAL::SMALLER`, iff it is smaller,
-and `CGAL::EQUAL` iff both are equal.
-*/
-template <typename Kernel>
-Comparison_result
-compare_scalar_product(const CGAL::Vector_3<Kernel> &u,
-                       const CGAL::Vector_3<Kernel> &v,
-                       const CGAL::Vector_3<Kernel> &w,
-                       const CGAL::Vector_3<Kernel> &x);
-
-/// @}
+compare_projection_along_direction_3(const CGAL::Point_3<Kernel> &p,
+                                     const CGAL::Point_3<Kernel> &q,
+                                     const CGAL::Direction_3<Kernel> &dir);
 
 
 /// \defgroup compare_slopes_grp CGAL::compare_slope()
