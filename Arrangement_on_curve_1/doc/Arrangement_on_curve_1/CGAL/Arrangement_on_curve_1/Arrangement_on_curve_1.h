@@ -55,7 +55,7 @@ namespace Arrangement_on_curve_1 {
  * geometry traits object, optimizing lifecycle tracking and enabling efficient
  * data synchronization across topological overlays.
  *
- * ### Binary-search mode
+ * ### Binary-Search Mode
  *
  * When `BinarySearch = true` and `TopologyTraits::UseVector = true`, the
  * `locate()` function uses binary search over the sorted vertex vector,
