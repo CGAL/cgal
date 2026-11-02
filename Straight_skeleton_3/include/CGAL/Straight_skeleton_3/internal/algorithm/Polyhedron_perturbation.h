@@ -57,6 +57,102 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
+// These 2 visitors look generic, but they are not, it's really about a ValueType being a pointer
+// and updating as to preserve the pointer information.
+template <typename ValueType>
+struct Range_updating_autoref_visitor
+  : public CGAL::Polygon_mesh_processing::Autorefinement::Default_visitor,
+    public CGAL::Polygon_mesh_processing::internal::Default_repair_PS_visitor
+{
+  using Autoref_visitor = CGAL::Polygon_mesh_processing::Autorefinement::Default_visitor;
+
+  Range_updating_autoref_visitor(const std::vector<ValueType>& old_range,
+                                 std::vector<ValueType>& new_range)
+    : old_range_(old_range), new_range_(new_range) {
+    new_range.reserve(old_range.size());
+  }
+
+  void verbatim_triangle_copy(std::size_t tgt_id, std::size_t src_id) {
+    // std::cout << "verbatim_triangle_copy " << tgt_id << " from " << src_id << std::endl;
+    new_range_.resize(tgt_id + 1);
+    new_range_[tgt_id] = old_range_[src_id];
+  }
+
+  void new_subtriangle (std::size_t tgt_id, std::size_t src_id) {
+    // std::cout << "new_subtriangle " << tgt_id << " from " << src_id << std::endl;
+    new_range_.resize(tgt_id + 1);
+    new_range_[tgt_id] = old_range_[src_id];
+  }
+
+private:
+  const std::vector<ValueType>& old_range_;
+  std::vector<ValueType>& new_range_;
+};
+
+template <typename Mesh, typename FPM>
+struct Face_property_map_updating_coref_visitor
+  : public CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<Mesh>
+{
+  using Coref_visitor = CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<Mesh>;
+  using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
+  using value_type = typename boost::property_traits<FPM>::value_type;
+
+  Face_property_map_updating_coref_visitor(FPM fpm)
+    : fpm_(fpm)
+  { }
+
+  void before_subface_creations(face_descriptor f_split, const Mesh&)
+  {
+    value_ = get(fpm_, f_split);
+  }
+
+  void after_subface_created(face_descriptor f_new, const Mesh&) const
+  {
+    put(fpm_, f_new, value_);
+  }
+
+private:
+  FPM fpm_;
+  value_type value_;
+};
+
+template <typename ValueType,
+          typename BaseVisitor = CGAL::Polygon_mesh_processing::internal::Default_repair_PS_visitor>
+struct Range_updating_repair_PS_visitor
+  : public BaseVisitor
+{
+  Range_updating_repair_PS_visitor(std::vector<ValueType>& range,
+                                    const BaseVisitor& base_visitor = BaseVisitor{})
+    : BaseVisitor(base_visitor), range_(range) { }
+
+  void swap(std::size_t pos_1, std::size_t pos_2) {
+    // std::cout << "swap(" << pos_1 << " " << pos_2 << ")" << std::endl;
+    BaseVisitor::swap(pos_1, pos_2);
+    std::swap(range_[pos_1], range_[pos_2]);
+  }
+  void duplicated_polygons(const std::vector<std::size_t>& duplicated_polygons) {
+    ValueType ptr;
+    // abusing ptr + knowing I'm keeping the first one
+    for(std::size_t i=0; i<duplicated_polygons.size(); ++i) {
+      if (range_[duplicated_polygons[i]]) {
+        // std::cout << "[] triangle " << duplicated_polygons[i] << " " << range_[duplicated_polygons[i]] << std::endl;
+        if (ptr && range_[duplicated_polygons[i]]) {
+          CGAL_assertion(ptr == range_[duplicated_polygons[i]]);
+        }
+        ptr = range_[duplicated_polygons[i]];
+      }
+    }
+    range_[duplicated_polygons[0]] = ptr;
+  }
+  void resize(std::size_t new_size) {
+    BaseVisitor::resize(new_size);
+    range_.resize(new_size);
+  }
+
+private:
+  std::vector<ValueType>& range_;
+};
+
 template <typename GeomTraits>
 class Polyhedron_perturbation
 {

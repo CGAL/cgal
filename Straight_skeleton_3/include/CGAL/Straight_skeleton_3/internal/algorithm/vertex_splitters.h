@@ -16,8 +16,8 @@
 #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/Abstract_vertex_splitter.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/Combinatorial_vertex_splitter.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/Convex_vertex_splitter.h>
-#include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/Arrangement_vertex_splitter.h>
 
+// #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/Arrangement_vertex_splitter.h>
 // #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/AngleVertexSplitter.h>
 // #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/SphereVertexSplitter.h>
 // #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/VolumeVertexSplitter.h>
