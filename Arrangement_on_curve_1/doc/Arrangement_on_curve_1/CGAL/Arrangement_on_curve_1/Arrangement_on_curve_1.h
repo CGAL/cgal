@@ -49,7 +49,7 @@ namespace Arrangement_on_curve_1 {
  * using Arr = Arrangement_on_curve_1<Gt, Identified_topology_traits<Gt, Vertex_data, void, true>>;
  * \endcode
  *
- * ### Traits Object Storing
+ * ### Traits %Object Storing
 
  * An arrangement object maintains a smart pointer to a shared immutable
  * geometry traits object, optimizing lifecycle tracking and enabling efficient
