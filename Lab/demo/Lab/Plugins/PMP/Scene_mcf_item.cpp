@@ -19,8 +19,6 @@ Scene_mcf_item::Scene_mcf_item(Face_graph* graph,
 
 Scene_mcf_item::~Scene_mcf_item()
 {
-  if(mcs)
-    delete mcs;
-  if(meso_skeleton)
-    delete meso_skeleton;
+  delete mcs;
+  delete meso_skeleton;
 }

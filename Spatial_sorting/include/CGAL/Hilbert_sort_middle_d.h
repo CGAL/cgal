@@ -143,6 +143,8 @@ public:
     template <class RandomAccessIterator>
     void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
     {
+      if (begin == end) return;
+
       _dimension = _k.point_dimension_d_object()(*begin);
       two_to_dim = 1;
       Starting_position start(_dimension);
