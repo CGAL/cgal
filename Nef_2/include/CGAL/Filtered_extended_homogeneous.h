@@ -775,7 +775,7 @@ line_equation(RT& a, RT& b, SPolynomial<RT>& c) const
     return;
 
   }
-  Extended_point<RT> p;
+  Extended_point<RT> p(0,0,1); // initialize to avoid "may be uninitialized" warning
   bool correct_orientation=true;
   if (!sstandard && !tstandard) {
     bool x_equal = (_p1.hx()*_p2.hw() - _p2.hx()*_p1.hw()).is_zero();
