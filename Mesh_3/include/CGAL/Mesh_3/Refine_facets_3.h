@@ -542,6 +542,7 @@ protected:
     return before_insertion_handle_facet_in_conflict_zone(facet, source_facet);
   }
 
+public:
   /// Restore restricted Delaunay ; may be call by Cells_mesher visitor
   void restore_restricted_Delaunay(const Vertex_handle& v);
 
