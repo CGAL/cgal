@@ -684,5 +684,31 @@ int main ()
     std::cout << "no points lost." << std::endl;
   }
 
+  {
+    int dim = 2;
+    std::cout << "Testing "<<dim<<"D (middle policy): Genere points at one ulp distance " << std::flush;
+
+    std::vector<Point> v({Point(0.,0.),
+                          Point(std::nextafter(0., 1.), std::nextafter(0., 1.)),
+                          Point(1.,1.)});
+    std::vector<Point> v2 (v);
+
+    std::cout << "            Sorting points...    " << std::flush;
+
+    timer.reset();timer.start();
+    CGAL::hilbert_sort (v.begin(), v.end());
+    timer.stop();
+
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
+
+    std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
+    std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
+    assert(v == v2);
+
+    std::cout << "no points lost." << std::endl;
+  }
+
   return 0;
 }
