@@ -603,7 +603,9 @@ public:
       }
 
       upcoming_event_time = event->time();
-      CGAL_assertion(upcoming_event_time < current_time);
+
+      CGAL_assertion((did_save && current_time >= upcoming_event_time) ||
+                      current_time > upcoming_event_time);
 
 #ifdef CGAL_SS3_RUN_TIMERS
       CGAL_SS3_CORE_TRACE_V(2, "current elapsed time: " << timer.time());
