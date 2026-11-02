@@ -2,7 +2,6 @@
 # coding: utf8
 
 import re
-import codecs
 from sys import argv
 from sys import stderr
 import os
@@ -271,7 +270,7 @@ def main():
     pattern_author = re.compile(r"\\cgalPkgAuthors?{([^}]*)}")
     pattern_bib = re.compile(r"\\cgalPkgBib{([^}]*)}")
 
-    f = codecs.open(
+    f = open(
         make_doc_path("Documentation", "packages.txt", source_dir, branch_build),
         "r",
         encoding="utf-8",
@@ -286,7 +285,7 @@ def main():
             filename = make_doc_path(
                 pkg, "PackageDescription.txt", source_dir, branch_build
             )
-            pkgdesc = codecs.open(filename, "r", encoding="utf-8")
+            pkgdesc = open(filename, "r", encoding="utf-8")
             authors = ""
             bib = ""
             anchor = ""
@@ -331,12 +330,12 @@ def main():
             result_html += gen_html_entry(title, authors, bib, anchor)
             k += 1
 
-    f = codecs.open(build_dir + "/how_to_cite_cgal.bib.in", "w", encoding="utf-8")
+    f = open(build_dir + "/how_to_cite_cgal.bib.in", "w", encoding="utf-8")
     f.write(result_bib)
     result_txt += RESULT_TXT_FOOTER
-    f = codecs.open(build_dir + "/how_to_cite_cgal.txt.in", "w", encoding="utf-8")
+    f = open(build_dir + "/how_to_cite_cgal.txt.in", "w", encoding="utf-8")
     f.write(result_txt)
-    f = codecs.open(build_dir + "/how_to_cite.html.in", "w", encoding="utf-8")
+    f = open(build_dir + "/how_to_cite.html.in", "w", encoding="utf-8")
     f.write(PRE_HTML + result_html + POST_HTML)
 
 

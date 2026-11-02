@@ -2,9 +2,8 @@
 
 from pyquery import PyQuery as pq
 from collections import defaultdict
-from sys import argv 
+from sys import argv
 import os.path as op
-import codecs
 
 # if _in is part of args, return true.
 def check_type(_in, args):
@@ -34,10 +33,10 @@ for i in range(0,len(compounds)):
       filepath='class'+compound+'.xml'
       total_path=op.join(op.sep, root_path,filepath)
       if(op.isfile(total_path)):
-        file_content = codecs.open(total_path, 'rb')
+        file_content = open(total_path, 'rb')
         e = pq(file_content.read(), parser="xml")
         compoundnames=[p.text() for p in list(e('includes').items())]
-        
+
         if(len(compoundnames) > 1 and compoundnames[0].find("Concept") != -1):
           types[i] = 'Concept '+types[i].lower()
     type_map[types[i]].append(name)
@@ -58,7 +57,7 @@ for i in range(0,len(compounds)):
 indent=""
 
 
-    
+
 
 #print
 #FOREACH type
@@ -93,7 +92,7 @@ for btype in type_map:
           complete_template+=template_name
         if not template_defval is None:
           complete_template+=' = '+template_defval
-        templates.append(complete_template)        
+        templates.append(complete_template)
         if templates==[]:#if no child was found, just take param.text()
          templates=[t.text() for t in list(param.items())]
     suffix="<"
@@ -122,7 +121,7 @@ for btype in type_map:
         templates=[]
         args="" # will contain the arguments of the methods and functions
         return_type="" #will contain the return type of a function/method
-        
+
         #look for arguments
         if op.isfile(op.join(op.sep, root_path,filepath)):
           f=pq(filename=op.join(op.sep, root_path,filepath), parser="xml")
@@ -160,7 +159,7 @@ for btype in type_map:
             complete_template+=template_name
           if not template_defval is None:
             complete_template+=' = '+template_defval
-          templates.append(complete_template)        
+          templates.append(complete_template)
           if templates==[]:#if no child was found, just take param.text()
            templates=[t.text() for t in list(param.items())]
 
