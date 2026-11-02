@@ -179,7 +179,7 @@ bool parse_args(int argc, char** argv,
   return true;
 }
 
-template <typename Mesh>
+template <typename Mesh, typename SaveTimesRange>
 bool preprocess_input(const std::filesystem::path& mesh_filename,
                       Mesh& sm,
                       const SaveTimesRange& save_times)
@@ -208,14 +208,14 @@ bool preprocess_input(const std::filesystem::path& mesh_filename,
     return false;
   }
 
-  if (!CGAL::is_closed(sm)) {
-    std::cerr << "Error: open input " << mesh_filename << std::endl;
-    return false;
-  }
-
   // let's tolerate untriangulated inputs
   if (!CGAL::is_triangle_mesh(sm)) {
     PMP::triangulate_faces(sm);
+  }
+
+  if (!CGAL::is_closed(sm)) {
+    std::cerr << "Error: open input " << mesh_filename << std::endl;
+    return false;
   }
 
   // some sanity checks
