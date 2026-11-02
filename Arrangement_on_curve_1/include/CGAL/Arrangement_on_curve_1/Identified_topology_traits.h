@@ -116,7 +116,7 @@ public:
   // boundary (both sides of the parameter space map to the same point).
   // has_identification_vertex() returns false until the arrangement creates
   // the vertex by inserting the identification point, and may return false
-  // again after clear() or after the vertex is erased.
+  // again after clear() or after the vertex is removed.
   // --------------------------------------------------------------------------
   bool has_identification_vertex() const { return m_has_identification_vertex; }
 
@@ -154,9 +154,9 @@ public:
   // clears the identification vertex cache if it is removed, then patches the
   // stored index in vector mode.
   // --------------------------------------------------------------------------
-  void erase_vertex(Vertex_descriptor v) {
+  void destroy_vertex(Vertex_descriptor v) {
     if (m_has_identification_vertex && m_identification_vertex == v) m_has_identification_vertex = false;
-    this->Base::erase_vertex(v);
+    this->Base::destroy_vertex(v);
     if constexpr (UseVector) {
       if (m_has_identification_vertex && m_identification_vertex > v) --m_identification_vertex;
     }

@@ -57,7 +57,7 @@ public:
 
   /*! determines whether the left boundary vertex exists.  It does not exist
    * until a point on the closed left boundary is inserted into the arrangement,
-   * and does not exist again after `clear()` or after the vertex is erased.
+   * and does not exist again after `clear()` or after the vertex is removed.
    */
   bool has_left_boundary_vertex() const;
 
@@ -79,7 +79,7 @@ public:
 
   /*! determines whether the right boundary vertex exists.  It does not exist
    * until a point on the closed right boundary is inserted into the arrangement,
-   * and does not exist again after `clear()` or after the vertex is erased.
+   * and does not exist again after `clear()` or after the vertex is removed.
    */
   bool has_right_boundary_vertex() const;
 

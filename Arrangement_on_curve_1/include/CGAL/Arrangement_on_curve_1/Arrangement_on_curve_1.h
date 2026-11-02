@@ -199,12 +199,12 @@ public:
                          "When BinarySearch = true, only the rightmost vertex can be destroyed.");
     }
 
-    this->topology_traits().erase_vertex(v);
+    this->topology_traits().destroy_vertex(v);
   }
 
   /*! destroys a given edge.
    */
-  void destroy_edge(Edge_descriptor e) { this->topology_traits().erase_edge(e); }
+  void destroy_edge(Edge_descriptor e) { this->topology_traits().destroy_edge(e); }
 
   /*! clears
    */

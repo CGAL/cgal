@@ -100,7 +100,7 @@ public:
   // Boundary vertex accessors.
   // has_*_boundary_vertex() returns false until the arrangement creates the
   // vertex; it may return false again after clear() or after the vertex is
-  // erased.
+  // destroyed.
   // --------------------------------------------------------------------------
   bool has_left_boundary_vertex() const { return m_has_left_boundary_vertex; }
 
@@ -137,10 +137,10 @@ public:
   }
 
   // patches the boundary vertex descriptors in vector mode.
-  void erase_vertex(Vertex_descriptor v) {
+  void destroy_vertex(Vertex_descriptor v) {
     if (m_has_left_boundary_vertex && (m_left_boundary_vertex == v)) m_has_left_boundary_vertex = false;
     if (m_has_right_boundary_vertex && (m_right_boundary_vertex == v)) m_has_right_boundary_vertex = false;
-    Base::erase_vertex(v);
+    Base::destroy_vertex(v);
     if constexpr (UseVector) {
       if (m_has_left_boundary_vertex && (m_left_boundary_vertex > v)) --m_left_boundary_vertex;
       if (m_has_right_boundary_vertex && (m_right_boundary_vertex > v)) --m_right_boundary_vertex;

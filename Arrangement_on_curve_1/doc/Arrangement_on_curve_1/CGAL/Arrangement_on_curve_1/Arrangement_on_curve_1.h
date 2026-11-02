@@ -32,7 +32,7 @@ namespace Arrangement_on_curve_1 {
  * The master curve \f$C = \phi_C(X)\f$ is given by a continuous function
  * \f$\phi_C: X \rightarrow \mathbb{R}^d\f$; it is defined over a
  * one-dimensional interval \f$X\f$ called the parameter space. The parameter
- * space can be open, closed, left-closed, right-closed, or identified. `GeometryTraits_1`
+ * space can be open, closed, left-closed, right-closed, or identified; see below. `GeometryTraits_1`
  * declares the types `Left_side_category` and `Right_side_category`, each of
  * which is one of `Open_side_tag`, `Closed_side_tag`, or `Identified_side_tag`.
  * The static data member, for example, `is_identified` is `true` if and only if

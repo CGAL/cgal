@@ -171,8 +171,8 @@ public:
   //! \name Modifiers
   //! @{
 
-  /*! creates a new vertex, enforcing the sorted ordering invariant when
-   * `BinarySearch` is `true`.
+  /*! creates a new vertex associated with point `p`, enforcing the sorted
+   * ordering invariant when `BinarySearch` is `true`.
    */
   Vertex_descriptor create_vertex(const Point_1& p);
 
@@ -180,11 +180,11 @@ public:
    */
   Edge_descriptor create_edge();
 
-  /*! destroys a given vertex.
+  /*! destroys vertex `v`.
    */
   void destroy_vertex(Vertex_descriptor v);
 
-  /*! destroys a given edge.
+  /*! destroys edge `e`.
    */
   void destroy_edge(Edge_descriptor e);
 
