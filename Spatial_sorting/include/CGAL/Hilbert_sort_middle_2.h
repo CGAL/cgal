@@ -16,8 +16,8 @@
 #include <functional>
 #include <cstddef>
 #include <CGAL/Hilbert_sort_middle_base.h>
-#include <CGAL/Bbox_2.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Spatial_sorting/internal/Spatial_sorting_helper.h>
 
 namespace CGAL {
 
@@ -160,7 +160,7 @@ public:
           break;
         }
       if(all_equal) return;
-      Bbox_2 bb=bbox_2(begin, end, Kernel_wrapper(_k));
+      Bbox_2 bb=bbox_2(begin, end, Spatial_sorting::internal::Kernel_wrapper_2<Kernel>(_k));
       skip_empty_cells<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax, bb);
     }
     else
@@ -176,7 +176,7 @@ public:
   void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
   {
     if (begin == end) return;
-    Bbox_2 box=bbox_2(begin, end, _k);
+    Bbox_2 box=bbox_2(begin, end, Spatial_sorting::internal::Kernel_wrapper_2<Kernel>(_k));
     sort <0, false, false> (begin, end, box.xmin(), box.ymin(), box.xmax(), box.ymax());
   }
 };
