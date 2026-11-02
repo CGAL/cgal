@@ -309,6 +309,7 @@ template <typename GeomTraits,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(const std::string& filename,
                const std::shared_ptr<Straight_skeleton_3<GeomTraits> >& skeleton,
+               const typename GeomTraits::FT& time,
                const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using FT = typename GeomTraits::FT;
@@ -342,6 +343,9 @@ bool write_OBJ(const std::string& filename,
 
   CGAL_SS3_IO_TRACE_V(8, "-- OBJ::Save(Skeleton) to " << filename << " --");
   CGAL_SS3_IO_TRACE_V(8, skeleton->nodes().size() << " NN, " << skeleton->sheets().size() << " NS");
+  CGAL_SS3_IO_TRACE_V(8, "Time = " << time);
+
+  CGAL_precondition(time <= 0);
 
   std::stringstream oss;
   set_stream_precision_from_NP(oss, np);
@@ -350,45 +354,52 @@ bool write_OBJ(const std::string& filename,
   std::map<Point_3, int> pos_to_index;
   int next_index = 1;
 
-  // Collect all unique nodes from all sheets
-  FT latest_time = 0;
-
   // Write vertices
   for (const NodeSPtr& node : skeleton->nodes()) {
+    if (node->time() < time) {
+      continue;
+    }
+
     const Point_3& point = node->point();
     pos_to_index[point] = next_index++;
 
     oss << "v " << CGAL::to_double(point.x()) << " "
                 << CGAL::to_double(point.y()) << " "
                 << CGAL::to_double(point.z()) << "\n";
-
-    if (node->time() < latest_time) {
-      latest_time = node->time();
-    }
   }
 
-  CGAL_SS3_IO_TRACE_V(8, "latest_time = " << latest_time);
 
-  // incomplete arcs get an interpolated point at the latest time
+  // incomplete arcs get an interpolated point at the requested time
   CGAL::unordered_flat_map<ArcSPtr, Point_3> incomplete_arc_to_point;
 
   // Write sheets as faces, triangulating if requested
   for (const SheetSPtr& sheet : skeleton->sheets()) {
+    CGAL_SS3_IO_TRACE_V(16, "  Sheet # " << sheet->id());
+    CGAL_SS3_IO_TRACE_V(16, "  Sheet #nodes " << sheet->nodes().size());
+    CGAL_SS3_IO_TRACE_V(16, "  Sheet #arcs " << sheet->arcs().size());
+    CGAL_SS3_IO_TRACE_V(16, "  Sheet #contours " << sheet->contours().size());
+
     const auto& nodes = sheet->nodes();
 
-    CGAL_SS3_IO_TRACE_V(16, "  Sheet # " << sheet->id());
-    CGAL_SS3_IO_TRACE_V(16, "  Sheet #nodes " << nodes.size());
-    CGAL_SS3_IO_TRACE_V(16, "  Sheet #arcs " << sheet->arcs().size());
+    const auto first_visible_node = std::find_if(nodes.begin(), nodes.end(),
+                                                 [&](const NodeSPtr& node) { return node->time() >= time; });
+    if (first_visible_node == nodes.end()) {
+      continue;
+    }
 
     // Grab all the 3D positions to insert in the CDT
     std::set<Point_3> unique_points;
     for (const NodeSPtr& node : nodes) {
+      if (node->time() < time) {
+        continue;
+      }
+
       CGAL_SS3_IO_TRACE_V(64, " Add point from node " << node->id() << " " << node->point() << " @ " << node->time());
       auto res = unique_points.insert(node->point());
       CGAL_warning_msg(res.second, "Node should not be found twice in the sheet's nodes");
     }
 
-    // If there are incomplete arcs, also add them (if the arc has left the source node, i.e. the source node's time is less than the latest time)
+    // If the source node exists at the requested time, add incomplete arcs clipped to that time.
     Vector_3 n = sheet->get_plane().orthogonal_vector();
     CGAL_assertion(n != CGAL::NULL_VECTOR);
 
@@ -412,15 +423,20 @@ bool write_OBJ(const std::string& filename,
 
     for (const ArcSPtr& arc : sheet->arcs()) {
       Point_3 ap0, ap1;
+      NodeSPtr node_src = arc->source();
+      if (node_src->time() <= time) {
+        continue;
+      }
 
-      // if the arc has no target (i.e., it's an incomplete arc), then we might need to add a partial arc.
-      if (!arc->has_target()) {
-        CGAL_SS3_IO_TRACE_V(64, " Arc from " << arc->source()->point() << " has no target");
-        NodeSPtr node_src = arc->source();
-        CGAL_assertion(node_src->time() >= latest_time);
-
+      if (arc->has_target() && arc->target()->time() >= time) {
+        NodeSPtr node_tgt = arc->target();
+        ap0 = node_src->point();
+        ap1 = node_tgt->point();
+        CGAL_assertion(ap0 != ap1);
+      } else {
+        CGAL_SS3_IO_TRACE_V(64, " Arc from " << node_src->point() << " is partial at the requested time");
         Point_3 interpolated_point;
-        if (node_src->time() == latest_time) { // detached node: several arcs may share the same final point
+        if (node_src->time() == time) { // detached node: several arcs may share the same final point
           interpolated_point = node_src->point();
         } else {
           auto it = incomplete_arc_to_point.find(arc);
@@ -441,7 +457,8 @@ bool write_OBJ(const std::string& filename,
 
             for (const FacetSPtr& f : ifs) {
               CGAL_SS3_DEBUG_SPTR(f);
-              shifted_planes.emplace_back(Transformation::shift_plane(f, latest_time));
+              // 'f' is a face in the base polyhedron, it lives at t=0
+              shifted_planes.emplace_back(Transformation::shift_plane(f, time));
             }
 
             CGAL_assertion(shifted_planes.size() == 3);
@@ -465,18 +482,12 @@ bool write_OBJ(const std::string& filename,
           }
         }
 
-        CGAL_SS3_IO_TRACE_V(64, " Add interpolated point from incomplete arc "<< arc->id() << " @ " << interpolated_point);
+        CGAL_SS3_IO_TRACE_V(64, " Add interpolated point from incomplete arc "<< arc->id() << ": " << interpolated_point);
         CGAL_SS3_IO_TRACE_V(64, " using direction: " << arc->direction());
 
         incomplete_points.push_back(interpolated_point);
         ap0 = node_src->point();
         ap1 = interpolated_point;
-      } else {
-        NodeSPtr node_src = arc->source();
-        NodeSPtr node_tgt = arc->target();
-        ap0 = node_src->point();
-        ap1 = node_tgt->point();
-        CGAL_assertion(ap0 != ap1);
       }
 
       if (ap0 == ap1) {
@@ -495,8 +506,9 @@ bool write_OBJ(const std::string& filename,
     }
 
     if (!incomplete_points.empty()) {
-      const auto line = Kernel_wrapper::intersection(sheet->get_facet_B()->get_plane(),
-                                                     sheet->get_facet_F()->get_plane());
+      const Plane_3 plane_B = Transformation::shift_plane(sheet->get_facet_B(), time);
+      const Plane_3 plane_F = Transformation::shift_plane(sheet->get_facet_F(), time);
+      const auto line = Kernel_wrapper::intersection(plane_B, plane_F);
       CGAL_assertion(line.has_value());
       const Point_3 line_origin = line->point();
       const Vector_3 line_direction = line->to_vector();

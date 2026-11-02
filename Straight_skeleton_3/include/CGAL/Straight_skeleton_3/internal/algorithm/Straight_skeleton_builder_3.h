@@ -691,10 +691,10 @@ public:
     CGAL_SS3_CORE_TRACE_V(2, events_summary());
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-# ifdef CGAL_SS3_DUMP_FILES
-    skeleton_->dump_nodes("final_nodes.xyz");
+#ifdef CGAL_SS3_DUMP_FILES
+    skeleton_->dump_nodes("final_nodes.xyz", current_time);
     skeleton_->dump_arcs("final_arcs.polylines.txt", current_time);
-    IO::write_OBJ("final_skeleton.obj", skeleton_);
+    IO::write_OBJ("final_skeleton.obj", skeleton_, current_time);
 # endif
     CGAL_postcondition(skeleton_->is_consistent(is_emptiness_expected));
 #endif
@@ -4613,7 +4613,7 @@ public:
     std::stringstream ss_filename;
     ss_filename << save_path_.string() << "/skeleton_" << current_time << ".obj";
 
-    return IO::write_OBJ(ss_filename.str(), skeleton);
+    return IO::write_OBJ(ss_filename.str(), skeleton, current_time);
   }
 
   // This 'handle' is in fact more akin to a collect, but the interesting point

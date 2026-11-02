@@ -1585,27 +1585,37 @@ public:
   }
 
   // dumps skeleton nodes in an .xyz format
-  void dump_nodes(const std::string& filename) const
+  void dump_nodes(const std::string& filename,
+                  const FT& time) const
   {
     std::ofstream nodes_out(filename);
     nodes_out.precision(17);
     for (NodeSPtr node : nodes_) {
-      nodes_out << node->point() << "\n";
+      if (node->time() >= time) {
+        nodes_out << node->point() << "\n";
+      }
     }
     nodes_out.close();
   }
 
   // dumps skeleton arcs in a CGAL polylines format
+  // If the skeleton isn't complete, partial arcs are drawn using the current direction
+  // of the subtending trisector, and, if `time` is chosen too large, might overshoot
+  // the real arc of the complete skeleton.
   void dump_arcs(const std::string& filename,
                  const FT& time) const
   {
     std::ofstream arcs_out(filename);
     arcs_out.precision(17);
     for (const ArcSPtr& arc : arcs_) {
+      CGAL_assertion(arc->has_source());
+      if (arc->source()->time() <= time) {
+        continue;
+      }
+
       arcs_out << "2 ";
       arcs_out << arc->source()->point() << " ";
-      if (arc->has_target()) {
-        CGAL_assertion(arc->target()->time() >= time);
+      if (arc->has_target() && arc->target()->time() >= time) {
         arcs_out << arc->target()->point() << "\n";
       } else {
         CGAL::unordered_flat_set<FacetSPtr> incident_faces;
@@ -1621,10 +1631,10 @@ public:
 
         std::array<Plane_3, 3> offset_planes;
         unsigned int i = 0;
-        for (FacetSPtr inc_f : incident_faces) {
+        for (const FacetSPtr& inc_f : incident_faces) {
+          // 'inc_f' is a face in the base polyhedron, it lives at t=0
           offset_planes[i++] = Transformation::shift_plane(inc_f, time);
         }
-        CGAL_postcondition(i == 3);
 
         std::optional<Point_3> res = Kernel_wrapper::intersection(offset_planes[0], offset_planes[1], offset_planes[2]);
         CGAL_assertion(res.has_value());
