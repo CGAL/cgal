@@ -15,18 +15,17 @@ namespace Arrangement_on_curve_1 {
  * for subdivisions along an infinite supporting line embedded in a
  * \f$d\f$-dimensional coordinate space.
  *
- * Points are represented using multi-dimensional dynamic coordinates
- * (`Kernel::Point_d`).  The linear ordering is resolved by computing inner dot
- * products across coordinate dimensions via Cartesian iterator ranges.  Both
- * sides of the parameter space are open, so `Line_d_traits_1` should be paired
- * with `Open_topology_traits`.
+ * Points are represented using multidimensional coordinates (`CGAL::Point_d`).
+ * The linear ordering is resolved by computing inner dot products across
+ * coordinate dimensions via %Cartesian iterator ranges.  Both sides of the
+ * parameter space are open, so `Line_d_traits_1` should be paired with
+ * `Open_topology_traits`.
  *
- * \tparam Kernel must be a standard multi-dimensional \cgal `Kernel` model
- *   (e.g., `Cartesian_d`).
+ * \tparam Kernel must be a model of the concept `Kernel_d` (e.g., `CGAL::Cartesian_d`).
  *
  * \cgalModels{AocTraits_1}
  */
-template <typename Kernel>
+template <typename Kernel_>
 class Line_d_traits_1 {
 public:
   //! \name Types
