@@ -422,7 +422,7 @@ of the `AocTopologyTraits` concept.  It provides:
 - Descriptor iterators and ranges.
 - Property maps for point and user-data access.
 - Core navigation (`left_edge`, `right_edge`, `left_vertex`, `right_vertex`, `has_left_vertex`, `has_right_vertex`).
-- Low-level modifiers (e.g., `create_vertex`, `create_edge`, `set_*`, `erase_vertex`, `erase_edge`).
+- Low-level modifiers (e.g., `create_vertex`, `create_edge`, `set_*`, `destroy_vertex`, `destroy_edge`).
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection aoc_ssec-topo_traits-models Models of the Topology Traits Concept
@@ -496,8 +496,8 @@ The `UseVector` template parameter controls the underlying container and descrip
   stable across insertions and removals of other cells.
 
 - **Vector mode** (`UseVector = true`): vertices and edges are stored in
-  `std::vector`.  Descriptors are `std::size_t` indices.  Erasing an
-  element shifts subsequent indices; `erase_vertex()` and `erase_edge()`
+  `std::vector`.  Descriptors are `std::size_t` indices.  Destroying an
+  element shifts subsequent indices; `destroy_vertex()` and `destroy_edge()`
   update all the stored indices automatically, including the left boundary
   edge and the cached vertices.
   Binary search (`BinarySearch` = `true`) is only available in vector mode.

@@ -69,7 +69,7 @@ public:
 
   /*! determines whether the identification vertex exists.  It does not exist
    * until the identification point is inserted into the arrangement, and does
-   * not exist again after `clear()` or after the vertex is erased.
+   * not exist again after `clear()` or after the vertex is removed.
    */
   bool has_identification_vertex() const;
 

@@ -26,7 +26,7 @@
  * - Core navigation (left/right_edge, left/right_vertex, has_left/right_vertex, vertex_point)
  * - The left and right boundary edges (left_boundary_edge, set_left_boundary_edge,
  *   right_boundary_edge, set_right_boundary_edge)
- * - Low-level storage primitives (create_vertex, create_edge, set_*, erase_vertex, erase_edge)
+ * - Low-level storage primitives (create_vertex, create_edge, set_*, destroy_vertex, destroy_edge)
  * - Construction (the spanning edge), copying (list-mode iterators are
  *   redirected into the copy), copy assignment, clear, and swap
  * - Allocator access
@@ -559,12 +559,12 @@ public:
   void clear_left_vertex (Edge_descriptor e) { e_ref(e).m_has_left  = false; }
   void clear_right_vertex(Edge_descriptor e) { e_ref(e).m_has_right = false; }
 
-  // erases the vertex `v`.  O(1) in list mode; in vector mode, O(1) for the
+  // destroys the vertex `v`.  O(1) in list mode; in vector mode, O(1) for the
   // last vertex and O(n) otherwise, as every stored vertex index greater than
   // `v` is decremented.  Derived classes that cache vertex descriptors (e.g.
   // Closed_topology_traits) hide this function with one that patches their
   // cache.
-  void erase_vertex(Vertex_descriptor v) {
+  void destroy_vertex(Vertex_descriptor v) {
     if constexpr (! UseVector) m_vertices.erase(v);
     else {
       if (v == m_vertices.size() - 1) { m_vertices.pop_back(); return; }
@@ -576,10 +576,10 @@ public:
     }
   }
 
-  // erases the edge `e`.  In vector mode, decrements every stored edge index
+  // destroys the edge `e`.  In vector mode, decrements every stored edge index
   // greater than `e`, including the boundary edges.
   // Pre: `e` is neither the left nor the right boundary edge.
-  void erase_edge(Edge_descriptor e) {
+  void destroy_edge(Edge_descriptor e) {
     CGAL_precondition(e != m_left_boundary_edge);
     CGAL_precondition(e != m_right_boundary_edge);
     if constexpr (! UseVector) m_edges.erase(e);

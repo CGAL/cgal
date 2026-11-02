@@ -1,7 +1,7 @@
-// Tests that erase_edge() of the topology traits keeps the boundary edges, in
+// Tests that destroy_edge() of the topology traits keeps the boundary edges, in
 // list and vector mode.  The edges are tagged with their creation index; the
 // left and right boundary edges are set to the edges tagged 3 and 2,
-// respectively, and the last edge and an interior edge are erased.
+// respectively, and the last edge and an interior edge are destroyed.
 
 #include <cstdlib>
 
@@ -18,8 +18,8 @@ void test(const std::string& name, std::size_t& failures) {
   for (int i = 0; i < 5; ++i) put(dm, edges[i], i);
   tt.set_left_boundary_edge(edges[3]);
   tt.set_right_boundary_edge(edges[2]);
-  tt.erase_edge(edges[4]);      // the last edge
-  tt.erase_edge(edges[1]);      // an interior edge; shifts the indices in vector mode
+  tt.destroy_edge(edges[4]);      // the last edge
+  tt.destroy_edge(edges[1]);      // an interior edge; shifts the indices in vector mode
   bool ok = (tt.number_of_edges() == 3) && (get(dm, tt.left_boundary_edge()) == 3) &&
     (get(dm, tt.right_boundary_edge()) == 2);
   std::cout << (report(ok, name, "boundary edges", failures) ? "PASS " : "FAIL ") << name << std::endl;

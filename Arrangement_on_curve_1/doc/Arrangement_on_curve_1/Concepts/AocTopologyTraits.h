@@ -197,13 +197,13 @@ public:
   //! unbinds the right vertex of edge `e`.
   void clear_right_vertex(Edge_descriptor e);
 
-  //! erases vertex `v`.
-  void erase_vertex(Vertex_descriptor v);
+  //! destroys vertex `v`.
+  void destroy_vertex(Vertex_descriptor v);
 
-  /*! erases edge `e`.
+  /*! destroys edge `e`.
    * \pre `e` is neither the left nor the right boundary edge.
    */
-  void erase_edge(Edge_descriptor e);
+  void destroy_edge(Edge_descriptor e);
 
   //! removes all vertices and edges and resets the topology to its initial state.
   void clear();
