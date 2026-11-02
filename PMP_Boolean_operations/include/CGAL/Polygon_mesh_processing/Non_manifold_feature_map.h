@@ -83,8 +83,10 @@ struct Non_manifold_feature_map
       if ( get(v_nm_id, source(hd, pm))==std::size_t(-1) ||
            get(v_nm_id, target(hd, pm))==std::size_t(-1) ) continue;
 
-      const Point_3& src = get(vpm, source(ed, pm));
-      const Point_3& tgt = get(vpm, target(ed, pm));
+      vertex_descriptor vds = source(hd, pm);
+      vertex_descriptor vdt = target(hd, pm);
+      const Point_3& src = get(vpm, vds);
+      const Point_3& tgt = get(vpm, vdt);
       // TODO: what to do with null edges?
       if (src > tgt)
         hd = opposite(hd, pm);

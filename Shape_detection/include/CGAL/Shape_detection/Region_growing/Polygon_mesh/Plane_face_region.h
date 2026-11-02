@@ -250,8 +250,10 @@ public:
         if (typename GeomTraits::Compare_squared_distance_3()(m_p, m_q, m_r,get(m_vpm, v), m_squared_distance_threshold) != SMALLER)
           return false;
 
-      const typename GeomTraits::Point_3& p2=get(m_vpm,source(h, m_pmesh));
-      const typename GeomTraits::Point_3& q2=get(m_vpm,target(h, m_pmesh));
+      vertex_descriptor vs = source(h, m_pmesh);
+      vertex_descriptor vt = target(h, m_pmesh);
+      const typename GeomTraits::Point_3& p2=get(m_vpm, vs);
+      const typename GeomTraits::Point_3& q2=get(m_vpm, vt);
       typename GeomTraits::Point_3 r2;
 
       halfedge_descriptor guard = prev(h, m_pmesh);
