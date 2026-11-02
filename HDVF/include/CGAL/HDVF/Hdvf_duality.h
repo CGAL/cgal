@@ -983,7 +983,7 @@ std::istream& Hdvf_duality<ChainComplex>::read_hdvf_reduction(std::istream& in) 
     _critical_K.resize(this->_K.dimension()+1);
     _critical_L_K.resize(this->_K.dimension()+1);
     for (int q=0; q<=this->_K.dimension(); ++q) {
-        std::vector<size_t> criticals = this->psc_flags(CRITICAL,q);
+        std::vector<size_t> criticals = this->psc_flaghd(CRITICAL,q);
         for (size_t cell : criticals) {
             if (_KCC.get_bit(q,cell)) // cell is critical in _K
                 _critical_K.at(q).push_back(cell);

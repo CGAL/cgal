@@ -172,7 +172,7 @@ inline size_t read_nodes(const std::string &filename, std::vector<typename Trait
 /*!
  \ingroup PkgHDVFIOClasses
 
- The class `Mesh_object_io` is an intermediate IO class, used to load simplices and produce simplicial complexes.
+ The class `Mesh_object_io` is an intermediate IO class, used to load arbitrary collections of simplices.  and produce simplicial complexes.
 
  The set of simplices stored in a `Mesh_object_io` is arbitrary. It is neither a simplicial complex (closed under the face operation), nor a proper mesh (including only cells of maximal dimension) and requires no manifold property. The collection of simplices stored in a `Mesh_object_io` are simply considered as maximal simplices when generating an associated simplicial complex.
 
