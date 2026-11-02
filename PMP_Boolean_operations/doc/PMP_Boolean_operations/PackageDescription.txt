@@ -11,7 +11,7 @@
 /// \ingroup PkgPMPBooleanOperationsRef
 
 /// \defgroup PMP_boolop_soup_grp Boolean Operations on Triangle Soups
-/// Functions to compute triangulated the union, difference, and intersection of triangle soups (possibly non-manifold).
+/// Functions to compute Boolean operations on possibly non-manifold inputs, and/or whose output is possibly non-manifold
 /// \ingroup PkgPMPBooleanOperationsRef
 
 /// \defgroup PMP_clip_grp Clipping and Splitting
