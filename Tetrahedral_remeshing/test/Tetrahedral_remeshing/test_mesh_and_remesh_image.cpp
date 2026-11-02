@@ -30,7 +30,7 @@ typedef Mesh_criteria::Cell_criteria     Cell_criteria;
 typedef CGAL::Triangulation_3<typename Tr::Geom_traits,
                               typename Tr::Triangulation_data_structure> T3;
 
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main()
 {
@@ -41,7 +41,7 @@ int main()
     std::cerr << "Error: Cannot read file " << filename << std::endl;
     return EXIT_FAILURE;
   }
-  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image, relative_error_bound = 1e-9);
+  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image, params::relative_error_bound(1e-9));
 
   // Mesh criteria
   Facet_criteria facet_criteria(25, 20, 2); // angle, size, approximation
@@ -49,7 +49,7 @@ int main()
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
   // Meshing
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude().no_perturb());
 
   std::cout << "Meshing done." << std::endl;
 
@@ -59,7 +59,7 @@ int main()
   //Remeshing : coarsen
   double target_edge_length = 15.;
   CGAL::tetrahedral_isotropic_remeshing(t3, target_edge_length,
-    CGAL::parameters::number_of_iterations(2)
+    params::number_of_iterations(2)
     .smooth_constrained_edges(true));
 
   std::cout << "Remeshing 1 done." << std::endl;
@@ -67,7 +67,7 @@ int main()
   //Remeshing : refine
   target_edge_length = 20.;
   CGAL::tetrahedral_isotropic_remeshing(t3, target_edge_length,
-    CGAL::parameters::number_of_iterations(2).remesh_boundaries(false));
+    params::number_of_iterations(2).remesh_boundaries(false));
 
   std::cout << "Remeshing 2 done." << std::endl;
 
