@@ -24,6 +24,8 @@
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
+#include <CGAL/box_intersection_d.h>
+
 #ifdef CGAL_AUTOREF_USE_PROGRESS_DISPLAY
 #include <boost/timer/progress_display.hpp>
 #endif
@@ -62,7 +64,7 @@
 //#define CGAL_AUTOREFINE_DEBUG_COUNTERS
 //#define CGAL_AUTOREF_DEBUG_DEPTH
 
-#if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS)
+#if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS) || defined(CGAL_BO3_AABB_TIMERS)
 #include <CGAL/Real_timer.h>
 #endif
 
@@ -989,65 +991,120 @@ void compute_intersecting_pairs(const PointRange& points, const PolygonRange& tr
                                 std::size_t split_id, std::vector<Pair_of_triangle_ids>& si_pairs,
                                 const PointMap& pm)
 {
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
-
-  std::vector<Box> boxes_1, boxes_2;
-  std::vector<Box*> boxes_1_ptr, boxes_2_ptr;
-
-  boxes_1.reserve(split_id);
-  boxes_1_ptr.reserve(boxes_1.size());
-  for (std::size_t i=0;i<split_id; ++i)
-  {
-    boxes_1.emplace_back(get(pm, points[triangles[i][0]]).bbox()+get(pm, points[triangles[i][1]]).bbox()+get(pm, points[triangles[i][2]]).bbox(), i);
-    boxes_1_ptr.push_back( &boxes_1.back() );
-  }
-
-  boxes_2.reserve(triangles.size()-split_id);
-  boxes_2_ptr.reserve(boxes_2.size());
-  for (std::size_t i=split_id;i<triangles.size(); ++i)
-  {
-    boxes_2.emplace_back(get(pm, points[triangles[i][0]]).bbox()+get(pm, points[triangles[i][1]]).bbox()+get(pm, points[triangles[i][2]]).bbox(), i);
-    boxes_2_ptr.push_back( &boxes_2.back() );
-  }
-
-  /// \todo experiments different cutoff values
-  std::ptrdiff_t cutoff = 2 * std::ptrdiff_t(
-      std::sqrt(boxes_1.size()+boxes_2.size()) );
-
-#ifdef CGAL_LINKED_WITH_TBB
-  constexpr bool need_copy = std::is_same_v<Concurrency_tag, Parallel_tag>;
-  using TBB_vector = tbb::concurrent_vector<Pair_of_triangle_ids>;
-  std::conditional_t<need_copy, TBB_vector, std::vector<Pair_of_triangle_ids> > collecter;
-#else
-  std::vector<Pair_of_triangle_ids>& collecter=si_pairs;
+#ifdef CGAL_BO3_AABB_TIMERS
+  Real_timer t;
+  t.start();
 #endif
-  auto callback = [&points, &triangles, &collecter, &pm]
-  (const Box* b1, const Box* b2)
-  {
-    std::size_t i1=b1->info(), i2=b2->info();
+  using Point = typename PointMap::value_type;
+  using VPM = internal::Property_map_for_soup<PointRange, PointMap>;
+  using AABB_tree_helper = CGAL::Polygon_mesh_processing::internal::AABB_tree_soup_helper<PointRange, PolygonRange, Kernel, VPM>;
+  using Tree = typename AABB_tree_helper::Tree;
+  AABB_tree_helper helper;
 
-    if (do_intersect(typename Kernel::Triangle_3(get(pm, points[triangles[i1][0]]),get(pm, points[triangles[i1][1]]),get(pm, points[triangles[i1][2]])),
-                     typename Kernel::Triangle_3(get(pm, points[triangles[i2][0]]),get(pm, points[triangles[i2][1]]),get(pm, points[triangles[i2][2]]))))
-    {
-      collecter.emplace_back(i1,i2);
-    }
-  };
+  using Bbox_map      = Pointer_property_map<Bbox_3>::type;
+  using Ref_point_map = Pointer_property_map<Epick::Point_3>::type;
+  using Compute_bbox = typename AABB_tree_helper::Compute_bbox<Bbox_map>;
+  using Split_primitives = typename AABB_tree_helper::Split_primitives<Ref_point_map>;
 
-  //using pointers in box_intersection_d is about 10% faster
-  CGAL::box_intersection_d<Concurrency_tag>(boxes_1_ptr.begin(), boxes_1_ptr.end(),
-                                            boxes_2_ptr.begin(), boxes_2_ptr.end(),
-                                            callback, cutoff );
+  CGAL::Cartesian_converter<Kernel, Epick> to_input;
+
+  std::vector<Bbox_3> bb_vector(triangles.size());
+  std::vector<Epick::Point_3> rp_vector(triangles.size());
+  Bbox_map bb_map = make_property_map(bb_vector);
+  Ref_point_map rp_map = make_property_map(rp_vector);
 
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr (need_copy)
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
   {
-    si_pairs.reserve(collecter.size());
-    std::copy(collecter.begin(), collecter.end(), std::back_inserter(si_pairs));
+    tbb::parallel_for(std::size_t(0), triangles.size(), [&](std::size_t i){
+      put(bb_map, i, get(pm, points[triangles[i][0]]).bbox() +
+                     get(pm, points[triangles[i][1]]).bbox() +
+                     get(pm, points[triangles[i][2]]).bbox());
+      put(rp_map, i, to_input(get(pm, points[triangles[i][0]])) );
+    });
   }
   else
-    si_pairs.swap(collecter);
 #endif
+  {
+    for(std::size_t i=0; i<triangles.size(); ++i){
+      put(bb_map, i, get(pm, points[triangles[i][0]]).bbox() +
+                     get(pm, points[triangles[i][1]]).bbox() +
+                     get(pm, points[triangles[i][2]]).bbox());
+      put(rp_map, i, to_input(get(pm, point(triangles[i][0]))) );
+    }
+  }
+  Compute_bbox compute_bbox(bb_map);
+  Split_primitives split_primitives(rp_map);
+
+#ifdef CGAL_BO3_AABB_TIMERS
+  std::cout << t.time() << " sec. to prepare bbox and reference point\n";
+#endif
+
+  Bbox_3 b1 = bbox_3(bb_vector.begin(), bb_vector.begin()+split_id);
+  Bbox_3 b2 = bbox_3(bb_vector.begin()+split_id, bb_vector.end());
+  Bbox_3 bb12((std::max)(b1.xmin(), b2.xmin()), (std::max)(b1.ymin(), b2.ymin()), (std::max)(b1.zmin(), b2.zmin()),
+              (std::min)(b1.xmax(), b2.xmax()), (std::min)(b1.ymax(), b2.ymax()), (std::min)(b1.zmax(), b2.zmax()));
+
+  std::vector<std::size_t> tm1_faces_intersecting_bb;
+  std::vector<std::size_t> tm2_faces_intersecting_bb;
+  tm1_faces_intersecting_bb.reserve(split_id);
+  tm2_faces_intersecting_bb.reserve(triangles.size()-split_id);
+
+  for(std::size_t i=0; i<split_id; ++i)
+    if(do_overlap(bb_vector[i], bb12))
+      tm1_faces_intersecting_bb.push_back(i);
+  for(std::size_t i=split_id; i<triangles.size(); ++i)
+    if(do_overlap(bb_vector[i], bb12))
+      tm2_faces_intersecting_bb.push_back(i);
+
+#ifdef CGAL_BO3_AABB_TIMERS
+  std::cout << t.time() << " sec. to select faces in the bbox\n";
+#endif
+
+  // If one set is empty, no intersection
+  if(tm1_faces_intersecting_bb.empty() || tm2_faces_intersecting_bb.empty())
+    return;
+
+  Tree tree1(tm1_faces_intersecting_bb.begin(), tm1_faces_intersecting_bb.end(), points, triangles, pm);
+  Tree tree2(tm2_faces_intersecting_bb.begin(), tm2_faces_intersecting_bb.end(), points, triangles, pm);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  {
+    tbb::task_group task_group;
+    task_group.run([&]() {
+      tree1.template custom_build<Concurrency_tag>(compute_bbox, split_primitives);
+    });
+    tree2.template custom_build<Concurrency_tag>(compute_bbox, split_primitives);
+    task_group.wait();
+  }
+  else
+#endif
+  {
+    tree1.template custom_build(compute_bbox, split_primitives);
+    tree2.template custom_build(compute_bbox, split_primitives);
+  }
+
+#ifdef CGAL_BO3_AABB_TIMERS
+  std::cout << t.time() << " sec. to build trees\n";
+#endif
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  {
+    tbb::concurrent_vector<Pair_of_triangle_ids> inter;
+    CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), parameters::concurrency_tag(Concurrency_tag()));
+    si_pairs.insert(si_pairs.end(), inter.begin(), inter.end());
+  }
+  else
+#endif
+  {
+    CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(si_pairs));
+  }
+#ifdef CGAL_BO3_AABB_TIMERS
+  std::cout << t.time() << " sec. traversal time\n";
+#endif
+
 }
 
 
@@ -1836,7 +1893,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{concurrency_tag}
- *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
  *     \cgalParamDefault{`CGAL::Sequential_tag`}
  *   \cgalParamNEnd
