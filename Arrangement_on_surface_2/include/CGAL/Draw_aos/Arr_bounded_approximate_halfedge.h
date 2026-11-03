@@ -290,11 +290,16 @@ public:
     m_right(ctx.bottom_right(), ctx.top_right()),
     m_bottom(ctx.bottom_left(), ctx.bottom_right()),
     m_top(ctx.top_left(), ctx.top_right()) {
-    Construct_gt_point_2<Geom_traits> ctr_p;
-    m_top_left = ctr_p(ctx.to_cartesian(ctx.top_left()));
-    m_top_right = ctr_p(ctx.to_cartesian(ctx.top_right()));
-    m_bottom_left = ctr_p(ctx.to_cartesian(ctx.bottom_left()));
-    m_bottom_right = ctr_p(ctx.to_cartesian(ctx.bottom_right()));
+    // The corners are used only by the approximation with a bounding box.
+    // Constructing them requires the construction of a point of the geometry
+    // traits from its coordinates, which some traits do not support.
+    if constexpr (has_approximate_xcv_with_bounds_v<Geom_traits, typename Geom_traits::Approximate_2>) {
+      Construct_gt_point_2<Geom_traits> ctr_p;
+      m_top_left = ctr_p(ctx.to_cartesian(ctx.top_left()));
+      m_top_right = ctr_p(ctx.to_cartesian(ctx.top_right()));
+      m_bottom_left = ctr_p(ctx.to_cartesian(ctx.bottom_left()));
+      m_bottom_right = ctr_p(ctx.to_cartesian(ctx.bottom_right()));
+    }
     Approx_nt ep_base = std::numeric_limits<Approx_nt>::epsilon();
     m_ep_left = std::max(std::abs(ep_base * ctx.xmin()), ep_base);
     m_ep_right = std::max(std::abs(ep_base * ctx.xmax()), ep_base);
