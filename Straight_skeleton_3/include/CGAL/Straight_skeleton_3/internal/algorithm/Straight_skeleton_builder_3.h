@@ -44,7 +44,7 @@
 // - Use CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION and CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
 //   in vertex-vertex events (check the graveyard)
 // - For contact events: exit early if the 4 planes are clearly not intersecting (diametral spheres
-//   around the edges of size [something]?)
+//   around the edges of size, or something like that...?)
 // - Avoid recomputing the denominator when the point is required; store event time as a quotient
 // - In crash_time() for pierce events, we could tighten the future bound using the *farthest* vanish
 //   event of any edge of the facet (probably not worth it, though)
@@ -53,22 +53,18 @@
 // - CT3 based contact event detection
 // - lighter & faster polyhedron data structures
 
-// @todo: cleaning
-// - clean up all the code related to local queue updates (horrible variable names, duplicates, etc.)
-
 // @todo
-// - User manual (doc figures)
-// - Reject non-manifold inputs, non-triangulated inputs (clarify ref doc)
 
 // @todo later:
 // - Do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
 // - Check for overly shared objects, redundant function calls (plane normalization, for example)
 // - Get rid of all the shared ptr stuff: we only need to zombie the elements and use IDs
 // - Do not triangulate outputs, use the code from remesh_planar_faces() for not simply connected faces
+// - clean up all the code related to local queue updates (horrible variable names, duplicates, etc.)
 
 // @todo latest:
 // - Use traits' functors everywhere
-// - Handle open inputs
+// - complete exterior skeletons
 
 // ----
 
