@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor chapterstraightskeleton3
 \cgalAutoToc
 
-\cgalFigureAnchor{SPSBanner}
+\cgalFigureAnchor{SPS3Banner}
 <center>
 <img src="complex_skeleton_3.png" style="max-width:60%;"/>
 </center>
@@ -155,7 +155,7 @@ and sheets may be fully present, absent, or truncated.
 <center>
 <img src="sps_exterior_skeleton.png" style="max-width:80%;"/>
 </center>
-\cgalFigureCaptionBegin{SPSExterior}
+\cgalFigureCaptionBegin{SPS3Exterior}
 On the left, the model <a href="https://ten-thousand-models.appspot.com/detail.html?file_id=496389">#496389</a> of Thingi10k is the polyhedral input.
 On the right, the complete interior skeleton is depicted in red, and the exterior skeleton, bounded
 to a maximum time of T=2, is shown in green.
@@ -177,7 +177,7 @@ at distance `t` is `ax+by+cz+d-t=0` then with a multiplicative weight `w`, the e
 <center>
 <img src="sps_weight.png" style="max-width:100%;"/>
 </center>
-\cgalFigureCaptionBegin{SPSWeight}
+\cgalFigureCaptionBegin{SPS3Weight}
 Straight skeletons obtained with uniform weights (left) and with different weights for horizontal
 and vertical facets (right).
 \cgalFigureCaptionEnd
