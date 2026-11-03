@@ -129,7 +129,7 @@ void test()
 
     // PERTURB (3)
     if (nb_operations >= 4) {
-      std::cout << "  #4 Pertub..." << std::endl;
+      std::cout << "  #4 Perturb..." << std::endl;
       CGAL::perturb_mesh_3(c3t3, domain, sliver_bound=perturb_bound);
 
       std::stringstream oss;
