@@ -219,9 +219,9 @@ private:
 
   using Node = typename Straight_skeleton_3::Node;
   using NodeSPtr = typename Straight_skeleton_3::NodeSPtr;
-  using Arc = typename Straight_skeleton_3::Arc;
-  using ArcWPtr = typename Straight_skeleton_3::ArcWPtr;
-  using ArcSPtr = typename Straight_skeleton_3::ArcSPtr;
+  using Spoke = typename Straight_skeleton_3::Spoke;
+  using SpokeWPtr = typename Straight_skeleton_3::SpokeWPtr;
+  using SpokeSPtr = typename Straight_skeleton_3::SpokeSPtr;
   using Sheet = typename Straight_skeleton_3::Sheet;
   using SheetWPtr = typename Straight_skeleton_3::SheetWPtr;
   using SheetSPtr = typename Straight_skeleton_3::SheetSPtr;
@@ -698,7 +698,7 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
 #ifdef CGAL_SS3_DUMP_FILES
     skeleton_->dump_nodes("final_nodes.xyz", current_time);
-    skeleton_->dump_arcs("final_arcs.polylines.txt", current_time);
+    skeleton_->dump_spokes("final_spokes.polylines.txt", current_time);
     IO::write_OBJ("final_skeleton.obj", skeleton_, current_time);
 # endif
     CGAL_postcondition(skeleton_->is_consistent(is_emptiness_expected));
@@ -724,14 +724,14 @@ public:
   }
 
   /**
-    * Creates a new arc for the vertex data.
+    * Creates a new spoke for the vertex data.
     * The node of the vertex data has to be set before.
     */
-  static ArcSPtr create_arc(const VertexSPtr& vertex)
+  static SpokeSPtr create_spoke(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->degree() == 3);
-    ArcSPtr result = ArcSPtr();
+    SpokeSPtr result = SpokeSPtr();
     CGAL_precondition(vertex->has_data());
     SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
 
@@ -773,8 +773,8 @@ public:
     // approximate square root, but it doesn't matter for robustness
     direction /= CGAL::approximate_sqrt(direction.squared_length());
 
-    result = Arc::create(data->get_node(), direction);
-    data->set_arc(result);
+    result = Spoke::create(data->get_node(), direction);
+    data->set_spoke(result);
     CGAL_SS3_DEBUG_SPTR(result);
 
     return result;
@@ -782,7 +782,7 @@ public:
 
   /**
     * Creates a new sheet for the edge data.
-    * The arcs of the vertices have to be set before.
+    * The spokes of the vertices have to be set before.
     */
   static SheetSPtr create_sheet(const EdgeSPtr& edge)
   {
@@ -839,8 +839,8 @@ public:
     if (node_src != node_tgt) {
       result->add_node(node_tgt);
     }
-    result->add_arc(Hds_utils::get_arc(edge->source()));
-    result->add_arc(Hds_utils::get_arc(edge->target()));
+    result->add_spoke(Hds_utils::get_spoke(edge->source()));
+    result->add_spoke(Hds_utils::get_spoke(edge->target()));
 
     return result;
   }
@@ -958,9 +958,9 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       CGAL_assertion(vertex->degree() == 3);
-      ArcSPtr arc = create_arc(vertex);
-      CGAL_SS3_DEBUG_SPTR(arc);
-      skeleton_->add_arc(arc);
+      SpokeSPtr spoke = create_spoke(vertex);
+      CGAL_SS3_DEBUG_SPTR(spoke);
+      skeleton_->add_spoke(spoke);
     }
 #endif
 
@@ -973,9 +973,9 @@ public:
       SheetSPtr sheet = create_sheet(edge);
       CGAL_SS3_DEBUG_SPTR(sheet);
 
-      // Squatting the arc type, this isn't really an arc, but a contour edge.
+      // Squatting the spoke type, this isn't really an spoke, but a contour edge.
       // Contours are useful to get a closed polygon (with holes) to draw sheets.
-      ArcSPtr contour = std::make_shared<Arc>(Hds_utils::get_node(edge->source()),
+      SpokeSPtr contour = std::make_shared<Spoke>(Hds_utils::get_node(edge->source()),
                                               Hds_utils::get_node(edge->target()));
       sheet->add_contour(contour);
 
@@ -4673,8 +4673,8 @@ public:
     node->set_point(event->point());
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(vertex_src)->close_arc(node);
-    Hds_utils::get_arc(vertex_tgt)->close_arc(node);
+    Hds_utils::get_spoke(vertex_src)->close_spoke(node);
+    Hds_utils::get_spoke(vertex_tgt)->close_spoke(node);
 
     Hds_utils::get_sheet(edge)->add_node(node);
     Hds_utils::clear_sheet(edge);
@@ -4905,24 +4905,24 @@ public:
       Hds_utils::get_sheet(edges[i])->add_node(node);
     }
 
-    // update arcs and sheets
+    // update spokes and sheets
     for (VertexSPtr vertex_ext : { vertex_src, vertex_tgt }) {
       Hds_utils::set_node(vertex_ext, node);
 
-      ArcSPtr arc = create_arc(vertex_ext);
-      skeleton_->add_arc(arc);
+      SpokeSPtr spoke = create_spoke(vertex_ext);
+      skeleton_->add_spoke(spoke);
 
       // 'edge' is common to both extremities, and is lacking a new sheet at this point
       for (EdgeWPtr inc_edge_w : vertex_ext->edges()) {
         if (EdgeSPtr inc_edge = inc_edge_w.lock()) {
           if (inc_edge != edge) {
-            Hds_utils::get_sheet(inc_edge)->add_arc(arc);
+            Hds_utils::get_sheet(inc_edge)->add_spoke(spoke);
           }
         }
       }
     }
 
-    // this sets up the two incident arcs, the nodes, etc.
+    // this sets up the two incident spokes, the nodes, etc.
     SheetSPtr sheet = create_sheet(edge);
     skeleton_->add_sheet(sheet);
 #endif
@@ -4982,9 +4982,9 @@ public:
     node->set_point(event->point());
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(edge_toremove_1->src(facet))->close_arc(node);
-    Hds_utils::get_arc(edge_toremove_1->tgt(facet))->close_arc(node);
-    Hds_utils::get_arc(edge_toremove_2->tgt(facet))->close_arc(node);
+    Hds_utils::get_spoke(edge_toremove_1->src(facet))->close_spoke(node);
+    Hds_utils::get_spoke(edge_toremove_1->tgt(facet))->close_spoke(node);
+    Hds_utils::get_spoke(edge_toremove_2->tgt(facet))->close_spoke(node);
 
     Hds_utils::get_sheet(edge_toremove_1)->add_node(node);
     Hds_utils::get_sheet(edge_toremove_2)->add_node(node);
@@ -5056,13 +5056,13 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     Hds_utils::set_node(vertex, node);
 
-    ArcSPtr arc = create_arc(vertex);
-    skeleton_->add_arc(arc);
+    SpokeSPtr spoke = create_spoke(vertex);
+    skeleton_->add_spoke(spoke);
 
     for (EdgeWPtr edge_w : vertex->edges()) {
       if (EdgeSPtr edge = edge_w.lock()) {
         Hds_utils::get_sheet(edge)->add_node(node);
-        Hds_utils::get_sheet(edge)->add_arc(arc);
+        Hds_utils::get_sheet(edge)->add_spoke(spoke);
       }
     }
 #endif
@@ -5116,7 +5116,7 @@ public:
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 3; ++i) {
-      Hds_utils::get_arc(vertices[i])->close_arc(node);
+      Hds_utils::get_spoke(vertices[i])->close_spoke(node);
     }
     std::array<EdgeSPtr, 3> edges = event->get_edges();
     for (unsigned int i = 0; i < 3; ++i) {
@@ -5166,17 +5166,17 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     Hds_utils::set_node(new_vertex, node);
 
-    ArcSPtr arc = create_arc(new_vertex);
-    skeleton_->add_arc(arc);
+    SpokeSPtr spoke = create_spoke(new_vertex);
+    skeleton_->add_spoke(spoke);
 
     for (EdgeWPtr edge_w : new_vertex->edges()) {
       if (EdgeSPtr edge = edge_w.lock()) {
         Hds_utils::get_sheet(edge)->add_node(node);
-        Hds_utils::get_sheet(edge)->add_arc(arc);
+        Hds_utils::get_sheet(edge)->add_spoke(spoke);
       }
     }
 
-    CGAL_postcondition(arc->sheets().size() == 3);
+    CGAL_postcondition(spoke->sheets().size() == 3);
 #endif
 
     // Gather relevant elements for local queue updates
@@ -5243,7 +5243,7 @@ public:
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 4; ++i) {
-      Hds_utils::get_arc(vertices[i])->close_arc(node);
+      Hds_utils::get_spoke(vertices[i])->close_spoke(node);
     }
     for (unsigned int i = 0; i < 4; ++i) {
       Hds_utils::get_sheet(edges[i])->add_node(node);
@@ -5369,7 +5369,7 @@ public:
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 4; ++i) {
-      Hds_utils::get_arc(vertices[i])->close_arc(node);
+      Hds_utils::get_spoke(vertices[i])->close_spoke(node);
     }
     for (unsigned int i = 0; i < 5; ++i) {
       Hds_utils::get_sheet(edges[i])->add_node(node);
@@ -5472,7 +5472,7 @@ public:
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 4; ++i) {
-      Hds_utils::get_arc(vertices[i])->close_arc(node);
+      Hds_utils::get_spoke(vertices[i])->close_spoke(node);
     }
     for (unsigned int i = 0; i < 6; ++i) {
       Hds_utils::get_sheet(edges[i])->add_node(node);
@@ -5698,8 +5698,8 @@ public:
     node->set_point(event->point());
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(vertex_1)->close_arc(node);
-    Hds_utils::get_arc(vertex_2)->close_arc(node);
+    Hds_utils::get_spoke(vertex_1)->close_spoke(node);
+    Hds_utils::get_spoke(vertex_2)->close_spoke(node);
 
     Hds_utils::get_sheet(edge_11)->add_node(node);
     Hds_utils::get_sheet(edge_12)->add_node(node);
@@ -5755,21 +5755,21 @@ public:
     Hds_utils::set_node(vertex_1, node);
     Hds_utils::set_node(vertex_2, node);
 
-    ArcSPtr arc_1 = create_arc(vertex_1);
-    skeleton_->add_arc(arc_1);
-    ArcSPtr arc_2 = create_arc(vertex_2);
-    skeleton_->add_arc(arc_2);
+    SpokeSPtr spoke_1 = create_spoke(vertex_1);
+    skeleton_->add_spoke(spoke_1);
+    SpokeSPtr spoke_2 = create_spoke(vertex_2);
+    skeleton_->add_spoke(spoke_2);
 
-    Hds_utils::get_sheet(edge_11)->add_arc(arc_1);
-    Hds_utils::get_sheet(edge_21)->add_arc(arc_1);
-    Hds_utils::get_sheet(edge_12)->add_arc(arc_2);
-    Hds_utils::get_sheet(edge_22)->add_arc(arc_2);
+    Hds_utils::get_sheet(edge_11)->add_spoke(spoke_1);
+    Hds_utils::get_sheet(edge_21)->add_spoke(spoke_1);
+    Hds_utils::get_sheet(edge_12)->add_spoke(spoke_2);
+    Hds_utils::get_sheet(edge_22)->add_spoke(spoke_2);
 
     SheetSPtr sheet = create_sheet(edge_tomerge_2);
     skeleton_->add_sheet(sheet);
 
-    CGAL_postcondition(arc_1->sheets().size() == 3);
-    CGAL_postcondition(arc_2->sheets().size() == 3);
+    CGAL_postcondition(spoke_1->sheets().size() == 3);
+    CGAL_postcondition(spoke_2->sheets().size() == 3);
 #endif
 
     // Gather relevant elements for local queue updates
@@ -5825,8 +5825,8 @@ public:
     node->set_point(event->point());
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(vertex_1)->close_arc(node);
-    Hds_utils::get_arc(vertex_2)->close_arc(node);
+    Hds_utils::get_spoke(vertex_1)->close_spoke(node);
+    Hds_utils::get_spoke(vertex_2)->close_spoke(node);
 
     for (VertexSPtr vertex : { vertex_1, vertex_2 }) {
       for (EdgeWPtr edge_w : vertex->edges()) {
@@ -5878,15 +5878,15 @@ public:
     Hds_utils::set_node(vertex_1, node);
     Hds_utils::set_node(vertex_2, node);
 
-    ArcSPtr arc_1 = create_arc(vertex_1);
-    skeleton_->add_arc(arc_1);
-    ArcSPtr arc_2 = create_arc(vertex_2);
-    skeleton_->add_arc(arc_2);
+    SpokeSPtr spoke_1 = create_spoke(vertex_1);
+    skeleton_->add_spoke(spoke_1);
+    SpokeSPtr spoke_2 = create_spoke(vertex_2);
+    skeleton_->add_spoke(spoke_2);
 
     for (VertexSPtr vertex : { vertex_1, vertex_2 }) {
       for (EdgeWPtr edge_w : vertex->edges()) {
         if (EdgeSPtr edge = edge_w.lock()) {
-          Hds_utils::get_sheet(edge)->add_arc(Hds_utils::get_arc(vertex));
+          Hds_utils::get_sheet(edge)->add_spoke(Hds_utils::get_spoke(vertex));
         }
       }
     }
@@ -5965,10 +5965,10 @@ public:
     skeleton_->add_node(node);
 
     if (facet_1_src == edge_2->get_facet_L() || facet_1_src == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->source())->close_arc(node);
+      Hds_utils::get_spoke(edge_1->source())->close_spoke(node);
     }
     if (facet_1_tgt == edge_2->get_facet_L() || facet_1_tgt == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->target())->close_arc(node);
+      Hds_utils::get_spoke(edge_1->target())->close_spoke(node);
     }
 
     for (EdgeWPtr edge_w : vertex->edges()) {
@@ -6041,21 +6041,21 @@ public:
     set_sheet(edge_tmp, Hds_utils::get_sheet(edge_2));
 
     Hds_utils::set_node(vertex, node);
-    ArcSPtr arc = create_arc(vertex);
-    skeleton_->add_arc(arc);
-    Hds_utils::get_sheet(edge_1)->add_arc(arc); // other 2 sheets are edge_21/edge_22's, created below
+    SpokeSPtr spoke = create_spoke(vertex);
+    skeleton_->add_spoke(spoke);
+    Hds_utils::get_sheet(edge_1)->add_spoke(spoke); // other 2 sheets are edge_21/edge_22's, created below
 
     Hds_utils::set_node(vertex_21, node);
-    ArcSPtr arc_21 = create_arc(vertex_21);
-    skeleton_->add_arc(arc_21);
-    Hds_utils::get_sheet(edge_b1)->add_arc(arc_21);
-    Hds_utils::get_sheet(edge_2)->add_arc(arc_21); // third sheet is edge_21's, created below
+    SpokeSPtr spoke_21 = create_spoke(vertex_21);
+    skeleton_->add_spoke(spoke_21);
+    Hds_utils::get_sheet(edge_b1)->add_spoke(spoke_21);
+    Hds_utils::get_sheet(edge_2)->add_spoke(spoke_21); // third sheet is edge_21's, created below
 
     Hds_utils::set_node(vertex_22, node);
-    ArcSPtr arc_22 = create_arc(vertex_22);
-    skeleton_->add_arc(arc_22);
-    Hds_utils::get_sheet(edge_b2)->add_arc(arc_22);
-    Hds_utils::get_sheet(edge_tmp)->add_arc(arc_22); // third sheet is edge_22's, created below
+    SpokeSPtr spoke_22 = create_spoke(vertex_22);
+    skeleton_->add_spoke(spoke_22);
+    Hds_utils::get_sheet(edge_b2)->add_spoke(spoke_22);
+    Hds_utils::get_sheet(edge_tmp)->add_spoke(spoke_22); // third sheet is edge_22's, created below
 
     SheetSPtr sheet_21 = create_sheet(edge_21);
     skeleton_->add_sheet(sheet_21);
@@ -6142,10 +6142,10 @@ public:
     skeleton_->add_node(node);
 
     if (facet_1_src == edge_2->get_facet_L() || facet_1_src == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->source())->close_arc(node);
+      Hds_utils::get_spoke(edge_1->source())->close_spoke(node);
     }
     if (facet_1_tgt == edge_2->get_facet_L() || facet_1_tgt == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->target())->close_arc(node);
+      Hds_utils::get_spoke(edge_1->target())->close_spoke(node);
     }
 
     std::array<EdgeSPtr, 4> edges;
@@ -6232,20 +6232,20 @@ public:
     Hds_utils::set_node(vertex_l, node);
     Hds_utils::set_node(vertex_r, node);
 
-    ArcSPtr arc_l = create_arc(vertex_l);
-    skeleton_->add_arc(arc_l);
-    ArcSPtr arc_r = create_arc(vertex_r);
-    skeleton_->add_arc(arc_r);
+    SpokeSPtr spoke_l = create_spoke(vertex_l);
+    skeleton_->add_spoke(spoke_l);
+    SpokeSPtr spoke_r = create_spoke(vertex_r);
+    skeleton_->add_spoke(spoke_r);
 
     set_sheet(edge_22, Hds_utils::get_sheet(edge_2));
 
-    Hds_utils::get_sheet(edge_2)->add_arc(arc_l);
-    Hds_utils::get_sheet(edge_2)->add_arc(arc_r);
+    Hds_utils::get_sheet(edge_2)->add_spoke(spoke_l);
+    Hds_utils::get_sheet(edge_2)->add_spoke(spoke_r);
 
     for (EdgeWPtr edge_w : vertex_l->edges()) {
       if (EdgeSPtr edge = edge_w.lock()) {
         if (Hds_utils::get_sheet(edge) != Hds_utils::get_sheet(edge_2)) {
-          Hds_utils::get_sheet(edge)->add_arc(arc_l);
+          Hds_utils::get_sheet(edge)->add_spoke(spoke_l);
         }
       }
     }
@@ -6253,7 +6253,7 @@ public:
     for (EdgeWPtr edge_w : vertex_r->edges()) {
       if (EdgeSPtr edge = edge_w.lock()) {
         if (Hds_utils::get_sheet(edge) != Hds_utils::get_sheet(edge_2)) {
-          Hds_utils::get_sheet(edge)->add_arc(arc_r);
+          Hds_utils::get_sheet(edge)->add_spoke(spoke_r);
         }
       }
     }
@@ -6357,8 +6357,8 @@ public:
     node->set_point(event->point());
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(vertex_1)->close_arc(node);
-    Hds_utils::get_arc(vertex_2)->close_arc(node);
+    Hds_utils::get_spoke(vertex_1)->close_spoke(node);
+    Hds_utils::get_spoke(vertex_2)->close_spoke(node);
 
     for (EdgeSPtr e : {edge_11, edge_12, edge_21, edge_22}) {
       Hds_utils::get_sheet(e)->add_node(node);
@@ -6419,17 +6419,17 @@ public:
     Hds_utils::set_node(vertex_1, node);
     Hds_utils::set_node(vertex_2, node);
 
-    ArcSPtr arc_1 = create_arc(vertex_1);
-    skeleton_->add_arc(arc_1);
-    ArcSPtr arc_2 = create_arc(vertex_2);
-    skeleton_->add_arc(arc_2);
+    SpokeSPtr spoke_1 = create_spoke(vertex_1);
+    skeleton_->add_spoke(spoke_1);
+    SpokeSPtr spoke_2 = create_spoke(vertex_2);
+    skeleton_->add_spoke(spoke_2);
 
     set_sheet(edge_tomerge_2, Hds_utils::get_sheet(edge_to_split));
 
     for (VertexSPtr vertex : { vertex_1, vertex_2 }) {
       for (EdgeWPtr edge_w : vertex->edges()) {
         if (EdgeSPtr edge = edge_w.lock()) {
-          Hds_utils::get_sheet(edge)->add_arc(Hds_utils::get_arc(vertex));
+          Hds_utils::get_sheet(edge)->add_spoke(Hds_utils::get_spoke(vertex));
         }
       }
     }
@@ -6501,10 +6501,10 @@ public:
     FacetSPtr facet_1_tgt = edge_1->get_facet_tgt();
 
     if (facet_1_src == facet_l2 || facet_1_src == facet_r2) {
-      Hds_utils::get_arc(edge_1->source())->close_arc(node);
+      Hds_utils::get_spoke(edge_1->source())->close_spoke(node);
     }
     if (facet_1_tgt == facet_l2 || facet_1_tgt == facet_r2) {
-      Hds_utils::get_arc(edge_1->target())->close_arc(node);
+      Hds_utils::get_spoke(edge_1->target())->close_spoke(node);
     }
 
     Hds_utils::get_sheet(edge_1)->add_node(node);
@@ -6568,14 +6568,14 @@ public:
     for (unsigned int i = 0; i < 4; ++i) {
       SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertices[i]->get_data());
       vertex_data->set_node(node);
-      ArcSPtr arc = create_arc(vertices[i]);
-      skeleton_->add_arc(arc);
+      SpokeSPtr spoke = create_spoke(vertices[i]);
+      skeleton_->add_spoke(spoke);
 
       for (EdgeWPtr ew : vertices[i]->edges()) {
         if (EdgeSPtr e = ew.lock()) {
           // could abuse the fact that new edges have no data or sheet yet, but this is clearer
           if (std::find(edges.begin(), edges.end(), e) == edges.end()) {
-            Hds_utils::get_sheet(e)->add_arc(arc); // other 2 are added when sheets are created below
+            Hds_utils::get_sheet(e)->add_spoke(spoke); // other 2 are added when sheets are created below
           }
         }
       }
@@ -6644,7 +6644,7 @@ public:
     node->set_point(point);
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(vertex)->close_arc(node);
+    Hds_utils::get_spoke(vertex)->close_spoke(node);
 
     for (EdgeWPtr edge_w : vertex->edges()) {
       if (EdgeSPtr edge = edge_w.lock()) {
@@ -6716,9 +6716,9 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     for (unsigned int i = 0; i < 3; ++i) {
       Hds_utils::set_node(vertices[i], node);
-      ArcSPtr arc = create_arc(vertices[i]);
-      skeleton_->add_arc(arc);
-      Hds_utils::get_sheet(edges[i])->add_arc(arc); // other 2 sheets are the new edges', created below
+      SpokeSPtr spoke = create_spoke(vertices[i]);
+      skeleton_->add_spoke(spoke);
+      Hds_utils::get_sheet(edges[i])->add_spoke(spoke); // other 2 sheets are the new edges', created below
     }
     for (unsigned int i = 0; i < 3; ++i) {
       SheetSPtr sheet = create_sheet(new_edges[i]);
@@ -6823,7 +6823,7 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     CGAL_postcondition_code(for (const VertexSPtr& v : polyhedron->vertices()) {)
     CGAL_postcondition(Hds_utils::get_node(v) != NodeSPtr());
-    CGAL_postcondition(Hds_utils::get_arc(v) != ArcSPtr());
+    CGAL_postcondition(Hds_utils::get_spoke(v) != SpokeSPtr());
     CGAL_postcondition_code(})
     CGAL_postcondition_code(for (const EdgeSPtr& e : polyhedron->edges()))
     CGAL_postcondition(Hds_utils::get_sheet(e) != SheetSPtr());

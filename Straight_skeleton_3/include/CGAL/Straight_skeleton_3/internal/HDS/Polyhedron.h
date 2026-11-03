@@ -106,8 +106,8 @@ public:
 
       using NodeWPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::NodeWPtr;
       using NodeSPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::NodeSPtr;
-      using ArcWPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::ArcWPtr;
-      using ArcSPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::ArcSPtr;
+      using SpokeWPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::SpokeWPtr;
+      using SpokeSPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::SpokeSPtr;
 
       using VertexDataSPtr = std::shared_ptr<Vertex_data>;
       using SkelVertexDataSPtr = std::shared_ptr<Skeleton_vertex_data>;
@@ -128,16 +128,16 @@ public:
         return std::make_shared<Skeleton_vertex_data>(*this);
       }
 
-      ArcSPtr get_arc() const
+      SpokeSPtr get_spoke() const
       {
-        CGAL_SS3_DEBUG_WPTR(arc_);
-        return this->arc_.lock();
+        CGAL_SS3_DEBUG_WPTR(spoke_);
+        return this->spoke_.lock();
       }
 
-      void set_arc(const ArcSPtr& arc)
+      void set_spoke(const SpokeSPtr& spoke)
       {
-        CGAL_SS3_DEBUG_SPTR(arc);
-        this->arc_ = arc;
+        CGAL_SS3_DEBUG_SPTR(spoke);
+        this->spoke_ = spoke;
       }
 
       NodeWPtr get_wnode() const
@@ -178,7 +178,7 @@ public:
       }
 
     protected:
-      ArcWPtr arc_;
+      SpokeWPtr spoke_;
       NodeWPtr node_;
       std::optional<Point_3> final_point_;
     };

@@ -65,7 +65,7 @@ private:
   using StraightSkeletonSPtr = std::shared_ptr<Straight_skeleton_3>;
 
   using NodeSPtr = typename Straight_skeleton_3::NodeSPtr;
-  using ArcSPtr = typename Straight_skeleton_3::ArcSPtr;
+  using SpokeSPtr = typename Straight_skeleton_3::SpokeSPtr;
   using SheetSPtr = typename Straight_skeleton_3::SheetSPtr;
 
 private:
@@ -104,26 +104,26 @@ public:
   }
 
 public:
-  static ArcSPtr get_arc(const VertexSPtr& vertex)
+  static SpokeSPtr get_spoke(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->has_data());
     SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
-    const ArcSPtr& arc = data->get_arc();
-    CGAL_SS3_DEBUG_SPTR(arc);
-    return arc;
+    const SpokeSPtr& spoke = data->get_spoke();
+    CGAL_SS3_DEBUG_SPTR(spoke);
+    return spoke;
   }
 
-  static void set_arc(const VertexSPtr& vertex,
-                      const ArcSPtr& arc)
+  static void set_spoke(const VertexSPtr& vertex,
+                      const SpokeSPtr& spoke)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
-    CGAL_SS3_DEBUG_SPTR(arc);
+    CGAL_SS3_DEBUG_SPTR(spoke);
     CGAL_precondition(vertex->has_data());
     SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
-    data->set_arc(arc);
+    data->set_spoke(spoke);
   }
 
   static NodeSPtr get_node(const VertexSPtr& vertex)

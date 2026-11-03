@@ -150,7 +150,7 @@ construct_skeleton(const TriangleMesh& tmesh,
  *
  * The upper bound `max_time` defines how far the straight skeleton is constructed,
  * i.e. nodes at a time greater than `max_time` are not computed. This may result
- * in the presence of unbounded arcs and sheets in the straight skeleton.
+ * in the presence of unbounded spokes and sheets in the straight skeleton.
  *
  * \warning An epsilon geometric perturbation is always applied to the input mesh as to avoid
  * degenerate configurations, See \ref Straight_skeleton_3GeneralPosition for more information.

@@ -324,7 +324,7 @@ bool write_OBJ(const std::string& filename,
 
   using Skeleton = Straight_skeleton_3<GeomTraits>;
   using NodeSPtr = typename Skeleton::NodeSPtr;
-  using ArcSPtr = typename Skeleton::ArcSPtr;
+  using SpokeSPtr = typename Skeleton::SpokeSPtr;
   using SheetWPtr = typename Skeleton::SheetWPtr;
   using SheetSPtr = typename Skeleton::SheetSPtr;
 
@@ -371,14 +371,14 @@ bool write_OBJ(const std::string& filename,
   }
 
 
-  // incomplete arcs get an interpolated point at the requested time
-  CGAL::unordered_flat_map<ArcSPtr, Point_3> incomplete_arc_to_point;
+  // incomplete spokes get an interpolated point at the requested time
+  CGAL::unordered_flat_map<SpokeSPtr, Point_3> incomplete_spoke_to_point;
 
   // Write sheets as faces, triangulating if requested
   for (const SheetSPtr& sheet : skeleton->sheets()) {
     CGAL_SS3_IO_TRACE_V(16, "  Sheet # " << sheet->id());
     CGAL_SS3_IO_TRACE_V(16, "  Sheet #nodes " << sheet->nodes().size());
-    CGAL_SS3_IO_TRACE_V(16, "  Sheet #arcs " << sheet->arcs().size());
+    CGAL_SS3_IO_TRACE_V(16, "  Sheet #spokes " << sheet->spokes().size());
     CGAL_SS3_IO_TRACE_V(16, "  Sheet #contours " << sheet->contours().size());
 
     const auto& nodes = sheet->nodes();
@@ -401,14 +401,14 @@ bool write_OBJ(const std::string& filename,
       CGAL_warning_msg(res.second, "Node should not be found twice in the sheet's nodes");
     }
 
-    // If the source node exists at the requested time, add incomplete arcs clipped to that time.
+    // If the source node exists at the requested time, add incomplete spokes clipped to that time.
     Vector_3 n = sheet->get_plane().orthogonal_vector();
     CGAL_assertion(n != CGAL::NULL_VECTOR);
 
     PK traits(n);
     PCDT pcdt(traits);
 
-    for (const ArcSPtr& contour : sheet->contours()) {
+    for (const SpokeSPtr& contour : sheet->contours()) {
       NodeSPtr v_src = contour->source();
       NodeSPtr v_tgt = contour->target();
       try {
@@ -423,33 +423,33 @@ bool write_OBJ(const std::string& filename,
 
     std::vector<Point_3> incomplete_points;
 
-    for (const ArcSPtr& arc : sheet->arcs()) {
+    for (const SpokeSPtr& spoke : sheet->spokes()) {
       Point_3 ap0, ap1;
-      NodeSPtr node_src = arc->source();
+      NodeSPtr node_src = spoke->source();
       if (node_src->time() <= time) {
         continue;
       }
 
-      if (arc->has_target() && arc->target()->time() >= time) {
-        NodeSPtr node_tgt = arc->target();
+      if (spoke->has_target() && spoke->target()->time() >= time) {
+        NodeSPtr node_tgt = spoke->target();
         ap0 = node_src->point();
         ap1 = node_tgt->point();
         CGAL_assertion(ap0 != ap1);
       } else {
-        CGAL_SS3_IO_TRACE_V(64, " Arc from " << node_src->point() << " is partial at the requested time");
+        CGAL_SS3_IO_TRACE_V(64, " Spoke from " << node_src->point() << " is partial at the requested time");
         Point_3 interpolated_point;
-        if (node_src->time() == time) { // detached node: several arcs may share the same final point
+        if (node_src->time() == time) { // detached node: several spokes may share the same final point
           interpolated_point = node_src->point();
         } else {
-          auto it = incomplete_arc_to_point.find(arc);
-          if (it == incomplete_arc_to_point.end()) {
+          auto it = incomplete_spoke_to_point.find(spoke);
+          if (it == incomplete_spoke_to_point.end()) {
             std::vector<Plane_3> shifted_planes;
             shifted_planes.reserve(3);
 
             // these faces are from the static polyhedron!!
             // @fixme really ought to fix this static stuff, or distinguish very clearly...
             CGAL::unordered_flat_set<FacetSPtr> ifs;
-            for (const SheetWPtr& sheet_wptr : arc->sheets()) {
+            for (const SheetWPtr& sheet_wptr : spoke->sheets()) {
               if (const SheetSPtr sheet = sheet_wptr.lock()) {
                 ifs.insert(sheet->get_facet_F());
                 ifs.insert(sheet->get_facet_B());
@@ -469,7 +469,7 @@ bool write_OBJ(const std::string& filename,
             interpolated_point = point.value();
 
             CGAL_assertion_code(auto res_1 =)
-              incomplete_arc_to_point.emplace(arc, interpolated_point);
+              incomplete_spoke_to_point.emplace(spoke, interpolated_point);
             CGAL_assertion(res_1.second);
 
             CGAL_assertion_code(auto res_2 =)
@@ -484,8 +484,8 @@ bool write_OBJ(const std::string& filename,
           }
         }
 
-        CGAL_SS3_IO_TRACE_V(64, " Add interpolated point from incomplete arc "<< arc->id() << ": " << interpolated_point);
-        CGAL_SS3_IO_TRACE_V(64, " using direction: " << arc->direction());
+        CGAL_SS3_IO_TRACE_V(64, " Add interpolated point from incomplete spoke "<< spoke->id() << ": " << interpolated_point);
+        CGAL_SS3_IO_TRACE_V(64, " using direction: " << spoke->direction());
 
         incomplete_points.push_back(interpolated_point);
         ap0 = node_src->point();
@@ -493,12 +493,12 @@ bool write_OBJ(const std::string& filename,
       }
 
       if (ap0 == ap1) {
-        CGAL_SS3_IO_TRACE_V(64, " Ignoring degenerate arc segment at " << ap0);
+        CGAL_SS3_IO_TRACE_V(64, " Ignoring degenerate spoke segment at " << ap0);
         continue;
       }
 
       try {
-        CGAL_SS3_IO_TRACE_V(64, " Try to add arc segment between " << ap0 << " and " << ap1);
+        CGAL_SS3_IO_TRACE_V(64, " Try to add spoke segment between " << ap0 << " and " << ap1);
         pcdt.insert_constraint(ap0, ap1);
       } catch(const typename PCDT::Intersection_of_constraints_exception&) {
         CGAL_SS3_IO_TRACE_V(1, "Warning: Intersection of constraints in sheet triangulation (a)");
@@ -527,12 +527,12 @@ bool write_OBJ(const std::string& filename,
         const Point_3& p0 = incomplete_points[i];
         const Point_3& p1 = incomplete_points[i + 1];
         if (p0 == p1) {
-          CGAL_SS3_IO_TRACE_V(64, " Ignoring degenerate closing arc at " << p0);
+          CGAL_SS3_IO_TRACE_V(64, " Ignoring degenerate closing spoke at " << p0);
           continue;
         }
 
         try {
-          CGAL_SS3_IO_TRACE_V(64, " Try to add closing arc between " << p0 << " and " << p1);
+          CGAL_SS3_IO_TRACE_V(64, " Try to add closing spoke between " << p0 << " and " << p1);
           pcdt.insert_constraint(p0, p1);
         } catch(const typename PCDT::Intersection_of_constraints_exception&) {
           CGAL_SS3_IO_TRACE_V(1, "Warning: Intersection of constraints in sheet triangulation (b)");

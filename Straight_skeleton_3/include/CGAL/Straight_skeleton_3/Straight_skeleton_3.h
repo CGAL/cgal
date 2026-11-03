@@ -57,18 +57,18 @@ class Polyhedron_transformation;
  * The class `Straight_skeleton_3` is a data structure providing access
  * to the combinatorial and geometrical information of a 3D straight skeleton.
  *
- * A 3D straight skeleton is composed of nodes, arcs, and sheets.
+ * A 3D straight skeleton is composed of nodes, spokes, and sheets.
  *
  * - Nodes are points at which topological changes have occurred during the propagation of the faces
  *   of the polyhedron.
- * - Arcs connect two nodes, and represent the trace of a vertex of the polyhedron during
- *   the propagation of the faces of the polyhedron. The vertex spawned at the source of the arc,
- *   and disappears at the target of the arc.
- * - Sheets are 2D surfaces connecting arcs and nodes, representing the trace of the edges
+ * - Spokes connect two nodes, and represent the trace of a vertex of the polyhedron during
+ *   the propagation of the faces of the polyhedron. The vertex spawned at the source of the spoke,
+ *   and disappears at the target of the spoke.
+ * - Sheets are 2D surfaces connecting spokes and nodes, representing the trace of the edges
  *   of the polyhedron during the propagation of the faces.
  *
  * If a maximal propagation time was set during construction of the skeleton (this is necessarily
- * the case for outward offsetting), the straight skeleton may be partial, i.e., some arcs
+ * the case for outward offsetting), the straight skeleton may be partial, i.e., some spokes
  * and sheets may be unbounded.
  *
  * \tparam GeomTraits must be a model of `Kernel` and be the same type as the one used to
@@ -103,7 +103,7 @@ private:
 
 public:
   class Node;
-  class Arc;
+  class Spoke;
   class Sheet;
 
 public:
@@ -114,10 +114,10 @@ public:
   * representing a point in 3D space at which an event has occurred during the propagation
   * of the faces of the polyhedron.
   *
-  * A node stores its 3D position, the time at which it was created, and the incident arcs and sheets.
+  * A node stores its 3D position, the time at which it was created, and the incident spokes and sheets.
   *
   * \sa `CGAL::Straight_skeleton_3`
-  * \sa `CGAL::Straight_skeleton_3::Arc`
+  * \sa `CGAL::Straight_skeleton_3::Spoke`
   * \sa `CGAL::Straight_skeleton_3::Sheet`
   */
   class Node
@@ -135,8 +135,8 @@ public:
     using Point_3 = typename Geom_traits::Point_3;
 
     using NodeSPtr = std::shared_ptr<Node>;
-    using ArcWPtr = std::weak_ptr<Arc>;
-    using ArcSPtr = std::shared_ptr<Arc>;
+    using SpokeWPtr = std::weak_ptr<Spoke>;
+    using SpokeSPtr = std::shared_ptr<Spoke>;
     using SheetWPtr = std::weak_ptr<Sheet>;
     using SheetSPtr = std::shared_ptr<Sheet>;
 
@@ -209,33 +209,33 @@ public:
       this->id_ = id;
     }
 
-    void add_arc(const ArcSPtr& arc)
+    void add_spoke(const SpokeSPtr& spoke)
     {
-      CGAL_SS3_DEBUG_SPTR(arc);
-      CGAL_precondition(!has_incident_arc(arc));
-      typename std::list<ArcWPtr>::iterator it = arcs_.insert(arcs_.end(), ArcWPtr(arc));
-      if (arc->source() == this->shared_from_this()) {
-        arc->set_source_list_it(it);
-      } else if (arc->has_target()) {
-        if (arc->target() == this->shared_from_this()) {
-          arc->set_target_list_it(it);
+      CGAL_SS3_DEBUG_SPTR(spoke);
+      CGAL_precondition(!has_incident_spoke(spoke));
+      typename std::list<SpokeWPtr>::iterator it = spokes_.insert(spokes_.end(), SpokeWPtr(spoke));
+      if (spoke->source() == this->shared_from_this()) {
+        spoke->set_source_list_it(it);
+      } else if (spoke->has_target()) {
+        if (spoke->target() == this->shared_from_this()) {
+          spoke->set_target_list_it(it);
         }
       }
     }
 
-    bool remove_arc(const ArcSPtr& arc)
+    bool remove_spoke(const SpokeSPtr& spoke)
     {
-      CGAL_SS3_DEBUG_SPTR(arc);
-      CGAL_precondition(has_incident_arc(arc));
+      CGAL_SS3_DEBUG_SPTR(spoke);
+      CGAL_precondition(has_incident_spoke(spoke));
       bool result = false;
-      if (arc->source() == this->shared_from_this()) {
-        arcs_.erase(arc->get_source_list_it());
-        arc->set_source_list_it(typename std::list<ArcWPtr>::iterator());
+      if (spoke->source() == this->shared_from_this()) {
+        spokes_.erase(spoke->get_source_list_it());
+        spoke->set_source_list_it(typename std::list<SpokeWPtr>::iterator());
         result = true;
-      } else if (arc->has_target()) {
-        if (arc->target() == this->shared_from_this()) {
-          arcs_.erase(arc->get_target_list_it());
-          arc->set_target_list_it(typename std::list<ArcWPtr>::iterator());
+      } else if (spoke->has_target()) {
+        if (spoke->target() == this->shared_from_this()) {
+          spokes_.erase(spoke->get_target_list_it());
+          spoke->set_target_list_it(typename std::list<SpokeWPtr>::iterator());
           result = true;
         }
       }
@@ -267,11 +267,11 @@ public:
       return result;
     }
 
-    bool has_incident_arc(const ArcSPtr& arc) const
+    bool has_incident_spoke(const SpokeSPtr& spoke) const
     {
-      CGAL_SS3_DEBUG_SPTR(arc);
-      ArcWPtr arc_wptr = ArcWPtr(arc);
-      bool result = (arcs_.end() != STL_Extension::internal::weak_find(arcs_.begin(), arcs_.end(), arc_wptr));
+      CGAL_SS3_DEBUG_SPTR(spoke);
+      SpokeWPtr spoke_wptr = SpokeWPtr(spoke);
+      bool result = (spokes_.end() != STL_Extension::internal::weak_find(spokes_.begin(), spokes_.end(), spoke_wptr));
       return result;
     }
 
@@ -293,22 +293,22 @@ public:
         }
       }
       sheets_.clear();
-      typename std::list<ArcWPtr>::iterator it_a = arcs_.begin();
-      while (it_a != arcs_.end()) {
-        ArcWPtr arc_wptr = *it_a++;
-        if (ArcSPtr arc = arc_wptr.lock()) {
-          remove_arc(arc);
+      typename std::list<SpokeWPtr>::iterator it_a = spokes_.begin();
+      while (it_a != spokes_.end()) {
+        SpokeWPtr spoke_wptr = *it_a++;
+        if (SpokeSPtr spoke = spoke_wptr.lock()) {
+          remove_spoke(spoke);
         }
       }
-      arcs_.clear();
+      spokes_.clear();
     }
 
     /*!
-    * return the list of incident arcs.
+    * return the list of incident spokes.
     */
-    std::list<std::weak_ptr<Arc> >& arcs()
+    std::list<std::weak_ptr<Spoke> >& spokes()
     {
-      return this->arcs_;
+      return this->spokes_;
     }
 
     /*!
@@ -322,10 +322,10 @@ public:
     unsigned int degree() const
     {
       unsigned int result = 0;
-      typename std::list<ArcWPtr>::const_iterator it_a = arcs_.begin();
-      while (it_a != arcs_.end()) {
-        ArcWPtr arc_wptr = *it_a++;
-        if (!arc_wptr.expired()) {
+      typename std::list<SpokeWPtr>::const_iterator it_a = spokes_.begin();
+      while (it_a != spokes_.end()) {
+        SpokeWPtr spoke_wptr = *it_a++;
+        if (!spoke_wptr.expired()) {
           ++result;
         }
       }
@@ -346,12 +346,12 @@ public:
       result += "<" + String_factory::fromDouble(CGAL::to_double(point().x())) + " ";
       result += String_factory::fromDouble(CGAL::to_double(point().y())) + " ";
       result += String_factory::fromDouble(CGAL::to_double(point().z())) + ">, ";
-      result += ", arcs={";
+      result += ", spokes={";
       bool first = true;
-      for (const ArcWPtr& arc_wptr : arcs_) {
-        if (ArcSPtr arc = arc_wptr.lock()) {
+      for (const SpokeWPtr& spoke_wptr : spokes_) {
+        if (SpokeSPtr spoke = spoke_wptr.lock()) {
           if (!first) result += ", ";
-          result += String_factory::fromInteger(arc->id());
+          result += String_factory::fromInteger(spoke->id());
           first = false;
         }
       }
@@ -376,7 +376,7 @@ public:
     FT time_;
     int id_;
 
-    std::list<ArcWPtr> arcs_;
+    std::list<SpokeWPtr> spokes_;
     std::list<SheetWPtr> sheets_;
     StraightSkeletonWPtr skel_;
 
@@ -390,74 +390,74 @@ public:
   /*!
   * \ingroup PkgStraightSkeleton3Classes
   *
-  * The class `Arc` represents an arc of the straight skeleton, i.e., a connection between two nodes.
+  * The class `Spoke` represents an spoke of the straight skeleton, i.e., a connection between two nodes.
   *
-  * If the skeleton is partial because the propagation was interrupted, some arcs may be unbounded
-  * and have only a source node. In this case, the arc stores a direction vector instead
+  * If the skeleton is partial because the propagation was interrupted, some spokes may be unbounded
+  * and have only a source node. In this case, the spoke stores a direction vector instead
   * of a target node.
   *
   * \sa `CGAL::Straight_skeleton_3`
   * \sa `CGAL::Straight_skeleton_3::Node`
   * \sa `CGAL::Straight_skeleton_3::Sheet`
   */
-  class Arc
-    : public std::enable_shared_from_this<Arc>
+  class Spoke
+    : public std::enable_shared_from_this<Spoke>
   {
   public:
     /*!
-    * the vector type used for the direction of the arc.
+    * the vector type used for the direction of the spoke.
     */
     using Vector_3 = typename Geom_traits::Vector_3;
     /*!
-    * the line type used for the supporting line of the arc.
+    * the line type used for the supporting line of the spoke.
     */
     using Line_3 = typename Geom_traits::Line_3;
 
     using NodeSPtr = std::shared_ptr<Node>;
-    using ArcWPtr = std::weak_ptr<Arc>;
-    using ArcSPtr = std::shared_ptr<Arc>;
+    using SpokeWPtr = std::weak_ptr<Spoke>;
+    using SpokeSPtr = std::shared_ptr<Spoke>;
     using SheetWPtr = std::weak_ptr<Sheet>;
     using SheetSPtr = std::shared_ptr<Sheet>;
 
   public:
-    Arc(const NodeSPtr& node_src, const Vector_3& direction)
+    Spoke(const NodeSPtr& node_src, const Vector_3& direction)
     {
       node_src_ = node_src;
       direction_ = direction;
-      id_ = next_arc_id_++;
+      id_ = next_spoke_id_++;
     }
 
-    Arc(const NodeSPtr& node_src, const NodeSPtr& node_tgt)
+    Spoke(const NodeSPtr& node_src, const NodeSPtr& node_tgt)
     {
       node_src_ = node_src;
       node_tgt_ = node_tgt;
-      id_ = next_arc_id_++;
+      id_ = next_spoke_id_++;
     }
 
-    ~Arc() {
+    ~Spoke() {
       node_src_.reset();
       node_tgt_.reset();
       direction_.reset();
       sheets_.clear();
     }
 
-    static ArcSPtr create(const NodeSPtr& node_src, const Vector_3& direction)
+    static SpokeSPtr create(const NodeSPtr& node_src, const Vector_3& direction)
     {
-      ArcSPtr result = std::make_shared<Arc>(node_src, direction);
-      node_src->add_arc(result);
+      SpokeSPtr result = std::make_shared<Spoke>(node_src, direction);
+      node_src->add_spoke(result);
       return result;
     }
 
-    static ArcSPtr create(const NodeSPtr& node_src, const NodeSPtr& node_tgt)
+    static SpokeSPtr create(const NodeSPtr& node_src, const NodeSPtr& node_tgt)
     {
-      ArcSPtr result = std::make_shared<Arc>(node_src, node_tgt);
-      node_src->add_arc(result);
-      node_tgt->add_arc(result);
+      SpokeSPtr result = std::make_shared<Spoke>(node_src, node_tgt);
+      node_src->add_spoke(result);
+      node_tgt->add_spoke(result);
       return result;
     }
 
     /*!
-    * returns the source node of the arc.
+    * returns the source node of the spoke.
     */
     std::shared_ptr<Node> source() const
     {
@@ -472,12 +472,12 @@ public:
       this->node_src_ = node_src;
     }
 
-    typename std::list<ArcWPtr>::iterator get_source_list_it() const
+    typename std::list<SpokeWPtr>::iterator get_source_list_it() const
     {
       return this->node_src_list_it_;
     }
 
-    void set_source_list_it(typename std::list<ArcWPtr>::iterator node_src_list_it)
+    void set_source_list_it(typename std::list<SpokeWPtr>::iterator node_src_list_it)
     {
       this->node_src_list_it_ = node_src_list_it;
     }
@@ -488,8 +488,8 @@ public:
     }
 
     /*!
-    * returns the target node of the arc.
-    * Note that for unbounded arcs, this function returns a null pointer.
+    * returns the target node of the spoke.
+    * Note that for unbounded spokes, this function returns a null pointer.
     * \sa `has_target()`
     */
     std::shared_ptr<Node> target() const
@@ -505,18 +505,18 @@ public:
       this->node_tgt_ = node_tgt;
     }
 
-    typename std::list<ArcWPtr>::iterator get_target_list_it() const
+    typename std::list<SpokeWPtr>::iterator get_target_list_it() const
     {
       return this->tgt_list_it_;
     }
 
-    void set_target_list_it(typename std::list<ArcWPtr>::iterator node_tgt_list_it)
+    void set_target_list_it(typename std::list<SpokeWPtr>::iterator node_tgt_list_it)
     {
       this->tgt_list_it_ = node_tgt_list_it;
     }
 
     /*!
-    * returns whether the arc has a target node.
+    * returns whether the spoke has a target node.
     */
     bool has_target() const
     {
@@ -533,12 +533,12 @@ public:
       }
     }
 
-    void close_arc(const NodeSPtr& node_tgt)
+    void close_spoke(const NodeSPtr& node_tgt)
     {
       CGAL_SS3_DEBUG_SPTR(node_tgt);
       CGAL_precondition(has_source() && !has_target());
       set_target(node_tgt);
-      node_tgt->add_arc(this->shared_from_this());
+      node_tgt->add_spoke(this->shared_from_this());
     }
 
     bool has_direction() const
@@ -547,7 +547,7 @@ public:
     }
 
     /*!
-    * returns the direction of the arc, i.e., the direction in which the vertex of the polyhedron
+    * returns the direction of the spoke, i.e., the direction in which the vertex of the polyhedron
     * is moving.
     */
     const Vector_3& direction() const
@@ -570,12 +570,12 @@ public:
       this->skel_ = skel;
     }
 
-    typename std::list<ArcSPtr>::iterator get_list_it() const
+    typename std::list<SpokeSPtr>::iterator get_list_it() const
     {
       return this->list_it_;
     }
 
-    void set_list_it(typename std::list<ArcSPtr>::iterator list_it)
+    void set_list_it(typename std::list<SpokeSPtr>::iterator list_it)
     {
       this->list_it_ = list_it;
     }
@@ -633,26 +633,26 @@ public:
     }
 
     /*!
-    * returns the other arc incident to `node` in the given `sheet`.
-    * \pre `sheet` contains this arc, and `node` is either the source or target of this arc.
+    * returns the other spoke incident to `node` in the given `sheet`.
+    * \pre `sheet` contains this spoke, and `node` is either the source or target of this spoke.
     */
-    std::shared_ptr<Arc> next(const std::shared_ptr<Sheet>& sheet, const std::shared_ptr<Node>& node) const
+    std::shared_ptr<Spoke> next(const std::shared_ptr<Sheet>& sheet, const std::shared_ptr<Node>& node) const
     {
       CGAL_precondition(has_incident_sheet(sheet));
       CGAL_precondition(node == node_src_ || node == node_tgt_);
-      ArcSPtr result = ArcSPtr();
-      // check the arcs incident to the node
-      std::list<ArcWPtr> warcs = node->arcs();
-      typename std::list<ArcWPtr>::const_iterator it = warcs.begin();
-      while (it != warcs.end()) {
-        ArcWPtr arc_wptr = *it++;
-        CGAL_SS3_DEBUG_WPTR(arc_wptr);
-        if (ArcSPtr arc = arc_wptr.lock()) {
-          if (arc == this->shared_from_this()) {
+      SpokeSPtr result = SpokeSPtr();
+      // check the spokes incident to the node
+      std::list<SpokeWPtr> wspokes = node->spokes();
+      typename std::list<SpokeWPtr>::const_iterator it = wspokes.begin();
+      while (it != wspokes.end()) {
+        SpokeWPtr spoke_wptr = *it++;
+        CGAL_SS3_DEBUG_WPTR(spoke_wptr);
+        if (SpokeSPtr spoke = spoke_wptr.lock()) {
+          if (spoke == this->shared_from_this()) {
             continue;
           }
-          if (arc->has_incident_sheet(sheet)) {
-            result = arc;
+          if (spoke->has_incident_sheet(sheet)) {
+            result = spoke;
             break;
           }
         }
@@ -661,7 +661,7 @@ public:
     }
 
     /*!
-    * returns the 3D line supporting the arc.
+    * returns the 3D line supporting the spoke.
     */
     Line_3 line() const
     {
@@ -675,12 +675,12 @@ public:
     }
 
     /*!
-    * returns combinatorial and geometrical information about the arc as a string.
+    * returns combinatorial and geometrical information about the spoke as a string.
     */
     std::string to_string() const
     {
-      std::string result("Arc(");
-      // Arc ID
+      std::string result("Spoke(");
+      // Spoke ID
       if (id_ != -1) {
         result += "id=" + String_factory::fromInteger(id_) + ", ";
       } else {
@@ -717,19 +717,19 @@ public:
 
   protected:
     NodeSPtr node_src_;
-    typename std::list<ArcWPtr>::iterator node_src_list_it_;
+    typename std::list<SpokeWPtr>::iterator node_src_list_it_;
     NodeSPtr node_tgt_;
-    typename std::list<ArcWPtr>::iterator tgt_list_it_;
+    typename std::list<SpokeWPtr>::iterator tgt_list_it_;
     std::optional<Vector_3> direction_;
-    typename std::list<SheetWPtr> sheets_; // every arc has 3 sheets
+    typename std::list<SheetWPtr> sheets_; // every spoke has 3 sheets
     StraightSkeletonWPtr skel_;
 
-    typename std::list<ArcSPtr>::iterator list_it_;
+    typename std::list<SpokeSPtr>::iterator list_it_;
 
     int id_;
 
   private:
-    static int next_arc_id_;
+    static int next_spoke_id_;
   };
 
 public:
@@ -737,11 +737,11 @@ public:
   * \ingroup PkgStraightSkeleton3Classes
   *
   * The class `Sheet` represents a sheet of the straight skeleton, i.e., a 2D surface
-  * bounded by arcs and nodes.
+  * bounded by spokes and nodes.
   *
-  * A special type of arcs, called *contours*, are also stored in the sheet. Contours are not
-  * skeleton arcs per se, but rather correspond to the edges of the input polyhedron,
-  * which are needed for the union of arcs to form a closed polygon (when the sheet is bounded).
+  * A special type of spokes, called *contours*, are also stored in the sheet. Contours are not
+  * skeleton spokes per se, but rather correspond to the edges of the input polyhedron,
+  * which are needed for the union of spokes to form a closed polygon (when the sheet is bounded).
   *
   * In the case of a partial straight skeleton, the sheet may be unbounded.
   *
@@ -759,7 +759,7 @@ public:
     using Plane_3 = typename Geom_traits::Plane_3;
 
     using NodeSPtr = std::shared_ptr<Node>;
-    using ArcSPtr = std::shared_ptr<Arc>;
+    using SpokeSPtr = std::shared_ptr<Spoke>;
     using SheetSPtr = std::shared_ptr<Sheet>;
 
     using EdgeWPtr = typename Polyhedron::EdgeWPtr;
@@ -878,26 +878,26 @@ public:
       return result;
     }
 
-    void add_arc(const ArcSPtr& arc)
+    void add_spoke(const SpokeSPtr& spoke)
     {
-      CGAL_SS3_DEBUG_SPTR(arc);
-      /*std::list<ArcSPtr>::iterator it =*/ arcs_.insert(arcs_.end(), arc);
-      arc->add_sheet(this->shared_from_this());
+      CGAL_SS3_DEBUG_SPTR(spoke);
+      /*std::list<SpokeSPtr>::iterator it =*/ spokes_.insert(spokes_.end(), spoke);
+      spoke->add_sheet(this->shared_from_this());
     }
 
-    bool remove_arc(const ArcSPtr& arc)
+    bool remove_spoke(const SpokeSPtr& spoke)
     {
-      CGAL_SS3_DEBUG_SPTR(arc);
+      CGAL_SS3_DEBUG_SPTR(spoke);
       bool result = false;
-      arcs_.remove(arc);
-      result = arc->remove_sheet(this->shared_from_this());
+      spokes_.remove(spoke);
+      result = spoke->remove_sheet(this->shared_from_this());
       return result;
     }
 
-    void add_contour(const ArcSPtr& contour)
+    void add_contour(const SpokeSPtr& contour)
     {
       CGAL_SS3_DEBUG_SPTR(contour);
-      /*std::list<ArcSPtr>::iterator it =*/ contours_.insert(contours_.end(), contour);
+      /*std::list<SpokeSPtr>::iterator it =*/ contours_.insert(contours_.end(), contour);
       contour->add_sheet(this->shared_from_this());
     }
 
@@ -909,15 +909,15 @@ public:
       CGAL_precondition((this->facet_b_ == sheet->get_facet_B() && this->facet_f_ == sheet->get_facet_F()) ||
                         (this->facet_b_ == sheet->get_facet_F() && this->facet_f_ == sheet->get_facet_B()));
 
-      // copy all arcs that do not yet exist in the sheet
-      for (ArcSPtr arc : sheet->arcs()) {
-        if (std::find(arcs_.begin(), arcs_.end(), arc) == arcs_.end()) {
-          add_arc(arc);
+      // copy all spokes that do not yet exist in the sheet
+      for (SpokeSPtr spoke : sheet->spokes()) {
+        if (std::find(spokes_.begin(), spokes_.end(), spoke) == spokes_.end()) {
+          add_spoke(spoke);
         }
       }
 
       // copy all contours that do not yet exist in the sheet
-      for (ArcSPtr contour : sheet->contours()) {
+      for (SpokeSPtr contour : sheet->contours()) {
         if (std::find(contours_.begin(), contours_.end(), contour) == contours_.end()) {
           add_contour(contour);
         }
@@ -932,18 +932,18 @@ public:
     }
 
     /*!
-    * returns the list of arcs of the sheet.
+    * returns the list of spokes of the sheet.
     */
-    std::list<std::shared_ptr<Arc> >& arcs()
+    std::list<std::shared_ptr<Spoke> >& spokes()
     {
-      return this->arcs_;
+      return this->spokes_;
     }
 
     /*!
     * returns the list of contours of the sheet.
-    * Note that this returns a list of arcs, as a sheet might be incident to multiple input edges.
+    * Note that this returns a list of spokes, as a sheet might be incident to multiple input edges.
     */
-    std::list<std::shared_ptr<Arc> >& contours()
+    std::list<std::shared_ptr<Spoke> >& contours()
     {
       return this->contours_;
     }
@@ -982,19 +982,19 @@ public:
       // contour IDs
       result << "contours={";
       first = true;
-      for (const ArcSPtr& contour : contours_) {
+      for (const SpokeSPtr& contour : contours_) {
         if (!first) result << ", ";
         result << String_factory::fromInteger(contour->id());
         first = false;
       }
       result << "}, ";
 
-      // arc IDs
-      result << "arcs={";
+      // spoke IDs
+      result << "spokes={";
       first = true;
-      for (const ArcSPtr& arc : arcs_) {
+      for (const SpokeSPtr& spoke : spokes_) {
         if (!first) result << ", ";
-        result << String_factory::fromInteger(arc->id());
+        result << String_factory::fromInteger(spoke->id());
         first = false;
       }
       result << "}";
@@ -1008,10 +1008,10 @@ public:
     FacetSPtr facet_b_;
     FacetSPtr facet_f_;
 
-    std::list<ArcSPtr> arcs_;
-    // Squatting the arc type for contours, which are edges of the static polyhedron.
+    std::list<SpokeSPtr> spokes_;
+    // Squatting the spoke type for contours, which are edges of the static polyhedron.
     // Contours are needed to generate a closed polygon (with holes) when drawing sheets.
-    std::list<ArcSPtr> contours_;
+    std::list<SpokeSPtr> contours_;
     std::list<NodeSPtr> nodes_;
     StraightSkeletonWPtr skel_;
 
@@ -1030,8 +1030,8 @@ public:
 public:
   using NodeWPtr = std::weak_ptr<Node>;
   using NodeSPtr = std::shared_ptr<Node>;
-  using ArcWPtr = std::weak_ptr<Arc>;
-  using ArcSPtr = std::shared_ptr<Arc>;
+  using SpokeWPtr = std::weak_ptr<Spoke>;
+  using SpokeSPtr = std::shared_ptr<Spoke>;
   using SheetWPtr = std::weak_ptr<Sheet>;
   using SheetSPtr = std::shared_ptr<Sheet>;
 
@@ -1040,7 +1040,7 @@ public:
   {
     polyhedron_.reset();
     sheets_.clear();
-    arcs_.clear();
+    spokes_.clear();
     nodes_.clear();
   }
 
@@ -1068,20 +1068,20 @@ public:
     return result;
   }
 
-  void add_arc(ArcSPtr arc)
+  void add_spoke(SpokeSPtr spoke)
   {
-    typename std::list<ArcSPtr>::iterator it = arcs_.insert(arcs_.end(), arc);
-    arc->set_skeleton(this->shared_from_this());
-    arc->set_list_it(it);
+    typename std::list<SpokeSPtr>::iterator it = spokes_.insert(spokes_.end(), spoke);
+    spoke->set_skeleton(this->shared_from_this());
+    spoke->set_list_it(it);
   }
 
-  bool remove_arc(ArcSPtr arc)
+  bool remove_spoke(SpokeSPtr spoke)
   {
     bool result = false;
-    if (arc->get_skeleton() == this->shared_from_this()) {
-      arcs_.erase(arc->get_list_it());
-      arc->set_skeleton(StraightSkeletonSPtr());
-      arc->set_list_it(typename std::list<ArcSPtr>::iterator());
+    if (spoke->get_skeleton() == this->shared_from_this()) {
+      spokes_.erase(spoke->get_list_it());
+      spoke->set_skeleton(StraightSkeletonSPtr());
+      spoke->set_list_it(typename std::list<SpokeSPtr>::iterator());
       result = true;
     }
     return result;
@@ -1117,8 +1117,8 @@ public:
     for (NodeSPtr node : sheet_from->nodes()) {
       node->remove_sheet(sheet_from);
     }
-    for (ArcSPtr arc : sheet_from->arcs()) {
-      arc->remove_sheet(sheet_from);
+    for (SpokeSPtr spoke : sheet_from->spokes()) {
+      spoke->remove_sheet(sheet_from);
     }
     remove_sheet(sheet_from);
   }
@@ -1141,11 +1141,11 @@ public:
   }
 
   /*!
-   * returns the arcs of the straight skeleton.
+   * returns the spokes of the straight skeleton.
    */
-  std::list<std::shared_ptr<Arc> >& arcs()
+  std::list<std::shared_ptr<Spoke> >& spokes()
   {
-    return this->arcs_;
+    return this->spokes_;
   }
 
   /*!
@@ -1164,10 +1164,10 @@ public:
       SheetSPtr sheet = *it_s++;
       sheet->set_id(-1);
     }
-    typename std::list<ArcSPtr>::iterator it_a = arcs_.begin();
-    while (it_a != arcs_.end()) {
-      ArcSPtr arc = *it_a++;
-      arc->set_id(-1);
+    typename std::list<SpokeSPtr>::iterator it_a = spokes_.begin();
+    while (it_a != spokes_.end()) {
+      SpokeSPtr spoke = *it_a++;
+      spoke->set_id(-1);
     }
     typename std::list<NodeSPtr>::iterator it_n = nodes_.begin();
     while (it_n != nodes_.end()) {
@@ -1191,11 +1191,11 @@ public:
           break;
         }
       }
-      CGAL::unordered_flat_set<ArcSPtr> arc_set;
-      for (const ArcSPtr& arc : arcs_) {
-        if (!arc_set.insert(arc).second) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: duplicate arc in arcs_ list");
-          CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+      CGAL::unordered_flat_set<SpokeSPtr> spoke_set;
+      for (const SpokeSPtr& spoke : spokes_) {
+        if (!spoke_set.insert(spoke).second) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: duplicate spoke in spokes_ list");
+          CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           result = false;
           break;
         }
@@ -1224,14 +1224,14 @@ public:
         }
       }
     }
-    // Check uniqueness of Arc IDs
+    // Check uniqueness of Spoke IDs
     {
-      CGAL::unordered_flat_set<int> arc_ids;
-      for (const ArcSPtr& arc : arcs_) {
-        int id = arc->id();
-        if (!arc_ids.insert(id).second) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: duplicate Arc ID in arcs_ list: " << id);
-          CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+      CGAL::unordered_flat_set<int> spoke_ids;
+      for (const SpokeSPtr& spoke : spokes_) {
+        int id = spoke->id();
+        if (!spoke_ids.insert(id).second) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: duplicate Spoke ID in spokes_ list: " << id);
+          CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           result = false;
           break;
         }
@@ -1261,30 +1261,30 @@ public:
         result = false;
         break;
       }
-      typename std::list<ArcWPtr>::const_iterator it_a = node->arcs().begin();
-      while (it_a != node->arcs().end()) {
-        ArcWPtr arc_wptr = *it_a++;
-        CGAL_SS3_DEBUG_WPTR(arc_wptr);
-        ArcSPtr arc = arc_wptr.lock();
-        if (arc_wptr.expired() || !arc) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: invalid ArcWPtr (expired or cannot lock) in node's arc list");
+      typename std::list<SpokeWPtr>::const_iterator it_a = node->spokes().begin();
+      while (it_a != node->spokes().end()) {
+        SpokeWPtr spoke_wptr = *it_a++;
+        CGAL_SS3_DEBUG_WPTR(spoke_wptr);
+        SpokeSPtr spoke = spoke_wptr.lock();
+        if (spoke_wptr.expired() || !spoke) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: invalid SpokeWPtr (expired or cannot lock) in node's spoke list");
           CGAL_SS3_SKEL_DS_TRACE(node->to_string());
           result = false;
           break;
         }
 
-        if (std::find(arcs_.begin(), arcs_.end(), arc) == arcs_.end()) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: node references an arc not present in the skeleton's arc list");
+        if (std::find(spokes_.begin(), spokes_.end(), spoke) == spokes_.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: node references an spoke not present in the skeleton's spoke list");
           CGAL_SS3_SKEL_DS_TRACE(node->to_string());
-          CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+          CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           result = false;
           break;
         }
 
-        if (node != arc->source() && node != arc->target()) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: incident arc does not have node as endpoint");
+        if (node != spoke->source() && node != spoke->target()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: incident spoke does not have node as endpoint");
           CGAL_SS3_SKEL_DS_TRACE(node->to_string());
-          CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+          CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           result = false;
           break;
         }
@@ -1320,86 +1320,86 @@ public:
       }
     }
 
-    typename std::list<ArcSPtr>::const_iterator it_a = arcs_.begin();
-    while (it_a != arcs_.end()) {
-      ArcSPtr arc = *it_a++;
-      CGAL_SS3_DEBUG_SPTR(arc);
-      ArcWPtr arc_wptr(arc);
+    typename std::list<SpokeSPtr>::const_iterator it_a = spokes_.begin();
+    while (it_a != spokes_.end()) {
+      SpokeSPtr spoke = *it_a++;
+      CGAL_SS3_DEBUG_SPTR(spoke);
+      SpokeWPtr spoke_wptr(spoke);
 
-      if (arc->get_skeleton() != this->shared_from_this()) {
-        CGAL_SS3_SKEL_DS_TRACE("Error: arc's skeleton pointer is incorrect");
-        CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+      if (spoke->get_skeleton() != this->shared_from_this()) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: spoke's skeleton pointer is incorrect");
+        CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
         result = false;
         break;
       }
 
-      if (!arc->source()) {
-        CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have source");
+      if (!spoke->source()) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: spoke does not have source");
         result = false;
         break;
       }
 
-      if (std::find(nodes_.begin(), nodes_.end(), arc->source()) == nodes_.end()) {
-        CGAL_SS3_SKEL_DS_TRACE("Error: arc source is not a node present in the skeleton's node list");
-        CGAL_SS3_SKEL_DS_TRACE(arc->source()->to_string());
+      if (std::find(nodes_.begin(), nodes_.end(), spoke->source()) == nodes_.end()) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: spoke source is not a node present in the skeleton's node list");
+        CGAL_SS3_SKEL_DS_TRACE(spoke->source()->to_string());
         result = false;
         break;
       }
 
-      std::list<ArcWPtr> warcs = arc->source()->arcs();
-      if (warcs.end() == STL_Extension::internal::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
-        CGAL_SS3_SKEL_DS_TRACE("Error: arc's source node does not have arc");
-        CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
-        CGAL_SS3_SKEL_DS_TRACE(arc->source()->to_string());
+      std::list<SpokeWPtr> wspokes = spoke->source()->spokes();
+      if (wspokes.end() == STL_Extension::internal::weak_find(wspokes.begin(), wspokes.end(), spoke_wptr)) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: spoke's source node does not have spoke");
+        CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
+        CGAL_SS3_SKEL_DS_TRACE(spoke->source()->to_string());
         result = false;
         break;
       }
 
-      if (arc->has_target()) {
-        if (std::find(nodes_.begin(), nodes_.end(), arc->target()) == nodes_.end()) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: arc target is not a node present in the skeleton's node list");
-          CGAL_SS3_SKEL_DS_TRACE(arc->target()->to_string());
+      if (spoke->has_target()) {
+        if (std::find(nodes_.begin(), nodes_.end(), spoke->target()) == nodes_.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: spoke target is not a node present in the skeleton's node list");
+          CGAL_SS3_SKEL_DS_TRACE(spoke->target()->to_string());
           result = false;
           break;
         }
 
-        warcs = arc->target()->arcs();
-        if (warcs.end() == STL_Extension::internal::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: arc's target node does not have arc");
-          CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
-          CGAL_SS3_SKEL_DS_TRACE(arc->target()->to_string());
+        wspokes = spoke->target()->spokes();
+        if (wspokes.end() == STL_Extension::internal::weak_find(wspokes.begin(), wspokes.end(), spoke_wptr)) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: spoke's target node does not have spoke");
+          CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
+          CGAL_SS3_SKEL_DS_TRACE(spoke->target()->to_string());
           result = false;
           break;
         }
       } else {
         if (no_unbounded_elements) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have target (full skeleton)");
+          CGAL_SS3_SKEL_DS_TRACE("Error: spoke does not have target (full skeleton)");
           result = false;
           break;
         } else {
-          if (!arc->has_direction()) {
-            CGAL_SS3_SKEL_DS_TRACE("Error: arc has neither target nor direction");
+          if (!spoke->has_direction()) {
+            CGAL_SS3_SKEL_DS_TRACE("Error: spoke has neither target nor direction");
             result = false;
             break;
           }
         }
       }
       unsigned int num_sheets = 0;
-      typename std::list<SheetWPtr>::const_iterator it_s = arc->sheets().begin();
-      while (it_s != arc->sheets().end()) {
+      typename std::list<SheetWPtr>::const_iterator it_s = spoke->sheets().begin();
+      while (it_s != spoke->sheets().end()) {
         SheetWPtr sheet_wptr = *it_s++;
         CGAL_SS3_DEBUG_WPTR(sheet_wptr);
         SheetSPtr sheet = sheet_wptr.lock();
         if (sheet_wptr.expired() || !sheet) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: invalid SheetWPtr (expired or cannot lock) in arc's sheet list");
-          CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+          CGAL_SS3_SKEL_DS_TRACE("Error: invalid SheetWPtr (expired or cannot lock) in spoke's sheet list");
+          CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           result = false;
           break;
         }
 
         if (std::find(sheets_.begin(), sheets_.end(), sheet) == sheets_.end()) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: arc references a sheet that is not present in the skeleton's sheet list");
-          CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+          CGAL_SS3_SKEL_DS_TRACE("Error: spoke references a sheet that is not present in the skeleton's sheet list");
+          CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
           result = false;
           break;
@@ -1407,10 +1407,10 @@ public:
 
         ++num_sheets;
 
-        std::list<ArcSPtr> arcs = sheet->arcs();
-        if (arcs.end() == std::find(arcs.begin(), arcs.end(), arc)) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: arc's sheet does not have arc");
-          CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+        std::list<SpokeSPtr> spokes = sheet->spokes();
+        if (spokes.end() == std::find(spokes.begin(), spokes.end(), spoke)) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: spoke's sheet does not have spoke");
+          CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
           result = false;
           break;
@@ -1418,8 +1418,8 @@ public:
       }
 
       if (num_sheets != 3) {
-        CGAL_SS3_SKEL_DS_TRACE("Error: Arc does not have 3 sheets.");
-        CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+        CGAL_SS3_SKEL_DS_TRACE("Error: Spoke does not have 3 sheets.");
+        CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
         CGAL_SS3_SKEL_DS_TRACE("num_sheets = " << num_sheets);
         result = false;
         break;
@@ -1469,38 +1469,38 @@ public:
         }
       }
 
-      // check that a node only has two incident arcs at most in the same sheet
-      CGAL::unordered_flat_map<NodeSPtr, int> arc_nodes;
+      // check that a node only has two incident spokes at most in the same sheet
+      CGAL::unordered_flat_map<NodeSPtr, int> spoke_nodes;
 
-      typename std::list<ArcSPtr>::const_iterator it_a = sheet->arcs().begin();
-      while (it_a != sheet->arcs().end()) {
-        ArcSPtr arc = *it_a++;
-        CGAL_SS3_DEBUG_SPTR(arc);
+      typename std::list<SpokeSPtr>::const_iterator it_a = sheet->spokes().begin();
+      while (it_a != sheet->spokes().end()) {
+        SpokeSPtr spoke = *it_a++;
+        CGAL_SS3_DEBUG_SPTR(spoke);
 
-        if (std::find(arcs_.begin(), arcs_.end(), arc) == arcs_.end()) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: sheet references an arc that is not present in the skeleton's arc list");
+        if (std::find(spokes_.begin(), spokes_.end(), spoke) == spokes_.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: sheet references an spoke that is not present in the skeleton's spoke list");
           CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
-          CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+          CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           result = false;
           break;
         }
 
-        std::list<SheetWPtr> wsheets = arc->sheets();
+        std::list<SheetWPtr> wsheets = spoke->sheets();
         if (wsheets.end() == STL_Extension::internal::weak_find(wsheets.begin(), wsheets.end(), sheet_wptr)) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: sheet's arc does not have sheet");
+          CGAL_SS3_SKEL_DS_TRACE("Error: sheet's spoke does not have sheet");
           CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
-          CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+          CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           result = false;
           break;
         }
 
-        arc_nodes[arc->source()]++;
-        if (arc->has_target()) {
-          arc_nodes[arc->target()]++;
+        spoke_nodes[spoke->source()]++;
+        if (spoke->has_target()) {
+          spoke_nodes[spoke->target()]++;
         }
-        for (auto [node, count] : arc_nodes) {
+        for (auto [node, count] : spoke_nodes) {
           if (count > 2) {
-            CGAL_SS3_SKEL_DS_TRACE("Error: sheet has a node with more than two incident arcs in the sheet");
+            CGAL_SS3_SKEL_DS_TRACE("Error: sheet has a node with more than two incident spokes in the sheet");
             CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
             CGAL_SS3_SKEL_DS_TRACE(node->to_string());
             result = false;
@@ -1509,9 +1509,9 @@ public:
           CGAL_SS3_DEBUG_SPTR(node);
           std::list<NodeSPtr> nodes = sheet->nodes();
           if (nodes.end() == std::find(nodes.begin(), nodes.end(), node)) {
-            CGAL_SS3_SKEL_DS_TRACE("Error: Nodes of arc of sheet should be nodes of sheet");
+            CGAL_SS3_SKEL_DS_TRACE("Error: Nodes of spoke of sheet should be nodes of sheet");
             CGAL_SS3_SKEL_DS_TRACE(node->to_string());
-            CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
+            CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
             CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
             result = false;
             break;
@@ -1520,7 +1520,7 @@ public:
       }
 
       // Contour checks
-      for (const ArcSPtr& contour : sheet->contours()) {
+      for (const SpokeSPtr& contour : sheet->contours()) {
         // Check that contour has exactly one incident sheet (the current sheet)
         int sheet_count = 0;
         for (const SheetWPtr& contour_sheet_wptr : contour->sheets()) {
@@ -1530,7 +1530,7 @@ public:
           }
         }
         if (sheet_count != 1) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: contour arc does not have exactly one incident sheet (should be the current sheet)");
+          CGAL_SS3_SKEL_DS_TRACE("Error: contour spoke does not have exactly one incident sheet (should be the current sheet)");
           CGAL_SS3_SKEL_DS_TRACE(contour->to_string());
           CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
           result = false;
@@ -1573,9 +1573,9 @@ public:
     for (const NodeSPtr& node : nodes_) {
       sstr << "    " << node->to_string() << "\n";
     }
-    sstr << "  Arcs:   " << arcs_.size() << std::endl;
-    for (const ArcSPtr& arc : arcs_) {
-      sstr << "    " << arc->to_string() << "\n";
+    sstr << "  Spokes:   " << spokes_.size() << std::endl;
+    for (const SpokeSPtr& spoke : spokes_) {
+      sstr << "    " << spoke->to_string() << "\n";
     }
     sstr << "  Sheets: " << sheets_.size() << std::endl;
     for (const SheetSPtr& sheet : sheets_) {
@@ -1598,29 +1598,29 @@ public:
     nodes_out.close();
   }
 
-  // dumps skeleton arcs in a CGAL polylines format
-  // If the skeleton isn't complete, partial arcs are drawn using the current direction
+  // dumps skeleton spokes in a CGAL polylines format
+  // If the skeleton isn't complete, partial spokes are drawn using the current direction
   // of the subtending trisector, and, if `time` is chosen too large, might overshoot
-  // the real arc of the complete skeleton.
-  void dump_arcs(const std::string& filename,
+  // the real spoke of the complete skeleton.
+  void dump_spokes(const std::string& filename,
                  const FT& time) const
   {
-    std::ofstream arcs_out(filename);
-    arcs_out.precision(17);
-    for (const ArcSPtr& arc : arcs_) {
-      CGAL_assertion(arc->has_source());
-      if (arc->source()->time() <= time) {
+    std::ofstream spokes_out(filename);
+    spokes_out.precision(17);
+    for (const SpokeSPtr& spoke : spokes_) {
+      CGAL_assertion(spoke->has_source());
+      if (spoke->source()->time() <= time) {
         continue;
       }
 
-      arcs_out << "2 ";
-      arcs_out << arc->source()->point() << " ";
-      if (arc->has_target() && arc->target()->time() >= time) {
-        arcs_out << arc->target()->point() << "\n";
+      spokes_out << "2 ";
+      spokes_out << spoke->source()->point() << " ";
+      if (spoke->has_target() && spoke->target()->time() >= time) {
+        spokes_out << spoke->target()->point() << "\n";
       } else {
         CGAL::unordered_flat_set<FacetSPtr> incident_faces;
-        CGAL_assertion(arc->sheets().size() == 3);
-        for (SheetWPtr sheet_wptr : arc->sheets()) {
+        CGAL_assertion(spoke->sheets().size() == 3);
+        for (SheetWPtr sheet_wptr : spoke->sheets()) {
           if (SheetSPtr sheet = sheet_wptr.lock()) {
             incident_faces.insert(sheet->get_facet_B());
             incident_faces.insert(sheet->get_facet_F());
@@ -1639,17 +1639,17 @@ public:
         std::optional<Point_3> res = Kernel_wrapper::intersection(offset_planes[0], offset_planes[1], offset_planes[2]);
         CGAL_assertion(res.has_value());
 
-        arcs_out << *res << "\n";
+        spokes_out << *res << "\n";
       }
     }
-    arcs_out.close();
+    spokes_out.close();
   }
 
 protected:
   PolyhedronSPtr polyhedron_;
 
   std::list<NodeSPtr> nodes_;
-  std::list<ArcSPtr> arcs_;
+  std::list<SpokeSPtr> spokes_;
   std::list<SheetSPtr> sheets_;
 };
 
@@ -1659,7 +1659,7 @@ template <typename GeomTraits>
 int CGAL::Straight_skeleton_3<GeomTraits>::Node::next_node_id_ = 0;
 
 template <typename GeomTraits>
-int CGAL::Straight_skeleton_3<GeomTraits>::Arc::next_arc_id_ = 0;
+int CGAL::Straight_skeleton_3<GeomTraits>::Spoke::next_spoke_id_ = 0;
 
 template <typename GeomTraits>
 int CGAL::Straight_skeleton_3<GeomTraits>::Sheet::next_sheet_id_ = 0;
