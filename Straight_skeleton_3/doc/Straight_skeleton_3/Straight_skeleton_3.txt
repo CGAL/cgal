@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor chapterstraightskeleton3
 \cgalAutoToc
 
-\cgalFigureAnchor{ComplexSLS}
+\cgalFigureAnchor{SPSBanner}
 <center>
 <img src="complex_skeleton_3.png" style="max-width:60%;"/>
 </center>
@@ -16,7 +16,8 @@ namespace CGAL {
 \section Straight_skeleton_3Introduction Introduction
 
 This package implements weighted straight skeletons of three-dimensional polyhedra.
-The approach is a direct extension of the method is used in \ref PkgStraightSkeleton2Ref "2D Straight Skeleton".
+The approach is a direct extension of the method is used in the package
+\ref PkgStraightSkeleton2Ref "2D Straight Skeleton".
 
 \subsection Straight_skeleton_3Straight Straight Skeletons of Polyhedra
 
@@ -24,31 +25,32 @@ An intuitive way to think of the construction of straight skeletons is to imagin
 (or grassfires) are spawned at each face of the polyhedron, and are moving inward, parallel
 to the face. As the fronts progress, vertices and edges of the polyhedron shift
 along the angular bisector of the planes subtending their incident faces,
-and the shape of faces change depending on the angles formed between polyhedral faces
-and the speeds assigned to each front.
+and the shape of faces change depending on the angles formed between polyhedral faces,
+and on the speeds assigned to each front.
 
 \cgalFigureAnchor{SPS3Progress}
 <center>
-<img src="sps_shifting.png" style="max-width:60%;"/>
+<img src="sps_shifting.png" style="max-width:100%;"/>
 </center>
 \cgalFigureCaptionBegin{SPS3Progress}
-Illustration of the shifting of a plane (leftmost) and polyhedral elements (vertex, edge, and face
-from left to right). The input is in gray, and the shifts for two values are drawn in blue.
+Illustration of the shifting of a plane (leftmost) and of polyhedral elements (vertex, edge, and face
+from left to right). The input is in gray, and the shifts for two values are drawn in shades of blue.
 Vertices move along angular trisectors and edges along angular bisectors (in red).
 \cgalFigureCaptionEnd
 
 During the transformation, the topology of the polyhedron will generally change such as a vertex
-hitting a face and piercing it, or an edge collapsing and flipping.
+hitting a face and piercing it, or an edge collapsing.
 The trace of the shifting polyhedral elements under this transformation forms
 a complex structure: the <em>straight skeleton</em>.
 
 \cgalFigureAnchor{SPS3Skeleton}
 <center>
-<img src="sls_skeleton.png" style="max-width:80%;"/>
+<img src="sps_skeleton.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{SPS3Skeleton}
-Construction of a straight skeleton: the wavefront interfaces define the straight skeleton.
-The traces of shifting vertices draw arcs of the skeleton (in red).
+Construction of a straight skeleton. The vertices and edges of the input polyhedron (in gray & black)
+progressively trace the skeleton (spokes and sheets in red). Rightmost, only the interfaces between
+sheets, i.e. spokes, are drawn.
 \cgalFigureCaptionEnd
 
 \section Straight_skeleton_3Definitions Definitions
@@ -57,42 +59,51 @@ We now give precise definitions of the various concepts relevant to this package
 
 \subsection Straight_skeleton_3PolyhedronDef Input Polyhedron
 
-The definition of polyhedron in use here is standard and in line with what can be found
+The definition of polyhedron used hereafter is standard and in line with what can be found
 in the rest of \cgal, for example in \ref PkgSurfaceMesh, \ref PkgPolyhedron,
 or \ref PkgPolygonMeshProcessing.
 
-We first define a <em>convex polyhedron</em> as a bounded, non-empty intersection of a finite
-number of halfspaces of the Euclidean three-space \f$ \mathbb{R}^3\f$. A <em>polyhedron</em> is then
-a bounded subset of \f$ \mathbb{R}^3\f$ which can be expressed as the finite union of convex polyhedra.
-A polyhedron can thus have holes, handles, disconnected connected components, etc.
+We first define a <em>convex domain</em> as a bounded, non-empty intersection of a finite
+number of halfspaces of the Euclidean three-space \f$ \mathbb{R}^3\f$. A <em>domain</em> is then
+a bounded subset of \f$ \mathbb{R}^3\f$ which can be expressed as the finite union of convex domains.
+A domain can thus have holes, handles, disconnected connected components, etc.
 
-The boundary of such polyhedron can be represented as a structural complex, which consists of vertices,
+The boundary of a domain can be represented as a structural complex, which consists of vertices,
 edges, faces, and symmetric incidence relations between these elements \cgalCite{k-ugpdd-99}.
-Vertices represent points in \f$ \mathbb{R}^3\f$. Edges are straight line segments between two points.
-Faces are planar, possibly non-convex polygons, and possibly with holes.
+Such combinatorial entity is called a polyhedron. Its vertices embed into \f$ \mathbb{R}^3\f$ as 3D points;
+its edges as straight line segments between two points; and faces as planar, possibly non-convex
+polygons (possibly with holes).
 
-With the definition above, a polyhedron forms 2-manifold structure in a combinatorial sense,
-but we must furthermore append to this definition that it must also be <em>geometrically manifold</em>:
+With the definition above, a polyhedron forms 2-manifold structure in a combinatorial sense.
+In our context, we furthermore append to this definition that it must also be <em>geometrically manifold</em>:
 there should not be so-called touching elements such as a vertex or an edge touching the
-interior of a non-incident face. Formally, the intersection of two non-incident elements of
-the polyhedron must be empty, and the intersection of two incident elements must be exactly
+interior of a non-incident face. Formally, the geometric intersection of two non-incident elements
+of the polyhedron must be empty, and the intersection of two incident elements must be exactly
 their common (topological) boundary.
 
 \subsection Straight_skeleton_3StraightSkeletonDef Straight Skeleton
 
 We call the structural elements of an input polyhedron <em>contour elements</em>.
-Given a contour face called the <em>source face</em>, its <em>offset face</em> at time `t` is a face
-parallel and with the same orientation such that the Euclidean distance between the planes
-supporting both faces is exactly `t`. In mathematical terms, if the supporting plane of the source face
-is described through the equation `ax+by+cz+d=0`, then the supporting plane of the offset face
-at a time `t` is `ax+by+cz+d-t=0`. An offset face is always located on the bounded side of the polyhedron.
 
-The straight skeleton is constructed by applying a continuous, <I>inward offsetting</I> to the contour faces.
-We also call this process <em>polyhedron face offsetting</em>, or simply <em>polyhedron offsetting</em>.
-Under this transformation, polyhedral vertices (edges) move along the angular trisector (bisector)
-of the planes subtending the incident faces, at a speed that depends on the angle between
-the three (two) incident contour faces. As elements shift, topological change may happen,
-such as two moving vertices impacting each other, or a moving vertex colliding with a moving face.
+\note A polyhedron is a surface structure whose two-dimensional elements are generally called <em> faces</em>.
+The 3D straight skeleton, despite also being a 2-dimensional structure embedded in 3D space,
+induces naturally a division of space into 3D cells. As a three-dimensional structure usually
+use the term <em>facet</em> for two-dimensional elements, we shall refer to polyhedron faces
+as contour <em>facets</em>, for consistency.
+
+Given a contour facet called the <em>source facet</em>, its <em>offset facet</em> at time `t` is a facet
+parallel and with the same orientation and such that the Euclidean distance between the planes
+supporting both facets is exactly `t`. In mathematical terms, if the supporting plane of the source facet
+is described through the equation `ax+by+cz+d=0`, then the supporting plane of the offset facet
+at a time `t` is `ax+by+cz+d-t=0`. In our setting, an offset facet shall always be located on the bounded
+side of the polyhedron.
+
+The straight skeleton is constructed by applying a continuous, <I>inward offsetting</I> to the contour facets.
+We also call this process <em>polyhedron facet offsetting</em>, or simply <em>polyhedron offsetting</em>.
+Under this transformation, contour vertices (edges) move along the angular trisector (bisector)
+of the planes subtending their incident facets, at a speed that depends on the angle between
+the three (two) incident contour facets. As elements shift, topological change may happen,
+such as two moving vertices impacting each other, or a moving vertex colliding with a moving facet.
 We call these topological changes <em>events</em>. When an event happens, the combinatorial structure
 of the polyhedron must be modified to retain the validity of the polyhedron during future offsetting.
 
@@ -101,49 +112,64 @@ of the polyhedron must be modified to retain the validity of the polyhedron duri
 <img src="sps_event_pierce.png" style="max-width:100%;"/>
 </center>
 \cgalFigureCaptionBegin{SPS3PierceEvent}
-A concave vertex (left, green dot) hits a face during wavefront propagation, forming a tunnel (right).
-The polyhedron's combinatorial structure must be updated to represent the hole in the opposite face.
+A concave vertex (left, green dot) hits a facet (below) during wavefront propagation, forming a tunnel (right).
+The polyhedron's combinatorial structure must be updated to represent the newly created hole.
 \cgalFigureCaptionEnd
 
-The straight skeleton is the set of faces traced out by the moving edges during offsetting.
-The trace of an edge is a polyhedral face called a <em>sheet</em> and the trace of a polyhedron vertex
-is a 3D segment called an <em>arc</em>. Arcs begin and end at <em>nodes</em>, which correspond
-to the time and position of an event.
+The straight skeleton is composed of three types of elements: nodes, spokes, and sheets.
+They describe the geometry traced by the moving elements of the input polyhedron:
+
+- A <em>node</em> is a 0-dimensional entity. It is either a contour vertex or corresponds to an event.
+  It embeds into \f$ \mathbb{R}^3\f$ as a 3D point.
+- A <em>spoke</em> is a 1-dimensional entity, linking two nodes. It embeds into \f$ \mathbb{R}^3\f$
+  as a straight line segment, the trace of a moving polyhedron vertex during offsetting.
+  The supporting line of a spoke is the angular trisector of the three planes supporting the incident
+  contour facets.
+- A <em>sheet</em> is a 2-dimensional entity, a polygonal domain bounded by spokes and contour edges.
+  It is the trace of a moving polyhedron edge during offsetting. A sheet lives on the bisector plane
+  of the two planes supporting the incident contour facets.
 
 The straight skeleton forms a unique partition of the interior of the polyhedron into <I>straight skeleton regions</I>,
-corresponding to the monotone areas traced by the continuous inward offsetting of the contour faces.
-Each region corresponds uniquely to one contour face, which is a face of that region.
-Regions are bounded by the angular bisectors of the supporting planes of the contour faces,
+corresponding to the monotone areas traced by the continuous inward offsetting of the contour facets.
+Each region corresponds uniquely to one contour facet, which is a facet of that region.
+Regions are bounded by the angular bisectors of the supporting planes of the contour facets,
 and each such region is itself a connected polyhedron, as defined in Section \ref Straight_skeleton_3PolyhedronDef.
 
-\cgalFigureBegin{SPS3Skeletons,simple_skeletons_3.png}
-Straight skeletons of various polyhedra. have one with only arcs, have one with multicolor sheets.
-\cgalFigureEnd
+\cgalFigureAnchor{SPS3Nomenclature}
+<center>
+<img src="sps_nomenclature.png" style="max-width:40%;"/>
+</center>
+\cgalFigureCaptionBegin{SPS3Nomenclature}
+Illustration of contour elements and skeleton elements.
+\cgalFigureCaptionEnd
 
-Constructing the exterior skeleton of the outer contour is achieved by reversing the orientation
-of the polyhedral faces: inwards shifting is now outwards with respect to the original polyhedron.
-The exterior skeleton of a polyhedron is always unbounded, and so are some of its sheets and arcs.
-Nonetheless, since the number of events is bounded by the facts that an event involves four planes
-and that planes move monotonously, there exists a time after which there are no events
-and the complete skeleton structure is known.
+Constructing the <em>exterior</em> skeleton of a polyhedron is achieved by reversing the orientation
+of the contour facets: inwards shifting becomes outwards with respect to the original polyhedron.
+In an exterior skeleton, some spokes and sheets are unbounded. Nonetheless, since the number of possible
+events is bounded, there exists a time after which there are no events and the complete skeleton
+structure is known and stable. In practice, the exterior skeleton is computed at a user-defined maximum
+time, meaning that nodes (events) that would be created after that time are not computed, and spokes
+and sheets may be fully present, absent, or truncated.
 
 \cgalFigureAnchor{SPS3Exterior}
 <center>
-<img src="sls_exterior_skeleton.png" style="max-width:50%;"/>
+<img src="sps_exterior_skeleton.png" style="max-width:80%;"/>
 </center>
-\cgalFigureCaptionBegin{SLSExterior}
-Input (left), interior (middle), and exterior (right) skeleton, only arcs and nodes are drawn for visibility.
+\cgalFigureCaptionBegin{SPSExterior}
+On the left, the model <a href="https://ten-thousand-models.appspot.com/detail.html?file_id=496389">#496389</a> of Thingi10k is the polyhedral input.
+On the right, the complete interior skeleton is depicted in red, and the exterior skeleton, bounded
+to a maximum time of T=2, is shown in green.
 \cgalFigureCaptionEnd
 
 \subsection Straight_skeleton_3WeightedStraightSkeletonDef Weighted Straight Skeleton
 
 Weighted straight skeletons generalize standard straight skeletons by assigning a weight to each
-contour face. The weight may be understood as the propagation speed of the corresponding wavefront.
+contour facet. The weight may be understood as the propagation speed of the corresponding wavefront.
 In weighted straight skeletons, vertices (edges) no longer move along the angular trisectors (bisectors)
-between three (two) contour faces, but along the <em>weighted</em> trisector (bisector).
+between three (two) contour facets, but along the <em>weighted</em> trisector (bisector).
 
-This \cgal package supports positive multiplicative weights: if the supporting plane of a contour face
-is described through the equation `ax+by+cz+d=0`, and the supporting plane of the offset face
+This \cgal package supports positive multiplicative weights: if the supporting plane of a contour facet
+is described through the equation `ax+by+cz+d=0`, and the supporting plane of the offset facet
 at distance `t` is `ax+by+cz+d-t=0` then with a multiplicative weight `w`, the equation becomes
 `ax+by+cz+d-wt=0`. Therefore, a larger weight encodes a faster moving front.
 
@@ -151,14 +177,14 @@ at distance `t` is `ax+by+cz+d-t=0` then with a multiplicative weight `w`, the e
 <center>
 <img src="sps_weight.png" style="max-width:100%;"/>
 </center>
-\cgalFigureCaptionBegin{SLSWeight}
+\cgalFigureCaptionBegin{SPSWeight}
 Straight skeletons obtained with uniform weights (left) and with different weights for horizontal
-and vertical faces (right).
+and vertical facets (right).
 \cgalFigureCaptionEnd
 
-A significant change from unweighted straight skeletons of polyhedra is that the faces of a weighted
-straight skeleton of a polyhedron with holes are no longer necessarily simply connected polyhedra:
-for example, a face can completely encompass a set of faces incident to a hole, resulting in the
+A significant change from unweighted straight skeletons of polyhedra is that the sheets of a weighted
+straight skeleton of a polyhedron with holes are no longer necessarily simply connected surfaces:
+for example, a sheet can completely encompass a set of sheets incident to a hole, resulting in the
 topology of a ball with a void.
 
 \section Straight_skeleton_3PolyhedronOffsetting Polyhedron Offsetting
@@ -188,15 +214,15 @@ Inward and outward offsets of the Thingi10k shape [#61418](https://ten-thousand-
 Although the definition of a straight skeleton of a polyhedron is identical in both 2D and 3D,
 there exist some major differences between the two settings.
 
-A first difference is immediately visible as one starts shifting faces in 3D: where a vertex of
+A first difference is immediately visible as one starts shifting facets in 3D: where a vertex of
 a 2D polygon has only 2 incident edges, a vertex in 3D can have an arbitrary number of incident edges
-and faces. If the number of edges incident to a vertex is greater than 3, we call the vertex a
+and facets. If the number of edges incident to a vertex is greater than 3, we call the vertex a
 <em>high-degree</em> vertex. In 2D, a vertex remains well defined as edges shift: its position is
 the intersection of the supporting lines of the translated edges. (Even in the degenerate case of
 parallel edges, the trace of the moving vertex is still well defined as the line orthogonal
-to the supporting line, and passing through a parent node.)
+to the supporting line, and passing through a parent vertex.)
 
-On the contrary, when the 3D faces incident to a high-degree vertex shift, they often no longer intersect
+On the contrary, when the 3D facets incident to a high-degree vertex shift, they often no longer intersect
 in a single point simply because in general setting there is no reason for four (or more) planes
 to intersect in a single point. Instead, a high-degree vertex will generally split under any shift
 into a tree (graph) of degree 3 vertices, whose embedding is free of self-intersections. Furthermore,
@@ -212,12 +238,12 @@ Splitting a high-degree vertex.
 \cgalFigureCaptionEnd
 
 The ambiguity stemming from the arbitrary choice of vertex split can also arise during event handling:
-when an edge collapses, face propagation may yield two valid geometric embeddings, requiring
+when an edge collapses, facet propagation may yield two valid geometric embeddings, requiring
 another arbitrary choice.
 
 \cgalFigureAnchor{SPS3EdgeCollapseAmbiguity}
 <center>
-<img src="sls_event_edge_flip.png" style="max-width:100%;"/>
+<img src="sps_event_edge_flip.png" style="max-width:100%;"/>
 </center>
 \cgalFigureCaptionBegin{SPS3EdgeCollapseAmbiguity}
 When handling the event of an edge collapsing, there may be multiple valid treatments.
@@ -234,7 +260,8 @@ below.
 <img src="sps_forest.png" style="max-width:100%;"/>
 </center>
 \cgalFigureCaptionBegin{SPS3VertexSplitForest}
-[TODO] \cgalCite{cgal:b-mbras-10}
+In degenerate configurations, the split of a high-degree vertex can be arbitrarily complex,
+even creating multiple disconnected edge graphs (Figure from \cgalCite{cgal:b-mbras-10}).
 \cgalFigureCaptionEnd
 
 Finally, the main difference, which results from the previous vertex behavior observations,
@@ -273,39 +300,35 @@ Three of the thirteen possible events: an edge event (left), a triangle event (m
 edge split event (right).
 \cgalFigureCaptionEnd
 
-In addition, under the hypothesis of general position, topologies of the polyhedron and
-straight skeleton become simpler: vertices of an (offset) polyhedron have degree 3,
-arcs have exactly 3 incident sheets, and nodes have 4 incident arcs (and 4 incident sheets).
+In addition, under the hypothesis of general position, the topologies of the polyhedron
+and straight skeleton become simpler: vertices of an (offset) polyhedron have degree 3,
+each spoke is incident to exactly three sheets, and each node is incident to four spokes and four sheets.
 
 \subsection Straight_skeleton_3GeneralPositionInPractice In Practice: Input Perturbation
 
 The hypothesis stipulated in the previous section makes it possible to use an event-based approach,
 but in practice very few polyhedra actually satisfy such a demanding requirement.
-For example, a model as simple as a unit cube is not in general position (3 pairs of parallel faces).
+For example, an input as simple as the unit cube is not in general position (parallel faces).
 Most real-world polyhedra also have high-degree vertices, which automatically make the input violate
 the hypothesis since by definition this means N plans going through a point.
 
 To make this package still usable with non-trivial models, a pre-processing step is performed
-with the aim of finding a polyhedron that is in general position and that is arbitrarily close
+with the goal of constructing a polyhedron that is in general position and that is arbitrarily close
 to the input polyhedron. This step is called the <em> perturbation</em> step.
-Note that during the perturbation, all high-degree vertices must be split into degree 3 vertices.
+The perturbation step is essentially composed of two stages: first, it performs a tiny,
+random nudge of the plane coefficients; secondly, it recovers an embedding of the polyhedron
+by reconstructing a valid surface at all high-degree vertices, splitting them into degree 3 vertices.
 
-The two main steps of the perturbation algorithm are the following:
-- perform a tiny, random nudge of the plane coefficients;
-- recover an embedding of the polyhedron by reconstructing a valid surface at all high-degree vertices.
-
-The magnitude of the nudge of course impacts the tightness to the correct result. By default,
+The magnitude of said nudge of course impacts the closeness to the input. By default,
 the perturbation value is chosen very small (1e-7 times the local coordinate magnitude), with
-the idea that the effect is diluted in the numerical errors that arise while performing inexact
-computations, or during input/output manipulations that is almost always using limited precision.
-The magnitude of the perturbation can also be adjusted by users such that it is below meaningfulness
-with respect to their data. There is of course a downside to using infinitesimal nudges as
+the idea that the effect is thus invisible as it becomes diluted in the numerical errors
+that arise while performing inexact computations, or during input/output manipulations
+(which pratically always using limited precision).
+The magnitude of the perturbation can be adjusted by users such that it is below a meaningfulness
+threshold with respect to their data. There is of course a downside to using infinitesimal nudges as
 computations become slower and, like most exact computation algorithms, the embedding back
-into real-world coordinates could suffer from self-intersections.
-
-However, it can also have a visible effect in some degenerate cases where numerical errors
-do not absorb the effect. For example, offsetting two parallel faces that are living in canonical
-planes by half their distance creates a merge.
+into real-world coordinates could suffer from self-intersections if there is not enough
+room in the floating point world to embed back exact numbers.
 
 The goal of this package is thus to provide valid results that are arbitrarily close to the correct result.
 
@@ -335,7 +358,7 @@ and exact constructions, possibly with exact square roots. Users should by defau
 This choice stems from the recurring computation of the intersection of moving elements.
 In 3D, the key geometric operation is the intersection of four shifting 3D (supporting) planes,
 answering the question: when and where will these four planes intersect in a single point.
-The position and time correspond to a potential event involving these four faces.
+The position and time correspond to a potential event involving these four facets.
 
 For the computation to be meaningful, these planes must be normalized. This inevitably introduces
 square root computations.
@@ -344,7 +367,7 @@ However, due to the mandatory perturbation mechanisms described in \ref Straight
 the use of a traits providing exact square root computations is not recommended: a (tiny) numerical
 error in the normalization of planes is anyway indistinguishable from the perturbation.
 Exact constructions are required to ensure that all vertices lay exactly on the supporting planes
-of their respective incident faces.
+of their respective incident facets.
 
 \section Straight_skeleton_3Example Examples
 
