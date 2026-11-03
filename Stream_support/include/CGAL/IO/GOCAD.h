@@ -166,7 +166,7 @@ bool read_GOCAD(std::istream& is,
  *
  * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamGocad.
  *
- * \attention The polygon soup is not cleared, and the data from the stream are appended.
+ * \note The polygon soup is not cleared, and the data from the stream are appended.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
  * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
@@ -214,7 +214,7 @@ bool read_GOCAD(std::istream& is,
  *
  * \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamGocad.
  *
- * \attention The polygon soup is not cleared, and the data from the file are appended.
+ * \note The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
  * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
@@ -244,7 +244,7 @@ bool read_GOCAD(std::istream& is,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const std::string& fname,
+bool read_GOCAD(const std::filesystem::path& fname,
                 PointRange& points,
                 PolygonRange& polygons,
                 const CGAL_NP_CLASS& np = parameters::default_values()
@@ -269,7 +269,7 @@ template <typename PointRange,
           typename PolygonRange,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(std::ostream& os,
-                 const char* fname,
+                 const std::string& fname,
                  const PointRange& points,
                  const PolygonRange& polygons,
                  const CGAL_NP_CLASS& np)
@@ -409,7 +409,7 @@ bool write_GOCAD(std::ostream& os,
 template <typename PointRange,
           typename PolygonRange,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const std::string& fname,
+bool write_GOCAD(const std::filesystem::path& fname,
                  const PointRange& points,
                  const PolygonRange& polygons,
                  const CGAL_NP_CLASS& np = parameters::default_values()
@@ -420,7 +420,7 @@ bool write_GOCAD(const std::string& fname,
 {
   std::ofstream os(fname);
   CGAL::IO::set_mode(os, CGAL::IO::ASCII);
-  return internal::write_GOCAD(os, fname.c_str(), points, polygons, np);
+  return internal::write_GOCAD(os, fname.string(), points, polygons, np);
 }
 
 } // namespace IO

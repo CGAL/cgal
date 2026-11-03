@@ -351,7 +351,7 @@ public:
     /*!
         Set the weight on the boundary term of the energy.
         Default is 1. 10 will strongly enforce the boundary matching, 1e-3 will only have a slight effect, favoring the inside meshing.
-        Warning: large value can lead to convergence issues if the boundary is not initialized on its contraint.
+        Warning: large value can lead to convergence issues if the boundary is not initialized on its constraint.
     */
     void set_boundary_weight(double weight); // large values can lead to convergence issues
 
@@ -477,7 +477,7 @@ private:
     void initialize_boundary();
     void initialize_curve_network();
     void create_compress_sorted_data();
-    void initialise_point_targets();
+    void initialize_point_targets();
     Eigen::VectorXd _compressed_coords;
     std::vector<bool> _compressed_locks;
     Vertex_descriptor_map<unsigned> _vertex_original_to_compressed;
@@ -502,7 +502,7 @@ private:
     std::vector<std::vector<Point_3>> _boundary_batch_info_polygons;
     std::vector<Plane> _boundary_batch_planes;
 
-    void initialise_boundary_query(Tetrahedral_mesh_smoother &);
+    void initialize_boundary_query(Tetrahedral_mesh_smoother &);
 
 
     std::vector<std::array<unsigned, 2>> _curve_edges;
@@ -517,7 +517,7 @@ private:
     std::vector<std::array<Point_3, 2>> _curve_batch_info_edges;
     std::vector<Curve_tangent> _curve_batch_tangents;
 
-    void initialise_curve_queries(Tetrahedral_mesh_smoother &);
+    void initialize_curve_queries(Tetrahedral_mesh_smoother &);
 
 
     std::vector<std::tuple<unsigned, Eigen::Vector3d, double>> _point_targets;
@@ -550,7 +550,7 @@ private:
     unsigned _nb_lbfgs_iterations = 0;
     unsigned _nb_predicates_invalid_steps = 0;
 
-    void initialise_smoother(Tetrahedral_mesh_smoother &);
+    void initialize_smoother(Tetrahedral_mesh_smoother &);
 };
 
 

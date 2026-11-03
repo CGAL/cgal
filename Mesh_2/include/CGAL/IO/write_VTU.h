@@ -446,19 +446,19 @@ void write_VTU(std::ostream& os,
 }
 
 template <class CDT, class InDomainPmap>
-bool write_VTU(std::string filename,
+bool write_VTU(const std::filesystem::path& filename,
                const CDT& tr,
                InDomainPmap ipm,
                Mode mode = BINARY)
 {
-  std::ofstream os(filename.c_str(), (mode == BINARY ? std::ios::binary : std::ios::out));
+  std::ofstream os(filename, (mode == BINARY ? std::ios::binary : std::ios::out));
   if(mode != BINARY) os.precision(17);
   write_VTU(os, tr, ipm, mode);
   return !os.fail();
 }
 
 template <class CDT>
-bool write_VTU(std::string filename,
+bool write_VTU(const std::filesystem::path& filename,
                const CDT& tr,
                Mode mode = BINARY)
 {

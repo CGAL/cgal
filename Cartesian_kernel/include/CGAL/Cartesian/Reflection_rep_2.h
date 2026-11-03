@@ -165,13 +165,13 @@ typedef typename CGAL::Line_2<R>                 Line_2;
             {
               case 0: return cosinus_;
               case 1: return sinus_;
-              default: return FT(0);
+              default: return t13();
             }
     case 1: switch (j)
             {
               case 0: return sinus_;
               case 1: return -cosinus_;
-              default: return FT(0);
+              default: return t23();
             }
     case 2: switch (j)
             {

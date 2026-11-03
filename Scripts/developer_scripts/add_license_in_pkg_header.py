@@ -8,26 +8,25 @@
 from sys import argv
 import os
 from os.path import join
-import codecs
 import re
 # REUSE-IgnoreStart
 def add_license_include_in_file(package_name, fname):
   # first, see if the include directive is already there
-  with codecs.open(fname, encoding='utf-8') as f:
+  with open(fname, encoding='utf-8') as f:
     if any(re.search("#include\s*<CGAL/license/", line) for line in f):
       return # include directive already there
 
   #match only file under a GPL license
-  with codecs.open(fname, encoding='utf-8') as f:
+  with open(fname, encoding='utf-8') as f:
     if not any(re.search("SPDX-License-Identifier:.*[ (]GPL", line) for line in f):
       return # include directive already there
 
 
   # include directive not already there
   inserted = False
-  with codecs.open(fname, encoding='utf-8') as f:
+  with open(fname, encoding='utf-8') as f:
     out_fname = fname + ".tmp"
-    out = codecs.open(out_fname, "w", encoding='utf-8')
+    out = open(out_fname, "w", encoding='utf-8')
     for line in f:
       if not inserted and re.search("#\s*define\s+CGAL_.*_H\s*$", line):
         out.write(line+"\n")

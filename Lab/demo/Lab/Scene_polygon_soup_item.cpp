@@ -601,7 +601,6 @@ Scene_polygon_soup_item::toolTip() const
     .arg(d->soup->polygons.size())
     .arg(this->renderingModeName())
     .arg(this->color().name());
-    str += QString("<br />Number of isolated vertices: %1<br />").arg(getNbIsolatedvertices());
     return str;
 }
 

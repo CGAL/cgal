@@ -136,7 +136,7 @@ struct Bounded_error_hd_wrapper
 };
 
 template<typename PolygonMesh>
-void get_mesh(const std::string& filepath, PolygonMesh& mesh)
+void get_mesh(const std::filesystem::path& filepath, PolygonMesh& mesh)
 {
   mesh.clear();
   CGAL::IO::read_polygon_mesh(filepath, mesh);
@@ -144,8 +144,8 @@ void get_mesh(const std::string& filepath, PolygonMesh& mesh)
 }
 
 template<typename PolygonMesh1, typename PolygonMesh2>
-void get_meshes(const std::string& filepath1,
-                const std::string& filepath2,
+void get_meshes(const std::filesystem::path& filepath1,
+                const std::filesystem::path& filepath2,
                 PolygonMesh1& mesh1,
                 PolygonMesh2& mesh2)
 {
@@ -244,7 +244,7 @@ void interior_triangle_example(const double error_bound,
 
 // Read a real mesh given by the user, perturb it slightly, and compute the
 // Hausdorff distance between the original mesh and its perturbation.
-void perturbing_surface_mesh_example(const std::string& filepath,
+void perturbing_surface_mesh_example(const std::filesystem::path& filepath,
                                      const double error_bound,
                                      const bool save = true)
 {
@@ -276,7 +276,7 @@ void perturbing_surface_mesh_example(const std::string& filepath,
 
 // Read two meshes and store them in two different face graph containers,
 // perturb the second mesh, and compute the Hausdorff distance.
-void perturbing_polyhedron_mesh_example(const std::string& filepath,
+void perturbing_polyhedron_mesh_example(const std::filesystem::path& filepath,
                                         const double error_bound,
                                         const bool save = true)
 {
@@ -318,8 +318,8 @@ void perturbing_polyhedron_mesh_example(const std::string& filepath,
 // Read two meshes given by the user, initially place them at their originally
 // given position. Move the second mesh in 300 steps away from the first one.
 // Print how the Hausdorff distance changes.
-void moving_surface_mesh_example(const std::string& filepath1,
-                                 const std::string& filepath2,
+void moving_surface_mesh_example(const std::filesystem::path& filepath1,
+                                 const std::filesystem::path& filepath2,
                                  const std::size_t n,
                                  const double error_bound,
                                  const bool save = true)
@@ -813,8 +813,8 @@ void test_one_versus_another(const FunctionWrapper1& functor1,
                              const FunctionWrapper2& functor2,
                              const double error_bound)
 {
-  const std::string filepath1 = "data/tetrahedron.off";
-  const std::string filepath2 = "data/tetrahedron-remeshed.off";
+  const std::filesystem::path filepath1 = "data/tetrahedron.off";
+  const std::filesystem::path filepath2 = "data/tetrahedron-remeshed.off";
 
   std::cout << std::endl << "-- test one versus another (tetrahedron):" << std::endl << std::endl;
   std::cout << "* name 1 -> " << functor1.name() << std::endl;
@@ -852,8 +852,8 @@ void test_one_versus_another(const FunctionWrapper1& functor1,
 
 template <typename FunctionWrapper1,
           typename FunctionWrapper2>
-void test_real_meshes(const std::string& filepath1,
-                      const std::string& filepath2,
+void test_real_meshes(const std::filesystem::path& filepath1,
+                      const std::filesystem::path& filepath2,
                       const FunctionWrapper1& functor1,
                       const FunctionWrapper2& functor2,
                       const double error_bound)
@@ -1006,8 +1006,8 @@ void test_realizing_triangles(const double error_bound,
   };
   tmp2.add_face(vhs2);
 
-  const std::string filepath1 = "data/tetrahedron.off";
-  const std::string filepath2 = "data/tetrahedron-remeshed.off";
+  const std::filesystem::path filepath1 = "data/tetrahedron.off";
+  const std::filesystem::path filepath2 = "data/tetrahedron-remeshed.off";
   mesh1.clear();
   mesh2.clear();
   get_meshes(filepath1, filepath2, mesh1, mesh2);
@@ -1028,7 +1028,7 @@ void test_realizing_triangles(const double error_bound,
 }
 
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
-void test_parallel_version(const std::string& filepath,
+void test_parallel_version(const std::filesystem::path& filepath,
                            const double error_bound)
 {
   std::cout << std::endl << "-- test parallel version:" << std::endl << std::endl;
@@ -1073,7 +1073,7 @@ void test_parallel_version(const std::string& filepath,
 }
 #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
-void test_early_quit(const std::string& filepath,
+void test_early_quit(const std::filesystem::path& filepath,
                      const bool save = true)
 {
   std::cout << std::endl << "-- test early quit:" << std::endl << std::endl;
@@ -1118,7 +1118,7 @@ void test_early_quit(const std::string& filepath,
 }
 
 void run_examples(const double error_bound,
-                  const std::string& filepath)
+                  const std::filesystem::path& filepath)
 {
   remeshing_tetrahedon_example(error_bound);
   interior_triangle_example(error_bound);
@@ -1137,7 +1137,7 @@ int main(int argc, char** argv)
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
 
-  const std::string filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
+  const std::filesystem::path filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   run_examples(error_bound, filepath);
 
   // ------------------------------------------------------------------------ //
@@ -1158,8 +1158,8 @@ int main(int argc, char** argv)
   test_one_versus_another(bound_hd, apprx_hd, error_bound);
 
   // --- Compare on real meshes.
-  const std::string filepath1 = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
-  const std::string filepath2 = (argc > 2 ? argv[2] : "data/tetrahedron-remeshed.off");
+  const std::filesystem::path filepath1 = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
+  const std::filesystem::path filepath2 = (argc > 2 ? argv[2] : "data/tetrahedron-remeshed.off");
 
 //  test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd, error_bound);
 //  test_real_meshes(filepath1, filepath2, naive_hd, bound_hd, error_bound);

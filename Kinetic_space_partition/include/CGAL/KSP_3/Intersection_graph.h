@@ -18,6 +18,8 @@
 // Boost includes.
 #include <boost/graph/adjacency_list.hpp>
 
+#include <atomic>
+
 // CGAL includes.
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Polygon_2.h>
@@ -44,7 +46,6 @@ public:
   using Point_3 = typename Intersection_kernel::Point_3;
   using Segment_3 = typename Intersection_kernel::Segment_3;
   using Line_3 = typename Intersection_kernel::Line_3;
-  using Polygon_2 = typename CGAL::Polygon_2<Intersection_kernel>;
 
   struct Vertex_property {
     Point_3 point;
@@ -52,14 +53,15 @@ public:
     Vertex_property(const Point_3& point) : point(point) {}
   };
 
-  using Kinetic_interval = std::vector<std::pair<IkFT, IkFT> >;// barycentric coordinate and intersection time.
 
   struct Edge_property {
     std::size_t line;
     std::size_t order;
     std::map<std::size_t, std::pair<std::size_t, std::size_t> > faces; // For each intersecting support plane there is one pair of adjacent faces (or less if the edge is on the bbox)
     std::set<std::size_t> planes;
-    std::map<std::size_t, std::pair<std::size_t, std::size_t> > vertices; // Maps support plane to a pair of vertices. (Can't be just one, can't be more than two)
+    // Maps (support plane, face) to the pair of kinetic vertices bounding the polygon of that face on this edge.
+    // An edge of a support plane separates two faces, and both may hold a polygon touching the edge.
+    std::map<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t> > vertices;
     Edge_property() : line(std::size_t(-1)), order(edge_counter++) { }
 
     Edge_property(const Edge_property &e) = default;
@@ -72,7 +74,9 @@ public:
       return *this;
     }
   private:
-    static std::size_t edge_counter;
+    // Atomic, as the kinetic partitions of the octree leaves may be computed in parallel.
+    // Each intersection graph is built by a single thread, so the order of its edges still follows their creation.
+    static std::atomic<std::size_t> edge_counter;
   };
 
   using Graph = boost::adjacency_list<
@@ -130,7 +134,6 @@ private:
   std::map<std::vector<std::size_t>, Vertex_descriptor> m_map_vertices;
   std::vector<Face_property> m_ifaces;
 
-  std::vector<bool> m_initial_part_of_partition;
 
 public:
   Intersection_graph()
@@ -151,7 +154,8 @@ public:
 
   const std::vector<std::pair<IkFT, Vertex_descriptor> >& vertices_on_line(std::size_t line_idx) const {
     CGAL_assertion(line_idx < m_lines.size());
-    return m_vertices_on_line[line_idx];
+    static const std::vector<std::pair<IkFT, Vertex_descriptor> > none;
+    return (line_idx < m_vertices_on_line.size()) ? m_vertices_on_line[line_idx] : none;
   }
 
   Edge_descriptor locate_edge_on_line(std::size_t line_idx, IkFT u) const {
@@ -178,10 +182,6 @@ public:
 
   std::size_t number_of_vertices() const {
     return static_cast<std::size_t>(boost::num_vertices(m_graph));
-  }
-
-  std::size_t number_of_faces() const {
-    return m_ifaces.size();
   }
 
   static Vertex_descriptor null_ivertex() {
@@ -215,11 +215,19 @@ public:
 
   const std::pair<Vertex_descriptor, bool> add_vertex(
     const Point_3& point, const std::vector<std::size_t>& intersected_planes) {
+    // More than three planes may intersect in the same point. Each subset of planes refers to the same vertex.
+    const auto pit = m_map_points.find(point);
+    if (pit != m_map_points.end()) {
+      m_map_vertices.insert(std::make_pair(intersected_planes, pit->second));
+      return std::make_pair(pit->second, false);
+    }
+
     const auto pair = m_map_vertices.insert(std::make_pair(intersected_planes, Vertex_descriptor()));
     const auto is_inserted = pair.second;
     if (is_inserted) {
       pair.first->second = boost::add_vertex(m_graph);
       m_graph[pair.first->second].point = point;
+      m_map_points.insert(std::make_pair(point, pair.first->second));
     }
     return std::make_pair(pair.first->second, is_inserted);
   }
@@ -263,12 +271,6 @@ public:
     }
 
     return false;
-  }
-
-  void get_faces(std::size_t sp_idx, Edge_descriptor edge, std::pair<Face_descriptor, Face_descriptor>& pair) const {
-    auto it = m_graph[edge].faces.find(sp_idx);
-    if (it != m_graph[edge].faces.end())
-      pair = it->second;
   }
 
   Face_descriptor get_other_face(std::size_t sp_idx, Edge_descriptor edge, Face_descriptor face) const {
@@ -338,16 +340,36 @@ public:
     m_nb_lines_on_bbox = m_lines.size();
   }
 
-  void initialization_done() {
-    m_initial_part_of_partition.resize(m_ifaces.size());
+  // Parts of the intersection graph that are modified by the propagation and finalization.
+  // The structure of the graph itself does not change after initialization.
+  struct Propagation_state {
+    std::vector<bool> part_of_partition;
+    std::vector<std::pair<Edge_descriptor, decltype(Edge_property::vertices)> > edge_vertices;
+  };
+
+  Propagation_state save_propagation_state() const {
+    Propagation_state state;
+    state.part_of_partition.resize(m_ifaces.size());
     for (std::size_t idx = 0; idx < m_ifaces.size(); idx++)
-      m_initial_part_of_partition[idx] = m_ifaces[idx].part_of_partition;
+      state.part_of_partition[idx] = m_ifaces[idx].part_of_partition;
+
+    for (const Edge_descriptor e : edges())
+      if (!m_graph[e].vertices.empty())
+        state.edge_vertices.push_back(std::make_pair(e, m_graph[e].vertices));
+
+    return state;
   }
 
-  void reset_to_initialization() {
-    CGAL_assertion(m_ifaces.size() == m_initial_part_of_partition.size());
+  void restore_propagation_state(Propagation_state&& state) {
+    CGAL_assertion(m_ifaces.size() == state.part_of_partition.size());
     for (std::size_t idx = 0; idx < m_ifaces.size(); idx++)
-      m_ifaces[idx].part_of_partition = m_initial_part_of_partition[idx];
+      m_ifaces[idx].part_of_partition = state.part_of_partition[idx];
+
+    for (const Edge_descriptor e : edges())
+      m_graph[e].vertices.clear();
+
+    for (auto& p : state.edge_vertices)
+      m_graph[p.first].vertices = std::move(p.second);
   }
 
   const std::pair<Edge_descriptor, Edge_descriptor>
@@ -362,7 +384,7 @@ public:
     Edge_descriptor sedge;
     std::tie(sedge, is_inserted) = boost::add_edge(source, vertex, m_graph);
     if (!is_inserted) {
-      std::cerr << "WARNING: " << segment_3(edge) << " " << point_3(vertex) << std::endl;
+      KSP::internal::Log_line(std::string(), std::cerr) << "WARNING: " << segment_3(edge) << " " << point_3(vertex);
     }
     CGAL_assertion(is_inserted);
     m_graph[sedge] = prop;
@@ -370,7 +392,7 @@ public:
     Edge_descriptor tedge;
     std::tie(tedge, is_inserted) = boost::add_edge(vertex, target, m_graph);
     if (!is_inserted) {
-      std::cerr << "WARNING: " << segment_3(edge) << " " << point_3(vertex) << std::endl;
+      KSP::internal::Log_line(std::string(), std::cerr) << "WARNING: " << segment_3(edge) << " " << point_3(vertex);
     }
     CGAL_assertion(is_inserted);
     m_graph[tedge] = prop;
@@ -439,14 +461,9 @@ public:
       m_graph[boost::target(edge, m_graph)].point);
   }
 
-  const Line_3 line_3(Edge_descriptor edge) const {
-    return Line_3(
-      m_graph[boost::source(edge, m_graph)].point,
-      m_graph[boost::target(edge, m_graph)].point);
-  }
 };
 
-template<typename GeomTraits, typename IntersectionKernel> std::size_t Intersection_graph<GeomTraits, IntersectionKernel>::Edge_property::edge_counter = 0;
+template<typename GeomTraits, typename IntersectionKernel> std::atomic<std::size_t> Intersection_graph<GeomTraits, IntersectionKernel>::Edge_property::edge_counter{0};
 
 #endif //DOXYGEN_RUNNING
 
