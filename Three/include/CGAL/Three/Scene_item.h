@@ -52,7 +52,7 @@ class SCENE_ITEM_EXPORT Scene_item : public QObject{
   Q_PROPERTY(QColor color READ color WRITE setColor)
   Q_PROPERTY(QString name READ name WRITE setName)
   Q_PROPERTY(bool visible READ visible WRITE setVisible)
-  Q_ENUMS(RenderingMode)
+  Q_ENUM(RenderingMode)
   Q_PROPERTY(RenderingMode renderingMode READ renderingMode WRITE setRenderingMode)
 public:
  /*!
