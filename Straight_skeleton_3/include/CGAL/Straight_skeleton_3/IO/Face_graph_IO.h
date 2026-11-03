@@ -79,7 +79,7 @@ void save_colored_mesh(const PolygonMesh& pmesh,
   std::mt19937_64 gen(0);
   std::uniform_int_distribution<> dist(0, 255);
 
-  std::map<value_type, CGAL::Color> colors;
+  std::map<value_type, CGAL::IO::Color> colors;
   for (const auto& value : unique_values) {
     colors[value] = Color(static_cast<unsigned char>(dist(gen)),
                           static_cast<unsigned char>(dist(gen)),
