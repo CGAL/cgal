@@ -286,14 +286,15 @@ bool write_OBJ(const std::string& filename,
  *
  * writes a `CGAL::Straight_skeleton_3` to a Wavefront OBJ file.
  *
- * The skeleton may be incomplete, in which case an incomplete sheet is drawn using
- * the latest time at any of the its nodes. If a sheet has fewer than 3 nodes, it is skipped.
+ * Depending on the time, the skeleton may be incomplete: skeleton edges and facets are interpolated to
+ * the requested time. A skeleton facet with fewer than 3 skeleton vertices is not drawn.
  *
  * \tparam GeomTraits must be a model of `Kernel`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param filename the path to the output file
  * \param skeleton the straight skeleton to output
+ * \param time the time at which to output the skeleton.
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -304,6 +305,7 @@ bool write_OBJ(const std::string& filename,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * \pre `time <= 0`
  */
 template <typename GeomTraits,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
