@@ -252,7 +252,7 @@ public:
     Bare_point center_;
   };
 
-  // in the configuration of a cell base still providing surface pathc info storage
+  // in the configuration of a cell base still providing surface patch info storage
   // (i.e., index, center, center index), use that instead of the C3T3 hash map
   CGAL_GENERATE_MEMBER_DETECTOR(set_surface_patch_index);
   static constexpr bool store_surface_patch_info_in_cell =
