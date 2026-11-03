@@ -21,14 +21,13 @@ typedef CDT::Point                                                Point;
 typedef CGAL::Polygon_2<K>                                        Polygon_2;
 typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>                  Mesh_2_criteria;
 
-using namespace CGAL;
 int main()
 {
  // Generated points are in that vector
   std::vector<Point> points;
 
   //Construct two non-intersecting nested polygons
-  ::Polygon_2 polygon1;
+  Polygon_2 polygon1;
   polygon1.push_back(Point(0,0));
   polygon1.push_back(Point(2,0));
   polygon1.push_back(Point(2,2));
@@ -48,7 +47,7 @@ int main()
   CGAL::refine_Delaunay_mesh_2(cdt, CGAL::parameters::criteria(criteria));
 
   // Create the generator, input is the Triangulation_2 cdt
-  Random_points_in_triangle_mesh_2<Point, CDT> g(cdt);
+  CGAL::Random_points_in_triangle_mesh_2<Point, CDT> g(cdt);
 
   // Get 100 random points in cdt
   std::copy_n(g, 100, std::back_inserter(points));
