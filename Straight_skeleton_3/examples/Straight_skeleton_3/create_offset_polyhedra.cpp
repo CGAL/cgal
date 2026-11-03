@@ -8,9 +8,7 @@
 #include <CGAL/property_map.h>
 
 #include <iostream>
-
-namespace PMP = CGAL::Polygon_mesh_processing;
-namespace SS3 = CGAL::Straight_skeletons_3;
+#include <vector>
 
 using K = CGAL::Exact_predicates_exact_constructions_kernel;
 using FT = K::FT;
@@ -18,6 +16,9 @@ using Point_3 = K::Point_3;
 
 using Mesh = CGAL::Surface_mesh<Point_3>;
 using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+namespace SS3 = CGAL::Straight_skeletons_3;
 
 int main(int argc, char** argv)
 {
@@ -54,7 +55,7 @@ int main(int argc, char** argv)
   CGAL::Real_timer timer;
   timer.start();
 
-  // Main call
+  // main call
   bool success = CGAL::create_straight_skeleton_and_offset_polyhedra_3(sm, save_times, results, CGAL::parameters::face_weight_map(face_weight_map));
 
   timer.stop();

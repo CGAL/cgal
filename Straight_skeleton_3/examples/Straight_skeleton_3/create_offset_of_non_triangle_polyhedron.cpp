@@ -14,22 +14,22 @@
 #include <sstream>
 #include <vector>
 
-namespace PMP = CGAL::Polygon_mesh_processing;
-namespace SS3 = CGAL::Straight_skeletons_3;
-
 using K = CGAL::Exact_predicates_exact_constructions_kernel;
 using FT = K::FT;
 using Point_3 = K::Point_3;
 
 using Mesh = CGAL::Surface_mesh<Point_3>;
-using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 using edge_descriptor = boost::graph_traits<Mesh>::edge_descriptor;
 using halfedge_descriptor = boost::graph_traits<Mesh>::halfedge_descriptor;
+using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+namespace SS3 = CGAL::Straight_skeletons_3;
 
 // Generate a unique color based on face index
 CGAL::IO::Color generate_color(const std::size_t index)
 {
-  // Use a simple hash-like coloring scheme to generate distinct colors
+  // simple hash-like coloring scheme to generate distinct colors
   unsigned char r = (index * 73) % 256;
   unsigned char g = (index * 127) % 256;
   unsigned char b = (index * 181) % 256;

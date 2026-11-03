@@ -31,7 +31,6 @@ int main(int argc, char** argv)
   }
 
   const std::filesystem::path mesh_filename = argv[1];
-
   Mesh sm;
   if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm) || CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
     std::cerr << "Error: failed to read input " << mesh_filename << std::endl;

@@ -32,7 +32,7 @@ using halfedge_descriptor = boost::graph_traits<Mesh>::halfedge_descriptor;
 // Generate a unique color based on face index
 CGAL::IO::Color generate_color(const std::size_t index)
 {
-  // Use a simple hash-like coloring scheme to generate distinct colors
+  // simple hash-like coloring scheme to generate distinct colors
   unsigned char r = (index * 73) % 256;
   unsigned char g = (index * 127) % 256;
   unsigned char b = (index * 181) % 256;
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 
   std::vector<FT> save_times = { -25, -50, -75 };
 
-  // every face has weight 3.0, meaning faces move at thrice the default speed
+  // arbitrary weight: every face has weight 3.0 (faces move at thrice the default speed)
   CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(3);
 
   std::vector<Mesh> results;
@@ -138,7 +138,7 @@ int main(int argc, char** argv)
       return EXIT_FAILURE;
     }
 
-    // Now, let's simplify the mesh to get polygonal faces...
+    // Now, let's simplify the mesh to get polygonal faces
 
     // Do some preprocessing to remove nasty elements that were created by perturbation of almost parallel faces
     PMP::remove_almost_degenerate_faces(result_sm,
@@ -149,7 +149,6 @@ int main(int argc, char** argv)
 
     std::stringstream out_css;
     out_css << "cleaned_result_" << save_time << ".off";
-
     if (!CGAL::IO::write_OFF(out_css.str(), result_sm, CGAL::parameters::stream_precision(17))) {
       std::cerr << "Error: failed to write result " << out_css.str() << std::endl;
       return EXIT_FAILURE;
