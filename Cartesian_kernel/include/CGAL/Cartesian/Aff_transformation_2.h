@@ -239,7 +239,7 @@ public:
 
   Line_2
   transform(const Line_2 &l) const
-  { assert(false);return l; }
+  { return l.transform(*this); }
 
   Line_2
   operator()(const Line_2 &l) const
