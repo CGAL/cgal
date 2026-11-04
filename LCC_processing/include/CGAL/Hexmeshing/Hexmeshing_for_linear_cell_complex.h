@@ -105,7 +105,7 @@ public:
     using InvalidPlaneSet = std::unordered_map<std::size_t, CCIdToFace>;
     std::array<InvalidPlaneSet, 3> plane_non_valid_faces;
 
-    const auto valid_face = [&](Dart_descriptor& face, char p, std::size_t cc_id){
+    const auto valid_face = [&](Dart_descriptor& face, std::size_t p, std::size_t cc_id){
       auto face_attr = lcc.attribute<2>(face);
       auto& face_info = face_attr->info();
       return lcc.is_dart_used(face) && face_attr != nullptr && face_attr->is_valid() && face_info.plane[p] == true && face_info.cc_id == cc_id;
