@@ -467,6 +467,15 @@ int main()
     assert(CGAL::is_valid_polygon_mesh(sm_out));
   }
 
+  // extra API tests
+  {
+    Surface_mesh sm, sm_out;
+    std::ifstream(CGAL::data_file_path("meshes/cube-subdivided.off")) >> sm;
+    auto ecm=get(CGAL::dynamic_edge_property_t<bool>(), const_cast<const Surface_mesh&>(sm), false);
+    auto vcm=get(CGAL::dynamic_vertex_property_t<std::size_t>(), const_cast<const Surface_mesh&>(sm));
+    auto fpm=get(CGAL::dynamic_face_property_t<std::size_t>(), const_cast<const Surface_mesh&>(sm));
+    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::edge_is_constrained_map(ecm).face_patch_map(fpm).vertex_corner_map(vcm));
+  }
   assert(OK);
 
   return 0 ;

@@ -154,7 +154,7 @@ bool write_OFF(std::ostream& os,
   \return `true` if the writing was successful, `false` otherwise.
 */
 template <typename Gt, typename Tds, typename NamedParameters = parameters::Default_named_parameters>
-bool write_OFF(const std::string& fname,
+bool write_OFF(const std::filesystem::path& fname,
                const CGAL::Triangulation_on_sphere_2<Gt, Tds>& dt,
                const NamedParameters& np = parameters::default_values())
 {

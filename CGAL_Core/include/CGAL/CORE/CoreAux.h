@@ -31,8 +31,8 @@
 
 namespace CORE {
 
-#ifndef LONG_BIT // such as in Linux
-  #define LONG_BIT (sizeof(long) * 8)
+#ifndef CORE_LONG_BIT // such as in Linux
+  #define CORE_LONG_BIT (sizeof(long) * 8)
 #endif
 
 /// CORE_EPS is unit roundoff for IEEE standard double, i.e., 2^{-53}.

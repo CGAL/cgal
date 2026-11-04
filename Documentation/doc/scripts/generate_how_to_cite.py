@@ -237,6 +237,7 @@ def protect_accentuated_letters(authors):
         .replace("%", "")
         .replace("đ", r"{\-d}")
         .replace("ï", r"{\"i}")
+        .replace("ç", r"{\,c}")
     )
     try:
         res.encode("ascii")

@@ -24,13 +24,13 @@ typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::t
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Mesh Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 namespace params = CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
-  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/liver.inr.gz");
+  const std::filesystem::path fname = (argc>1)?argv[1]:CGAL::data_file_path("images/liver.inr.gz");
   // Domain
   CGAL::Image_3 image;
   if(!image.read(fname)){

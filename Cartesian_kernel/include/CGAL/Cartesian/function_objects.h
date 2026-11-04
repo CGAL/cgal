@@ -17,6 +17,7 @@
 #ifndef CGAL_CARTESIAN_FUNCTION_OBJECTS_H
 #define CGAL_CARTESIAN_FUNCTION_OBJECTS_H
 
+#include <array>
 #include <CGAL/tags.h>
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/predicates/kernel_ftC2.h>
@@ -4122,6 +4123,17 @@ namespace CartesianKernelFunctors {
     typedef typename K::Sphere_3       Sphere_3;
 
   public:
+    std::array<Orientation,2>
+    operator()( const Point_3& p, const Point_3& q,
+                const Point_3& r, const Point_3& s, const Point_3& t) const
+    {
+      return orientationsC3(p.x(), p.y(), p.z(),
+                            q.x(), q.y(), q.z(),
+                            r.x(), r.y(), r.z(),
+                            s.x(), s.y(), s.z(),
+                            t.x(), t.y(), t.z());
+    }
+
     Orientation
     operator()( const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s) const

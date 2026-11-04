@@ -18,7 +18,7 @@ sudo apt-get install -y \
  libglpk-dev \
  libopencv-dev \
  zsh \
- qt6-base-dev qt6-declarative-dev libqt6svg6-dev libqt6websockets6-dev
+ qt6-base-dev qt6-declarative-dev libqt6svg6-dev qt6-websockets-dev
 
 #update CMake
 sudo apt purge --auto-remove cmake

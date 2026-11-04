@@ -41,9 +41,6 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("features_and_adaptive_sizing.cpp")
   target_link_libraries(features_and_adaptive_sizing PRIVATE CGAL::Eigen3_support)
 
-  create_single_source_cgal_program("test_mesh_and_remesh_with_io.cpp")
-  target_link_libraries(test_mesh_and_remesh_with_io PRIVATE CGAL::Eigen3_support)
-
   # with MLS projection
   add_executable(test_mesh_and_remesh_polyhedron_with_features_mls
                 "test_mesh_and_remesh_polyhedron_with_features.cpp")
@@ -56,8 +53,11 @@ if(TARGET CGAL::Eigen3_support)
   if(CGAL_ImageIO_USE_ZLIB)
     create_single_source_cgal_program("test_mesh_and_remesh_image.cpp")
     target_link_libraries(test_mesh_and_remesh_image PRIVATE CGAL::Eigen3_support)
+
+    create_single_source_cgal_program("test_mesh_and_remesh_with_io.cpp")
+    target_link_libraries(test_mesh_and_remesh_with_io PRIVATE CGAL::Eigen3_support)
   else()
-    message(STATUS "NOTICE: The test 'test_mesh_and_remesh_image' uses zlib, and will not be compiled.")
+    message(STATUS "NOTICE: The tests 'test_mesh_and_remesh_image' and `test_mesh_and_remesh_with_io` use zlib, and will not be compiled.")
   endif()
 else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")

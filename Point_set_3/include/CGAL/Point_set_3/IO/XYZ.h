@@ -83,7 +83,7 @@ bool read_XYZ(std::istream& is,
   \return `true` if the reading was successful, `false` otherwise.
 */
 template <typename Point, typename Vector>
-bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
+bool read_XYZ(const std::filesystem::path& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ifstream is(fname);
   return read_XYZ(is, point_set);
@@ -171,7 +171,7 @@ bool write_XYZ(std::ostream& os,
   \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
+bool write_XYZ(const std::filesystem::path& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream os(fname);
   return write_XYZ(os, point_set, np);

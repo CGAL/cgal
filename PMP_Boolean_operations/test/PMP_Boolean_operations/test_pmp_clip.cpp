@@ -1,5 +1,7 @@
 #include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -633,8 +635,13 @@ void test()
     assert(vertices(tm1).size()==72);
     assert(faces(tm1).size()==79);
   }
+}
 
-
+template <class Mesh>
+std::size_t nb_connected_components(const Mesh& tm)
+{
+  auto fcm = get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
+  return PMP::connected_components(tm, fcm);
 }
 
 template <class Mesh>
@@ -724,9 +731,67 @@ void test_split_plane()
   //if the list does contain all those numbers.
   assert(num_vertices(meshes[0]) == 12);
   assert(num_vertices(meshes[1]) == 12);
-
-  CGAL::clear(tm1);
   meshes.clear();
+  CGAL::clear(tm1);
+
+// test plane on a face of a cube (triangulated)
+  std::ifstream(CGAL::data_file_path("meshes/cube.off")) >> tm1;
+  PMP::split(tm1, K::Plane_3(0,0,1,1));
+  std::ofstream("/tmp/out.off") << tm1;
+  assert(nb_connected_components(tm1)==2);
+  CGAL::clear(tm1);
+
+
+  CGAL::make_hexahedron(CGAL::Bbox_3(-1,-1,-1,1,1,1), tm1);
+  PMP::split(tm1, K::Plane_3(0,0,1,1));
+  assert(nb_connected_components(tm1)==2);
+  CGAL::clear(tm1);
+
+  std::ifstream(CGAL::data_file_path("meshes/cheese.off")) >> tm1;
+  PMP::split(tm1, K::Plane_3(0,0,1,-0.050000000699999998));
+  std::ofstream("/tmp/out.off") << tm1;
+  assert(nb_connected_components(tm1)==4);
+  CGAL::clear(tm1);
+
+
+  std::ifstream(CGAL::data_file_path("meshes/cross_quad.off")) >> tm1;
+  PMP::split(tm1, K::Plane_3(0,1,1,-3));
+  assert(nb_connected_components(tm1)==2);
+  CGAL::clear(tm1);
+
+  std::ifstream(CGAL::data_file_path("meshes/cross_quad.off")) >> tm1;
+  PMP::triangulate_faces(tm1);
+  PMP::split(tm1, K::Plane_3(0,1,1,-3));
+  assert(nb_connected_components(tm1)==2);
+  CGAL::clear(tm1);
+
+  CGAL::make_hexahedron(K::Point_3(-1,0,1),K::Point_3(1,0,1),K::Point_3(1,-1,0),K::Point_3(-1,-1,0),K::Point_3(-1,0,-1),K::Point_3(-1,1,0),K::Point_3(1,1,0),K::Point_3(1,0,-1),tm1);
+  PMP::split(tm1, K::Plane_3(0,1,0,-1));
+  assert(nb_connected_components(tm1)==1);
+  CGAL::clear(tm1);
+
+  CGAL::make_hexahedron(K::Point_3(-1,0,1),K::Point_3(1,0,1),K::Point_3(1,-1,0),K::Point_3(-1,-1,0),K::Point_3(-1,0,-1),K::Point_3(-1,1,0),K::Point_3(1,1,0),K::Point_3(1,0,-1),tm1);
+  PMP::clip(tm1, K::Plane_3(0,1,0,-1));
+  assert(nb_connected_components(tm1)==1);
+  CGAL::clear(tm1);
+
+  CGAL::make_hexahedron(K::Point_3(-1,0,1),K::Point_3(1,0,1),K::Point_3(1,-1,0),K::Point_3(-1,-1,0),K::Point_3(-1,0,-1),K::Point_3(-1,1,0),K::Point_3(1,1,0),K::Point_3(1,0,-1),tm1);
+  Mesh clipper;
+  CGAL::make_hexahedron(CGAL::Bbox_3(-2,-2,-2, 2,2,1),clipper);
+  PMP::triangulate_faces(tm1);
+  PMP::triangulate_faces(clipper);
+  PMP::clip(tm1, K::Plane_3(0,1,0,-1));
+  assert(nb_connected_components(tm1)==1);
+  CGAL::clear(tm1);
+  CGAL::clear(clipper);
+
+  CGAL::make_hexahedron(K::Point_3(-1,0,1),K::Point_3(1,0,1),K::Point_3(1,-1,0),K::Point_3(-1,-1,0),K::Point_3(-1,0,-1),K::Point_3(-1,1,0),K::Point_3(1,1,0),K::Point_3(1,0,-1),tm1);
+  CGAL::make_hexahedron(CGAL::Bbox_3(-2,-2,1, 2, 2, 3),clipper);
+  PMP::triangulate_faces(tm1);
+  PMP::triangulate_faces(clipper);
+  PMP::clip(tm1, clipper);
+  assert(nb_connected_components(tm1)==0);
+  CGAL::clear(tm1);
 }
 
 template <class TriangleMesh>
@@ -1256,7 +1321,7 @@ struct Clip_and_split_visitor
 
 void test_clip_and_split_with_plane_visitor()
 {
-  auto test_clip =[](std::string fname, const K::Plane_3& plane, bool triangulate, bool clip_volume)
+  auto test_clip =[](std::filesystem::path fname, const K::Plane_3& plane, bool triangulate, bool clip_volume)
   {
     std::cout << "   testing with clip " << fname << " vs " << plane << " (" << triangulate << "," << clip_volume << ")\n";
     Surface_mesh sm;
@@ -1268,7 +1333,7 @@ void test_clip_and_split_with_plane_visitor()
     visitor.check();
   };
 
-  auto test_split =[](std::string fname, const K::Plane_3& plane, bool triangulate)
+  auto test_split =[](std::filesystem::path fname, const K::Plane_3& plane, bool triangulate)
   {
     std::cout << "   testing with split" << fname << " vs " << plane << " (" << triangulate << ")\n";
     Surface_mesh sm;
@@ -1279,7 +1344,7 @@ void test_clip_and_split_with_plane_visitor()
     visitor.check();
   };
 
-  auto test = [&](std::string fname, const K::Plane_3& plane)
+  auto test = [&](std::filesystem::path fname, const K::Plane_3& plane)
   {
     test_clip(fname, plane, true, true);
     test_clip(fname, plane, true, false);
@@ -1292,6 +1357,102 @@ void test_clip_and_split_with_plane_visitor()
   test(CGAL::data_file_path("meshes/torus_quad.off"), K::Plane_3(0,0,1,0));
   test(CGAL::data_file_path("meshes/elephant.off"), K::Plane_3(0.137304, -0.293668, 0.945995, 0));
 
+}
+
+
+
+
+template <class ECM>
+std::size_t
+count_constrained_edges(const Surface_mesh& tm, ECM ecm)
+{
+  std::size_t n=0;
+  for(auto e : tm.edges())
+  {
+    if ( ecm[e] ) ++n;
+  }
+  return n;
+}
+
+/*
+template <class ECM>
+void dump_constrained_edges(const Surface_mesh& tm, ECM ecm, std::string fname)
+{
+  std::ofstream output(fname);
+  for(auto e : tm.edges())
+  {
+    if ( get(ecm, e) )
+      output << "2 " << tm.point( tm.vertex(e, 0) )
+             <<  " " << tm.point( tm.vertex(e, 1) ) << "\n";
+  }
+}
+*/
+
+void test_edge_is_constrained()
+{
+  {
+  Surface_mesh tm;
+  std::ifstream(CGAL::data_file_path("meshes/joint_refined.off")) >> tm;
+
+  auto ecm = tm.add_property_map<Surface_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::detect_sharp_edges(tm, 60, ecm);
+
+  CGAL::Bbox_3 bb(-0.61222702264785767, -0.31298750638961792, -0.16560758650302887,
+                  0.54861283302307129, 0.62676382064819336, 0.68821543455123901);
+
+  Surface_mesh clipper;
+  CGAL::make_hexahedron(K::Iso_cuboid_3(bb), clipper, params::do_not_triangulate_faces(false));
+
+  PMP::clip(tm, clipper, params::edge_is_constrained_map(ecm));
+
+  assert( count_constrained_edges(tm, ecm)==132 );
+  }
+
+  {
+  Surface_mesh tm;
+  std::ifstream(CGAL::data_file_path("meshes/joint_refined.off")) >> tm;
+
+  auto ecm = tm.add_property_map<Surface_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::detect_sharp_edges(tm, 60, ecm);
+
+  CGAL::Bbox_3 bb(-0.61222702264785767, -0.31298750638961792, -0.16560758650302887,
+                  0.54861283302307129, 0.62676382064819336, 0.68821543455123901);
+
+  Surface_mesh clipper;
+  CGAL::make_hexahedron(K::Iso_cuboid_3(bb), clipper, params::do_not_triangulate_faces(false));
+
+  PMP::clip(tm, clipper, params::edge_is_constrained_map(ecm).clip_volume(true));
+
+  assert( count_constrained_edges(tm, ecm)==132 );
+  }
+
+  {
+  Surface_mesh tm;
+  std::ifstream(CGAL::data_file_path("meshes/joint_refined.off")) >> tm;
+
+  auto ecm = tm.add_property_map<Surface_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::detect_sharp_edges(tm, 60, ecm);
+
+  K::Plane_3 plane(-1.63242e-16, -1, -2.22045e-16, -0.242727);
+
+  PMP::clip(tm, plane, params::edge_is_constrained_map(ecm));
+
+  assert( count_constrained_edges(tm, ecm)==146 );
+  }
+
+  {
+  Surface_mesh tm;
+  std::ifstream(CGAL::data_file_path("meshes/joint_refined.off")) >> tm;
+
+  auto ecm = tm.add_property_map<Surface_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::detect_sharp_edges(tm, 60, ecm);
+
+  K::Plane_3 plane(-1.63242e-16, -1, -2.22045e-16, -0.242727);
+
+  PMP::clip(tm, plane, params::edge_is_constrained_map(ecm).clip_volume(true));
+
+  assert( count_constrained_edges(tm, ecm)==146 );
+  }
 }
 
 int main()
@@ -1324,6 +1485,9 @@ int main()
   std::cout << "Done!" << std::endl;
   std::cout << "running test_clip_and_split_with_plane_visitor\n";
   test_clip_and_split_with_plane_visitor();
+  std::cout << "running test_edge_is_constrained\n";
+  test_edge_is_constrained();
   std::cout << "Done!" << std::endl;
+
   return EXIT_SUCCESS;
 }

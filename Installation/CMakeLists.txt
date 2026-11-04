@@ -442,16 +442,11 @@ if(CGAL_DISABLE_GMP)
   unset(WITH_CGAL_Core CACHE)
   unset(CGAL_USE_GMP)
   unset(CGAL_USE_GMP CACHE)
-  # Nasty trick to make sure <gmp.h> is not used when CGAL_DISABLE_GMP is TRUE
-  file(WRITE "${CGAL_BINARY_DIR}/include/gmp.h"
-       "#error GMP is disabled by the CMake option CGAL_DISABLE_GMP")
 else()
   list(APPEND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMP MPFR)
 
   # When CMake is run several times, to avoid duplicates
   list(REMOVE_DUPLICATES CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
-
-  file(REMOVE "${CGAL_BINARY_DIR}/include/gmp.h")
 endif()
 hide_variable(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
 
@@ -835,6 +830,7 @@ if(CGAL_BRANCH_BUILD)
     find_package(GMP REQUIRED)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
+    get_target_property(CGAL_EIGEN_3_INCLUDE_DIRS Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     find_package(Qt6 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
     set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
     find_package(VTK COMPONENTS ImagingGeneral IOImage NO_MODULE)
@@ -923,6 +919,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     endforeach()
     foreach(
       incdir
+      ${CGAL_EIGEN_3_INCLUDE_DIRS}
       ${VTK_INCLUDE_DIRS}
       ${LEDA_INCLUDE_DIR}
       ${OPENMESH_INCLUDE_DIR}
