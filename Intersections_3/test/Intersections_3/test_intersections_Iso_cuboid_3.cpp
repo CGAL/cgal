@@ -498,6 +498,16 @@ public:
     check_do_intersect(Cub(p(0,0,0), p(1,1,1)), Tet(p(0,1,0), p(1,1,0), p(4,5,6), p(1,1,1))
                        /*Tr(p(0,1,0), p(1,1,0), p(1,1,1))*/);
 
+    // degenerate (flat) cuboids
+    const Tet tet(p(-1,-1,0), p(5,-1,0), p(-1,5,0), p(-1,-1,5)); // x,y >= -1, z >= 0, x+y+z <= 4
+    check_do_intersect(Cub(p(0,0,1), p(1,1,1)), tet); // square inside
+    check_do_intersect(Cub(p(0,0,1), p(1,0,1)), tet); // segment inside
+    check_do_intersect(Cub(p(0,0,1), p(0,0,1)), tet); // point inside
+    check_do_intersect(Cub(p(1,1,1), p(3,3,1)), tet); // square crossing a face
+    check_do_intersect(Cub(p(2,2,0), p(3,3,0)), tet); // square touching an edge
+    check_do_not_intersect(Cub(p(5,5,1), p(6,6,1)), tet);
+    check_do_not_intersect(Cub(p(5,5,1), p(5,6,1)), tet);
+
     // generic inside
     for(int i=0; i<N; ++i)
     {

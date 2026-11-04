@@ -100,6 +100,13 @@ public:
     check_do_intersect(Sph(p(0,0,0), 4), Tet(p(2,2,0), p(2,-2,0), p(4,9,7), p(8,-3,4))); // edge
     check_do_intersect(Sph(p(0,0,0), 4), Tet(p(2,2,3), p(2,-2,-3), p(4,2,-3), p(8,-3,4))); // face
 
+    // sphere of radius 0
+    const Tet tet(p(0,0,0), p(4,0,0), p(0,4,0), p(0,0,4));
+    check_do_intersect(Sph(p(1,1,1), 0), tet); // inside
+    check_do_intersect(Sph(p(0,1,1), 0), tet); // on a face
+    check_do_intersect(Sph(p(4,0,0), 0), tet); // on a vertex
+    check_do_not_intersect(Sph(p(3,3,3), 0), tet);
+
     for(int i=0; i<N; ++i)
     {
       P tet0 = random_point(), tet1 = random_point(), tet2 = random_point(), tet3 = random_point();

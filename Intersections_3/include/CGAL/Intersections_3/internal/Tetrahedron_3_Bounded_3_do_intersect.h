@@ -46,7 +46,8 @@ do_intersect_tetrahedron_bounded(const Bounded& tr,
 {
   typedef typename K::Boolean Boolean;
 
-  CGAL_kernel_precondition(!k.is_degenerate_3_object()(tr));
+  // `tr` may be degenerate (e.g. a flat Iso_cuboid_3 or a Sphere_3 of radius 0):
+  // testing the faces of `tet` against it and `p` against `tet` still works.
   CGAL_kernel_precondition(!k.is_degenerate_3_object()(tet));
 
   Boolean result = false;
