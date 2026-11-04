@@ -2,16 +2,18 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/tetrahedron_soup_to_lcc.h>
 #include <CGAL/draw_linear_cell_complex.h>
-#include <array>
-
 #include <CGAL/IO/MEDIT.h>
+
+#include <array>
+#include <filesystem>
+
 
 using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3>;
 using Point_3 = CGAL::Exact_predicates_inexact_constructions_kernel::Point_3;
 
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.mesh");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.mesh");
 
   std::vector<Point_3> points;
   std::vector<std::array<std::size_t,4>> tetras;
@@ -22,8 +24,7 @@ int main(int argc, char** argv)
     std::cerr << "Cannot open " << filename << std::endl;
     return 1;
   }
-
-  CGAL::IO::read_MEDIT(in, points, tetras, subdomains);
+  CGAL::IO::read_MEDIT(in, points, CGAL::parameters::tetrahedra(std::ref(tetras)).tetrahedron_refs(std::ref(subdomains)));
 
   //filter out subdomain 0
   std::vector<std::array<std::size_t,4>> filtered_tetras;
@@ -31,8 +32,10 @@ int main(int argc, char** argv)
     if (subdomains[i]!=0)
       filtered_tetras.push_back(tetras[i]);
 
+  std::cout << points.size() << " "  << filtered_tetras.size() << std::endl;
   LCC lcc;
-  CGAL::tetrahedron_soup_to_lcc(points, filtered_tetras, lcc);
+  CGAL::tetrahedron_soup_to_lcc(lcc, points, filtered_tetras);
 
   CGAL::draw(lcc);
+  return 0;
 }

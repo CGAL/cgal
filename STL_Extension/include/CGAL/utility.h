@@ -349,6 +349,30 @@ struct overloaded : Ts... {
 };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
+template <class T>
+struct is_variant : std::false_type {};
+
+template <class... Ts>
+struct is_variant<std::variant<Ts...>> : std::true_type {};
+
+template <class T>
+constexpr bool is_variant_v = is_variant<T>::value;
+
+template <class T>
+using is_variant_t = typename is_variant<T>::type;
+
+template <typename T>
+struct is_pair : std::false_type {};
+
+template <typename U, typename V>
+struct is_pair<std::pair<U, V>> : std::true_type {};
+
+template <class T>
+constexpr bool is_pair_v = is_pair<T>::value;
+
+template <class T>
+using is_pair_t = typename is_pair<T>::type;
+
 } //namespace CGAL
 
 namespace std {

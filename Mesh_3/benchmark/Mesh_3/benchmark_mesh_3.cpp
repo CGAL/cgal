@@ -148,7 +148,7 @@ enum Exit_code
 // the call to Mesh_3 happens here
 template <typename C3t3, typename Domain>
 Exit_code make_mesh(const Domain& domain,
-                    const CGAL::Mesh_criteria_3<typename C3t3::Triangulation>& criteria,
+                    const CGAL::Mesh_criteria_3<C3t3>& criteria,
                     const std::string& output_filename)
 {
 #ifdef _DEBUG
@@ -244,7 +244,7 @@ Exit_code make_mesh(const Domain& domain,
                     double cell_sizing, double cell_shape,
                     const std::string& output_filename)
 {
-  typedef CGAL::Mesh_criteria_3<typename C3t3::Triangulation> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
   const CGAL::Bbox_3 bbox = domain.bbox();
 
@@ -511,7 +511,7 @@ Exit_code run(const std::string& input,
     else // not a known implicit function
     {
       // Assume it's a CGAL data file...
-      std::string full_path = CGAL::data_file_path(input);
+      std::filesystem::path full_path = CGAL::data_file_path(input);
 
       // ...and if it is not, then take it as it is
       if(!std::ifstream(full_path).good())

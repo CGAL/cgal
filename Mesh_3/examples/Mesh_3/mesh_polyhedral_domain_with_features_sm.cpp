@@ -28,13 +28,13 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 namespace params = CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
-  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("meshes/fandisk.off");
+  const std::filesystem::path fname = (argc>1)?argv[1]:CGAL::data_file_path("meshes/fandisk.off");
   std::ifstream input(fname);
   Polyhedron polyhedron;
   input >> polyhedron;

@@ -80,7 +80,7 @@ void detect(Polygon_mesh &mesh, FT max_distance, FT max_angle, std::size_t min_r
 int main(int argc, char *argv[]) {
 
   // Load data either from a local folder or a user-provided file.
-  const std::string filename = argc == 1 ? CGAL::data_file_path("meshes/step.off") : argv[1];
+  const std::filesystem::path filename = argc == 1 ? CGAL::data_file_path("meshes/step.off") : argv[1];
   std::cout << filename << std::endl;
   std::ifstream in(filename);
   CGAL::IO::set_ascii_mode(in);

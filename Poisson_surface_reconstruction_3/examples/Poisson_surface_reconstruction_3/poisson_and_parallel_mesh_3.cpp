@@ -47,7 +47,7 @@ void poisson_reconstruction(const PointSet& points, const char* output)
   typedef CGAL::Poisson_mesh_domain_3<Kernel> Mesh_domain;
   typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
   // Poisson options
   FT sm_angle = 20.0; // Min triangle angle in degrees.
@@ -151,8 +151,8 @@ void poisson_reconstruction(const PointSet& points, const char* output)
 
 int main(int argc, char* argv[])
 {
-  const std::string file = (argc > 1) ? std::string(argv[1])
-                                      : CGAL::data_file_path("points_3/kitten.xyz");
+  const std::filesystem::path file = (argc > 1) ? argv[1]
+                                                : CGAL::data_file_path("points_3/kitten.xyz");
 
   // Reads the point set file in points[].
   // Note: read_points() requires an iterator over points

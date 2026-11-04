@@ -1,4 +1,5 @@
 #include "Scene_polylines_item.h"
+#include "Scene_points_with_normal_item.h"
 
 #include <QMainWindow>
 #include <CGAL/Three/CGAL_Lab_io_plugin_interface.h>
@@ -9,11 +10,16 @@
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 
 #include <CGAL/Three/Three.h>
-#include <fstream>
+
 #include <QVariant>
 #include <QMessageBox>
 #include <QInputDialog>
+
+#include <fstream>
+#include <set>
+
 using namespace CGAL::Three;
+
 class CGAL_Lab_polylines_io_plugin :
   public QObject,
   public CGAL_Lab_io_plugin_interface,
@@ -54,10 +60,15 @@ public:
       actionSimplify_polylines->setProperty("subMenuName", "Operations on Polylines");
       actionSimplify_polylines->setObjectName("actionSimplifyPolylines");
 
+      actionCreate_point_set = new QAction(tr("Create Point Set from Selected Polylines"), mainWindow);
+      actionCreate_point_set->setProperty("subMenuName", "Operations on Polylines");
+      actionCreate_point_set->setObjectName("actionCreatePointSet");
+
       connect(actionSplit_polylines, &QAction::triggered, this, &CGAL_Lab_polylines_io_plugin::split);
       connect(actionSplit_polylines_graph, &QAction::triggered, this, &CGAL_Lab_polylines_io_plugin::split_graph);
       connect(actionJoin_polylines, &QAction::triggered, this, &CGAL_Lab_polylines_io_plugin::join);
       connect(actionSimplify_polylines, &QAction::triggered, this, &CGAL_Lab_polylines_io_plugin::simplify);
+      connect(actionCreate_point_set, &QAction::triggered, this, &CGAL_Lab_polylines_io_plugin::point_set_from_polyline);
 
 
     }
@@ -90,15 +101,19 @@ public:
     else if(a==actionJoin_polylines)
       return (all_polylines_selected &&
               scene->selectionIndices().size() > 1);
+    else if(a==actionCreate_point_set)
+      return (all_polylines_selected &&
+              scene->selectionIndices().size() >= 1);
     else
       return false;
   }
   QList<QAction*> actions() const override{
 
-    return QList<QAction*>()<<actionSplit_polylines
-                            <<actionJoin_polylines
-                           <<actionSimplify_polylines
-                          <<actionSplit_polylines_graph;
+    return QList<QAction*>() << actionSplit_polylines
+                             << actionJoin_polylines
+                             << actionSimplify_polylines
+                             << actionSplit_polylines_graph
+                             << actionCreate_point_set;
   }
 
   bool isDefaultLoader(const Scene_item* item) const override{
@@ -113,12 +128,14 @@ public:
   //!Joins the selected Scene_polylines_items in a single item containing all their polylines.
   void join();
   void simplify();
+  void point_set_from_polyline();
 
 private:
   QAction* actionSplit_polylines;
   QAction* actionSplit_polylines_graph;
   QAction* actionJoin_polylines;
   QAction* actionSimplify_polylines;
+  QAction* actionCreate_point_set;
 };
 
 bool CGAL_Lab_polylines_io_plugin::canLoad(QFileInfo fileinfo) const{
@@ -401,6 +418,43 @@ void CGAL_Lab_polylines_io_plugin::simplify()
   }
   item->invalidateOpenGLBuffers();
   item->redraw();
+}
+
+void CGAL_Lab_polylines_io_plugin::point_set_from_polyline()
+{
+  std::set<Scene_polylines_item::Point_3> points;
+  QStringList names;
+  for(int index : scene->selectionIndices())
+  {
+    Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(scene->item(index));
+    if(item == nullptr)
+      continue;
+    names << item->name();
+    for(const Scene_polylines_item::Polyline& polyline : item->polylines)
+    {
+      if(polyline.empty())
+        continue;
+      const std::size_t last_index = polyline.size() - 1;
+      for(std::size_t i = 0; i < polyline.size(); ++i)
+      {
+        if(polyline.size() > 1 && i == last_index && polyline.front() == polyline.back())
+          continue;
+        points.insert(polyline[i]);
+      }
+    }
+  }
+
+  if(points.empty())
+    return;
+
+  Scene_points_with_normal_item* new_ps_item = new Scene_points_with_normal_item();
+  for(const Scene_polylines_item::Point_3& point : points)
+    new_ps_item->point_set()->insert(point);
+
+  new_ps_item->setName(tr("Points from %1").arg(names.isEmpty() ? tr("selected polylines") : names.join(", ")));
+  CGAL::Three::Three::scene()->addItem(new_ps_item);
+  new_ps_item->invalidateOpenGLBuffers();
+  new_ps_item->redraw();
 }
 
 void CGAL_Lab_polylines_io_plugin::join()

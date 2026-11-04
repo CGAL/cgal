@@ -152,7 +152,7 @@ public:
     addDockWidget(dock_widget);
 
     dock_widget->setVisible(false);
-    dock_widget->setEnabled(false);
+    dock_widget->setEnabled(true);
 
     connect(dock_widget->propertyBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(onNewPropertySelected(int)));
@@ -516,7 +516,6 @@ private Q_SLOTS:
 
     if(property_index >= 0 && property_index < dock_widget->propertyBox->count()) // valid property
     {
-      dock_widget->setEnabled(true);
       disableExtremeValues(); // only available after coloring
 
       // Curvature property-specific slider
@@ -530,7 +529,6 @@ private Q_SLOTS:
     }
     else // no or broken property
     {
-      dock_widget->setEnabled(false);
       dock_widget->propertyBox->setEnabled(true);
     }
   }

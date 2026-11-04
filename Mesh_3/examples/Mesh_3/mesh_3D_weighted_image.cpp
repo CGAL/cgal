@@ -22,14 +22,14 @@ using Tr   = CGAL::Mesh_triangulation_3<Mesh_domain,
 using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 
 // Criteria
-using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+using Mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
 
 namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
   /// [Loads image]
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("images/420.inr");// liver.inr.gz");
+  const std::filesystem::path fname = (argc > 1) ? argv[1] : CGAL::data_file_path("images/420.inr");// liver.inr.gz");
   CGAL::Image_3 image;
   if(!image.read(fname)){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;

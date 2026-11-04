@@ -279,7 +279,7 @@ in contrast to the rules of previous paragraph.
 </UL>
 
 \section secfile_header File header
-
+\noop REUSE-IgnoreStart
 Each \cgal source file must start with a heading that allows for an easy
 identification of the file.  The file header contains:
 <UL>
@@ -349,6 +349,7 @@ Here follows what this gives for a file under the LGPL :
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion
 \endcode
+\noop REUSE-IgnoreEnd
 
 \section seccode_format_doc_req_and_rec Requirements and recommendations
 

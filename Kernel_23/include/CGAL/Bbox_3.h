@@ -81,6 +81,7 @@ public:
 
   inline void dilate(int dist);
   inline void scale(double factor);
+  inline void pad(double offset);
 };
 
 inline
@@ -210,6 +211,8 @@ Bbox_3::dilate(int dist)
   rep[3] = float_advance(rep[3],dist);
   rep[4] = float_advance(rep[4],dist);
   rep[5] = float_advance(rep[5],dist);
+
+  CGAL_postcondition(rep[0] < rep[3] && rep[1] < rep[4] && rep[2] < rep[5]);
 }
 
 inline
@@ -233,6 +236,25 @@ Bbox_3::scale(double factor)
   rep[3] = center[0] + factor * half_width[0];
   rep[4] = center[1] + factor * half_width[1];
   rep[5] = center[2] + factor * half_width[2];
+}
+
+inline
+void
+Bbox_3::pad(double offset)
+{
+
+  if (offset == 0.)
+    return;
+
+  rep[0] -= offset;
+  rep[1] -= offset;
+  rep[2] -= offset;
+  rep[3] += offset;
+  rep[4] += offset;
+  rep[5] += offset;
+
+  CGAL_postcondition(rep[0] < rep[3] && rep[1] < rep[4] && rep[2] < rep[5]);
+
 }
 
 inline

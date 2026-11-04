@@ -61,12 +61,24 @@ CGAL_add_named_parameter(vertex_normal_map_t, vertex_normal_map, vertex_normal_m
 CGAL_add_named_parameter(vertex_color_map_t, vertex_color_map, vertex_color_map)
 CGAL_add_named_parameter(vertex_texture_map_t, vertex_texture_map, vertex_texture_map)
 CGAL_add_named_parameter(vertex_oriented_side_map_t, vertex_oriented_side_map, vertex_oriented_side_map)
+CGAL_add_named_parameter(read_vertex_oriented_side_map_t, read_vertex_oriented_side_map, read_vertex_oriented_side_map)
+
 
 CGAL_add_named_parameter(face_color_map_t, face_color_map, face_color_map)
 CGAL_add_named_parameter(repair_polygon_soup_t, repair_polygon_soup, repair_polygon_soup)
 CGAL_add_named_parameter(output_color_t, output_color, output_color)
 CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
 CGAL_add_named_parameter(read_only_one_object_t, read_only_one_object, read_only_one_object)
+
+// List of named parameters that we use in the package 'Stream_support'
+CGAL_add_named_parameter(tetrahedra_t, tetrahedra, tetrahedra)
+CGAL_add_named_parameter(edges_t, edges, edges)
+CGAL_add_named_parameter(ridges_t, ridges, ridges)
+CGAL_add_named_parameter(corners_t, corners, corners)
+CGAL_add_named_parameter(tetrahedron_refs_t, tetrahedron_refs, tetrahedron_refs)
+CGAL_add_named_parameter(triangle_refs_t, triangle_refs, triangle_refs)
+CGAL_add_named_parameter(edge_refs_t, edge_refs, edge_refs)
+CGAL_add_named_parameter(point_refs_t, point_refs, point_refs)
 
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
@@ -121,6 +133,7 @@ CGAL_add_named_parameter(allow_move_functor_t, allow_move_functor, allow_move_fu
 CGAL_add_named_parameter(throw_on_self_intersection_t, throw_on_self_intersection, throw_on_self_intersection)
 CGAL_add_named_parameter(clip_volume_t, clip_volume, clip_volume)
 CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact_clipper)
+CGAL_add_named_parameter(do_not_mark_intersection_polylines_t, do_not_mark_intersection_polylines, do_not_mark_intersection_polylines)
 CGAL_add_named_parameter(output_iterator_t, output_iterator, output_iterator)
 CGAL_add_named_parameter(erase_policy_t, erase_policy, erase_policy)
 CGAL_add_named_parameter(require_same_orientation_t, require_same_orientation, require_same_orientation)
@@ -182,6 +195,7 @@ CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
 CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
 CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
+CGAL_add_named_parameter(split_triangle_range_at_t, split_triangle_range_at, split_triangle_range_at)
 CGAL_add_named_parameter(use_bounding_box_filtering_t, use_bounding_box_filtering, use_bounding_box_filtering)
 CGAL_add_named_parameter(shuffle_planes_t, shuffle_planes, shuffle_planes)
 CGAL_add_named_parameter(use_convex_specialization_t, use_convex_specialization, use_convex_specialization)
@@ -434,7 +448,7 @@ CGAL_add_named_parameter_with_compatibility(cell_min_size_param_t, cell_min_size
 CGAL_add_named_parameter_with_compatibility(function_param_t, function_param, function)
 CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_object_param, bounding_object)
 
-// List of named parameters used in the package ' 3D Surface Subdivision Methods'
+// List of named parameters used in the package '3D Surface Subdivision Methods'
 CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_not_modify_geometry)
 
 //List of named parameters used in Straight_skeleton_2
@@ -453,3 +467,9 @@ CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
 
 // List of named parameters used in the package 'Barycentric_coordinates_3'
 CGAL_add_named_parameter(computation_policy_t, computation_policy, computation_policy)
+
+// List of named parameters used in the package 'Linear_cell_complex'
+CGAL_add_named_parameter(use_trimming_t, use_trimming, use_trimming)
+
+//List of named parameters used in Mesh_smoothing_3
+CGAL_add_named_parameter(max_number_of_evaluations_t, max_number_of_evaluations, max_number_of_evaluations)

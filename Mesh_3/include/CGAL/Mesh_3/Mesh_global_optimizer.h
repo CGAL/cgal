@@ -39,16 +39,16 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <vector>
-#include <list>
-#include <limits>
-
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
 # include <mutex>
 # include <tbb/parallel_for_each.h>
 # include <tbb/concurrent_vector.h>
 #endif
+
+#include <limits>
+#include <list>
+#include <vector>
 
 namespace CGAL {
 
@@ -919,10 +919,10 @@ compute_move(const Vertex_handle& v)
   // Project surface vertex
   if ( c3t3_.in_dimension(v) == 2 )
   {
-    const Weighted_point& position = tr_.point(v);
-    Bare_point new_position = translate(cp(position), move);
-    Bare_point projected_new_position = helper_.project_on_surface(v, new_position);
-    move = vector(cp(position), projected_new_position);
+    const Bare_point& position = cp(tr_.point(v));
+    Bare_point new_position = translate(position, move);
+    auto [projected_new_position, index] = helper_.project_on_surface(v, new_position);
+    move = vector(position, projected_new_position);
   }
 
   FT local_move_sq_ratio = sq_length(move) / local_sq_size;

@@ -635,8 +635,13 @@ void test()
     assert(vertices(tm1).size()==72);
     assert(faces(tm1).size()==79);
   }
+}
 
-
+template <class Mesh>
+std::size_t nb_connected_components(const Mesh& tm)
+{
+  auto fcm = get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
+  return PMP::connected_components(tm, fcm);
 }
 
 template <class Mesh>
@@ -726,9 +731,67 @@ void test_split_plane()
   //if the list does contain all those numbers.
   assert(num_vertices(meshes[0]) == 12);
   assert(num_vertices(meshes[1]) == 12);
-
-  CGAL::clear(tm1);
   meshes.clear();
+  CGAL::clear(tm1);
+
+// test plane on a face of a cube (triangulated)
+  std::ifstream(CGAL::data_file_path("meshes/cube.off")) >> tm1;
+  PMP::split(tm1, K::Plane_3(0,0,1,1));
+  std::ofstream("/tmp/out.off") << tm1;
+  assert(nb_connected_components(tm1)==2);
+  CGAL::clear(tm1);
+
+
+  CGAL::make_hexahedron(CGAL::Bbox_3(-1,-1,-1,1,1,1), tm1);
+  PMP::split(tm1, K::Plane_3(0,0,1,1));
+  assert(nb_connected_components(tm1)==2);
+  CGAL::clear(tm1);
+
+  std::ifstream(CGAL::data_file_path("meshes/cheese.off")) >> tm1;
+  PMP::split(tm1, K::Plane_3(0,0,1,-0.050000000699999998));
+  std::ofstream("/tmp/out.off") << tm1;
+  assert(nb_connected_components(tm1)==4);
+  CGAL::clear(tm1);
+
+
+  std::ifstream(CGAL::data_file_path("meshes/cross_quad.off")) >> tm1;
+  PMP::split(tm1, K::Plane_3(0,1,1,-3));
+  assert(nb_connected_components(tm1)==2);
+  CGAL::clear(tm1);
+
+  std::ifstream(CGAL::data_file_path("meshes/cross_quad.off")) >> tm1;
+  PMP::triangulate_faces(tm1);
+  PMP::split(tm1, K::Plane_3(0,1,1,-3));
+  assert(nb_connected_components(tm1)==2);
+  CGAL::clear(tm1);
+
+  CGAL::make_hexahedron(K::Point_3(-1,0,1),K::Point_3(1,0,1),K::Point_3(1,-1,0),K::Point_3(-1,-1,0),K::Point_3(-1,0,-1),K::Point_3(-1,1,0),K::Point_3(1,1,0),K::Point_3(1,0,-1),tm1);
+  PMP::split(tm1, K::Plane_3(0,1,0,-1));
+  assert(nb_connected_components(tm1)==1);
+  CGAL::clear(tm1);
+
+  CGAL::make_hexahedron(K::Point_3(-1,0,1),K::Point_3(1,0,1),K::Point_3(1,-1,0),K::Point_3(-1,-1,0),K::Point_3(-1,0,-1),K::Point_3(-1,1,0),K::Point_3(1,1,0),K::Point_3(1,0,-1),tm1);
+  PMP::clip(tm1, K::Plane_3(0,1,0,-1));
+  assert(nb_connected_components(tm1)==1);
+  CGAL::clear(tm1);
+
+  CGAL::make_hexahedron(K::Point_3(-1,0,1),K::Point_3(1,0,1),K::Point_3(1,-1,0),K::Point_3(-1,-1,0),K::Point_3(-1,0,-1),K::Point_3(-1,1,0),K::Point_3(1,1,0),K::Point_3(1,0,-1),tm1);
+  Mesh clipper;
+  CGAL::make_hexahedron(CGAL::Bbox_3(-2,-2,-2, 2,2,1),clipper);
+  PMP::triangulate_faces(tm1);
+  PMP::triangulate_faces(clipper);
+  PMP::clip(tm1, K::Plane_3(0,1,0,-1));
+  assert(nb_connected_components(tm1)==1);
+  CGAL::clear(tm1);
+  CGAL::clear(clipper);
+
+  CGAL::make_hexahedron(K::Point_3(-1,0,1),K::Point_3(1,0,1),K::Point_3(1,-1,0),K::Point_3(-1,-1,0),K::Point_3(-1,0,-1),K::Point_3(-1,1,0),K::Point_3(1,1,0),K::Point_3(1,0,-1),tm1);
+  CGAL::make_hexahedron(CGAL::Bbox_3(-2,-2,1, 2, 2, 3),clipper);
+  PMP::triangulate_faces(tm1);
+  PMP::triangulate_faces(clipper);
+  PMP::clip(tm1, clipper);
+  assert(nb_connected_components(tm1)==0);
+  CGAL::clear(tm1);
 }
 
 template <class TriangleMesh>
@@ -1258,7 +1321,7 @@ struct Clip_and_split_visitor
 
 void test_clip_and_split_with_plane_visitor()
 {
-  auto test_clip =[](std::string fname, const K::Plane_3& plane, bool triangulate, bool clip_volume)
+  auto test_clip =[](std::filesystem::path fname, const K::Plane_3& plane, bool triangulate, bool clip_volume)
   {
     std::cout << "   testing with clip " << fname << " vs " << plane << " (" << triangulate << "," << clip_volume << ")\n";
     Surface_mesh sm;
@@ -1270,7 +1333,7 @@ void test_clip_and_split_with_plane_visitor()
     visitor.check();
   };
 
-  auto test_split =[](std::string fname, const K::Plane_3& plane, bool triangulate)
+  auto test_split =[](std::filesystem::path fname, const K::Plane_3& plane, bool triangulate)
   {
     std::cout << "   testing with split" << fname << " vs " << plane << " (" << triangulate << ")\n";
     Surface_mesh sm;
@@ -1281,7 +1344,7 @@ void test_clip_and_split_with_plane_visitor()
     visitor.check();
   };
 
-  auto test = [&](std::string fname, const K::Plane_3& plane)
+  auto test = [&](std::filesystem::path fname, const K::Plane_3& plane)
   {
     test_clip(fname, plane, true, true);
     test_clip(fname, plane, true, false);
@@ -1325,7 +1388,7 @@ void dump_constrained_edges(const Surface_mesh& tm, ECM ecm, std::string fname)
 }
 */
 
-void test_edge_is_contrained()
+void test_edge_is_constrained()
 {
   {
   Surface_mesh tm;
@@ -1422,8 +1485,8 @@ int main()
   std::cout << "Done!" << std::endl;
   std::cout << "running test_clip_and_split_with_plane_visitor\n";
   test_clip_and_split_with_plane_visitor();
-  std::cout << "running test_edge_is_contrained\n";
-  test_edge_is_contrained();
+  std::cout << "running test_edge_is_constrained\n";
+  test_edge_is_constrained();
   std::cout << "Done!" << std::endl;
 
   return EXIT_SUCCESS;

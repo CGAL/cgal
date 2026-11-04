@@ -44,7 +44,7 @@ std::size_t count_edges(const Mesh& mesh, const EdgesMap& edges_map)
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1)
+  const std::filesystem::path filename = (argc > 1)
                              ? argv[1]
                              : CGAL::data_file_path("meshes/corner_tris_with_hole.off");
 
