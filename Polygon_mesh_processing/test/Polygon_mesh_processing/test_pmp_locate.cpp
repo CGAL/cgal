@@ -100,6 +100,68 @@ bool is_equal(const FT& a, const FT& b)
     return (a == b);
 }
 
+template <typename K, typename Point>
+void check_degenerate_barycentric_coordinates(const Point& p, const Point& q, const Point& r,
+                                             const Point& query,
+                                             const typename PMP::Barycentric_coordinates<typename K::FT>& expected)
+{
+  typedef typename K::FT                                                     FT;
+  typedef typename PMP::Barycentric_coordinates<FT>                          Barycentric_coordinates;
+
+  const Barycentric_coordinates coordinates = PMP::barycentric_coordinates(p, q, r, query, K());
+  std::cout << "get " << coordinates[0] << " " << coordinates[1] << " " << coordinates[2] << std::endl;
+  assert(is_equal(coordinates[0], expected[0]));
+  assert(is_equal(coordinates[1], expected[1]));
+  assert(is_equal(coordinates[2], expected[2]));
+}
+
+template <typename K, typename Point>
+void test_degenerate_barycentric_coordinates_P()
+{
+  typedef typename K::FT FT;
+
+  // abusing '1' being a z coordinate for 3D points, and the homogeneous coordinate in 2D
+  const Point points[3] = { Point(0, 0, 1), Point(2, 0, 1), Point(1, 0, 1) };
+  const Point query(0.5, 0, 1);
+  const FT expected[3] = { FT(0.75), FT(0.25), FT(0) };
+
+  for(int i=0; i<3; ++i) {
+    for(int j=0; j<3; ++j) {
+      for(int k=0; k<3; ++k) {
+        if(i == j || i == k || j == k)
+          continue;
+        std::cout << "test " << points[i] << " " << points[j] << " " << points[k] << std::endl;
+        check_degenerate_barycentric_coordinates<K>(points[i], points[j], points[k], query,
+                                                    CGAL::make_array(expected[i], expected[j], expected[k]));
+      }
+    }
+  }
+
+  // collinear, outside of longest segment
+  check_degenerate_barycentric_coordinates<K>(points[0], points[1], points[2], Point(3, 0, 1),
+                                              CGAL::make_array(FT(-0.5), FT(1.5), FT(0)));
+
+  // collinear with twice the same points
+  check_degenerate_barycentric_coordinates<K>(Point(0, 0, 1), Point(0, 0, 1), Point(2, 0, 1), query,
+                                              CGAL::make_array(FT(0.75), FT(0), FT(0.25)));
+  check_degenerate_barycentric_coordinates<K>(Point(0, 0, 1), Point(2, 0, 1), Point(0, 0, 1), query,
+                                              CGAL::make_array(FT(0.75), FT(0.25), FT(0)));
+  check_degenerate_barycentric_coordinates<K>(Point(0, 0, 1), Point(2, 0, 1), Point(2, 0, 1), query,
+                                              CGAL::make_array(FT(0.75), FT(0.25), FT(0)));
+
+  // all equal
+  check_degenerate_barycentric_coordinates<K>(Point(3, 0, 1), Point(3, 0, 1), Point(3, 0, 1), Point(3, 0, 1),
+                                              CGAL::make_array(FT(1), FT(0), FT(0)));
+}
+
+template <typename K>
+void test_degenerate_barycentric_coordinates()
+{
+  std::cout << "  test degenerate barycentric coordinates..." << std::endl;
+  test_degenerate_barycentric_coordinates_P<K, typename K::Point_2>();
+  test_degenerate_barycentric_coordinates_P<K, typename K::Point_3>();
+}
+
 template<typename K, typename G>
 void test_snappers(const G& g)
 {
@@ -752,6 +814,7 @@ void test_locate(const G& g,
 {
   assert(num_vertices(g) != 0 && num_faces(g) != 0);
 
+  test_degenerate_barycentric_coordinates<K>();
   test_snappers<K>(g);
   test_constructions<K>(g, vpm, rnd);
   test_random_entities<K>(g, rnd);
