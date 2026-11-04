@@ -813,7 +813,7 @@ private Q_SLOTS:
     CGAL_assertion(max_v != boost::graph_traits<SMesh>::null_vertex());
 
     face_descriptor unused_fd;
-    Point_3 unused_p(0,0,0); // initialzed to avoid compiler warning, but will be set in zoomToId()
+    Point_3 unused_p(0,0,0); // initialized to avoid compiler warning, but will be set in zoomToId()
     ::zoomToId(mesh,
                QString("v%1").arg(static_cast<int>(max_v)),
                getActiveViewer(),
