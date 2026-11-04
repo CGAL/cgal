@@ -75,7 +75,7 @@ if(TARGET CGAL::FastFloat_support)
   cgal_add_test(test_iformat_numbers_fastfloat)
 
   add_executable(test_OFF_fastfloat test_OFF.cpp)
-  target_link_libraries(test_OFF_fastfloat PRIVATE CGAL::CGAL CGAL::FastFloat_support)
+  target_link_libraries(test_OFF_fastfloat PRIVATE CGAL::CGAL CGAL::FastFloat_support CGAL::Data)
   cgal_add_test(test_OFF_fastfloat)
 endif()
 
@@ -86,5 +86,5 @@ cgal_add_test(test_iformat_numbers_no_fromchars)
 
 add_executable(test_OFF_no_fromchars test_OFF.cpp)
 target_compile_definitions(test_OFF_no_fromchars PUBLIC CGAL_DISABLE_FROM_CHARS=1)
-target_link_libraries(test_OFF_no_fromchars PRIVATE CGAL::CGAL)
+target_link_libraries(test_OFF_no_fromchars PRIVATE CGAL::CGAL CGAL::Data)
 cgal_add_test(test_OFF_no_fromchars)
