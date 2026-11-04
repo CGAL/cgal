@@ -603,7 +603,8 @@ void find_splittable_edge(const VertexWithTolerance& vertex_with_tolerance,
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
   std::cout << "  Closest point: (" << closest_p << ")" << std::endl
-            << "  on edge: " << traversal_traits.closest_primitive_id()
+            << "  on edge: " << closest_e
+            << " (" << get(vpm_T, source(closest_e, tm_T)) << " - " << get(vpm_T, target(closest_e, tm_T)) << ")"
             << "  at sq distance " << gt.compute_squared_distance_3_object()(query, closest_p)
             << " with squared tolerance: " << sq_tolerance
             << " && close enough? " << is_close_enough << std::endl;
@@ -694,7 +695,7 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
                         const bool is_source_mesh_fixed) // when snapping is B --> A and the mesh B is fixed
 {
 #ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "split " << edges_to_split.size() << " edges" << std::endl;
+  std::cout << edges_to_split.size() << " edges to split" << std::endl;
 #endif
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor           vertex_descriptor;
@@ -734,6 +735,14 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 #endif
 
     Vertices_with_new_position& splitters = es.second;
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    std::cout << "  " << splitters.size() << " splitting points" << std::endl;
+    for (const Vertex_with_new_position& vnp : splitters)
+    {
+      std::cout << "    " << vnp.first << " (" << get(vpm_S, target(vnp.first, tm_S)) << ")"
+                << " at " << vnp.second << std::endl;
+    }
+#endif
 
     if(splitters.size() > 1)
     {
