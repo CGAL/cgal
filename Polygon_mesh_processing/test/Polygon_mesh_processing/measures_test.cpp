@@ -7,6 +7,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
+#include <CGAL/Polygon_mesh_processing/orientation_basic.h>
+
 #include <CGAL/Bbox_3.h>
 
 #include <iostream>
@@ -354,6 +356,82 @@ void test_compare()
 
 }
 
+template <typename PolygonMesh1, typename PolygonMesh2, typename K>
+void test_equal()
+{
+  typedef typename boost::graph_traits<PolygonMesh1>::face_descriptor        face_descriptor1;
+  typedef typename boost::graph_traits<PolygonMesh2>::vertex_descriptor      vertex_descriptor2;
+  typedef typename boost::graph_traits<PolygonMesh2>::face_descriptor        face_descriptor2;
+  typedef typename K::Point_3 Point_3;
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
+  PolygonMesh1 mesh1;
+  PolygonMesh2 mesh2;
+
+
+  // Reference tetrahedron.
+  CGAL::make_tetrahedron(
+    Point_3(0, 0, 0),
+    Point_3(1, 0, 0),
+    Point_3(0, 1, 0),
+    Point_3(0, 0, 1),
+    mesh1);
+
+  // Identical tetrahedron.
+  CGAL::make_tetrahedron(
+    Point_3(0, 0, 0),
+    Point_3(1, 0, 0),
+    Point_3(0, 1, 0),
+    Point_3(0, 0, 1),
+    mesh2);
+  assert(PMP::are_equal(mesh1, mesh2));
+  mesh2.clear();
+
+  // Same tetrahedron, with a different vertex insertion order.
+  CGAL::make_tetrahedron(
+    Point_3(0, 0, 1),
+    Point_3(1, 0, 0),
+    Point_3(0, 0, 0),
+    Point_3(0, 1, 0),
+    mesh2);
+  assert(PMP::are_equal(mesh1, mesh2));
+  mesh2.clear();
+
+  // Same combinatorics, different geometry.
+  CGAL::make_tetrahedron(
+    Point_3(1, 0, 0),
+    Point_3(2, 0, 0),
+    Point_3(1, 1, 0),
+    Point_3(1, 0, 1),
+    mesh2);
+  assert(!PMP::are_equal(mesh1, mesh2));
+  mesh2.clear();
+
+  // Same geometry, reversed orientation.
+  CGAL::make_tetrahedron(
+    Point_3(0, 0, 0),
+    Point_3(1, 0, 0),
+    Point_3(0, 1, 0),
+    Point_3(0, 0, 1),
+    mesh2);
+  PMP::reverse_face_orientations(mesh2);
+  assert(!PMP::are_equal(mesh1, mesh2));
+  mesh2.clear();
+
+  // Different number of vertices, edges and faces.
+  PolygonMesh2 triangle;
+  auto v0 = add_vertex(triangle);
+  auto v1 = add_vertex(triangle);
+  auto v2 = add_vertex(triangle);
+
+  put(CGAL::vertex_point, triangle, v0, Point_3(0, 0, 0));
+  put(CGAL::vertex_point, triangle, v1, Point_3(1, 0, 0));
+  put(CGAL::vertex_point, triangle, v2, Point_3(0, 1, 0));
+
+  CGAL::Euler::add_face(std::vector<vertex_descriptor2>{v0, v1, v2}, triangle);
+  assert(!PMP::are_equal(mesh1, triangle));
+}
+
 int main(int argc, char* argv[])
 {
   const std::filesystem::path filename_polyhedron =
@@ -373,6 +451,10 @@ int main(int argc, char* argv[])
   test_compare<CGAL::Polyhedron_3<Epec>, CGAL::Surface_mesh<Epec::Point_3> >();
   test_compare<CGAL::Surface_mesh<Epic::Point_3>, CGAL::Polyhedron_3<Epic> >();
   test_compare<CGAL::Surface_mesh<Epec::Point_3>, CGAL::Polyhedron_3<Epec> >();
+  test_equal<CGAL::Polyhedron_3<Epic>, CGAL::Surface_mesh<Epic::Point_3>, Epic >();
+  test_equal<CGAL::Polyhedron_3<Epec>, CGAL::Surface_mesh<Epec::Point_3>, Epec >();
+  test_equal<CGAL::Surface_mesh<Epic::Point_3>, CGAL::Polyhedron_3<Epic>, Epic >();
+  test_equal<CGAL::Surface_mesh<Epec::Point_3>, CGAL::Polyhedron_3<Epec>, Epec >();
   std::cerr << "All done." << std::endl;
   return 0;
 }
