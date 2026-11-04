@@ -149,7 +149,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
       const halfedge_descriptor prev_oh = prev(opposite(h, tm), tm);
 
       // check that the border has at least 4 edges not to create degenerate volumes
-      if(border_size(h, tm) >= 4)
+      if(CGAL::internal::border_size(h, tm) >= 4)
       {
         const FT lambda = tol_s / (tol_s + tol_t);
         const Point new_p = ps + lambda * (pt - ps);
