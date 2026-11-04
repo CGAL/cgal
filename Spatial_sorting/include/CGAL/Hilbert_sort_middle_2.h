@@ -107,11 +107,17 @@ public:
     const int y = (x + 1) % 2;
     double xmed= (xmin+xmax)/2;
     double ymed= (ymin+ymax)/2;
+    const bool x_degen = (xmin == xmed || xmed == xmax);
+    const bool y_degen = (ymin == ymed || ymed == ymax);
     const bool x_lower = (x==0) ? xmed<bb.xmin() : xmed<bb.ymin();
     const bool x_upper = (x==0) ? xmed>bb.xmax() : xmed>bb.ymax();
     const bool y_lower = (x==0) ? ymed<bb.ymin() : ymed<bb.xmin();
     const bool y_upper = (x==0) ? ymed>bb.ymax() : ymed>bb.xmax();
-    if( (!x_lower && !x_upper) || (!y_lower && !y_upper)){
+
+    if(x_degen && y_degen)
+      return;
+
+    if( (!x_degen && !x_lower && !x_upper) || (!y_degen && !y_lower && !y_upper)){
       // Not contain in one quarter
       sort<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax);
       return;

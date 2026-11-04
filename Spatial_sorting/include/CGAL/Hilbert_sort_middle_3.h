@@ -120,6 +120,13 @@ public:
       double ymed= (ymin+ymax)/2;
       double zmed= (zmin+zmax)/2;
 
+      const bool x_degen = (xmin == xmed || xmed == xmax);
+      const bool y_degen = (ymin == ymed || ymed == ymax);
+      const bool z_degen = (zmin == zmed || zmed == zmax);
+
+      if(x_degen && y_degen && z_degen)
+        return;
+
       const bool x_lower = (x==0) ? xmed<bb.xmin() : ((x==1) ? xmed<bb.ymin() : xmed<bb.zmin());
       const bool x_upper = (x==0) ? xmed>bb.xmax() : ((x==1) ? xmed>bb.ymax() : xmed>bb.zmax());
       const bool y_lower = (x==0) ? ymed<bb.ymin() : ((x==1) ? ymed<bb.zmin() : ymed<bb.xmin());
@@ -127,7 +134,7 @@ public:
       const bool z_lower = (x==0) ? zmed<bb.zmin() : ((x==1) ? zmed<bb.xmin() : zmed<bb.ymin());
       const bool z_upper = (x==0) ? zmed>bb.zmax() : ((x==1) ? zmed>bb.xmax() : zmed>bb.ymax());
 
-      if( (!x_lower && !x_upper) || (!y_lower && !y_upper) || (!z_lower && !z_upper) ){
+      if( (!x_degen && !x_lower && !x_upper) || (!y_degen && !y_lower && !y_upper) || (!z_degen && !z_lower && !z_upper) ){
         // Not contain in one quarter
         sort<x, upx, upy, upz> (begin, end, xmin, ymin, zmin, xmax, ymax, zmax);
         return;
