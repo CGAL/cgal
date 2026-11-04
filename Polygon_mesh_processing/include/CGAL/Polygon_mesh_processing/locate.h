@@ -220,6 +220,42 @@ snap_coordinates_to_border(Barycentric_coordinates<FT>& coords,
   return snapped;
 }
 
+template <typename FT, typename P, typename ConstructVector, typename ScalarProduct>
+Barycentric_coordinates<FT>
+barycentric_coordinates_on_longest_edge(const P& p, const P& q, const P& r,
+                                        const P& query,
+                                        const ConstructVector& construct_vector,
+                                        const ScalarProduct& scalar_product)
+{
+  const auto pq = construct_vector(p, q);
+  const auto pr = construct_vector(p, r);
+  const auto qr = construct_vector(q, r);
+
+  const FT sq_pq = scalar_product(pq, pq);
+  const FT sq_pr = scalar_product(pr, pr);
+  const FT sq_qr = scalar_product(qr, qr);
+
+  if(sq_pq == FT(0) && sq_pr == FT(0) && sq_qr == FT(0))
+    return CGAL::make_array(FT(1), FT(0), FT(0));
+
+  if(sq_pq >= sq_pr && sq_pq >= sq_qr)
+  {
+    const FT t = scalar_product(construct_vector(p, query), pq) / sq_pq;
+    return CGAL::make_array(FT(1) - t, t, FT(0));
+  }
+
+  // pq isn't the longest, so check the others
+  if(sq_pr >= sq_qr)
+  {
+    const FT t = scalar_product(construct_vector(p, query), pr) / sq_pr;
+    return CGAL::make_array(FT(1) - t, FT(0), t);
+  }
+
+  const FT t = scalar_product(construct_vector(q, query), qr) / sq_qr;
+
+  return CGAL::make_array(FT(0), FT(1) - t, t);
+}
+
 template <typename FT, typename TriangleMesh>
 bool
 snap_location_to_border(Face_location<TriangleMesh, FT>& loc,
@@ -258,7 +294,8 @@ struct Barycentric_coordinate_calculator // 2D version
     FT d21 = csp2(v2, v1);
 
     FT denom = d00 * d11 - d01 * d01;
-    CGAL_assertion((d00 * d11 - d01 * d01) != FT(0)); // denom != 0
+    if(denom == FT(0))
+      return barycentric_coordinates_on_longest_edge<FT>(p, q, r, query, cv2, csp2);
 
     FT v = (d11 * d20 - d01 * d21) / denom;
     FT w = (d00 * d21 - d01 * d20) / denom;
@@ -295,11 +332,12 @@ struct Barycentric_coordinate_calculator<K, P, 3 /*3D specialization*/>
     FT d20 = csp3(v2, v0);
     FT d21 = csp3(v2, v1);
 
-    CGAL_assertion((d00 * d11 - d01 * d01) != FT(0)); // denom != 0
-    FT denom_inv = FT(1) / (d00 * d11 - d01 * d01);
+    FT denom = d00 * d11 - d01 * d01;
+    if(denom == FT(0))
+      return barycentric_coordinates_on_longest_edge<FT>(p, q, r, query, cv3, csp3);
 
-    FT v = (d11 * d20 - d01 * d21) * denom_inv;
-    FT w = (d00 * d21 - d01 * d20) * denom_inv;
+    FT v = (d11 * d20 - d01 * d21) / denom;
+    FT w = (d00 * d21 - d01 * d20) / denom;
 
     return CGAL::make_array(FT(FT(1) - v - w), v, w);
   }
@@ -349,6 +387,14 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 /// \brief Given a set of three points and a query point, computes the barycentric
 ///        coordinates of the query point with respect to the first three points.
 ///
+/// The correspondence between the returned coordinates `(w0, w1, w2)` and the three points
+/// is the following: `w0` corresponds to `p`, `w1` corresponds to `q`, and `w2` corresponds to `r`.
+///
+/// If `p`, `q`, and `r` are collinear, `query` is projected onto the line defined by `p`, `q`,
+/// and `r`, and the barycentric coordinates are computed with respect to the two points
+/// realizing the longest segment, with lexicographic tie-breaking.
+// If all three points coincide, the coordinates returned are `(1, 0, 0)`.
+///
 /// \tparam GeomTraits the type of a geometric traits. Must be a model of `Kernel` and be compatible
 ///                    with the template parameter `Point`.
 /// \tparam Point the type of a geometric 2D or 3D point
@@ -357,8 +403,7 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 /// \param query the query point whose barycentric coordinates will be computed
 /// \param gt an instance of the geometric traits
 ///
-/// \pre `p`, `q`, and `r` are not collinear.
-/// \pre `query` lies on the plane defined by `p`, `q`, and `r`.
+/// \pre `query` lies in the affine hull of `p`, `q`, and `r`.
 ///
 template <typename GeomTraits, typename Point>
 Barycentric_coordinates<typename GeomTraits::FT>
