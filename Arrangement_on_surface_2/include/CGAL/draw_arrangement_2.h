@@ -616,9 +616,9 @@ void draw_impl_agas(const Arrangement& arr, const GSOptions& gso,
   using Face_const_handle = typename Arrangement::Face_const_handle;
   using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
   using Geom_traits = typename Arrangement::Geometry_traits_2;
-  // The geometry traits may be a (chain of) decorator(s); obtain the geometric
-  // types from the last traits in the chain.
-  using Direction_3 = typename undecorated_traits_t<Geom_traits>::Direction_3;
+  // The geometry traits may be built upon other traits (e.g., a decorator or a
+  // polycurve traits); obtain the geometric types from the innermost traits.
+  using Direction_3 = typename innermost_traits_t<Geom_traits>::Direction_3;
   using Point_2 = typename Geom_traits::Point_2;
   using Agas_template_args = tmpl_args<Geom_traits>;
 

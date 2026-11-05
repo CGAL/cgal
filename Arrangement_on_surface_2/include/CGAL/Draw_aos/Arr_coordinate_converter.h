@@ -66,8 +66,8 @@ private:
  * represented as azimuth ( [0, 2 Pi) ) and polar ( [0, Pi] ) angle in radians. Points on the identification curve have
  * azimuth == 0. The south pole has polar == 0.
  *
- * The specialization is selected if the geometry traits, or the last traits in
- * its chain of decorators, is or derives from an instance of
+ * The specialization is selected if the innermost traits of the geometry traits
+ * (see `innermost_traits`) is or derives from an instance of
  * `Arr_geodesic_arc_on_sphere_traits_2`.
  *
  * \tparam GeomTraits
