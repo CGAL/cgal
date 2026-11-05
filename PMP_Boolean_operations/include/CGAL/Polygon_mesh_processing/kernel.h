@@ -19,23 +19,47 @@
 #include <CGAL/Polygon_mesh_processing/internal/clip_convex.h>
 #include <CGAL/Polygon_mesh_processing/internal/Three_point_cut_plane_traits.h>
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/assertions.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/centroid.h>
+#include <CGAL/Dynamic_property_map.h>
+#include <CGAL/enum.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Fraction_traits.h>
+#include <CGAL/global_functions_distance_3.h>
+#include <CGAL/Lazy.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Origin.h>
 #include <CGAL/Profile_counter.h>
+#include <CGAL/property_map.h>
+#include <CGAL/Simple_cartesian.h>
 
+#include <CGAL/utils.h>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/iterator/transform_iterator.hpp>
 
 #include <algorithm>
 #include <array>
+#include <chrono>
+#include <climits>
+#include <cmath>
+#include <cstddef>
 #include <functional>
+#include <iostream>
 #include <iterator>
+#include <limits>
 #include <optional>
 #include <random>
+#include <string_view>
+#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
