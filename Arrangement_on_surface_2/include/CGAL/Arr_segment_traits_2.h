@@ -25,6 +25,7 @@
 
 #include <fstream>
 
+#include <type_traits>
 #include <variant>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -516,6 +517,23 @@ public:
     bool operator()(const Point_2& p1, const Point_2& p2) const {
       const Kernel& kernel = m_traits;
       return (kernel.equal_2_object()(p1, p2));
+    }
+
+    /*! determines whether two kernel objects of another type (e.g., two
+     * directions) are equal.  As this functor hides `Kernel::Equal_2`, it
+     * forwards these objects to it, thus extending it.  Objects convertible
+     * to points or to \f$x\f$-monotone curves (e.g., points and curves with
+     * data, derived from them) are excluded; the overloads above handle them.
+     * \param t1 the first object.
+     * \param t2 the second object.
+     * \return (true) if the two objects are equal; (false) otherwise.
+     */
+    template <typename T,
+              std::enable_if_t<! std::is_convertible_v<const T&, const Point_2&> &&
+                               ! std::is_convertible_v<const T&, const X_monotone_curve_2&>, int> = 0>
+    bool operator()(const T& t1, const T& t2) const {
+      const Kernel& kernel = m_traits;
+      return kernel.equal_2_object()(t1, t2);
     }
   };
 

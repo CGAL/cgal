@@ -9,6 +9,7 @@
 //
 // Author(s): Alex Tsui <alextsui05@gmail.com>
 //            Ahmed Essam <theartful.ae@gmail.com>
+//            Efi Fogel <efifogel@gmail.com>
 
 #include "EnvelopeCallback.h"
 #include "CurveGraphicsItem.h"
@@ -17,9 +18,10 @@
 #include "ArrangementTypes.h"
 #include "ArrangementTypesUtils.h"
 
-#include <CGAL/envelope_2.h>
-#include <CGAL/Envelope_diagram_1.h>
+#include <CGAL/Envelope_2/envelope_2.h>
+#include <CGAL/Envelope_2/Envelope_diagram_1.h>
 
+#include <memory>
 #include <vector>
 
 template <typename Arr_>
@@ -182,10 +184,13 @@ void EnvelopeCallback< Arr_>::slotModelChanged( )
 template < typename Arr_ >
 void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
 {
-  typedef CGAL::Envelope_diagram_1<Traits> Diagram_1;
-  typedef typename Diagram_1::Edge_const_handle Edge_const_handle;
+  typedef typename EnvelopeFunctions<Arrangement>::Diagram_1 Diagram_1;
 
-  Diagram_1 diagram;
+  // The diagram, and thus the envelope computation, shares the traits of the
+  // arrangement, which owns it.
+  typename Diagram_1::Shared_traits_2 traits(
+    this->arr->geometry_traits(), [](const Traits*) {});
+  Diagram_1 diagram(std::move(traits));
   CGAL::Qt::CurveGraphicsItem<Traits>* envelopeToUpdate;
 
   EnvelopeFunctions<Arrangement> envelope_functions;
@@ -215,32 +220,27 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
 
   envelopeToUpdate->clear( );
 
-  auto next_edge = [](const auto& e) -> Edge_const_handle {
-    auto&& v = e->right();
-    if (v) return v->right();
-    else   return nullptr;
-  };
-
   auto construct_x_monotone_subcurve_2 =
     Construct_x_monotone_subcurve_2<Traits>{arr->traits()};
-  for (Edge_const_handle e = diagram.leftmost(); e; e = next_edge(e))
+  for (auto e = diagram.leftmost(); ; e = diagram.right_edge(diagram.right_vertex(e)))
   {
-    if (!e->is_empty())
+    if (!diagram.empty_edge_curves(e))
     {
       std::optional<Point_2> leftPoint, rightPoint;
-      if (e->left())
-        leftPoint = e->left()->point();
+      if (diagram.has_left_vertex(e))
+        leftPoint = diagram.point(diagram.left_vertex(e));
 
-      if (e->right())
-        rightPoint = e->right()->point();
+      if (diagram.has_right_vertex(e))
+        rightPoint = diagram.point(diagram.right_vertex(e));
 
-      X_monotone_curve_2 curve =
-        construct_x_monotone_subcurve_2(e->curve(), leftPoint, rightPoint);
+      X_monotone_curve_2 curve = construct_x_monotone_subcurve_2(
+        diagram.edge_curve(e), leftPoint, rightPoint);
 
       envelopeToUpdate->insert(curve);
       // TODO: visually show leftPoint and rightPoint
       // note: leftPoint and rightPoint are not the actual curve points
     }
+    if (e == diagram.rightmost()) break;
   }
 
   envelopeToUpdate->modelChanged();

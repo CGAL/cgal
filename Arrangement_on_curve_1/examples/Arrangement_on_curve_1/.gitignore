@@ -1,0 +1,14 @@
+# CMake / Qt autogen artifacts
+CGAL_Qt6_moc_and_resources_autogen/
+qrc_*.cpp
+.qt/
+
+# Example executables (one per .cpp)
+arr_on_algebraic_curve
+arr_on_circle
+arr_on_circle_segment
+arr_on_line_2
+arr_on_line_3
+arr_on_line_d
+overlay_line_3
+simple
