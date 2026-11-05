@@ -109,10 +109,10 @@ public:
     double ymed= (ymin+ymax)/2;
     const bool x_degen = (xmin == xmed || xmed == xmax);
     const bool y_degen = (ymin == ymed || ymed == ymax);
-    const bool x_lower = (x==0) ? xmed<bb.xmin() : xmed<bb.ymin();
-    const bool x_upper = (x==0) ? xmed>bb.xmax() : xmed>bb.ymax();
-    const bool y_lower = (x==0) ? ymed<bb.ymin() : ymed<bb.xmin();
-    const bool y_upper = (x==0) ? ymed>bb.ymax() : ymed>bb.xmax();
+    const bool x_lower = (x==0) ? xmed<=bb.xmin() : xmed<=bb.ymin();
+    const bool y_lower = (x==0) ? ymed<=bb.ymin() : ymed<=bb.xmin();
+    const bool x_upper = (x==0) ? xmed>=bb.xmax() : xmed>=bb.ymax();
+    const bool y_upper = (x==0) ? ymed>=bb.ymax() : ymed>=bb.xmax();
 
     if(x_degen && y_degen)
       return;

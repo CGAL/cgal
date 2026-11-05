@@ -127,12 +127,12 @@ public:
       if(x_degen && y_degen && z_degen)
         return;
 
-      const bool x_lower = (x==0) ? xmed<bb.xmin() : ((x==1) ? xmed<bb.ymin() : xmed<bb.zmin());
-      const bool x_upper = (x==0) ? xmed>bb.xmax() : ((x==1) ? xmed>bb.ymax() : xmed>bb.zmax());
-      const bool y_lower = (x==0) ? ymed<bb.ymin() : ((x==1) ? ymed<bb.zmin() : ymed<bb.xmin());
-      const bool y_upper = (x==0) ? ymed>bb.ymax() : ((x==1) ? ymed>bb.zmax() : ymed>bb.xmax());
-      const bool z_lower = (x==0) ? zmed<bb.zmin() : ((x==1) ? zmed<bb.xmin() : zmed<bb.ymin());
-      const bool z_upper = (x==0) ? zmed>bb.zmax() : ((x==1) ? zmed>bb.xmax() : zmed>bb.ymax());
+      const bool x_lower = (x==0) ? xmed<=bb.xmin() : ((x==1) ? xmed<=bb.ymin() : xmed<=bb.zmin());
+      const bool x_upper = (x==0) ? xmed>=bb.xmax() : ((x==1) ? xmed>=bb.ymax() : xmed>=bb.zmax());
+      const bool y_lower = (x==0) ? ymed<=bb.ymin() : ((x==1) ? ymed<=bb.zmin() : ymed<=bb.xmin());
+      const bool y_upper = (x==0) ? ymed>=bb.ymax() : ((x==1) ? ymed>=bb.zmax() : ymed>=bb.xmax());
+      const bool z_lower = (x==0) ? zmed<=bb.zmin() : ((x==1) ? zmed<=bb.xmin() : zmed<=bb.ymin());
+      const bool z_upper = (x==0) ? zmed>=bb.zmax() : ((x==1) ? zmed>=bb.xmax() : zmed>=bb.ymax());
 
       if( (!x_degen && !x_lower && !x_upper) || (!y_degen && !y_lower && !y_upper) || (!z_degen && !z_lower && !z_upper) ){
         // Not contain in one quarter

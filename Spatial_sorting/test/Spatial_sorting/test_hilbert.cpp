@@ -37,7 +37,6 @@ int main ()
   CGAL::Real_timer timer;
 
   std::cout << "Testing Hilbert sort." << std::endl;
-
   {
     std::cout << "Testing 2D (middle policy): Testing Fix cases " << std::flush;
 
@@ -57,7 +56,15 @@ int main ()
     std::vector<Point_2> v2 (v);
 
     CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
-    assert(v[0] == v2[1] && v[1] == v2[2] && v[2] == v2[0]);
+    assert(v[0] == v2[0] && v[1] == v2[2] && v[2] == v2[1]);
+  }
+  {
+    std::vector<Point_2> v({Point_2(0.,8.),
+                            Point_2(8.,0.),
+                            Point_2(2.,2.),
+                            Point_2(3.,2.)});
+    std::vector<Point_2> v2 (v);
+    CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
   }
   {
     std::cout << "Testing 3D (middle policy): Testing Fix cases " << std::flush;
@@ -69,6 +76,17 @@ int main ()
 
     CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
     assert(v[0] == v2[1] && v[1] == v2[2] && v[2] == v2[0]);
+  }
+  {
+    std::vector<Point_3> v({Point_3(0.,0.,8.),
+                            Point_3(0.,8.,0.),
+                            Point_3(8.,0.,0.),
+                            Point_3(2.,2.,2.),
+                            Point_3(3.,2.,2.),
+                            Point_3(2.,3.,2.)});
+    std::vector<Point_3> v2 (v);
+
+    CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
   }
   {
     std::vector<Point_3> v({Point_3(1.,0.,0.),
