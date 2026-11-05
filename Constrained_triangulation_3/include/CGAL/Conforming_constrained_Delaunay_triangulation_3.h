@@ -55,6 +55,7 @@
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Polygon_mesh_processing/kernel.h>
+#include <CGAL/Polygon_mesh_processing/locate.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Real_timer.h>
@@ -120,11 +121,14 @@
 #include <algorithm>
 #include <array>
 #include <bitset>
+#include <chrono>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <exception>
 #include <fstream>
 #include <functional>
+#include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <limits>
@@ -1462,27 +1466,28 @@ public:
       out << prefix << "  - " << nb(CDT_3_vertex_type::STEINER_IN_FACE) << " Steiner vertices in faces\n";
       out << prefix << "  - " << nb(CDT_3_vertex_type::STEINER_IN_VOLUME) << " Steiner vertices in volume\n";
       out << prefix << "  - " << nb(CDT_3_vertex_type::FREE) << " free vertices\n";
-      if(impl().options().move_Steiner_vertices_allow_negative_tets()) {
-        std::size_t nb_of_negative_tets = 0;
-        auto point = [this](typename Triangulation::Vertex_handle vh) {
-          return triangulation().point(vh);
-        };
-        CGAL::unordered_flat_set<typename Triangulation::Vertex_handle> vertices_with_negative_tets;
-        for(auto c: triangulation().finite_cell_handles()) {
-          const auto verts
-           = triangulation().vertices(c);
-          if(triangulation().orientation(point(verts[0]), point(verts[1]), point(verts[2]), point(verts[3])) < 0) {
-            ++nb_of_negative_tets;
-            for(auto v : verts) {
-              if(v->ccdt_3_data().vertex_type() == CDT_3_vertex_type::STEINER_IN_VOLUME) {
-                vertices_with_negative_tets.insert(v);
-              }
+
+      std::size_t nb_of_negative_tets = 0;
+      auto point = [this](typename Triangulation::Vertex_handle vh) {
+        return triangulation().point(vh);
+      };
+      CGAL::unordered_flat_set<typename Triangulation::Vertex_handle> vertices_with_negative_tets;
+      for(auto c: triangulation().finite_cell_handles()) {
+        const auto verts
+          = triangulation().vertices(c);
+        if(triangulation().orientation(point(verts[0]), point(verts[1]), point(verts[2]), point(verts[3])) < 0) {
+          ++nb_of_negative_tets;
+          for(auto v : verts) {
+            if(v->ccdt_3_data().vertex_type() == CDT_3_vertex_type::STEINER_IN_VOLUME) {
+              vertices_with_negative_tets.insert(v);
             }
           }
         }
-        out << prefix << "  - " << nb_of_negative_tets << " negative tetrahedra\n";
-        out << prefix << "  - " << vertices_with_negative_tets.size() << " Steiner vertices with negative tetrahedra around\n";
       }
+
+      out << prefix << "  - " << nb_of_negative_tets << " negative tetrahedra\n";
+      out << prefix << "  - " << vertices_with_negative_tets.size() << " Steiner vertices with negative tetrahedra around\n";
+
       return out;
     }, IO_manip_tag{});
   }
@@ -1509,6 +1514,7 @@ public:
   static Facet_pair null_facet_pair() { return{Facet{}, Facet{}}; };
 
   using Geom_traits = typename T_3::Geom_traits;
+  using Conforming_Dt::number_type_is_exact;
   using Point_3 = typename T_3::Point;
   using Segment_3 = typename Geom_traits::Segment_3;
   using Triangle_3 = typename Geom_traits::Triangle_3;
@@ -1737,7 +1743,7 @@ protected:
   void set_adjacency_between_3d_facets(Facet f1, Facet f2) const {
     // }
     tr().tds().set_adjacency(f1.first, f1.second, f2.first, f2.second);
-    if(dbg().move_Steiner_vertices_level() > 1) {
+    if(dbg().move_Steiner_vertices_level() > 2) {
       std::cerr << cdt_3_format("-> set adjacency between facets ({})=[{}]+{} and ({})=[{}]+{}\n",
                                 IO::oformat(f1), with_offset(tr().vertices(f1)),
                                 with_offset(f1.first->vertex(f1.second)),
@@ -1782,61 +1788,159 @@ protected:
     return std::nullopt;
   }
 
+  bool check_if_constrained_faces_are_coplanar() const {
+    CGAL::unordered_flat_map<Face_index, std::optional<typename Geom_traits::Vector_3>> incident_polygon_normals;
+    bool result = true;
+    for(auto f: this->constrained_facets()) {
+      auto face_id = tr().face_constraint_index(f);
+      auto& normal_opt = incident_polygon_normals[face_id];
+      const auto& facet_vertices = tr().vertices(f);
+      const auto& p0 = facet_vertices[0]->point();
+      const auto& p1 = facet_vertices[1]->point();
+      const auto& p2 = facet_vertices[2]->point();
+      const auto normal = CGAL::cross_product(p1 - p0, p2 - p0);
+      if(normal_opt.has_value()) {
+        // check if the new normal is consistent with the existing one
+        const auto& existing_normal = normal_opt.value();
+        if(CGAL::cross_product(existing_normal, normal) != NULL_VECTOR) {
+          auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
+          std::cerr << "Inconsistent normals for face " << face_id << "\n";
+          result = false;
+          auto n = existing_normal / CGAL::approximate_sqrt(existing_normal.squared_length());
+          auto n2 = normal / CGAL::approximate_sqrt(normal.squared_length());
+          if constexpr(number_type_is_exact) {
+            n.exact();
+            n2.exact();
+          }
+          std::cerr << "  - existing normal: " << n << "\n"
+                    << "  -      new normal: " << n2 << "\n";
+        }
+      } else {
+        normal_opt = normal;
+      }
+    }
+    return result;
+  }
+
   template <typename Components, typename Map>
   CGAL::Surface_mesh<Point_3>
   construct_star_component_mesh(std::size_t component_index,
-                                  const Components& components,
-                                  const Map& map_from_incident_constraint_face_id_to_new_triangles) const
+                                const Components& components,
+                                const Map& map_from_incident_constraint_face_id_to_new_triangles) const
   {
     CGAL::Surface_mesh<Point_3> component_mesh;
+    using face_descriptor = typename CGAL::Surface_mesh<Point_3>::Face_index;
+    auto [patch_id_map, _] = component_mesh.template add_property_map<face_descriptor, int>("f:patch_id", 0);
+
+    const bool the_whole_link = (component_index == 0);
+    const bool only_incident_facets = (component_index == SIZE_MAX);
+    const bool all_components = the_whole_link || only_incident_facets;
+
     std::vector<Point_3> points;
     std::vector<std::array<std::size_t, 3>> triangles;
+    std::vector<Face_index> triangle_face_indices;
+
     std::size_t vertex_index = 0;
-    for(std::size_t facet_id = components.component_offsets[component_index - 1],
-                         end = components.component_offsets[component_index];
-        facet_id < end; ++facet_id)
-    {
+
+    const std::size_t facets_start = all_components ? 0 :components.component_offsets[component_index - 1];
+    const std::size_t facets_end =
+        all_components ? components.facets.size() : components.component_offsets[component_index];
+    for(std::size_t facet_id = facets_start; facet_id < facets_end; ++facet_id) {
       const auto& [cell, facet_index, type] = components.facets[facet_id];
-      if(!this->debug().move_Steiner_vertices_allow_negative_tets() &&
+      if((the_whole_link || !this->debug().move_Steiner_vertices_allow_negative_tets()) &&
          type == Star_components_facets::Type_of_facet::INCIDENT_TO_V)
       {
         continue;
       }
-      if(tr().is_infinite(Facet(cell, facet_index))) {
+      if(only_incident_facets && type != Star_components_facets::Type_of_facet::INCIDENT_TO_V) {
         continue;
       }
-      for(auto v: this->vertices(Facet{cell, facet_index})) {
+      const Facet facet(cell, facet_index);
+      if(tr().is_infinite(facet)) {
+        continue;
+      }
+      for(auto v: this->vertices(facet)) {
         points.push_back(tr().point(v));
       } // end for each vertex of the facet
       // swap the orientation: our facets are oriented toward the center of the star component
       // but we want them to be oriented outward
       triangles.push_back({vertex_index, vertex_index + 2, vertex_index + 1});
+      const Face_index face_index =
+          type == Star_components_facets::Type_of_facet::INCIDENT_TO_V ? face_constraint_index(facet) : -1;
+      triangle_face_indices.push_back(face_index);
       vertex_index += 3;
     } // end for each facet in the component
-    if(!this->debug().move_Steiner_vertices_allow_negative_tets()) {
-      const auto& incident_face_ids = components.component_incident_constraint_face_ids[component_index - 1];
-      for(auto face_id : incident_face_ids) {
-        if(face_id == INVALID_FACE_INDEX) {
-          continue;
-        }
-        const auto& new_triangles = map_from_incident_constraint_face_id_to_new_triangles.at(face_id);
-        for(const auto& triangle : new_triangles) {
-          points.push_back(triangle[0]);
-          points.push_back(triangle[1]);
-          points.push_back(triangle[2]);
-          triangles.push_back({vertex_index, vertex_index + 1, vertex_index + 2});
-          vertex_index += 3;
+    if((only_incident_facets || !the_whole_link) && !this->debug().move_Steiner_vertices_allow_negative_tets()) {
+      const std::size_t components_starts = only_incident_facets ? 1 : component_index;
+      const std::size_t components_end =
+          only_incident_facets ? components.component_offsets.size() : component_index + 1;
+      for(auto component_index = components_starts; component_index < components_end; ++component_index) {
+        const auto& incident_face_ids = components.component_incident_constraint_face_ids[component_index - 1];
+        for(auto face_id : incident_face_ids) {
+          if(face_id == INVALID_FACE_INDEX) {
+            continue;
+          }
+          const auto& new_triangles = map_from_incident_constraint_face_id_to_new_triangles.at(face_id);
+          for(const auto& triangle : new_triangles) {
+            points.push_back(triangle[0]);
+            points.push_back(triangle[1]);
+            points.push_back(triangle[2]);
+            triangles.push_back({vertex_index, vertex_index + 1, vertex_index + 2});
+            triangle_face_indices.push_back(face_id);
+            vertex_index += 3;
+          }
         }
       }
     }
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, triangles);
+    if(only_incident_facets) {
+      for(auto i = 0u; i < triangles.size(); ++i) {
+        auto& triangle = triangles[i];
+        auto it = std::min_element(triangle.begin(), triangle.end());
+        // put the minimal element at first
+        std::rotate(triangle.begin(), it, triangle.end());
+      }
+      for(auto i = 0u; i < triangles.size(); ++i) {
+        auto it = std::remove(triangles.begin() + i + 1, triangles.end(), triangles[i]);
+        const auto index = it - triangles.begin();
+        triangles.erase(it, triangles.end());
+        triangle_face_indices.erase(triangle_face_indices.begin() + index);
+      }
+    }
     CGAL::Polygon_mesh_processing::orient_polygon_soup(points, triangles);
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, component_mesh);
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, component_mesh,
+    CGAL::parameters::polygon_to_face_output_iterator(boost::make_function_output_iterator(
+        [&](const auto& polygon_to_face) {
+          auto [poly_idx, fd] = polygon_to_face;
+          put(patch_id_map, fd, triangle_face_indices[poly_idx]);
+        })));
     return component_mesh;
   }
 
+  // Write `mesh` as an OFF file, with exact rational coordinates ("num/den") if the number type is exact.
+  static void write_exact_off(std::ostream& out, const CGAL::Surface_mesh<Point_3>& mesh) {
+    using Mesh = CGAL::Surface_mesh<Point_3>;
+    out << "OFF\n" << vertices(mesh).size() << " " << faces(mesh).size() << " 0\n";
+    std::map<typename Mesh::Vertex_index, std::size_t> vid;
+    for(auto kv : vertices(mesh)) {
+      vid.emplace(kv, vid.size());
+      const auto& p = mesh.point(kv);
+      if constexpr (number_type_is_exact) {
+        out << p.x().exact() << " " << p.y().exact() << " " << p.z().exact() << "\n";
+      } else {
+        out << p.x() << " " << p.y() << " " << p.z() << "\n";
+      }
+    }
+    for(auto f : faces(mesh)) {
+      out << degree(f, mesh);
+      for(auto kv : vertices_around_face(halfedge(f, mesh), mesh)) out << " " << vid[kv];
+      out << "\n";
+    }
+  }
+
   std::optional<Point_3> compute_center_point_if_possible(const CGAL::Surface_mesh<Point_3>& component_mesh) const {
-    return CGAL::Polygon_mesh_processing::kernel_point(component_mesh);
+    bool debug = (this->debug().move_Steiner_vertices_level() > 1);
+    return CGAL::Polygon_mesh_processing::kernel_point(component_mesh, CGAL::parameters::debug(debug));
   }
 
   template <typename Components, typename Map>
@@ -1967,7 +2071,7 @@ protected:
       cells_in_other_components.clear(); // clear it here, and fill it again with the cells opposite to a constrained
                                          // facet during the exploration of the current component
 
-      if(dbg().move_Steiner_vertices_level() > 1) {
+      if(dbg().move_Steiner_vertices_level() > 2) {
         std::cerr << "  (starting a new component through face with id " << component_first_incident_face_id << ")\n";
       }
       // - `out.facets` is part of the result, and a queue as well, with `queue_head` as the index of
@@ -2026,7 +2130,7 @@ protected:
       out.nb_of_incident_facets_for_each_component.push_back(std::distance(begin_it, incident_facets_end));
       out.component_offsets.push_back(out.facets.size());
 
-      if(dbg().move_Steiner_vertices_level() > 1) {
+      if(dbg().move_Steiner_vertices_level() > 2) {
         std::cerr << "- Star component #" << out.nb_of_incident_facets_for_each_component.size()
                   << " has:\n  - "
                   << (out.facets.size() - component_offset) << " total facets,\n  - "
@@ -2087,7 +2191,7 @@ protected:
                                 New_CDT_2_face_handles_output_iterator new_face_handles_out,
                                 Run_mode run_mode = NORMAL_RUN)
   {
-    const bool debug = dbg().move_Steiner_vertices_level() > 1 && run_mode == NORMAL_RUN;
+    const bool debug = dbg().move_Steiner_vertices_level() > 2 && run_mode == NORMAL_RUN;
     const bool is_a_half_hole = vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE;
     if(debug) {
       std::cerr << cdt_3_format("Filling {}hole in CDT_2 with {} edges, is_outside_the_face = {}\n",
@@ -2376,7 +2480,7 @@ protected:
         }
         set_facet_constrained(facet_c, face_id, next);
         set_facet_constrained(facet_d, face_id, current);
-        CGAL_assertion(dbg().move_Steiner_vertices_level() < 2 || mutable_cdt_2.tds().is_valid(true));
+        CGAL_assertion(dbg().move_Steiner_vertices_level() < 3 || mutable_cdt_2.tds().is_valid(true));
         return true;
       }
     } while(face_circ != done);
@@ -2392,7 +2496,7 @@ protected:
                                    New_CDT_2_face_handles_output_iterator new_face_handles_out,
                                    Run_mode run_mode = NORMAL_RUN)
   {
-    const bool debug = dbg().move_Steiner_vertices_level() > 1 && run_mode == NORMAL_RUN;
+    const bool debug = dbg().move_Steiner_vertices_level() > 2 && run_mode == NORMAL_RUN;
     std::tuple<New_CDT_2_face_handles_output_iterator, Facet_pair, Facet_pair> result{
         new_face_handles_out, null_facet_pair(), null_facet_pair()};
     auto& [new_face_handles_out_it, half_hole_facet_pair, second_half_hole_facet_pair] = result;
@@ -2643,12 +2747,13 @@ protected:
     return result;
   } // end of `remove_Steiner_vertex_from_cdt_2`
 
-  bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
+  bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v, std::size_t i, std::size_t n_steiner_vertices) {
     if(dbg().move_Steiner_vertices()) {
       auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightGreen>(std::cerr);
-      std::cerr << "Moving Steiner vertex " << display_vert(v) << " to the volume\n";
+      auto s = std::log10(n_steiner_vertices) + 1;
+        std::cerr << "[" << std::setw(s) << (i+1) << "/" << n_steiner_vertices << "] Moving Steiner vertex " << display_vert(v) << " to the volume\n";
     }
-    auto indent_guards = CGAL::IO::make_indenting_guards(dbg().move_Steiner_vertices_level() > 1 ? "| " : "", std::cerr);
+    auto indent_guards = CGAL::IO::make_indenting_guards(dbg().move_Steiner_vertices_level() > 2 ? "| " : "", std::cerr);
 
     CGAL::unordered_flat_map<Face_index, CDT_2_vertex_handle> face_to_cdt_2_vertex_for_v;
     const auto v_type = vertex_type(v);
@@ -2675,7 +2780,7 @@ protected:
 
     const auto incident_constrained_facet = *incident_constrained_facet_opt;
 
-    if(dbg().move_Steiner_vertices_level() > 1) {
+    if(dbg().move_Steiner_vertices_level() > 2) {
       const auto nb_of_incident_cells = std::invoke([&]() {
         std::size_t nb_of_incident_cells{0};
         tr().incident_cells(v, CGAL::Counting_output_iterator(&nb_of_incident_cells));
@@ -2688,11 +2793,11 @@ protected:
     const auto star_components = collect_star_components_facets(v, incident_constrained_facet);
     const auto nb_of_star_components = star_components.component_incident_constraint_face_ids.size();
 
-    if(dbg().move_Steiner_vertices_level() > 1) {
+    if(dbg().move_Steiner_vertices_level() > 2) {
       std::cerr << "- Nb of components of the star: " << nb_of_star_components << '\n';
     }
     if(nb_of_star_components == 1) {
-      if(dbg().move_Steiner_vertices_level() > 1) {
+      if(dbg().move_Steiner_vertices_level() > 2) {
         auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
         std::cerr << "- Only one component in the star, cannot move the vertex to the volume, aborting\n";
       }
@@ -2734,15 +2839,20 @@ protected:
       for(std::size_t component_index = 1; component_index <= nb_of_star_components; ++component_index) {
         auto component_mesh = construct_star_component_mesh(component_index, star_components,
                                                             map_from_incident_constraint_face_id_to_new_triangles);
-        if(dbg().move_Steiner_vertices_level() > 1) {
+        if(dbg().move_Steiner_vertices_level() > 2) {
           std::ostringstream ss;
-          ss << "dump_vertex_" << with_offset(v) << "_component_"  << component_index << ".off";
-          const std::string filename = ss.str();
-          std::ofstream out(filename);
-          out.precision(17);
-          out << component_mesh;
+          ss << "dump_vertex_" << with_offset(v) << "_component_"  << component_index << ".ply";
+          CGAL::IO::write_PLY(ss.str(), component_mesh, CGAL::parameters::stream_precision(17));
         }
+        std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
         auto opt_kernel_center_point = compute_center_point_if_possible(component_mesh);
+        std::chrono::duration<double> elapsed_time = std::chrono::steady_clock::now() - start_time;
+        auto at_exit = make_scope_exit([&] {
+          if(dbg().move_Steiner_vertices_level() > 1) {
+            std::cerr << "    computation time for kernel_point of component #" << component_index << ": "
+                      << elapsed_time.count() << " s\n";
+          }
+        });
         if(dbg().move_Steiner_vertices_level() > 1) {
           std::cerr << "  - incident constraint faces ids of component #" << component_index << ": {"
                     << IO::oformat(star_components.component_incident_constraint_face_ids[component_index - 1])
@@ -2750,7 +2860,7 @@ protected:
           std::cerr << "    kernel center point of component #" << component_index << ": ";
         }
         if(opt_kernel_center_point.has_value()) {
-          auto kernel_center_point = *opt_kernel_center_point;
+          auto kernel_center_point = this->exact(*opt_kernel_center_point);
           central_points->push_back(kernel_center_point);
           if(dbg().move_Steiner_vertices_level() > 1) {
             std::cerr << *opt_kernel_center_point << " (distance to vertex: "
@@ -2761,6 +2871,26 @@ protected:
           if(dbg().move_Steiner_vertices_level() > 1) {
             auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
             std::cerr << "none (the component is either degenerate or open) ABORT\n";
+            CGAL::Surface_mesh<Point_3> kernel;
+            CGAL::Polygon_mesh_processing::kernel(component_mesh, kernel, CGAL::parameters::random_seed(0));
+            std::ostringstream ss;
+            if constexpr (number_type_is_exact) {
+              auto vpmap = get(vertex_point, kernel);
+              for(auto v: vertices(kernel)) {
+                get(vpmap, v).exact();
+              }
+            }
+            ss << "dump_vertex_" << with_offset(v) << "_component_"  << component_index << "_kernel.off";
+            CGAL::IO::write_OFF(ss.str(), kernel, CGAL::parameters::stream_precision(17));
+            ss.str(""); // clear the stringstream for reuse
+            ss << "dump_vertex_" << with_offset(v) << "_component_"  << component_index << "_exact_kernel.off";
+            CGAL::IO::write_OFF(ss.str(), kernel, CGAL::parameters::stream_precision(17));
+            ss.str(""); // clear the stringstream for reuse
+            ss << "dump_vertex_" << with_offset(v) << "_component_"  << component_index << "_exact.off";
+            std::ofstream out(ss.str());
+            out.precision(17);
+            write_exact_off(out, component_mesh);
+            out.close();
           }
           if(!this->debug().move_Steiner_vertices_allow_negative_tets()) {
             central_points.reset();
@@ -2773,7 +2903,7 @@ protected:
       return central_points;
     }); // end compute central points for each component
 
-    if(dbg().move_Steiner_vertices_level() > 1) {
+    if(dbg().move_Steiner_vertices_level() > 2) {
       dump_link_mesh_of_vertex_to_ply(v, star_components, map_from_incident_constraint_face_id_to_new_triangles);
     }
 
@@ -2782,7 +2912,32 @@ protected:
         auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
         std::cerr << "- No central point could be computed for at least one of the components, aborting moving the "
                      "vertex to the volume\n";
-        // CGAL_error();
+        auto vertex_link_mesh =
+            construct_star_component_mesh(0, star_components, map_from_incident_constraint_face_id_to_new_triangles);
+        std::stringstream ss;
+        ss << "dump_vertex_" << with_offset(v) << "_link.ply";
+        CGAL::IO::write_PLY(ss.str(), vertex_link_mesh, CGAL::parameters::stream_precision(17));
+        auto vertex_incident_facets = construct_star_component_mesh(
+            SIZE_MAX, star_components, map_from_incident_constraint_face_id_to_new_triangles);
+        ss.str("");
+        ss << "dump_vertex_" << with_offset(v) << "_incident_facets.ply";
+        CGAL::IO::write_PLY(ss.str(), vertex_incident_facets, CGAL::parameters::stream_precision(17));
+        Surface_mesh<Point_3> vertex_link_mesh_kernel;
+        CGAL::Polygon_mesh_processing::kernel(vertex_link_mesh, vertex_link_mesh_kernel, CGAL::parameters::use_bounding_box_filtering(true));
+        ss.str("");
+        ss << "dump_vertex_" << with_offset(v) << "_link_kernel.ply";
+        CGAL::IO::write_PLY(ss.str(), vertex_link_mesh_kernel, CGAL::parameters::stream_precision(17));
+        if(vertex_link_mesh_kernel.is_empty()) {
+          std::cerr << "Kernel of the star is empty\n";
+        } else {
+          // triangulate vertex_link_mesh_kernel
+          if(CGAL::Polygon_mesh_processing::triangulate_faces(vertex_link_mesh_kernel)) {
+            auto loc = CGAL::Polygon_mesh_processing::locate(v->point(), vertex_link_mesh_kernel);
+            auto proj = CGAL::Polygon_mesh_processing::construct_point(loc, vertex_link_mesh_kernel);
+            std::cerr << "distance from vertex to kernel: "
+                      << CGAL::approximate_sqrt(CGAL::squared_distance(v->point(), proj)) << "\n";
+          }
+        }
       }
       return false;
     }
@@ -2833,7 +2988,7 @@ protected:
            component_index < end; ++component_index)
       {
         const auto& [face_id, orientation] = star_components.face_ids_between_consecutive_components[component_index];
-        if(dbg().move_Steiner_vertices_level() > 1) {
+        if(dbg().move_Steiner_vertices_level() > 2) {
           std::cerr << "Component " << (component_index+1) << " with center "
                     << display_vert(new_center_vertices[component_index]) << "\n";
           if(this->debug().move_Steiner_vertices_level() > 2) {
@@ -2859,10 +3014,10 @@ protected:
         if(true == facet_pair_to_reconnect[0].first->has_vertex(new_center_vertices[component_index]) &&
            false == facet_pair_to_reconnect[1].first->has_vertex(new_center_vertices[component_index]))
         {
-          if(dbg().move_Steiner_vertices_level() > 1) { std::cerr << "SWAPPING facet pair to reconnect\n"; }
+          if(dbg().move_Steiner_vertices_level() > 2) { std::cerr << "SWAPPING facet pair to reconnect\n"; }
           std::swap(facet_pair_to_reconnect[0], facet_pair_to_reconnect[1]);
         }
-        if(dbg().move_Steiner_vertices_level() > 1) {
+        if(dbg().move_Steiner_vertices_level() > 2) {
           std::cerr << cdt_3_format("The facet ({}) to reconnect in the 3D triangulation is:{}\n",
                                     IO::oformat(facet_pair_to_reconnect[0]),
                                     display_facet("  - ", facet_pair_to_reconnect[0]));
@@ -2886,13 +3041,13 @@ protected:
                                       last_facet_to_reconnect_to_opt.value());
     }
 
-    if(dbg().move_Steiner_vertices_level() > 1) {
+    if(dbg().move_Steiner_vertices_level() > 2) {
       std::cerr << "- number of new 2D faces created in the CDT: " << nb_of_new_2d_faces << '\n';
     }
 
     tr().tds().delete_vertex(v);
 
-    CGAL_assertion(dbg().move_Steiner_vertices_level() < 2 || tr().tds().is_valid(true));
+    CGAL_assertion(dbg().move_Steiner_vertices_level() < 3 || tr().tds().is_valid(true));
 
     return true;
   } // end move_one_Steiner_vertex_to_the_volume(..)
@@ -3737,6 +3892,8 @@ public:
   }
 
   auto move_Steiner_vertices_to_the_volume() {
+    const bool backup_allow_negative_tets = this->options().move_Steiner_vertices_allow_negative_tets();
+    this->options().move_Steiner_vertices_allow_negative_tets(false);
     if(dbg().move_Steiner_vertices_level() > 1) {
       std::cerr << "move_Steiner_vertices_to_the_volume()\n";
       dump_constrained_facets_to_off("dump_before_moving_steiner_vertices.off");
@@ -3745,9 +3902,32 @@ public:
     for(auto v : this->finite_vertex_handles()) {
       if(is_Steiner_vertex_on_surface(v)) steiner_vertices.push_back(v);
     }
-    for(auto v : steiner_vertices) {
-      move_one_Steiner_vertex_to_the_volume(v);
+
+    auto do_remove_Steiner_vertices = [&]() {
+      std::reverse(steiner_vertices.begin(), steiner_vertices.end());
+      auto non_movable_Steiner_vertices_end = steiner_vertices.begin();
+      const auto n_steiner_vertices = steiner_vertices.size();
+      for(auto i = 0u; i < n_steiner_vertices; ++i) {
+        if(!move_one_Steiner_vertex_to_the_volume(steiner_vertices[i], i, n_steiner_vertices))
+        {
+          std::swap(steiner_vertices[i], *non_movable_Steiner_vertices_end);
+          ++non_movable_Steiner_vertices_end;
+        }
+      }
+      if(dbg().move_Steiner_vertices_level() > 0) {
+        std::cerr << "Non-movable Steiner vertices: "
+                  << std::distance(steiner_vertices.begin(), non_movable_Steiner_vertices_end) << "\n";
+      }
+      steiner_vertices.erase(non_movable_Steiner_vertices_end, steiner_vertices.end());
+    };
+
+    do_remove_Steiner_vertices();
+    this->options().move_Steiner_vertices_allow_negative_tets(backup_allow_negative_tets);
+    if(backup_allow_negative_tets && !steiner_vertices.empty()) {
+      do_remove_Steiner_vertices(); // retry removing Steiner vertices with negative tets allowed
     }
+    CGAL_warning(this->debug().move_Steiner_vertices_level() == 0 || !number_type_is_exact ||
+                 check_if_constrained_faces_are_coplanar());
     CGAL_assertion(tr().tds().is_valid(true));
   }
 
@@ -3945,8 +4125,7 @@ private:
         }
         std::cerr << counter << " triangles(s) in the face\n";
       }
-      if(this->debug().input_faces() &&
-         Algebraic_structure_traits<typename Geom_traits::FT>::Is_exact::value &&
+      if(this->debug().input_faces() && number_type_is_exact &&
          !std::all_of(cdt_2.finite_face_handles().begin(), cdt_2.finite_face_handles().end(), [=](const auto fh) {
            const auto p0 = cdt_2.point(fh->vertex(0));
            const auto v1 = cdt_2.point(fh->vertex(1)) - p0;

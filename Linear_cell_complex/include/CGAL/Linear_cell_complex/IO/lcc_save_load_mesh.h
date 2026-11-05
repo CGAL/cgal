@@ -579,7 +579,7 @@ bool save_object_3D_gmsh(const std::string& filename, const LCC& lcc)
       fo<<std::endl;
     }
     else
-    { // TODO Generic case, not posible with gmsh format. is it true?
+    { // TODO Generic case, not possible with gmsh format. is it true?
     }
   }
   fo<<"$EndElements"<<std::endl;

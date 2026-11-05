@@ -57,7 +57,7 @@ bool save_lcc_surface_into_off(const std::string& filename, const LCC& lcc)
   // all vertices
   std::size_t nb=0;
   // For this loop, we cannot iterate through vertex attributes since they may
-  // not contain one of its dart. In such a case, it is not possible to ummark
+  // not contain one of its dart. In such a case, it is not possible to unmark
   // the 3free vertices.
   for(auto it=lcc.darts().begin(), itend=lcc.darts().end(); it!=itend; ++it)
   {
@@ -114,7 +114,7 @@ void build_manifold_surface_from_lcc(const LCC& lcc,
   // all vertices
   std::size_t nb=0;
   // For this loop, we cannot iterate through vertex attributes since they may
-  // not contain one of its dart. In such a case, it is not possible to ummark
+  // not contain one of its dart. In such a case, it is not possible to unmark
   // the 3free vertices.
   points.reserve(nbvertices);
   for(auto it=lcc.darts().begin(), itend=lcc.darts().end(); it!=itend; ++it)

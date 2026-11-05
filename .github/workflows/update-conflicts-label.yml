@@ -1,0 +1,140 @@
+name: Update Conflicts Label
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+  push:
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  update-conflicts-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Conflicts label
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const label = 'Conflicts';
+            const sleep = (milliseconds) =>
+              new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+            async function getMergeablePullRequest(number) {
+              for (let attempt = 0; attempt < 5; ++attempt) {
+                const { data: pullRequest } = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: number,
+                });
+
+                if (pullRequest.mergeable !== null) {
+                  return pullRequest;
+                }
+
+                await sleep(10000);
+              }
+
+              throw new Error(`GitHub did not determine whether pull request #${number} is mergeable.`);
+            }
+
+            async function updateLabel(number) {
+              let result;
+              try {
+                const pullRequest = await getMergeablePullRequest(number);
+                const labels = pullRequest.labels.map(({ name }) => name);
+                const hasLabel = labels.includes(label);
+
+                if (pullRequest.mergeable === false) {
+                  if (hasLabel) {
+                    result = { number, action: 'unchanged', detail: 'has conflicts, already labeled' };
+                  } else {
+                    await github.rest.issues.addLabels({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: number,
+                      labels: [label],
+                    });
+                    result = { number, action: 'added', detail: 'has conflicts, label added' };
+                  }
+                } else if (hasLabel) {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: number,
+                    name: label,
+                  });
+                  result = { number, action: 'removed', detail: 'no conflicts, label removed' };
+                } else {
+                  result = { number, action: 'unchanged', detail: 'no conflicts, not labeled' };
+                }
+              } catch (error) {
+                result = { number, action: 'failed', detail: error.message };
+              }
+
+              const message = `#${number}: ${result.detail}`;
+              if (result.action === 'failed') {
+                core.error(message);
+              } else {
+                core.info(message);
+              }
+              return result;
+            }
+
+            async function runPool(items, limit, worker) {
+              const queue = [...items];
+              const results = [];
+              const workers = Array.from(
+                { length: Math.min(limit, queue.length) },
+                async () => {
+                  while (queue.length > 0) {
+                    results.push(await worker(queue.shift()));
+                  }
+                },
+              );
+              await Promise.all(workers);
+              return results;
+            }
+
+            let results;
+            if (context.eventName === 'pull_request_target') {
+              results = [await updateLabel(context.payload.pull_request.number)];
+            } else {
+              const pullRequests = await github.paginate(github.rest.pulls.list, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                base: context.ref.replace('refs/heads/', ''),
+                per_page: 100,
+              });
+
+              core.info(`Checking ${pullRequests.length} open pull request(s).`);
+              results = await runPool(pullRequests, 5, (pullRequest) =>
+                updateLabel(pullRequest.number),
+              );
+            }
+
+            results.sort((a, b) => a.number - b.number);
+            const count = (action) => results.filter((r) => r.action === action).length;
+            const failed = results.filter((r) => r.action === 'failed');
+
+            await core.summary
+              .addHeading(`"${label}" label update`)
+              .addTable([
+                [{ data: 'Result', header: true }, { data: 'Count', header: true }],
+                ['Label added', String(count('added'))],
+                ['Label removed', String(count('removed'))],
+                ['Unchanged', String(count('unchanged'))],
+                ['Failed', String(failed.length)],
+              ])
+              .addDetails(
+                'Per pull request',
+                '\n\n' + results.map((r) => `- #${r.number}: ${r.action} (${r.detail})`).join('\n') + '\n',
+              )
+              .write();
+
+            if (failed.length > 0) {
+              core.setFailed(`${failed.length} pull request(s) could not be updated.`);
+            }

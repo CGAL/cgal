@@ -34,7 +34,7 @@ namespace CGAL::internal::Hexmeshing
 
     std::vector<Dart_descriptor> marked_nodes;  ///< Collection of nodes that have been marked during refinement
     std::vector<Dart_descriptor> faces_of_plane;  ///< Faces lying on the current refinement plane
-    std::vector<Dart_descriptor> additionnal_volumes_found;  ///< Additional volumes discovered during refinement
+    std::vector<Dart_descriptor> additional_volumes_found;  ///< Additional volumes discovered during refinement
 
     std::vector<Dart_descriptor> volumes_to_refine;  ///< Collection of volumes that need to be refined
     std::vector<Dart_descriptor> faces_to_refine;  ///< Collection of faces that need to be refined

@@ -166,16 +166,16 @@ namespace CGAL::internal::Hexmeshing
    * @param lcc The Linear Cell Complex
    * @param plane The plane normal direction to search for
    * @param edge A dart descriptor representing the edge to find adjacent faces for
-   * @param additionnal_volumes Pointer to vector to store volumes encountered during the search
+   * @param additional_volumes Pointer to vector to store volumes encountered during the search
    * @return A dart descriptor to the adjacent face on the plane, or null if not found
    */
   inline
-  Dart_descriptor adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_descriptor edge, std::vector<Dart_descriptor>* additionnal_volumes)
+  Dart_descriptor adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_descriptor edge, std::vector<Dart_descriptor>* additional_volumes)
   {
-    Dart_descriptor other_face = __adjacent_face_on_plane(lcc, plane, edge, *additionnal_volumes);
+    Dart_descriptor other_face = __adjacent_face_on_plane(lcc, plane, edge, *additional_volumes);
 
     if (other_face == lcc.null_dart_descriptor && !lcc.is_free<3>(edge))
-      other_face = __adjacent_face_on_plane(lcc, plane, lcc.beta<3>(edge), *additionnal_volumes);
+      other_face = __adjacent_face_on_plane(lcc, plane, lcc.beta<3>(edge), *additional_volumes);
 
     return other_face;
   }

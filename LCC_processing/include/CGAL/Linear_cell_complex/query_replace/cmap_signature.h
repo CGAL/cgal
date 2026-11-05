@@ -756,7 +756,7 @@ bool check_dart_compatibility_and_mark(
   // 3/ not assigned with an index
   // 4/ 2 or 3 and marked by a constraint
   //
-  //the desired behaviour is then :
+  //the desired behavior is then :
   // * a1 epsilon/epsilon => OK
   // * a2 epsilon/indexed => KO
   // * a3 epsilon/not indexed => KO
@@ -856,7 +856,7 @@ bool check_dart_compatibility_and_mark(
 #endif
 ///////////////////////////////////////////////////////////////////////////////
 /// Checks whether there is a match between a pattern and a part of an input
-/// map by trying to recreate a partial labelling of the map, starting with a
+/// map by trying to recreate a partial labeling of the map, starting with a
 /// dart and following a word of the pattern.
 template<unsigned int dimension, class CMAP>
 bool check_word_from_dart(CMAP& cmap,

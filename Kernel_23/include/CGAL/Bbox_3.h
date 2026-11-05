@@ -76,6 +76,9 @@ public:
 
   inline int largest_span_index() const;
 
+  inline double get_value(int i) const;
+  inline void set_value(int i, double v);
+
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
 
@@ -133,6 +136,9 @@ inline double Bbox_3::squared_diagonal_length() const {
 inline int Bbox_3::largest_span_index() const {
   return (x_span()>=y_span()) ? ((x_span()>=z_span()) ? 0 : 2) : ((y_span()>=z_span()) ? 1 : 2);
 }
+
+inline double Bbox_3::get_value(int i) const { return rep[i]; }
+inline void Bbox_3::set_value(int i, double v) { rep[i] = v; }
 
 inline
 bool

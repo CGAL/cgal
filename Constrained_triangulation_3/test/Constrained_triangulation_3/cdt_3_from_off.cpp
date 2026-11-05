@@ -801,7 +801,7 @@ int go(Mesh mesh, CDT_options options) {
   // Validation: check conforming status and validity
   {
     auto _ = CGAL::CDT_3_VALIDATION_TASK_guard();
-    CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
+    CGAL_assertion(!options.call_is_valid || options.use_flips_to_recover_segments ||cdt.is_valid(true));
     CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
   }
 

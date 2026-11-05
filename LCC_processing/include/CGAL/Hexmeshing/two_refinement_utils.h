@@ -47,7 +47,7 @@ namespace CGAL::internal::Hexmeshing
       }
     }
 
-    CGAL_assertion_msg(false, "get_partions(Union_find<T>) function did not find all sets. Bug?");
+    CGAL_assertion_msg(false, "get_partitions(Union_find<T>) function did not find all sets. Bug?");
     return result;
   };
 
