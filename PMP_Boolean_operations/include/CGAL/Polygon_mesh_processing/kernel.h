@@ -232,7 +232,7 @@ kernel(const FaceRange& face_range,
   bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
   bool check_euler_characteristic = !choose_parameter(get_parameter(np, internal_np::allow_open_input), false) && std::size_t(std::distance(face_range.begin(), face_range.end()))==faces(pm).size();
-  unsigned seed = choose_parameter(get_parameter(np, internal_np::random_seed), unsigned(-1));
+  unsigned seed = choose_parameter(get_parameter(np, internal_np::random_seed), UINT_MAX);
   auto rng = is_default_parameter<NamedParameters, internal_np::random_seed_t>::value ? std::default_random_engine(): std::default_random_engine(seed);
 
   // Immediate exit if the input is well-formed and not of genus zero
