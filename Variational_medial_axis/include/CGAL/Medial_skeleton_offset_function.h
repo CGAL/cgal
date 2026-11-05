@@ -16,10 +16,16 @@
 #include <CGAL/license/Variational_medial_axis.h>
 
 #include <CGAL/Variational_medial_axis_sampling.h>
+#include <CGAL/AABB_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_tree.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
 #include <boost/functional/hash.hpp>
+#include <boost/iterator/counting_iterator.hpp>
 #include <algorithm>
+#include <initializer_list>
+#include <memory>
 #include <unordered_set>
 #include <vector>
 #include <limits>
@@ -39,7 +45,30 @@ template <class TriangleMesh, class GeomTraits = Default> class Medial_skeleton_
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using Sphere_3 = typename GT::Sphere_3;
+  using Iso_cuboid_3 = typename GT::Iso_cuboid_3;
   using MSkeleton = Medial_skeleton<TriangleMesh, GeomTraits>;
+
+  // The primitives of the tree are the medial slabs (ids 0 to the number of faces - 1, in the order of `faces()`)
+  // followed by the cones of the free edges (medial edges that do not belong to any slabs).
+  // The datum of a primitive is its bounding box.
+  using Box_map = typename Pointer_property_map<Iso_cuboid_3>::const_type;
+  using Point_map = typename Pointer_property_map<Point_3>::const_type;
+  using Primitive = AABB_primitive<std::size_t, Box_map, Point_map, Tag_true, Tag_false>;
+  using AABB_traits = AABB_traits_3<GT, Primitive>;
+  using Tree = AABB_tree<AABB_traits>;
+
+  // The tree is not copyable, and the function object is copied by the meshing domain:
+  // the copies share the tree and the data its property maps point to.
+  struct Search_tree
+  {
+    std::vector<Iso_cuboid_3> boxes;
+    std::vector<Point_3> reference_points;
+    std::vector<FT> max_radii; // largest radius of the spheres of each primitive
+    FT max_radius = FT(0);     // largest radius of all spheres
+    Tree tree;
+  };
+
+  class Minimum_traversal_traits;
 
 
 public:
@@ -64,38 +93,86 @@ public:
     for(const auto& e : skeleton_.edges())
       if(face_edges.find(make_edge(e.first, e.second)) == face_edges.end())
         free_edges_.push_back(e);
+
+    build_search_tree();
   }
 
 
-  // Evaluate the minimum distance from point p to the interpolated medial axis (cones and slabs)
+  // Evaluate the minimum distance from point p to the interpolated medial axis (cones and slabs).
+  // The primitives whose lower bound is not smaller than the current minimum are skipped,
+  // which gives the same value as evaluating all primitives, up to rounding errors.
   FT operator()(const Point_3& p) const {
-    FT dmin = (std::numeric_limits<FT>::max)();
-
-    for(const auto& tri : skeleton_.faces()) {
-      const Point_3& c1 = (*spheres_)[tri[0]].center();
-      const Point_3& c2 = (*spheres_)[tri[1]].center();
-      const Point_3& c3 = (*spheres_)[tri[2]].center();
-      const FT& r1 = radii_[tri[0]];
-      const FT& r2 = radii_[tri[1]];
-      const FT& r3 = radii_[tri[2]];
-      dmin = (std::min)(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
-      if(dmin < 0)
-        return dmin;
-    }
-    for(const auto& [i, j] : free_edges_) {
-      const Point_3& c1 = (*spheres_)[i].center();
-      const Point_3& c2 = (*spheres_)[j].center();
-      const FT& r1 = radii_[i];
-      const FT& r2 = radii_[j];
-      dmin = (std::min)(dmin, eval_cone(c1, c2, r1, r2, p));
-      if(dmin < 0)
-        return dmin;
-    }
-
-    return dmin;
+    if(search_tree_ == nullptr)
+      return (std::numeric_limits<FT>::max)();
+    Minimum_traversal_traits traits(*this);
+    search_tree_->tree.traversal_with_priority(p, traits);
+    return traits.minimum();
   }
 
 private:
+  void build_search_tree() {
+    const std::size_t n = skeleton_.faces().size() + free_edges_.size();
+    if(n == 0)
+      return;
+
+    auto data = std::make_shared<Search_tree>();
+    data->boxes.reserve(n);
+    data->reference_points.reserve(n);
+    data->max_radii.reserve(n);
+    // `Sphere_3::bbox()` rounds outward, so the box of a primitive contains all its spheres.
+    auto add_primitive = [&](std::initializer_list<std::size_t> ids) {
+      Bbox_3 box;
+      FT max_radius = FT(0);
+      for(std::size_t i : ids) {
+        box += (*spheres_)[i].bbox();
+        max_radius = (std::max)(max_radius, radii_[i]);
+      }
+      data->boxes.emplace_back(box);
+      data->reference_points.push_back(CGAL::midpoint(data->boxes.back().min(), data->boxes.back().max()));
+      data->max_radii.push_back(max_radius);
+      data->max_radius = (std::max)(data->max_radius, max_radius);
+    };
+    for(const auto& tri : skeleton_.faces())
+      add_primitive({tri[0], tri[1], tri[2]});
+    for(const auto& [i, j] : free_edges_)
+      add_primitive({i, j});
+
+    data->tree.rebuild(boost::counting_iterator<std::size_t>(0), boost::counting_iterator<std::size_t>(n),
+                       make_property_map(std::as_const(data->boxes)),
+                       make_property_map(std::as_const(data->reference_points)));
+    search_tree_ = std::move(data);
+  }
+
+  // Lower bound of the value at p of a primitive whose spheres are in `box` and have a radius at most `max_radius`:
+  // the distance from p to the box if p is outside the box, and -max_radius otherwise.
+  template <class Box>
+  static FT lower_bound(const Point_3& p, const Box& box, const FT& max_radius) {
+    FT sq_dist = FT(0);
+    bool inside = true;
+    for(int i = 0; i < 3; ++i) {
+      const FT v = p.cartesian(i);
+      if(v < FT(box.min_coord(i))) {
+        sq_dist += CGAL::square(FT(box.min_coord(i)) - v);
+        inside = false;
+      } else if(v > FT(box.max_coord(i))) {
+        sq_dist += CGAL::square(v - FT(box.max_coord(i)));
+        inside = false;
+      }
+    }
+    return inside ? -max_radius : CGAL::approximate_sqrt(sq_dist);
+  }
+
+  FT eval_primitive(std::size_t id, const Point_3& p) const {
+    const std::size_t nf = skeleton_.faces().size();
+    if(id < nf) {
+      const auto& tri = skeleton_.faces()[id];
+      return eval_slab((*spheres_)[tri[0]].center(), (*spheres_)[tri[1]].center(), (*spheres_)[tri[2]].center(),
+                       radii_[tri[0]], radii_[tri[1]], radii_[tri[2]], p);
+    }
+    const auto& [i, j] = free_edges_[id - nf];
+    return eval_cone((*spheres_)[i].center(), (*spheres_)[j].center(), radii_[i], radii_[j], p);
+  }
+
   FT sphere_distance(const Point_3& p, const Point_3& c, const FT r) const {
     return CGAL::approximate_sqrt((p - c).squared_length()) - r;
   }
@@ -192,12 +269,53 @@ private:
     return boundary;
   }
 
+  // Traversal traits computing the minimum of the values of the primitives at the query point.
+  // A node or a primitive is visited only if its lower bound is smaller than the current minimum,
+  // and the child with the smaller lower bound is visited first.
+  class Minimum_traversal_traits
+  {
+  public:
+    using Priority = FT;
+
+    explicit Minimum_traversal_traits(const Medial_skeleton_offset_function& f)
+        : f_(f)
+        , data_(*f.search_tree_)
+        , minimum_((std::numeric_limits<FT>::max)()) {}
+
+    bool go_further() const { return true; }
+
+    void intersection(const Point_3& p, const Primitive& primitive) {
+      const std::size_t id = primitive.id();
+      if(lower_bound(p, data_.boxes[id], data_.max_radii[id]) < minimum_)
+        minimum_ = (std::min)(minimum_, f_.eval_primitive(id, p));
+    }
+
+    template <class Node>
+    std::pair<bool, Priority> do_intersect_with_priority(const Point_3& p, const Node& node) const {
+      const FT lb = lower_bound(p, node.bbox(), data_.max_radius);
+      return std::make_pair(lb < minimum_, -lb);
+    }
+
+    template <class Node>
+    bool do_intersect(const Point_3& p, const Node& node) const {
+      return do_intersect_with_priority(p, node).first;
+    }
+
+    FT minimum() const { return minimum_; }
+
+  private:
+    const Medial_skeleton_offset_function& f_;
+    const Search_tree& data_;
+    FT minimum_;
+  };
+
 private:
   const MSkeleton& skeleton_;
   const std::vector<Sphere_3>* spheres_;
 
   std::vector<FT> radii_;
   std::vector<std::pair<std::size_t, std::size_t>> free_edges_;
+  std::shared_ptr<const Search_tree> search_tree_;
 };
 
 #endif // DoXYGEN_RUNNING
