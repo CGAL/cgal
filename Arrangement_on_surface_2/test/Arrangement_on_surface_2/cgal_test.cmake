@@ -1487,6 +1487,7 @@ compile_and_run(test_polycurve_intersection)
 
 compile_and_run(test_tracing_traits)
 compile_and_run(test_counting_traits)
+compile_and_run(test_draw_traits_detection)
 
 if(CGAL_DISABLE_GMP)
   get_directory_property(LIST_OF_TESTS TESTS)

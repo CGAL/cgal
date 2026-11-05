@@ -208,8 +208,10 @@ private:
 
   template <typename Gt, std::enable_if_t<is_or_derived_from_agas_v<Gt>, int> = 0>
   static void transform_polyline_impl(Context& ctx, Polyline& polyline, const Halfedge_const_handle& he) {
-    using Direction_3 = typename Geom_traits::Direction_3;
-    using Vector_3 = typename Geom_traits::Vector_3;
+    // The geometry traits may be a (chain of) decorator(s); obtain the geometric
+    // types from the last traits in the chain.
+    using Direction_3 = typename undecorated_traits_t<Geom_traits>::Direction_3;
+    using Vector_3 = typename undecorated_traits_t<Geom_traits>::Vector_3;
 
     if (polyline.size() < 2) return;
     const X_monotone_curve_2& curve = he->curve();

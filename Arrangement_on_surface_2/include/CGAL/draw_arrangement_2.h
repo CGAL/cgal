@@ -276,15 +276,14 @@ public:
   }
 
   ///
-  template <typename Kernel, int AtanX, int AtanY>
-  Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ,
-                                      Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY> const&)
+  template <typename Traits, std::enable_if_t<is_or_derived_from_agas_v<Traits>, int> = 0>
+  Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ, const Traits&)
   { return circ; }
 
   /*! finds the halfedge incident to the lexicographically smallest vertex
    * along the CCB, such that there is no other halfedge underneath.
    */
-  template <typename Traits>
+  template <typename Traits, std::enable_if_t<! is_or_derived_from_agas_v<Traits>, int> = 0>
   Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ, const Traits&) {
     // std::cout << "find_smallest()\n";
     const auto* traits = this->m_aos.geometry_traits();
@@ -617,7 +616,9 @@ void draw_impl_agas(const Arrangement& arr, const GSOptions& gso,
   using Face_const_handle = typename Arrangement::Face_const_handle;
   using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
   using Geom_traits = typename Arrangement::Geometry_traits_2;
-  using Direction_3 = typename Geom_traits::Direction_3;
+  // The geometry traits may be a (chain of) decorator(s); obtain the geometric
+  // types from the last traits in the chain.
+  using Direction_3 = typename undecorated_traits_t<Geom_traits>::Direction_3;
   using Point_2 = typename Geom_traits::Point_2;
   using Agas_template_args = tmpl_args<Geom_traits>;
 
