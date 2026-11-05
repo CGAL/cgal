@@ -21,6 +21,12 @@
 #include <CGAL/Basic_viewer.h>
 #include <CGAL/Multipolygon_with_holes_2.h>
 
+
+#if defined (__GNUC__) && ! defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
 
@@ -213,5 +219,9 @@ void draw(const CGAL::Multipolygon_with_holes_2<T, C>& mpwh,
 }
 
 } // End namespace CGAL
+
+#if defined (__GNUC__) && ! defined(__clang__)
+#  pragma GCC diagnostic pop
+#endif
 
 #endif // CGAL_DRAW_MULTIPOLYGON_WITH_HOLES_2_H
