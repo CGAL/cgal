@@ -554,6 +554,7 @@ class Variational_medial_axis_sampling
 
 
   using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
   // Property map types
