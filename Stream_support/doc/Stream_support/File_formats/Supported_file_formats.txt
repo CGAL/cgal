@@ -14,6 +14,7 @@ each specific format.
 - \ref IOStreamPLY
 - \ref IOStreamXYZ
 - \ref IOStreamVTK
+- \ref IOStreamGLTF
 - \ref IOStreamGocad
 - \ref IOStream3MF
 - \ref IOStreamWRL
@@ -345,6 +346,17 @@ of its coordinates and other properties. Only coordinates and normals are curren
     <td>\link PkgStreamSupportIoFuncsXYZ CGAL::IO::write_XYZ(const std::string&, const PointRange&)\endlink</td>
   </tr>
 </table>
+
+
+
+\section IOStreamGLTF GLTF File Format
+
+The `GLTF` format, using the file extension `.gltf`, is an \ascii file format
+that enables reading polygon soups or a polygon mesh.
+
+A precise specification of the format is available <a href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html"> here</a>.
+
+@todo link to the functions
 
 
 \section IOStreamGocad GOCAD (TS) File Format
