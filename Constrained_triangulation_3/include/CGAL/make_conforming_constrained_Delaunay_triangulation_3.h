@@ -52,7 +52,7 @@ namespace CGAL {
   described by the `plc_face_id` property map if provided.
 
   In the case where the input contains a non-planar PLC face, building the triangulation may fail with an exception
-  of type `CGAL::Non_planar_plc_facet_exception`.
+  of type \link CGAL::Non_planar_plc_facet_exception `CGAL::Non_planar_plc_facet_exception`\endlink.
 
   \pre The input data must not be coplanar.
   \pre The input data must not have self-intersections.
