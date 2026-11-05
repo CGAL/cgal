@@ -170,12 +170,8 @@ inline extLong::extLong(int i) : val(i), flag(0) {
     flag = -1;
 }
 
-inline extLong::extLong(unsigned int ui) : val(ui), flag(0) {
-  if (val >= EXTLONG_MAX) {
-    val  = EXTLONG_MAX;
-    flag = 1;
-  }
-}
+inline extLong::extLong(unsigned int ui)
+  : extLong(static_cast<unsigned long>(ui)) {}
 
 inline extLong::extLong(long l) : val(l), flag(0) {
   if (val >= EXTLONG_MAX)
@@ -196,7 +192,7 @@ inline extLong::extLong(unsigned long u) {
 
 template <typename T, typename>
 inline extLong::extLong(T u) {
-  if (u >= (std::numeric_limits<std::size_t>::max)()) {
+  if (u >= U_EXTLONG_MAX) {
     val  = EXTLONG_MAX;
     flag = 1;
   } else {
