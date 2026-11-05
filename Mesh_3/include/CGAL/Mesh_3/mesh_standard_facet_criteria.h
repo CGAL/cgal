@@ -684,16 +684,18 @@ protected:
 
   virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
+    CGAL_assertion(c3t3.is_in_complex(f));
+    CGAL_assertion(sq_distance_theoretical_bound_ > FT(0));
+
     const Tr& tr = c3t3.triangulation();
-    auto scale = tr.geom_traits().construct_scaled_vector_3_object();
-    auto normal = tr.geom_traits().construct_normal_3_object();
     auto diff_vec = tr.geom_traits().construct_difference_of_vectors_3_object();
 
     auto unit_normal = [&](const Facet& f) -> Vector_3
     {
       auto normal = tr.geom_traits().construct_normal_3_object();
-      const auto& t = tr.triangle(f);
+      auto scale = tr.geom_traits().construct_scaled_vector_3_object();
 
+      const auto& t = tr.triangle(f);
       Vector_3 n = normal(t[0], t[1], t[2]);
       return scale(n, FT(1) / CGAL::sqrt(n.squared_length()));
     };
@@ -725,6 +727,9 @@ protected:
 
           if(sqd > sq_distance_theoretical_bound_)
           {
+            const auto& t = tr.triangle(f);
+            std::cout << t[0] << " " << t[1] << " " << t[2] << " " << t[0] << std::endl;
+
 #ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
             std::cerr << "Bad facet (normal variation criterion: "
               << sqd << " > " << sq_distance_theoretical_bound_ << ")" << std::endl;
