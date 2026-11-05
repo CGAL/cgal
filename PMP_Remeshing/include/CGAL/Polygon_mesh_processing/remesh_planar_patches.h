@@ -640,27 +640,34 @@ bool decimate_impl(const TriangleMesh& tm,
         halfedge_descriptor h_init = h;
         std::size_t cc_id = get(face_cc_ids, face(h_init, tm));
         if (!cc_to_handle.test(cc_id)) continue;
-        do{
-          std::size_t i2 = get(vertex_corner_id, target(h_init, tm));
-          if ( is_corner_id(i2) )
-          {
-            check_corner(i2, target(h_init, tm));
-            face_boundaries[ cc_id ].push_back( Id_pair(i1,i2) );
-            if (face_normals[ cc_id ] == NULL_VECTOR)
-            {
-              face_normals[ cc_id ] = normal(get(vpm, source(h, tm)),
-                                             get(vpm, target(h, tm)),
-                                             get(vpm, target(next(h, tm), tm)));
-            }
-            break;
-          }
 
-          do{
-            h_init=opposite(next(h_init, tm), tm);
-          } while( !get(edge_is_constrained, edge(h_init, tm)) );
-          h_init=opposite(h_init, tm);
+        // collect all corners
+        std::vector<std::size_t> face_corners;
+        for (auto hhh : halfedges_around_face(h_init, tm))
+        {
+          std::size_t ic = get(vertex_corner_id, target(hhh, tm));
+          if ( is_corner_id(ic) )
+          {
+            check_corner(ic, target(hhh, tm));
+            face_corners.push_back(ic);
+          }
         }
-        while(true);
+
+        if (face_corners.size()<3) continue;
+
+        typename Kernel::Vector_3 sum(NULL_VECTOR);
+        const typename Kernel::Point_3& p0=corners[face_corners[0]];
+        for (std::size_t pos=1; pos<face_corners.size()-1; ++pos)
+        {
+          const typename Kernel::Point_3& p1=corners[face_corners[pos]];
+          const typename Kernel::Point_3& p2=corners[face_corners[pos+1]];
+          typename Kernel::Vector_3 n =
+            cross_product(typename Kernel::Vector_3(p1, p2),
+                          typename Kernel::Vector_3(p1, p0));
+          n/=typename Kernel::FT(1.)/ typename Kernel::FT(2.);
+          sum += n;
+        }
+        face_normals[ cc_id ]=sum;
       }
     }
 
