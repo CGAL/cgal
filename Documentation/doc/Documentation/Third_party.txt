@@ -308,7 +308,6 @@ In order to use \osqp in \cgal programs, the executables should be linked with t
 
 The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
 
-
 \subsection thirdpartyVTK VTK
 
 \vtk is the Visualization Toolkit.
@@ -320,4 +319,13 @@ The \vtk web site is <A HREF="https://vtk.org/">`https://vtk.org`</A>.
 \itk is the Insight Toolkit.
 In \cgal, this library is used in some examples of the \ref PkgMesh3 package.
 The \itk web site is <A HREF="https://itk.org/">`https://itk.org`</A>.
+
+\subsection thirdpartyProtoSphere ProtoSphereExtended
+
+\protosphere is a GPU-based sphere packing library.
+
+In \cgal, this library is used in the \ref PkgSpherePacking package.
+
+It is available at  <A HREF="https://gitlab.informatik.uni-bremen.de/cgvr_public/protosphereextended">https://gitlab.informatik.uni-bremen.de/cgvr_public/protosphereextended</A>.
+
 */
