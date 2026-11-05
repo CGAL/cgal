@@ -791,7 +791,7 @@ is_on_vertex(const Barycentric_coordinates<FT>& bar)
 template <typename FT, typename TriangleMesh>
 bool
 is_on_vertex(const Face_location<TriangleMesh, FT>& loc,
-             const TriangleMesh& tm)
+             const TriangleMesh&)
 {
   return is_on_vertex(loc.second);
 }
@@ -841,7 +841,7 @@ is_on_halfedge(const Barycentric_coordinates<FT>& bar)
 template <typename FT, typename TriangleMesh>
 bool
 is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
-               const TriangleMesh& tm)
+               const TriangleMesh&)
 {
   return is_on_halfedge(loc.second);
 }
@@ -927,7 +927,7 @@ is_in_face(const Barycentric_coordinates<FT>& bar,
 template <typename FT, typename TriangleMesh>
 bool
 is_in_face(const Face_location<TriangleMesh, FT>& loc,
-           const TriangleMesh& tm)
+           const TriangleMesh&)
 {
   return is_in_face(loc.second);
 }
