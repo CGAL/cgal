@@ -20,6 +20,12 @@
 
 #include <CGAL/assertions.h>
 
+#ifdef CGAL_SCOTCH_ENABLED
+#include <cstdint>
+#include <type_traits>
+#include <scotch.h>
+#endif
+
 #include <metis.h>
 
 #include <boost/graph/graph_traits.hpp>
@@ -31,6 +37,10 @@ namespace CGAL {
 
 namespace METIS {
 
+#ifdef CGAL_SCOTCH_ENABLED
+template<typename>
+struct dependent_false : std::false_type {};
+#endif
 #ifndef DOXYGEN_RUNNING
 
 struct Output_vertex_partition_ids
@@ -132,7 +142,10 @@ void partition_graph(const TriangleMesh& tm,
   // do not support Fortran-style arrays
   CGAL_assertion((*options)[METIS_OPTION_NUMBERING] == -1 || // default initialization is '-1'
                  (*options)[METIS_OPTION_NUMBERING] == 0);
-
+#ifdef CGAL_SCOTCH_ENABLED
+  static_assert(dependent_false<TriangleMesh>::value,
+                "partition_graph() is not supported with Scotch: Scotch does not provide METIS_PartMeshNodal(). Use partition_dual_graph() instead.");
+#else
   CGAL_assertion_code(int ret =)
     METIS_PartMeshNodal(&ne, &nn, eptr, eind,
                         nullptr /* nodes weights */, nullptr /* nodes sizes */,
@@ -142,7 +155,7 @@ void partition_graph(const TriangleMesh& tm,
                         &objval, epart, npart);
 
   CGAL_assertion(ret == METIS_OK);
-
+#endif
   Output_vertex_partition_ids vo;
   Output_face_partition_ids fo;
   vo(tm, indices, npart, get_parameter(np, internal_np::vertex_partition_id));
@@ -231,7 +244,6 @@ void partition_graph(const TriangleMesh& tm, int nparts, const NamedParameters& 
 
   return partition_graph(tm, nparts, get_parameter(np, internal_np::METIS_options), np);
 }
-
 } // end namespace METIS
 
 } // end namespace CGAL
