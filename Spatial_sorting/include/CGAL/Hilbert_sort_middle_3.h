@@ -140,8 +140,6 @@ public:
         return;
       }
 
-      CGAL_assertion( xmax > xmin || ymax > ymin || zmax > zmin);
-
       if(x_upper != upx)
       {
         if(y_upper != upy)
