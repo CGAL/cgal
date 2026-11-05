@@ -636,31 +636,29 @@ bool decimate_impl(const TriangleMesh& tm,
       std::size_t i1 = get(vertex_corner_id, source(h, tm));
       if ( is_corner_id(i1) )
       {
-        check_corner(i1, source(h, tm));
-        halfedge_descriptor h_init = h;
-        std::size_t cc_id = get(face_cc_ids, face(h_init, tm));
+        std::size_t cc_id = get(face_cc_ids, face(h, tm));
         if (!cc_to_handle.test(cc_id)) continue;
 
         // collect all corners
-        std::vector<std::size_t> face_corners;
-        for (auto hhh : halfedges_around_face(h_init, tm))
+        std::vector<std::size_t> face_corner_ids;
+        for (auto hhh : halfedges_around_face(h, tm))
         {
           std::size_t ic = get(vertex_corner_id, target(hhh, tm));
           if ( is_corner_id(ic) )
           {
             check_corner(ic, target(hhh, tm));
-            face_corners.push_back(ic);
+            face_corner_ids.push_back(ic);
           }
         }
 
-        if (face_corners.size()<3) continue;
+        if (face_corner_ids.size()<3) continue;
 
         typename Kernel::Vector_3 sum(NULL_VECTOR);
-        const typename Kernel::Point_3& p0=corners[face_corners[0]];
-        for (std::size_t pos=1; pos<face_corners.size()-1; ++pos)
+        const typename Kernel::Point_3& p0=corners[face_corner_ids[0]];
+        for (std::size_t pos=1; pos<face_corner_ids.size()-1; ++pos)
         {
-          const typename Kernel::Point_3& p1=corners[face_corners[pos]];
-          const typename Kernel::Point_3& p2=corners[face_corners[pos+1]];
+          const typename Kernel::Point_3& p1=corners[face_corner_ids[pos]];
+          const typename Kernel::Point_3& p2=corners[face_corner_ids[pos+1]];
           typename Kernel::Vector_3 n =
             cross_product(typename Kernel::Vector_3(p1, p2),
                           typename Kernel::Vector_3(p1, p0));
