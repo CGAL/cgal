@@ -8482,6 +8482,7 @@ public:
 
   /*!
     returns true iff `p` lies on `t`.
+    \pre `t` is not degenerate.
   */
   bool operator()(const Kernel::Triangle_3&t,
                   const Kernel::Point_3&p);

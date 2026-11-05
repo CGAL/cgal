@@ -3832,6 +3832,7 @@ namespace CartesianKernelFunctors {
     Boolean
     operator()( const Triangle_3& t, const Point_3& p) const
     {
+      CGAL_kernel_precondition(!t.is_degenerate());
       Point_3  o  = t.vertex(0) + t.supporting_plane().orthogonal_vector();
       Vector_3 v0 = t.vertex(0)-o,
                v1 = t.vertex(1)-o,
