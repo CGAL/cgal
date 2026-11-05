@@ -120,23 +120,45 @@ struct has_is_in_x_range<Gt,
 template <typename Gt>
 inline constexpr bool has_is_in_x_range_v = has_is_in_x_range<Gt>::value;
 
-// Obtain the last (innermost) traits in a chain of traits decorators, e.g.,
-// `Arr_tracing_traits_2` and `Arr_counting_traits_2`. A decorator exposes the
-// traits it decorates as the nested type `Decorated_traits_2`. If Gt is not a
-// decorator, the result is Gt itself.
+// Obtain the traits that a traits class is built upon, if any:
+// - A traits decorator, e.g., `Arr_tracing_traits_2` or `Arr_counting_traits_2`,
+//   exposes the traits it decorates as the nested type `Decorated_traits_2`.
+// - A polycurve traits, e.g., `Arr_polycurve_traits_2` or
+//   `Arr_polyline_traits_2`, exposes the traits of its subcurves as the nested
+//   type `Subcurve_traits_2`.
+// If Gt defines both types, `Decorated_traits_2` takes precedence. If Gt
+// defines neither, it is not built upon another traits.
 template <typename Gt, typename = void>
-struct undecorated_traits { using type = Gt; };
+struct subcurve_traits_of {};
 
 template <typename Gt>
-struct undecorated_traits<Gt, std::void_t<typename Gt::Decorated_traits_2>> :
-    undecorated_traits<typename Gt::Decorated_traits_2>
+struct subcurve_traits_of<Gt, std::void_t<typename Gt::Subcurve_traits_2>>
+{ using type = typename Gt::Subcurve_traits_2; };
+
+template <typename Gt, typename = void>
+struct underlying_traits_of : subcurve_traits_of<Gt> {};
+
+template <typename Gt>
+struct underlying_traits_of<Gt, std::void_t<typename Gt::Decorated_traits_2>>
+{ using type = typename Gt::Decorated_traits_2; };
+
+// Obtain the last (innermost) traits in a chain of traits classes, each built
+// upon the next one (see `underlying_traits_of`), e.g.,
+// Arr_counting_traits_2<Arr_polyline_traits_2<Arr_polycurve_traits_2<...>>>.
+// If Gt is not built upon another traits, the result is Gt itself.
+template <typename Gt, typename = void>
+struct innermost_traits { using type = Gt; };
+
+template <typename Gt>
+struct innermost_traits<Gt, std::void_t<typename underlying_traits_of<Gt>::type>> :
+    innermost_traits<typename underlying_traits_of<Gt>::type>
 {};
 
 template <typename Gt>
-using undecorated_traits_t = typename undecorated_traits<Gt>::type;
+using innermost_traits_t = typename innermost_traits<Gt>::type;
 
-// Detect whether the last traits in the chain of decorators of Gt (or Gt itself
-// if it is not a decorator) is or derives from
+// Detect whether the innermost traits of Gt (see `innermost_traits`) is or
+// derives from
 // Arr_geodesic_arc_on_sphere_traits_2<*, *, *>
 template <typename Gt>
 struct is_or_derived_from_agas {
@@ -147,7 +169,7 @@ private:
   static std::false_type test(...);
 
 public:
-  static constexpr bool value = decltype(test(static_cast<const undecorated_traits_t<Gt>*>(nullptr)))::value;
+  static constexpr bool value = decltype(test(static_cast<const innermost_traits_t<Gt>*>(nullptr)))::value;
 };
 
 template <typename Gt>
@@ -172,11 +194,11 @@ Agas_tmpl_args<Kernel_, AtanX, AtanY> agas_tmpl_args(const Arr_geodesic_arc_on_s
 
 No_tmpl_args agas_tmpl_args(...);
 
-// Obtain the template arguments of the last traits in the chain of decorators
-// of Gt (or of Gt itself if it is not a decorator), provided that it is or
-// derives from Arr_geodesic_arc_on_sphere_traits_2<*, *, *>.
+// Obtain the template arguments of the innermost traits of Gt (see
+// `innermost_traits`), provided that it is or derives from
+// Arr_geodesic_arc_on_sphere_traits_2<*, *, *>.
 template <typename Gt>
-struct tmpl_args : decltype(agas_tmpl_args(static_cast<const undecorated_traits_t<Gt>*>(nullptr))) {};
+struct tmpl_args : decltype(agas_tmpl_args(static_cast<const innermost_traits_t<Gt>*>(nullptr))) {};
 
 /*! \brief Approximation data types
  *
@@ -229,8 +251,8 @@ public:
   Gt_point operator()(const Approx_point& pt) const { return Gt_point(pt.x(), pt.y()); }
 };
 
-// Specialization for traits that are, or whose last traits in the chain of
-// decorators is, or derive from Arr_geodesic_arc_on_sphere_traits_2
+// Specialization for traits whose innermost traits (see `innermost_traits`) is
+// or derives from Arr_geodesic_arc_on_sphere_traits_2
 template <typename Gt>
 class Construct_gt_point_2<Gt, std::enable_if_t<is_or_derived_from_agas_v<Gt>>> {
   using Geom_traits = Gt;

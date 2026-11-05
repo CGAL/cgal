@@ -3,7 +3,10 @@
 // differs from the code for arrangements on the plane. The geometry traits may
 // be a (chain of) decorator(s), e.g., Arr_tracing_traits_2 or
 // Arr_counting_traits_2, in which case the detection must apply to the last
-// (innermost) traits in the chain.
+// (innermost) traits in the chain. Similarly, the geometry traits may be a
+// polycurve traits, e.g., Arr_polyline_traits_2 or Arr_polycurve_traits_2,
+// whose subcurve traits handle geodesic arcs on the sphere. Decorators and
+// polycurve traits can be chained in any order.
 
 #include <cstdlib>
 #include <iostream>
@@ -15,12 +18,22 @@
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_counting_traits_2.h>
 #include <CGAL/Arr_tracing_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_polycurve_traits_2.h>
 #include <CGAL/Draw_aos/type_utils.h>
 #include <CGAL/Draw_aos/Arr_coordinate_converter.h>
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using Segment_traits = CGAL::Arr_segment_traits_2<Kernel>;
 using Geodesic_traits = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
+
+// Polycurve traits
+using Segment_polyline_traits = CGAL::Arr_polyline_traits_2<Segment_traits>;
+using Segment_polycurve_traits = CGAL::Arr_polycurve_traits_2<Segment_traits>;
+using Geodesic_polyline_traits = CGAL::Arr_polyline_traits_2<Geodesic_traits>;
+using Geodesic_polycurve_traits = CGAL::Arr_polycurve_traits_2<Geodesic_traits>;
+using Nested_geodesic_polycurve_traits =
+  CGAL::Arr_polycurve_traits_2<CGAL::Arr_polycurve_traits_2<CGAL::Arr_polycurve_traits_2<Geodesic_traits>>>;
 
 // A traits class derived from the geodesic-arc-on-sphere traits.
 class Derived_geodesic_traits : public Geodesic_traits {};
@@ -35,6 +48,13 @@ static_assert(CGAL::draw_aos::tmpl_args<Decorated_rotated_geodesic_traits>::atan
 static_assert(CGAL::draw_aos::tmpl_args<Decorated_rotated_geodesic_traits>::atan_y == 7);
 static_assert(std::is_same_v<CGAL::draw_aos::tmpl_args<Decorated_rotated_geodesic_traits>::Kernel, Kernel>);
 static_assert(CGAL::draw_aos::tmpl_args<Derived_geodesic_traits>::atan_x == -1);
+using Mixed_rotated_geodesic_traits =
+  CGAL::Arr_counting_traits_2<CGAL::Arr_polyline_traits_2<CGAL::Arr_tracing_traits_2<
+    CGAL::Arr_polycurve_traits_2<Rotated_geodesic_traits>>>>;
+static_assert(std::is_same_v<CGAL::draw_aos::innermost_traits_t<Mixed_rotated_geodesic_traits>,
+                             Rotated_geodesic_traits>);
+static_assert(CGAL::draw_aos::tmpl_args<Mixed_rotated_geodesic_traits>::atan_x == -11);
+static_assert(CGAL::draw_aos::tmpl_args<Mixed_rotated_geodesic_traits>::atan_y == 7);
 
 /* Test that the conversion of a point on the sphere to the parameter space
  * with decorated traits is identical to the conversion with the plain traits.
@@ -74,6 +94,9 @@ int main() {
   ok &= test<CGAL::Arr_tracing_traits_2<Segment_traits>>("tracing segment traits", false);
   ok &= test<CGAL::Arr_counting_traits_2<CGAL::Arr_tracing_traits_2<Segment_traits>>>
     ("counting tracing segment traits", false);
+  ok &= test<Segment_polyline_traits>("segment polyline traits", false);
+  ok &= test<Segment_polycurve_traits>("segment polycurve traits", false);
+  ok &= test<CGAL::Arr_counting_traits_2<Segment_polyline_traits>>("counting segment polyline traits", false);
 
   // Traits on the sphere
   ok &= test<Geodesic_traits>("geodesic traits", true);
@@ -84,12 +107,24 @@ int main() {
     ("counting tracing geodesic traits", true);
   ok &= test<CGAL::Arr_tracing_traits_2<CGAL::Arr_counting_traits_2<Derived_geodesic_traits>>>
     ("tracing counting derived geodesic traits", true);
+  ok &= test<Geodesic_polyline_traits>("geodesic polyline traits", true);
+  ok &= test<Geodesic_polycurve_traits>("geodesic polycurve traits", true);
+  ok &= test<CGAL::Arr_counting_traits_2<Geodesic_polyline_traits>>("counting geodesic polyline traits", true);
+  ok &= test<CGAL::Arr_polycurve_traits_2<CGAL::Arr_counting_traits_2<Geodesic_traits>>>
+    ("polycurve of counting geodesic traits", true);
+  ok &= test<Nested_geodesic_polycurve_traits>("nested geodesic polycurve traits", true);
+  ok &= test<Mixed_rotated_geodesic_traits>("counting polyline tracing polycurve rotated geodesic traits", true);
 
   ok &= test_coordinate_converter<CGAL::Arr_counting_traits_2<Geodesic_traits>, Geodesic_traits>
     ("counting geodesic traits");
   ok &= test_coordinate_converter<Derived_geodesic_traits, Geodesic_traits>("derived geodesic traits");
   ok &= test_coordinate_converter<Decorated_rotated_geodesic_traits, Rotated_geodesic_traits>
     ("counting tracing rotated geodesic traits");
+  ok &= test_coordinate_converter<Geodesic_polyline_traits, Geodesic_traits>("geodesic polyline traits");
+  ok &= test_coordinate_converter<Nested_geodesic_polycurve_traits, Geodesic_traits>
+    ("nested geodesic polycurve traits");
+  ok &= test_coordinate_converter<Mixed_rotated_geodesic_traits, Rotated_geodesic_traits>
+    ("counting polyline tracing polycurve rotated geodesic traits");
 
   if (! ok) return EXIT_FAILURE;
   std::cout << "Passed" << std::endl;
