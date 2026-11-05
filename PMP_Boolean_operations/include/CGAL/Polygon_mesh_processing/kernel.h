@@ -207,7 +207,8 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
 #endif
 }
 
-template <typename PolygonMesh,
+template <bool used_to_find_a_point = false,
+          typename PolygonMesh,
           typename FaceRange,
           typename NamedParameters = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
@@ -217,7 +218,6 @@ kernel(const FaceRange& face_range,
        PolygonMesh& kernel,
        const NamedParameters& np = parameters::default_values(),
        const NamedParametersOut& np_out = parameters::default_values(),
-       bool used_to_find_a_point = false,
        std::optional<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3> *p = nullptr)
 {
   using parameters::choose_parameter;
@@ -386,7 +386,7 @@ kernel(const FaceRange& face_range,
     }
   }
 
-  if(used_to_find_a_point){
+  if constexpr(used_to_find_a_point){
     bool strictly_inside = choose_parameter(get_parameter(np, internal_np::strictly_inside), true);
 
     CGAL_BRANCH_PROFILER_3(std::string("failures/need_refinements/calls to PMP::kernel_point() filters: "), tmp);
@@ -447,11 +447,11 @@ kernel(const FaceRange& face_range,
               *p = from_exact(candidate_point);
               return true;
             }
-            z = std::nextafter(z, -std::numeric_limits<double>::infinity());
+            z = std::nextafter(z, std::numeric_limits<double>::infinity());
           }
-          y = std::nextafter(y, -std::numeric_limits<double>::infinity());
+          y = std::nextafter(y, std::numeric_limits<double>::infinity());
         }
-        x = std::nextafter(x, -std::numeric_limits<double>::infinity());
+        x = std::nextafter(x, std::numeric_limits<double>::infinity());
       }
 
       return false;
@@ -755,7 +755,7 @@ kernel_point(const FaceRange& face_range,
 {
   std::optional<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3> res;
   PolygonMesh k;
-  internal::kernel(face_range, pm, k, np, parameters::default_values(), true, &res);
+  internal::kernel<true>(face_range, pm, k, np, parameters::default_values(), &res);
 
   // If the kernel is empty or degenerated with strictly inside option, return empty
   if(is_empty(k))
