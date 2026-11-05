@@ -50,6 +50,20 @@ public:
     radii_.reserve(n);
     for(const auto& sph : *spheres_)
       radii_.push_back(CGAL::approximate_sqrt(sph.squared_radius()));
+
+    // The cone of an edge of a face is contained in the slab of that face,
+    // so only the edges that do not belong to any face are evaluated as cones.
+    using Edge = std::pair<std::size_t, std::size_t>;
+    auto make_edge = [](std::size_t i, std::size_t j) { return Edge((std::min)(i, j), (std::max)(i, j)); };
+    std::unordered_set<Edge, boost::hash<Edge>> face_edges;
+    for(const auto& tri : skeleton_.faces()) {
+      face_edges.insert(make_edge(tri[0], tri[1]));
+      face_edges.insert(make_edge(tri[1], tri[2]));
+      face_edges.insert(make_edge(tri[2], tri[0]));
+    }
+    for(const auto& e : skeleton_.edges())
+      if(face_edges.find(make_edge(e.first, e.second)) == face_edges.end())
+        free_edges_.push_back(e);
   }
 
 
@@ -57,43 +71,22 @@ public:
   FT operator()(const Point_3& p) const {
     FT dmin = (std::numeric_limits<FT>::max)();
 
-    // TODO: the filtering strategy doesn't work
-    std::unordered_set<std::pair<std::size_t, std::size_t>, boost::hash<std::pair<std::size_t, std::size_t>>>
-        visited_edges;
-
     for(const auto& tri : skeleton_.faces()) {
-      const std::size_t a = tri[0], b = tri[1], c = tri[2];
-      const Point_3& c1 = (*spheres_)[a].center();
-      const Point_3& c2 = (*spheres_)[b].center();
-      const Point_3& c3 = (*spheres_)[c].center();
-      const FT& r1 = radii_[a];
-      const FT& r2 = radii_[b];
-      const FT& r3 = radii_[c];
-      /*
-      const FT& r_max = r1>r2 ? (r1 > r3 ? r1 : r3) : (r2 > r3 ? r2 : r3);
-      if(dmin > eval_slab(c1, c2, c3, r_max, r_max, r_max,p)) {
-         dmin = (std::min)(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
-      }
-      */
+      const Point_3& c1 = (*spheres_)[tri[0]].center();
+      const Point_3& c2 = (*spheres_)[tri[1]].center();
+      const Point_3& c3 = (*spheres_)[tri[2]].center();
+      const FT& r1 = radii_[tri[0]];
+      const FT& r2 = radii_[tri[1]];
+      const FT& r3 = radii_[tri[2]];
       dmin = (std::min)(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
-      visited_edges.insert({a, b});
-      visited_edges.insert({b, c});
-      visited_edges.insert({c, a});
       if(dmin < 0)
         return dmin;
     }
-    for(auto [i, j] : skeleton_.edges()) {
-      if(visited_edges.find({i, j}) != visited_edges.end())
-        continue;
+    for(const auto& [i, j] : free_edges_) {
       const Point_3& c1 = (*spheres_)[i].center();
       const Point_3& c2 = (*spheres_)[j].center();
       const FT& r1 = radii_[i];
       const FT& r2 = radii_[j];
-      /*
-      const FT r_max = r1 > r2 ? r1 : r2;
-      if(dmin > eval_cone(c1, c2, r_max, r_max, p))
-        dmin = (std::min)(dmin, eval_cone(c1, c2, r1, r2, p));
-      */
       dmin = (std::min)(dmin, eval_cone(c1, c2, r1, r2, p));
       if(dmin < 0)
         return dmin;
@@ -204,6 +197,7 @@ private:
   const std::vector<Sphere_3>* spheres_;
 
   std::vector<FT> radii_;
+  std::vector<std::pair<std::size_t, std::size_t>> free_edges_;
 };
 
 #endif // DoXYGEN_RUNNING
