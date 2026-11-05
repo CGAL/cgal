@@ -33,6 +33,7 @@
 //   double as arguments, improves performance.
 
 #include <utility> // for std::pair
+#include <algorithm>
 #include <CGAL/number_type_config.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/utils_classes.h>
@@ -1029,11 +1030,20 @@ template < bool b >
 Interval_nt<b>
 ldexp(const Interval_nt<b> &i, int e)
 {
-  double scale = std::ldexp(1.0, e);
-  Interval_nt<b> scale_interval (
-                      CGAL_NTS is_finite(scale) ? scale : CGAL_IA_MAX_DOUBLE,
-                      scale == 0 ? CGAL_IA_MIN_DOUBLE : scale);
-  return i * scale_interval;
+  const int limit = std::numeric_limits<double>::max_exponent
+                    - std::numeric_limits<double>::min_exponent
+                    + std::numeric_limits<double>::digits;
+  // Larger exponents already overflow or underflow every finite nonzero input.
+  e = (std::max)(-limit, (std::min)(e, limit));
+  Interval_nt<b> result = i;
+  while(e != 0)
+  {
+    const int step = (std::max)(std::numeric_limits<double>::min_exponent - 1,
+                              (std::min)(e, std::numeric_limits<double>::max_exponent - 1));
+    result *= std::ldexp(1.0, step);
+    e -= step;
+  }
+  return result;
 }
 
 
