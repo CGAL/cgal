@@ -630,22 +630,17 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
                               OutputIterator oi, bool l2r = true) const {
-      if (l2r) {
-        for (auto it = xcv.points_begin(); it != xcv.points_end(); ++it) {
-          const auto& p = *it;
-          auto x = CGAL::to_double(p.x());
-          auto y = CGAL::to_double(p.y());
-          *oi++ = Approximate_point_2(x, y);
-        }
+      // The points of `xcv` are stored in the direction of `xcv`, which may be
+      // either left to right or right to left. Traverse them in the stored
+      // order iff the direction of `xcv` matches the requested direction.
+      auto cmp_endpts = m_traits.compare_endpoints_xy_2_object();
+      bool is_directed_right = (cmp_endpts(xcv) == SMALLER);
+      if (is_directed_right == l2r) {
+        for (auto it = xcv.points_begin(); it != xcv.points_end(); ++it) *oi++ = operator()(*it);
         return oi;
       }
 
-      for (auto it = xcv.points_rbegin(); it != xcv.points_rend(); ++it) {
-        const auto& p = *it;
-        auto x = CGAL::to_double(p.x());
-        auto y = CGAL::to_double(p.y());
-        *oi++ = Approximate_point_2(x, y);
-      }
+      for (auto it = xcv.points_rbegin(); it != xcv.points_rend(); ++it) *oi++ = operator()(*it);
       return oi;
     }
   };
