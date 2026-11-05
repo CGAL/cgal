@@ -64,12 +64,6 @@ Release date: December 2026
 - **Breaking change**: Removed the function `CGAL::Polygon_mesh_processing::smooth_mesh()` which was deprecated since CGAL-5.5.
 - **Breaking change**: Removed the overload of the functions `CGAL::Polygon_mesh_processing::triangulate_hole()`, `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`, and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()` having output iterators for vertices and faces as parameter, which were deprecated since CGAL-6.0.
 
-### [Polygon Mesh Processing - Remeshing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
-- Added a new parameter `edge_is_protected_map` to
-[`void CGAL::Polygon_mesh_processing::isotropic_remeshing()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__local__remeshing__grp.html),
- to distinguish between "constrained" edges that can be resampled while the constrained edges polyline graph remains topologically unchanged,
- and "protected" edges that may not be modified at all by remeshing.
-
 ### [Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations)
 
 ### Polygon Mesh Processing - Boolean Operations
@@ -107,6 +101,12 @@ Release date: December 2026
 
 - **Breaking change**:  `CGAL::IO::Color`  is no longer imported into `namespace CGAL`.
 
+### [Meshing and Remeshing of Polygon Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
+- Added a new parameter `edge_is_protected_map` to
+[`CGAL::Polygon_mesh_processing::isotropic_remeshing()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__local__remeshing__grp.html),
+ to distinguish between "constrained" edges that can be resampled while the constrained edges polyline graph remains topologically unchanged,
+ and "protected" edges that may not be modified at all by remeshing.
+ - Fix an API bug in `CGAL::Polygon_mesh_processing::remesh_planar_patches()`: when coplanarity/collinearity criteria are too relaxed, it might happen that some patches cannot be triangulated. To handle such cases, a Boolean is now returned to indicate if all patches could be triangulated (same behavior as `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`). Also those two functions can now produce a (self-intersecting) mesh in case the simplified mesh turned out to be non-manifold (internally calling the function `CGAL::Polygon_mesh_processing::orient_polygon_soup()` on the corners and patches detected). In order to check if a non-manifoldness was worked around, the new named parameter `number_of_corners()` can be used and the filled value shall be compared to the number of vertices of the output mesh.
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
