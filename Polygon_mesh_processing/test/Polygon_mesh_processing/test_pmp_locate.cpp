@@ -436,7 +436,8 @@ void test_locate_in_face(const G& g,
 
   loc = PMP::locate_vertex<FT>(v, g);
 
-  assert(is_equal(loc.second[CGAL::vertex_index_in_face(v, loc.first, g)], FT(1)));
+  assert(CGAL::vertex_index_in_face(v, loc.first, g) < 3);
+  assert(is_equal(loc.second[CGAL::vertex_index_in_face(v, loc.first, g)%3], FT(1))); // %3 in order to avoid a warning
   assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 1) % 3], FT(0)));
   assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 2) % 3], FT(0)));
 
