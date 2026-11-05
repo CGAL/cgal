@@ -775,7 +775,7 @@ line_equation(RT& a, RT& b, SPolynomial<RT>& c) const
     return;
 
   }
-  Extended_point<RT> p;
+  Extended_point<RT> p(0,0,1); // initialize to avoid "may be uninitialized" warning
   bool correct_orientation=true;
   if (!sstandard && !tstandard) {
     bool x_equal = (_p1.hx()*_p2.hw() - _p2.hx()*_p1.hw()).is_zero();
@@ -1180,9 +1180,8 @@ Point_2 construct_point(const Standard_line_2& l, Point_type& t) const
                      break;
     case BOTTOMFRAME: res = epoint( l.b(), -l.c(), -l.a(), 0, l.a());
                      break;
-    case TOPFRAME: res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a());
-                     break;
-    default: CGAL_error_msg("EPoint type not correct!");
+    default :        CGAL_assertion(t == TOPFRAME);
+                     res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a());
   }
   return res;
 }
