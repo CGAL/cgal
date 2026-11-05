@@ -18,7 +18,7 @@
 #include <CGAL/double.h>
 #include <CGAL/use.h>
 
-#include <boost/utility/result_of.hpp>
+#include <type_traits>
 #include <iterator>
 #include <utility>
 #include <vector>
@@ -50,9 +50,9 @@ struct Data_access
 
 //the interpolation functions:
   template < class ForwardIterator, class ValueFunctor>
-typename boost::result_of<
-           ValueFunctor(typename std::iterator_traits<ForwardIterator>::value_type::first_type)>
-             ::type::first_type
+typename std::invoke_result_t<
+           ValueFunctor, typename std::iterator_traits<ForwardIterator>::value_type::first_type>
+             ::first_type
 linear_interpolation(ForwardIterator first, ForwardIterator beyond,
                      const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                      ValueFunctor value_function)
@@ -61,7 +61,7 @@ linear_interpolation(ForwardIterator first, ForwardIterator beyond,
   CGAL_precondition(norm > 0);
 
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            result_type;
   typedef typename result_type::first_type                                        Value_type;
 
   result_type val = value_function(first->first);
@@ -78,9 +78,9 @@ linear_interpolation(ForwardIterator first, ForwardIterator beyond,
 
 template < class ForwardIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
 std::pair<
-  typename boost::result_of<
-             ValueFunctor(typename std::iterator_traits<ForwardIterator>::value_type::first_type)>
-               ::type::first_type,
+  typename std::invoke_result_t<
+             ValueFunctor, typename std::iterator_traits<ForwardIterator>::value_type::first_type>
+               ::first_type,
   bool>
 quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
@@ -93,8 +93,8 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
   CGAL_precondition(norm > 0);
 
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
-  typedef typename boost::result_of<GradFunctor(arg_type)>::type                  gradient_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
+  typedef std::invoke_result_t<GradFunctor, arg_type>                             gradient_functor_result_type;
   typedef typename value_functor_result_type::first_type                          Value_type;
 
   typedef typename Traits::Point_d                                                Bare_point;
@@ -127,9 +127,9 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
 
 template < class ForwardIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
 std::pair<
-  typename boost::result_of<
-             ValueFunctor(typename std::iterator_traits<ForwardIterator>::value_type::first_type)>
-               ::type::first_type,
+  typename std::invoke_result_t<
+             ValueFunctor, typename std::iterator_traits<ForwardIterator>::value_type::first_type>
+               ::first_type,
   bool>
 sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
@@ -142,8 +142,8 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
   CGAL_precondition(norm >0);
 
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
-  typedef typename boost::result_of<GradFunctor(arg_type)>::type                  gradient_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
+  typedef std::invoke_result_t<GradFunctor, arg_type>                             gradient_functor_result_type;
   typedef typename value_functor_result_type::first_type                          Value_type;
 
   typedef typename Traits::FT                                                     Coord_type;
@@ -210,9 +210,9 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 
 template < class ForwardIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
 std::pair<
-  typename boost::result_of<
-             ValueFunctor(typename std::iterator_traits<ForwardIterator>::value_type::first_type)>
-               ::type::first_type,
+  typename std::invoke_result_t<
+             ValueFunctor, typename std::iterator_traits<ForwardIterator>::value_type::first_type>
+               ::first_type,
   bool>
 sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
                                const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
@@ -225,8 +225,8 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
   CGAL_precondition(norm > 0);
 
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
-  typedef typename boost::result_of<GradFunctor(arg_type)>::type                  gradient_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
+  typedef std::invoke_result_t<GradFunctor, arg_type>                             gradient_functor_result_type;
   typedef typename value_functor_result_type::first_type                          Value_type;
 
   typedef typename Traits::FT                                                     Coord_type;
@@ -283,9 +283,9 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
 template < class RandomAccessIterator, class ValueFunctor, class GradFunctor,
            class Traits, class Point_>
 std::pair<
-  typename boost::result_of<
-             ValueFunctor(typename std::iterator_traits<RandomAccessIterator>::value_type::first_type)>
-               ::type::first_type,
+  typename std::invoke_result_t<
+             ValueFunctor, typename std::iterator_traits<RandomAccessIterator>::value_type::first_type>
+               ::first_type,
   bool>
 farin_c1_interpolation(RandomAccessIterator first,
                        RandomAccessIterator beyond,
@@ -299,8 +299,8 @@ farin_c1_interpolation(RandomAccessIterator first,
   CGAL_precondition(norm >0);
 
   typedef typename std::iterator_traits<RandomAccessIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
-  typedef typename boost::result_of<GradFunctor(arg_type)>::type                  gradient_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
+  typedef std::invoke_result_t<GradFunctor, arg_type>                             gradient_functor_result_type;
   typedef typename value_functor_result_type::first_type                          Value_type;
 
   typedef typename Traits::FT                                                     Coord_type;

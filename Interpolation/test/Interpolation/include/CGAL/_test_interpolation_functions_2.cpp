@@ -28,7 +28,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/squared_distance_2.h>
 
-#include <boost/utility/result_of.hpp>
+#include <type_traits>
 
 #include <iostream>
 #include <cassert>
@@ -52,7 +52,7 @@ struct Extract_point
   }
 
   template <typename VH>
-  typename boost::result_of<const Construct_point_2(const Point_2&)>::type
+  std::invoke_result_t<const Construct_point_2&, const Point_2&>
   operator()(const VH& vh) const {
     return traits.construct_point_2_object()(vh->point());
   }
@@ -167,7 +167,7 @@ bool _test_sibson_c1_interpolation_sqrt(ForwardIterator first, ForwardIterator b
                                         CGAL::Field_with_sqrt_tag)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
 
   value_functor_result_type res = CGAL::sibson_c1_interpolation(first, beyond,
                                                                 norm, p, f,
@@ -180,9 +180,9 @@ template < class ForwardIterator, class ValueFunctor, class GradFunctor, class G
 bool test_interpolation_with_value(ForwardIterator first, ForwardIterator beyond,
                                    const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                                    const Point& p,
-                                   const typename boost::result_of<
-                                                    ValueFunctor(typename std::iterator_traits<ForwardIterator>::value_type::first_type)>
-                                                    ::type::first_type exact_value,
+                                   const typename std::invoke_result_t<
+                                                    ValueFunctor, typename std::iterator_traits<ForwardIterator>::value_type::first_type>
+                                                    ::first_type exact_value,
                                    ValueFunctor f,
                                    GradFunctor grad_f,
                                    const Gt& geom_traits,
@@ -190,7 +190,7 @@ bool test_interpolation_with_value(ForwardIterator first, ForwardIterator beyond
                                    const typename std::iterator_traits<ForwardIterator>::value_type::second_type& tolerance)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
-  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
+  typedef std::invoke_result_t<ValueFunctor, arg_type>                            value_functor_result_type;
   typedef typename value_functor_result_type::first_type                          Value_type;
 
   if(i == 0)
