@@ -61,6 +61,11 @@
 #define CGAL_BASIC_VIEWER_INIT_SIZE_X 500
 #define CGAL_BASIC_VIEWER_INIT_SIZE_Y 450
 
+#if defined (__GNUC__) && ! defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
 namespace CGAL {
 namespace Qt {
 //------------------------------------------------------------------------------
@@ -3027,6 +3032,10 @@ void draw_graphics_scene(const Graphics_scene& graphics_scene,
 }
 
 } // End namespace CGAL
+
+#if defined (__GNUC__) && ! defined(__clang__)
+#  pragma GCC diagnostic pop
+#endif
 
 #endif // CGAL_USE_BASIC_VIEWER
 
