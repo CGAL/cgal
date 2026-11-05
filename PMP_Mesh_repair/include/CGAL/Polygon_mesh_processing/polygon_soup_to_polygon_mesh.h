@@ -30,6 +30,9 @@
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
 #include <boost/container/flat_set.hpp>
+#include <boost/container/flat_map.hpp>
+#include <boost/container/small_vector.hpp>
+#include <unordered_map>
 
 #include <array>
 #include <set>
@@ -97,6 +100,7 @@ public:
                   const bool insert_isolated_vertices = true)
   {
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor      face_descriptor;
     typedef typename boost::property_traits<VertexPointMap>::value_type     PM_Point;
 
     typedef typename Polygon_and_Point_id_helper<V2V>::type Point_id;
@@ -136,12 +140,11 @@ public:
       const Polygon& polygon = m_polygons[i];
       const std::size_t size = polygon.size();
 
-      std::vector<vertex_descriptor> vr(size); //vertex range
-      vr.resize(size);
+      boost::container::small_vector<vertex_descriptor,4> vr(size); //vertex range
       for(std::size_t j = 0; j < size; ++j)
         vr[j] = vertices[polygon[j] ];
 
-      typename boost::graph_traits<PolygonMesh>::face_descriptor fd = CGAL::Euler::add_face(vr, pmesh);
+      face_descriptor fd = CGAL::Euler::add_face(vr, pmesh);
       CGAL_postcondition(is_valid_face_descriptor(fd, pmesh));
       *i2f++ = std::make_pair(i, fd);
     }

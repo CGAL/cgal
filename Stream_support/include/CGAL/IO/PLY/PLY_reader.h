@@ -279,6 +279,7 @@ public:
   virtual void get(std::istream& stream) const = 0;
 
   const std::vector<Type>& buffer() const { return m_buffer; }
+  std::vector<Type>& buffer() { return m_buffer; }
 };
 
 template <typename SizeType, typename IndexType>
@@ -400,7 +401,7 @@ public:
         PLY_read_typed_list<Type>*
             property = dynamic_cast<PLY_read_typed_list<Type>*>(m_properties[i]);
         CGAL_assertion(property != nullptr);
-        t = property->buffer();
+        std::swap(t,property->buffer());
         return;
       }
     t = {};
