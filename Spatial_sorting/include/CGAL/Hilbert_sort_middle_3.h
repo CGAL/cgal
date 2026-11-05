@@ -13,9 +13,11 @@
 #define CGAL_HILBERT_SORT_MIDDLE_3_H
 
 #include <CGAL/config.h>
+#include <cmath>
 #include <functional>
 #include <cstddef>
 #include <CGAL/Hilbert_sort_middle_base.h>
+#include <CGAL/Spatial_sorting/internal/Spatial_sorting_helper.h>
 
 namespace CGAL {
 
@@ -99,8 +101,80 @@ private:
 
 public:
     Hilbert_sort_middle_3 (const Kernel &k, std::ptrdiff_t limit = 1)
-        : _k(k), _limit (limit)
+      : _k(k), _limit (limit)
     {}
+
+    // Hilbert sort use double representations so two points not strictly equal will treat identically by hilbert sort
+    bool have_equal_representations(Point a, Point b) const{
+            return to_double(_k.compute_x_3_object()(a)) == to_double(_k.compute_x_3_object()(b)) &&
+                   to_double(_k.compute_y_3_object()(a)) == to_double(_k.compute_y_3_object()(b)) &&
+                   to_double(_k.compute_z_3_object()(a)) == to_double(_k.compute_z_3_object()(b));
+    }
+
+    template <int x, bool upx, bool upy, bool upz, class RandomAccessIterator>
+    void skip_empty_cells (RandomAccessIterator begin, RandomAccessIterator end,
+                           double xmin, double ymin, double zmin, double xmax, double ymax, double zmax, Bbox_3 bb) const
+    {
+      const int y = (x + 1) % 3, z = (x + 2) % 3;
+      double xmed= (xmin+xmax)/2;
+      double ymed= (ymin+ymax)/2;
+      double zmed= (zmin+zmax)/2;
+
+      const bool x_degen = (xmin == xmed || xmed == xmax);
+      const bool y_degen = (ymin == ymed || ymed == ymax);
+      const bool z_degen = (zmin == zmed || zmed == zmax);
+
+      if(x_degen && y_degen && z_degen)
+        return;
+
+      const bool x_lower = (x==0) ? xmed<=bb.xmin() : ((x==1) ? xmed<=bb.ymin() : xmed<=bb.zmin());
+      const bool x_upper = (x==0) ? xmed>=bb.xmax() : ((x==1) ? xmed>=bb.ymax() : xmed>=bb.zmax());
+      const bool y_lower = (x==0) ? ymed<=bb.ymin() : ((x==1) ? ymed<=bb.zmin() : ymed<=bb.xmin());
+      const bool y_upper = (x==0) ? ymed>=bb.ymax() : ((x==1) ? ymed>=bb.zmax() : ymed>=bb.xmax());
+      const bool z_lower = (x==0) ? zmed<=bb.zmin() : ((x==1) ? zmed<=bb.xmin() : zmed<=bb.ymin());
+      const bool z_upper = (x==0) ? zmed>=bb.zmax() : ((x==1) ? zmed>=bb.xmax() : zmed>=bb.ymax());
+
+      if( (!x_degen && !x_lower && !x_upper) || (!y_degen && !y_lower && !y_upper) || (!z_degen && !z_lower && !z_upper) ){
+        // Not contain in one quarter
+        sort<x, upx, upy, upz> (begin, end, xmin, ymin, zmin, xmax, ymax, zmax);
+        return;
+      }
+
+      if(x_upper != upx)
+      {
+        if(y_upper != upy)
+        {
+          if(z_upper != upz)
+            skip_empty_cells<z, upz, upx, upy> (begin, end, zmin, xmin, ymin, zmed, xmed, ymed, bb);
+          else
+            skip_empty_cells<y, upy, upz, upx> (begin, end, ymin, zmed, xmin, ymed, zmax, xmed, bb);
+        }
+        else
+        {
+          if(z_upper != upz)
+            skip_empty_cells<x, upx, !upy, !upz> (begin, end, xmin, ymax, zmed, xmed, ymed, zmin, bb);
+          else
+            skip_empty_cells<y, upy, upz, upx> (begin, end, ymed, zmed, xmin, ymax, zmax, xmed, bb);
+        }
+      }
+      else
+      {
+        if(y_upper != upy)
+        {
+          if(z_upper != upz)
+            skip_empty_cells<z, !upz, !upx, upy> (begin, end, zmed, xmax, ymin, zmin, xmed, ymed, bb);
+          else
+            skip_empty_cells<y, !upy, upz, !upx> (begin, end, ymed, zmed, xmax, ymin, zmax, xmed, bb);
+        }
+        else
+        {
+          if(z_upper != upz)
+            skip_empty_cells<x, upx, !upy, !upz> (begin, end, xmed, ymax, zmed, xmax, ymed, zmin, bb);
+          else
+            skip_empty_cells<y, !upy, upz, !upx> (begin, end, ymax, zmed, xmax, ymed, zmax, xmed, bb);
+        }
+      }
+    }
 
     template <int x, bool upx, bool upy, bool upz, class RandomAccessIterator>
       void sort (RandomAccessIterator begin, RandomAccessIterator end,
@@ -132,52 +206,46 @@ public:
         RandomAccessIterator m7 =
           internal::fixed_hilbert_split (m6, m8, Cmp< z, !upz> (zmed,_k));
 
+        bool all_contained_in_one_corner = true;
+        if(m1 != m0 && m1 != m8) all_contained_in_one_corner = false;
+        if(m2 != m0 && m2 != m8) all_contained_in_one_corner = false;
+        if(m3 != m0 && m3 != m8) all_contained_in_one_corner = false;
+        if(m4 != m0 && m4 != m8) all_contained_in_one_corner = false;
+        if(m5 != m0 && m5 != m8) all_contained_in_one_corner = false;
+        if(m6 != m0 && m6 != m8) all_contained_in_one_corner = false;
+        if(m7 != m0 && m7 != m8) all_contained_in_one_corner = false;
 
-        if (m1!=m8)
+        if(all_contained_in_one_corner){
+          // If all elements are equal, we can return.
+          bool all_equal = true;
+          for(auto it=begin; it!=end-1; ++it)
+            if(!have_equal_representations(*it, *(it+1))){
+              all_equal = false;
+              break;
+            }
+          if(all_equal) return;
+          Bbox_3 bb=bbox_3(begin, end, Spatial_sorting::internal::Kernel_wrapper_3<Kernel>(_k));
+          skip_empty_cells<x, upx, upy, upz> (begin, end, xmin, ymin, zmin, xmax, ymax, zmax, bb);
+        }
+        else
+        {
           sort<z, upz, upx, upy> (m0, m1, zmin, xmin, ymin, zmed, xmed, ymed);
-        if (m1!=m0 || m2!=m8)
           sort<y, upy, upz, upx> (m1, m2, ymin, zmed, xmin, ymed, zmax, xmed);
-        if (m2!=m0 || m3!=m8)
           sort<y, upy, upz, upx> (m2, m3, ymed, zmed, xmin, ymax, zmax, xmed);
-        if (m3!=m0 || m4!=m8)
           sort<x, upx,!upy,!upz> (m3, m4, xmin, ymax, zmed, xmed, ymed, zmin);
-        if (m4!=m0 || m5!=m8)
           sort<x, upx,!upy,!upz> (m4, m5, xmed, ymax, zmed, xmax, ymed, zmin);
-        if (m5!=m0 || m6!=m8)
           sort<y,!upy, upz,!upx> (m5, m6, ymax, zmed, xmax, ymed, zmax, xmed);
-        if (m6!=m0 || m7!=m8)
           sort<y,!upy, upz,!upx> (m6, m7, ymed, zmed, xmax, ymin, zmax, xmed);
-        if (m7!=m0)
           sort<z,!upz,!upx, upy> (m7, m8, zmed, xmax, ymin, zmin, xmed, ymed);
+        }
     }
 
     template <class RandomAccessIterator>
     void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
     {
       if (begin == end) return;
-
-      double xmin=to_double(_k.compute_x_3_object()(*begin)),
-             ymin=to_double(_k.compute_y_3_object()(*begin)),
-             zmin=to_double(_k.compute_z_3_object()(*begin)),
-               xmax=xmin,
-             ymax=ymin,
-             zmax=zmin;
-      for(RandomAccessIterator it=begin+1; it<end; ++it){
-        if ( to_double(_k.compute_x_3_object()(*it)) < xmin)
-          xmin = to_double(_k.compute_x_3_object()(*it));
-        if ( to_double(_k.compute_y_3_object()(*it)) < ymin)
-          ymin = to_double(_k.compute_y_3_object()(*it));
-        if ( to_double(_k.compute_z_3_object()(*it)) < zmin)
-          zmin = to_double(_k.compute_z_3_object()(*it));
-        if ( to_double(_k.compute_x_3_object()(*it)) > xmax)
-          xmax = to_double(_k.compute_x_3_object()(*it));
-        if ( to_double(_k.compute_y_3_object()(*it)) > ymax)
-          ymax = to_double(_k.compute_y_3_object()(*it));
-        if ( to_double(_k.compute_z_3_object()(*it)) > zmax)
-          zmax = to_double(_k.compute_z_3_object()(*it));
-      }
-
-      sort <0, false, false, false> (begin, end, xmin,ymin,zmin,xmax,ymax,zmax);
+      Bbox_3 bb = bbox_3(begin, end, Spatial_sorting::internal::Kernel_wrapper_3<Kernel>(_k));
+      sort <0, false, false, false> (begin, end, bb.xmin(),bb.ymin(),bb.zmin(),bb.xmax(),bb.ymax(),bb.zmax());
     }
 };
 
