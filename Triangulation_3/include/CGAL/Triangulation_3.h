@@ -1948,6 +1948,12 @@ public:
     return Tds::vertices(c);
   }
 
+  /// Edges around a facet
+  static std::array<Edge, 3> edges(const Facet& f)
+  {
+    return Tds::edges(f);
+  }
+
   // cells around an edge
   Cell_circulator incident_cells(const Edge& e) const
   {
