@@ -198,13 +198,13 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   # detect that the test has already been created.
   add_custom_target("compilation_of__demo_framework")
   cgal_add_compilation_test(demo_framework)
-  if(TEST "compilation of  demo_framework")
-    set_property(TEST "compilation of  demo_framework"
+  if(TEST "${compilation_of__demo_framework}")
+    set_property(TEST "${compilation_of__demo_framework}"
       APPEND PROPERTY LABELS "CGAL_build_system" "Installation" "${PROJECT_NAME}")
-    set_property(TEST "compilation of  demo_framework"
+    set_property(TEST "${compilation_of__demo_framework}"
       APPEND PROPERTY FIXTURES_SETUP "demo_framework_SetupFixture")
-    set_property(TEST "compilation of  demo_framework"
-      APPEND PROPERTY DEPENDS "check build system" "compilation of  CGAL_Qt6_moc_and_resources")
+    set_property(TEST "${compilation_of__demo_framework}"
+      APPEND PROPERTY DEPENDS "check build system" "${compilation_of__CGAL_Qt6_moc_and_resources}")
   endif()
 
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,

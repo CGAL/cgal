@@ -3,6 +3,9 @@ project(test_configuration)
 find_package(CGAL)
 add_definitions(-DQT_NO_KEYWORDS)
 
+message(NOTICE "Found CGAL version: ${CGAL_VERSION}")
+message(NOTICE "CGAL_DIR is set to: ${CGAL_DIR}")
+
 get_filename_component(CGAL_DIR_PATH "${CGAL_DIR}/CMakeConfig.cmake" DIRECTORY)
 get_filename_component(CGAL_GIVEN_DIR_PATH "${CGAL_GIVEN_DIR}/CMakeConfig.cmake" DIRECTORY)
 
@@ -11,4 +14,5 @@ if(NOT ${CGAL_DIR_PATH} STREQUAL ${CGAL_GIVEN_DIR_PATH})
   message( FATAL_ERROR "The CGAL_DIR is wrong !")
 endif()
 add_executable(test_configuration @CMAKE_CURRENT_SOURCE_DIR@/test_configuration.cpp)
+CGAL_add_test(test_configuration)
 target_link_libraries(test_configuration PRIVATE CGAL::CGAL)
