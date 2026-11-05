@@ -74,6 +74,8 @@ Release date: December 2026
 - The corefinement based operations (including Boolean operations) has been optimized to better
   handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
   in those cases.
+- `corefine()` and its variants now have a named parameter `concurrency_tag`, specifying whether the task should be performed using a single or multiple threads.
+- The running time of `corefine()`, `autorefine()` and their variants has been improved.
 - Added new multithreading compatible functions operating directly on triangle soups, enabling the handling of non-manifold input and output volumes:
   `CGAL::Polygon_mesh_processing::compute_union_of_triangle_soups()`, `CGAL::Polygon_mesh_processing::compute_intersection_of_triangle_soups()`, and
   `CGAL::Polygon_mesh_processing::compute_difference_of_triangle_soups()`.
