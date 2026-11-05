@@ -24,6 +24,7 @@
 #include <math.h>
 #include <cmath>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 #ifdef CGAL_USE_GMPXX
@@ -351,6 +352,7 @@ struct Mpzf {
       if(size!=0) mpn_copyi(data(),x.data(),std::abs(size));
     }
     x.size = 0;
+    x.exp = 0;
   }
   Mpzf& operator=(Mpzf&& x)noexcept{
     if (this == &x) return *this; // is this needed?
@@ -374,6 +376,7 @@ struct Mpzf {
       if(size!=0) mpn_copyi(data(),x.data(),std::abs(size));
     }
     x.size = 0;
+    x.exp = 0;
     return *this;
   }
 #else
@@ -432,27 +435,22 @@ struct Mpzf {
   Mpzf(double d){
     init();
     using std::uint64_t;
-    union {
-#ifdef CGAL_LITTLE_ENDIAN
-      struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s;
-#else /* CGAL_BIG_ENDIAN */
-      //WARNING: untested!
-      struct { uint64_t sig:1; uint64_t exp:11; uint64_t man:52; } s;
-#endif
-      double d;
-    } u;
-    u.d = d;
+    static_assert(sizeof(double) == sizeof(uint64_t));
+    uint64_t bits;
+    // Assumes same endianness for integers and floats
+    std::memcpy(&bits, &d, sizeof(bits));
+    const uint64_t man = bits & ((uint64_t(1) << 52) - 1);
     uint64_t m;
-    uint64_t dexp = u.s.exp;
+    uint64_t dexp = (bits >> 52) & 0x7ff;
     CGAL_assertion_msg(dexp != 2047, "Creating an Mpzf from infinity or NaN.");
     if (dexp == 0) {
       if (d == 0) { size=0; exp=0; return; }
       else { // denormal number
-        m = u.s.man;
+        m = man;
         ++dexp;
       }
     } else {
-      m = (1LL<<52) | u.s.man;
+      m = (uint64_t(1) << 52) | man;
     }
     int e1 = (int)dexp+13;
     // FIXME: make it more general! But not slower...
@@ -496,7 +494,7 @@ struct Mpzf {
       }
     }
 #endif
-    if(u.s.sig) size=-size;
+    if(bits >> 63) size=-size;
     //CGAL_assertion(to_double()==IA_force_to_double(d));
   }
 
@@ -509,10 +507,17 @@ struct Mpzf {
     init_from_mpz_t(z.mpz());
   }
   void init_from_mpz_t(mpz_t const z){
+    if (mpz_sgn(z) == 0) {
+      init();
+      size=0;
+      exp=0;
+      return;
+    }
     exp=Exponent_type(mpz_scan1(z,0)/GMP_NUMB_BITS);
     size=Size_type(mpz_size(z)-exp);
     init(size);
     mpn_copyi(data(),z->_mp_d+exp,size);
+    if (mpz_sgn(z) < 0) size=-size;
   }
 
 #if 0
@@ -951,30 +956,30 @@ struct Mpzf {
     int e = 64 * (asize - 1 + exp);
     mp_limb_t x = data()[asize-1];
     int lz = Mpzf_impl::clz(x);
+    bool exact;
     if (lz <= 11) {
-      if (lz != 11) {
-        e += (11 - lz);
-        x >>= (11 - lz);
-      }
-      dl = double(x);
-      dh = double(x + 1);
-      // Check for the few cases where dh=x works (asize==1 and the evicted
-      // bits from x were 0s)
+      // x has at least 53 significant bits, drop the s lowest ones.
+      int s = 11 - lz; // 0..11
+      mp_limb_t old_x = x;
+      x >>= s; // s == 0 is fine
+      // The lower limbs are non-zero as soon as asize > 1.
+      exact = (asize == 1) && (x << s) == old_x;
+      e += s;
     }
     else if (asize == 1) {
-      dl = dh = double(x); // conversion is exact
+      exact = true; // x has less than 53 significant bits
     }
     else {
+      int s = lz - 11; // 1..52
       mp_limb_t y = data()[asize-2];
-      e -= (lz - 11);
-      x <<= (lz - 11);
-      y >>= (75 - lz);
-      x |= y;
-      dl = double(x);
-      dh = double(x + 1);
-      // Check for the few cases where dh=x works (asize==2 and the evicted
-      // bits from y were 0s)
+      // The evicted bits are the 64-s lowest bits of y, and they are the
+      // only non-zero ones if asize==2 (data()[0] != 0 and is y).
+      exact = (asize == 2) && (y << s) == 0;
+      x = (x << s) | (y >> (64 - s)); // 12 <= 64-s <= 63: no UB
+      e -= s;
     }
+    dl = double(x);
+    dh = exact ? dl : double(x + 1); // x+1 <= 2^53 is exact
     typedef Interval_nt<> IA;
     IA res (dl, dh);
     res = ldexp (res, e);
