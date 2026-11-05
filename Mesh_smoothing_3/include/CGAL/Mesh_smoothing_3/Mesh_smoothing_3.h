@@ -556,6 +556,22 @@ private:
 
 using cgal_types::C3t3_wrapper;
 
+namespace internal {
+
+// Holds the `C3t3_wrapper` used by `C3t3_smoother`. It is a separate base
+// class, listed before `Mesh_smoother`, so that the wrapper is fully
+// constructed before `Mesh_smoother` binds references to it
+// (base-from-member idiom).
+template<typename C3t3>
+struct C3t3_wrapper_holder {
+    C3t3_wrapper<C3t3> mesh_wrapper;
+
+    explicit C3t3_wrapper_holder(C3t3 &c3t3)
+    : mesh_wrapper(c3t3)
+    {}
+};
+
+} // namespace internal
 
 /*!
 * \ingroup pkgMeshSmoothing3Classes
@@ -575,14 +591,17 @@ template<
     typename C3t3,
     typename ConcurrencyTag = Mesh_smoothing_3::Parallel_if_available_tag
 >
-class C3t3_smoother : public Mesh_smoother <C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, ConcurrencyTag> {
+class C3t3_smoother
+  : private internal::C3t3_wrapper_holder<C3t3>
+  , public Mesh_smoother <C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, ConcurrencyTag> {
 private:
-    C3t3_wrapper<C3t3> mesh_wrapper;
+    using Holder = internal::C3t3_wrapper_holder<C3t3>;
+    using Base = Mesh_smoother<C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, ConcurrencyTag>;
 
 public:
     C3t3_smoother(C3t3 &c3t3)
-    : Mesh_smoother<C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, ConcurrencyTag>(mesh_wrapper, mesh_wrapper, mesh_wrapper)
-    , mesh_wrapper(c3t3)
+    : Holder(c3t3)
+    , Base(this->mesh_wrapper, this->mesh_wrapper, this->mesh_wrapper)
     {}
 };
 
