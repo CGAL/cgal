@@ -59,6 +59,19 @@ int my_nearbyint(const T& d)
 
 template < typename T >
 inline
+void MP_Float::construct_from_builtin_integral_type(T i)
+{
+    while(i != 0) {
+      limb high, low;
+      split(static_cast<limb2>(i % INTERN_MP_FLOAT::base), high, low);
+      v.push_back(low);
+      i = i / INTERN_MP_FLOAT::base + high;
+    }
+    canonicalize();
+}
+
+template < typename T >
+inline
 void MP_Float::construct_from_builtin_fp_type(T d)
 {
     if (d == 0)
