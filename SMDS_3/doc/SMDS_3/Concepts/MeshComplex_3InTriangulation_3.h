@@ -244,7 +244,7 @@ size_type number_of_cells();
 /*!
 Returns the number of cells that belong to the subdomain of the embedded complex with index `index`.
 */
-size_type number_of_cells(Subdomain_index index);
+size_type number_of_cells_in_subdomain(Subdomain_index index);
 
 /*!
 Returns the number of facets that are surface facets, i. e. belong to some surface patch
@@ -256,7 +256,7 @@ size_type number_of_facets();
 Returns the number of facets that belong to the surface patch
 of the embedded complex with index `index`.
 */
-size_type number_of_facets(Surface_patch_index index);
+size_type number_of_facets_in_patch(Surface_patch_index index);
 
 /*!
 Returns `true` iff the cell `c` belongs to the 3D complex.

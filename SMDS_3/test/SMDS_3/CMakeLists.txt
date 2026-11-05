@@ -34,3 +34,5 @@ if(TARGET CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
+
+create_single_source_cgal_program( "test_complex_index_counts.cpp")
