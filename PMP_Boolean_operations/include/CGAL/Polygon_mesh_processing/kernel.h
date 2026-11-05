@@ -85,7 +85,7 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
   using Plane_3 = typename GT::Plane_3;
   using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
-  if (vertices(pm).size() <= 4)
+  if (faces(pm).size() <= 4)
     return centroid(boost::make_transform_iterator(vertices(pm).begin(), gpf),
                     boost::make_transform_iterator(vertices(pm).end(), gpf));
 
@@ -100,14 +100,19 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
     }
   }
 
+  const Point_3& p0 = gpf(v0);
+
+  if(v1 == vertex_descriptor())
+    return p0;
+
   CGAL_assertion(v1 != vertex_descriptor());
   CGAL_assertion(v1 != v0);
 
-  const Point_3& p0 = gpf(v0);
   const Point_3& p1 = gpf(v1);
   FT max_depth(0);
   vertex_descriptor v2;
   for(vertex_descriptor v: vertices(pm)){
+    if(v == v0 || v == v1) continue;
     const Point_3& p2 = gpf(v);
 #ifdef CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DISTANCE
     FT dist = (CGAL::min)(squared_distance(p0, p2), squared_distance(p1, p2));
@@ -116,7 +121,6 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
       max_depth = dist;
     }
 #else // CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DEPTH
-    if(v == v0 || v == v1) continue;
     Point_3 c = centroid(p0, p1, p2);
     FT centroid_depth = (CGAL::max)( squared_distance(c, Line_3(p0, p1)),
                           (CGAL::max)( squared_distance(c, Line_3(p0, p2)),
@@ -128,7 +132,10 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
 #endif
   }
 
-  CGAL_assertion(v2 != vertex_descriptor());
+
+  if(v2 == vertex_descriptor())
+    return midpoint(p0, p1);
+
   CGAL_assertion(v2 != v0);
   CGAL_assertion(v2 != v1);
 
@@ -137,6 +144,7 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
   max_depth = 0;
   vertex_descriptor v3;
   for(vertex_descriptor v: vertices(pm)){
+    if(v == v0 || v == v1 || v == v2) continue;
     const Point_3& p3 = gpf(v);
 #ifdef CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DISTANCE
     FT dist = (CGAL::min)( squared_distance(p0, p3),
@@ -147,7 +155,6 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
       max_depth = dist;
     }
 #else // CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DEPTH
-    if(v == v0 || v == v1 || v == v2) continue;
     Point_3 c = centroid(p0, p1, p2, p3);
     FT centroid_depth = (CGAL::max)(
                           (CGAL::max)( squared_distance(c, Plane_3(p0, p1, p2)),
@@ -160,8 +167,10 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
     }
 #endif
   }
-  CGAL_assertion(v3 != vertex_descriptor());
-  return centroid(p0, p1, p2, gpf(v3));;
+  if(v3 != vertex_descriptor())
+    return centroid(p0, p1, p2, gpf(v3));
+  else
+    return centroid(p0, p1, p2);
 #endif
 }
 
