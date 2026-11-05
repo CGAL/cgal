@@ -21,6 +21,7 @@ create_single_source_cgal_program("polyhedral_envelope.cpp" )
 create_single_source_cgal_program("polyhedral_envelope_of_triangle_soup.cpp" )
 create_single_source_cgal_program("polyhedral_envelope_mesh_containment.cpp" )
 create_single_source_cgal_program("sample_example.cpp" )
+create_single_source_cgal_program("poisson_sampling_sm_example.cpp" )
 create_single_source_cgal_program("self_intersections_example.cpp" )
 create_single_source_cgal_program("volume_connected_components.cpp")
 
