@@ -120,7 +120,24 @@ struct has_is_in_x_range<Gt,
 template <typename Gt>
 inline constexpr bool has_is_in_x_range_v = has_is_in_x_range<Gt>::value;
 
-// Detect whether Gt is or derives from Arr_geodesic_arc_on_sphere_traits_2<*, *, *>
+// Obtain the last (innermost) traits in a chain of traits decorators, e.g.,
+// `Arr_tracing_traits_2` and `Arr_counting_traits_2`. A decorator exposes the
+// traits it decorates as the nested type `Decorated_traits_2`. If Gt is not a
+// decorator, the result is Gt itself.
+template <typename Gt, typename = void>
+struct undecorated_traits { using type = Gt; };
+
+template <typename Gt>
+struct undecorated_traits<Gt, std::void_t<typename Gt::Decorated_traits_2>> :
+    undecorated_traits<typename Gt::Decorated_traits_2>
+{};
+
+template <typename Gt>
+using undecorated_traits_t = typename undecorated_traits<Gt>::type;
+
+// Detect whether the last traits in the chain of decorators of Gt (or Gt itself
+// if it is not a decorator) is or derives from
+// Arr_geodesic_arc_on_sphere_traits_2<*, *, *>
 template <typename Gt>
 struct is_or_derived_from_agas {
 private:
@@ -130,7 +147,7 @@ private:
   static std::false_type test(...);
 
 public:
-  static constexpr bool value = decltype(test(static_cast<const Gt*>(nullptr)))::value;
+  static constexpr bool value = decltype(test(static_cast<const undecorated_traits_t<Gt>*>(nullptr)))::value;
 };
 
 template <typename Gt>
@@ -141,15 +158,25 @@ template <typename Gt>
 inline constexpr bool is_or_derived_from_curved_surf_traits_v = is_or_derived_from_agas_v<Gt>;
 
 // Static helpers to get template arguments from a geometry traits
-template <typename Gt>
-struct tmpl_args {};
-
 template <typename Kernel_, int AtanX, int AtanY>
-struct tmpl_args<Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY>> {
+struct Agas_tmpl_args {
   using Kernel = Kernel_;
   static constexpr int atan_x = AtanX;
   static constexpr int atan_y = AtanY;
 };
+
+struct No_tmpl_args {};
+
+template <typename Kernel_, int AtanX, int AtanY>
+Agas_tmpl_args<Kernel_, AtanX, AtanY> agas_tmpl_args(const Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY>*);
+
+No_tmpl_args agas_tmpl_args(...);
+
+// Obtain the template arguments of the last traits in the chain of decorators
+// of Gt (or of Gt itself if it is not a decorator), provided that it is or
+// derives from Arr_geodesic_arc_on_sphere_traits_2<*, *, *>.
+template <typename Gt>
+struct tmpl_args : decltype(agas_tmpl_args(static_cast<const undecorated_traits_t<Gt>*>(nullptr))) {};
 
 /*! \brief Approximation data types
  *
@@ -192,7 +219,7 @@ public:
  *
  * \tparam Gt Geometry traits
  */
-template <typename Gt>
+template <typename Gt, typename = void>
 class Construct_gt_point_2 {
   using Approx_traits = Arr_approximate_traits<Gt>;
   using Approx_point = typename Approx_traits::Approx_point;
@@ -202,17 +229,18 @@ public:
   Gt_point operator()(const Approx_point& pt) const { return Gt_point(pt.x(), pt.y()); }
 };
 
-// Specialization for Arr_geodesic_arc_on_sphere_traits_2
-template <typename Kernel, int AtanX, int AtanY>
-class Construct_gt_point_2<Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>> {
-  using Geom_traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>;
-  using Approx_traits = Arr_approximate_traits<Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>>;
+// Specialization for traits that are, or whose last traits in the chain of
+// decorators is, or derive from Arr_geodesic_arc_on_sphere_traits_2
+template <typename Gt>
+class Construct_gt_point_2<Gt, std::enable_if_t<is_or_derived_from_agas_v<Gt>>> {
+  using Geom_traits = Gt;
+  using Approx_traits = Arr_approximate_traits<Geom_traits>;
   using Approx_point = typename Approx_traits::Approx_point;
   using Gt_point = typename Geom_traits::Point_2;
 
 public:
   Gt_point operator()(const Approx_point& pt) const {
-    using Direction_3 = typename Kernel::Direction_3;
+    using Direction_3 = typename tmpl_args<Geom_traits>::Kernel::Direction_3;
     return Gt_point(Direction_3(pt.dx(), pt.dy(), pt.dz()),
                     static_cast<typename Gt_point::Location_type>(pt.location()));
   }
