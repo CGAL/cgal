@@ -25,6 +25,7 @@
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/number_utils.h> // for to_double
 
@@ -638,7 +639,112 @@ protected:
 
 }; // end class Facet_on_same_surface_criterion
 
+template<typename C3T3, typename Visitor_>
+class Facet_normals_variation_criterion
+: public Mesh_3::Abstract_criterion<C3T3, Visitor_>
+{
+  typedef typename C3T3::Triangulation Tr;
+  typedef typename Tr::Geom_traits::FT FT;
+  typedef typename Tr::Geom_traits::Vector_3 Vector_3;
 
+  typedef typename Tr::Cell_handle Cell_handle;
+  typedef typename Tr::Facet Facet;
+  typedef typename Tr::Edge Edge;
+  typedef typename Tr::Triangle Triangle;
+
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
+  typedef typename Base::Quality Quality;
+  typedef typename Base::Is_bad Is_bad;
+
+  typedef Facet_normals_variation_criterion<C3T3, Visitor_> Self;
+
+public:
+  /// Constructor
+  Facet_normals_variation_criterion(const FT& bound_degrees)
+  {
+    const FT bound_rad = bound_degrees * CGAL_PI / 180.0;
+
+    // theoretical bound for the squared Euclidean distance between two unit normals
+    // is 2 * sin(theta / 2)
+    const double sin_half = std::sin(CGAL::to_double(bound_rad) * 0.5);
+    sq_distance_theoretical_bound_ = CGAL::square( FT(2. * sin_half) );
+  }
+
+  /// Destructor
+  virtual ~Facet_normals_variation_criterion() {}
+
+protected:
+  virtual void do_accept(Visitor_& v) const { v.visit(*this); }
+
+  virtual Self* do_clone() const
+  {
+    // Call copy ctor on this
+    return new Self(*this);
+  }
+
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
+  {
+    const Tr& tr = c3t3.triangulation();
+    auto scale = tr.geom_traits().construct_scaled_vector_3_object();
+    auto normal = tr.geom_traits().construct_normal_3_object();
+    auto diff_vec = tr.geom_traits().construct_difference_of_vectors_3_object();
+
+    auto unit_normal = [&](const Facet& f) -> Vector_3
+    {
+      auto normal = tr.geom_traits().construct_normal_3_object();
+      const auto& t = tr.triangle(f);
+
+      Vector_3 n = normal(t[0], t[1], t[2]);
+      return scale(n, FT(1) / CGAL::sqrt(n.squared_length()));
+    };
+
+    // compute n1 = unit normal to f
+    const Vector_3 n1 = unit_normal(f);
+
+    // for each of the 3 neighboring facets, compute unit normal n2 and compare with n1
+    for(const Edge& e : tr.edges(f))
+    {
+      if(c3t3.is_in_complex(e))
+        continue;
+
+      const auto& [vs, vt] = tr.vertices(e);
+      Cell_handle cell = e.first;
+      do
+      {
+        unsigned int next_index
+          = CGAL::Triangulation_utils_3::next_around_edge(cell->index(vs), cell->index(vt));
+
+        if(c3t3.is_in_complex(cell, next_index))
+        {
+          Facet f2(cell, next_index);
+          Vector_3 n2 = unit_normal(f2);
+
+          // compute squared distance ||n1 - n2||^2
+          const Vector_3 diff = diff_vec(n1, n2);
+          const double sqd = diff.squared_length();
+
+          if(sqd > sq_distance_theoretical_bound_)
+          {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+            std::cerr << "Bad facet (normal variation criterion: "
+              << sqd << " > " << sq_distance_theoretical_bound_ << ")" << std::endl;
+#endif
+            return Is_bad(Quality(sqd));
+          }
+        }
+
+        cell = cell->neighbor(next_index);
+      }
+      while(cell != e.first);
+    }
+
+    return Is_bad();
+  }
+
+private:
+  FT sq_distance_theoretical_bound_;
+
+}; // end class Facet_normals_variation_criterion
 
 template <typename C3T3>
 class Facet_criterion_visitor
