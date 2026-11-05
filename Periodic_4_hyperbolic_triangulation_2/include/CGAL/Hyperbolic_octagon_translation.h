@@ -150,7 +150,7 @@ public:
 
   std::pair<FT,FT> alpha() const
   {
-    const Matrix& _m = gmap(_wrd.to_string());
+    const Matrix& _m = gmap(to_string());
     ECplx _a = _m.alpha();
     FT ax = _a.real();
     FT ay = _a.imag();
@@ -160,8 +160,7 @@ public:
 
   std::pair<FT,FT> beta() const
   {
-    const std::string ws = _wrd.to_string();
-    const Matrix& _m = gmap(ws);
+    const Matrix& _m = gmap(to_string());
     ECplx _b = _m.beta();
     FT bx = _b.real();
     FT by = _b.imag();
