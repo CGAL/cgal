@@ -130,7 +130,7 @@ namespace CGAL{
     vtkCellArray* const vtk_cells = vtkCellArray::New();
 
     vtk_points->Allocate(num_vertices(pmesh));
-    vtk_cells->Allocate(num_faces(pmesh));
+    vtk_cells->AllocateEstimate(num_faces(pmesh), 3);
 
     std::map<vertex_descriptor, vtkIdType> Vids;
     vtkIdType inum = 0;
