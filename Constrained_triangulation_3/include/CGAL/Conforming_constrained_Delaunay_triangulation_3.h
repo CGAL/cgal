@@ -2734,8 +2734,9 @@ protected:
     }
     mutable_cdt_2.delete_vertex(vh_2d);
     if(debug) {
-      dump_face(face_id, std::string("dump_face_") + std::to_string(face_id) + "_after_removing_Steiner_vertex_" +
-                             std::to_string(vh_2d->time_stamp()) + ".off");
+      std::stringstream ss;
+      ss << "dump_face_" << face_id << "_after_removing_Steiner_vertex_" << with_offset(v) << ".off";
+      dump_face(face_id, ss.str());
 
       if(!cdt_2.tds().is_valid(true, 3)) {
         std::cerr << "ERROR: CDT_2 is not valid after removing Steiner vertex " << with_point_and_info(v)
@@ -2870,9 +2871,15 @@ protected:
         } else {
           if(dbg().move_Steiner_vertices_level() > 1) {
             auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
-            std::cerr << "none (the component is either degenerate or open) ABORT\n";
             CGAL::Surface_mesh<Point_3> kernel;
             CGAL::Polygon_mesh_processing::kernel(component_mesh, kernel, CGAL::parameters::random_seed(0));
+            kernel.collect_garbage();
+            if(kernel.is_empty()) {
+              std::cerr << "none (empty kernel)\n";
+            } else {
+              std::cerr << "none (non-empty kernel (" << num_vertices(kernel) << " vertices, " << num_faces(kernel)
+                        << " faces), but cannot compute a point inside it)\n";
+            }
             std::ostringstream ss;
             if constexpr (number_type_is_exact) {
               auto vpmap = get(vertex_point, kernel);
@@ -2914,21 +2921,33 @@ protected:
                      "vertex to the volume\n";
         auto vertex_link_mesh =
             construct_star_component_mesh(0, star_components, map_from_incident_constraint_face_id_to_new_triangles);
-        std::stringstream ss;
-        ss << "dump_vertex_" << with_offset(v) << "_link.ply";
-        CGAL::IO::write_PLY(ss.str(), vertex_link_mesh, CGAL::parameters::stream_precision(17));
-        auto vertex_incident_facets = construct_star_component_mesh(
-            SIZE_MAX, star_components, map_from_incident_constraint_face_id_to_new_triangles);
-        ss.str("");
-        ss << "dump_vertex_" << with_offset(v) << "_incident_facets.ply";
-        CGAL::IO::write_PLY(ss.str(), vertex_incident_facets, CGAL::parameters::stream_precision(17));
         Surface_mesh<Point_3> vertex_link_mesh_kernel;
-        CGAL::Polygon_mesh_processing::kernel(vertex_link_mesh, vertex_link_mesh_kernel, CGAL::parameters::use_bounding_box_filtering(true));
-        ss.str("");
-        ss << "dump_vertex_" << with_offset(v) << "_link_kernel.ply";
-        CGAL::IO::write_PLY(ss.str(), vertex_link_mesh_kernel, CGAL::parameters::stream_precision(17));
+        CGAL::Polygon_mesh_processing::kernel(vertex_link_mesh, vertex_link_mesh_kernel);
+        if(dbg().move_Steiner_vertices_level() > 1) {
+          std::stringstream ss;
+          ss << "dump_vertex_" << with_offset(v) << "_link.ply";
+          CGAL::IO::write_PLY(ss.str(), vertex_link_mesh, CGAL::parameters::stream_precision(17));
+          auto vertex_incident_facets = construct_star_component_mesh(
+              SIZE_MAX, star_components, map_from_incident_constraint_face_id_to_new_triangles);
+          ss.str("");
+          ss << "dump_vertex_" << with_offset(v) << "_incident_facets.ply";
+          CGAL::IO::write_PLY(ss.str(), vertex_incident_facets, CGAL::parameters::stream_precision(17));
+          ss.str("");
+          ss << "dump_vertex_" << with_offset(v) << "_link_kernel.ply";
+          CGAL::IO::write_PLY(ss.str(), vertex_link_mesh_kernel, CGAL::parameters::stream_precision(17));
+          ss.str("");
+          ss << "dump_vertex_" << with_offset(v) << ".xyz";
+          std::ofstream ofs(ss.str());
+          ofs.precision(17);
+          const auto& p = tr().point(v);
+          ofs << to_double(p.x()) << " " << to_double(p.y()) << " " << to_double(p.z()) << "\n";
+          ofs.close();
+        }
+        vertex_link_mesh_kernel.collect_garbage();
         if(vertex_link_mesh_kernel.is_empty()) {
           std::cerr << "Kernel of the star is empty\n";
+        } else if(num_faces(vertex_link_mesh_kernel) == 0) {
+          std::cerr << "Kernel of the star has no faces\n";
         } else {
           // triangulate vertex_link_mesh_kernel
           if(CGAL::Polygon_mesh_processing::triangulate_faces(vertex_link_mesh_kernel)) {
@@ -2994,7 +3013,7 @@ protected:
           if(this->debug().move_Steiner_vertices_level() > 2) {
             const auto& component_facets = star_components.component_facets_range(component_index+1);
             for(const auto& [cell, facet_index, facet_type] : component_facets) {
-              std::cerr << cdt_3_format("  - facet ({}) of with vertices:{}\n",
+              std::cerr << cdt_3_format("  - facet ({}) with vertices:{}\n",
                                         IO::oformat(Facet{cell, facet_index}),
                                         display_facet("      ", Facet{cell, facet_index}));
             }
@@ -3908,10 +3927,17 @@ public:
       auto non_movable_Steiner_vertices_end = steiner_vertices.begin();
       const auto n_steiner_vertices = steiner_vertices.size();
       for(auto i = 0u; i < n_steiner_vertices; ++i) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         if(!move_one_Steiner_vertex_to_the_volume(steiner_vertices[i], i, n_steiner_vertices))
         {
           std::swap(steiner_vertices[i], *non_movable_Steiner_vertices_end);
           ++non_movable_Steiner_vertices_end;
+        }
+        if(dbg().move_Steiner_vertices()) {
+          auto end_time = std::chrono::high_resolution_clock::now();
+          std::cerr << "  (Moved Steiner vertex " << i << " in "
+                    << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()
+                    << " ms)\n";
         }
       }
       if(dbg().move_Steiner_vertices_level() > 0) {

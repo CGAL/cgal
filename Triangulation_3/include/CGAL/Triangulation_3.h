@@ -1715,10 +1715,14 @@ protected:
     return Vertex_triple{m[t[0]], m[t[1]], m[t[2]]};
   }
 
-  template <class Functor, class Triple>
-  static Vertex_triple apply_functor(Functor& f, const Triple& t) {
-    const auto& [t0, t1, t2] = t;
-    return Vertex_triple{f(t0), f(t1), f(t2)};
+  template <class Functor, class Tuple, std::size_t... Is>
+  static auto apply_functor_impl(Functor f, const Tuple& t, std::index_sequence<Is...>) {
+    return std::array{f(std::get<Is>(t))...};
+  }
+
+  template <class Functor, class Tuple>
+  static auto apply_functor(Functor f, const Tuple& t) {
+    return apply_functor_impl(f, t, std::make_index_sequence<std::tuple_size_v<Tuple>>{});
   }
 
   template <class Map>
