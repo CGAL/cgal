@@ -3949,7 +3949,7 @@ public:
 
     do_remove_Steiner_vertices();
     this->options().move_Steiner_vertices_allow_negative_tets(backup_allow_negative_tets);
-    if(backup_allow_negative_tets && !steiner_vertices.empty()) {
+    if(!steiner_vertices.empty()) {
       do_remove_Steiner_vertices(); // retry removing Steiner vertices with negative tets allowed
     }
     CGAL_warning(this->debug().move_Steiner_vertices_level() == 0 || !number_type_is_exact ||
