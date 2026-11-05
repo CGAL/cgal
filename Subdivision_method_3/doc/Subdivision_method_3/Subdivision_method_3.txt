@@ -59,9 +59,9 @@ to approximate a smooth surface.
 Many refinement patterns are used in practice.
 `Subdivision_method_3` supports the four most popular
 patterns, and each of them is used by
-Catmull-Clark\cgalCite{cgal:cc-rgbss-78}, Loop\cgalCite{cloop:mthesis},
-Doo-Sabin\cgalCite{doo1978behaviour} and
-\f$ \sqrt{3}\f$ subdivision\cgalCite{cgal:k-s-00}
+Catmull-Clark (\cgalCite{cgal:cc-rgbss-78}), Loop (\cgalCite{cloop:mthesis}),
+Doo-Sabin (\cgalCite{doo1978behaviour}) and
+\f$ \sqrt{3}\f$ subdivision (\cgalCite{cgal:k-s-00})
 (left to right in the figure below). We name these patterns by their topological
 characteristics instead of the associated subdivision methods.
 PQQ indicates the <I>P</I>rimal <I>Q</I>uadtrateral <I>Q</I>uadrisection.
