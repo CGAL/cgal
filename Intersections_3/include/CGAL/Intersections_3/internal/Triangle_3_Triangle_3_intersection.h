@@ -423,6 +423,12 @@ intersection(const typename K::Triangle_3& t1,
 {
   CGAL_precondition(!t1.is_degenerate() && !t2.is_degenerate());
 
+  const auto coplanar = k.coplanar_3_object();
+  if(coplanar(t1[0], t1[1], t1[2], t2[0]) &&
+     coplanar(t1[0], t1[1], t1[2], t2[1]) &&
+     coplanar(t1[0], t1[1], t1[2], t2[2]))
+    return intersection_coplanar_triangles(t1, t2, k);
+
   typename Intersection_traits<K, typename K::Plane_3, typename K::Plane_3>::result_type
     v = internal::intersection(t1.supporting_plane(), t2.supporting_plane(), k);
 
