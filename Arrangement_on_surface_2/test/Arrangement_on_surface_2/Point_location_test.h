@@ -152,7 +152,8 @@ protected:
                          Simple_pl*,
                          Walk_pl*,
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
-  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS)
                          Lm_pl*,
                          Lm_random_pl*,
                          Lm_grid_pl*,
@@ -681,7 +682,8 @@ Point_location_test(const Geom_traits& geom_traits) :
   INIT_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
-  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS)
 
   INIT_PL_LM();
   INIT_PL_LM_RANDOM();
@@ -741,7 +743,8 @@ void Point_location_test<GeomTraits, TopolTraits>::deallocate_pl_strategies()
   DEALLOCATE_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
-  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS)
 
   DEALLOCATE_PL_LM();
   DEALLOCATE_PL_LM_RANDOM();
@@ -807,7 +810,8 @@ bool Point_location_test<GeomTraits, TopolTraits>::allocate_pl_strategies()
   ALLOCATE_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
-  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS)
 
   ALLOCATE_PL_LM();
   ALLOCATE_PL_LM_RANDOM();
@@ -839,7 +843,8 @@ bool Point_location_test<GeomTraits, TopolTraits>::construct_pl_strategies()
   CONSTRUCT_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
-  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS)
 
   MEASURE_LM_PL(timer, CONSTRUCT_PL_LM());
   MEASURE_LM_RANDOM_PL(timer, CONSTRUCT_PL_LM_RANDOM());
@@ -874,7 +879,8 @@ bool Point_location_test<GeomTraits, TopolTraits>::attach_pl_strategies()
   ATTACH_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
-  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS)
 
   MEASURE_LM_PL(timer, ATTACH_PL_LM());
   MEASURE_LM_RANDOM_PL(timer, ATTACH_PL_LM_RANDOM());
@@ -915,7 +921,8 @@ bool Point_location_test<GeomTraits, TopolTraits>::perform()
   QUERY_PL_WALK(objs[pl_index++]);
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
-  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS)
 
   QUERY_PL_LM(objs[pl_index++]);
   QUERY_PL_LM_RANDOM(objs[pl_index++]);

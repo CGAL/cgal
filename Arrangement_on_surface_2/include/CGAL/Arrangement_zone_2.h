@@ -7,9 +7,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Ron Wein          <wein@post.tau.ac.il>
-//            Efi Fogel         <efif@post.tau.ac.il>
-//            (based on old version by Eyal Flato)
+// Author(s) : Ron Wein          <wein@post.tau.ac.il>
+//             Efi Fogel         <efif@post.tau.ac.il>
+//               (based on old version by Eyal Flato)
 
 #ifndef CGAL_ARRANGEMENT_ZONE_2_H
 #define CGAL_ARRANGEMENT_ZONE_2_H
@@ -32,6 +32,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <utility>
 
 namespace CGAL {
 
@@ -324,7 +325,7 @@ private:
   /*! obtains the next intersection of m_cv with the given halfedge.
    * \param he A handle to the halfedge.
    * \param skip_first_point Should we skip the first intersection point.
-   * \param intersect_on_right_boundary Output: If an intersetion point is
+   * \param intersect_on_right_boundary Output: If an intersection point is
    *                                            computed, marks whether this
    *                                            point coincides with the right
    *                                            curve-end, which lies on the
@@ -462,7 +463,7 @@ private:
    * \param on_boundary Specifies whether the left endpoint of the curve lies
    *                    on the face boundary.
    * \pre If on_boundary is (true) then m_left_he must be valid; if it is
-   *      (false), then both m_left_v anf m_left_he must be invalid.
+   *      (false), then both m_left_v and m_left_he must be invalid.
    * \return (true) if we are done with the zone-computation process;
    *         (false) if we still have a remaining portion of m_cv to continue
    *         with.
