@@ -441,8 +441,19 @@ to a vertex on the border of two neighboring patches might be modifed at the sam
 by two threads, one would need a mutex or put constraints on all faces incident
 to boundary vertices.
 
+The first example uses the classical Lindstrom-Turk placement to collapse all edges shorter
+than a given threshold. The work can be dispatched across multiple threads, and the final mesh
+still satisfies the criterion. Load balancing depends on how the short edges are distributed
+among the parts of the mesh partition.
+
 \cgalExample{Surface_mesh_simplification/collapse_small_edges_in_parallel.cpp}
 
+The second example uses the more recently introduced Garland-Heckbert policies to reduce the
+number of edges by a given ratio. Here, the load is as well balanced as the partition is in
+terms of face count. However, the partition is more likely to introduce artifacts in the output
+triangle mesh, and the seams between parts may be visible.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_gh_edge_count_parallel.cpp}
 
 \section SimplificationDesign Design and Implementation History
 

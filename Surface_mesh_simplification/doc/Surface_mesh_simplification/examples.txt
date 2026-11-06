@@ -12,4 +12,5 @@
 \example Surface_mesh_simplification/edge_collapse_visitor_surface_mesh.cpp
 \example Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp
 \example Surface_mesh_simplification/collapse_small_edges_in_parallel.cpp
+\example Surface_mesh_simplification/edge_collapse_gh_edge_count_parallel.cpp
 */
