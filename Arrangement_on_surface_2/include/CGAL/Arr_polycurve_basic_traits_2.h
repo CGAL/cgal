@@ -698,8 +698,12 @@ public:
       if (! m_poly_traits.is_vertical_2_object()(xcv)) {
         const auto* geom_traits = m_poly_traits.subcurve_traits_2();
         if (geom_traits->is_on_y_identification_2_object()(p)) {
-          auto cmp_y = geom_traits->compare_y_on_boundary_2_object();
-          return cmp_y(p, m_poly_traits.construct_min_vertex_2_object()(xcv));
+          // The point lies on the identification curve and in the x-range of
+          // xcv; thus, an end of xcv lies on the identification curve.
+          // Compare the point with the subcurve that contains this end.
+          auto i = m_poly_traits.locate_on_identification(xcv, p);
+          CGAL_precondition(i != INVALID_INDEX);
+          return geom_traits->compare_y_at_x_2_object()(p, xcv[i]);
         }
         return compare_non_vertical(p, xcv);
       }
@@ -1049,6 +1053,13 @@ public:
      */
     bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                     bool consider_common_endpoints = true) const {
+      // The comparisons below are not applicable to curves that lie on the
+      // identification curve.
+      if constexpr (Polycurve_basic_traits_2::has_identified_x_sides) {
+        if (m_poly_traits.is_on_identification(xcv1) || m_poly_traits.is_on_identification(xcv2))
+          return m_poly_traits.do_intersect_on_identification(xcv1, xcv2, consider_common_endpoints);
+      }
+
       /* Testing collisions between polycurves (while counting common
        * endpoints as intersections) is relatively simple.  Testing collision
        * between polycurves while ignoring common endpoints is more challenging.
@@ -2464,6 +2475,256 @@ public:
   ///@}
 
 protected:
+  /// \name Utilities for curves and points that lie on the identification
+  /// curve. The traits of a surface whose parameter space is identified on
+  /// the left and right sides (e.g., the sphere) forbids the application of
+  /// several functors to curves and points that lie on the identification
+  /// curve, e.g., Parameter_space_in_x_2, Compare_x_2, Compare_xy_2,
+  /// Compare_x_on_boundary_2, and Compare_x_near_boundary_2. The arrangement
+  /// code adheres to this rule, and so must the polycurve traits when it
+  /// applies the functors of the subcurve traits. Observe that an x-monotone
+  /// polycurve has a subcurve that lies on the identification curve iff all
+  /// its subcurves do, as a non-vertical x-monotone polycurve has no vertical
+  /// subcurves and a vertical polycurve lies on a single meridian.
+  //@{
+
+  //! Indicates whether the left and right sides are identified.
+  static constexpr bool has_identified_x_sides = std::is_same_v<Left_side_category, Arr_identified_side_tag>;
+
+  /*! determines whether an \f$x\f$-monotone polycurve lies on the
+   * identification curve.
+   */
+  bool is_on_identification(const X_monotone_curve_2& xcv) const {
+    if constexpr (has_identified_x_sides)
+      return (xcv.number_of_subcurves() > 0) && subcurve_traits_2()->is_on_y_identification_2_object()(xcv[0]);
+    else return false;
+  }
+
+  /*! determines whether a point lies on the identification curve. */
+  bool is_on_identification(const Point_2& p) const {
+    if constexpr (has_identified_x_sides) return subcurve_traits_2()->is_on_y_identification_2_object()(p);
+    else return false;
+  }
+
+  /*! compares the \f$y\f$-coordinates of two points that lie on the
+   * identification curve, where each one of them may also be a pole
+   * (a contraction point) on the bottom or top boundary.
+   */
+  Comparison_result compare_y_on_identification(const Point_2& p1, const Point_2& p2) const {
+    const auto* geom_traits = subcurve_traits_2();
+    auto ps_y = geom_traits->parameter_space_in_y_2_object();
+    auto rank = [](Arr_parameter_space ps) -> int
+      { return (ps == ARR_BOTTOM_BOUNDARY) ? 0 : (ps == ARR_TOP_BOUNDARY) ? 2 : 1; };
+    const Arr_parameter_space ps1 = ps_y(p1);
+    const Arr_parameter_space ps2 = ps_y(p2);
+    if (rank(ps1) != rank(ps2)) return (rank(ps1) < rank(ps2)) ? SMALLER : LARGER;
+    if (ps1 != ARR_INTERIOR) return EQUAL;
+    return geom_traits->compare_y_on_boundary_2_object()(p1, p2);
+  }
+
+  /*! obtains the indices of the subcurves that contain the minimal end and
+   * the maximal end of a non-empty \f$x\f$-monotone polycurve, respectively.
+   */
+  std::pair<std::size_t, std::size_t> end_subcurve_indices(const X_monotone_curve_2& xcv) const {
+    const std::size_t n = xcv.number_of_subcurves();
+    CGAL_precondition(n > 0);
+    if (subcurve_traits_2()->compare_endpoints_xy_2_object()(xcv[0]) == SMALLER) return std::make_pair(0, n - 1);
+    return std::make_pair(n - 1, 0);
+  }
+
+  /*! obtains the endpoints of an \f$x\f$-monotone polycurve that does not lie
+   * on the identification curve, that lie on the identification curve, in
+   * lexicographic order; that is, the minimal end if it lies on the left
+   * boundary, and then the maximal end if it lies on the right boundary.
+   */
+  std::vector<Point_2> endpoints_on_identification(const X_monotone_curve_2& xcv) const {
+    CGAL_precondition(! is_on_identification(xcv));
+    const auto* geom_traits = subcurve_traits_2();
+    auto ps_x = geom_traits->parameter_space_in_x_2_object();
+    auto [imin, imax] = end_subcurve_indices(xcv);
+    std::vector<Point_2> points;
+    if (ps_x(xcv[imin], ARR_MIN_END) == ARR_LEFT_BOUNDARY)
+      points.push_back(geom_traits->construct_min_vertex_2_object()(xcv[imin]));
+    if (ps_x(xcv[imax], ARR_MAX_END) == ARR_RIGHT_BOUNDARY)
+      points.push_back(geom_traits->construct_max_vertex_2_object()(xcv[imax]));
+    return points;
+  }
+
+  /*! locates the index of the subcurve of an \f$x\f$-monotone polycurve that
+   * contains a point, where either the polycurve or the point lies on the
+   * identification curve.
+   * - If the polycurve lies on the identification curve, the point lies on
+   *   the identification curve as well, and the subcurve whose
+   *   \f$y\f$-range contains the point is located.
+   * - Otherwise, the point lies on the identification curve, and the subcurve
+   *   that contains the end of the polycurve that lies on the identification
+   *   curve is located; if both ends lie on the identification curve, the
+   *   subcurve that contains the minimal end is located.
+   * \return the index of the subcurve, or `INVALID_INDEX` if no such
+   *         subcurve exists.
+   */
+  std::size_t locate_on_identification(const X_monotone_curve_2& xcv, const Point_2& q) const {
+    const auto* geom_traits = subcurve_traits_2();
+    if (is_on_identification(xcv)) {
+      auto min_vertex = geom_traits->construct_min_vertex_2_object();
+      auto max_vertex = geom_traits->construct_max_vertex_2_object();
+      for (std::size_t i = 0; i < xcv.number_of_subcurves(); ++i) {
+        if ((compare_y_on_identification(q, min_vertex(xcv[i])) != SMALLER) &&
+            (compare_y_on_identification(q, max_vertex(xcv[i])) != LARGER))
+          return i;
+      }
+      return INVALID_INDEX;
+    }
+
+    CGAL_precondition(is_on_identification(q));
+    auto ps_x = geom_traits->parameter_space_in_x_2_object();
+    auto [imin, imax] = end_subcurve_indices(xcv);
+    if (ps_x(xcv[imin], ARR_MIN_END) == ARR_LEFT_BOUNDARY) return imin;
+    if (ps_x(xcv[imax], ARR_MAX_END) == ARR_RIGHT_BOUNDARY) return imax;
+    return INVALID_INDEX;
+  }
+
+  /*! determines whether two \f$x\f$-monotone polycurves intersect, where at
+   * least one of them lies on the identification curve.
+   * \param consider_common_endpoints indicates whether common endpoints should
+   *        be counted as intersections.
+   */
+  bool do_intersect_on_identification(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                                      bool consider_common_endpoints) const {
+    auto min_vertex = construct_min_vertex_2_object();
+    auto max_vertex = construct_max_vertex_2_object();
+    const bool on_id1 = is_on_identification(xcv1);
+    const bool on_id2 = is_on_identification(xcv2);
+    CGAL_precondition(on_id1 || on_id2);
+
+    if (on_id1 && on_id2) {
+      // Both curves lie on the identification curve; compare their y-ranges.
+      const auto& lo = (compare_y_on_identification(min_vertex(xcv1), min_vertex(xcv2)) == LARGER) ?
+        min_vertex(xcv1) : min_vertex(xcv2);
+      const auto& hi = (compare_y_on_identification(max_vertex(xcv1), max_vertex(xcv2)) == SMALLER) ?
+        max_vertex(xcv1) : max_vertex(xcv2);
+      auto res = compare_y_on_identification(lo, hi);
+      if (res == LARGER) return false;
+      // If the y-ranges share a single point, it is an endpoint of both curves.
+      if (res == EQUAL) return consider_common_endpoints;
+      return true;
+    }
+
+    // One curve lies on the identification curve; the other curve may meet it
+    // only at its endpoints that lie on the identification curve.
+    const auto& id_xcv = on_id1 ? xcv1 : xcv2;
+    const auto& other = on_id1 ? xcv2 : xcv1;
+    for (const auto& p : endpoints_on_identification(other)) {
+      auto res_min = compare_y_on_identification(p, min_vertex(id_xcv));
+      auto res_max = compare_y_on_identification(p, max_vertex(id_xcv));
+      if ((res_min == SMALLER) || (res_max == LARGER)) continue;
+      // `p` is an endpoint of `other`; it is a common endpoint iff it is also
+      // an endpoint of `id_xcv`.
+      if ((res_min == EQUAL) || (res_max == EQUAL)) {
+        if (consider_common_endpoints) return true;
+        continue;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  /*! computes the intersections of two \f$x\f$-monotone polycurves, where at
+   * least one of them lies on the identification curve.
+   * - If both lie on the identification curve, they either overlap, share a
+   *   single endpoint, or are disjoint. An overlap is directed from right to
+   *   left (that is, top to bottom) iff both curves are directed so;
+   *   otherwise, it is directed from left to right.
+   * - Otherwise, the curve that does not lie on the identification curve may
+   *   meet the other only at its endpoints that lie on the identification
+   *   curve. The intersection points are reported in lexicographic order.
+   * The multiplicity of an intersection point is 0 (unknown).
+   * This function is used only by polycurve traits that support intersections.
+   */
+  template <typename OutputIterator>
+  OutputIterator intersect_on_identification(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                                             OutputIterator oi) const {
+    const auto* geom_traits = subcurve_traits_2();
+    auto min_vertex = construct_min_vertex_2_object();
+    auto max_vertex = construct_max_vertex_2_object();
+    const bool on_id1 = is_on_identification(xcv1);
+    const bool on_id2 = is_on_identification(xcv2);
+    CGAL_precondition(on_id1 || on_id2);
+
+    if (! on_id1 || ! on_id2) {
+      const auto& id_xcv = on_id1 ? xcv1 : xcv2;
+      const auto& other = on_id1 ? xcv2 : xcv1;
+      auto equal = geom_traits->equal_2_object();
+      auto points = endpoints_on_identification(other);
+      // A curve that winds around the sphere may start and end at the same point.
+      if ((points.size() == 2) && equal(points[0], points[1])) points.pop_back();
+      for (const auto& p : points) {
+        if ((compare_y_on_identification(p, min_vertex(id_xcv)) == SMALLER) ||
+            (compare_y_on_identification(p, max_vertex(id_xcv)) == LARGER))
+          continue;
+        *oi++ = std::make_pair(p, Multiplicity(0));
+      }
+      return oi;
+    }
+
+    // Both curves lie on the identification curve; compute the intersection of
+    // their y-ranges.
+    const auto& lo = (compare_y_on_identification(min_vertex(xcv1), min_vertex(xcv2)) == LARGER) ?
+      min_vertex(xcv1) : min_vertex(xcv2);
+    const auto& hi = (compare_y_on_identification(max_vertex(xcv1), max_vertex(xcv2)) == SMALLER) ?
+      max_vertex(xcv1) : max_vertex(xcv2);
+    auto res = compare_y_on_identification(lo, hi);
+    if (res == LARGER) return oi;
+    if (res == EQUAL) {
+      *oi++ = std::make_pair(lo, Multiplicity(0));
+      return oi;
+    }
+
+    // Collect the parts of the subcurves of xcv1 within the range [lo, hi],
+    // each directed from bottom to top, in bottom-to-top order.
+    auto cmp_endpts = geom_traits->compare_endpoints_xy_2_object();
+    auto ctr_opposite = geom_traits->construct_opposite_2_object();
+    auto split = geom_traits->split_2_object();
+    auto sub_min_vertex = geom_traits->construct_min_vertex_2_object();
+    auto sub_max_vertex = geom_traits->construct_max_vertex_2_object();
+    auto upward = [&](const X_monotone_subcurve_2& xs)
+      { return (cmp_endpts(xs) == SMALLER) ? xs : ctr_opposite(xs); };
+    // Split an upward subcurve at a point in its interior, and obtain the
+    // lower part or the upper part (each directed upward).
+    auto part = [&](const X_monotone_subcurve_2& xs, const Point_2& p, bool lower) {
+      X_monotone_subcurve_2 xs1, xs2;
+      split(xs, p, xs1, xs2);
+      xs1 = upward(xs1);
+      xs2 = upward(xs2);
+      bool xs1_is_lower = (compare_y_on_identification(sub_min_vertex(xs1), sub_min_vertex(xs2)) == SMALLER);
+      return (xs1_is_lower == lower) ? xs1 : xs2;
+    };
+
+    std::vector<X_monotone_subcurve_2> subcurves;
+    const std::size_t n1 = xcv1.number_of_subcurves();
+    const bool upward1 = (cmp_endpts(xcv1[0]) == SMALLER);
+    for (std::size_t k = 0; k < n1; ++k) {
+      auto xs = upward(xcv1[upward1 ? k : n1 - 1 - k]);
+      if (compare_y_on_identification(sub_max_vertex(xs), lo) != LARGER) continue;
+      if (compare_y_on_identification(sub_min_vertex(xs), hi) != SMALLER) break;
+      if (compare_y_on_identification(sub_min_vertex(xs), lo) == SMALLER) xs = part(xs, lo, false);
+      if (compare_y_on_identification(sub_max_vertex(xs), hi) == LARGER) xs = part(xs, hi, true);
+      subcurves.push_back(xs);
+    }
+
+    X_monotone_curve_2 ocv;
+    const bool downward = ! upward1 && (cmp_endpts(xcv2[0]) != SMALLER);
+    if (downward) {
+      for (auto it = subcurves.rbegin(); it != subcurves.rend(); ++it) ocv.push_back(ctr_opposite(*it));
+    }
+    else {
+      for (const auto& xs : subcurves) ocv.push_back(xs);
+    }
+    *oi++ = ocv;
+    return oi;
+  }
+  //@}
+
   /*
    * Roadmap: locate() should return an iterator to the located subcurve
    */
@@ -2613,6 +2874,9 @@ protected:
    */
   std::size_t locate_impl(const X_monotone_curve_2& xcv, const X_monotone_subcurve_2& xs, Arr_curve_end ce,
                           Arr_not_all_sides_oblivious_tag) const {
+    // The comparisons below are not applicable to curves that lie on the
+    // identification curve.
+    CGAL_precondition(! is_on_identification(xcv));
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     if (geom_traits->is_vertical_2_object()(xcv[0])) {
       CGAL_precondition_code
@@ -2655,6 +2919,11 @@ protected:
    * \param(in) p the query point.
    */
   std::size_t locate_impl(const X_monotone_curve_2& xcv, const Point_2& p, Arr_not_all_sides_oblivious_tag) const {
+    // The comparisons below are not applicable to curves and points that lie
+    // on the identification curve.
+    if constexpr (has_identified_x_sides) {
+      if (is_on_identification(xcv) || is_on_identification(p)) return locate_on_identification(xcv, p);
+    }
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     if (geom_traits->is_vertical_2_object()(xcv[0])) {
       CGAL_precondition_code
@@ -2684,6 +2953,11 @@ protected:
 
   //
   std::size_t locate(const X_monotone_curve_2& xcv, const Point_2& q) const {
+    // The comparisons below are not applicable to curves and points that lie
+    // on the identification curve.
+    if constexpr (has_identified_x_sides) {
+      if (is_on_identification(xcv) || is_on_identification(q)) return locate_on_identification(xcv, q);
+    }
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     if (geom_traits->is_vertical_2_object()(xcv[0])) {
       CGAL_precondition_code
@@ -2713,20 +2987,35 @@ protected:
    *         to the right) of `q`, or `INVALID_INDEX` if no such subcurve exists.
    */
   std::size_t locate_side(const X_monotone_curve_2& cv, const Point_2& q, const bool& to_right) const {
+    // If q lies on the identification curve and cv does not, q is an endpoint
+    // of cv. If cv is defined to the right of q, q is its minimal end, which
+    // lies on the left boundary; if cv is defined to the left of q, q is its
+    // maximal end, which lies on the right boundary.
+    if constexpr (has_identified_x_sides) {
+      if (! is_on_identification(cv) && is_on_identification(q)) {
+        auto ps_x = subcurve_traits_2()->parameter_space_in_x_2_object();
+        auto [imin, imax] = end_subcurve_indices(cv);
+        if (to_right) return (ps_x(cv[imin], ARR_MIN_END) == ARR_LEFT_BOUNDARY) ? imin : INVALID_INDEX;
+        return (ps_x(cv[imax], ARR_MAX_END) == ARR_RIGHT_BOUNDARY) ? imax : INVALID_INDEX;
+      }
+    }
+
     // First locate a subcurve subcurves[i] that contains q in its x-range.
-    std::size_t i = locate(cv, q);
+    // An end of a subcurve may lie on the boundary; thus, compare curve ends
+    // rather than the points they correspond to.
+    std::size_t i = locate_impl(cv, q, All_sides_oblivious_category());
     if (i == INVALID_INDEX) return INVALID_INDEX;
 
     auto equal = subcurve_traits_2()->equal_2_object();
     auto cmp_endpts = subcurve_traits_2()->compare_endpoints_xy_2_object();
-    auto cmp_x = subcurve_traits_2()->compare_x_2_object();
+    auto cmp_x = compare_x_2_object();
     auto is_vert = subcurve_traits_2()->is_vertical_2_object();
     auto get_max_v = subcurve_traits_2()->construct_max_vertex_2_object();
     auto get_min_v = subcurve_traits_2()->construct_min_vertex_2_object();
 
     Comparison_result direction = cmp_endpts(cv[i]);
 
-    if ((! is_vert(cv[0]) && (cmp_x(get_min_v(cv[i]), q) == EQUAL)) ||
+    if ((! is_vert(cv[0]) && (cmp_x(cv[i], ARR_MIN_END, q) == EQUAL)) ||
         (is_vert(cv[0]) && equal(get_min_v(cv[i]), q))) {
       // q is the left endpoint of the i-th subcurve:
       if (to_right) return i;
@@ -2743,7 +3032,7 @@ protected:
       }
     }
 
-    if ((! is_vert(cv[0]) && (cmp_x(get_max_v(cv[i]), q) == EQUAL)) ||
+    if ((! is_vert(cv[0]) && (cmp_x(cv[i], ARR_MAX_END, q) == EQUAL)) ||
         (is_vert(cv[0]) && equal(get_max_v(cv[i]), q))) {
       // q is the right endpoint of the i-th subcurve:
       if (! to_right) return i;
