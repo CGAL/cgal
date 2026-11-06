@@ -7,6 +7,8 @@
 // polycurve traits, e.g., Arr_polyline_traits_2 or Arr_polycurve_traits_2,
 // whose subcurve traits handle geodesic arcs on the sphere. Decorators and
 // polycurve traits can be chained in any order.
+// Also, test the construction of the identification curve, which the drawing
+// of arrangements on the sphere inserts, through such chains.
 
 #include <cstdlib>
 #include <iostream>
@@ -74,6 +76,24 @@ bool test_coordinate_converter(const std::string& name) {
   return false;
 }
 
+/* Test that the identification curve constructed through a chain of traits
+ * lies on the identification curve of that traits, is vertical, and extends
+ * from the south pole (bottom boundary) to the north pole (top boundary).
+ */
+template <typename Gt>
+bool test_identification_curve(const Gt& traits, const std::string& name) {
+  auto xcv = CGAL::draw_aos::construct_identification_curve(traits);
+  bool on_id = traits.is_on_y_identification_2_object()(xcv);
+  bool vertical = traits.is_vertical_2_object()(xcv);
+  auto ps_y = traits.parameter_space_in_y_2_object();
+  bool ends = (ps_y(xcv, CGAL::ARR_MIN_END) == CGAL::ARR_BOTTOM_BOUNDARY) &&
+    (ps_y(xcv, CGAL::ARR_MAX_END) == CGAL::ARR_TOP_BOUNDARY);
+  if (on_id && vertical && ends) return true;
+  std::cerr << "Error: " << name << ": identification curve: on identification = " << on_id
+            << ", vertical = " << vertical << ", from south pole to north pole = " << ends << std::endl;
+  return false;
+}
+
 template <typename Gt>
 bool test(const std::string& name, bool expected) {
   bool agas = CGAL::draw_aos::is_or_derived_from_agas_v<Gt>;
@@ -125,6 +145,20 @@ int main() {
     ("nested geodesic polycurve traits");
   ok &= test_coordinate_converter<Mixed_rotated_geodesic_traits, Rotated_geodesic_traits>
     ("counting polyline tracing polycurve rotated geodesic traits");
+
+  ok &= test_identification_curve(Geodesic_traits(), "geodesic traits");
+  ok &= test_identification_curve(Rotated_geodesic_traits(), "rotated geodesic traits");
+  ok &= test_identification_curve(CGAL::Arr_counting_traits_2<Geodesic_traits>(), "counting geodesic traits");
+  ok &= test_identification_curve(Geodesic_polyline_traits(), "geodesic polyline traits");
+  ok &= test_identification_curve(Nested_geodesic_polycurve_traits(), "nested geodesic polycurve traits");
+  {
+    // Construct the chain from a tracing traits object whose traces are disabled.
+    using Tracing_traits = CGAL::Arr_tracing_traits_2<CGAL::Arr_polycurve_traits_2<Rotated_geodesic_traits>>;
+    Tracing_traits tracing_traits;
+    tracing_traits.disable_all_traces();
+    Mixed_rotated_geodesic_traits mixed_traits(&tracing_traits);
+    ok &= test_identification_curve(mixed_traits, "counting polyline tracing polycurve rotated geodesic traits");
+  }
 
   if (! ok) return EXIT_FAILURE;
   std::cout << "Passed" << std::endl;
