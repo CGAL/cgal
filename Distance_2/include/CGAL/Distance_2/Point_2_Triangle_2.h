@@ -43,7 +43,38 @@ distance_index(int &ind1,
   const Point_2& vt1 = triangle.vertex(1);
   const Point_2& vt2 = triangle.vertex(2);
 
-  if(leftturn(vt0, vt1, vt2)) {
+  const Orientation orient =k.orientation_2_object()(vt0, vt1, vt2);
+  if(orient == COLLINEAR) {
+    //the triangle is a segment or a point.
+    // the longest of the 3 edges covers the other two so classify the point against it.
+    typedef typename K::FT FT;
+    typename K::Compute_squared_distance_2 sq_dist = k.compute_squared_distance_2_object();
+    const FT d01 = sq_dist(vt0, vt1);
+    const FT d12 = sq_dist(vt1, vt2);
+    const FT d20 = sq_dist(vt2, vt0);
+    int a = 0, b = 1;
+    FT longest = d01;
+    if(d12 > longest) { a = 1; b = 2; longest = d12; }
+    if(d20 > longest)a = 2,b = 0;
+    if(longest == FT(0)) {
+      ind1 = 0; ind2 = -1;
+      return;
+    }
+    const Point_2& A = triangle.vertex(a);
+    const Point_2& B = triangle.vertex(b);
+    if(!is_acute_angle(B, A, pt, k)) {
+      ind1 = a; ind2 = -1;
+      return;
+    }
+    if(!is_acute_angle(A, B, pt, k)) {
+      ind1 = b; ind2 = -1;
+      return;
+    }
+    ind1 = a; ind2 = b;
+    return;
+  }
+
+  if(orient == LEFT_TURN) {
     if(leftturn(pt, vt1, vt0)) {
       if(!is_acute_angle(vt0, vt1, pt, k)) {
         if(leftturn(pt, vt2, vt1)) {
