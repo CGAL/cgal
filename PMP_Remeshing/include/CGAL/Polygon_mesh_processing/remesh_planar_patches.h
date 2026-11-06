@@ -641,45 +641,86 @@ bool decimate_impl(const TriangleMesh& tm,
     std::vector<bool> duplicated_corners(nb_corners_and_nb_cc.first, false);
     auto check_corner = [&corner_id_to_vd, &duplicated_corners](std::size_t corner_id, vertex_descriptor vd)
     {
-      if (corner_id_to_vd[corner_id]!=graph_traits::null_vertex() && corner_id_to_vd[corner_id]!=vd)
-        duplicated_corners[corner_id]=true;
+      if (corner_id_to_vd[corner_id]!=graph_traits::null_vertex())
+      {
+        if (corner_id_to_vd[corner_id]!=vd) duplicated_corners[corner_id]=true;
+      }
+      else
+        corner_id_to_vd[corner_id]=vd;
     };
 
-    // collect maximal constrained edges per cc
+    typedef typename Kernel::Vector_3 Vector_3;
+    typedef typename Kernel::Point_3 Point_3;
+
+    // sum of the area vectors of all the contours of each patch
+    std::vector<Vector_3> normal_sums(face_normals.size(), NULL_VECTOR);
+    // halfedges starting a corner-to-corner segment that were already walked
+    std::set<halfedge_descriptor> visited;
+
+    // collect maximal constrained edges per cc, contour by contour
     for(halfedge_descriptor h : halfedges(tm))
     {
       if (!get(edge_is_constrained, edge(h, tm)) || is_border(h, tm)) continue;
 
       std::size_t i1 = get(vertex_corner_id, source(h, tm));
-      if ( is_corner_id(i1) )
-      {
-        check_corner(i1, source(h, tm));
-        halfedge_descriptor h_init = h;
-        std::size_t cc_id = get(face_cc_ids, face(h_init, tm));
-        if (!cc_to_handle.test(cc_id)) continue;
-        do{
-          std::size_t i2 = get(vertex_corner_id, target(h_init, tm));
-          if ( is_corner_id(i2) )
-          {
-            check_corner(i2, target(h_init, tm));
-            face_boundaries[ cc_id ].push_back( Id_pair(i1,i2) );
-            if (face_normals[ cc_id ] == NULL_VECTOR)
-            {
-              face_normals[ cc_id ] = normal(get(vpm, source(h, tm)),
-                                             get(vpm, target(h, tm)),
-                                             get(vpm, target(next(h, tm), tm)));
-            }
-            break;
-          }
+      if ( !is_corner_id(i1) ) continue;
 
-          do{
-            h_init=opposite(next(h_init, tm), tm);
-          } while( !get(edge_is_constrained, edge(h_init, tm)) );
-          h_init=opposite(h_init, tm);
+      check_corner(i1, source(h, tm));
+      std::size_t cc_id = get(face_cc_ids, face(h, tm));
+      if (!cc_to_handle.test(cc_id)) continue;
+      if (!visited.insert(h).second) continue; // contour already extracted
+
+      // walk the whole contour containing h, cutting it at corners
+      std::vector<std::size_t> contour(1, i1); // corner ids in order
+      std::size_t prev = i1;
+      halfedge_descriptor h_loop = h;
+      do{
+        std::size_t i2 = get(vertex_corner_id, target(h_loop, tm));
+        const bool i2_is_corner = is_corner_id(i2);
+        if ( i2_is_corner )
+        {
+          check_corner(i2, target(h_loop, tm));
+          face_boundaries[ cc_id ].push_back( Id_pair(prev, i2) );
+          prev = i2;
         }
-        while(true);
+
+        // go to the next halfedge of the patch boundary
+        do{
+          h_loop=opposite(next(h_loop, tm), tm);
+        } while( !get(edge_is_constrained, edge(h_loop, tm)) );
+        h_loop=opposite(h_loop, tm);
+
+        if (h_loop == h) break; // contour closed (the last pair pushed ends at i1)
+
+        if ( i2_is_corner )
+        {
+          CGAL_assertion(duplicated_corners[i2] || source(h_loop, tm)==corner_id_to_vd[i2]);
+          // h_loop could be found again in the for-loop, mark it so that the CCB is seen once.
+          visited.insert(h_loop);
+          contour.push_back(i2); // added here to not add i1 twice
+        }
+      }
+      while(true);
+
+      if (face_normals[ cc_id ] == NULL_VECTOR && contour.size() >= 3)
+      {
+        // normal vector of the contour weight by area (same as in PMP::compute_normal())
+        const Point_3& p0 = corners[contour[0]];
+        for (std::size_t pos=1; pos+1<contour.size(); ++pos)
+          normal_sums[cc_id] += cross_product(Vector_3(p0, corners[contour[pos]]),
+                                              Vector_3(p0, corners[contour[pos+1]]));
       }
     }
+
+    // set the normals not provided by the user / not computed in a previous round
+    for (std::size_t cc_id = cc_to_handle.find_first();
+                     cc_id < cc_to_handle.npos;
+                     cc_id = cc_to_handle.find_next(cc_id))
+    {
+      if (face_normals[cc_id] == NULL_VECTOR)
+        face_normals[cc_id] = normal_sums[cc_id];
+    }
+
 
     for (std::size_t cc_id = cc_to_handle.find_first();
                          cc_id < cc_to_handle.npos;
@@ -719,6 +760,8 @@ bool decimate_impl(const TriangleMesh& tm,
           // TODO this is not optimal at all since we already have the set of constraints,
           //      we could work on the graph on constraint and recover only the orientation
           //      of the edge. To be done if someone find it too slow.
+          //      In particular, in the loop to compute face normals, corners contains all the CCBs of each face
+          //      and we could seperate them and have them cleanly
           std::vector<halfedge_descriptor> hborders;
           CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, static_cast<PID>(cc_id), face_cc_ids);
           extract_boundary_cycles(ffg, std::back_inserter(hborders));
