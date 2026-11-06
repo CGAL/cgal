@@ -82,7 +82,8 @@ kernel(const FaceRange& face_range,
 
   using KernelPointMap = typename boost::property_map<PolygonMesh, dynamic_vertex_property_t<EPoint_3> >::type;
 
-  bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
+  // bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
+  const bool bbox_filtering = false; // A bug was detected in the bbox filtering code, so we disable it for now. It will be fixed in 6.3 release.
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
   bool check_euler_characteristic = !choose_parameter(get_parameter(np, internal_np::allow_open_input), false) && std::size_t(std::distance(face_range.begin(), face_range.end()))==faces(pm).size();
   unsigned seed = choose_parameter(get_parameter(np, internal_np::random_seed), unsigned(-1));
@@ -233,7 +234,7 @@ kernel(const FaceRange& face_range,
       centroid += EVector_3(ORIGIN, get(kvpm, v)) / vertices(kernel).size();
 
     // Approximate the centroid
-    Point_3 double_centroid(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
+    EPoint_3 double_centroid(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
 
     // Check if the approximate_centroid is inside the kernel
     bool is_valid = true;
@@ -242,7 +243,7 @@ kernel(const FaceRange& face_range,
       Plane_3 plane(get(kvpm,source(h, kernel)),
                     get(kvpm,target(h, kernel)),
                     get(kvpm,target(next(h, kernel), kernel)));
-      if(oriented_side(plane, centroid) != ON_NEGATIVE_SIDE){
+      if(oriented_side(plane, double_centroid) != ON_NEGATIVE_SIDE){
         is_valid = false;
         break;
       }
