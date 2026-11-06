@@ -1485,6 +1485,7 @@ compile_and_run(test_sgm)
 
 compile_and_run(test_polycurve_intersection)
 compile_and_run(test_polycurve_approximation)
+compile_and_run(test_polyline_construction)
 
 compile_and_run(test_tracing_traits)
 compile_and_run(test_counting_traits)

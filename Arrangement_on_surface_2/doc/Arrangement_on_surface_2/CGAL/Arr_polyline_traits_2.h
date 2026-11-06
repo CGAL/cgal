@@ -296,7 +296,7 @@ public:
      *      left-to-right or it is to its left if `xcv` is oriented
      *      right-to-left.
      */
-    void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
+    void operator()(X_monotone_curve_2& xcv, const Point_2& p) const;
 
     /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
      * at the back. If `xcv` is empty, `seg` will be its first segment.
@@ -340,13 +340,13 @@ public:
     /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
      * the front.
      * \param xcv the existing \f$x\f$-monotone polyline
-     * \param p the point to be pushed back.
+     * \param p the point to be pushed front.
      * \pre `xcv` contains at least one segment
      * \pre `p` is either to the left of `xcv` if it is oriented
      *      left-to-right or it is to its right if `xcv` is oriented
      *      right-to-left.
      */
-    void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
+    void operator()(X_monotone_curve_2& xcv, const Point_2& p) const;
 
     /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
      * at the front. If `xcv` is empty, `seg` will be its first segment.
