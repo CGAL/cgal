@@ -928,7 +928,10 @@ public:
       , garbage_(std::exchange(sm.garbage_, false))
       , recycle_(std::exchange(sm.recycle_, true))
       , anonymous_property_(std::exchange(sm.anonymous_property_, 0))
-    {}
+    {
+      Surface_mesh fresh; // AF: todo assign() did not compile
+      sm = fresh;
+    }
 
     /// assigns `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh& operator=(const Surface_mesh& rhs);
@@ -956,6 +959,8 @@ public:
       garbage_ = std::exchange(sm.garbage_, false);
       recycle_ = std::exchange(sm.recycle_, true);
       anonymous_property_ = std::exchange(sm.anonymous_property_, 0);
+      Surface_mesh fresh;
+      sm = fresh;
       return *this;
     }
 
