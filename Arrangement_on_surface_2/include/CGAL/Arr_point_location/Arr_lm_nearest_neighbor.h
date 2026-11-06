@@ -174,7 +174,7 @@ public:
 
   /*! clears the search tree. */
   void clear() {
-    if (m_tree != nullptr) delete m_tree;
+    delete m_tree;
     m_tree = nullptr;
     m_is_empty = true;
   }

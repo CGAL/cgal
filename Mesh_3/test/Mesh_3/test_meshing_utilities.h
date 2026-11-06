@@ -122,7 +122,6 @@ struct Tester
                   CGAL::parameters::no_perturb(),
                   CGAL::parameters::no_reset_c3t3());
 
-#ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
     // Using adjacencies instead of calling oracle to update restricted
     // Delaunay of the surface during the refinement of the volume
     // does not ensure that refinement is idempotent
@@ -142,7 +141,6 @@ struct Tester
     f = c3t3.number_of_facets_in_complex();
     c = c3t3.number_of_cells_in_complex();
     assert ( n < 11 );
-#endif
 
     verify_c3t3(c3t3,domain,domain_type,v,v,f,f,c,c);
     verify_c3t3_hausdorff_distance(c3t3, domain, domain_type, hdist);
@@ -206,19 +204,20 @@ struct Tester
     //-------------------------------------------------------
     // Verifications
     //-------------------------------------------------------
-    std::cerr << "\tNumber of cells: " << c3t3.number_of_cells_in_complex()
-              << "  (expected in [" << min_cells_expected << ", " << max_cells_expected << "])\n";
-    std::cerr << "\tNumber of facets: " << c3t3.number_of_facets_in_complex()
-              << "  (expected in [" << min_facets_expected << ", " << max_facets_expected << "])\n";
-    std::cerr << "\tNumber of vertices: " << c3t3.triangulation().number_of_vertices()
-              << "  (expected in [" << min_vertices_expected << ", " << max_vertices_expected << "])\n";
-
-    dump_c3t3(c3t3, "dump_c3t3");
+    std::cerr << "\tNumber of cells: " << c3t3.number_of_cells_in_complex() << " ";
+    std::cerr << "[expected: " << min_cells_expected << " - " << max_cells_expected << "]\n";
+    std::cerr << "\tNumber of facets: " << c3t3.number_of_facets_in_complex() << " ";
+    std::cerr << "[expected: " << min_facets_expected << " - " << max_facets_expected << "]\n";
+    std::cerr << "\tNumber of vertices: " << c3t3.triangulation().number_of_vertices() << " ";
+    std::cerr << "[expected: " << min_vertices_expected << " - " << max_vertices_expected << "]\n";
 
     std::size_t dist_facets ( std::distance(c3t3.facets_in_complex_begin(),
                                             c3t3.facets_in_complex_end()) );
     std::size_t dist_cells ( std::distance(c3t3.cells_in_complex_begin(),
-                                            c3t3.cells_in_complex_end()) );
+                                           c3t3.cells_in_complex_end()) );
+
+    std::cout << "dist_facets " << dist_facets << std::endl;
+    std::cout << "dist_cells " << dist_cells << std::endl;
 
     assert(min_vertices_expected <= c3t3.triangulation().number_of_vertices());
     assert(max_vertices_expected >= c3t3.triangulation().number_of_vertices());
@@ -327,11 +326,11 @@ struct Tester
         assert(index.first != index.second);
         Cell_handle c1 = f.first;
         Cell_handle c2 = f.first->neighbor(f.second);
-        if( c1->subdomain_index() == c2->subdomain_index() )
+        if( c3t3.subdomain_index(c1) == c3t3.subdomain_index(c2) )
         {
           std::cerr << "ERROR:"
-                    << "\nc1->subdomain_index(): " << c1->subdomain_index()
-                    << "\nc2->subdomain_index(): " << c2->subdomain_index()
+                    << "\nc3t3.subdomain_index(c1): " << c3t3.subdomain_index(c1)
+                    << "\nc3t3.subdomain_index(c2): " << c3t3.subdomain_index(c2)
                     << "\nc3t3.surface_patch_index(f).first:  " << index.first
                     << "\nc3t3.surface_patch_index(f).second: " << index.second;
           if(tr.is_infinite(c1)) std::cerr << "\nc1 is infinite";

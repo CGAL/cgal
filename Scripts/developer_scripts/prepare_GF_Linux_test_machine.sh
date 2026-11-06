@@ -324,6 +324,7 @@ if command -v dnf5 &>/dev/null; then
   $SUDO_OR_PRINT tee /etc/systemd/system/dnf5-automatic.timer.d/time.conf >/dev/null <<EOF
 [Timer]
 OnBootSec=
+RandomizedDelaySec=5m
 OnCalendar= 20:00
 EOF
   color_echo "Reloading systemd and enabling dnf5-automatic.timer."

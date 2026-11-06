@@ -107,11 +107,12 @@ public:
       for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++)
         dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "after-partition-sp" + std::to_string(sp));
 
-    std::cout.precision(20);
     CGAL_assertion(m_data.check_bbox());
     CGAL_assertion(m_data.check_interior());
     CGAL_assertion(m_data.check_vertices());
     CGAL_assertion(m_data.check_edges());
+
+    set_input_polygons_of_pfaces();
 
     merge_facets_connected_components();
 
@@ -177,7 +178,16 @@ private:
       } while (h != first);
     }
 
-    volume.centroid = CGAL::centroid(tets.begin(), tets.end(), CGAL::Dimension_tag<3>());
+    // The volume of thin cells may vanish in the approximation. In that case, the average of the vertices,
+    // which lies within the convex cell, is used as centroid.
+    FT sum_volumes = 0;
+    for (const Tetrahedron_3& tet : tets)
+      sum_volumes += CGAL::abs(tet.volume());
+
+    if (sum_volumes > 0)
+      volume.centroid = CGAL::centroid(tets.begin(), tets.end(), CGAL::Dimension_tag<3>());
+    else
+      volume.centroid = inside;
   }
 
   void create_volumes() {
@@ -232,8 +242,30 @@ private:
     }
 
     m_data.face_is_part_of_input_polygon().resize(num_faces);
-    for (const auto& p : face2index)
+    m_data.face_to_input_polygon().resize(num_faces, std::size_t(-1));
+    for (const auto& p : face2index) {
       m_data.face_is_part_of_input_polygon()[p.second] = m_data.support_plane(p.first.first).is_initial(p.first.second);
+      // A face may originate from several coplanar input polygons. Only the first one is reported.
+      for (std::size_t i : m_data.support_plane(p.first.first).input(p.first.second))
+        if (i != std::size_t(-1)) {
+          m_data.face_to_input_polygon()[p.second] = i;
+          break;
+        }
+
+      // Faces on a side of the bbox overlapping an input polygon lying in that side, e.g., on a split plane of the octree.
+      Support_plane& sp = m_data.support_plane(p.first.first);
+      if (p.first.first < 6 && !sp.data().coinciding_polygons.empty()) {
+        std::vector<typename Intersection_kernel::Point_2> face;
+        for (const PVertex& pv : m_data.pvertices_of_pface(p.first))
+          face.push_back(sp.to_2d(m_data.point_3(m_data.ivertex(pv))));
+        for (const auto& [input, polygon] : sp.data().coinciding_polygons)
+          if (interiors_intersect(face, polygon)) {
+            m_data.face_is_part_of_input_polygon()[p.second] = true;
+            m_data.face_to_input_polygon()[p.second] = input;
+            break;
+          }
+      }
+    }
 
     m_data.face_to_vertices().resize(num_faces);
     m_data.face_to_support_plane().resize(num_faces);
@@ -249,6 +281,43 @@ private:
     }
 
     remove_collinear_vertices();
+  }
+
+  // Do the interiors of the two convex polygons intersect? The polygons are separated if all vertices of one of them
+  // are on the outer side of an edge of the other one, or on its line.
+  static bool interiors_intersect(std::vector<typename Intersection_kernel::Point_2> a, std::vector<typename Intersection_kernel::Point_2> b) {
+    auto make_ccw = [](std::vector<typename Intersection_kernel::Point_2>& poly) {
+      typename Intersection_kernel::FT area = 0;
+      for (std::size_t i = 0; i < poly.size(); i++) {
+        const auto& p = poly[i];
+        const auto& q = poly[(i + 1) % poly.size()];
+        area += p.x() * q.y() - q.x() * p.y();
+      }
+      if (CGAL::is_negative(area))
+        std::reverse(poly.begin(), poly.end());
+      return !CGAL::is_zero(area);
+    };
+    if (a.size() < 3 || b.size() < 3 || !make_ccw(a) || !make_ccw(b))
+      return false;
+
+    auto separates = [](const std::vector<typename Intersection_kernel::Point_2>& p, const std::vector<typename Intersection_kernel::Point_2>& q) {
+      for (std::size_t i = 0; i < p.size(); i++) {
+        const auto& s = p[i];
+        const auto& t = p[(i + 1) % p.size()];
+        if (s == t)
+          continue;
+        bool all_outside = true;
+        for (const auto& r : q)
+          if (CGAL::orientation(s, t, r) == CGAL::LEFT_TURN) {
+            all_outside = false;
+            break;
+          }
+        if (all_outside)
+          return true;
+      }
+      return false;
+    };
+    return !separates(a, b) && !separates(b, a);
   }
 
   void segment_adjacent_volumes(const PFace& pface, std::vector<Volume_cell>& volumes, std::map<PFace, std::pair<int, int> >& map_volumes) {
@@ -538,6 +607,22 @@ private:
     return CGAL::ON_ORIENTED_BOUNDARY;
   }
 
+  // Stores the input polygon each pface originates from in its f:input property.
+  void set_input_polygons_of_pfaces() {
+    for (std::size_t sp_idx = 6; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
+      Support_plane& sp = m_data.support_plane(sp_idx);
+      for (const auto& [iface, polygon] : sp.data().piece_polygon) {
+        if (sp.data().polygons.find(iface) == sp.data().polygons.end())
+          continue;
+        auto it = sp.data().iface2pface.find(iface);
+        if (it == sp.data().iface2pface.end())
+          continue;
+        std::vector<std::size_t>& input = sp.input(it->second);
+        input.assign(1, sp.input_polygon(polygon).input);
+      }
+    }
+  }
+
   void merge_facets_connected_components() {
     // Purpose: merge facets between the same volumes. Every pair of volumes can have at most one contact polygon (which also has to be convex)
     // Precondition: all volumes are convex, the contact area between each pair of volumes is empty or convex
@@ -578,10 +663,15 @@ private:
       num_components = (std::max<std::size_t>)(num_components, fcm[f]);
 
     initial_component.resize(num_components + 1, false);
+    // Input polygons of the faces of each component.
+    std::vector<std::set<std::size_t> > component_input(num_components + 1);
     Support_plane& sp = m_data.support_plane(sp_idx);
     for (const auto& f : mesh.faces()) {
       if (sp.is_initial(f))
         initial_component[fcm[f]] = true;
+      for (std::size_t i : sp.input(f))
+        if (i != std::size_t(-1))
+          component_input[fcm[f]].insert(i);
     }
 
     //std::vector<Halfedge> remove_edges;
@@ -619,6 +709,8 @@ private:
       remove_faces[f0] = false;
       if (initial_component[c0])
         sp.set_initial(f0);
+      if (!component_input[c0].empty())
+        sp.input(f0).assign(component_input[c0].begin(), component_input[c0].end());
 
       // Find halfedge loop around component.
       std::vector<Halfedge> loop;
@@ -645,15 +737,15 @@ private:
             break;
           c_other = fcm[f_other];
           if (c0 == c_other && ecm[Edge_index(n >> 1)])
-            std::cout << "edge and face constraint map inconsistent1" << std::endl;
+            KSP::internal::Log_line(m_data.log_prefix()) << "edge and face constraint map inconsistent1";
 
           if (c0 != c_other && !ecm[Edge_index(n >> 1)])
-            std::cout << "edge and face constraint map inconsistent2" << std::endl;
+            KSP::internal::Log_line(m_data.log_prefix()) << "edge and face constraint map inconsistent2";
         } while (c0 == c_other && n != h);
 
         if (n == h) {
           // Should not happen.
-          std::cout << "Searching for next edge of connected component failed" << std::endl;
+          KSP::internal::Log_line(m_data.log_prefix()) << "Searching for next edge of connected component failed";
         }
         loop.push_back(n);
         set_face(n, f0, mesh);
@@ -683,7 +775,7 @@ private:
     }
 
     if (!mesh.is_valid(true)) {
-      std::cout << "mesh is not valid after merging faces of sp " << sp_idx << std::endl;
+      KSP::internal::Log_line(m_data.log_prefix()) << "mesh is not valid after merging faces of sp " << sp_idx;
     }
   }
 
@@ -732,7 +824,7 @@ private:
           if (!face_filled)
             face2vertices[cell.faces[f]].push_back(vertices.size());
           else
-            std::cout << "Should not happen" << std::endl;
+            KSP::internal::Log_line(m_data.log_prefix()) << "Should not happen";
           vertices.push_back(from_exact(m_data.point_3(ivertex)));
           exact_vertices.push_back(m_data.point_3(ivertex));
         }
