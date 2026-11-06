@@ -19,6 +19,7 @@
 
 #include <CGAL/aff_transformation_tags.h>
 #include <CGAL/determinant.h>
+#include <CGAL/number_utils.h>
 
 #include <ostream>
 #include <vector>
@@ -162,7 +163,7 @@ public:
   Direction_3
   transform(const Direction_3 &d) const
   { if(is_identity()) return d;
-    if(is_scaling()) return d;
+    if(is_scaling()) return is_negative(entries[0]) ? -d : d;
     if(is_translation()) return d;
 
     Vector_3 v = d.to_vector();
@@ -222,7 +223,7 @@ public:
 
   bool is_even() const {
     if(is_identity()) return true;
-    if(is_scaling()) return true;
+    if(is_scaling()) return is_positive(entries[0]); // det = s^3
     if(is_translation()) return true;
     return sign_of_determinant(entries[0], entries[1], entries[2],
                                entries[4], entries[5], entries[6],

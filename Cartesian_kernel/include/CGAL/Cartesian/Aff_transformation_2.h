@@ -103,8 +103,13 @@ public:
                        const FT &w = FT(1))
   : entries(2), variant(rotation)
   {
-          entries[0] = sine/w;
-          entries[1] = cosine/w;
+    if (w != FT(1)) {
+      entries[0] = sine/w;
+      entries[1] = cosine/w;
+    } else {
+      entries[0] = sine;
+      entries[1] = cosine;
+    }
   }
 
   const FT& sinus() const { return entries[0];}
@@ -220,7 +225,7 @@ public:
   Direction_2
   transform(const Direction_2 &d) const
   { if(is_identity()) return d;
-    if(is_scaling()) return d;
+    if(is_scaling()) return is_negative(entries[0]) ? -d : d;
     if(is_translation()) return d;
     if(is_rotation())
       return Direction_2(cosinus() * d.dx() - sinus() * d.dy(),
@@ -268,7 +273,7 @@ public:
   bool is_even() const
   {
     if(is_identity()) return true;
-    if(is_scaling()) return is_positive(entries[0]);
+    if(is_scaling()) return true; // det = s^2 >= 0
     if(is_translation()) return true;
     if(is_reflection()) return false;
     if(is_rotation()) { return true;}
