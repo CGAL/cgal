@@ -10,8 +10,8 @@
 //
 // Author(s)     : Qijia Huang
 
-#ifndef CGAL_MEDIAL_SKELETON_OFFSET_FUNCTION_H
-#define CGAL_MEDIAL_SKELETON_OFFSET_FUNCTION_H
+#ifndef CGAL_VARIATIONAL_MEDIAL_AXIS_INTERNAL_MEDIAL_SKELETON_OFFSET_FUNCTION_H
+#define CGAL_VARIATIONAL_MEDIAL_AXIS_INTERNAL_MEDIAL_SKELETON_OFFSET_FUNCTION_H
 
 #include <CGAL/license/Variational_medial_axis.h>
 
@@ -32,9 +32,9 @@
 #include <utility>
 
 namespace CGAL {
+namespace Variational_medial_axis {
+namespace internal {
 
-
-#ifndef DOXYGEN_RUNNING
 template <class TriangleMesh, class GeomTraits = Default> class Medial_skeleton_offset_function
 {
   using GT = typename Default::Get<
@@ -53,22 +53,22 @@ template <class TriangleMesh, class GeomTraits = Default> class Medial_skeleton_
   // The datum of a primitive is its bounding box.
   using Box_map = typename Pointer_property_map<Iso_cuboid_3>::const_type;
   using Point_map = typename Pointer_property_map<Point_3>::const_type;
-  using Primitive = AABB_primitive<std::size_t, Box_map, Point_map, Tag_true, Tag_false>;
-  using AABB_traits = AABB_traits_3<GT, Primitive>;
-  using Tree = AABB_tree<AABB_traits>;
+  using Medial_primitive = AABB_primitive<std::size_t, Box_map, Point_map, Tag_true, Tag_false>;
+  using Medial_primitive_AABB_traits = AABB_traits_3<GT, Medial_primitive>;
+  using Medial_primitive_AABB_tree = AABB_tree<Medial_primitive_AABB_traits>;
 
   // The tree is not copyable, and the function object is copied by the meshing domain:
   // the copies share the tree and the data its property maps point to.
-  struct Search_tree
+  struct Medial_primitive_tree
   {
     std::vector<Iso_cuboid_3> boxes;
     std::vector<Point_3> reference_points;
     std::vector<FT> max_radii; // largest radius of the spheres of each primitive
     FT max_radius = FT(0);     // largest radius of all spheres
-    Tree tree;
+    Medial_primitive_AABB_tree tree;
   };
 
-  class Minimum_traversal_traits;
+  class Medial_primitive_traversal_traits;
 
 
 public:
@@ -94,7 +94,7 @@ public:
       if(face_edges.find(make_edge(e.first, e.second)) == face_edges.end())
         free_edges_.push_back(e);
 
-    build_search_tree();
+    build_medial_primitive_tree();
   }
 
 
@@ -102,20 +102,20 @@ public:
   // The primitives whose lower bound is not smaller than the current minimum are skipped,
   // which gives the same value as evaluating all primitives, up to rounding errors.
   FT operator()(const Point_3& p) const {
-    if(search_tree_ == nullptr)
+    if(medial_primitive_tree_ == nullptr)
       return (std::numeric_limits<FT>::max)();
-    Minimum_traversal_traits traits(*this);
-    search_tree_->tree.traversal_with_priority(p, traits);
+    Medial_primitive_traversal_traits traits(*this);
+    medial_primitive_tree_->tree.traversal_with_priority(p, traits);
     return traits.minimum();
   }
 
 private:
-  void build_search_tree() {
+  void build_medial_primitive_tree() {
     const std::size_t n = skeleton_.faces().size() + free_edges_.size();
     if(n == 0)
       return;
 
-    auto data = std::make_shared<Search_tree>();
+    auto data = std::make_shared<Medial_primitive_tree>();
     data->boxes.reserve(n);
     data->reference_points.reserve(n);
     data->max_radii.reserve(n);
@@ -140,7 +140,7 @@ private:
     data->tree.rebuild(boost::counting_iterator<std::size_t>(0), boost::counting_iterator<std::size_t>(n),
                        make_property_map(std::as_const(data->boxes)),
                        make_property_map(std::as_const(data->reference_points)));
-    search_tree_ = std::move(data);
+    medial_primitive_tree_ = std::move(data);
   }
 
   // Lower bound of the value at p of a primitive whose spheres are in `box` and have a radius at most `max_radius`:
@@ -272,19 +272,19 @@ private:
   // Traversal traits computing the minimum of the values of the primitives at the query point.
   // A node or a primitive is visited only if its lower bound is smaller than the current minimum,
   // and the child with the smaller lower bound is visited first.
-  class Minimum_traversal_traits
+  class Medial_primitive_traversal_traits
   {
   public:
     using Priority = FT;
 
-    explicit Minimum_traversal_traits(const Medial_skeleton_offset_function& f)
+    explicit Medial_primitive_traversal_traits(const Medial_skeleton_offset_function& f)
         : f_(f)
-        , data_(*f.search_tree_)
+        , data_(*f.medial_primitive_tree_)
         , minimum_((std::numeric_limits<FT>::max)()) {}
 
     bool go_further() const { return true; }
 
-    void intersection(const Point_3& p, const Primitive& primitive) {
+    void intersection(const Point_3& p, const Medial_primitive& primitive) {
       const std::size_t id = primitive.id();
       if(lower_bound(p, data_.boxes[id], data_.max_radii[id]) < minimum_)
         minimum_ = (std::min)(minimum_, f_.eval_primitive(id, p));
@@ -305,7 +305,7 @@ private:
 
   private:
     const Medial_skeleton_offset_function& f_;
-    const Search_tree& data_;
+    const Medial_primitive_tree& data_;
     FT minimum_;
   };
 
@@ -315,11 +315,11 @@ private:
 
   std::vector<FT> radii_;
   std::vector<std::pair<std::size_t, std::size_t>> free_edges_;
-  std::shared_ptr<const Search_tree> search_tree_;
+  std::shared_ptr<const Medial_primitive_tree> medial_primitive_tree_;
 };
 
-#endif // DoXYGEN_RUNNING
-
-
+} // namespace internal
+} // namespace Variational_medial_axis
 } // namespace CGAL
-#endif // CGAL_MEDIAL_SKELETON_OFFSET_FUNCTION_H
+
+#endif // CGAL_VARIATIONAL_MEDIAL_AXIS_INTERNAL_MEDIAL_SKELETON_OFFSET_FUNCTION_H

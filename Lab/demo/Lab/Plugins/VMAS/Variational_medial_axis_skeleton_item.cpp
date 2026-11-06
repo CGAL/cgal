@@ -13,7 +13,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Variational_medial_axis_sampling.h>
-#include <CGAL/Medial_skeleton_offset_function.h>
 
 #include <sstream>
 

@@ -21,7 +21,7 @@
 
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-#include <CGAL/Medial_skeleton_offset_function.h>
+#include <CGAL/Variational_medial_axis/internal/Medial_skeleton_offset_function.h>
 
 #include <CGAL/Variational_medial_axis_sampling.h>
 
@@ -197,7 +197,7 @@ void Variational_medial_axis_skeleton_plugin::trace_surface()
   vmas.sample(CGAL::parameters::number_of_spheres(nbs));
   auto skeleton = vmas.skeleton();
 
-  CGAL::Medial_skeleton_offset_function<Mesh> implicit_function(skeleton);
+  CGAL::Variational_medial_axis::internal::Medial_skeleton_offset_function<Mesh> implicit_function(skeleton);
 
   namespace p = CGAL::parameters;
 
