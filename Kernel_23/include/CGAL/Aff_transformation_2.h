@@ -109,19 +109,38 @@ public:
                        const RT & m22,
                        const RT & m23,
 
-                       const RT &w= RT(1))
+                       const RT &w)
     : Rep(m11, m12, m13,
           m21, m22, m23,
                          w)
   {}
 
+  Aff_transformation_2(const RT & m11,
+                       const RT & m12,
+                       const RT & m13,
+
+                       const RT & m21,
+                       const RT & m22,
+                       const RT & m23)
+    : Rep(m11, m12, m13,
+          m21, m22, m23)
+  {}
+
   Aff_transformation_2(const RT & m11, const RT & m12,
                        const RT & m21, const RT & m22,
-                       const RT &w = RT(1))
+                       const RT &w)
     : Rep(m11, m12,
           m21, m22,
                    w)
   {}
+
+  Aff_transformation_2(const RT & m11, const RT & m12,
+                       const RT & m21, const RT & m22)
+    : Rep(m11, m12,
+          m21, m22)
+  {}
+
+
 };
 
 

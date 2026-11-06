@@ -20,6 +20,7 @@
 #include <CGAL/aff_transformation_tags.h>
 #include <CGAL/determinant.h>
 #include <CGAL/rational_rotation.h>
+#include <CGAL/number_utils.h>
 
 #include <ostream>
 #include <vector>
@@ -203,10 +204,10 @@ public:
     if(is_translation()) return v;
     if(is_rotation())
       return construct_vector_2(cosinus() * v.x() - sinus() * v.y(),
-                                sinus() * v.x() + cosinus() * v.y());
+                                sinus() * v.x()   + cosinus() * v.y());
     if(is_reflection())
-      return construct_vector_2(cosinus()*v.x()+sinus()*v.y()-cosinus()*tx()-sinus()*ty()+tx(),
-                                sinus()*v.x()-cosinus()*v.y()-sinus()*tx()+cosinus()*ty()+ty());
+      return construct_vector_2(cosinus()*v.x() + sinus()*v.y(),
+                                sinus()*v.x()   + cosinus()*v.y());
     return construct_vector_2(entries[0] * v.x() + entries[1] * v.y() ,
                               entries[3] * v.x() + entries[4] * v.y());
    }
@@ -267,9 +268,9 @@ public:
   bool is_even() const
   {
     if(is_identity()) return true;
-    if(is_scaling()) return true;
+    if(is_scaling()) return is_positive(entries[0]);
     if(is_translation()) return true;
-    if(is_reflection()) return true;
+    if(is_reflection()) return false;
     if(is_rotation()) { return true;}
     return sign_of_determinant(entries[0], entries[1],
                                entries[3], entries[4]) == POSITIVE;
@@ -286,6 +287,7 @@ public:
 
   bool has_rotation() const {
     if(is_rotation() || is_reflection()) return true;
+    if(is_general()) return !(is_zero(entries[1]) && is_zero(entries[3]));
     return false;
   }
 
