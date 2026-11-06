@@ -38,7 +38,7 @@ namespace CGAL::internal::Hexmeshing
     for(auto edge = edges.begin(); edge != edges.end(); edge++)
     {
       auto redge = lcc.beta<1>(edge);
-      int id1 = lcc.attribute<0>(edge)->id, id2 = lcc.attribute<0>(redge)->id;
+      auto id1 = lcc.attribute<0>(edge)->id, id2 = lcc.attribute<0>(redge)->id;
       P_new[id1] += (lcc.point(redge) - CGAL::ORIGIN);
       P_new[id2] += (lcc.point(edge) - CGAL::ORIGIN);
       count[id1]++;
@@ -55,7 +55,7 @@ namespace CGAL::internal::Hexmeshing
       if(lcc.is_marked(vertex, surface_mark) ||
           lcc.is_marked(vertex, side_mark)) continue;
 
-      int id = lcc.attribute<0>(vertex)->id;
+      auto id = lcc.attribute<0>(vertex)->id;
 
       CGAL_assertion(count[id]);
 
@@ -106,8 +106,8 @@ namespace CGAL::internal::Hexmeshing
         }
       }
       if(inside && outside && lcc.is_whole_cell_marked<1>(edge, surface_mark)) {
-        int id1 = lcc.attribute<0>(edge)->id;
-        int id2 = lcc.attribute<0>(lcc.beta<1>(edge))->id;
+        auto id1 = lcc.attribute<0>(edge)->id;
+        auto id2 = lcc.attribute<0>(lcc.beta<1>(edge))->id;
         neighbors_list[id1].emplace_back(lcc.beta<1>(edge));
         neighbors_list[id2].emplace_back(edge);
       }
@@ -128,7 +128,7 @@ namespace CGAL::internal::Hexmeshing
 
     for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
       auto attr = lcc.attribute<0>(vertex);
-      int id = attr->id;
+      auto id = attr->id;
       if(neighbors_list[id].empty()) continue;
 
       Vector N_k = attr->normal;

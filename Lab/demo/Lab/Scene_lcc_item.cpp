@@ -579,6 +579,12 @@ void Scene_lcc_item::resetColors()
   invalidateOpenGLBuffers();
   redraw();
 }
+
+Scene_lcc_item::LCC* Scene_lcc_item::lcc()
+{
+  return &d->lcc;
+}
+
 QMenu* Scene_lcc_item::contextMenu()
 {
   const char* prop_name = "Menu modified by Scene_lcc_item.";

@@ -87,6 +87,7 @@ if(VTK_FOUND AND VTK_LIBRARIES)
       scene_polylines_item
       scene_c3t3_item
       scene_points_with_normal_item
+      scene_lcc_item
       ${VTK_LIBRARIES}
   )
   target_compile_definitions(vtk_plugin  PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
