@@ -84,24 +84,6 @@ public:
   void set_sliver_value(double) {}
   double sliver_value() const { return 0.; }
 
-  ///////// valid implementation
-  template<typename Surface_patch_index>
-  void set_surface_patch_index(const int i, const Surface_patch_index& patch)
-  {
-    if(patch > 0)
-      this->ccdt_3_data().set_face_constraint_index(i, patch - 1);
-    else
-      this->ccdt_3_data().set_face_constraint_index(i, patch);
-  }
-
-  auto surface_patch_index(const int i) const {
-    return this->ccdt_3_data().face_constraint_index(i) + 1;
-  }
-
-  bool is_facet_on_surface(const int i) const {
-    return this->ccdt_3_data().face_constraint_index(i) >= 0;
-  }
-
   ///////// end of for C3T3
 
   static std::string io_signature() {
