@@ -1240,13 +1240,143 @@ public:
     using Approximate_kernel = typename Approximate_2::Approximate_kernel;
   };
 
+  using Subcurve_approximate_2 = typename has_approximate_2<Subcurve_traits_2>::Approximate_2;
   using Approximate_number_type = typename has_approximate_2<Subcurve_traits_2>::Approximate_number_type;
-  using Approximate_2 = typename has_approximate_2<Subcurve_traits_2>::Approximate_2;
   using Approximate_point_2 = typename has_approximate_2<Subcurve_traits_2>::Approximate_point_2;
   using Approximate_kernel = typename has_approximate_2<Subcurve_traits_2>::Approximate_kernel;
 
+protected:
+  // Detect whether the approximation functor `A` of the subcurve traits
+  // approximates \f$x\f$-monotone subcurves (in addition to points) given an
+  // output iterator of type `OutputIterator`.
+  template <typename A, typename OutputIterator, typename = void>
+  struct has_approximate_xcv : std::false_type {};
+
+  template <typename A, typename OutputIterator>
+  struct has_approximate_xcv
+  <A, OutputIterator,
+   std::void_t<decltype(std::declval<const A&>()(std::declval<const X_monotone_subcurve_2&>(),
+                                                 std::declval<double>(),
+                                                 std::declval<OutputIterator>(),
+                                                 std::declval<bool>()))>> :
+    std::true_type
+  {};
+
+  /*! An output iterator adaptor that discards the first value assigned to it
+   * if so requested, and passes every other value to the adapted iterator.
+   * It is used to avoid the duplication of the common endpoint of every two
+   * consecutive subcurves of a polycurve. The adaptor refers to the adapted
+   * iterator and to the flag rather than storing them, as an output iterator
+   * is not necessarily assignable, and copies of the adaptor must share the
+   * state.
+   */
+  template <typename OutputIterator>
+  class Skip_first_output_iterator {
+  public:
+    using iterator_category = std::output_iterator_tag;
+    using value_type = void;
+    using difference_type = std::ptrdiff_t;
+    using pointer = void;
+    using reference = void;
+
+    Skip_first_output_iterator(OutputIterator& oi, bool& skip) : m_oi(&oi), m_skip(&skip) {}
+
+    template <typename T>
+    Skip_first_output_iterator& operator=(const T& t) {
+      if (*m_skip) *m_skip = false;
+      else *(*m_oi)++ = t;
+      return *this;
+    }
+
+    Skip_first_output_iterator& operator*() { return *this; }
+    Skip_first_output_iterator& operator++() { return *this; }
+    Skip_first_output_iterator operator++(int) { return *this; }
+
+  private:
+    OutputIterator* m_oi;
+    bool* m_skip;
+  };
+
+  /*! A functor that approximates points and \f$x\f$-monotone polycurves. It
+   * is defined only if the subcurve traits defines `Approximate_2`; see
+   * `Approximate_2` below. A polycurve is approximated only if the
+   * approximation functor of the subcurve traits approximates subcurves.
+   */
+  class Polycurve_approximate_2 {
+  protected:
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+
+    /*! The traits (in case it has state). */
+    const Polycurve_basic_traits_2& m_poly_traits;
+
+    friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+
+    /*! constructs. */
+    Polycurve_approximate_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
+
+  public:
+    using Approximate_number_type = typename Polycurve_basic_traits_2::Approximate_number_type;
+    using Approximate_point_2 = typename Polycurve_basic_traits_2::Approximate_point_2;
+    using Approximate_kernel = typename Polycurve_basic_traits_2::Approximate_kernel;
+
+    /*! obtains an approximation of a point coordinate.
+     * \param p the exact point.
+     * \param i the coordinate index.
+     * \return an approximation of the `i`-th coordinate of `p`.
+     */
+    Approximate_number_type operator()(const Point_2& p, int i) const
+    { return m_poly_traits.subcurve_traits_2()->approximate_2_object()(p, i); }
+
+    /*! obtains an approximation of a point.
+     */
+    Approximate_point_2 operator()(const Point_2& p) const
+    { return m_poly_traits.subcurve_traits_2()->approximate_2_object()(p); }
+
+    /*! obtains an approximation of an \f$x\f$-monotone polycurve, which is
+     * the concatenation of the approximations of its subcurves, where the
+     * common endpoint of every two consecutive subcurves appears once.
+     * \param xcv the polycurve.
+     * \param error the approximation error bound, passed as is to the
+     *        approximation of every subcurve.
+     * \param oi the output iterator of approximate points.
+     * \param l2r indicates whether the approximation is from left to right.
+     * \return the past-the-end output iterator.
+     * This operator is defined only if the approximation functor of the
+     * subcurve traits approximates subcurves.
+     */
+    template <typename OutputIterator, typename A = Subcurve_approximate_2,
+              std::enable_if_t<has_approximate_xcv<A, Skip_first_output_iterator<OutputIterator>>::value, int> = 0>
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi,
+                              bool l2r = true) const {
+      if (xcv.number_of_subcurves() == 0) return oi;
+
+      // All subcurves of an \f$x\f$-monotone polycurve are directed as the
+      // polycurve, and they are stored in its direction. Traverse them in the
+      // stored order iff the direction of `xcv` matches the requested one.
+      auto approx = m_poly_traits.subcurve_traits_2()->approximate_2_object();
+      bool is_directed_right = (m_poly_traits.compare_endpoints_xy_2_object()(xcv) == SMALLER);
+      bool skip = false;
+      auto approx_subcurve = [&](const X_monotone_subcurve_2& sub) {
+        approx(sub, error, Skip_first_output_iterator<OutputIterator>(oi, skip), l2r);
+        skip = true;
+      };
+      if (is_directed_right == l2r)
+        for (auto it = xcv.subcurves_begin(); it != xcv.subcurves_end(); ++it) approx_subcurve(*it);
+      else
+        for (auto it = xcv.subcurves_rbegin(); it != xcv.subcurves_rend(); ++it) approx_subcurve(*it);
+      return oi;
+    }
+  };
+
+public:
+  /*! The approximation functor, defined only if the subcurve traits defines
+   * `Approximate_2`, and `void` otherwise.
+   */
+  using Approximate_2 =
+    std::conditional_t<std::is_void_v<Subcurve_approximate_2>, void, Polycurve_approximate_2>;
+
   /*! obtains an Approximate_2 functor object. */
-  Approximate_2 approximate_2_object_impl(std::false_type) const { return subcurve_traits_2()->approximate_2_object(); }
+  Approximate_2 approximate_2_object_impl(std::false_type) const { return Approximate_2(*this); }
 
   Approximate_2 approximate_2_object_impl(std::true_type) const { }
 

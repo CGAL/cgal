@@ -592,62 +592,6 @@ public:
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
 
-  //
-  class Approximate_2 : public Base::Approximate_2 {
-  protected:
-    using Traits = Arr_polyline_traits_2<Segment_traits_2>;
-
-    /*! The traits (in case it has state) */
-    const Traits& m_traits;
-
-    /*! constructs
-     * \param traits the traits.
-     */
-    Approximate_2(const Traits& traits) :
-      Base::Approximate_2(*(traits.subcurve_traits_2())),
-      m_traits(traits)
-    {}
-
-    friend class Arr_polyline_traits_2<Segment_traits_2>;
-
-  public:
-    using Approximate_number_type = typename Base::Approximate_number_type;
-    using Approximate_point_2 = typename Base::Approximate_point_2;
-    using Approximate_kernel = typename Base::Approximate_kernel;
-
-    /*! obtains an approximation of a point coordinate.
-     * \param p the exact point.
-     * \param i the coordinate index (either 0 or 1).
-     * \pre `i` is either 0 or 1.
-     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
-     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
-     */
-    Approximate_number_type operator()(const Point_2& p, int i) const { return Base::Approximate_2::operator()(p, i); }
-
-    Approximate_point_2 operator()(const Point_2& p) const { return Base::Approximate_2::operator()(p); }
-
-    /*! obtains an approximation of an \f$x\f$-monotone curve. */
-    template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
-                              OutputIterator oi, bool l2r = true) const {
-      // The points of `xcv` are stored in the direction of `xcv`, which may be
-      // either left to right or right to left. Traverse them in the stored
-      // order iff the direction of `xcv` matches the requested direction.
-      auto cmp_endpts = m_traits.compare_endpoints_xy_2_object();
-      bool is_directed_right = (cmp_endpts(xcv) == SMALLER);
-      if (is_directed_right == l2r) {
-        for (auto it = xcv.points_begin(); it != xcv.points_end(); ++it) *oi++ = operator()(*it);
-        return oi;
-      }
-
-      for (auto it = xcv.points_rbegin(); it != xcv.points_rend(); ++it) *oi++ = operator()(*it);
-      return oi;
-    }
-  };
-
-  /*! obtains an Approximate_2 functor object. */
-  Approximate_2 approximate_2_object() const { return Approximate_2(*this); }
-
   /*! obtains the segment traits.
    * \return the segment traits.
    */

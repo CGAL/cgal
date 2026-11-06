@@ -1,9 +1,16 @@
+#include <array>
+#include <cmath>
 #include <vector>
 
+#include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/draw_arrangement_2.h>
 
 #include "arr_geodesic.h"
 #include "arr_print.h"
+
+using Poly_traits = CGAL::Arr_polyline_traits_2<Geom_traits>;
+using Poly_topol_traits = CGAL::Arr_spherical_topology_traits_2<Poly_traits>;
+using Poly_arrangement = CGAL::Arrangement_on_surface_2<Poly_traits, Poly_topol_traits>;
 
 void draw_face_crossing_boundary() {
   Arrangement arr;
@@ -97,10 +104,46 @@ void draw_random_arcs(int n) {
   CGAL::draw(arr, (std::to_string(n) + " random arcs").c_str());
 }
 
+/* Draw an arrangement of closed polylines of geodesic arcs, each approximating
+ * a small circle on the sphere. The circles lie in planes parallel to the
+ * XY-, YZ-, and ZX-planes.
+ */
+void draw_small_circles(std::size_t n) {
+  Poly_traits traits;
+  auto ctr_p = traits.subcurve_traits_2()->construct_point_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
+
+  // Each circle is given by the index of the axis orthogonal to its plane and
+  // by the (signed) distance of its plane from the origin.
+  std::vector<std::pair<int, double>> circles = {{2, -0.6}, {2, 0.2}, {2, 0.7},  {0, -0.7}, {0, -0.1},
+                                                 {0, 0.5},  {1, -0.4}, {1, 0.3}, {1, 0.8}};
+  std::vector<Poly_traits::Curve_2> curves;
+  for (const auto& [axis, c] : circles) {
+    const double r = std::sqrt(1.0 - c * c);
+    std::vector<Point> points;
+    for (std::size_t i = 0; i < n; ++i) {
+      const double t = 2.0 * CGAL_PI * (static_cast<double>(i) + 0.5) / static_cast<double>(n);
+      std::array<double, 3> v;
+      v[axis] = c;
+      v[(axis + 1) % 3] = r * std::cos(t);
+      v[(axis + 2) % 3] = r * std::sin(t);
+      points.push_back(ctr_p(v[0], v[1], v[2]));
+    }
+    points.push_back(points.front());
+    curves.push_back(ctr_cv(points.begin(), points.end()));
+  }
+
+  Poly_arrangement arr(&traits);
+  CGAL::insert(arr, curves.begin(), curves.end());
+  print_arrangement_size(arr);
+  CGAL::draw(arr, "polylines of geodesic arcs approximating small circles");
+}
+
 int main() {
   draw_face_crossing_boundary();
   draw_lakes();
   draw_gaussian_map();
   draw_random_arcs(100);
+  draw_small_circles(16);
   return 0;
 }
