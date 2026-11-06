@@ -157,6 +157,34 @@ struct innermost_traits<Gt, std::void_t<typename underlying_traits_of<Gt>::type>
 template <typename Gt>
 using innermost_traits_t = typename innermost_traits<Gt>::type;
 
+// Detect whether Gt is a traits decorator, i.e., it defines `Decorated_traits_2`.
+template <typename Gt, typename = void>
+struct is_traits_decorator : std::false_type {};
+
+template <typename Gt>
+struct is_traits_decorator<Gt, std::void_t<typename Gt::Decorated_traits_2>> : std::true_type {};
+
+template <typename Gt>
+inline constexpr bool is_traits_decorator_v = is_traits_decorator<Gt>::value;
+
+// Detect whether Gt is built upon another traits (see `underlying_traits_of`).
+template <typename Gt, typename = void>
+struct has_underlying_traits : std::false_type {};
+
+template <typename Gt>
+struct has_underlying_traits<Gt, std::void_t<typename underlying_traits_of<Gt>::type>> : std::true_type {};
+
+template <typename Gt>
+inline constexpr bool has_underlying_traits_v = has_underlying_traits<Gt>::value;
+
+// Obtain the traits object that the given traits object is built upon: the
+// decorated traits of a decorator or the subcurve traits of a polycurve traits.
+template <typename Gt, std::enable_if_t<has_underlying_traits_v<Gt>, int> = 0>
+const typename underlying_traits_of<Gt>::type& underlying_traits(const Gt& traits) {
+  if constexpr (is_traits_decorator_v<Gt>) return traits.traits();
+  else return *traits.subcurve_traits_2();
+}
+
 // Detect whether the innermost traits of Gt (see `innermost_traits`) is or
 // derives from
 // Arr_geodesic_arc_on_sphere_traits_2<*, *, *>
@@ -199,6 +227,35 @@ No_tmpl_args agas_tmpl_args(...);
 // Arr_geodesic_arc_on_sphere_traits_2<*, *, *>.
 template <typename Gt>
 struct tmpl_args : decltype(agas_tmpl_args(static_cast<const innermost_traits_t<Gt>*>(nullptr))) {};
+
+/*! constructs the identification curve of an arrangement on the sphere, that
+ * is, the x-monotone curve of the given traits that lies on the identification
+ * meridian from the south pole to the north pole.
+ * The arc is constructed by the innermost traits, which is (or derives from)
+ * `Arr_geodesic_arc_on_sphere_traits_2`, as the construction of a curve from
+ * its endpoints and the normal of its plane is specific to this traits. Then,
+ * it is lifted through the chain of traits: a decorator uses the curve type
+ * of the traits it decorates, and a polycurve traits constructs an x-monotone
+ * polycurve that consists of a single subcurve.
+ */
+template <typename Gt>
+typename Gt::X_monotone_curve_2 construct_identification_curve(const Gt& traits) {
+  static_assert(is_or_derived_from_agas_v<Gt>,
+                "The innermost traits must be (or derive from) Arr_geodesic_arc_on_sphere_traits_2.");
+  if constexpr (has_underlying_traits_v<Gt>) {
+    auto xcv = construct_identification_curve(underlying_traits(traits));
+    if constexpr (is_traits_decorator_v<Gt>) return xcv;
+    else return traits.construct_x_monotone_curve_2_object()(xcv);
+  }
+  else {
+    using Direction_3 = typename Gt::Direction_3;
+    using Point_2 = typename Gt::Point_2;
+    using Args = tmpl_args<Gt>;
+    Point_2 src(Direction_3(0, 0, -1), Point_2::MIN_BOUNDARY_LOC);
+    Point_2 trg(Direction_3(0, 0, 1), Point_2::MAX_BOUNDARY_LOC);
+    return traits.construct_x_monotone_curve_2_object()(src, trg, Direction_3(Args::atan_y, -Args::atan_x, 0));
+  }
+}
 
 /*! \brief Approximation data types
  *
