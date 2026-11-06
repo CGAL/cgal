@@ -34,6 +34,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #ifdef CGAL_SLS_OUTPUT_FILES
 #include <CGAL/IO/polygon_soup_io.h>
@@ -50,6 +51,7 @@
 #include <CGAL/IO/helpers.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/utility.h>
 
 #include <boost/algorithm/clamp.hpp>
 #include <boost/range/value_type.hpp>
@@ -400,6 +402,9 @@ public:
   {
     CGAL_precondition(face_points.size() >= 3);
 
+    // Purge consecutive duplicate points (can happen with inexact constructions)
+    face_points.erase(std::unique(face_points.begin(), face_points.end()), face_points.end());
+
     // shift once to ensure that face_points[0] and face_points[1] are at z=0 and thus the normal is correct
     std::rotate(face_points.rbegin(), face_points.rbegin() + 1, face_points.rend());
     CGAL_assertion(face_points[0][2] == 0 && face_points[1][2] == 0);
@@ -415,7 +420,94 @@ public:
     catch(const typename PCDT::Intersection_of_constraints_exception&)
     {
       if(m_verbose)
-        std::cerr << "Warning: Failed to triangulate skeleton face" << std::endl;
+        std::cerr << "Warning: Failed to triangulate lateral face (projection traits)" << std::endl;
+
+      /// ------------------------------------------------------------------------------------------
+      CDT cdt;
+      std::vector<CDT_Vertex_handle> vertices;
+      vertices.reserve(face_points.size());
+
+      std::size_t id = points.size();
+      for(const Point_3& p : face_points)
+      {
+        CDT_Vertex_handle vh = cdt.insert(Point_2(p.x(), p.y()));
+        vh->info() = id++;
+        vertices.push_back(vh);
+      }
+
+      try
+      {
+        for(std::size_t i = 0; i < vertices.size(); ++i)
+          cdt.insert_constraint(vertices[i], vertices[(i + 1) % vertices.size()]);
+      }
+      catch(const typename CDT::Intersection_of_constraints_exception&)
+      {
+        if(m_verbose)
+          std::cerr << "Warning: Failed to triangulate lateral face (CDT2)" << std::endl;
+
+        /// ----------------------------------------------------------------------------------------
+        std::vector<CGAL::Triple<int, int, int> > patch;
+        CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
+          face_points, std::back_inserter(patch),
+          CGAL::parameters::use_delaunay_triangulation(false));
+
+        if(patch.empty())
+        {
+          if(m_verbose)
+            std::cerr << "Warning: Failed to triangulate lateral face (triangulate_hole_polyline)" << std::endl;
+
+          /// --------------------------------------------------------------------------------------
+          const std::size_t id_offset = points.size();
+          std::vector<std::size_t> face;
+          face.reserve(face_points.size());
+          for(const Point_3& p : face_points)
+          {
+            points.push_back(p);
+            face.push_back(id_offset + face.size());
+          }
+          if(invert_faces)
+            std::reverse(face.begin(), face.end());
+          std::cout << "face:";
+          for (std::size_t i : face)
+            std::cout << " " << points[i];
+          faces.push_back(face);
+          return;
+        }
+
+        const std::size_t id_offset = points.size();
+        for(const Point_3& p : face_points)
+          points.push_back(p);
+
+        for(const auto& triangle : patch)
+        {
+          const std::size_t i0 = id_offset + triangle.first;
+          const std::size_t i1 = id_offset + triangle.second;
+          const std::size_t i2 = id_offset + triangle.third;
+          if(invert_faces)
+            faces.push_back({i0, i2, i1});
+          else
+            faces.push_back({i0, i1, i2});
+        }
+        return;
+      }
+
+      for(const Point_3& p : face_points)
+        points.push_back(p);
+
+      std::unordered_map<CDT_Face_handle, bool> fallback_in_domain_map;
+      boost::associative_property_map<std::unordered_map<CDT_Face_handle, bool> > fallback_in_domain(fallback_in_domain_map);
+      CGAL::mark_domain_in_triangulation(cdt, fallback_in_domain);
+
+      for(CDT_Face_handle f : cdt.finite_face_handles())
+      {
+        if(!get(fallback_in_domain, f))
+          continue;
+
+        if(invert_faces)
+          faces.push_back({f->vertex(0)->info(), f->vertex(2)->info(), f->vertex(1)->info()});
+        else
+          faces.push_back({f->vertex(0)->info(), f->vertex(1)->info(), f->vertex(2)->info()});
+      }
       return;
     }
 
