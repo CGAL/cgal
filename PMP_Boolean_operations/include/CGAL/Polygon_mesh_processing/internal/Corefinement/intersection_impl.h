@@ -347,7 +347,7 @@ class Intersection_of_triangle_meshes
     // Wrap the call of AABB intersections given two callback functions
     auto AABB_call = [&](auto &callback12, auto &callback21){
 #ifdef CGAL_LINKED_WITH_TBB
-      if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
+      if constexpr(ConcurrencyTag::is_parallel)
       {
         oneapi::tbb::task_group tg;
         tg.run([&]{ helper_1.template build<ConcurrencyTag>(tm1_faces_intersecting_bb, tree1, tm1, vpm1); });
@@ -503,7 +503,7 @@ class Intersection_of_triangle_meshes
     Callback callback(tm, vpm, stm_edge_to_ltm_faces, coplanar_faces);
 
   #ifdef CGAL_LINKED_WITH_TBB
-    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
+    if constexpr(ConcurrencyTag::is_parallel)
     {
       tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
       CGAL::AABB_trees::all_pairs_of_intersecting_primitives<ConcurrencyTag>(tree, std::back_inserter(inter));
