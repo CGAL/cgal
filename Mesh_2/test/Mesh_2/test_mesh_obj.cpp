@@ -7,6 +7,7 @@
 // #define CGAL_MESH_2_DEBUG_INSERTIONS 1
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
 #include <CGAL/bisect_failures.h>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
@@ -92,6 +93,7 @@ static auto save_obj(const Obj_data& data, const std::filesystem::path& filename
 static int run_mesh(const Obj_data& data)
 {
   CDT cdt;
+  [[maybe_unused]] CGAL::With_point_tag<CDT> with_point_tag{{-1}, &cdt};
 
   double squared_distance = (std::numeric_limits<double>::max)();
   for(const std::vector<std::size_t>& id_pl : data.polylines) {
@@ -103,8 +105,8 @@ static int run_mesh(const Obj_data& data)
       va->info() = id_pl[pid - 1];
       auto vb = cdt.insert(data.points[id_pl[pid]]);
       vb->info() = id_pl[pid];
-      // std::cerr << "Inserting constraint between " << CGAL::IO::oformat(va, CGAL::With_point_tag{})
-      //           << " and " << CGAL::IO::oformat(vb, CGAL::With_point_tag{}) << "\n";
+      // std::cerr << "Inserting constraint between " << CGAL::IO::oformat(va, with_point_tag)
+      //           << " and " << CGAL::IO::oformat(vb, with_point_tag) << "\n";
       cdt.insert_constraint(va, vb);
     }
   }
@@ -119,8 +121,8 @@ static int run_mesh(const Obj_data& data)
         auto va = fc->vertex(cdt.cw(edge_index));
         auto vb = fc->vertex(cdt.ccw(edge_index));
       //   std::cerr << "Add constrained edge on the convex hull: ";
-      //   std::cerr << CGAL::IO::oformat(va, CGAL::With_point_tag{}) << "  "
-      //             << CGAL::IO::oformat(vb, CGAL::With_point_tag{}) << "\n";
+      //   std::cerr << CGAL::IO::oformat(va, with_point_tag) << "  "
+      //             << CGAL::IO::oformat(vb, with_point_tag) << "\n";
         cdt.insert_constraint(va, vb);
         file_stream << "l " << (va->info() + 1 - points_ids_offsets[va->info()]) << " "
                     << (vb->info() + 1 - points_ids_offsets[vb->info()]) << "\n";

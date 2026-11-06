@@ -1,4 +1,8 @@
-﻿#include <CGAL/Polygon_mesh_processing/locate.h>
+﻿#define CGAL_PMP_LOCATE_DEBUG
+
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
+#include <CGAL/Polygon_mesh_processing/locate.h>
 
 // Graphs
 #include <CGAL/Polyhedron_3.h>
@@ -94,6 +98,68 @@ bool is_equal(const FT& a, const FT& b)
     return (CGAL::abs(a - b) <= 1e-7); // numeric_limits' epsilon is too restrictive...
   else
     return (a == b);
+}
+
+template <typename K, typename Point>
+void check_degenerate_barycentric_coordinates(const Point& p, const Point& q, const Point& r,
+                                             const Point& query,
+                                             const typename PMP::Barycentric_coordinates<typename K::FT>& expected)
+{
+  typedef typename K::FT                                                     FT;
+  typedef typename PMP::Barycentric_coordinates<FT>                          Barycentric_coordinates;
+
+  const Barycentric_coordinates coordinates = PMP::barycentric_coordinates(p, q, r, query, K());
+  std::cout << "get " << coordinates[0] << " " << coordinates[1] << " " << coordinates[2] << std::endl;
+  assert(is_equal(coordinates[0], expected[0]));
+  assert(is_equal(coordinates[1], expected[1]));
+  assert(is_equal(coordinates[2], expected[2]));
+}
+
+template <typename K, typename Point>
+void test_degenerate_barycentric_coordinates_P()
+{
+  typedef typename K::FT FT;
+
+  // abusing '1' being a z coordinate for 3D points, and the homogeneous coordinate in 2D
+  const Point points[3] = { Point(0, 0, 1), Point(2, 0, 1), Point(1, 0, 1) };
+  const Point query(0.5, 0, 1);
+  const FT expected[3] = { FT(0.75), FT(0.25), FT(0) };
+
+  for(int i=0; i<3; ++i) {
+    for(int j=0; j<3; ++j) {
+      for(int k=0; k<3; ++k) {
+        if(i == j || i == k || j == k)
+          continue;
+        std::cout << "test " << points[i] << " " << points[j] << " " << points[k] << std::endl;
+        check_degenerate_barycentric_coordinates<K>(points[i], points[j], points[k], query,
+                                                    CGAL::make_array(expected[i], expected[j], expected[k]));
+      }
+    }
+  }
+
+  // collinear, outside of longest segment
+  check_degenerate_barycentric_coordinates<K>(points[0], points[1], points[2], Point(3, 0, 1),
+                                              CGAL::make_array(FT(-0.5), FT(1.5), FT(0)));
+
+  // collinear with twice the same points
+  check_degenerate_barycentric_coordinates<K>(Point(0, 0, 1), Point(0, 0, 1), Point(2, 0, 1), query,
+                                              CGAL::make_array(FT(0.75), FT(0), FT(0.25)));
+  check_degenerate_barycentric_coordinates<K>(Point(0, 0, 1), Point(2, 0, 1), Point(0, 0, 1), query,
+                                              CGAL::make_array(FT(0.75), FT(0.25), FT(0)));
+  check_degenerate_barycentric_coordinates<K>(Point(0, 0, 1), Point(2, 0, 1), Point(2, 0, 1), query,
+                                              CGAL::make_array(FT(0.75), FT(0.25), FT(0)));
+
+  // all equal
+  check_degenerate_barycentric_coordinates<K>(Point(3, 0, 1), Point(3, 0, 1), Point(3, 0, 1), Point(3, 0, 1),
+                                              CGAL::make_array(FT(1), FT(0), FT(0)));
+}
+
+template <typename K>
+void test_degenerate_barycentric_coordinates()
+{
+  std::cout << "  test degenerate barycentric coordinates..." << std::endl;
+  test_degenerate_barycentric_coordinates_P<K, typename K::Point_2>();
+  test_degenerate_barycentric_coordinates_P<K, typename K::Point_3>();
 }
 
 template<typename K, typename G>
@@ -210,14 +276,20 @@ void test_constructions(const G& g,
   descriptor_variant dv = PMP::get_descriptor_from_location(loc, g);
   const face_descriptor* fd = std::get_if<face_descriptor>(&dv);
   assert(fd);
+  assert(PMP::is_in_face(loc.second));
+  assert(PMP::is_in_face(loc, g));
 
   loc = std::make_pair(f, CGAL::make_array(FT(0.5), FT(0.5), FT(0)));
   dv = PMP::get_descriptor_from_location(loc, g);
   const halfedge_descriptor* hd = std::get_if<halfedge_descriptor>(&dv);
   assert(hd);
+  assert(PMP::is_on_halfedge(loc.second));
+  assert(PMP::is_on_halfedge(loc, g));
 
   loc = std::make_pair(f, CGAL::make_array(FT(1), FT(0), FT(0)));
   assert(PMP::is_on_vertex(loc, source(halfedge(f, g), g), g));
+  assert(PMP::is_on_vertex(loc.second));
+  assert(PMP::is_on_vertex(loc, g));
 
   dv = PMP::get_descriptor_from_location(loc, g);
   if(const vertex_descriptor* v = std::get_if<vertex_descriptor>(&dv)) { } else { assert(false); }
@@ -682,6 +754,39 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     if (std::is_same<K, EPECK>()) {
       assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, g), p3_a), FT(0)));
       assert(PMP::is_in_face(loc, g));
+#ifndef CGAL_NO_DEPRECATED_CODE
+      assert(PMP::is_in_face(loc.second, g));
+#endif
+    }
+
+    if (std::is_same<typename boost::property_traits<VPM>::value_type, Point_3>::value) {
+      std::cout << "new tests!" << std::endl;
+      vertex_descriptor v0 = source(halfedge(f, g), g);
+      const Point_3 p0 = get(vpm, v0);
+      vertex_descriptor v1 = target(halfedge(f, g), g);
+      const Point_3 p1 = get(vpm, v1);
+      vertex_descriptor v2 = target(next(halfedge(f, g), g), g);
+      const Point_3 p2 = get(vpm, v2);
+
+      const FT tiny = FT(1e-9);
+      const Point_3 near_edge_query = CGAL::barycenter(p0, FT(1) - tiny, p1, tiny, p2, -tiny);
+
+      auto loc_with_tree = PMP::locate_with_AABB_tree(near_edge_query, tree_a, g,
+                             CGAL::parameters::vertex_point_map(vpm).snapping_tolerance(1e-7));
+      auto loc_without_tree = PMP::locate(near_edge_query, g,
+                                CGAL::parameters::vertex_point_map(vpm).snapping_tolerance(1e-7));
+
+      assert(PMP::is_on_face_border(loc_with_tree, g));
+      assert(PMP::is_on_face_border(loc_without_tree, g));
+
+      loc_with_tree = PMP::locate_with_AABB_tree(near_edge_query, tree_a, g);
+      std::cout << "loc with tree (1): " << loc_with_tree.second[0] << " " << loc_with_tree.second[1] << " " << loc_with_tree.second[2] << std::endl;
+      assert(!PMP::is_on_vertex(loc_with_tree, v0, g));
+
+      loc_with_tree = PMP::locate_with_AABB_tree(near_edge_query, tree_a, g, CGAL::parameters::snapping_tolerance(1e-7));
+
+      std::cout << "loc with tree (2): " << loc_with_tree.second[0] << " " << loc_with_tree.second[1] << " " << loc_with_tree.second[2] << std::endl;
+      assert(PMP::is_on_vertex(loc_with_tree, v0, g));
     }
 
     loc = PMP::locate_with_AABB_tree(CGAL::ORIGIN, tree_b, g, CGAL::parameters::vertex_point_map(custom_vpm_3D));
@@ -709,6 +814,7 @@ void test_locate(const G& g,
 {
   assert(num_vertices(g) != 0 && num_faces(g) != 0);
 
+  test_degenerate_barycentric_coordinates<K>();
   test_snappers<K>(g);
   test_constructions<K>(g, vpm, rnd);
   test_random_entities<K>(g, rnd);
