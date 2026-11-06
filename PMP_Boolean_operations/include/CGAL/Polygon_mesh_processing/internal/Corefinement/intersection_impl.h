@@ -371,8 +371,8 @@ class Intersection_of_triangle_meshes
       else
 #endif
       {
-        helper_1.template build<ConcurrencyTag>(tree1, tm1, vpm1);
-        helper_2.template build<ConcurrencyTag>(tree2, tm2, vpm2);
+        helper_1.template build<ConcurrencyTag>(tm1_faces_intersecting_bb, tree1, tm1, vpm1);
+        helper_2.template build<ConcurrencyTag>(tm2_faces_intersecting_bb, tree2, tm2, vpm2)
 
         std::vector<std::pair<face_descriptor, face_descriptor>> inter;
         CGAL::AABB_trees::all_pairs_of_primitives_with_overlapping_bbox(tree1, tree2, std::back_inserter(inter));
