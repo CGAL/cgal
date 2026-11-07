@@ -865,10 +865,25 @@ public:
    * This function allows manual control over the algorithm execution,
    * performing only position optimization without sphere splitting.
    *
-   * \param nb_iteration Number of iterations to perform
+   * \param nb_iteration Number of iterations to perform. If it is 0, the points are reassigned
+   *        to the spheres without moving them.
    *
    */
   void update(std::size_t nb_iteration) {
+    if(nb_iteration == 0) {
+      // reassign the points and recompute the errors and split points, without moving the spheres
+      sphere_mesh_->reset();
+      if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>) {
+#ifdef CGAL_LINKED_WITH_TBB
+        assign_vertices_to_clusters_parallel();
+        total_error_ = compute_sphere_errors_parallel();
+#endif
+      } else {
+        assign_vertices_to_clusters();
+        total_error_ = compute_sphere_errors();
+      }
+      last_total_error_ = total_error_;
+    }
     for(std::size_t i = 0; i < nb_iteration; i++) {
       update_single_step();
     }

@@ -4,6 +4,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Variational_medial_axis_sampling.h>
 #include <CGAL/extract_variational_medial_skeleton.h>
+#include <algorithm>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -193,7 +194,13 @@ bool test_API() {
     std::cout << "Adding spheres succeeded: new vertex count is " << skeleton3.number_of_vertices() << std::endl;
   }
   ids = vmas.sphere_ids();
-  vmas.remove_sphere_by_id(ids[0]);
+
+  auto kept_sphere = vmas.sphere(ids.back());
+  vmas.remove_sphere_by_id(ids[0], 0);
+  if(vmas.sphere(ids.back()) != kept_sphere) {
+    std::cerr << "sphere() failed: the sphere changed after removing another sphere" << std::endl;
+    return false;
+  }
   vmas.remove_sphere_by_id(ids[1]);
   vmas.remove_sphere_by_id(ids[2]);
   auto skeleton4 = vmas.skeleton();
@@ -203,6 +210,25 @@ bool test_API() {
     return false;
   } else {
     std::cout << "Removing sphere succeeded: new vertex count is " << skeleton4.number_of_vertices() << std::endl;
+  }
+
+  ids = vmas.sphere_ids();
+  vmas.add_sphere_by_id(ids[0], 0);
+  auto new_ids = vmas.sphere_ids();
+  if(new_ids.size() != ids.size() + 1) {
+    std::cerr << "add_sphere_by_id() failed: expected " << ids.size() + 1 << " spheres, got " << new_ids.size()
+              << std::endl;
+    return false;
+  }
+  auto new_id = *std::find_if(new_ids.begin(), new_ids.end(),
+                              [&](auto id) { return std::find(ids.begin(), ids.end(), id) == ids.end(); });
+  vmas.add_sphere_by_id(new_id, 0);
+  if(vmas.sphere_ids().size() != ids.size() + 2) {
+    std::cerr << "add_sphere_by_id() failed: expected " << ids.size() + 2 << " spheres, got "
+              << vmas.sphere_ids().size() << std::endl;
+    return false;
+  } else {
+    std::cout << "Adding spheres without optimization succeeded" << std::endl;
   }
   return true;
 }
