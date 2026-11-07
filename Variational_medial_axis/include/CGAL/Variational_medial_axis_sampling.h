@@ -1285,8 +1285,8 @@ private:
     using LDLTSolver = Eigen::LDLT<EMat>;
 
     auto& cluster_points = sphere.get_cluster_points_idx();
-//    Point_3 center = sphere.get_center();
-//    FT radius = sphere.get_radius();
+    Point_3 center = sphere.get_center();
+    FT radius = sphere.get_radius();
 
     auto nrows = 2 * cluster_points.size();
     EMat J(nrows, 4);
@@ -1295,6 +1295,7 @@ private:
     b.setZero();
     int idx = 0;
     EVec4 s;
+    s << center.x(), center.y(), center.z(), radius;
 
     for(int i = 0; i < 10; i++) {
       idx = 0;
@@ -1410,7 +1411,7 @@ private:
                           Point_3 p = tpoints_.point(idx);
                           FT min_distance = (std::numeric_limits<FT>::max)();
                           Vector_3 normal = point_normal_map_[idx];
-                          Sphere_ID closest_sphere_id;
+                          Sphere_ID closest_sphere_id = MSMesh::INVALID_SPHERE_ID;
 
                           // Find the sphere with smallest distance to the vertex
                           for(const auto& sphere : sphere_mesh_->spheres()) {
