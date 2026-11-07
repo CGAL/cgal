@@ -544,7 +544,6 @@ class Variational_medial_axis_sampling
   using Vector_3 = typename GT::Vector_3;
   using MSMesh = Medial_sphere_mesh<TriangleMesh, GT>;
   using MSphere = typename MSMesh::MSphere;
-  using Sphere_ID = typename MSMesh::Sphere_ID;
   using Point_set = CGAL::Point_set_3<Point_3, Vector_3>;
   using Point_index = typename Point_set::Index;
   using Base_search_traits = CGAL::Search_traits_3<GT>;
@@ -582,6 +581,15 @@ public:
 
   /// number type
   using FT = typename GT::FT;
+
+  /// identifier of a medial sphere.
+  /// The identifier of a sphere does not change until the sphere is removed, but the identifiers
+  /// are not contiguous once spheres have been removed.
+#ifdef DOXYGEN_RUNNING
+  using Sphere_ID = unspecified_type;
+#else
+  using Sphere_ID = typename MSMesh::Sphere_ID;
+#endif
 
   /// \name Constructor
   ///@{

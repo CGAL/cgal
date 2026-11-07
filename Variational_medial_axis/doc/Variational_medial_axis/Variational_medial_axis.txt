@@ -56,9 +56,13 @@ The method takes as input triangulated surface mesh which can be a mode of `Face
 It also requires Eigen (version 3.2 or later) for the use of the `Eigen::LDLT` solver, which is employed to solve the linear systems arising during optimization.
 
 The output is stored in a `Medial_skeleton` structure, which contains three containers:
-- **vertices**: each element corresponds to a medial sphere,
-- **edges**: each element is a `std::pair<std::size_t, std::size_t>` encoding the adjacency between two spheres,
-- **faces**: each element is a triplet of `Sphere_ID`(std::array<std::size_t, 3>) values encoding a triangular patch connecting three spheres.
+- **vertices**: each element is a medial sphere (`Sphere_3`),
+- **edges**: each element is a `std::pair<std::size_t, std::size_t>` holding the indices of two adjacent spheres,
+- **faces**: each element is a `std::array<std::size_t, 3>` holding the indices of three spheres forming a triangular patch.
+
+A sphere is referred to by its index in the container of vertices.
+Note that this index is in general different from the `Variational_medial_axis_sampling::Sphere_ID` of the sphere,
+which identifies a sphere during the optimization (see Section \ref VMASfunctionobject).
 
 A helper function `CGAL:IO::write_PLY()` is provided to export the resulting skeleton to a `.ply` file,
 which can then be visualized in external software such as Blender.
