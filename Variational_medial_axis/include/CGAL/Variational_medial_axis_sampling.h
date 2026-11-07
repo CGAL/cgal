@@ -1110,7 +1110,7 @@ private:
     sample_surface_mesh();
 
     scale_ = kd_tree_->bounding_box().max_span();
-    converged_threshold_ = scale_ * scale_ * 1e-5;
+    converged_threshold_ = scale_ * scale_ * error_convergence_tolerance;
 
     sphere_mesh_ = std::make_unique<MSMesh>();
 
@@ -1123,7 +1123,7 @@ private:
 
   inline FT cosine_angle(const Vector_3& v1, const Vector_3& v2) {
     FT norm_v1v2 = CGAL::approximate_sqrt(v1.squared_length() * v2.squared_length());
-    FT res = norm_v1v2 > 1e-20 ? (v1 * v2) / norm_v1v2 : FT(1);
+    FT res = CGAL::is_zero(norm_v1v2) ? FT(1) : (v1 * v2) / norm_v1v2;
     return std::clamp(res, FT(-1), FT(1)); // Ensure the result is within [-1, 1]
   }
 
@@ -1136,7 +1136,7 @@ private:
 
   std::pair<Point_3, FT> shrinking_ball_algorithm(const Point_3& p,  // point on the surface
                                                   const Vector_3& n, // inverse of search direction
-                                                  FT delta_convergence = FT(1e-5)) {
+                                                  FT delta_convergence = FT(shrinking_ball_relative_tolerance)) {
     auto approximate_angle = GT().compute_approximate_angle_3_object();
     delta_convergence *= scale_;
     const FT denoise_preserve = FT(20.0); // in degree
@@ -1581,6 +1581,10 @@ private:
   }
 
 private:
+  // relative to scale_ (squared for the error, as it is an area)
+  static constexpr double error_convergence_tolerance = 1e-5;
+  static constexpr double shrinking_ball_relative_tolerance = 1e-5;
+
   const TriangleMesh& tmesh_;
   Point_set tpoints_;
   GT traits_;
