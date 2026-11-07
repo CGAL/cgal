@@ -182,7 +182,8 @@ bool test_API() {
   } else {
     std::cout << "Adding spheres succeeded: new vertex count is " << skeleton2.number_of_vertices() << std::endl;
   }
-  vmas.add_sphere_by_id(5);
+  auto ids = vmas.sphere_ids();
+  vmas.add_sphere_by_id(ids[5]);
   auto skeleton3 = vmas.skeleton();
   if(skeleton3.number_of_vertices() != skeleton.number_of_vertices() + 3) {
     std::cerr << "Adding spheres failed: expected " << skeleton.number_of_vertices() + 3 << " vertices, got "
@@ -191,9 +192,10 @@ bool test_API() {
   } else {
     std::cout << "Adding spheres succeeded: new vertex count is " << skeleton3.number_of_vertices() << std::endl;
   }
-  vmas.remove_sphere_by_id(0);
-  vmas.remove_sphere_by_id(1);
-  vmas.remove_sphere_by_id(2);
+  ids = vmas.sphere_ids();
+  vmas.remove_sphere_by_id(ids[0]);
+  vmas.remove_sphere_by_id(ids[1]);
+  vmas.remove_sphere_by_id(ids[2]);
   auto skeleton4 = vmas.skeleton();
   if(skeleton4.number_of_vertices() != skeleton.number_of_vertices()) {
     std::cerr << "Removing sphere failed: expected " << skeleton.number_of_vertices() << " vertices, got "

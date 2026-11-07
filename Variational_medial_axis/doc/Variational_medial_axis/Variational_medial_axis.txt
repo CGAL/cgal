@@ -62,7 +62,8 @@ The output is stored in a `Medial_skeleton` structure, which contains three cont
 
 A sphere is referred to by its index in the container of vertices.
 Note that this index is in general different from the `Variational_medial_axis_sampling::Sphere_ID` of the sphere,
-which identifies a sphere during the optimization (see Section \ref VMASfunctionobject).
+which identifies a sphere during the optimization (see Section \ref VMASfunctionobject);
+`Variational_medial_axis_sampling::sphere_ids()` gives the identifier of each vertex of the skeleton.
 
 A helper function `CGAL:IO::write_PLY()` is provided to export the resulting skeleton to a `.ply` file,
 which can then be visualized in external software such as Blender.

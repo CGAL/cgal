@@ -50,8 +50,8 @@ void Variational_medial_axis_skeleton_item::fill_subitems()
   auto skeleton = d->vmas.skeleton();
 
   spheres = new Scene_spheres_item(this, 0, false, false);
-  for (std::size_t i=0; i<skeleton.vertices().size(); ++i)
-    spheres->add_sphere(skeleton.vertices()[i], i);
+  for (auto id : d->vmas.sphere_ids())
+    spheres->add_sphere(d->vmas.sphere(id), std::size_t(id));
 
   spheres->setName("Medial Spheres");
   spheres->setRenderingMode(Gouraud);

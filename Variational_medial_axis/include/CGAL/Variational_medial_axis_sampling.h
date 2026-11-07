@@ -946,6 +946,25 @@ public:
   }
 
   /**
+   * \brief returns the identifiers of the current medial spheres.
+   *
+   */
+  std::vector<Sphere_ID> sphere_ids() const {
+    std::vector<Sphere_ID> ids;
+    ids.reserve(sphere_mesh_->nb_spheres());
+    for(const auto& sphere : sphere_mesh_->spheres())
+      ids.push_back(sphere.id());
+    return ids;
+  }
+
+  /**
+   * \brief returns the medial sphere with the identifier `id`.
+   *
+   * \pre `id` is the identifier of a current medial sphere.
+   */
+  Sphere_3 sphere(Sphere_ID id) const { return sphere_mesh_->sphere(id).sphere(); }
+
+  /**
    * \brief returns the medial skeleton as a `Medial_skeleton` object.
    *
    * This function builds a medial skeleton from the current state of the medial sphere mesh.
