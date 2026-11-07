@@ -10,7 +10,7 @@ namespace CGAL {
 <img src="main_image.png" width="1100px"/>
 </center>
 \cgalFigureCaptionBegin{main_image}
-Medial skeleton of a bug model. Given a triangulated mesh(left), the medial skeleton is extracted, where each vertex corresponds a sphere(middle) and the connectivity of these spheres constructs a mesh(right) known as <I>Medial mesh</I>
+Medial skeleton of a bug model. Given a triangulated mesh (left), the medial skeleton is extracted, where each vertex corresponds to a sphere (middle) and the connectivity of these spheres constructs a mesh (right) known as <I>Medial mesh</I>.
 \cgalFigureCaptionEnd
 \section VMASIntroduction Introduction
 
@@ -21,7 +21,7 @@ In this context, each point of the medial axis can be viewed as the center of a 
 This package implements a skeletonization algorithm \cgalCite{huang2024dynamic} that extracts a coarse, discrete approximation of the medial axis from a triangulated surface mesh without borders.
 Unlike the \ref PkgSurfaceMeshSkeletonization package, which computes a purely curve-based (1D) skeleton, the output of this method is a non-manifold triangle mesh that may contain both curve (1D) and surface (2D) elements, a structure sometimes referred to as a <I>medial mesh</I>.
 Each vertex of the resulting mesh corresponds to a medial sphere, and the edges and faces encode the adjacency relationships between these spheres.
-One can reconstruct the original mesh by interpolating between spheres according their adjacency relationships.
+One can reconstruct the original mesh by interpolating between spheres according to their adjacency relationships.
 For each edge, interpolating between two spheres yields a <I>medial cone</I>.
 For each face, interpolating between three spheres yields a <I>medial slab</I>.
 \cgalFigureAnchor{cone_slab}
@@ -52,7 +52,7 @@ Overview of the algorithm, image taken from \cgalCite{huang2024dynamic}
 \section VMASAPI User Interface Description
 \subsection VMASio Input and Output
 
-The method takes as input triangulated surface mesh which can be a mode of `FaceListGraph`, such as `CGAL::Surface_mesh`.
+The method takes as input a triangulated surface mesh, which can be a model of `FaceListGraph`, such as `CGAL::Surface_mesh`.
 It also requires Eigen (version 3.2 or later) for the use of the `Eigen::LDLT` solver, which is employed to solve the linear systems arising during optimization.
 
 The output is stored in a `Medial_skeleton` structure, which contains three containers:
@@ -65,7 +65,7 @@ Note that this index is in general different from the `Variational_medial_axis_s
 which identifies a sphere during the optimization (see Section \ref VMASfunctionobject);
 `Variational_medial_axis_sampling::sphere_ids()` gives the identifier of each vertex of the skeleton.
 
-A helper function `CGAL:IO::write_PLY()` is provided to export the resulting skeleton to a `.ply` file,
+A helper function `CGAL::IO::write_PLY()` is provided to export the resulting skeleton to a `.ply` file,
 which can then be visualized in external software such as Blender.
 
 \subsection VMASacc Acceleration Structure
@@ -79,7 +79,7 @@ To accelerate this closest point query, a KD-tree constructed from the surface s
 The function `CGAL::extract_variational_medial_skeleton()` provides a convenient interface for users who want to quickly extract a medial skeleton with specified parameters.
 This function accepts the following parameters:
 - `number_of_spheres`: target number of medial spheres
-- `number_of_samples`: number of points that will be sampled on the surface
+- `neighbor_radius`: radius used to determine the number of points sampled on the surface
 - `lambda`: weight balancing the energy terms
 - `random_seed`: random seed for generating sample points on the surface
 - `number_of_iterations`: maximum number of iterations
@@ -90,7 +90,7 @@ The following example showcases the usage of this function:
 \cgalExample{Variational_medial_axis/vmas_free_function.cpp}
 
 \subsection VMASfunctionobject Class for Advanced and Dynamic Control
-The class `CGAL::Variational_medial_axis_sampling` provides some advanced usage of the algorithm
+The class `CGAL::Variational_medial_axis_sampling` provides some advanced usage of the algorithm.
 Several key functions are provided for algorithm control:
 - `CGAL::Variational_medial_axis_sampling::sample()`: Executes the complete algorithm with specified parameters and returns a boolean indicating success.
 The algorithm may fail either when the optimization does not converge (the error stays above the error threshold) or when the surface sampling is not dense enough to generate a sufficient number of medial spheres.

@@ -44,13 +44,14 @@ namespace CGAL {
 ///                          the internal energy minimisation converged before. If not provided, the number of spheres will be
 ///                          the one at the end of the energy minimisation or at the end of the iterations.}
 ///    \cgalParamType{unsigned int}
+///    \cgalParamDefault{0}
 ///    \cgalParamExtra{This number should generally not exceed 300, as the method is designed to produce coarse skeletons.}
 ///  \cgalParamNEnd
 ///   \cgalParamNBegin{neighbor_radius}
 ///     \cgalParamDescription{This parameter is used to sample the input triangle mesh for the optimization process.
 ///                           Sample points will be chosen such that it should be possible to cover the surface area
 ///                           of the triangle mesh using circle of that radius with centered at the sample points.}
-///     \cgalParamType{unsigned int}
+///     \cgalParamType{FT}
 ///     \cgalParamDefault{A radius corresponding to 20,000 sample points}
 ///  \cgalParamNEnd
 ///  \cgalParamNBegin{number_of_iterations}
@@ -61,7 +62,7 @@ namespace CGAL {
 /// connectivity construction.}
 ///   \cgalParamNEnd
 ///  \cgalParamNBegin{lambda}
-///    \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values tend to
+///    \cgalParamDescription{A weight balancing the two energy terms: the Spherical Quadric Error Metric (SQEM) and the Euclidean distance. Smaller values tend to
 /// produce skeletons that follow local features more closely.}
 ///    \cgalParamType{FT}
 ///    \cgalParamDefault{FT(0.2)}
@@ -70,6 +71,7 @@ namespace CGAL {
 ///   \cgalParamNBegin{random_seed}
 ///     \cgalParamDescription{The random seed to sample points on the triangle mesh surface.}
 ///     \cgalParamType{unsigned int}
+///     \cgalParamDefault{42}
 ///     \cgalParamExtra{Fix the random seed so that the result can be reproduced}
 ///   \cgalParamNEnd
 ///  \cgalParamNBegin{concurrency_tag}

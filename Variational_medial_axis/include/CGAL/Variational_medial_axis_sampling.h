@@ -517,7 +517,7 @@ private:
 /// \endcode
 ///
 /// @tparam VertexPointMap
-///         a model of `ReadWritePropertyMap`
+///         a model of `ReadablePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `GeomTraits::Point_3` as value type.<br>
 ///         <b>%Default:</b>
@@ -606,28 +606,29 @@ public:
   ///        An optional sequence of \ref bgl_namedparameters "Named Parameters", listed below:
   ///
   /// \cgalNamedParamsBegin
-  ///   \cgalParamNBegin{number_of_spheres}
-  ///     \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.}
-  ///     \cgalParamType{unsigned int}
-  ///     \cgalParamDefault{100}
-  ///  \cgalParamNEnd
   ///  \cgalParamNBegin{number_of_spheres}
   ///    \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.
   ///                          Note that this number might not be achieved if the maximum number of iterations is reached or if
   ///                          the internal energy minimisation converged before. If not provided, the number of spheres will be
   ///                          the one at the end of the energy minimisation or at the end of the iterations.}
   ///    \cgalParamType{unsigned int}
+  ///    \cgalParamDefault{0}
   ///    \cgalParamExtra{This number should generally not exceed 300, as the method is designed to produce coarse skeletons.}
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{neighbor_radius}
   ///     \cgalParamDescription{This parameter is used to sample the input triangle mesh for the optimization process.
   ///                           Sample points will be chosen such that it should be possible to cover the surface area
   ///                           of the triangle mesh using circle of that radius with centered at the sample points.}
-  ///     \cgalParamType{unsigned int}
+  ///     \cgalParamType{FT}
   ///     \cgalParamDefault{A radius corresponding to 20,000 sample points}
   ///   \cgalParamNEnd
+  ///   \cgalParamNBegin{number_of_iterations}
+  ///     \cgalParamDescription{The maximum number of iterations for the optimization process.}
+  ///     \cgalParamType{int}
+  ///     \cgalParamDefault{1000}
+  ///   \cgalParamNEnd
   ///   \cgalParamNBegin{lambda}
-  ///     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage
+  ///     \cgalParamDescription{A weight balancing the two energy terms: the Spherical Quadric Error Metric (SQEM) and the Euclidean distance. Smaller values encourage
   ///     the skeleton to extend deeper into local geometric features of the shape.}
   ///     \cgalParamType{FT}
   ///     \cgalParamDefault{FT(0.2)}
@@ -636,14 +637,15 @@ public:
   ///   \cgalParamNBegin{random_seed}
   ///     \cgalParamDescription{The random seed to sample points on the triangle mesh surface.}
   ///     \cgalParamType{unsigned int}
+  ///     \cgalParamDefault{42}
   ///     \cgalParamExtra{Fix the random seed so that the result can be reproduced}
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{vertex_point_map}
-  ///     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+  ///     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
   ///     \cgalParamType{a class model of `ReadablePropertyMap` with
-  ///     `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  ///     `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
   ///                    as key type and `%Point_3` as value type}
-  ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+  ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{verbose}
   ///     \cgalParamDescription{If `true`, the algorithm will print detailed information about its progress.}
@@ -703,7 +705,7 @@ public:
    *     \cgalParamDescription{This parameter is used to sample the input triangle mesh for the optimization process.
    *                           Sample points will be chosen such that it should be possible to cover the surface area
    *                           of the triangle mesh using circle of that radius with centered at the sample points.}
-   *     \cgalParamType{unsigned int}
+   *     \cgalParamType{FT}
    *     \cgalParamDefault{A radius corresponding to 20,000 sample points}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{number_of_iterations}
@@ -712,7 +714,7 @@ public:
    *     \cgalParamDefault{1000}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{lambda}
-   *     \cgalParamDescription{A weight balancing the two energy terms {SQEM(Spherical Quadrics Error Metric) and Euclidean}. Smaller values encourage
+   *     \cgalParamDescription{A weight balancing the two energy terms: the Spherical Quadric Error Metric (SQEM) and the Euclidean distance. Smaller values encourage
    * the skeleton to extend deeper into local geometric features of the shape.}
    *     \cgalParamType{FT}
    *     \cgalParamDefault{FT(0.2)}
@@ -721,6 +723,7 @@ public:
    *   \cgalParamNBegin{random_seed}
    *      \cgalParamDescription{The random seed to sample points on the triangle mesh surface.}
    *      \cgalParamType{unsigned int}
+   *      \cgalParamDefault{42}
    *      \cgalParamExtra{Fix the random seed so that the result can be reproduced}
    *    \cgalParamNEnd
    *   \cgalParamNBegin{verbose}
@@ -1000,7 +1003,7 @@ public:
   /**
    * \brief returns the lambda parameter for the algorithm.
    *
-   * This parameter controls the balance between the SQEM and Euclidean energy terms.
+   * This parameter controls the balance between the two energy terms: the Spherical Quadric Error Metric (SQEM) and the Euclidean distance.
    * Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.
    */
   FT lambda() const { return lambda_; }
