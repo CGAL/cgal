@@ -45,7 +45,6 @@ template <typename Arrangement>
 class Arr_bounded_approximate_halfedge {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   using Halfedge_const_handle = typename Arrangement::Halfedge_const_handle;
-  using Gt_point = typename Geom_traits::Point_2;
 
   using Approx_traits = Arr_approximate_traits<Geom_traits>;
   using Approx_nt = typename Approx_traits::Approx_nt;
@@ -73,8 +72,9 @@ private:
     Context& operator=(const Context&) = delete;
 
   public:
-    /*! \brief Insert a point to the polyline if it is within the x-range of the curve
-     * \note Will be replaced after AosApproximateUnboundedTraits_2 is fully available.
+    /*! \brief Insert a point to the polyline if it is within the x-range of the bounding box.
+     * A point to the left of the x-range is retained as the last point, so that the intersection with the left side
+     * of the bounding box can be computed when the next point is traced.
      * \param pt
      */
     void insert(Point pt) {
@@ -131,7 +131,9 @@ private:
 
   /*! \brief Trace approximated curve point in ltr ordering, adding boundary intersections if necessary.
    *
-   * \note This method will eventually be replaced by AosApproximateUnboundedTraits_2.
+   * It is used for both the approximation of a curve without constraints and the approximation of a curve clipped to
+   * the bounding box (see `AosTraits::ApproximateUnbounded_2`). Points that lie below or above the bounding box are
+   * kept; they are clamped onto the bottom or top side when faces are approximated.
    */
   void trace_add(Context& ctx, Point pt) const {
     if (! ctx.last_pt().has_value()) {
@@ -157,40 +159,6 @@ private:
     if (ctx.last_pt()->x() <= ctx.xmax() && pt.x() > ctx.xmax())
       ctx.insert(boundary_intersection(ctx, pt, Boundary_side::Right));
     ctx.insert(pt);
-  }
-
-  /*! \brief Check if the point is within the x-range of the curve.
-   */
-  static bool is_in_x_range(const Context& ctx, const Gt_point& pt) {
-    const Geom_traits& traits = ctx.m_traits;
-    const X_monotone_curve_2& curve = ctx.m_curve;
-
-    if constexpr(has_is_in_x_range_v<Geom_traits>) return curve.is_in_x_range(pt);
-    if constexpr(!has_parameter_space_in_x_2<Geom_traits>::value) {
-      const auto& min_pt = traits.construct_min_vertex_2_object()(curve);
-      const auto& max_pt = traits.construct_max_vertex_2_object()(curve);
-      return ((traits.compare_x_2_object()(pt, min_pt) != CGAL::SMALLER) &&
-              (traits.compare_x_2_object()(pt, max_pt) != CGAL::LARGER));
-    }
-
-    Comparison_result left_cmp;
-    if (auto left_loc = traits.parameter_space_in_x_2_object()(curve, ARR_MIN_END); left_loc == ARR_INTERIOR)
-      left_cmp = traits.compare_x_2_object()(pt, traits.construct_min_vertex_2_object()(curve));
-    else if (left_loc == ARR_LEFT_BOUNDARY)
-      left_cmp = CGAL::LARGER;
-    else
-      left_cmp = traits.compare_x_on_boundary_2_object()(pt, curve, ARR_MIN_END);
-    if (left_cmp == CGAL::SMALLER) return false;
-    if (left_cmp == CGAL::EQUAL) return true;
-
-    Comparison_result right_cmp;
-    if (auto right_loc = traits.parameter_space_in_x_2_object()(curve, ARR_MAX_END); right_loc == ARR_INTERIOR)
-      right_cmp = traits.compare_x_2_object()(pt, traits.construct_max_vertex_2_object()(curve));
-    else if (right_loc == ARR_RIGHT_BOUNDARY)
-      right_cmp = CGAL::SMALLER;
-    else
-      right_cmp = traits.compare_x_on_boundary_2_object()(pt, curve, ARR_MAX_END);
-    return right_cmp != CGAL::LARGER;
   }
 
   /*! \brief transform approximated curve points(ltr ordering) in place based on the halfedge, giving correct
@@ -244,34 +212,21 @@ private:
 
   void approximate_curve(Context& ctx) const { approximate_curve_impl<Geom_traits>(ctx); }
 
-  // If Approximate_2 supports curve approximation with bounding box
+  // If Approximate_2 supports curve approximation with bounding box.
+  // The approximation is clipped to the bounding box, except that every
+  // portion of the curve that lies below or above the box (within the
+  // vertical strip of the box) is represented by points strictly below or
+  // above the box. Clamping the points to the box, when faces are
+  // approximated, turns these portions into the bottom or top side of the
+  // box, which yields the corners of the box. Edges are drawn only between
+  // points inside the box, so these portions are not drawn. The points are
+  // traced exactly as the points of the approximation of a bounded curve.
   template <typename Gt, std::enable_if_t<has_approximate_xcv_with_bounds_v<Gt, typename Gt::Approximate_2>, int> = 0>
   void approximate_curve_impl(Context& ctx) const {
-    const Geom_traits& traits = ctx.m_traits;
-    const X_monotone_curve_2& curve = ctx.m_curve;
-    Polyline& polyline = ctx.m_polyline;
-    auto compare_y_at_x_2 = traits.compare_y_at_x_2_object();
-
-    if (is_in_x_range(ctx, m_top_left)) {
-      if (compare_y_at_x_2(m_top_left, curve) == CGAL::SMALLER) {
-        polyline.insert(polyline.end(), {Approx_traits::Null_point, Point(ctx.xmin(), ctx.ymax())});
-      }
-      else if (compare_y_at_x_2(m_bottom_left, curve) == CGAL::LARGER) {
-        polyline.insert(polyline.end(), {Approx_traits::Null_point, Point(ctx.xmin(), ctx.ymin())});
-      }
-    }
-    traits.approximate_2_object()(curve, ctx.m_approx_error,
-                                  boost::make_function_output_iterator([&ctx, this](Approx_point approx_pt)
-                                  { ctx.m_polyline.push_back(snap_to_boundary(ctx, ctx.to_uv(approx_pt))); }),
-                                  ctx.bbox(), true);
-    if (is_in_x_range(ctx, m_top_right)) {
-      if (compare_y_at_x_2(m_top_right, curve) == CGAL::SMALLER) {
-        polyline.insert(polyline.end(), {Point(ctx.xmax(), ctx.ymax()), Approx_traits::Null_point});
-      }
-      else if (compare_y_at_x_2(m_bottom_right, curve) == CGAL::LARGER) {
-        polyline.insert(polyline.end(), {Point(ctx.xmax(), ctx.ymin()), Approx_traits::Null_point});
-      }
-    }
+    auto approx = m_ctx.m_traits.approximate_2_object();
+    approx(ctx.m_curve, ctx.m_approx_error,
+           boost::make_function_output_iterator([&ctx, this](Approx_point pt) { trace_add(ctx, ctx.to_uv(pt)); }),
+           ctx.bbox(), true);
   }
 
   // If Approximate_2 does not support curve approximation with bounding box
@@ -282,42 +237,14 @@ private:
            boost::make_function_output_iterator([&ctx, this](Approx_point pt) { trace_add(ctx, ctx.to_uv(pt)); }), true);
   }
 
-  /*! \brief Adjusts a point by snapping it to the nearest boundary to reduce floating-point error.
-   *
-   * \return The adjusted (snapped) point if it lies within snapping tolerance, or the original point otherwise.
-   */
-  Point snap_to_boundary(const Context& ctx, Point pt) const {
-    Approx_nt x = pt.x(), y = pt.y();
-    if (std::abs(x - ctx.xmin()) < m_ep_left) x = ctx.xmin();
-    else if (std::abs(x - ctx.xmax()) < m_ep_right) x = ctx.xmax();
-    if (std::abs(y - ctx.ymin()) < m_ep_bottom) y = ctx.ymin();
-    else if (std::abs(y - ctx.ymax()) < m_ep_top) y = ctx.ymax();
-    return Point(x, y);
-  }
-
 public:
   Arr_bounded_approximate_halfedge(const Bounded_render_context& ctx) :
     m_ctx(ctx),
     m_left(ctx.bottom_left(), ctx.top_left()),
     m_right(ctx.bottom_right(), ctx.top_right()),
     m_bottom(ctx.bottom_left(), ctx.bottom_right()),
-    m_top(ctx.top_left(), ctx.top_right()) {
-    // The corners are used only by the approximation with a bounding box.
-    // Constructing them requires the construction of a point of the geometry
-    // traits from its coordinates, which some traits do not support.
-    if constexpr (has_approximate_xcv_with_bounds_v<Geom_traits, typename Geom_traits::Approximate_2>) {
-      Construct_gt_point_2<Geom_traits> ctr_p;
-      m_top_left = ctr_p(ctx.to_cartesian(ctx.top_left()));
-      m_top_right = ctr_p(ctx.to_cartesian(ctx.top_right()));
-      m_bottom_left = ctr_p(ctx.to_cartesian(ctx.bottom_left()));
-      m_bottom_right = ctr_p(ctx.to_cartesian(ctx.bottom_right()));
-    }
-    Approx_nt ep_base = std::numeric_limits<Approx_nt>::epsilon();
-    m_ep_left = std::max(std::abs(ep_base * ctx.xmin()), ep_base);
-    m_ep_right = std::max(std::abs(ep_base * ctx.xmax()), ep_base);
-    m_ep_bottom = std::max(std::abs(ep_base * ctx.ymin()), ep_base);
-    m_ep_top = std::max(std::abs(ep_base * ctx.ymax()), ep_base);
-  }
+    m_top(ctx.top_left(), ctx.top_right())
+  {}
 
   const Polyline& operator()(const Halfedge_const_handle& he) const {
     CGAL_assertion(!he->is_fictitious());
@@ -344,8 +271,6 @@ public:
 private:
   const Bounded_render_context& m_ctx;
   Approx_line_2 m_left, m_right, m_bottom, m_top;
-  Gt_point m_top_left, m_top_right, m_bottom_left, m_bottom_right;
-  Approx_nt m_ep_left, m_ep_right, m_ep_bottom, m_ep_top;
 };
 
 } // namespace draw_aos
