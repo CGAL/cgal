@@ -379,13 +379,13 @@ public:
     set( p_first, p_last, q_first, q_last);
   }
 
-  Polytope_distance_d(const Self& pd) = delete; 
+  Polytope_distance_d(const Self& other) = delete; 
 
-  Polytope_distance_d(Self&& pd) noexcept = delete;
+  Polytope_distance_d(Self&& other) noexcept = delete;
 
-  Self& operator=(const Self& pd) = delete;
+  Self& operator=(const Self& other) = delete;
 
-  Self& operator=(Self&& pd) noexcept = delete;
+  Self& operator=(Self&& other) noexcept = delete;
 
   ~Polytope_distance_d() = default;
 
