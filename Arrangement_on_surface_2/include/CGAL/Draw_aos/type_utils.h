@@ -106,20 +106,6 @@ constexpr bool has_approximate_traits_v =
   (has_approximate_xcv_v<Gt, typename Gt::Approximate_2> ||
    has_approximate_xcv_with_bounds_v<Gt, typename Gt::Approximate_2>);
 
-template <typename Gt, typename = std::void_t<>>
-struct has_is_in_x_range : std::false_type
-{};
-
-template <typename Gt>
-struct has_is_in_x_range<Gt,
-                         std::void_t<decltype(std::declval<typename Gt::X_monotone_curve_2>().is_in_x_range
-                                              (std::declval<const typename Gt::Point_2&>()))>> : std::true_type
-{};
-
-// Detect whether Gt::X_monotone_curve_2 has a member function bool is_in_x_range(const Gt::Point_2&)
-template <typename Gt>
-inline constexpr bool has_is_in_x_range_v = has_is_in_x_range<Gt>::value;
-
 // Obtain the traits that a traits class is built upon, if any:
 // - A traits decorator, e.g., `Arr_tracing_traits_2` or `Arr_counting_traits_2`,
 //   exposes the traits it decorates as the nested type `Decorated_traits_2`.
@@ -291,38 +277,6 @@ public:
   inline static const Point Null_point =
     Point(std::numeric_limits<Approx_nt>::signaling_NaN(), std::numeric_limits<Approx_nt>::signaling_NaN());
   static bool is_null(Point pt) { return std::isnan(pt.x()) || std::isnan(pt.y()); }
-};
-
-/*!
- * \brief Functor to construct a Point_2 from an Approximate_point_2.
- *
- * \tparam Gt Geometry traits
- */
-template <typename Gt, typename = void>
-class Construct_gt_point_2 {
-  using Approx_traits = Arr_approximate_traits<Gt>;
-  using Approx_point = typename Approx_traits::Approx_point;
-  using Gt_point = typename Gt::Point_2;
-
-public:
-  Gt_point operator()(const Approx_point& pt) const { return Gt_point(pt.x(), pt.y()); }
-};
-
-// Specialization for traits whose innermost traits (see `innermost_traits`) is
-// or derives from Arr_geodesic_arc_on_sphere_traits_2
-template <typename Gt>
-class Construct_gt_point_2<Gt, std::enable_if_t<is_or_derived_from_agas_v<Gt>>> {
-  using Geom_traits = Gt;
-  using Approx_traits = Arr_approximate_traits<Geom_traits>;
-  using Approx_point = typename Approx_traits::Approx_point;
-  using Gt_point = typename Geom_traits::Point_2;
-
-public:
-  Gt_point operator()(const Approx_point& pt) const {
-    using Direction_3 = typename tmpl_args<Geom_traits>::Kernel::Direction_3;
-    return Gt_point(Direction_3(pt.dx(), pt.dy(), pt.dz()),
-                    static_cast<typename Gt_point::Location_type>(pt.location()));
-  }
 };
 
 } // namespace draw_aos
