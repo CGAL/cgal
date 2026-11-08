@@ -230,6 +230,15 @@ bool test_API() {
   } else {
     std::cout << "Adding spheres without optimization succeeded" << std::endl;
   }
+
+  // sampling again with the same parameters must start from scratch and give the same skeleton
+  vmas.sample(CGAL::parameters::lambda(0.2).number_of_spheres(200).concurrency_tag(CGAL::Sequential_tag{}));
+  if(vmas.skeleton().vertices() != skeleton.vertices()) {
+    std::cerr << "sample() failed: sampling again with the same parameters gives a different skeleton" << std::endl;
+    return false;
+  } else {
+    std::cout << "Sampling again succeeded" << std::endl;
+  }
   return true;
 }
 

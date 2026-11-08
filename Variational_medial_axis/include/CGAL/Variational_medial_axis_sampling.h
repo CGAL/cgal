@@ -1622,7 +1622,7 @@ private:
     total_error_ = FT(0.0);
     total_error_diff_ = (std::numeric_limits<FT>::max)();
     last_total_error_ = total_error_;
-    sphere_mesh_->reset();
+    sphere_mesh_->clear();
   }
 
 private:
