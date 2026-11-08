@@ -183,12 +183,9 @@ Testing whether two polygons intersect results with a Boolean value,
 and does not require any additional data beyond the provision of the
 two input polygons. The example listed below tests whether the two
 triangles depicted on the right intersect. It uses, as do the other
-example programs in this chapter, the auxiliary header file
-`bso_rational_nt.h`, which defines the type `Number_type` as
-\gmp's rational number-type (`Gmpq`), or as the
-number type `Quotient<MP_Float>` that is included in the support
-library of \cgal, based on whether the \gmp library is installed
-or not. It also uses the function `print_polygon.h` listed above,
+example programs in this section, the
+`Exact_predicates_exact_constructions_kernel` kernel.
+It also uses the function `print_polygon()` listed above,
 which is located in the header file `print_utils.h`.
 
 \cgalExample{Boolean_set_operations_2/do_intersect.cpp}
