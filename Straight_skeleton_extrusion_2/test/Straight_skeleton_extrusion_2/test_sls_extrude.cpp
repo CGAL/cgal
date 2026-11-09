@@ -203,7 +203,8 @@ bool test(const char* poly_filename,
   std::cout << "\nTest:\n"
             << "\tPolygon: " << poly_filename << "\n"
             << "\tAngles: " << angles_filename << "\n"
-            << "\tHeight: " << height << std::endl;
+            << "\tHeight: " << height << "\n"
+            << "\tKernel: " << typeid(K).name() << std::endl;
 
   Polygon_with_holes_2 pwh;
   if(!read_input_polygon(poly_filename, pwh) || pwh.outer_boundary().is_empty())

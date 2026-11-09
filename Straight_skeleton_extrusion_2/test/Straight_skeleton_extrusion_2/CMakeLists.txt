@@ -9,7 +9,9 @@ find_package(LEDA QUIET)
 
 include_directories(BEFORE "include")
 
+create_single_source_cgal_program("test_sls_extrude_kernel_choice.cpp")
 create_single_source_cgal_program("test_sls_extrude.cpp")
+
 if(CGAL_Qt6_FOUND)
   target_link_libraries(test_sls_extrude PRIVATE CGAL::CGAL_Basic_viewer)
 endif()
