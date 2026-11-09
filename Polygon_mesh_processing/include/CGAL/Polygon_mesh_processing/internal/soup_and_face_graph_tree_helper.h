@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SOUP_AND_TREE_HELPER_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SOUP_AND_TREE_HELPER_H
 
-#include <CGAL/license/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/license/Polygon_mesh_processing/predicate.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -96,7 +96,7 @@ struct AABB_tree_graph_helper
     if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       tbb::parallel_for(std::size_t(0), face_range.size(), [&](std::size_t i){
-        face_descriptor f = face_range[i];
+        face_descriptor f = face_range[i]; // TODO: does not work if face_range is faces(tm)
         put(bb_map, f, face_bbox(f, tm, parameters::vertex_point_map(vpm)));
         put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))) );
       });
@@ -207,11 +207,11 @@ struct AABB_tree_soup_helper
     if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
     {
       tbb::parallel_for(std::size_t(0), face_range.size(), [&](std::size_t i){
-        i = face_range[i];
-        put(bb_map, i, get(vpm, triangles[i][0]).bbox() +
-                       get(vpm, triangles[i][1]).bbox() +
-                       get(vpm, triangles[i][2]).bbox());
-        put(rp_map, i, to_input(get(vpm, triangles[i][0])) );
+        auto tid = face_range[i];
+        put(bb_map, tid, get(vpm, triangles[tid][0]).bbox() +
+                         get(vpm, triangles[tid][1]).bbox() +
+                         get(vpm, triangles[tid][2]).bbox());
+        put(rp_map, tid, to_input(get(vpm, triangles[tid][0])) );
       });
     }
     else
