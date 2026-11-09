@@ -1184,7 +1184,7 @@ private:
                                                   FT delta_convergence = FT(shrinking_ball_relative_tolerance)) {
     auto approximate_angle = GT().compute_approximate_angle_3_object();
     delta_convergence *= scale_;
-    const FT denoise_preserve = FT(20.0); // in degree
+    const FT denoise_preserve_angle = FT(20.0); // in degree
     const int iteration_limit = 30;
     int j = 0;
     FT r = FT(1.0) * scale_; // initial radius
@@ -1205,7 +1205,7 @@ private:
       CGAL_assertion(CGAL::is_finite(r_next) && r_next > FT(0));
       Point_3 c_next = p - (r_next * n);
       FT seperation_angle = approximate_angle(p - c_next, q_next - c_next);
-      if(j > 0 && seperation_angle < denoise_preserve) {
+      if(j > 0 && seperation_angle < denoise_preserve_angle) {
         /* std::cout << "Denoise preserve angle achieved at iteration: " << j
                   << ", Angle: " << CGAL::to_double(seperation_angle) << " degrees, Center: " << c_next
                   << ", Radius: " << r_next << std::endl;*/
