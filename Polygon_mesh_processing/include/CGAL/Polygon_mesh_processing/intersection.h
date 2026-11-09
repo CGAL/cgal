@@ -159,10 +159,10 @@ compute_face_face_intersection(const FaceRange& face_range1,
   std::vector<face_descriptor> faces_to_test2;
 
   for(face_descriptor f : face_range1)
-    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm1), bb))
+    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm1, parameters::vertex_point_map(vpm1)), bb))
       faces_to_test1.emplace_back(f);
   for(face_descriptor f : face_range2)
-    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm2), bb))
+    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm2, parameters::vertex_point_map(vpm2)), bb))
       faces_to_test2.emplace_back(f);
 
   Tree_1 tree1;
@@ -282,7 +282,7 @@ compute_face_polyline_intersection(const FaceRange& face_range,
 
   std::vector<face_descriptor> faces_to_test;
   for(face_descriptor f : face_range)
-    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm), bb))
+    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm, parameters::vertex_point_map(vpm)), bb))
       faces_to_test.emplace_back(f);
 
   AABB_tree_helper helper;
@@ -424,7 +424,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
 
   std::vector<face_descriptor> faces_to_test;
   for(face_descriptor f : face_range)
-    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm), bb))
+    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm, parameters::vertex_point_map(vpm)), bb))
       faces_to_test.emplace_back(f);
 
   AABB_tree_helper helper;
