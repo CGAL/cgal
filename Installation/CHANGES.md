@@ -88,6 +88,8 @@ Release date: December 2026
   and [`CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`](https://doc.cgal.org/6.3/AABB_tree/group__PkgAABBTreeRef.html#ga1440e8c221074f645e5562db8fa9c1e9).
   These functions respectively determine whether two AABB trees intersect and compute all pairs
   of intersecting primitives between two AABB trees.
+- Added a new primitive type, [`CGAL::AABB_indexed_triangle_primitive_3`](https://doc.cgal.org/6.3/AABB_tree/classCGAL_1_1AABB__indexed__triangle__primitive__3.html),
+  which uses as identifier an index into a range of triplets of indices.
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
 
@@ -115,9 +117,11 @@ Release date: December 2026
 
 ### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/6.3/Manual/packages.html#PkgSMDS3)
 
-- Introduced the function [`CGAL::is_tetrahedron_soup_a_triangulation()`](https://doc.cgal.org/6.3/SMDS_3/group__PkgSMDS3Functions.html#ga51228a9e912aaa5160355f1c74201eb2),
+- Added the function [`CGAL::is_tetrahedron_soup_a_triangulation()`](https://doc.cgal.org/6.3/SMDS_3/group__PkgSMDS3Functions.html#ga51228a9e912aaa5160355f1c74201eb2),
   which can be used to check if a soup of tetrahedra defines a valid 3D triangulation that can
   be handled by [`CGAL::tetrahedron_soup_to_triangulation_3()`](https://doc.cgal.org/6.3/SMDS_3/group__PkgSMDS3Functions.html#gad2f0b256c958cea9aff7fb4f855b53eb).
+- Added overloaded versions of the functions [`CGAL::IO::read_MEDIT()`](https://doc.cgal.org/6.3/SMDS_3/group__PkgSMDS3IOFunctions.html#ga1596bc2182c49fa941313bf69f60d64c),
+  which enable reading [CGAL 3D mesh complexes](https://doc.cgal.org/6.3/SMDS_3/classCGAL_1_1Mesh__complex__3__in__triangulation__3.html).
 
 ### [3D Mesh Generation](https://doc.cgal.org/6.3/Manual/packages.html#PkgMesh3)
 
