@@ -556,8 +556,7 @@ self_intersections_impl(const FaceRange& face_range,
       {
         std::atomic<unsigned int> atomic_counter(counter);
         std::atomic<bool> atomic_flag(false);
-        Throw_iterator throwing_count(atomic_counter, atomic_flag, maximum_number, std::back_inserter(face_pairs));
-        Throw_at_count_reached_output_iterator count_filter(throwing_count);
+        Throw_iterator count_filter(atomic_counter, atomic_flag, maximum_number, std::back_inserter(face_pairs));
         all_pairs_of_intersecting_faces(tree, count_filter);
       }
       catch(const CGAL::internal::Throw_at_output_exception&)
