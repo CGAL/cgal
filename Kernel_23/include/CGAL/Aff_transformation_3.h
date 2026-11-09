@@ -122,15 +122,6 @@ operator<<(std::ostream& os, const CGAL::Aff_transformation_3<R>& t)
   return os << static_cast<const RAff_transformation_3&>(t);
 }
 
-template < class R >
-std::istream&
-operator>>(std::istream& is, CGAL::Aff_transformation_3<R>& t)
-{
-  typedef typename R::Kernel_base::Aff_transformation_3 RAff_transformation_3;
-  return is >> static_cast<const RAff_transformation_3&>(t);
-}
-
-
 } //namespace CGAL
 
 #endif // CGAL_AFF_TRANSFORMATION_3_H

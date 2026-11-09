@@ -121,15 +121,6 @@ public:
                m31/w, m32/w, m33/w, m34/w };
   }
 
-
-  template <class T>
-  auto transform(const T &t) const -> decltype(t.transform(*this))
-  { return t.transform(*this); }
-
-  template <class T>
-  auto operator()(const T &t) const -> decltype(t.transform(*this))
-  { return t.transform(*this); }
-
   Point_3
   transform(const Point_3 &p) const
   { if(is_identity()) return p;
