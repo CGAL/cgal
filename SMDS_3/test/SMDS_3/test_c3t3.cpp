@@ -335,7 +335,7 @@ struct Tester
 
     c3t3.set_subdomain_index(ch, subdomain_index_bis);
     c3t3.set_surface_patch_index(f2, surface_patch_index_bis);
-#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDE
     c3t3.set_surface_index(f2, surface_patch_index_bis);
     c3t3.set_surface_index(f2.first, f2.second, surface_patch_index_bis);
 #endif
@@ -344,7 +344,7 @@ struct Tester
 
     assert(c3t3.subdomain_index(ch) == subdomain_index_bis);
     assert(c3t3.surface_patch_index(f2) == surface_patch_index_bis);
-#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDE
     assert(c3t3.surface_index(f2) == surface_patch_index_bis);
     assert(c3t3.surface_index(f2.first, f2.second) == surface_patch_index_bis);
 #endif

@@ -1,4 +1,3 @@
-import codecs
 import re
 import argparse
 import sys
@@ -88,7 +87,7 @@ def get_toc_entry(s):
 def main():
     filename = args.filename
 
-    f = codecs.open(filename, "r", encoding="utf-8")
+    f = open(filename, "r", encoding="utf-8")
 
     if not f:
         print("Cannot open " + input + "\n")
@@ -130,7 +129,7 @@ def main():
 
     if not toc_empty:
         f.close()
-        f = codecs.open(filename, "w", encoding="utf-8")
+        f = open(filename, "w", encoding="utf-8")
         f.write(toc)
         f.write(buffer)
 

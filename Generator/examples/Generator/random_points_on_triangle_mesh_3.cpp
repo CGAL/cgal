@@ -4,8 +4,8 @@
 
 #include <iostream>
 #include <fstream>
-using namespace CGAL;
-typedef Simple_cartesian<double>                           K;
+
+typedef CGAL::Simple_cartesian<double>                     K;
 typedef CGAL::Polyhedron_3<K>                              Polyhedron;
 typedef K::Point_3                                         Point;
 typedef K::FT                                              FT;
@@ -20,7 +20,7 @@ int main()
   polyhedron.make_tetrahedron(Point(-1,0,0), Point(0,1,0), Point(1,0,0), Point(0,0,-1));
 
   // Create the generator, input is the Polyhedron polyhedron
-  Random_points_in_triangle_mesh_3<Polyhedron>
+  CGAL::Random_points_in_triangle_mesh_3<Polyhedron>
       g(polyhedron);
 
   // Get 100 random points in cdt

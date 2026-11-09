@@ -187,7 +187,7 @@ SMesh* poisson_reconstruct(Point_set& points,
   typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
   typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
   // AABB tree
   typedef CGAL::AABB_face_graph_triangle_primitive<SMesh> Primitive;
@@ -310,6 +310,7 @@ SMesh* poisson_reconstruct(Point_set& points,
     // Defines surface mesh generation criteria
     Mesh_criteria criteria(CGAL::parameters::facet_angle = sm_angle,
                            CGAL::parameters::facet_size = sm_radius*average_spacing,
+                           CGAL::parameters::facet_min_size = 2.*sm_dichotomy_error,
                            CGAL::parameters::facet_distance = sm_distance*average_spacing);
 
     CGAL_TRACE_STREAM << "  make_mesh_3 with\n"

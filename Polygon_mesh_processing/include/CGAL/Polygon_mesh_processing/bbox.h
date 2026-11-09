@@ -75,7 +75,7 @@ CGAL::Bbox_3 bbox(const PolygonMesh& pmesh,
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
     vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                            get_const_property_map(CGAL::vertex_point, pmesh));
+                           get_const_property_map(CGAL::vertex_point, pmesh));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -142,7 +142,7 @@ CGAL::Bbox_3 vertex_bbox(typename boost::graph_traits<PolygonMesh>::vertex_descr
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
     vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                            get_const_property_map(CGAL::vertex_point, pmesh));
+                           get_const_property_map(CGAL::vertex_point, pmesh));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -197,7 +197,7 @@ CGAL::Bbox_3 edge_bbox(typename boost::graph_traits<PolygonMesh>::edge_descripto
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
     vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                            get_const_property_map(CGAL::vertex_point, pmesh));
+                           get_const_property_map(CGAL::vertex_point, pmesh));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -257,7 +257,7 @@ CGAL::Bbox_3 face_bbox(typename boost::graph_traits<PolygonMesh>::face_descripto
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
     vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                            get_const_property_map(CGAL::vertex_point, pmesh));
+                           get_const_property_map(CGAL::vertex_point, pmesh));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));

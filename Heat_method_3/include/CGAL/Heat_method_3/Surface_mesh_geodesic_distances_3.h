@@ -400,21 +400,21 @@ private:
       }
       source_set_val = phi-source_set_val;
     } else {
+      // phi is determined only up to an additive constant: anchor it by
+      // subtracting the mean of phi over the source set (the least-squares
+      // choice; for a single source this is the exact shift). phi is in
+      // general NOT constant across a multi-vertex source set, so taking a
+      // per-vertex minimum over |phi(i) - phi(s)| -- the distance from the
+      // VALUE phi(i) to the SET of source values -- folds every vertex whose
+      // value lies inside the source-value spread toward 0 and shifts the
+      // far field by the maximum source value instead of a constant.
+      double mean_source_phi = 0.;
+      for(vertex_descriptor vd : sources()) {
+        mean_source_phi += phi.coeff(get(vertex_id_map, vd), 0);
+      }
+      mean_source_phi /= static_cast<double>(sources().size());
       for(int i = 0; i<dimension; i++) {
-        double min_val = (std::numeric_limits<double>::max)();
-        Index vd_index;
-        //go through the distances to the sources and leave the minimum distance;
-        for(vertex_descriptor vd : sources()){
-          vd_index = get(vertex_id_map, vd);
-          double new_d = CGAL::abs(-phi.coeff(vd_index,0)+phi.coeff(i,0));
-          if(phi.coeff(vd_index,0)==phi.coeff(i,0)) {
-            min_val = 0.;
-          }
-          if(new_d < min_val) {
-            min_val = new_d;
-          }
-        }
-        source_set_val(i,0) = min_val;
+        source_set_val(i,0) = phi.coeff(i,0) - mean_source_phi;
       }
     }
     m_solved_phi.swap(source_set_val);

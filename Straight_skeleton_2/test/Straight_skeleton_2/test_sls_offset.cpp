@@ -339,8 +339,15 @@ void test_offset_square()
   square.push_back(Point(1, 1));
   square.push_back(Point(0, 1));
 
+  std::vector<double> weights;
+  weights.push_back(1);
+  weights.push_back(1);
+  weights.push_back(1);
+  weights.push_back(1);
+
   Skeleton_builder ssb;
   ssb.enter_contour(square.begin(), square.end());
+  ssb.enter_contour_weights(weights.begin(), weights.end());
 
   std::shared_ptr<Ss> ss = ssb.construct_skeleton();
   assert(is_valid<K>(ss));
@@ -349,8 +356,8 @@ void test_offset_square()
     CGAL::create_interior_skeleton_and_offset_polygons_2(0.5, Polygon_2(square.begin(), square.end()), K());
 
   std::cout << offset_polys.size() << " polygons" << std::endl;
-  for(const auto& offp : offset_polys)
-    CGAL::Straight_skeletons_2::IO::print_polygon(*offp);
+  // for(const auto& offp : offset_polys)
+  //   CGAL::Straight_skeletons_2::IO::print_polygon(*offp);
 
   assert(offset_polys.empty());
 }

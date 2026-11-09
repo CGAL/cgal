@@ -236,8 +236,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
       NamedParameters,
       Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
     > ::type ECM;
-  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             Static_boolean_property_map<edge_descriptor, false>());
+  ECM ecm = choose_parameter<Static_boolean_property_map<edge_descriptor, false>>(get_parameter(np, internal_np::edge_is_constrained));
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::least_squares_fitting_t,
@@ -415,7 +414,6 @@ detect_corners_of_regions(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  using parameters::is_default_parameter;
 
   using VPM = typename GetVertexPointMap < PolygonMesh, NamedParameters>::const_type;
   using Traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
@@ -432,14 +430,7 @@ detect_corners_of_regions(
                 Default_ecm
               > ::type;
 
-  Default_ecm dynamic_ecm;
-  if(is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value)
-  {
-    dynamic_ecm = get(CGAL::dynamic_edge_property_t<bool>(), mesh);
-    for (edge_descriptor e : edges(mesh))
-      put(dynamic_ecm, e, false);
-  }
-  Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
+  Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), CGAL::dynamic_edge_property_t<bool>(), mesh, false);
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::least_squares_fitting_t,

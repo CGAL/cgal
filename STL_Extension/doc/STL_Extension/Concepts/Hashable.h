@@ -14,9 +14,7 @@ specializations `boost::hash<Key>` and `std::hash<Key>` exist.
 \sa `CGAL::Unique_hash_map<Key,Mapped,Hash>`
 \sa <A HREF="https://en.cppreference.com/w/cpp/container/unordered_set">`std::unordered_set`</a>
 \sa <A HREF="https://en.cppreference.com/w/cpp/container/unordered_map">`std::unordered_map`</a>
-\sa <A HREF="https://www.boost.org/libs/unordered/doc/html/unordered.html#unordered_set">`boost::unordered_set`</a>
-\sa <A HREF="https://www.boost.org/libs/unordered/doc/html/unordered.html#unordered_map">`boost::unordered_map`</a>
-
+\sa <A HREF="https://www.boost.org/doc/libs/latest/libs/unordered/doc/html/unordered/intro.html">`Boost::Unordered`</a>
 */
 
 class Hashable {

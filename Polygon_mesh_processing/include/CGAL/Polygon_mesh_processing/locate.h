@@ -1547,7 +1547,7 @@ build_AABB_tree(const TriangleMesh& tm,
 ///
 /// \brief returns the face location nearest to the given point, as a location.
 ///
-/// Note that it is possible for the triangle mesh to have ambiant dimension `2` (e.g. the mesh
+/// Note that it is possible for the triangle mesh to have ambient dimension `2` (e.g. the mesh
 /// is a 2D triangulation, or a CGAL::Surface_mesh<CGAL::Point_2<Kernel> >), as long as an appropriate
 /// vertex point property map is passed in the AABB tree, which will convert from 2D to 3D.
 ///

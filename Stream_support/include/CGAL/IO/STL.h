@@ -31,6 +31,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <filesystem>
 
 namespace CGAL {
 
@@ -45,15 +46,14 @@ namespace IO {
  *
  * \brief reads the content of `is` into `points` and `facets`, using the \ref IOStreamSTL.
  *
- * \attention The polygon soup is not cleared, and the data from the stream are appended.
+ * \note The polygon soup is not cleared, and the data from the stream are appended.
  *
- * \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
+ * \note To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
  *
- * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *                    whose value type is the point type
- * \tparam TriangleRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ * \tparam PointRange a model of the concepts `BackInsertionSequence` whose value type is the point type
+ * \tparam TriangleRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                       a model of the concept `RandomAccessContainer` whose `value_type` is
+ *                       an unsigned integer type convertible to `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param is the input stream
@@ -161,12 +161,12 @@ bool read_STL(std::istream& is,
  * \brief reads the content of a file named `fname` into `points` and `facets`, using the \ref IOStreamSTL.
  *
  *  If `use_binary_mode` is `true`, but the reading fails, \ascii reading will be automatically tested.
- * \attention The polygon soup is not cleared, and the data from the file are appended.
+ * \note The polygon soup is not cleared, and the data from the file are appended.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam TriangleRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type.
+ * \tparam TriangleRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                       a model of the concept `RandomAccessContainer` whose `value_type` is
+ *                       an unsigned integer type convertible to `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the input file
@@ -191,7 +191,7 @@ bool read_STL(std::istream& is,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const std::string& fname,
+bool read_STL(const std::filesystem::path& fname,
               PointRange& points,
               TriangleRange& facets,
               const CGAL_NP_CLASS& np = parameters::default_values()
@@ -251,14 +251,14 @@ typename K::Vector_3 construct_normal_of_STL_face(const typename K::Point_3& p,
  *
  * \brief writes the content of `points` and `facets` in `os`, using the \ref IOStreamSTL.
  *
- * \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+ * \note To write to a binary file, the flag `std::ios::binary` must be set during the creation
  *            of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
  *            of the stream must be set to `BINARY`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam TriangleRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ * \tparam TriangleRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                       a model of the concept `SequenceContainer` whose `value_type` is
+ *                       an unsigned integer type convertible to `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param os the output stream
@@ -317,9 +317,10 @@ bool write_STL(std::ostream& os,
 
     for(const Triangle& face : facets)
     {
-      const Point& p = get(point_map, points[face[0]]);
-      const Point& q = get(point_map, points[face[1]]);
-      const Point& r = get(point_map, points[face[2]]);
+      auto it = std::cbegin(face);
+      const Point& p = get(point_map, points[*it++]);
+      const Point& q = get(point_map, points[*it++]);
+      const Point& r = get(point_map, points[*it]);
       const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       decltype(auto) pp = conv(p);
@@ -342,9 +343,10 @@ bool write_STL(std::ostream& os,
     os << "solid\n";
     for(const Triangle& face : facets)
     {
-      const Point& p = get(point_map, points[face[0]]);
-      const Point& q = get(point_map, points[face[1]]);
-      const Point& r = get(point_map, points[face[2]]);
+      auto it = std::cbegin(face);
+      const Point& p = get(point_map, points[*it++]);
+      const Point& q = get(point_map, points[*it++]);
+      const Point& r = get(point_map, points[*it]);
       const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       decltype(auto) pp = conv(p);
@@ -369,12 +371,12 @@ bool write_STL(std::ostream& os,
  *
  * \brief writes the content of `points` and `facets` in a file named `fname`, using the \ref IOStreamSTL.
  *
- * \attention The polygon soup is not cleared, and the data from the file are appended.
+ * \note The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam TriangleRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ * \tparam TriangleRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                       a model of the concept `SequenceContainer` whose `value_type` is
+ *                       an unsigned integer type convertible to `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
@@ -400,7 +402,7 @@ bool write_STL(std::ostream& os,
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname,
+bool write_STL(const std::filesystem::path& fname,
                const PointRange& points,
                const TriangleRange& facets,
                const CGAL_NP_CLASS& np = parameters::default_values()

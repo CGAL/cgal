@@ -1,6 +1,6 @@
-project(Surface_mesh_topology_Benchmarks)
-
 cmake_minimum_required(VERSION 3.12...3.31)
+
+project(Surface_mesh_topology_Benchmarks)
 
 find_package(CGAL REQUIRED)
 

@@ -743,14 +743,14 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
+  VCM vcm = choose_parameter<VCM>(get_parameter(np, internal_np::vertex_color_map));
   bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
 
   using FCM = typename internal_np::Lookup_named_param_def<
     internal_np::face_color_map_t,
     CGAL_NP_CLASS,
     typename Surface_mesh<Point>::template Property_map<FIndex, CGAL::IO::Color> >::type;
-  FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
+  FCM fcm = choose_parameter<FCM>(get_parameter(np, internal_np::face_color_map));
   bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
 
   std::vector<std::string> prop = sm.template properties<Simplex>();

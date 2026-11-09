@@ -778,8 +778,10 @@ private:
         NT c = get(ctmap, hd);
 
         // UV positions
-        const Point_2& uvpi = get(uvmap, source(hd, mesh));
-        const Point_2& uvpj = get(uvmap, target(hd, mesh));
+        vertex_descriptor vpi = source(hd, mesh);
+        vertex_descriptor vpj = target(hd, mesh);
+        const Point_2& uvpi = get(uvmap, vpi);
+        const Point_2& uvpj = get(uvmap, vpj);
         NT diff_x = uvpi.x() - uvpj.x();
         NT diff_y = uvpi.y() - uvpj.y();
 //        CGAL_warning(diff_x == 0. && diff_y == 0.);
@@ -1172,8 +1174,10 @@ private:
       NT nabla_x = 0., nabla_y = 0.;
 
       // UV positions
-      const Point_2& pi = get(uvmap, source(hd, mesh));
-      const Point_2& pj = get(uvmap, target(hd, mesh));
+      vertex_descriptor vpi = source(hd, mesh);
+      vertex_descriptor vpj = target(hd, mesh);
+      const Point_2& pi = get(uvmap, vpi);
+      const Point_2& pj = get(uvmap, vpj);
       NT diff_x = pi.x() - pj.x();
       NT diff_y = pi.y() - pj.y();
 
