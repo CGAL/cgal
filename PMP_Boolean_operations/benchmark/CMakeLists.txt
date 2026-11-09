@@ -6,6 +6,8 @@ project(PMP_Boolean_operations_Benchmarks)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)
+find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
 
 create_single_source_cgal_program("rotated_cubes_autorefinement.cpp")
 create_single_source_cgal_program("coplanar_cubes_autorefinement.cpp")
@@ -22,8 +24,12 @@ create_single_source_cgal_program("Performance/performance_boolop.cpp")
 create_single_source_cgal_program("Robustness/robustness_boolop.cpp")
 create_single_source_cgal_program("Quality/quality_boolop.cpp")
 
-#create_single_source_cgal_program("polygon_mesh_slicer.cpp")
-#target_link_libraries(polygon_mesh_slicer PRIVATE CGAL::Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program("polygon_mesh_slicer.cpp")
+  target_link_libraries(polygon_mesh_slicer PRIVATE CGAL::Eigen3_support)
+else()
+  message(STATUS "NOTICE: Eigen3 not found. polygon_mesh_slicer will not be built.")
+endif()
 
 find_package(TBB QUIET)
 include(CGAL_TBB_support)
