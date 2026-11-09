@@ -40,7 +40,7 @@ namespace AABB_trees {
   /// and a primitive of `tree2` that intersect.
   ///
   /// Two primitives intersect if their datum intersect according to the traits of the tree.
-  /// Thus, with all documented traits in CGAL, two triangles sharing a vertex are considered
+  /// Thus, with all documented traits in \cgal, two triangles sharing a vertex are considered
   /// to intersect, and similarly for other primitives types and types of intersection.
   ///
   /// \cgalNamedParamsBegin
@@ -133,7 +133,7 @@ namespace AABB_trees {
   ///  - `id2` is the ID of a primitive from `tree2`
   ///
   /// Two primitives intersect if their datum intersect according to the traits of the tree.
-  /// Thus, with all documented traits in CGAL, two triangles sharing a vertex are considered
+  /// Thus, with all documented traits in \cgal, two triangles sharing a vertex are considered
   /// to intersect, and similarly for other primitives types and types of intersection.
   ///
   /// \tparam AABBTree1        type of the first AABB tree.
