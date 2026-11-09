@@ -272,8 +272,7 @@ public:
     /// @{
 
     /*! appends a point `p` to an existing polyline `cv` at the back.
-     * \param cv a polyline. Note, `cv` is not (necessarily)
-     *        \f$x\f$-monotone.
+     * \param cv a polyline. Note, `cv` is not (necessarily) \f$x\f$-monotone.
      * \param p a point to be appended to `cv` at the back.
      * \pre `cv` contains at least one segment.
      */
@@ -282,33 +281,29 @@ public:
     /*! appends a segment `seg` to an existing polyline `cv` at the back.
      * If `cv` is empty, `seg` will be its first segment.
      * \param cv a polyline. Note, `cv` is (not necessarily) \f$x\f$-monotone.
-     * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended
-     *        to `cv`
+     * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended to `cv` at the back.
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
-     * the back.
-     * \param xcv the existing \f$x\f$-monotone polyline
-     * \param p the point to be pushed back.
+    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at the back.
+     * \param xcv the existing \f$x\f$-monotone polyline.
+     * \param p the point to be appended to `xcv` at the back.
      * \pre `xcv` contains at least one segment
-     * \pre `p` is either to the right of `xcv` if it is oriented
-     *      left-to-right or it is to its left if `xcv` is oriented
-     *      right-to-left.
+     * \pre `p` is either to the right of `xcv` if it is oriented left-to-right
+     *      or it is to its left if `xcv` is oriented right-to-left.
      */
     void operator()(X_monotone_curve_2& xcv, const Point_2& p) const;
 
     /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
      * at the back. If `xcv` is empty, `seg` will be its first segment.
-     * \param xcv existing \f$x\f$-monotone polyline
-     * \param seg the segment to be added
-     * \pre If `xcv` is not empty then `seg` extends `xcv` to the right if
-     *      `xcv` is oriented right-to-left. Otherwise, `seg` extends `xcv` to
-     *      the left.
+     * \param xcv existing \f$x\f$-monotone polyline.
+     * \param seg the segment to be appended to `xcv` at the back.
+     * \pre If `xcv` is not empty then `seg` extends `xcv` to the right if `xcv`
+     *      is oriented right-to-left. Otherwise, `seg` extends `xcv` to the left.
      * \pre `seg` is not degenerated.
-     * \pre `xcv` and `seg` should have the same orientation
+     * \pre `xcv` and `seg` should have the same orientation.
      */
-    void operator()(const X_monotone_curve_2& xcv, Segment_2& seg) const;
+    void operator()(X_monotone_curve_2& xcv, Segment_2& seg) const;
 
     /// @} /* end of operations */
   }; /* end of Arr_polyline_traits_2::Push_back_2 */
@@ -322,9 +317,8 @@ public:
     /// @{
 
     /*! appends a point `p` to an existing polyline `cv` at the front.
-     * \param cv a polyline. Note, `cv` is not (necessarily)
-     *        \f$x\f$-monotone.
-     * \param p a point to be appended to `cv` at the back.
+     * \param cv a polyline. Note, `cv` is not (necessarily) \f$x\f$-monotone.
+     * \param p a point to be appended to `cv` at the front.
      * \pre `cv` contains at least one segment.
      */
     void operator()(Curve_2& cv, const Point_2& p) const;
@@ -332,33 +326,29 @@ public:
     /*! appends a segment `seg` to an existing polyline `cv` at the front.
      * If `cv` is empty, `seg` will be its first segment.
      * \param cv a polyline. Note, `cv` is (not necessarily) \f$x\f$-monotone.
-     * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended
-     * to `cv`
+     * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended to `cv` at the front.
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
-     * the front.
-     * \param xcv the existing \f$x\f$-monotone polyline
-     * \param p the point to be pushed front.
-     * \pre `xcv` contains at least one segment
-     * \pre `p` is either to the left of `xcv` if it is oriented
-     *      left-to-right or it is to its right if `xcv` is oriented
-     *      right-to-left.
+    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at the front.
+     * \param xcv the existing \f$x\f$-monotone polyline.
+     * \param p the point to be appended to `xcv` at the front.
+     * \pre `xcv` contains at least one segment.
+     * \pre `p` is either to the left of `xcv` if it is oriented left-to-right
+     *      or it is to its right if `xcv` is oriented right-to-left.
      */
     void operator()(X_monotone_curve_2& xcv, const Point_2& p) const;
 
-    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
-     * at the front. If `xcv` is empty, `seg` will be its first segment.
-     * \param xcv existing \f$x\f$-monotone polyline
-     * \param seg the segment to be added
-     * \pre If `xcv` is not empty then `seg` extends `xcv` to the left if
-     *      `xcv` is oriented right-to-left. Otherwise, `seg` extends `xcv` to
-     *      the right.
+    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv` at the front.
+     * If `xcv` is empty, `seg` will be its first segment.
+     * \param xcv existing \f$x\f$-monotone polyline.
+     * \param seg the segment to be appended to `xcv` at the front.
+     * \pre If `xcv` is not empty then `seg` extends `xcv` to the left if `xcv`
+     *      is oriented right-to-left. Otherwise, `seg` extends `xcv` to the right.
      * \pre `seg` is not degenerated.
-     * \pre `xcv` and `seg` should have the same orientation
+     * \pre `xcv` and `seg` should have the same orientation.
      */
-    void operator()(const X_monotone_curve_2& xcv, Segment_2& seg) const;
+    void operator()(X_monotone_curve_2& xcv, Segment_2& seg) const;
 
     /// @} /* end of operations */
   }; /* end of Arr_polyline_traits_2::Push_front_2 */
