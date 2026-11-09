@@ -297,11 +297,11 @@ class Intersection_of_triangle_meshes
                                                  next(next(halfedge(f_2, tm2), tm2), tm2) };
 
       for(halfedge_descriptor h : hf2){
-        if( is_border_edge(h, tm2) || h < opposite(h, tm2))
+        if( (is_border_edge(h, tm2) || h < opposite(h, tm2)) && !get(is_shared_edge_map_2, edge(h, tm2)) )
           callback12(hf1[0], h);
       }
       for(halfedge_descriptor h : hf1){
-        if( is_border_edge(h, tm1) || h < opposite(h, tm1))
+        if( (is_border_edge(h, tm1) || h < opposite(h, tm1)) && !get(is_shared_edge_map_1, edge(h, tm1)) )
           callback21(hf2[0], h);
       }
     };
@@ -372,7 +372,7 @@ class Intersection_of_triangle_meshes
 #endif
       {
         helper_1.template build<ConcurrencyTag>(tm1_faces_intersecting_bb, tree1, tm1, vpm1);
-        helper_2.template build<ConcurrencyTag>(tm2_faces_intersecting_bb, tree2, tm2, vpm2)
+        helper_2.template build<ConcurrencyTag>(tm2_faces_intersecting_bb, tree2, tm2, vpm2);
 
         std::vector<std::pair<face_descriptor, face_descriptor>> inter;
         CGAL::AABB_trees::all_pairs_of_primitives_with_overlapping_bbox(tree1, tree2, std::back_inserter(inter));
