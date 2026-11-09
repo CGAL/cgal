@@ -29,9 +29,9 @@ template<bool in_order, typename Value1, typename Value2, typename OutputIterato
 class Wrap_output_iterator
 {
   Value1 first;
-  OutputIterator out;
+  OutputIterator& out;
 public:
-  Wrap_output_iterator(Value1 first_, OutputIterator out_): first(first_), out(out_){}
+  Wrap_output_iterator(Value1 first_, OutputIterator& out_): first(first_), out(out_){}
 
   Wrap_output_iterator& operator=(Value2 second){
     if constexpr(in_order)
