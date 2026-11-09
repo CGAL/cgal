@@ -390,7 +390,7 @@ public:
   /*!
   * \ingroup PkgStraightSkeleton3Classes
   *
-  * The class `Spoke` represents an spoke of the straight skeleton, i.e., a connection between two nodes.
+  * The class `Spoke` represents a spoke of the straight skeleton, i.e., a connection between two nodes.
   *
   * If the skeleton is partial because the propagation was interrupted, some spokes may be unbounded
   * and have only a source node. In this case, the spoke stores a direction vector instead
@@ -1274,7 +1274,7 @@ public:
         }
 
         if (std::find(spokes_.begin(), spokes_.end(), spoke) == spokes_.end()) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: node references an spoke not present in the skeleton's spoke list");
+          CGAL_SS3_SKEL_DS_TRACE("Error: node references a spoke not present in the skeleton's spoke list");
           CGAL_SS3_SKEL_DS_TRACE(node->to_string());
           CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           result = false;
@@ -1478,7 +1478,7 @@ public:
         CGAL_SS3_DEBUG_SPTR(spoke);
 
         if (std::find(spokes_.begin(), spokes_.end(), spoke) == spokes_.end()) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: sheet references an spoke that is not present in the skeleton's spoke list");
+          CGAL_SS3_SKEL_DS_TRACE("Error: sheet references a spoke that is not present in the skeleton's spoke list");
           CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
           CGAL_SS3_SKEL_DS_TRACE(spoke->to_string());
           result = false;

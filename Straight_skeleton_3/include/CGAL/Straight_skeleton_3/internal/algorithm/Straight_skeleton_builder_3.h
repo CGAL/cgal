@@ -969,7 +969,7 @@ public:
       SheetSPtr sheet = create_sheet(edge);
       CGAL_SS3_DEBUG_SPTR(sheet);
 
-      // Squatting the spoke type, this isn't really an spoke, but a contour edge.
+      // Squatting the spoke type, this isn't really a spoke, but a contour edge.
       // Contours are useful to get a closed polygon (with holes) to draw sheets.
       SpokeSPtr contour = std::make_shared<Spoke>(Hds_utils::get_node(edge->source()),
                                               Hds_utils::get_node(edge->target()));
