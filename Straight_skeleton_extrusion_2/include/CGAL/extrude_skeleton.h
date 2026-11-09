@@ -790,8 +790,10 @@ public:
     std::map<Point_2, Point_2> snapped_positions;
 #endif
 
+#ifdef CGAL_SLS_EXTRUSION_TIMERS
     CGAL::Real_timer timer;
     timer.start();
+#endif
 
     S_Straight_skeleton_2_ptr s_ss_ptr;
 
@@ -823,10 +825,10 @@ public:
                    m_sk);
     }
 
+#ifdef CGAL_SLS_EXTRUSION_TIMERS
     timer.stop();
     std::cout << "Straight skeleton construction took " << timer.time() << " seconds" << std::endl;
-    timer.reset();
-    timer.start();
+#endif
 
     if(!s_ss_ptr)
     {
@@ -840,9 +842,21 @@ public:
     CGAL::draw(*s_ss_ptr);
 #endif
 
+#ifdef CGAL_SLS_EXTRUSION_TIMERS
+    timer.reset();
+    timer.start();
+#endif
+
     CGAL_assertion(s_ss_ptr->is_valid(s_partial_skeleton));
     Straight_skeleton_2_ptr ss_ptr = CGAL::convert_straight_skeleton_2<Straight_skeleton_2>(s_ss_ptr);
     CGAL_assertion(ss_ptr && ss_ptr->is_valid(s_partial_skeleton));
+
+#ifdef CGAL_SLS_EXTRUSION_TIMERS
+    timer.stop();
+    std::cout << "Conversion took " << timer.time() << " seconds" << std::endl;
+    timer.reset();
+    timer.start();
+#endif
 
     if(s_is_default_extrusion_height)
     {
@@ -884,8 +898,10 @@ public:
     apply_snapping<XK>(points, snapped_positions);
 #endif
 
+#ifdef CGAL_SLS_EXTRUSION_TIMERS
     timer.stop();
     std::cout << "Offset construction took " << timer.time() << " seconds" << std::endl;
+#endif
 
     return true;
   }
