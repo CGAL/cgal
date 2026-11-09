@@ -34,9 +34,9 @@ Release date: December 2026
 
 - Added new, multithreading-compatible functions operating directly on triangle soups,
   enabling the handling of non-manifold input and output volumes:
-  - [`CGAL::Polygon_mesh_processing::compute_union_of_triangle_soups()`](),
-  - [`CGAL::Polygon_mesh_processing::compute_intersection_of_triangle_soups()`](), and
-  - [`CGAL::Polygon_mesh_processing::compute_difference_of_triangle_soups()`]().
+  - [`CGAL::Polygon_mesh_processing::compute_union_of_triangle_soups()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__soup__grp.html#gaba4ca69504579964c53b11222416a91b),
+  - [`CGAL::Polygon_mesh_processing::compute_intersection_of_triangle_soups()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__soup__grp.html#ga1cd9f060faac08f2b5b9528444b1532c), and
+  - [`CGAL::Polygon_mesh_processing::compute_difference_of_triangle_soups()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__soup__grp.html#ga570e1882afe964725f62a8809ca6b6b3).
 - Corefinement-based operations (including Boolean operations) have been optimized to better handle
   configurations where some identical faces are shared between the input meshes, leading to
   a significant speed-up in those cases.
@@ -84,8 +84,8 @@ Release date: December 2026
   now accepts an optional `ConcurrencyTag` template parameter ([`CGAL::Sequential_tag`](https://doc.cgal.org/6.3/STL_Extension/structCGAL_1_1Sequential__tag.html)
   by default). When [`CGAL::Parallel_tag`](https://doc.cgal.org/6.3/STL_Extension/structCGAL_1_1Parallel__tag.html)
   is specified, the tree construction is performed in parallel.
-- Added the functions [`CGAL::AABB_trees::do_intersect()`]()
-  and [`CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`]().
+- Added the functions [`CGAL::AABB_trees::do_intersect()`](https://doc.cgal.org/6.3/AABB_tree/group__PkgAABBTreeRef.html#ga7434a520645c7a8cc2be71cf33d14a85)
+  and [`CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`](https://doc.cgal.org/6.3/AABB_tree/group__PkgAABBTreeRef.html#ga1440e8c221074f645e5562db8fa9c1e9).
   These functions respectively determine whether two AABB trees intersect and compute all pairs
   of intersecting primitives between two AABB trees.
 
