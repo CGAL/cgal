@@ -502,8 +502,8 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   for(std::size_t pi = 0; pi < polylines1.size(); ++pi)
   {
     const auto& polyline = polylines1[pi];
-    if (polyline.size()<2) continue; //skip isolated points
     polyline_begin1.push_back(segments1.size());
+    if (polyline.size()<2) continue; //skip isolated points
 
     auto pit = std::begin(polyline);
     auto prev = pit++;
@@ -514,8 +514,8 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   for(std::size_t pi = 0; pi < polylines2.size(); ++pi)
   {
     const auto& polyline = polylines2[pi];
-    if (polyline.size()<2) continue; //skip isolated points
     polyline_begin2.push_back(segments2.size());
+    if (polyline.size()<2) continue; //skip isolated points
 
     auto pit = std::begin(polyline);
     auto prev = pit++;
