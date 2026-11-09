@@ -173,7 +173,7 @@ pca_estimate_normals(
   PointMap point_map = NP_helper::get_point_map(points, np);
   NormalMap normal_map = NP_helper::get_normal_map(points, np);
   FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), FT(0));
-  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
+  const std::function<bool(double)> callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
 
   // Input points types

@@ -283,7 +283,7 @@ bilateral_smooth_point_set(
   typedef typename Kernel::FT FT;
 
   double sharpness_angle = choose_parameter(get_parameter(np, internal_np::sharpness_angle), 30.);
-  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
+  const std::function<bool(double)> callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
 
   CGAL_precondition(points.begin() != points.end());

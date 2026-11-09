@@ -209,7 +209,7 @@ jet_smooth_point_set(
                                                          typename Kernel::FT(0));
   unsigned int degree_fitting = choose_parameter(get_parameter(np, internal_np::degree_fitting), 2);
   unsigned int degree_monge = choose_parameter(get_parameter(np, internal_np::degree_monge), 2);
-  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
+  const std::function<bool(double)> callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                std::function<bool(double)>());
 
   // types for K nearest neighbors search structure
