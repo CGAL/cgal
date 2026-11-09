@@ -434,13 +434,6 @@ The mesh is first partitioned with the help of the \ref thirdpartyMETIS library.
 Each patch is copied and simplified independently.
 Finally, the result is reassembled and a final pass is performed sequentially for the boundaries of the patches.
 
-A more elaborate version would also enable the usage of constrained property maps.
-Instead of making copies of patches one might collapse in the input graph.
-This needs taking care of possible race conditons. As the halfedge associated
-to a vertex on the border of two neighboring patches might be modifed at the same time
-by two threads, one would need a mutex or put constraints on all faces incident
-to boundary vertices.
-
 The first example uses the classical Lindstrom-Turk placement to collapse all edges shorter
 than a given threshold. The work can be dispatched across multiple threads, and the final mesh
 still satisfies the criterion. The resulting speed-up coefficient depends on the distribution of short edges
