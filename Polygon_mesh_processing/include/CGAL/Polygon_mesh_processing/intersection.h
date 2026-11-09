@@ -642,6 +642,9 @@ compute_face_polylines_intersection(const FaceRange& face_range,
                                     OutputIterator out,
                                     const NamedParameters& np)
 {
+  if (face_range.empty() || polyline_range.empty())
+    return out;
+
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
@@ -669,9 +672,11 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(boost::vertex_point, tm));
 
-  Bbox_3 b1 = Polygon_mesh_processing::bbox(tm, np);
+  Bbox_3 b1;
+  for (face_descriptor f : face_range)
+   b1 += Polygon_mesh_processing::face_bbox(f, tm, np);
   auto polyline_it = polyline_range.begin();
-  Bbox_3 b2 = bbox_3(polyline_it->begin(), polyline_it->end());
+  Bbox_3 b2 = bbox_3(polyline_it->begin(), polyline_it->end()); // can deref the polyline_it as we already checked it's not empty
   for(++polyline_it; polyline_it != polyline_range.end(); ++polyline_it)
     b2 += bbox_3(polyline_it->begin(), polyline_it->end());
 
