@@ -408,6 +408,7 @@ class Intersection_of_triangle_meshes
     else {
       if (const_mesh_ptr==&tm1)
       {
+        // tm1 might feature degenerate features
         auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
           if (get(vpm2, source(h2, tm2)) != get(vpm2, target(h2, tm2)))
             callback12(h1, h2);
@@ -444,7 +445,7 @@ class Intersection_of_triangle_meshes
       {
         if (const_mesh_ptr==&tm2)
         {
-          // tm2 might feature
+          // tm2 might feature degenerate features
           auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
             if(!callback12.is_face_degenerated(h1))
               callback12(h1, h2);
