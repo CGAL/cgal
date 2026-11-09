@@ -566,6 +566,7 @@ self_intersections_impl(const FaceRange& face_range,
         // Sequentially write into the output iterator
         for(std::size_t i=0; i<face_pairs.size(); ++i)
           *out ++= face_pairs[i];
+        return out;
       }
     }
     else
