@@ -411,10 +411,8 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   {
     const auto& polyline = polyline_range[pi];
 
-    if(polyline.size() < 2)
-      continue;
-
     polyline_begin.push_back(segments.size());
+    if(polyline.size() < 2) continue;
 
     auto pit = std::begin(polyline);
     auto prev = pit++;
