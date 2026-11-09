@@ -14,6 +14,7 @@
 /// Forward declarations of the Surface_mesh package.
 
 #include <boost/mpl/has_xxx.hpp>
+#include <type_traits>
 
 #ifndef DOXYGEN_RUNNING
 
