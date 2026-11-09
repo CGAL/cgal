@@ -60,7 +60,7 @@ struct Simplify
     : tm_ptr(&tm)
   {
     std::size_t nb_edges = num_edges(tm);
-    thread_expected_nb_edges=nb_edges*ratio*1.01; // we take more on purpose to let the last pass achieve expected nb
+    thread_expected_nb_edges=static_cast<std::size_t>(nb_edges*ratio*1.01); // we take more on purpose to let the last pass achieve expected nb
   }
 
   void operator()() const
@@ -85,7 +85,8 @@ int main(int argc, char** argv)
 {
   typedef boost::graph_traits<Triangle_mesh>::face_descriptor face_descriptor;
 
-  std::ifstream in((argc>1) ? std::string(argv[1]) : CGAL::data_file_path("meshes/refined_elephant.off"));
+  auto fname = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/refined_elephant.off");
+  std::ifstream in(fname);
   double ratio = (argc > 2) ? std::stod(argv[2]) : 0.2;
   int number_of_parts = (argc>3) ? std::atoi(argv[3]) : 8;
 
@@ -96,7 +97,7 @@ int main(int argc, char** argv)
             << " #F = " << num_faces(tm) << std::endl;
 
   std::size_t nb_in_edges=num_edges(tm);
-  std::size_t expected_nb_edges=nb_in_edges*ratio;
+  std::size_t expected_nb_edges=static_cast<std::size_t>(nb_in_edges*ratio);
 
   std::cerr << "expected # output edges " << expected_nb_edges << "\n";
 
