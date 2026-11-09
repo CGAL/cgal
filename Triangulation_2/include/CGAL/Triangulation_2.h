@@ -39,13 +39,12 @@
 
 #include <CGAL/double.h>
 
-#include <boost/utility/result_of.hpp>
+#include <type_traits>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
-#include <boost/utility/result_of.hpp>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/STL_Extension/internal/info_check.h>
@@ -306,7 +305,7 @@ public:
                Face_handle &fr) const;
 
   // GEOMETRIC FEATURES AND CONSTRUCTION
-  typename boost::result_of<const Construct_point_2(const Point&)>::type
+  std::invoke_result_t<const Construct_point_2&, const Point&>
   construct_point(const Point& p) const { return geom_traits().construct_point_2_object()(p); }
 
 
