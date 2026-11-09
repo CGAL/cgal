@@ -5,14 +5,15 @@
 
 /*!
 \addtogroup PkgVMASRef
-\cgalPkgDescriptionBegin{Dynamic Skeletonization Via Variational Medial Axis Sampling,PkgVMAS}
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Medial Skeletonization,PkgVMAS}
 \cgalPkgPicture{pkg-vmas.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Qijia Huang}
-\cgalPkgDesc{The package provides an implementation of a dynamic approximation of the medial axis.
-             This approximation features a collection of bi-tangent spheres, with edges and triangles connecting there centers.
-             Spheres can be added or removed and the resulting set of edges and triangles will be updated accordingly.}
+\cgalPkgDesc{This package computes a coarse approximation of the medial axis of a triangulated surface mesh without borders.
+             The result is a set of medial spheres (centers and radii) whose centers are connected by edges and triangles,
+             so that the skeleton can have both curve-like (1D) and sheet-like (2D) parts.
+             Spheres can be added or removed afterwards, and the edges and triangles are updated accordingly.}
 \cgalPkgManuals{Chapter_VMAS,PkgVMASRef}
 \cgalPkgSummaryEnd
 
