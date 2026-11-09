@@ -650,7 +650,6 @@ class Facet_normals_variation_criterion
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Edge Edge;
-  typedef typename Tr::Triangle Triangle;
 
   typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
@@ -661,14 +660,8 @@ class Facet_normals_variation_criterion
 public:
   /// Constructor
   Facet_normals_variation_criterion(const FT& bound_degrees)
-  {
-    const FT bound_rad = bound_degrees * CGAL_PI / 180.0;
-
-    // theoretical bound for the squared Euclidean distance between two unit normals
-    // is 2 * sin(theta / 2)
-    const double sin_half = std::sin(CGAL::to_double(bound_rad) * 0.5);
-    sq_distance_theoretical_bound_ = CGAL::square( FT(2. * sin_half) );
-  }
+      : cosine_bound_(std::cos(bound_degrees * CGAL_PI / 180.0))
+  {}
 
   /// Destructor
   virtual ~Facet_normals_variation_criterion() {}
@@ -685,10 +678,14 @@ protected:
   virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
     CGAL_assertion(c3t3.is_in_complex(f));
-    CGAL_assertion(sq_distance_theoretical_bound_ > FT(0));
+    CGAL_assertion(cosine_bound_ <= FT(1));
+
+    using T3_utils = CGAL::Triangulation_utils_3;
 
     const Tr& tr = c3t3.triangulation();
-    auto diff_vec = tr.geom_traits().construct_difference_of_vectors_3_object();
+    auto compare_angle = tr.geom_traits().compare_angle_3_object();
+    auto scalar_product = tr.geom_traits().compute_scalar_product_3_object();
+    auto opp = tr.geom_traits().construct_opposite_vector_3_object();
 
     auto unit_normal = [&](const Facet& f) -> Vector_3
     {
@@ -701,53 +698,73 @@ protected:
     };
 
     // compute n1 = unit normal to f
-    const Vector_3 n1 = unit_normal(f);
+    const Facet& start_facet = f;
+    const Vector_3 start_normal = unit_normal(start_facet);
 
-    // for each of the 3 neighboring facets, compute unit normal n2 and compare with n1
+    // for each of the 3 neighboring facets, compute unit normal n2 and compare with nf
     for(const Edge& e : tr.edges(f))
     {
       if(c3t3.is_in_complex(e))
         continue;
 
       const auto& [vs, vt] = tr.vertices(e);
-      Cell_handle cell = e.first;
+
+      Cell_handle cell = start_facet.first;
       do
       {
-        unsigned int next_index
-          = CGAL::Triangulation_utils_3::next_around_edge(cell->index(vs), cell->index(vt));
+        int next_index = T3_utils::next_around_edge(cell->index(vs), cell->index(vt));
+
+        if(cell->neighbor(next_index) == f.first)
+          break; // we have come back to the original facet, stop
 
         if(c3t3.is_in_complex(cell, next_index))
         {
           Facet f2(cell, next_index);
-          Vector_3 n2 = unit_normal(f2);
 
-          // compute squared distance ||n1 - n2||^2
-          const Vector_3 diff = diff_vec(n1, n2);
-          const double sqd = diff.squared_length();
+          const Vector_3 n2 = unit_normal(f2);
 
-          if(sqd > sq_distance_theoretical_bound_)
+          if(scalar_product(start_normal, n2) < 0.)
           {
-            const auto& t = tr.triangle(f);
-            std::cout << t[0] << " " << t[1] << " " << t[2] << " " << t[0] << std::endl;
-
 #ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
-            std::cerr << "Bad facet (normal variation criterion: "
-              << sqd << " > " << sq_distance_theoretical_bound_ << ")" << std::endl;
+            std::cerr << "Bad facet (normals are opposite)" << std::endl;
 #endif
-            return Is_bad(Quality(sqd));
+            return Is_bad(Quality(1));
           }
+
+//          const auto& vf = tr.vertices(f);
+//          const auto& vf2 = tr.vertices(f2);
+//          // compare the angle between the two normals, using the 3 points of each facet
+//          // with the cosine bound
+//          auto res = compare_angle(vf[0]->point().point(),
+//                                   vf[1]->point().point(),
+//                                   vf[2]->point().point(),
+//                                   vf2[0]->point().point(),
+//                                   vf2[1]->point().point(),
+//                                   vf2[2]->point().point(),
+//                                   cosine_bound_);
+//
+//          // if res == SMALLER, then the angles between the 2 normals is smaller than the bound
+//          // and the triangulation is "flat enough"
+//          // otherwise :
+//          if(res == CGAL::LARGER)
+//          {
+//#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+//            std::cerr << "Bad facet (max cos dh variation = " << cosine_bound_ << ")" << std::endl;
+//#endif
+//            return Is_bad(Quality(1));
+//          }
         }
 
         cell = cell->neighbor(next_index);
       }
-      while(cell != e.first);
+      while(cell != start_facet.first);
     }
 
     return Is_bad();
   }
 
 private:
-  FT sq_distance_theoretical_bound_;
+  const FT cosine_bound_;
 
 }; // end class Facet_normals_variation_criterion
 
