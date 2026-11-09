@@ -436,20 +436,20 @@ compute_face_face_intersection(const FaceRange& face_range1,
        typename boost::property_traits<VPM2>::value_type
        >::value) );
 
-  std::vector<face_descriptor> face_to_test1;
-  std::vector<face_descriptor> face_to_test2;
+  std::vector<face_descriptor> faces_to_test1;
+  std::vector<face_descriptor> faces_to_test2;
 
   for(face_descriptor f : face_range1)
     if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm1), bb))
-      face_to_test1.emplace_back(f);
+      faces_to_test1.emplace_back(f);
   for(face_descriptor f : face_range2)
     if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm2), bb))
-      face_to_test2.emplace_back(f);
+      faces_to_test2.emplace_back(f);
 
   Tree_1 tree1;
   Tree_2 tree2;
-  helper_1.template build<Concurrency_tag>(face_to_test1, tree1, tm1, vpm1);
-  helper_2.template build<Concurrency_tag>(face_to_test2, tree2, tm2, vpm2);
+  helper_1.template build<Concurrency_tag>(faces_to_test1, tree1, tm1, vpm1);
+  helper_2.template build<Concurrency_tag>(faces_to_test2, tree2, tm2, vpm2);
 
   CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, out, parameters::concurrency_tag(Concurrency_tag()));
   return out;
@@ -561,15 +561,15 @@ compute_face_polyline_intersection(const FaceRange& face_range,
   for(; pit != std::end(polyline); ++pit, ++prev)
     segments.emplace_back(*prev, *pit);
 
-  std::vector<face_descriptor> face_to_test;
+  std::vector<face_descriptor> faces_to_test;
   for(face_descriptor f : face_range)
     if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm), bb))
-      face_to_test.emplace_back(f);
+      faces_to_test.emplace_back(f);
 
   AABB_tree_helper helper;
   Face_tree face_tree;
 
-  helper.template build<Concurrency_tag>(face_tree, tm, vpm);
+  helper.template build<Concurrency_tag>(faces_to_test, face_tree, tm, vpm);
   Segment_tree segment_tree(segments.begin(), segments.end());
 
   auto out_converter = boost::make_function_output_iterator(
@@ -698,15 +698,15 @@ compute_face_polylines_intersection(const FaceRange& face_range,
       segments.emplace_back(*prev, *pit);
   }
 
-  std::vector<face_descriptor> face_to_test;
+  std::vector<face_descriptor> faces_to_test;
   for(face_descriptor f : face_range)
     if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm), bb))
-      face_to_test.emplace_back(f);
+      faces_to_test.emplace_back(f);
 
   AABB_tree_helper helper;
   Face_tree face_tree;
 
-  helper.template build<Concurrency_tag>(face_tree, tm, vpm);
+  helper.template build<Concurrency_tag>(faces_to_test, face_tree, tm, vpm);
   Segment_tree segment_tree(segments.begin(), segments.end());
 
   auto out_converter =
