@@ -28,6 +28,7 @@
 #include <CGAL/create_weighted_offset_polygons_2.h>
 #include <CGAL/create_weighted_offset_polygons_from_polygon_with_holes_2.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Straight_skeleton_converter_2.h>
 
 #include <CGAL/General_polygon_with_holes_2.h>
 
@@ -47,6 +48,8 @@
 
 #include <CGAL/boost/graph/border.h>
 #include <CGAL/Cartesian/function_objects.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/enum.h>
 #include <CGAL/IO/helpers.h>
 #include <CGAL/Kernel_traits.h>
@@ -68,6 +71,14 @@
 namespace CGAL {
 namespace Straight_skeleton_extrusion {
 namespace internal {
+
+template <typename SK>
+struct Extrusion_kernel_selector
+{
+  using type = std::conditional_t<std::is_floating_point<typename SK::FT>::value,
+                                  CGAL::Exact_predicates_exact_constructions_kernel,
+                                  SK>;
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,14 +107,14 @@ inline constexpr FT default_extrusion_height()
 
 // The purpose of this visitor is to snap back almost-vertical (see preprocess_weights()) edges
 // to actual vertical slabs.
-template <typename HDS, typename GeomTraits>
-typename GeomTraits::Point_2
-snap_point_to_contour_halfedge_plane(const typename GeomTraits::Point_2& op,
+template <typename HDS, typename XK>
+typename XK::Point_2
+snap_point_to_contour_halfedge_plane(const typename XK::Point_2& op,
                                      typename HDS::Halfedge_const_handle ch)
 {
-  using FT = typename GeomTraits::FT;
-  using Segment_2 = typename GeomTraits::Segment_2;
-  using Line_2 = typename GeomTraits::Line_2;
+  using FT = typename XK::FT;
+  using Segment_2 = typename XK::Segment_2;
+  using Line_2 = typename XK::Line_2;
 
   using Vertex_const_handle = typename HDS::Vertex_const_handle;
 
@@ -137,28 +148,28 @@ snap_point_to_contour_halfedge_plane(const typename GeomTraits::Point_2& op,
   }
 }
 
-template <typename HDS, typename GeomTraits>
+template <typename HDS, typename XK>
 void snap_skeleton_vertex(typename HDS::Halfedge_const_handle hds_h,
                           typename HDS::Halfedge_const_handle contour_h,
-                          std::map<typename GeomTraits::Point_2,
-                                   typename GeomTraits::Point_2>& snapped_positions)
+                          std::map<typename XK::Point_2,
+                                   typename XK::Point_2>& snapped_positions)
 {
   typename HDS::Vertex_const_handle hds_tv = hds_h->vertex();
 
   // this re-applies snapping towards contour_h even if the point was already snapped towards another contour
   auto insert_result = snapped_positions.emplace(hds_tv->point(), hds_tv->point());
-  insert_result.first->second = snap_point_to_contour_halfedge_plane<HDS, GeomTraits>(insert_result.first->second, contour_h);
+  insert_result.first->second = snap_point_to_contour_halfedge_plane<HDS, XK>(insert_result.first->second, contour_h);
 
   // std::cout << "snap_skeleton_vertex(V" << hds_tv->id() << " pt: " << hds_h->vertex()->point() << ")"
   //           << " to " << insert_result.first->second << std::endl;
 }
 
-template <typename GeomTraits, typename PointRange>
+template <typename XK, typename PointRange>
 void apply_snapping(PointRange& points,
-                    const std::map<typename GeomTraits::Point_2,
-                                   typename GeomTraits::Point_2>& snapped_positions)
+                    const std::map<typename XK::Point_2,
+                                   typename XK::Point_2>& snapped_positions)
 {
-  using Point_3 = typename GeomTraits::Point_3;
+  using Point_3 = typename XK::Point_3;
 
   for(Point_3& p3 : points)
   {
@@ -171,14 +182,14 @@ void apply_snapping(PointRange& points,
 
 template <typename StraightSkeleton_2,
           typename OffsetBuilderTraits,
-          typename GeomTraits>
+          typename XK>
 class Skeleton_offset_correspondence_builder_visitor
   : public CGAL::Default_polygon_offset_builder_2_visitor<OffsetBuilderTraits, StraightSkeleton_2>
 {
   using Base = CGAL::Default_polygon_offset_builder_2_visitor<OffsetBuilderTraits, StraightSkeleton_2>;
 
-  using FT = typename GeomTraits::FT;
-  using Point_2 = typename GeomTraits::Point_2;
+  using FT = typename XK::FT;
+  using Point_2 = typename XK::Point_2;
 
   using SS_Halfedge_const_handle = typename StraightSkeleton_2::Halfedge_const_handle;
 
@@ -242,11 +253,11 @@ public:
     }
     else if(is_h1_vertical)
     {
-      m_snapped_positions[op] = snap_point_to_contour_halfedge_plane<HDS, GeomTraits>(op, contour_h1);
+      m_snapped_positions[op] = snap_point_to_contour_halfedge_plane<HDS, XK>(op, contour_h1);
     }
     else if(is_h2_vertical)
     {
-      m_snapped_positions[op] = snap_point_to_contour_halfedge_plane<HDS, GeomTraits>(op, contour_h2);
+      m_snapped_positions[op] = snap_point_to_contour_halfedge_plane<HDS, XK>(op, contour_h2);
     }
 #endif
   }
@@ -265,25 +276,25 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template <typename GeomTraits>
+template <typename SK,
+          typename XK>
 class Extrusion_builder
 {
-  using Geom_traits = GeomTraits;
+  using SFT = typename SK::FT;
+  using FT = typename XK::FT;
+  using Point_2 = typename XK::Point_2;
+  using Point_3 = typename XK::Point_3;
+  using Vector_3 = typename XK::Vector_3;
 
-  using FT = typename Geom_traits::FT;
-  using Point_2 = typename Geom_traits::Point_2;
-  using Segment_2 = typename Geom_traits::Segment_2;
-  using Line_2 = typename Geom_traits::Line_2;
-  using Point_3 = typename Geom_traits::Point_3;
-  using Vector_3 = typename Geom_traits::Vector_3;
-
-  using Polygon_2 = CGAL::Polygon_2<Geom_traits>;
-  using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Geom_traits>;
+  using Polygon_2 = CGAL::Polygon_2<XK>;
+  using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<XK>;
 
   using Offset_polygons = std::vector<std::shared_ptr<Polygon_2> >;
   using Offset_polygons_with_holes = std::vector<std::shared_ptr<Polygon_with_holes_2> >;
 
-  using Straight_skeleton_2 = CGAL::Straight_skeleton_2<Geom_traits>;
+  using S_Straight_skeleton_2 = CGAL::Straight_skeleton_2<SK>;
+  using S_Straight_skeleton_2_ptr = std::shared_ptr<S_Straight_skeleton_2>;
+  using Straight_skeleton_2 = CGAL::Straight_skeleton_2<XK>;
   using Straight_skeleton_2_ptr = std::shared_ptr<Straight_skeleton_2>;
 
   using SS_Vertex_const_handle = typename Straight_skeleton_2::Vertex_const_handle;
@@ -295,17 +306,17 @@ class Extrusion_builder
   using HDS_Face_handle = typename HDS::Face_handle;
 
   // Standard CDT2 for the horizontal (z constant) faces
-  using Vb = CGAL::Triangulation_vertex_base_with_info_2<std::size_t, Geom_traits>;
-  using Vbb = CGAL::Triangulation_vertex_base_2<Geom_traits, Vb>;
-  using Fb = CGAL::Constrained_triangulation_face_base_2<Geom_traits>;
+  using Vbb = CGAL::Triangulation_vertex_base_with_info_2<std::size_t, XK>;
+  using Vb = CGAL::Triangulation_vertex_base_2<XK, Vbb>;
+  using Fb = CGAL::Constrained_triangulation_face_base_2<XK>;
   using TDS = CGAL::Triangulation_data_structure_2<Vb,Fb>;
   using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
-  using CDT = CGAL::Constrained_Delaunay_triangulation_2<Geom_traits, TDS, Itag>;
+  using CDT = CGAL::Constrained_Delaunay_triangulation_2<XK, TDS, Itag>;
   using CDT_Vertex_handle = typename CDT::Vertex_handle;
   using CDT_Face_handle = typename CDT::Face_handle;
 
   // Projection CDT2 for the lateral faces
-  using PK = CGAL::Projection_traits_3<Geom_traits>;
+  using PK = CGAL::Projection_traits_3<XK>;
   using PVbb = CGAL::Triangulation_vertex_base_with_info_2<std::size_t, PK>;
   using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
   using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
@@ -314,24 +325,62 @@ class Extrusion_builder
   using PCDT_Vertex_handle = typename PCDT::Vertex_handle;
   using PCDT_Face_handle = typename PCDT::Face_handle;
 
-  using Offset_builder_traits = CGAL::Polygon_offset_builder_traits_2<Geom_traits>;
-  using Visitor = Skeleton_offset_correspondence_builder_visitor<Straight_skeleton_2, Offset_builder_traits, Geom_traits>;
+  using Offset_builder_traits = CGAL::Polygon_offset_builder_traits_2<XK>;
+  using Visitor = Skeleton_offset_correspondence_builder_visitor<Straight_skeleton_2, Offset_builder_traits, XK>;
   using Offset_builder = CGAL::Polygon_offset_builder_2<Straight_skeleton_2,
                                                         Offset_builder_traits,
                                                         Polygon_2,
                                                         Visitor>;
 
 private:
-  Geom_traits m_gt;
+  SK m_sk;
+  XK m_xk;
   bool m_verbose;
 
 public:
-  Extrusion_builder(const Geom_traits& gt, bool verbose = false) : m_gt(gt), m_verbose(verbose) { }
+  Extrusion_builder(const SK& sk, const XK& xk, bool verbose = false)
+    : m_sk(sk), m_xk(xk), m_verbose(verbose)
+  { }
+
+private:
+  template <typename Polygon>
+  Polygon_2 convert_polygon(const Polygon& polygon) const
+  {
+    using IPoint = typename boost::range_value<Polygon>::type;
+    using IK = typename Kernel_traits<IPoint>::Kernel;
+    CGAL::Cartesian_converter<IK, XK> converter;
+
+    Polygon_2 result;
+    for(const IPoint& p : polygon)
+      result.push_back(converter(p));
+    return result;
+  }
+
+  const Polygon_2& convert_polygon(const Polygon_2& polygon) const
+  {
+    return polygon;
+  }
+
+  template <typename PolygonWithHoles>
+  Polygon_with_holes_2 convert_polygon_with_holes(const PolygonWithHoles& p) const
+  {
+    Polygon_with_holes_2 polygon(convert_polygon(p.outer_boundary()));
+    for(auto hole = p.holes_begin(); hole != p.holes_end(); ++hole)
+      polygon.add_hole(convert_polygon(*hole));
+    return polygon;
+  }
+
+  const Polygon_with_holes_2& convert_polygon_with_holes(const Polygon_with_holes_2& p) const
+  {
+    return p;
+  }
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+public:
   template <typename PolygonWithHoles,
             typename PointRange, typename FaceRange>
   void construct_horizontal_faces(const PolygonWithHoles& p,
@@ -340,18 +389,19 @@ public:
                                   FaceRange& faces,
                                   const bool invert_faces = false)
   {
+    const auto& x_pwh = convert_polygon_with_holes(p);
     CDT cdt;
 
     try
     {
-      cdt.insert_constraint(p.outer_boundary().begin(), p.outer_boundary().end(), true /*close*/);
-      for(auto h_it=p.holes_begin(); h_it!=p.holes_end(); ++h_it)
+      cdt.insert_constraint(x_pwh.outer_boundary().begin(), x_pwh.outer_boundary().end(), true /*close*/);
+      for(auto h_it=x_pwh.holes_begin(); h_it!=x_pwh.holes_end(); ++h_it)
         cdt.insert_constraint(h_it->begin(), h_it->end(), true /*close*/);
     }
     catch(const typename CDT::Intersection_of_constraints_exception&)
     {
       if(m_verbose)
-        std::cerr << "Warning: Failed to triangulate horizontal face" << std::endl;
+        std::cerr << "Warning: Failed to triangulate horizontal face @ alt " << altitude << std::endl;
       return;
     }
 
@@ -385,17 +435,17 @@ public:
   }
 
   template <typename PointRange, typename FaceRange>
-  void construct_horizontal_faces(const Offset_polygons_with_holes& p_ptrs,
+  void construct_horizontal_faces(const Offset_polygons_with_holes& polygons,
                                   const FT altitude,
                                   PointRange& points,
                                   FaceRange& faces)
   {
-    for(const auto& p_ptr : p_ptrs)
-      construct_horizontal_faces(*p_ptr, altitude, points, faces);
+    for(const auto& polygon : polygons)
+      construct_horizontal_faces(*polygon, altitude, points, faces);
   }
 
-  template <typename SLSFacePoints, typename PointRange, typename FaceRange>
-  void triangulate_skeleton_face(SLSFacePoints& face_points,
+  template <typename FacePoints, typename PointRange, typename FaceRange>
+  void triangulate_skeleton_face(FacePoints& face_points,
                                  const bool invert_faces,
                                  PointRange& points,
                                  FaceRange& faces)
@@ -457,6 +507,8 @@ public:
             std::cerr << "Warning: Failed to triangulate lateral face (triangulate_hole_polyline)" << std::endl;
 
           /// --------------------------------------------------------------------------------------
+
+          // failed to triangulate, output the face...
           const std::size_t id_offset = points.size();
           std::vector<std::size_t> face;
           face.reserve(face_points.size());
@@ -465,15 +517,15 @@ public:
             points.push_back(p);
             face.push_back(id_offset + face.size());
           }
+
           if(invert_faces)
             std::reverse(face.begin(), face.end());
-          std::cout << "face:";
-          for (std::size_t i : face)
-            std::cout << " " << points[i];
+
           faces.push_back(face);
           return;
         }
 
+        // output faces from triangulate_hole_polyline()
         const std::size_t id_offset = points.size();
         for(const Point_3& p : face_points)
           points.push_back(p);
@@ -491,6 +543,7 @@ public:
         return;
       }
 
+      // output faces from the z=0 CDT
       for(const Point_3& p : face_points)
         points.push_back(p);
 
@@ -511,6 +564,7 @@ public:
       return;
     }
 
+    // output faces from the PCDT
     std::size_t id = points.size(); // point ID offset (previous faces inserted their points);
     for(PCDT_Vertex_handle vh : pcdt.finite_vertex_handles())
     {
@@ -574,7 +628,7 @@ public:
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
         // this computes the snapped position but does not change the geometry of the skeleton
         if(is_vertical && !hds_tv->is_contour())
-          snap_skeleton_vertex<HDS, Geom_traits>(hds_h, contour_h, snapped_positions);
+          snap_skeleton_vertex<HDS, XK>(hds_h, contour_h, snapped_positions);
 #endif
 
         face_points.emplace_back(hds_tv->point().x(), hds_tv->point().y(), hds_tv->time());
@@ -595,17 +649,17 @@ public:
   }
 
   void construct_lateral_faces(const Straight_skeleton_2& ss,
-                              const Offset_builder& offset_builder,
-                              const FT height,
-                              std::vector<Point_3>& points,
-                              std::vector<std::vector<std::size_t> >& faces,
-                              const std::unordered_map<HDS_Halfedge_const_handle, Point_2>& offset_points,
+                               const Offset_builder& offset_builder,
+                               const FT height,
+                               std::vector<Point_3>& points,
+                               std::vector<std::vector<std::size_t> >& faces,
+                               const std::unordered_map<HDS_Halfedge_const_handle, Point_2>& offset_points,
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-                              const FT& vertical_weight,
-                              std::map<Point_2, Point_2>& snapped_positions,
+                               const FT& vertical_weight,
+                               std::map<Point_2, Point_2>& snapped_positions,
 #endif
-                              const bool ignore_frame_faces = false,
-                              const bool invert_faces = false)
+                               const bool ignore_frame_faces = false,
+                               const bool invert_faces = false)
   {
     CGAL_precondition(height != default_extrusion_height<FT>());
 
@@ -673,7 +727,7 @@ public:
         {
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
           if(is_vertical && !hds_tv->is_contour())
-            snap_skeleton_vertex<HDS, Geom_traits>(hds_h, contour_h, snapped_positions);
+            snap_skeleton_vertex<HDS, XK>(hds_h, contour_h, snapped_positions);
 #endif
 
           const Point_2& off_p = hds_tv->point();
@@ -701,21 +755,30 @@ public:
 public:
   // this is roughly "CGAL::create_interior_weighted_skeleton_and_offset_polygons_with_holes_2()",
   // but we want to know the intermediate straight skeleton to build the lateral faces of the 3D mesh
-  template <typename PolygonWithHoles,
+  template <typename PolygonWithHoles, typename WeightRange, typename IFT,
             typename PointRange, typename FaceRange>
   bool inward_construction(const PolygonWithHoles& pwh,
-                          const std::vector<std::vector<FT> >& speeds,
-                          const FT vertical_weight,
-                          const FT height,
-                          PointRange& points,
-                          FaceRange& faces)
+                           const WeightRange& speeds,
+                           const IFT i_vertical_weight,
+                           const SFT s_height,
+                           PointRange& points,
+                           FaceRange& faces)
   {
-    CGAL_precondition(!is_zero(height));
+    CGAL_precondition(!is_zero(s_height));
 
-    const FT abs_height = abs(height);
+    using IPoint_2 = typename boost::range_value<typename PolygonWithHoles::Polygon_2>::type;
+    using IK = typename Kernel_traits<IPoint_2>::Kernel;
+
+    CGAL::Cartesian_converter<IK, SK> s_converter;
+    CGAL::Cartesian_converter<SK, XK> converter;
+
+    const FT vertical_weight = converter(s_converter(i_vertical_weight));
+    const FT height = converter(s_height);
+    const FT abs_height = CGAL::abs(height);
+    const SFT s_abs_height = CGAL::abs(s_height);
 
     // bottom face (z=0)
-    construct_horizontal_faces(pwh, 0 /*height*/, points, faces, true /*invert faces*/);
+    construct_horizontal_faces(pwh, FT(0) /*height*/, points, faces, true /*invert faces*/);
 
     // Avoid recomputing offset points multiple times
     std::unordered_map<HDS_Halfedge_const_handle, Point_2> offset_points;
@@ -727,36 +790,45 @@ public:
     std::map<Point_2, Point_2> snapped_positions;
 #endif
 
-    Straight_skeleton_2_ptr ss_ptr;
+    CGAL::Real_timer timer;
+    timer.start();
 
-    bool is_default_extrusion_height = (height == default_extrusion_height<FT>());
+    S_Straight_skeleton_2_ptr s_ss_ptr;
+
+    const bool s_is_default_extrusion_height = (s_height == default_extrusion_height<SFT>());
+    const bool s_partial_skeleton = (!s_is_default_extrusion_height && pwh.number_of_holes() == 0);
 
     // @partial_wsls_pwh interior SLS of weighted polygons with holes can have skeleton faces with holes
     // The current postprocessing is in the function EnforceSimpleConnectedness, but it has not yet
     // been made compatible with partial skeletons.
-    if(is_default_extrusion_height || pwh.number_of_holes() != 0)
+    if(!s_partial_skeleton)
     {
-      ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(
-                 CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
-                 CGAL_SS_i::vertices_end(pwh.outer_boundary()),
-                 pwh.holes_begin(), pwh.holes_end(),
-                 std::begin(speeds[0]), std::end(speeds[0]),
-                 std::next(std::begin(speeds)), std::end(speeds),
-                 m_gt);
+      s_ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(
+                   CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
+                   CGAL_SS_i::vertices_end(pwh.outer_boundary()),
+                   pwh.holes_begin(), pwh.holes_end(),
+                   std::begin(speeds[0]), std::end(speeds[0]),
+                   std::next(std::begin(speeds)), std::end(speeds),
+                   m_sk);
     }
     else
     {
-      ss_ptr = CGAL_SS_i::create_partial_interior_weighted_straight_skeleton_2(
-                 abs_height,
-                 CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
-                 CGAL_SS_i::vertices_end(pwh.outer_boundary()),
-                 pwh.holes_begin(), pwh.holes_end(),
-                 std::begin(speeds[0]), std::end(speeds[0]),
-                 std::next(std::begin(speeds)), std::end(speeds),
-                 m_gt);
+      s_ss_ptr = CGAL_SS_i::create_partial_interior_weighted_straight_skeleton_2(
+                   s_abs_height,
+                   CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
+                   CGAL_SS_i::vertices_end(pwh.outer_boundary()),
+                   pwh.holes_begin(), pwh.holes_end(),
+                   std::begin(speeds[0]), std::end(speeds[0]),
+                   std::next(std::begin(speeds)), std::end(speeds),
+                   m_sk);
     }
 
-    if(!ss_ptr)
+    timer.stop();
+    std::cout << "Straight skeleton construction took " << timer.time() << " seconds" << std::endl;
+    timer.reset();
+    timer.start();
+
+    if(!s_ss_ptr)
     {
       if(m_verbose)
         std::cerr << "Error: encountered an error during skeleton construction" << std::endl;
@@ -764,11 +836,15 @@ public:
     }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-    Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
-    CGAL::draw(*ss_ptr);
+    Straight_skeletons_2::IO::print_straight_skeleton(*s_ss_ptr);
+    CGAL::draw(*s_ss_ptr);
 #endif
 
-    if(is_default_extrusion_height)
+    CGAL_assertion(s_ss_ptr->is_valid(s_partial_skeleton));
+    Straight_skeleton_2_ptr ss_ptr = CGAL::convert_straight_skeleton_2<Straight_skeleton_2>(s_ss_ptr);
+    CGAL_assertion(ss_ptr && ss_ptr->is_valid(s_partial_skeleton));
+
+    if(s_is_default_extrusion_height)
     {
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       construct_lateral_faces(*ss_ptr, points, faces, vertical_weight, snapped_positions);
@@ -776,7 +852,7 @@ public:
       construct_lateral_faces(*ss_ptr, points, faces);
 #endif
     }
-    else // height != default_extrusion_height<FT>()
+    else // height != default_extrusion_height<SFT>()
     {
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       Visitor visitor(*ss_ptr, offset_points, vertical_weight, snapped_positions);
@@ -805,28 +881,40 @@ public:
     }
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    apply_snapping<Geom_traits>(points, snapped_positions);
+    apply_snapping<XK>(points, snapped_positions);
 #endif
+
+    timer.stop();
+    std::cout << "Offset construction took " << timer.time() << " seconds" << std::endl;
 
     return true;
   }
 
-  template <typename PolygonWithHoles,
+  template <typename PolygonWithHoles, typename WeightRange, typename IFT,
             typename PointRange, typename FaceRange>
   bool outward_construction(const PolygonWithHoles& pwh,
-                            const std::vector<std::vector<FT> >& speeds,
-                            const FT vertical_weight,
-                            const FT height,
+                            const WeightRange& speeds,
+                            const IFT i_vertical_weight,
+                            const SFT s_height,
                             PointRange& points,
                             FaceRange& faces)
   {
-    CGAL_precondition(!is_zero(height));
-    CGAL_precondition(height != default_extrusion_height<FT>()); // was checked before, this is just a reminder
+    CGAL_precondition(!is_zero(s_height));
+    CGAL_precondition(s_height != default_extrusion_height<SFT>()); // was checked before, this is just a reminder
 
-    const FT abs_height = abs(height);
+    using IPoint_2 = typename boost::range_value<typename PolygonWithHoles::Polygon_2>::type;
+    using IK = typename Kernel_traits<IPoint_2>::Kernel;
+
+    CGAL::Cartesian_converter<IK, SK> s_converter;
+    CGAL::Cartesian_converter<SK, XK> converter;
+
+    const FT vertical_weight = converter(s_converter(i_vertical_weight));
+    const FT height = converter(s_height);
+    const FT abs_height = CGAL::abs(height);
+    const SFT s_abs_height = CGAL::abs(s_height);
 
     // bottom face (z=0)
-    construct_horizontal_faces(pwh, 0 /*height*/, points, faces, true /*invert faces*/);
+    construct_horizontal_faces(pwh, FT(0) /*height*/, points, faces, true /*invert faces*/);
 
     // Avoid recomputing offset points multiple times
     std::unordered_map<HDS_Halfedge_const_handle, Point_2> offset_points;
@@ -845,14 +933,14 @@ public:
     //
     // Start with the outer boundary
     {
-      Straight_skeleton_2_ptr ss_ptr = CGAL_SS_i::create_partial_exterior_weighted_straight_skeleton_2(
-                                          abs_height,
-                                          CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
-                                          CGAL_SS_i::vertices_end(pwh.outer_boundary()),
-                                          std::begin(speeds[0]), std::end(speeds[0]),
-                                          m_gt);
+      S_Straight_skeleton_2_ptr s_ss_ptr = CGAL_SS_i::create_partial_exterior_weighted_straight_skeleton_2(
+                                             s_abs_height,
+                                             CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
+                                             CGAL_SS_i::vertices_end(pwh.outer_boundary()),
+                                             std::begin(speeds[0]), std::end(speeds[0]),
+                                             m_sk);
 
-      if(!ss_ptr)
+      if(!s_ss_ptr)
       {
         if(m_verbose)
           std::cerr << "Error: encountered an error during outer skeleton construction" << std::endl;
@@ -860,9 +948,13 @@ public:
       }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-      Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
-      CGAL::draw(*ss_ptr);
+      Straight_skeletons_2::IO::print_straight_skeleton(*s_ss_ptr);
+      CGAL::draw(*s_ss_ptr);
 #endif
+
+      CGAL_assertion(s_ss_ptr->is_valid(true /*partial*/));
+      Straight_skeleton_2_ptr ss_ptr = CGAL::convert_straight_skeleton_2<Straight_skeleton_2>(s_ss_ptr);
+      CGAL_assertion(ss_ptr && ss_ptr->is_valid(true /*partial*/));
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       Visitor visitor(*ss_ptr, offset_points, vertical_weight, snapped_positions);
@@ -887,38 +979,42 @@ public:
     }
 
     // now, deal with the holes
-
     std::size_t hole_id = 0;
     for(auto hit=pwh.holes_begin(); hit!=pwh.holes_end(); ++hit, ++hole_id)
     {
-      Polygon_2 hole = *hit; // intentional copy
+      using I_Polygon_2 = CGAL::cpp20::remove_cvref_t<decltype(*pwh.holes_begin())>;
+      I_Polygon_2 hole = *hit; // intentional copy
       hole.reverse_orientation();
 
       // this is roughly "CGAL::create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2()",
-      // but we want to know the intermediate straight skeleton to build the lateral faces of the 3D mesh
+      // but we need the intermediate straight skeleton to build the lateral faces of the 3D mesh
 
-      std::vector<Polygon_2> no_holes;
-      std::vector<std::vector<FT> > no_speeds;
-      Straight_skeleton_2_ptr ss_ptr = CGAL_SS_i::create_partial_interior_weighted_straight_skeleton_2(
-                                          abs_height,
-                                          CGAL_SS_i::vertices_begin(hole),
-                                          CGAL_SS_i::vertices_end(hole),
-                                          std::begin(no_holes), std::end(no_holes),
-                                          std::begin(speeds[1 + hole_id]), std::end(speeds[1 + hole_id]),
-                                          std::begin(no_speeds), std::end(no_speeds),
-                                          m_gt);
+      std::vector<I_Polygon_2> no_holes;
+      std::vector<std::vector<IFT> > no_speeds;
+      S_Straight_skeleton_2_ptr s_ss_ptr = CGAL_SS_i::create_partial_interior_weighted_straight_skeleton_2(
+                                             s_abs_height,
+                                             CGAL_SS_i::vertices_begin(hole),
+                                             CGAL_SS_i::vertices_end(hole),
+                                             std::begin(no_holes), std::end(no_holes),
+                                             std::begin(speeds[1 + hole_id]), std::end(speeds[1 + hole_id]),
+                                             std::begin(no_speeds), std::end(no_speeds),
+                                             m_sk);
 
-      if(!ss_ptr)
+      if(!s_ss_ptr)
       {
         if(m_verbose)
           std::cerr << "Error: encountered an error during skeleton construction" << std::endl;
-        return EXIT_FAILURE;
+        return false;
       }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-      Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
-      CGAL::draw(*ss_ptr);
+      Straight_skeletons_2::IO::print_straight_skeleton(*s_ss_ptr);
+      CGAL::draw(*s_ss_ptr);
 #endif
+
+      CGAL_assertion(s_ss_ptr->is_valid(true /*partial*/));
+      Straight_skeleton_2_ptr ss_ptr = CGAL::convert_straight_skeleton_2<Straight_skeleton_2>(s_ss_ptr);
+      CGAL_assertion(ss_ptr && ss_ptr->is_valid(true /*partial*/));
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       Visitor visitor(*ss_ptr, offset_points, vertical_weight, snapped_positions);
@@ -956,7 +1052,7 @@ public:
     }
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    apply_snapping<Geom_traits>(points, snapped_positions);
+    apply_snapping<XK>(points, snapped_positions);
 #endif
 
     return true;
@@ -1075,29 +1171,35 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 {
   namespace PMP = ::CGAL::Polygon_mesh_processing;
 
-  using Polygon_2 = typename PolygonWithHoles::Polygon_2;
-  using Point = typename boost::range_value<Polygon_2>::type;
+  using I_Polygon_2 = typename PolygonWithHoles::Polygon_2;
+  using I_Point = typename boost::range_value<I_Polygon_2>::type;
+  using IK = typename Kernel_traits<I_Point>::type;
+  using IFT = typename IK::FT;
 
-  using Default_kernel = typename Kernel_traits<Point>::type;
-  using Geom_traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
-                                                                   NamedParameters,
-                                                                   Default_kernel>::type;
-  using FT = typename Geom_traits::FT;
+  using SK = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                          NamedParameters,
+                                                          IK>::type;
+  using SFT = typename SK::FT;
+  using S_Point_3 = typename SK::Point_3;
 
-  using Point_3 = typename Geom_traits::Point_3;
+  using XK = typename Extrusion_kernel_selector<SK>::type;
+  using Point_3 = typename XK::Point_3;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
-  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, CGAL::internal_np::geom_traits));
+  SK sk = choose_parameter<SK>(get_parameter(np, CGAL::internal_np::geom_traits));
 
-  const FT height = choose_parameter(get_parameter(np, internal_np::maximum_height), default_extrusion_height<FT>());
+  const SFT s_height = choose_parameter(get_parameter(np, internal_np::maximum_height), default_extrusion_height<SFT>());
+
+  if(verbose)
+    std::cout << "XK is " << typeid(XK).name() << std::endl;
 
   Slope slope;
   bool valid_input;
-  FT vertical_weight;
-  std::tie(slope, valid_input, vertical_weight) = preprocess_weights<FT>(weights, verbose);
+  IFT i_vertical_weight;
+  std::tie(slope, valid_input, i_vertical_weight) = preprocess_weights<IFT>(weights, verbose);
 
   if(!valid_input)
   {
@@ -1119,7 +1221,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   // End of preprocessing, start the actual skeleton computation
 
-  if(slope != Slope::INWARD && height == default_extrusion_height<FT>())
+  if(slope != Slope::INWARD && s_height == default_extrusion_height<SFT>())
   {
     if(verbose)
       std::cerr << "Error: height must be specified when using an outward (or vertical) slope" << std::endl;
@@ -1132,12 +1234,13 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   points.reserve(2 * pwh.outer_boundary().size()); // just a reasonable guess
   faces.reserve(2 * pwh.outer_boundary().size() + 2*pwh.number_of_holes());
 
-  Extrusion_builder<Geom_traits> builder(gt, verbose);
+  XK xk;
+  Extrusion_builder<SK, XK> builder(sk, xk, verbose);
   bool res;
   if(slope != Slope::OUTWARD) // INWARD or VERTICAL
-    res = builder.inward_construction(pwh, weights, vertical_weight, height, points, faces);
+    res = builder.inward_construction(pwh, weights, i_vertical_weight, s_height, points, faces);
   else
-    res = builder.outward_construction(pwh, weights, vertical_weight, height, points, faces);
+    res = builder.outward_construction(pwh, weights, i_vertical_weight, s_height, points, faces);
 
   if(!res)
     return false;
@@ -1154,7 +1257,13 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
     PMP::orient_polygon_soup(points, faces);
   CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(faces));
 
-  PMP::polygon_soup_to_polygon_mesh(points, faces, out);
+  CGAL::Cartesian_converter<XK, SK> s_converter;
+  std::vector<S_Point_3> s_output_points;
+  s_output_points.reserve(points.size());
+  for(const Point_3& p : points)
+    s_output_points.push_back(s_converter(p));
+
+  PMP::polygon_soup_to_polygon_mesh(s_output_points, faces, out);
 
   CGAL_warning(is_valid_polygon_mesh(out) && is_closed(out));
 
