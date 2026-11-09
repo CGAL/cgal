@@ -97,7 +97,7 @@ struct AABB_tree_graph_helper
     {
       tbb::parallel_for(std::size_t(0), face_range.size(), [&](std::size_t i){
         face_descriptor f = face_range[i];
-        put(bb_map, f, face_bbox(f, tm));
+        put(bb_map, f, face_bbox(f, tm, parameters::vertex_point_map(vpm)));
         put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))) );
       });
     }
@@ -105,7 +105,7 @@ struct AABB_tree_graph_helper
 #endif
     {
       for(face_descriptor f : face_range){
-        put(bb_map, f, face_bbox(f, tm));
+        put(bb_map, f, face_bbox(f, tm, parameters::vertex_point_map(vpm)));
         put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))) );
       }
     }
