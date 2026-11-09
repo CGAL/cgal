@@ -263,8 +263,7 @@ public:
    */
   class Construct_x_monotone_curve_2 {};
 
-  /*! Functor to augment a polyline by either adding a vertex or a segment
-   * at the back.
+  /*! Functor to augment a polyline by either adding a vertex or a segment at the back.
    */
   class Push_back_2 {
   public:
@@ -294,8 +293,8 @@ public:
      */
     void operator()(X_monotone_curve_2& xcv, const Point_2& p) const;
 
-    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
-     * at the back. If `xcv` is empty, `seg` will be its first segment.
+    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv` at the back.
+     * If `xcv` is empty, `seg` will be its first segment.
      * \param xcv existing \f$x\f$-monotone polyline.
      * \param seg the segment to be appended to `xcv` at the back.
      * \pre If `xcv` is not empty then `seg` extends `xcv` to the right if `xcv`
