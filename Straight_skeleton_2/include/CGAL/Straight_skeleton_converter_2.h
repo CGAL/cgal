@@ -377,6 +377,22 @@ convert_straight_skeleton_2 ( Source_skeleton const& aSrc )
 
 }
 
+template<class Target_skeleton, class Source_skeleton,
+         std::enable_if_t<!std::is_same<Target_skeleton, Source_skeleton>::value>* = nullptr>
+std::shared_ptr<Target_skeleton>
+convert_straight_skeleton_2 ( std::shared_ptr<Source_skeleton> const& aSrc )
+{
+  CGAL_precondition(bool(aSrc));
+  return convert_straight_skeleton_2<Target_skeleton>(*aSrc);
+}
+
+template<class Skeleton>
+const std::shared_ptr<Skeleton>&
+convert_straight_skeleton_2 ( std::shared_ptr<Skeleton> const& aSrc )
+{
+  return aSrc;
+}
+
 } // end namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_2_CONVERTER_H //
