@@ -316,33 +316,35 @@ public:
     /// \name Operations
     /// @{
 
-    /*! appends a point `p` to an existing polyline `cv` at the front.
+    /*! prepends a point `p` to an existing polyline `cv` at the front.
      * \param cv a polyline. Note, `cv` is not (necessarily) \f$x\f$-monotone.
-     * \param p a point to be appended to `cv` at the front.
+     * \param p a point to be prepended to `cv` at the front.
      * \pre `cv` contains at least one segment.
      */
     void operator()(Curve_2& cv, const Point_2& p) const;
 
-    /*! appends a segment `seg` to an existing polyline `cv` at the front.
+    /*! prepends a segment `seg` to an existing polyline `cv` at the front.
      * If `cv` is empty, `seg` will be its first segment.
      * \param cv a polyline. Note, `cv` is (not necessarily) \f$x\f$-monotone.
-     * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended to `cv` at the front.
+     * \param seg a segment (not necessarily \f$x\f$-monotone) to be prepended to `cv` at the front.
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at the front.
+    /*! Curve_2& cv, const Segment_2& seg) const;
+
+    /*! prepends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at the front.
      * \param xcv the existing \f$x\f$-monotone polyline.
-     * \param p the point to be appended to `xcv` at the front.
+     * \param p the point to be prepended to `xcv` at the front.
      * \pre `xcv` contains at least one segment.
      * \pre `p` is either to the left of `xcv` if it is oriented left-to-right
      *      or it is to its right if `xcv` is oriented right-to-left.
      */
     void operator()(X_monotone_curve_2& xcv, const Point_2& p) const;
 
-    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv` at the front.
+    /*! prepends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv` at the front.
      * If `xcv` is empty, `seg` will be its first segment.
      * \param xcv existing \f$x\f$-monotone polyline.
-     * \param seg the segment to be appended to `xcv` at the front.
+     * \param seg the segment to be prepended to `xcv` at the front.
      * \pre If `xcv` is not empty then `seg` extends `xcv` to the left if `xcv`
      *      is oriented right-to-left. Otherwise, `seg` extends `xcv` to the right.
      * \pre `seg` is not degenerated.
@@ -376,3 +378,5 @@ public:
 }; /* end Arr_polyline_traits_2 */
 
 } /* end namespace CGAL */
+
+//  LocalWords:  prepends
