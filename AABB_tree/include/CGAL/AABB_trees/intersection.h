@@ -216,7 +216,9 @@ namespace AABB_trees {
     return out;
   }
 
-   /// \ingroup PkgAABBTreeRef
+// not officially documented for now
+#ifndef DOXYGEN_RUNNING
+  /// \ingroup PkgAABBTreeRef
   ///
   /// \brief computes all pairs of primitives with overlapping bbox from two AABB trees.
   ///
@@ -252,9 +254,6 @@ namespace AABB_trees {
                                                      const NamedParameters1& /*np1*/ = parameters::default_values(),
                                                      const NamedParameters2& /*np2*/ = parameters::default_values())
   {
-    using parameters::get_parameter;
-    using parameters::choose_parameter;
-    using parameters::is_default_parameter;
     using Concurrency_tag = typename internal_np::Lookup_named_param_def <
                                           internal_np::concurrency_tag_t,
                                           NamedParameters1,
@@ -278,7 +277,7 @@ namespace AABB_trees {
   ///
   /// Intersections of a primitive with itself are not reported, and each intersecting
   /// pair of distinct primitives is reported only once.
-  template< typename Concurrency_tag = Sequential_tag,
+  template< typename Concurrency_tag = Sequential_tag, // TODO: shouldn't it be a named parameter?
             typename AABBTree,
             typename OutputIterator>
   void all_pairs_of_primitives_with_overlapping_bbox(const AABBTree &tree,
@@ -289,6 +288,7 @@ namespace AABB_trees {
     CGAL::internal::AABB_tree::Two_trees_listing_primitives_with_overlapping_bbox_traits traversal_traits(tree.traits(), tree.traits(), out);
     CGAL::internal::AABB_tree::one_tree_traversal<Concurrency_tag>(tree, traversal_traits);
   }
+#endif
 
 }} // end namespace CGAL::AABB_trees
 
