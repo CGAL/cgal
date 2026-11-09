@@ -604,7 +604,7 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
                                 pair.second.second);
       });
 
-  out = compute_polylines_polylines_intersection(polylines1, polylines2, polyline_out, K);
+  compute_polylines_polylines_intersection(polylines1, polylines2, polyline_out, K);
   return out;
 }
 
