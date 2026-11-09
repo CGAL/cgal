@@ -4,10 +4,10 @@
 #include <CGAL/Random.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                 K;
-typedef K::Point_2                                                                                                         Point_2;
-typedef K::Triangle_2                                                                                                 Triangle_2;
-typedef std::vector<Point_2>                                                                                Container;
-typedef CGAL::Random_points_in_triangle_2<Point_2>                                         Point_generator;
+typedef K::Point_2                                                          Point_2;
+typedef K::Triangle_2                                                       Triangle_2;
+typedef std::vector<Point_2>                                                Container;
+typedef CGAL::Random_points_in_triangle_2<Point_2>                          Point_generator;
 
 int main() {
         std::cout << "Creating 100 random points in a triangle in 2D." << std::endl;

@@ -34,9 +34,9 @@ Release date: December 2026
 
 - Added new, multithreading-compatible functions operating directly on triangle soups,
   enabling the handling of non-manifold input and output volumes:
-  - [`CGAL::Polygon_mesh_processing::compute_union()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__soup__grp.html#ga0805f2e4e1ebc81300a1f380fcba9862),
-  - [`CGAL::Polygon_mesh_processing::compute_intersection()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__soup__grp.html#ga13bb4611ab02ea56d1e2ce6c555d3b71), and
-  - [`CGAL::Polygon_mesh_processing::compute_difference()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__soup__grp.html#ga8002f202957ce718b4742e29d3f7f2aa).
+  - [`CGAL::Polygon_mesh_processing::compute_union_of_triangle_soups()`](),
+  - [`CGAL::Polygon_mesh_processing::compute_intersection_of_triangle_soups()`](), and
+  - [`CGAL::Polygon_mesh_processing::compute_difference_of_triangle_soups()`]().
 - Corefinement-based operations (including Boolean operations) have been optimized to better handle
   configurations where some identical faces are shared between the input meshes, leading to
   a significant speed-up in those cases.
@@ -107,6 +107,15 @@ Release date: December 2026
   Each is (still) parameterized with another traits class being decorated, but it does not inherit from it.
   In addition one can get and set a smart pointer to the class being decorated.
 
+### [3D Mesh Generation](https://doc.cgal.org/6.3/Manual/packages.html#PkgMesh3)
+
+- **Breaking change**: The template parameter of `CGAL::Mesh_cell_criteria_3`,
+  `CGAL::Mesh_edge_criteria_3`, and `CGAL::Mesh_facet_criteria_3` is now the
+  mesh complex type `C3T3`, rather than its triangulation type. Code that
+  explicitly instantiates these criteria classes must be updated accordingly.
+  `CGAL::Mesh_criteria_3` also uses `C3T3` as its template parameter, but
+  continues to accept the triangulation type for backward compatibility.
+
 ### [3D Triangulations](https://doc.cgal.org/6.3/Manual/packages.html#PkgTriangulation3)
 
 - **Breaking change**: Removed the class template `Regular_triangulation_euclidean_traits_3`, which was deprecated since CGAL-4.10.
@@ -120,6 +129,7 @@ Release date: December 2026
   to distinguish between "constrained" edges that can be resampled while the constrained edges
   polyline graph remains topologically unchanged, and "protected" edges that may not be modified
   at all by remeshing.
+ - Fix an API bug in `CGAL::Polygon_mesh_processing::remesh_planar_patches()`: when coplanarity/collinearity criteria are too relaxed, it might happen that some patches cannot be triangulated. To handle such cases, a Boolean is now returned to indicate if all patches could be triangulated (same behavior as `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`). Also those two functions can now produce a (self-intersecting) mesh in case the simplified mesh turned out to be non-manifold (internally calling the function `CGAL::Polygon_mesh_processing::orient_polygon_soup()` on the corners and patches detected). In order to check if a non-manifoldness was worked around, the new named parameter `number_of_corners()` can be used and the filled value shall be compared to the number of vertices of the output mesh.
 
 ### [Polygon Mesh Processing - Mesh Repair](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPMeshRepair)
 
@@ -5188,7 +5198,7 @@ fixes for this release.
     removed.
 - The deprecated linear kernel functors `Construct_supporting_line_2`
     and `Construct_supporting_line_3` have been removed.
-- `Ambiant_dimension` and `Feature_dimension` have been added to
+- `Ambient_dimension` and `Feature_dimension` have been added to
     retrieve the potentially compile-time dimension of a space or of an
     object.
 - `barycenter()` functions have been added.

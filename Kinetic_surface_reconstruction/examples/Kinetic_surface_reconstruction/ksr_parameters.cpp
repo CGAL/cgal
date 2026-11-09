@@ -56,6 +56,7 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
 
   // Shape detection.
   parser.add_val_parameter("-kn", parameters.k_neighbors);
+  parser.add_val_parameter("-knn", parameters.k_neighbors);
   parser.add_val_parameter("-dist", parameters.maximum_distance);
   parser.add_val_parameter("-angle", parameters.maximum_angle);
   parser.add_val_parameter("-minp", parameters.min_region_size);
@@ -77,6 +78,7 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   parser.add_val_parameter("-k", parameters.k_intersections);
   parser.add_val_parameter("-odepth", parameters.max_octree_depth);
   parser.add_val_parameter("-osize", parameters.max_octree_node_size);
+  parser.add_bool_parameter("-sequential", parameters.sequential);
 
   // Reconstruction.
   parser.add_val_parameter("-lambda", parameters.graphcut_lambda);
@@ -91,7 +93,7 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
 
 int main(const int argc, const char** argv) {
   // Parameters.
-  std::cout.precision(20);
+  std::cout.precision(17);
   std::cout << std::endl;
   std::cout << "--- PARSING INPUT: " << std::endl;
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
@@ -213,7 +215,10 @@ int main(const int argc, const char** argv) {
   else {
     after_shape_detection = timer.time();
 
-    ksr.partition(parameters.k_intersections, param);
+    if (parameters.sequential)
+      ksr.partition<CGAL::Sequential_tag>(parameters.k_intersections, param);
+    else
+      ksr.partition<CGAL::Parallel_if_available_tag>(parameters.k_intersections, param);
 
     after_partition = timer.time();
 
@@ -240,7 +245,7 @@ int main(const int argc, const char** argv) {
   std::cout << polylist.size() << " polygons, " << vtx.size() << " vertices" << std::endl;
 
   if (polylist.size() > 0)
-    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+    CGAL::IO::write_polygon_soup(path.stem().string() + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
 
   timer.stop();
 
@@ -262,7 +267,7 @@ int main(const int argc, const char** argv) {
 
     if (polylist.size() > 0) {
       non_empty = true;
-      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+      CGAL::IO::write_polygon_soup(path.stem().string() + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
     }
   }
 

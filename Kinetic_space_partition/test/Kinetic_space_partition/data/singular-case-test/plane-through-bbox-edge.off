@@ -1,0 +1,14 @@
+OFF
+# Single partition. The input extents are [0,1]^3, so the dilated bbox is [-0.002,1.002]^3 and the plane x+y=1
+# contains the two bbox edges (x,y)=(1.002,-0.002) and (x,y)=(-0.002,1.002).
+8 2 0
+0.0 0.0 0.5
+1.0 0.0 0.5
+1.0 1.0 0.5
+0.0 1.0 0.5
+1.0 0.0 0.0
+0.0 1.0 0.0
+0.0 1.0 1.0
+1.0 0.0 1.0
+4 0 1 2 3
+4 4 5 6 7

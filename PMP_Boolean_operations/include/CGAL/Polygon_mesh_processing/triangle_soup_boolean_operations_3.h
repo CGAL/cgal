@@ -103,7 +103,7 @@ connected_components(const EdgeConnectivity& adjacent_edges,
 }
 
 #ifdef CGAL_LINKED_WITH_TBB
-// we actually only parallelise the exploraton in the triangles of the two (for now)
+// we actually only parallelize the exploraton in the triangles of the two (for now)
 // input soups. Since autorefine only creates new triangles, we can seed the exploration
 // with the range of input triangles. Everything not reached will be seeded in a last sequential step.
 template <class EdgeConnectivity, class FaceConnectivity>
@@ -480,7 +480,7 @@ select(const std::vector<Exact_point>& points,
     {
       using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
       // handling coplanar
-      //TODO: we will make several time the comparision with the same point, not sure if it is coslty. Maybe group them?
+      //TODO: we will make several time the comparison with the same point, not sure if it is coslty. Maybe group them?
       if (triangles[e1.second][e1.first]==triangles[e2.second][e2.first])
         return e1.second < e2.second;
       if (triangles[e1.second][e1.first]==triangles[tref.second][tref.first])
@@ -784,7 +784,7 @@ prepare_data(const PointRange& points_1, const TriangleRange& triangles_1,
 #endif
 
   //TODO:  investigate if a detection of identical triangles in the input could be interesting
-  //TODO: import optimisation on the triangle ranges with bboxes meshes intersection to restrict the number of intersection tests
+  //TODO: import optimization on the triangle ranges with bboxes meshes intersection to restrict the number of intersection tests
   //TODO: import identical patches opti
   PMP::autorefine_triangle_soup(out_points, out_triangles, CGAL::parameters::concurrency_tag(Concurrency_tag())
                                                                             .visitor(visitor).split_triangle_range_at(nbt_1));
@@ -1086,7 +1086,7 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
       {
         using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
         // handling coplanar
-        //TODO: we will make several time the comparision with the same point, not sure if it is coslty. Maybe group them?
+        //TODO: we will make several time the comparison with the same point, not sure if it is coslty. Maybe group them?
         if (triangles[e1.second][e1.first]==triangles[e2.second][e2.first])
           return e1.second < e2.second;
         if (triangles[e1.second][e1.first]==triangles[tref.second][tref.first])
@@ -1150,11 +1150,16 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   *
   * computes the union of two volumes, each bounded by a triangle soup.
   *
+  * The definition given of triangle mesh \link coref_def_subsec bounding \endlink a volume can be extended to a triangle soup, allowing non-manifold edges and vertices.
+  * As for a triangle mesh, the orientation of the soup triangles must be coherent and consistent with the volume bounded.
+  *
   * \pre \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect() `!CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points_1, triangles_1)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect() `!CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points_2, triangles_2)` \endlink
   *
   * @tparam PointRange a model of the concepts `RandomAccessContainer` whose value type is `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the named parameter `geom_traits`.
-  * @tparam TriangleRange a model of the concept `RandomAccessContainer` whose `value_type` is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
+  *                    Additionally, it must also be a model of `BackInsertionSequence` and `Swappable`.
+  * @tparam TriangleRange a model of the concept `RandomAccessContainer` whose `value_type`, say `Triangle`, is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
+  *                       Additionally, both `TriangleRange` and `Triangle` must also be models of `BackInsertionSequence` and `Swappable`.
   *
   * @param points_1 points of the first triangle soup.
   * @param triangles_1 triangles of the first triangle soup, each element in the vector describes a triangle using the indices of the points in `points_1`.
@@ -1163,7 +1168,7 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   * @param triangles_2 triangles of the second triangle soup, each element in the vector describes a triangle using the indices of the points in `points_2`.
   *
   * @param out_points points of the output triangle soup bounding the volume result of the Boolean operation.
-  * @param out_triangles triangles of the ouput triangle soup, each element in the vector describes a triangle using the indices of the points in `out_points`.
+  * @param out_triangles triangles of the output triangle soup, each element in the vector describes a triangle using the indices of the points in `out_points`.
   *
   * @param np optional sequence of named parameters among the ones listed below
   *
@@ -1176,16 +1181,16 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   *   \cgalParamNBegin{geom_traits}
   *     \cgalParamDescription{an instance of a geometric traits class}
   *     \cgalParamType{a class model of `Kernel`}
-  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the value type of `PointRange`, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The nested `Point_3` type of the geometric traits class must be compatible with the value type of `PointRange`.}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
-void compute_union(const PointRange& points_1, const TriangleRange& triangles_1,
-                   const PointRange& points_2, const TriangleRange& triangles_2,
-                         PointRange& out_points,     TriangleRange& out_triangles,
-                   const NamedParameters& np = parameters::default_values())
+void compute_union_of_triangle_soups(const PointRange& points_1, const TriangleRange& triangles_1,
+                                     const PointRange& points_2, const TriangleRange& triangles_2,
+                                           PointRange& out_points,     TriangleRange& out_triangles,
+                                     const NamedParameters& np = parameters::default_values())
 {
   CGAL_USE(np);
 
@@ -1250,13 +1255,13 @@ void compute_union(const PointRange& points_1, const TriangleRange& triangles_1,
 /**
   * \ingroup PMP_boolop_soup_grp
   * computes the intersection of two volumes, each bounded by a triangle soup.
-  * \copydetails CGAL::Polygon_mesh_processing::compute_union()
+  * \copydetails CGAL::Polygon_mesh_processing::compute_union_of_triangle_soups()
   */
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
-void compute_intersection(const PointRange& points_1, const TriangleRange& triangles_1,
-                          const PointRange& points_2, const TriangleRange& triangles_2,
-                                PointRange& out_points,     TriangleRange& out_triangles,
-                          const NamedParameters& np = parameters::default_values())
+void compute_intersection_of_triangle_soups(const PointRange& points_1, const TriangleRange& triangles_1,
+                                            const PointRange& points_2, const TriangleRange& triangles_2,
+                                                  PointRange& out_points,     TriangleRange& out_triangles,
+                                            const NamedParameters& np = parameters::default_values())
 {
   CGAL_USE(np);
 
@@ -1308,13 +1313,13 @@ void compute_intersection(const PointRange& points_1, const TriangleRange& trian
 /**
   * \ingroup PMP_boolop_soup_grp
   * computes the difference of two volumes, each bounded by a triangle soup.
-  * \copydetails CGAL::Polygon_mesh_processing::compute_union()
+  * \copydetails CGAL::Polygon_mesh_processing::compute_union_of_triangle_soups()
   */
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
-void compute_difference(const PointRange& points_1, const TriangleRange& triangles_1,
-                        const PointRange& points_2, const TriangleRange& triangles_2,
-                              PointRange& out_points,     TriangleRange& out_triangles,
-                        const NamedParameters& np = parameters::default_values())
+void compute_difference_of_triangle_soups(const PointRange& points_1, const TriangleRange& triangles_1,
+                                          const PointRange& points_2, const TriangleRange& triangles_2,
+                                                PointRange& out_points,     TriangleRange& out_triangles,
+                                          const NamedParameters& np = parameters::default_values())
 {
   CGAL_USE(np);
 
