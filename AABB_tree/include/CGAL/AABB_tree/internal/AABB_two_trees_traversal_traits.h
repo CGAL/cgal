@@ -35,15 +35,14 @@ public:
 
   Wrap_output_iterator& operator=(Value2 second){
     if constexpr(in_order)
-      *out = std::make_pair(first, second);
+      *out++ = std::make_pair(first, second);
     else
-      *out = std::make_pair(second, first);
+      *out++ = std::make_pair(second, first);
     return *this;
   }
   Wrap_output_iterator& operator*(){ return *this; }
-  Wrap_output_iterator& operator++(){ ++out; return *this; }
-  Wrap_output_iterator  operator++(int){ auto tmp = *this; ++out; return tmp; }
-  Wrap_output_iterator& operator+(int d){ out += d; return *this; }
+  Wrap_output_iterator& operator++(){ return *this; }
+  Wrap_output_iterator& operator++(int){ return *this;}
 };
 
 template<typename AABBTraits1, typename AABBTraits2, typename OutputIterator>
