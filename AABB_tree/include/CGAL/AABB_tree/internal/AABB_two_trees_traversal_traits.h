@@ -360,8 +360,6 @@ public:
 
   void intersection(const Primitive1& primitive1, const Primitive2& primitive2)
   {
-    Do_intersect_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum> traits(m_traits2);
-    traits.intersection(internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1), primitive2);
     if constexpr(Use_inverse_transformation::value)
     {
       Do_intersect_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum> traits(m_traits2);
