@@ -275,7 +275,7 @@ public:
 private:
   OutputIterator m_out_it;
   const AABBTraits& m_traits;
-  const AffTransformation& m_transfo;
+  AffTransformation m_transfo;
   bool m_has_rotation;
 };
 
