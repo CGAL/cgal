@@ -93,7 +93,7 @@ struct AABB_tree_graph_helper
     Ref_point_map rp_map = get(Face_ref_point_tag(), tm);
 
 #ifdef CGAL_LINKED_WITH_TBB
-    if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+    if constexpr(Concurrency_tag::is_parallel)
     {
       // if face_range is not a random access range, we need to copy it to a vector first
       // if face range is a random access range, it is penalized per a copy of the range
@@ -219,7 +219,7 @@ struct AABB_tree_soup_helper
     Ref_point_map rp_map = make_property_map(rp_vector);
 
 #ifdef CGAL_LINKED_WITH_TBB
-    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
+    if constexpr(ConcurrencyTag::is_parallel)
     {
       tbb::parallel_for(std::size_t(0), face_range.size(), [&](std::size_t i){
         auto tid = face_range[i];

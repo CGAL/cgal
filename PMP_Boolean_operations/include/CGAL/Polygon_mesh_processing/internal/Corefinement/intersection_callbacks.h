@@ -28,34 +28,6 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-template<class TriangleMesh, class EdgeToFaces>
-class Collect_face_bbox_per_edge_bbox {
-protected:
-  const TriangleMesh& tm_faces;
-  const TriangleMesh& tm_edges;
-  EdgeToFaces& edge_to_faces;
-
-  typedef boost::graph_traits<TriangleMesh> Graph_traits;
-  typedef typename Graph_traits::face_descriptor face_descriptor;
-  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
-
-public:
-  Collect_face_bbox_per_edge_bbox(
-    const TriangleMesh& tm_faces,
-    const TriangleMesh& tm_edges,
-    EdgeToFaces& edge_to_faces)
-  : tm_faces(tm_faces)
-  , tm_edges(tm_edges)
-  , edge_to_faces(edge_to_faces)
-  {}
-
-  void operator()( halfedge_descriptor fh, halfedge_descriptor eh) const
-  {
-    // put(edge_to_faces, edge(eh,tm_edges), face(fh, tm_faces));
-    edge_to_faces[edge(eh,tm_edges)].insert(face(fh, tm_faces));
-  }
-};
-
 template<class TriangleMesh,
          class VertexPointMapF, class VertexPointMapE,
          class EdgeToFaces,

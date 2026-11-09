@@ -111,7 +111,7 @@ void mixed_meshes_intersections(const TriangleMesh1 &tm1,
   Bbox_pmap_1 bb1 = get(Face_bbox_tag(), tm1);
   Bbox_pmap_2 bb2 = get(Face_bbox_tag(), tm2);
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  if constexpr(Concurrency_tag::is_parallel)
   {
     oneapi::tbb::parallel_for(
       oneapi::tbb::blocked_range<size_t>(0, faces(tm1).size()),
@@ -151,7 +151,7 @@ void mixed_meshes_intersections(const TriangleMesh1 &tm1,
   tree2.insert(faces(tm2).first, faces(tm2).second, tm2);
 
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  if constexpr(Concurrency_tag::is_parallel)
   {
     CGAL_MUTEX m;
     oneapi::tbb::task_group tg;
@@ -474,7 +474,7 @@ void AABB_two_trees_meshes_intersections(const TriangleMesh1 &tm1,
   Ref_point_map_2 rpm2 = get(Face_ref_point_tag(), tm);
 
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  if constexpr(Concurrency_tag::is_parallel)
   {
     tbb::parallel_for(std::size_t(0), faces(tm1).size(), [&](std::size_t i){
       face_descriptor f(i);
@@ -512,7 +512,7 @@ void AABB_two_trees_meshes_intersections(const TriangleMesh1 &tm1,
   tree2.insert(faces(tm2).first, faces(tm2).second, tm2);
 
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  if constexpr(Concurrency_tag::is_parallel)
   {
     oneapi::tbb::task_group tg;
     tg.run([&]{ tree1.template custom_build<Concurrency_tag>(compute_bbox1, split_primitives1); });
@@ -578,7 +578,7 @@ void AABB_self_intersections(const TriangleMesh &tm, OutputIterator out, const N
   tree.template build<Concurrency_tag>();
 
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  if constexpr(Concurrency_tag::is_parallel)
   {
     CGAL_MUTEX mutex;
     tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
@@ -679,7 +679,7 @@ void AABB_meshes_intersections(const TriangleMesh1 &tm1,
   tree.template build<Concurrency_tag>();
 
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  if constexpr(Concurrency_tag::is_parallel)
   {
     CGAL_MUTEX mutex;
     tbb::concurrent_vector<std::pair<face_descriptor_1, face_descriptor_2>> inter;
