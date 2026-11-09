@@ -207,7 +207,7 @@ public:
                                 sinus() * v.x()   + cosinus() * v.y());
     if(is_reflection())
       return construct_vector_2(cosinus()*v.x() + sinus()*v.y(),
-                                sinus()*v.x()   + cosinus()*v.y());
+                                sinus()*v.x()   - cosinus()*v.y());
     return construct_vector_2(entries[0] * v.x() + entries[1] * v.y() ,
                               entries[3] * v.x() + entries[4] * v.y());
    }
