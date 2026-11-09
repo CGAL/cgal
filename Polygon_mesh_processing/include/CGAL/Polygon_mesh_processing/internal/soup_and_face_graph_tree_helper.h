@@ -95,11 +95,26 @@ struct AABB_tree_graph_helper
 #ifdef CGAL_LINKED_WITH_TBB
     if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
-      tbb::parallel_for(std::size_t(0), face_range.size(), [&](std::size_t i){
-        face_descriptor f = face_range[i]; // TODO: does not work if face_range is faces(tm)
-        put(bb_map, f, face_bbox(f, tm, parameters::vertex_point_map(vpm)));
-        put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))) );
-      });
+      // if face_range is not a random access range, we need to copy it to a vector first
+      // if face range is a random access range, it is penalized per a copy of the range
+      using Iterator = decltype(face_range.begin());
+      constexpr bool is_random_access = std::is_base_of_v<std::random_access_iterator_tag, typename std::iterator_traits<Iterator>::iterator_category>;
+      auto parallel_call = [&](const auto& range){
+        tbb::parallel_for(std::size_t(0), face_range.size(), [&](std::size_t i){
+          face_descriptor f = *(range.begin() + i);
+          put(bb_map, f, face_bbox(f, tm, parameters::vertex_point_map(vpm)));
+          put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))) );
+        });
+      };
+      if constexpr(is_random_access)
+      {
+        parallel_call(face_range);
+      }
+      else
+      {
+        std::vector<face_descriptor> face_range_vector(face_range.begin(), face_range.end());
+        parallel_call(face_range_vector);
+      }
     }
     else
 #endif
