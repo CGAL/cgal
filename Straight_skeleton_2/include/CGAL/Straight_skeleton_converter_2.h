@@ -88,7 +88,9 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
   {
     CGAL_assertion( handle_assigned(aH) ) ;
 
-    return Target_halfedge( aH->id(), aH->slope() ) ;
+    Target_halfedge result(aH->id(), aH->slope());
+    result.set_weight(this->operator()(aH->weight()));
+    return result;
   }
 
   Target_face operator() ( Source_face_const_handle aF ) const
