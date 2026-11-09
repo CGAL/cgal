@@ -744,7 +744,7 @@ public:
   *
   * \sa `CGAL::Straight_skeleton_3`
   * \sa `CGAL::Straight_skeleton_3::Node`
-  * \sa `CGAL::Straight_skeleton_3::Sheet`
+  * \sa `CGAL::Straight_skeleton_3::Spoke`
   */
   class Sheet
     : public std::enable_shared_from_this<Sheet>
