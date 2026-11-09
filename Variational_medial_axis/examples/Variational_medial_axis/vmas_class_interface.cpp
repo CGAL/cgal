@@ -7,7 +7,7 @@ using Mesh = CGAL::Surface_mesh<K::Point_3>;
 
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/chair.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/chair.off");
 
   Mesh mesh;
   if(!CGAL::IO::read_polygon_mesh(filename, mesh))

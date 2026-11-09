@@ -133,7 +133,7 @@ bool compare_skeletons(const Skeleton& skeleton1, const Skeleton& skeleton2, dou
 bool test_correctness() {
 
   Mesh mesh;
-  const std::string filename(CGAL::data_file_path("meshes/elephant.off"));
+  const std::filesystem::path filename(CGAL::data_file_path("meshes/elephant.off"));
 
   if(!CGAL::IO::read_polygon_mesh(filename, mesh)) {
     std::cerr << "Cannot open" << filename << std::endl;
@@ -159,7 +159,7 @@ bool test_correctness() {
 
 bool test_API() {
   Mesh mesh;
-  const std::string filename(CGAL::data_file_path("meshes/chair.off"));
+  const std::filesystem::path filename(CGAL::data_file_path("meshes/chair.off"));
 
   if(!CGAL::IO::read_polygon_mesh(filename, mesh)) {
     std::cerr << "Cannot open" << filename << std::endl;
@@ -252,7 +252,7 @@ Skeleton run_sampling(const Mesh& mesh, const TestParams& params) {
   return vmas.skeleton();
 }
 
-bool test_determinism(const TestParams& params, const std::string& mesh_file_path) {
+bool test_determinism(const TestParams& params, const std::filesystem::path& mesh_file_path) {
   std::cout << "Testing determinism for " << params.mesh_name << "..." << std::endl;
 
   Mesh mesh;
@@ -308,7 +308,7 @@ int main() {
 
   std::cout << "\n--- Test 3: Determinism ---" << std::endl;
   for(const auto& params : test_cases) {
-    std::string mesh_file = CGAL::data_file_path("meshes/" + params.mesh_name + ".off");
+    const std::filesystem::path mesh_file = CGAL::data_file_path("meshes/" + params.mesh_name + ".off");
 
     // Check if mesh file exists
     std::ifstream test_file(mesh_file);
