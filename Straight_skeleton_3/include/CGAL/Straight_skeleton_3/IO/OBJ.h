@@ -129,7 +129,7 @@ bool write_OBJ(const std::string& filename,
     }
 
     if (do_triangulate_facet) {
-      Vector_3 n = facet->get_plane().orthogonal_vector();
+      Vector_3 n = facet->supporting_plane().orthogonal_vector();
       CGAL_assertion(n != CGAL::NULL_VECTOR);
 
       PK traits(n);
@@ -402,7 +402,7 @@ bool write_OBJ(const std::string& filename,
     }
 
     // If the source node exists at the requested time, add incomplete spokes clipped to that time.
-    Vector_3 n = sheet->get_plane().orthogonal_vector();
+    Vector_3 n = sheet->supporting_plane().orthogonal_vector();
     CGAL_assertion(n != CGAL::NULL_VECTOR);
 
     PK traits(n);

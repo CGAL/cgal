@@ -439,7 +439,7 @@ public:
 
     for (const FacetSPtr& facet : polyhedron_->facets()) {
       FT speed = other_speed;
-      const auto pl = facet->get_plane();
+      const auto pl = facet->supporting_plane();
       const auto normal = pl.orthogonal_vector();
       // CGAL_SS3_CORE_TRACE("SP X " << CGAL::scalar_product(normal, Vector_3(1,0,0)));
       // CGAL_SS3_CORE_TRACE("SP Y " << CGAL::scalar_product(normal, Vector_3(0,1,0)));
@@ -509,11 +509,11 @@ public:
       }
 
       CGAL_assertion_code(for (const FacetSPtr& facet : polyhedron->facets()) {)
-      CGAL_assertion(facet->get_plane().a() == Hds_utils::get_base_plane(facet).a());
-      CGAL_assertion(facet->get_plane().b() == Hds_utils::get_base_plane(facet).b());
-      CGAL_assertion(facet->get_plane().c() == Hds_utils::get_base_plane(facet).c());
+      CGAL_assertion(facet->supporting_plane().a() == Hds_utils::get_base_plane(facet).a());
+      CGAL_assertion(facet->supporting_plane().b() == Hds_utils::get_base_plane(facet).b());
+      CGAL_assertion(facet->supporting_plane().c() == Hds_utils::get_base_plane(facet).c());
       CGAL_assertion_code(const FT& speed = Hds_utils::get_speed(facet);)
-      CGAL_assertion(facet->get_plane().d() == Hds_utils::get_base_plane(facet).d() - speed * current_time);
+      CGAL_assertion(facet->supporting_plane().d() == Hds_utils::get_base_plane(facet).d() - speed * current_time);
       CGAL_assertion_code(})
 
       Abstract_event_sptr event = next_event(queue, polyhedron, current_time, time_future_bound);
@@ -743,9 +743,9 @@ public:
     }
     CGAL_assertion(i == 3);
 
-    const Plane_3& pl0 = facets[0]->get_plane();
-    const Plane_3& pl1 = facets[1]->get_plane();
-    const Plane_3& pl2 = facets[2]->get_plane();
+    const Plane_3& pl0 = facets[0]->supporting_plane();
+    const Plane_3& pl1 = facets[1]->supporting_plane();
+    const Plane_3& pl2 = facets[2]->supporting_plane();
     const FT& w0 = Hds_utils::get_speed(facets[0]);
     const FT& w1 = Hds_utils::get_speed(facets[1]);
     const FT& w2 = Hds_utils::get_speed(facets[2]);
@@ -792,8 +792,8 @@ public:
     CGAL_SS3_DEBUG_SPTR(facet_l);
     CGAL_SS3_DEBUG_SPTR(facet_r);
 
-    const Plane_3& plane_l = facet_l->get_plane();
-    const Plane_3& plane_r = facet_r->get_plane();
+    const Plane_3& plane_l = facet_l->supporting_plane();
+    const Plane_3& plane_r = facet_r->supporting_plane();
     FacetSPtr facet_b = Hds_utils::get_facet_origin(facet_l);
     FT speed_l = Hds_utils::get_speed(facet_l);
     FacetSPtr facet_f = Hds_utils::get_facet_origin(facet_r);
@@ -885,7 +885,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(8, "Cache base planes...");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     for (const FacetSPtr& facet : polyhedron->facets()) {
-      const Plane_3& plane = facet->get_plane();
+      const Plane_3& plane = facet->supporting_plane();
       CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane));
       Hds_utils::set_base_plane(facet, plane);
       CGAL_postcondition(Hds_utils::get_base_plane(facet) == plane);
@@ -1352,7 +1352,7 @@ public:
         FacetSPtr facet_2_src = edge_2->get_facet_src();
         FacetSPtr facet_2_tgt = edge_2->get_facet_tgt();
 
-        CGAL_assertion_code(const Plane_3& plane_l2 = facet_l2->get_plane();)
+        CGAL_assertion_code(const Plane_3& plane_l2 = facet_l2->supporting_plane();)
         CGAL_assertion_code(const FT& l2a = plane_l2.a();)
         CGAL_assertion_code(const FT& l2b = plane_l2.b();)
         CGAL_assertion_code(const FT& l2c = plane_l2.c();)
@@ -1360,7 +1360,7 @@ public:
         CGAL_assertion_code(const FT& speed_l2 = Hds_utils::get_speed(facet_l2);)
         CGAL_assertion_code(FT lt2 = (l2a * point.x() + l2b * point.y() + l2c * point.z() + l2d) / speed_l2);
 
-        CGAL_assertion_code(const Plane_3& plane_r2 = facet_r2->get_plane();)
+        CGAL_assertion_code(const Plane_3& plane_r2 = facet_r2->supporting_plane();)
         CGAL_assertion_code(const FT& r2a = plane_r2.a();)
         CGAL_assertion_code(const FT& r2b = plane_r2.b();)
         CGAL_assertion_code(const FT& r2c = plane_r2.c();)
@@ -3823,7 +3823,7 @@ public:
           // # `has_edge_to_facet` check is done at pop time - see is_actual_pierce_event()
 
           // # Shrinking, so the vertex must be on the backside of the plane
-          if (Kernel_wrapper::side(facet->get_plane(), vertex->point()) > 0) {
+          if (Kernel_wrapper::side(facet->supporting_plane(), vertex->point()) > 0) {
             continue;
           }
 
@@ -3844,7 +3844,7 @@ public:
 
             // # If both move in the same direction, we cannot pierce
             const Vector_3 d (vertex->point(), shifted_pt);
-            const Vector_3 n = facet->get_plane().orthogonal_vector();
+            const Vector_3 n = facet->supporting_plane().orthogonal_vector();
             if (n * d < 0) { // negative because the facet moves in a direction opposite of the normal
               continue;
             }
@@ -4728,7 +4728,7 @@ public:
       std::vector<FacetSPtr> facets_clone(4);
       for (unsigned int i = 0; i < 4; ++i) {
         facets_clone[i] = Facet::create(); // combinatorics built manually below
-        facets_clone[i]->set_plane(facets[i]->get_plane());
+        facets_clone[i]->set_plane(facets[i]->supporting_plane());
         CGAL_assertion(facets[i]->has_data());
         facets_clone[i]->set_data(facets[i]->get_data()->clone(facets[i]));
       }
@@ -4791,7 +4791,7 @@ public:
       std::vector<FacetSPtr> facets_clone(4);
       for (unsigned int i = 0; i < 4; ++i) {
         facets_clone[i] = Facet::create(); // combinatorics built manually below
-        facets_clone[i]->set_plane(facets[i]->get_plane());
+        facets_clone[i]->set_plane(facets[i]->supporting_plane());
         CGAL_assertion(facets[i]->has_data());
         facets_clone[i]->set_data(facets[i]->get_data()->clone(facets[i]));
       }
@@ -4821,10 +4821,10 @@ public:
     } else if (not_flipped_valid && !flipped_valid) {
       flip_edge = false;
     } else if (flipped_valid && not_flipped_valid) {
-      const Vector_3 n0 = facets[0]->get_plane().orthogonal_vector();
-      const Vector_3 n2 = facets[2]->get_plane().orthogonal_vector();
-      const Vector_3 n1 = facets[1]->get_plane().orthogonal_vector();
-      const Vector_3 n3 = facets[3]->get_plane().orthogonal_vector();
+      const Vector_3 n0 = facets[0]->supporting_plane().orthogonal_vector();
+      const Vector_3 n2 = facets[2]->supporting_plane().orthogonal_vector();
+      const Vector_3 n1 = facets[1]->supporting_plane().orthogonal_vector();
+      const Vector_3 n3 = facets[3]->supporting_plane().orthogonal_vector();
       CGAL::Comparison_result dac = CGAL::compare_angle(n0, n2, n1, n3);
 
       if (edge_event_ == 0) {
@@ -6471,8 +6471,8 @@ public:
 
     // this must be done **BEFORE** the shift because after the shift there is
     // an intersection between the two edges, and so the orientation becomes coplanar
-    int orientation = Kernel_wrapper::orientation(Hds_utils::line(event->get_edge_1()),
-                                                  Hds_utils::line(event->get_edge_2()));
+    int orientation = Kernel_wrapper::orientation(Hds_utils::supporting_line(event->get_edge_1()),
+                                                  Hds_utils::supporting_line(event->get_edge_2()));
     CGAL_assertion(orientation != 0);
 
     const FT& event_time = event->time();

@@ -307,7 +307,7 @@ public:
       result->add_edge(edge_c);
       if (edge_prev_c) {
         facet_c = Facet::create();
-        facet_c->set_plane(facet->get_plane());
+        facet_c->set_plane(facet->supporting_plane());
         edge_prev_c->set_facet_L(facet_c);
         facet_c->add_edge(edge_prev_c);
         edge_c->set_facet_R(facet_c);
@@ -326,7 +326,7 @@ public:
       facet_next = edge->other(facet);
     }
     facet_c = Facet::create();
-    facet_c->set_plane(facet->get_plane());
+    facet_c->set_plane(facet->supporting_plane());
     edge_prev_c->set_facet_L(facet_c);
     facet_c->add_edge(edge_prev_c);
     edge_first_c->set_facet_R(facet_c);
@@ -376,7 +376,7 @@ public:
             vertex->has_incident_facet(facet_left)) {
           vertices_tosplit.erase(it_current);
           VertexSPtr vertex2 = vertex->split(facet_left, facet_right);
-          if (facet_left->get_plane() == facet_right->get_plane()) {
+          if (facet_left->supporting_plane() == facet_right->supporting_plane()) {
             EdgeSPtr edge = vertex->find_edge(vertex2);
             edges_to_remove.push_back(edge);
           }

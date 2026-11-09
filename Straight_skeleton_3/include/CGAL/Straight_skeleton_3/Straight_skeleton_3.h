@@ -663,7 +663,7 @@ public:
     /*!
     * returns the 3D line supporting the spoke.
     */
-    Line_3 line() const
+    Line_3 supporting_line() const
     {
       Line_3 result;
       if (node_tgt_) {
@@ -849,7 +849,7 @@ public:
     /*!
     * returns the supporting plane of the sheet.
     */
-    const Plane_3& get_plane() const
+    const Plane_3& supporting_plane() const
     {
       return this->plane_;
     }

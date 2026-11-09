@@ -221,7 +221,7 @@ public:
   static bool is_self_intersecting_facet(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-    const Plane_3& pl = facet->get_plane();
+    const Plane_3& pl = facet->supporting_plane();
     const Vector_3 normal = pl.orthogonal_vector();
     if (is_zero(normal.z())) {
       using Traits_2 = CGAL::Projection_traits_xz_3<GeomTraits>;
@@ -259,7 +259,7 @@ public:
 
     CGAL_SS3_ALGO_TRACE_V(64, "is_inside() using ray shooting (" << point << ", F" << facet->id() << ")");
 
-    const Plane_3& pl = facet->get_plane();
+    const Plane_3& pl = facet->supporting_plane();
     const Vector_3 normal = pl.orthogonal_vector();
 
     // shoot random rays till something is hit
@@ -575,7 +575,7 @@ public:
   {
     CGAL_SS3_ALGO_TRACE_V(32, "is_inside() using ray shooting V2 (" << point << ", F" << facet->id() << ")");
 
-    const Plane_3& pl = facet->get_plane();
+    const Plane_3& pl = facet->supporting_plane();
     const Vector_3 normal = pl.orthogonal_vector();
     if (is_zero(normal.z())) {
       using Traits_2 = CGAL::Projection_traits_xz_3<GeomTraits>;
@@ -611,7 +611,7 @@ public:
       return false;
     }
 
-    const Plane_3& facet_pl = facet->get_plane();
+    const Plane_3& facet_pl = facet->supporting_plane();
 
     // Start with the case of the edge living in the same plane as the facet (unlikely to happen)
     // @speed use the projection traits here too

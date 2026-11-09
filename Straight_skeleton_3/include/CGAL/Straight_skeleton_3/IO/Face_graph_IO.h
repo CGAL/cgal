@@ -368,7 +368,7 @@ public:
     // all vertices should be within the max distance of the chosen supporting plane
     for (const FacetSPtr& f : polyhedron->facets()) {
       for (const VertexSPtr& v : f->vertices()) {
-        CGAL_postcondition(CGAL::squared_distance(f->get_plane(), v->point()) < CGAL::square(max_distance));
+        CGAL_postcondition(CGAL::squared_distance(f->supporting_plane(), v->point()) < CGAL::square(max_distance));
       }
     }
 
@@ -454,7 +454,7 @@ public:
       std::size_t input_face_id = Hds_utils::get_input_face_id(facet);
       CGAL_SS3_IO_TRACE_V(32, "Saving facet " << facet->id() << " with speed " << speed << " and input face id " << input_face_id);
 
-      Vector_3 n = facet->get_plane().orthogonal_vector();
+      Vector_3 n = facet->supporting_plane().orthogonal_vector();
       CGAL_assertion(n != CGAL::NULL_VECTOR);
 
       PK traits(n);

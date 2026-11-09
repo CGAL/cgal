@@ -73,7 +73,7 @@ private:
   using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
 
 public:
-  static Line_3 line(const EdgeSPtr& edge)
+  static Line_3 supporting_line(const EdgeSPtr& edge)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     Line_3 result;
@@ -98,7 +98,7 @@ public:
       Vector_3 v_dir { *p_tgt - *p_src };
       result = Line_3 { vertex_src->point(), v_dir };
     } else {
-      result = edge->line();
+      result = edge->supporting_line();
     }
     return result;
   }
@@ -573,7 +573,7 @@ public:
       //                   vertices[1]->point(),
       //                   vertices[2]->point() };
       //   Vector_3 v1 = plane.orthogonal_vector();
-      //   Vector_3 v2 = facet->get_plane().orthogonal_vector();
+      //   Vector_3 v2 = facet->supporting_plane().orthogonal_vector();
       //   if (CGAL::scalar_product(v1, v2) > 0) {
       //     // angle between orthogonal vectors of planes < CGAL_PI/2.0
       //     // not a hole

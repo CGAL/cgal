@@ -254,7 +254,7 @@ public:
         FacetSPtr facet2 = *it_f2++;
 
         // Do not use CGAL::do_intersect: here we want to check that the result is a point
-        if (!Kernel_wrapper::intersection(facet1->get_plane(), facet2->get_plane())) {
+        if (!Kernel_wrapper::intersection(facet1->supporting_plane(), facet2->supporting_plane())) {
           CGAL_SS3_TRANSF_TRACE_V(1, "Degenerate facet pair:");
           CGAL_SS3_TRANSF_TRACE_V(1, "  " << facet1->to_string());
           CGAL_SS3_TRANSF_TRACE_V(1, "  " << facet2->to_string());
@@ -290,7 +290,7 @@ public:
           FacetSPtr facet3 = *it_f3++;
 
           // Do not use CGAL::do_intersect: here we want to check that the result is a point
-          if (!Kernel_wrapper::intersection(facet1->get_plane(), facet2->get_plane(), facet3->get_plane())) {
+          if (!Kernel_wrapper::intersection(facet1->supporting_plane(), facet2->supporting_plane(), facet3->supporting_plane())) {
             CGAL_SS3_TRANSF_TRACE_V(1, "Degenerate facet triplet:");
             CGAL_SS3_TRANSF_TRACE_V(1, "  " << facet1->to_string());
             CGAL_SS3_TRANSF_TRACE_V(1, "  " << facet2->to_string());
@@ -403,7 +403,7 @@ public:
     normals.reserve(nf);
 
     for (const FacetSPtr& facet : polyhedron->facets()) {
-      const Vector_3 n = facet->get_plane().orthogonal_vector();
+      const Vector_3 n = facet->supporting_plane().orthogonal_vector();
       normals.emplace_back(facet, n);
     }
 
@@ -608,8 +608,8 @@ public:
                                                   const VertexRange& fixed_vertices)
   {
     CGAL_SS3_TRANSF_TRACE_V(32, "Perturb (Fixed) F" << facet->id() << " [size: " << facet->vertices().size() << "]");
-    CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << facet->get_plane().a() << " " << facet->get_plane().b() << " "
-                                                        << facet->get_plane().c() << " " << facet->get_plane().d() << "]");
+    CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << facet->supporting_plane().a() << " " << facet->supporting_plane().b() << " "
+                                                        << facet->supporting_plane().c() << " " << facet->supporting_plane().d() << "]");
     CGAL_SS3_TRANSF_TRACE_V(32, "  with " << fixed_vertices.size() << " fixed vertices");
     for (const VertexSPtr& fixed_vertex : fixed_vertices) {
       CGAL_SS3_TRANSF_TRACE_V(32, "    fixed V" << fixed_vertex->id() << " at " << fixed_vertex->point());
@@ -666,9 +666,9 @@ public:
       const double y0 = cy / double(vertex_count);
       const double z0 = cz / double(vertex_count);
 
-      const double na = nudge(facet->get_plane().a());
-      const double nb = nudge(facet->get_plane().b());
-      const double nc = nudge(facet->get_plane().c());
+      const double na = nudge(facet->supporting_plane().a());
+      const double nb = nudge(facet->supporting_plane().b());
+      const double nc = nudge(facet->supporting_plane().c());
       const double nd = -(na * x0 + nb * y0 + nc * z0);
 
       facet->set_plane(Plane_3{na, nb, nc, nd});
@@ -676,16 +676,16 @@ public:
       // 1 fixed point: nudge (a, b, c), recompute d so the plane passes through the point
       const Point_3& p0 = *(fixed_points[0]);
 
-      const double na = nudge(facet->get_plane().a());
-      const double nb = nudge(facet->get_plane().b());
-      const double nc = nudge(facet->get_plane().c());
+      const double na = nudge(facet->supporting_plane().a());
+      const double nb = nudge(facet->supporting_plane().b());
+      const double nc = nudge(facet->supporting_plane().c());
 
       const FT& x0 = p0.x();
       const FT& y0 = p0.y();
       const FT& z0 = p0.z();
       FT d = - (na * x0 + nb * y0 + nc * z0);
       facet->set_plane(Plane_3{na, nb, nc, d});
-      CGAL_postcondition(facet->get_plane().has_on(p0));
+      CGAL_postcondition(facet->supporting_plane().has_on(p0));
     } else if (fixed_points_count == 2) {
 #if 1
       // The planes containing p0 and p1 form a 2-dimensional linear subspace (a pencil)
@@ -779,9 +779,9 @@ public:
       const double e2[3] = { n2[0]/l2, n2[1]/l2, n2[2]/l2 };
 
       // Target direction: cast to double to drop the DAG of the previous plane
-      double t[3] = { CGAL::to_double(facet->get_plane().a()),
-                      CGAL::to_double(facet->get_plane().b()),
-                      CGAL::to_double(facet->get_plane().c()) };
+      double t[3] = { CGAL::to_double(facet->supporting_plane().a()),
+                      CGAL::to_double(facet->supporting_plane().b()),
+                      CGAL::to_double(facet->supporting_plane().c()) };
       const double tn = norm3(t);
       CGAL_assertion(tn > 0.);
       t[0] /= tn;
@@ -892,8 +892,8 @@ public:
       // By construction, for any 'alpha' and 'beta':
       //   a1*p0 + d1 = alpha*(N1.p0 + D1) + beta*(N2.p0 + D2) = 0
       //   a1*p1 + d1 = alpha*(N1.u)       + beta*(N2.u)       = 0
-      CGAL_postcondition(facet->get_plane().has_on(p0));
-      CGAL_postcondition(facet->get_plane().has_on(p1));
+      CGAL_postcondition(facet->supporting_plane().has_on(p0));
+      CGAL_postcondition(facet->supporting_plane().has_on(p1));
 
       // (a1,b1,c1) reproduces the UNIT vector tj, so the plane is already
       // normalized to ~1 ulp: no rescaling (and no extra 53-bit factor) needed.
@@ -927,9 +927,9 @@ public:
       const FT uu = ux*ux + uy*uy + uz*uz;
 
       // Original normal
-      const FT& a0 = facet->get_plane().a();
-      const FT& b0 = facet->get_plane().b();
-      const FT& c0 = facet->get_plane().c();
+      const FT& a0 = facet->supporting_plane().a();
+      const FT& b0 = facet->supporting_plane().b();
+      const FT& c0 = facet->supporting_plane().c();
 
       // Project original normal onto plane orthogonal to u
       const FT dot = a0*ux + b0*uy + c0*uz;
@@ -954,13 +954,13 @@ public:
       const FT c1 = cb + epsilon * vz;
       const FT d1 = - (a1 * p0x + b1 * p0y + c1 * p0z);
       facet->set_plane(Plane_3{a1, b1, c1, d1});
-      CGAL_postcondition(facet->get_plane().has_on(p0));
-      CGAL_postcondition(facet->get_plane().has_on(p1));
+      CGAL_postcondition(facet->supporting_plane().has_on(p0));
+      CGAL_postcondition(facet->supporting_plane().has_on(p1));
 #endif
     }
 
-    CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << facet->get_plane().a() << " " << facet->get_plane().b() << " "
-                                                      << facet->get_plane().c() << " " << facet->get_plane().d() << "]");
+    CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << facet->supporting_plane().a() << " " << facet->supporting_plane().b() << " "
+                                                      << facet->supporting_plane().c() << " " << facet->supporting_plane().d() << "]");
 
     CGAL_postcondition(Transformation::has_normalized_plane(facet));
   }
@@ -1023,8 +1023,8 @@ public:
 
     CGAL::unordered_flat_map<FacetSPtr, Plane_3> original_planes;
     for (const FacetSPtr& f : polyhedron->facets()) {
-      CGAL_SS3_TRANSF_TRACE_V(32, "Original plane of F" << f->id() << " is " << f->get_plane());
-      original_planes[f] = f->get_plane();
+      CGAL_SS3_TRANSF_TRACE_V(32, "Original plane of F" << f->id() << " is " << f->supporting_plane());
+      original_planes[f] = f->supporting_plane();
     }
 
     CGAL::unordered_flat_map<VertexSPtr, std::array<double, 3> > vertex_tolerances;
@@ -1061,7 +1061,7 @@ public:
             if (FacetSPtr f2 = it_wf2->lock()) {
               for (auto it_wf3 = std::next(it_wf2); it_wf3 != v->facets().end(); ++it_wf3) {
                 if (FacetSPtr f3 = it_wf3->lock()) {
-                  std::optional<Point_3> p_new = Kernel_wrapper::intersection(f1->get_plane(), f2->get_plane(), f3->get_plane());
+                  std::optional<Point_3> p_new = Kernel_wrapper::intersection(f1->supporting_plane(), f2->supporting_plane(), f3->supporting_plane());
                   if (!p_new.has_value()) {
                     CGAL_SS3_TRANSF_TRACE_V(1, "Warning: triplet of planes does not define a point! (a)");
                     CGAL_SS3_TRANSF_TRACE_V(1, "  faces: " << f1->id() << " " << f2->id() << " " << f3->id());
@@ -1074,18 +1074,18 @@ public:
                     CGAL_SS3_TRANSF_TRACE_V(32, "  |dx|=" << CGAL::abs(p_new->x() - orig.x()) << " VS tol_x=" << tol[0]);
                     CGAL_SS3_TRANSF_TRACE_V(32, "  |dy|=" << CGAL::abs(p_new->y() - orig.y()) << " VS tol_y=" << tol[1]);
                     CGAL_SS3_TRANSF_TRACE_V(32, "  |dz|=" << CGAL::abs(p_new->z() - orig.z()) << " VS tol_z=" << tol[2]);
-                    CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f1->id() << " [" << f1->get_plane().a() << " " << f1->get_plane().b() << " "
-                                                                          << f1->get_plane().c() << " " << f1->get_plane().d() << "] || from original: "
-                                                                          << CGAL::squared_distance(f1->get_plane(), orig) << " || from new: "
-                                                                          << CGAL::squared_distance(f1->get_plane(), p_new.value()));
-                    CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f2->id() << " [" << f2->get_plane().a() << " " << f2->get_plane().b() << " "
-                                                                          << f2->get_plane().c() << " " << f2->get_plane().d() << "] || from original: "
-                                                                          << CGAL::squared_distance(f2->get_plane(), orig) << " || from new: "
-                                                                          << CGAL::squared_distance(f2->get_plane(), p_new.value()));
-                    CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f3->id() << " [" << f3->get_plane().a() << " " << f3->get_plane().b() << " "
-                                                                          << f3->get_plane().c() << " " << f3->get_plane().d() << "] || from original: "
-                                                                          << CGAL::squared_distance(f3->get_plane(), orig) << " || from new: "
-                                                                          << CGAL::squared_distance(f3->get_plane(), p_new.value()));
+                    CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f1->id() << " [" << f1->supporting_plane().a() << " " << f1->supporting_plane().b() << " "
+                                                                          << f1->supporting_plane().c() << " " << f1->supporting_plane().d() << "] || from original: "
+                                                                          << CGAL::squared_distance(f1->supporting_plane(), orig) << " || from new: "
+                                                                          << CGAL::squared_distance(f1->supporting_plane(), p_new.value()));
+                    CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f2->id() << " [" << f2->supporting_plane().a() << " " << f2->supporting_plane().b() << " "
+                                                                          << f2->supporting_plane().c() << " " << f2->supporting_plane().d() << "] || from original: "
+                                                                          << CGAL::squared_distance(f2->supporting_plane(), orig) << " || from new: "
+                                                                          << CGAL::squared_distance(f2->supporting_plane(), p_new.value()));
+                    CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f3->id() << " [" << f3->supporting_plane().a() << " " << f3->supporting_plane().b() << " "
+                                                                          << f3->supporting_plane().c() << " " << f3->supporting_plane().d() << "] || from original: "
+                                                                          << CGAL::squared_distance(f3->supporting_plane(), orig) << " || from new: "
+                                                                          << CGAL::squared_distance(f3->supporting_plane(), p_new.value()));
                     return false;
                   }
                 }
@@ -1261,10 +1261,10 @@ public:
         {
           boost::container::small_vector<const Plane_3*, 4> pl;
           for (const FacetSPtr& g : frozen_at[v]) {
-            pl.push_back(&(g->get_plane()));
+            pl.push_back(&(g->supporting_plane()));
           }
           if (cand) {
-            pl.push_back(&(cand->get_plane()));
+            pl.push_back(&(cand->supporting_plane()));
           }
 
           if (pl.size() > 3) {
@@ -1387,9 +1387,9 @@ public:
               for (auto it3 = std::next(it2); it3 != facets.end(); ++it3) {
                 const FacetSPtr& f3 = *it3;
 
-                std::optional<Point_3> q = Kernel_wrapper::intersection(f1->get_plane(),
-                                                                        f2->get_plane(),
-                                                                        f3->get_plane());
+                std::optional<Point_3> q = Kernel_wrapper::intersection(f1->supporting_plane(),
+                                                                        f2->supporting_plane(),
+                                                                        f3->supporting_plane());
                 if (!q.has_value()) {
                   CGAL_SS3_TRANSF_TRACE_V(1, "Warning: triplet of planes does not define a point!");
                   CGAL_SS3_TRANSF_TRACE_V(1, "  faces: " << f1->id() << " " << f2->id() << " " << f3->id());
@@ -1476,8 +1476,8 @@ public:
         auto recompute_facet_plane = [&](const FacetSPtr& f)
         {
           CGAL_SS3_TRANSF_TRACE_V(32, "Recompute F" << f->id());
-          CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
-                                                              << f->get_plane().c() << " " << f->get_plane().d() << "]");
+          CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << f->supporting_plane().a() << " " << f->supporting_plane().b() << " "
+                                                              << f->supporting_plane().c() << " " << f->supporting_plane().d() << "]");
 
           CGAL_precondition(frozen_facets.count(f) == 0);
           CGAL_precondition(original_planes.count(f));
@@ -1509,12 +1509,12 @@ public:
             f->set_plane(new_pl);
             Transformation::normalize_facet_plane(f);
 
-            CGAL_postcondition(f->get_plane().has_on(p0));
-            CGAL_postcondition(f->get_plane().has_on(p1));
-            CGAL_postcondition(f->get_plane().has_on(p2));
+            CGAL_postcondition(f->supporting_plane().has_on(p0));
+            CGAL_postcondition(f->supporting_plane().has_on(p1));
+            CGAL_postcondition(f->supporting_plane().has_on(p2));
 
-            CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
-                                                              << f->get_plane().c() << " " << f->get_plane().d() << "] [3 anchors]");
+            CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << f->supporting_plane().a() << " " << f->supporting_plane().b() << " "
+                                                              << f->supporting_plane().c() << " " << f->supporting_plane().d() << "] [3 anchors]");
           }
         };
 
@@ -1623,7 +1623,7 @@ public:
           CGAL_assertion_code(
             for (const FacetSPtr& f : frozen_facets)
               for (const VertexSPtr& v : f->vertices())
-                CGAL_assertion(f->get_plane().has_on(v->point()));
+                CGAL_assertion(f->supporting_plane().has_on(v->point()));
           )
         }
 
@@ -1770,7 +1770,7 @@ public:
           CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f->id()
                                         << (frozen_facets.count(f) ? " [frozen]" : "")
                                         << " [" << anchor_count(f) << " anchors]"
-                                        << " [" << f->get_plane() << "]");
+                                        << " [" << f->supporting_plane() << "]");
         }
 
 #ifdef CGAL_SS3_DUMP_FILES
@@ -1812,7 +1812,7 @@ public:
 
       for (const FacetSPtr& f : facets_to_translate) {
         nudge_ranges[f] = nudge_range;
-        pre_nudge_planes[f] = f->get_plane();
+        pre_nudge_planes[f] = f->supporting_plane();
       }
 
       ID_set<FacetSPtr> active_facets(facets_to_translate.begin(), facets_to_translate.end());
@@ -1841,14 +1841,14 @@ public:
 
           CGAL_SS3_TRANSF_TRACE_V(32, "Perturb (Translate) Facet " << f->id());
           CGAL_SS3_TRANSF_TRACE_V(32, "  Nudge coefficient: " << nudge_coeff);
-          CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
-                                                              << f->get_plane().c() << " " << f->get_plane().d() << "]");
+          CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << f->supporting_plane().a() << " " << f->supporting_plane().b() << " "
+                                                              << f->supporting_plane().c() << " " << f->supporting_plane().d() << "]");
 
           Plane_3 nudged_plane { base_plane.a(), base_plane.b(), base_plane.c(), base_plane.d() + nudge_coeff };
           f->set_plane(nudged_plane);
 
-          CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
-                                                            << f->get_plane().c() << " " << f->get_plane().d() << "]");
+          CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << f->supporting_plane().a() << " " << f->supporting_plane().b() << " "
+                                                            << f->supporting_plane().c() << " " << f->supporting_plane().d() << "]");
         }
 
         // Now, facets have updated with nudged planes -> check stability of the vertices affected
@@ -1903,10 +1903,10 @@ public:
       CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " has length " << Size_shenanigans::length(v->point()));
 
       CGAL_SS3_TRANSF_TRACE_CODE(for (const FacetSPtr& f : polyhedron->facets()) )
-      CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " has length " << Size_shenanigans::length(f->get_plane()));
+      CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " has length " << Size_shenanigans::length(f->supporting_plane()));
 
       CGAL_SS3_TRANSF_TRACE_CODE(for (const FacetSPtr& f : polyhedron->facets()) )
-      CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " has final plane " << f->get_plane());
+      CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " has final plane " << f->supporting_plane());
 
       CGAL_postcondition(polyhedron->is_consistent());
 
@@ -1979,7 +1979,7 @@ public:
       CGAL_assertion_code(if (FacetSPtr f2 = it_wf2->lock()) {)
       CGAL_assertion_code(for (auto it_wf3 = std::next(it_wf2) ; it_wf3 != vertex->facets().end(); ++it_wf3) {)
       CGAL_assertion_code(if (FacetSPtr f3 = it_wf3->lock()) {)
-      CGAL_assertion_code(std::optional<Point_3> p_new = Kernel_wrapper::intersection(f1->get_plane(), f2->get_plane(), f3->get_plane());)
+      CGAL_assertion_code(std::optional<Point_3> p_new = Kernel_wrapper::intersection(f1->supporting_plane(), f2->supporting_plane(), f3->supporting_plane());)
       CGAL_assertion_code(if (p_new.has_value()) {)
       CGAL_assertion(bb.xmin() < p_new->x() && p_new->x() < bb.xmax());
       CGAL_assertion(bb.ymin() < p_new->y() && p_new->y() < bb.ymax());
@@ -2011,7 +2011,7 @@ public:
 
       for (const auto& facet_wptr : vertex->facets()) {
         if (FacetSPtr facet = facet_wptr.lock()) {
-          const Plane_3& plane = facet->get_plane();
+          const Plane_3& plane = facet->supporting_plane();
           CGAL::Polygon_mesh_processing::split(mesh, plane, CGAL::parameters::do_not_triangulate_faces(true).visitor(visitor));
           std::vector<halfedge_descriptor> hedges;
           CGAL::extract_boundary_cycles(mesh, std::back_inserter(hedges));
@@ -2101,7 +2101,7 @@ public:
       for (std::size_t i=0; i<polygons.size(); ++i) {
         const FacetSPtr& fsptr = polygon_to_facet[i];
         if (fsptr) {
-          const Plane_3& plane = fsptr->get_plane();
+          const Plane_3& plane = fsptr->supporting_plane();
           const Point_3& p0 = points[polygons[i][0]];
           const Point_3& p1 = points[polygons[i][1]];
           const Point_3& p2 = points[polygons[i][2]];
@@ -2633,8 +2633,8 @@ public:
           CGAL_SS3_DEBUG_SPTR(facet_l);
           CGAL_SS3_DEBUG_SPTR(facet_r);
           CGAL_SS3_TRANSF_TRACE_V(64, "LF/RF = " << facet_l->id() << " " << facet_r->id());
-          const Plane_3& plane_l = facet_l->get_plane();
-          const Plane_3& plane_r = facet_r->get_plane();
+          const Plane_3& plane_l = facet_l->supporting_plane();
+          const Plane_3& plane_r = facet_r->supporting_plane();
           CGAL_SS3_TRANSF_TRACE_V(64, "planes = " << plane_l << " " << plane_r);
           std::optional<Line_3> oline = Kernel_wrapper::intersection(plane_l, plane_r);
           CGAL_assertion(bool(oline));
@@ -2673,7 +2673,7 @@ public:
 
         // now, if the edge is convex in the input polyhedron, we must turn "right", meaning,
         // the next point is on the negative side of the plane
-        if (prev_facet->get_plane().oriented_side(points[first_pid]) == CGAL::NEGATIVE)
+        if (prev_facet->supporting_plane().oriented_side(points[first_pid]) == CGAL::NEGATIVE)
           return {(is_convex ? first_pid : second_pid), true};
         else
           return {(is_convex ? second_pid : first_pid), true};
@@ -2762,7 +2762,7 @@ public:
 
         PID prev_pid (-1);
         for(;;) {
-          CGAL_assertion(facet->get_plane().has_on(points[current_pid]));
+          CGAL_assertion(facet->supporting_plane().has_on(points[current_pid]));
 
           CGAL_SS3_TRANSF_TRACE_V(64, "at " << points[current_pid]);
           CGAL_SS3_TRANSF_TRACE_V(64, "at " << normalized_points[current_pid] << " (normalized)");

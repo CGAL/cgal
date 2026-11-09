@@ -271,11 +271,11 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(32, "has_coplanar F" << facet_l->id() << ", F" << facet_r->id());
 
     if (epsilon == 0.) {
-      return (facet_l->get_plane() == facet_r->get_plane()); // planes are normalized
+      return (facet_l->supporting_plane() == facet_r->supporting_plane()); // planes are normalized
     }
 
-    const Vector_3 normal_l = facet_l->get_plane().orthogonal_vector();
-    const Vector_3 normal_r = facet_r->get_plane().orthogonal_vector();
+    const Vector_3 normal_l = facet_l->supporting_plane().orthogonal_vector();
+    const Vector_3 normal_r = facet_r->supporting_plane().orthogonal_vector();
     CGAL_SS3_TRANSF_TRACE_V(32, "  normal_l: " << normal_l);
     CGAL_SS3_TRANSF_TRACE_V(32, "  normal_r: " << normal_r);
     CGAL_SS3_TRANSF_TRACE_V(32, "  angle: " << CGAL::approximate_angle(normal_l, normal_r));
@@ -978,7 +978,7 @@ public:
 
     CGAL_postcondition_code(for (FacetWPtr facet_wptr : vertex->facets()) {)
     CGAL_postcondition_code(    if (FacetSPtr facet = facet_wptr.lock()) {)
-    CGAL_postcondition(             facet->get_plane().has_on(*point));
+    CGAL_postcondition(             facet->supporting_plane().has_on(*point));
     CGAL_postcondition_code(    })
     CGAL_postcondition_code(})
 
@@ -999,8 +999,8 @@ public:
     while (i < 3 && it_f != vertex->facets().end()) {
       FacetWPtr facet_wptr = *it_f++;
       if (FacetSPtr facet = facet_wptr.lock()) {
-        planes[i++] = &(facet->get_plane());
-        CGAL_SS3_TRANSF_TRACE_V(64, "  Facet " << facet->id() << " [" << facet->get_plane() << "]");
+        planes[i++] = &(facet->supporting_plane());
+        CGAL_SS3_TRANSF_TRACE_V(64, "  Facet " << facet->id() << " [" << facet->supporting_plane() << "]");
       }
     }
     CGAL_postcondition(i == 3);
@@ -1042,7 +1042,7 @@ public:
     while (i < 3 && it_f != vertex->facets().end()) {
       FacetWPtr facet_wptr = *it_f++;
       if (FacetSPtr facet = facet_wptr.lock()) {
-        const Plane_3& plane = facet->get_plane();
+        const Plane_3& plane = facet->supporting_plane();
 
         if (vertex->degree() > 3) {
           // planes are _offset_ planes, but it doesn't matter for the tests
@@ -1107,10 +1107,10 @@ public:
     const FT& speed_tgt = Hds_utils::get_speed(facet_tgt);
 
     // Offset the two common planes
-    Plane_3 offset_plane_l = Geom_utils::offset_plane(facet_l->get_plane(), speed_l*time);
-    Plane_3 offset_plane_r = Geom_utils::offset_plane(facet_r->get_plane(), speed_r*time);
-    Plane_3 offset_plane_src = Geom_utils::offset_plane(facet_src->get_plane(), speed_src*time);
-    Plane_3 offset_plane_tgt = Geom_utils::offset_plane(facet_tgt->get_plane(), speed_tgt*time);
+    Plane_3 offset_plane_l = Geom_utils::offset_plane(facet_l->supporting_plane(), speed_l*time);
+    Plane_3 offset_plane_r = Geom_utils::offset_plane(facet_r->supporting_plane(), speed_r*time);
+    Plane_3 offset_plane_src = Geom_utils::offset_plane(facet_src->supporting_plane(), speed_src*time);
+    Plane_3 offset_plane_tgt = Geom_utils::offset_plane(facet_tgt->supporting_plane(), speed_tgt*time);
 
 #if 0
     // leaving it here because it's not that intuitive: factoring the intersection of the
@@ -1138,7 +1138,7 @@ public:
                              const FT& time)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-    const Plane_3& plane = facet->get_plane();
+    const Plane_3& plane = facet->supporting_plane();
     const FT& speed = Hds_utils::get_speed(facet);
     return Geom_utils::offset_plane(plane, speed*time);
   }
@@ -1323,10 +1323,10 @@ public:
     using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
     using PCDT_VH = typename PCDT::Vertex_handle;
 
-    const Vector_3 n = facet->get_plane().orthogonal_vector();
+    const Vector_3 n = facet->supporting_plane().orthogonal_vector();
     CGAL_precondition(n != CGAL::NULL_VECTOR);
     CGAL_SS3_TRANSF_TRACE_V(16, "Construct triangulation of F" << facet->id());
-    CGAL_SS3_TRANSF_TRACE_V(16, "F plane: " << facet->get_plane());
+    CGAL_SS3_TRANSF_TRACE_V(16, "F plane: " << facet->supporting_plane());
     CGAL_SS3_TRANSF_TRACE_V(16, "CDT normal: " << n);
 
     PK projection_traits(n);
@@ -1467,9 +1467,9 @@ public:
   static bool has_normalized_plane(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-    const FT& a = facet->get_plane().a();
-    const FT& b = facet->get_plane().b();
-    const FT& c = facet->get_plane().c();
+    const FT& a = facet->supporting_plane().a();
+    const FT& b = facet->supporting_plane().b();
+    const FT& c = facet->supporting_plane().c();
     return (square(a) + square(b) + square(c) - 1) <= 1e-5; // @fixme hardcoded bound
   }
 
@@ -1496,10 +1496,10 @@ public:
   static bool normalize_facet_plane(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-    const FT& a = facet->get_plane().a();
-    const FT& b = facet->get_plane().b();
-    const FT& c = facet->get_plane().c();
-    const FT& d = facet->get_plane().d();
+    const FT& a = facet->supporting_plane().a();
+    const FT& b = facet->supporting_plane().b();
+    const FT& c = facet->supporting_plane().c();
+    const FT& d = facet->supporting_plane().d();
 
     // this should be the only place with unavoidable SQRTs
     const FT n = CGAL::approximate_sqrt(square(a) + square(b) + square(c));

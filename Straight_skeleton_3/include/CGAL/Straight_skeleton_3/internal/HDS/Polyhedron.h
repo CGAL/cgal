@@ -1077,7 +1077,7 @@ public:
       return { vertex_src_->point(), vertex_tgt_->point() };
     }
 
-    Line_3 line() const
+    Line_3 supporting_line() const
     {
       return { vertex_src_->point(), vertex_tgt_->point() };
     }
@@ -1349,14 +1349,14 @@ public:
         FacetSPtr facet_r = this->get_facet_R();
         CGAL_SS3_DEBUG_SPTR(facet_l);
         CGAL_SS3_DEBUG_SPTR(facet_r);
-        const Plane_3& plane_l = facet_l->get_plane();
+        const Plane_3& plane_l = facet_l->supporting_plane();
         const Vector_3 normal_l = plane_l.orthogonal_vector();
         CGAL_assertion(normal_l != CGAL::NULL_VECTOR);
         const Vector_3 dir { vertex_src_->point(), vertex_tgt_->point() };
         CGAL_assertion(dir != CGAL::NULL_VECTOR);
         const Point_3& p_src = vertex_src_->point();
         Point_3 p = p_src + CGAL::cross_product(normal_l, dir);
-        const Plane_3& plane_r = facet_r->get_plane();
+        const Plane_3& plane_r = facet_r->supporting_plane();
         if (plane_r.oriented_side(p) == CGAL::ON_POSITIVE_SIDE) {
           result = true;
         }
@@ -2091,7 +2091,7 @@ private:
     /**
     * The direction of the normal points to the outside.
     */
-    const Plane_3& get_plane() const
+    const Plane_3& supporting_plane() const
     {
       return this->plane_;
     }
@@ -2347,7 +2347,7 @@ public:
     while (it_f != facets_.end()) {
       FacetSPtr facet = *it_f++;
       FacetSPtr facet_c = Facet::create();
-      facet_c->set_plane(facet->get_plane());
+      facet_c->set_plane(facet->supporting_plane());
       typename std::list<VertexSPtr>::const_iterator it_v = facet->vertices().begin();
       while (it_v != facet->vertices().end()) {
         VertexSPtr vertex = *it_v++;
