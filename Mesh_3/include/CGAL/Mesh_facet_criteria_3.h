@@ -117,7 +117,7 @@ public:
                         const FT& distance_bound,
                         const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
                         const FT& min_radius_bound = 0.,
-                        const FT& normals_variation_bound = 50.);
+                        const FT& normals_variation_bound = 0.);
 
 #endif
 
@@ -134,7 +134,7 @@ public:
                         const DistanceField& distance_bound,
                         const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
                         const FT& min_radius_bound = 0.,
-                        const FT& normals_variation_bound = 50.)
+                        const FT& normals_variation_bound = 0.)
     : squared_min_radius_bound_(std::nullopt)
   {
     if (FT(0) != min_radius_bound)
