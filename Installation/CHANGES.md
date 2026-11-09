@@ -107,6 +107,12 @@ Release date: December 2026
   Each is (still) parameterized with another traits class being decorated, but it does not inherit from it.
   In addition one can get and set a smart pointer to the class being decorated.
 
+### [3D Triangulations](https://doc.cgal.org/6.3/Manual/packages.html#PkgTriangulation3)
+
+- **Breaking change**: Removed the class template `Regular_triangulation_euclidean_traits_3`, which was deprecated since CGAL-4.10.
+- **Breaking change**: Removed the concept `WeightedPoint`, which was deprecated since CGAL-4.9.
+- **Breaking change**: Removed the member function `vertices_in_conflict()` of the Delaunay and the regular triangulations, which were deprecated since CGAL-3.8.
+
 ### [3D Mesh Generation](https://doc.cgal.org/6.3/Manual/packages.html#PkgMesh3)
 
 - **Breaking change**: The template parameter of `CGAL::Mesh_cell_criteria_3`,
@@ -116,12 +122,6 @@ Release date: December 2026
   `CGAL::Mesh_criteria_3` also uses `C3T3` as its template parameter, but
   continues to accept the triangulation type for backward compatibility.
 
-### [3D Triangulations](https://doc.cgal.org/6.3/Manual/packages.html#PkgTriangulation3)
-
-- **Breaking change**: Removed the class template `Regular_triangulation_euclidean_traits_3`, which was deprecated since CGAL-4.10.
-- **Breaking change**: Removed the concept `WeightedPoint`, which was deprecated since CGAL-4.9.
-- **Breaking change**: Removed the member function `vertices_in_conflict()` of the Delaunay and the regular triangulations, which were deprecated since CGAL-3.8.
-
 ### [Polygon Mesh Processing - Remeshing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
 
 - Added a new parameter `edge_is_protected_map` to
@@ -129,7 +129,18 @@ Release date: December 2026
   to distinguish between "constrained" edges that can be resampled while the constrained edges
   polyline graph remains topologically unchanged, and "protected" edges that may not be modified
   at all by remeshing.
- - Fix an API bug in `CGAL::Polygon_mesh_processing::remesh_planar_patches()`: when coplanarity/collinearity criteria are too relaxed, it might happen that some patches cannot be triangulated. To handle such cases, a Boolean is now returned to indicate if all patches could be triangulated (same behavior as `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`). Also those two functions can now produce a (self-intersecting) mesh in case the simplified mesh turned out to be non-manifold (internally calling the function `CGAL::Polygon_mesh_processing::orient_polygon_soup()` on the corners and patches detected). In order to check if a non-manifoldness was worked around, the new named parameter `number_of_corners()` can be used and the filled value shall be compared to the number of vertices of the output mesh.
+- The function [`CGAL::Polygon_mesh_processing::remesh_planar_patches()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__planar__remeshing__grp.html#ga64ac0f94b930b207c02ca486f32f5a45)
+  now returns a Boolean to to indicate if all patches could be triangulated (same behavior as
+  the function [`CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__planar__remeshing__grp.html#ga0e6da479548199a5d82c3cf0ed36e8a0)).
+  Failure to triangulate can happen when coplanarity/collinearity criteria are too relaxed.
+- The functions [`CGAL::Polygon_mesh_processing::remesh_planar_patches()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__planar__remeshing__grp.html#ga64ac0f94b930b207c02ca486f32f5a45)
+  and [`CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__planar__remeshing__grp.html#ga0e6da479548199a5d82c3cf0ed36e8a0)
+  now produce a (self-intersecting) mesh in case the output is non-manifold, rather than
+  returning an empty result. Non-manifold occurences are internally handled using the function
+  [`CGAL::Polygon_mesh_processing::orient_polygon_soup()`](https://doc.cgal.org/6.3/PMP_Mesh_repair/group__PMP__orientation__grp.html#gad380465ee62d858d27fab4cfda6c1764),
+  which duplicates elements as to achieve a combinatorially manifold structure. The new named parameter
+  `number_of_corners()` can be used to check if duplication happened by comparing its value to
+  the number of vertices of the output mesh.
 
 ### [Polygon Mesh Processing - Mesh Repair](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPMeshRepair)
 
