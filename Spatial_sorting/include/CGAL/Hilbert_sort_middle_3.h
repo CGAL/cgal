@@ -140,18 +140,22 @@ public:
         return;
       }
 
-      if(x_upper != upx)
+      CGAL_assertion(!x_upper || !x_lower || (x==0 ? (bb.xmax() == bb.xmin()) : x==1 ? (bb.ymax() == bb.ymin()) : (bb.zmax() == bb.zmin())));
+      CGAL_assertion(!y_upper || !y_lower || (y==0 ? (bb.xmax() == bb.xmin()) : y==1 ? (bb.ymax() == bb.ymin()) : (bb.zmax() == bb.zmin())));
+      CGAL_assertion(!z_upper || !z_lower || (z==0 ? (bb.xmax() == bb.xmin()) : z==1 ? (bb.ymax() == bb.ymin()) : (bb.zmax() == bb.zmin())));
+
+      if(x_lower == upx)
       {
-        if(y_upper != upy)
+        if(y_lower == upy)
         {
-          if(z_upper != upz)
+          if(z_lower == upz)
             skip_empty_cells<z, upz, upx, upy> (begin, end, zmin, xmin, ymin, zmed, xmed, ymed, bb);
           else
             skip_empty_cells<y, upy, upz, upx> (begin, end, ymin, zmed, xmin, ymed, zmax, xmed, bb);
         }
         else
         {
-          if(z_upper != upz)
+          if(z_lower == upz)
             skip_empty_cells<x, upx, !upy, !upz> (begin, end, xmin, ymax, zmed, xmed, ymed, zmin, bb);
           else
             skip_empty_cells<y, upy, upz, upx> (begin, end, ymed, zmed, xmin, ymax, zmax, xmed, bb);

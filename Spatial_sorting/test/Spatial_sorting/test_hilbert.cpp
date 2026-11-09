@@ -56,7 +56,7 @@ int main ()
     std::vector<Point_2> v2 (v);
 
     CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
-    assert(v[0] == v2[0] && v[1] == v2[2] && v[2] == v2[1]);
+    assert(v[0] == v2[1] && v[1] == v2[2] && v[2] == v2[0]);
   }
   {
     std::vector<Point_2> v({Point_2(0.,8.),
@@ -96,7 +96,7 @@ int main ()
     std::vector<Point_3> v2 (v);
 
     CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
-    assert(v[0] == v2[0] && v[1] == v2[2] && v[2] == v2[1]);
+    assert(v[0] == v2[1] && v[1] == v2[2] && v[2] == v2[0]);
   }
   {
     std::cout << "Testing 2D (median policy): Generating "<<nb_points_2<<" random points... " << std::flush;

@@ -123,16 +123,19 @@ public:
       return;
     }
 
-    if( x_upper != upx )
+    CGAL_assertion(!x_upper || !x_lower || (x==0 ? (bb.xmax() == bb.xmin()) : (bb.ymax() == bb.ymin())));
+    CGAL_assertion(!y_upper || !y_lower || (y==0 ? (bb.xmax() == bb.xmin()) : (bb.ymax() == bb.ymin())));
+
+    if( x_lower == upx )
     {
-      if( y_upper != upy )
+      if( y_lower == upy )
         skip_empty_cells<y, upy, upx> (begin, end, ymin, xmin, ymed, xmed, bb);
       else
         skip_empty_cells<x, upx, upy> (begin, end, xmin, ymed, xmed, ymax, bb);
     }
     else
     {
-      if( y_upper != upy )
+      if( y_lower == upy )
         skip_empty_cells<y, !upx, !upy> (begin, end, ymed, xmax, ymin, xmed, bb);
       else
         skip_empty_cells<x, upx, upy> (begin, end, xmed, ymed, xmax, ymax, bb);
