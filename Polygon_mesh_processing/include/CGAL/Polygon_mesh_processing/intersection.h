@@ -591,8 +591,8 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
                                        OutputIterator out,
                                        const Kernel& K)
 {
-  std::array<Polyline, 1> polylines1{{polyline1}};
-  std::array<Polyline, 1> polylines2{{polyline2}};
+  std::array<std::reference_wrapper<const Polyline>, 1> polylines1{{std::cref(polyline1)}};
+  std::array<std::reference_wrapper<const Polyline>, 1> polylines2{{std::cref(polyline2)}};
 
   auto polyline_out =
     boost::make_function_output_iterator(
@@ -1131,34 +1131,6 @@ bool do_intersect(const TriangleMesh& tm,
   { return true; }
 
   return false;
-}
-
-namespace internal {
-  template <class Iterator>
-  struct AABB_indexed_bbox_primitive
-  {
-    using Id = std::size_t;
-    using Datum = CGAL::Bbox_3;
-
-    AABB_indexed_bbox_primitive() = default;
-
-    AABB_indexed_bbox_primitive(Iterator it)
-      : m_it(it)
-    {}
-
-    Id id() const
-    {
-      return m_it->index;
-    }
-
-    const Datum& datum() const
-    {
-      return m_it->bbox;
-    }
-
-  private:
-    Iterator m_it;
-  };
 }
 
 /*!

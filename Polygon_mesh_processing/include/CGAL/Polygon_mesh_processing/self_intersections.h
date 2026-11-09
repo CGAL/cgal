@@ -400,7 +400,6 @@ public:
 
     constexpr bool go_further() const { return true; }
 
-  // node coming from the same tree, always alternate is a good choice
   template<class Node_A, class Node_B>
   bool prefer_A_for_next_step(const Node_A&, const Node_B&, const std::size_t&, const std::size_t&) const {
     return false;
