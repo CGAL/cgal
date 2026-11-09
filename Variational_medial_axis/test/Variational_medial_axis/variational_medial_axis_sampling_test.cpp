@@ -15,6 +15,9 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Surface_mesh<Point> Mesh;
 typedef CGAL::Variational_medial_axis_sampling<Mesh> VMAS;
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Variational_medial_axis_sampling<Mesh, CGAL::Parallel_tag> Parallel_VMAS;
+#endif
 typedef CGAL::Medial_skeleton<Mesh> Skeleton;
 
 // Test parameters structure
@@ -126,7 +129,8 @@ bool compare_skeletons(const Skeleton& skeleton1, const Skeleton& skeleton2, dou
   return true;
 }
 
-bool test_correcteness() {
+
+bool test_correctness() {
 
   Mesh mesh;
   const std::string filename(CGAL::data_file_path("meshes/elephant.off"));
@@ -136,21 +140,19 @@ bool test_correcteness() {
     return false;
   }
 
-  auto skeleton_kd_tree = CGAL::extract_variational_medial_skeleton(
+  auto skeleton = CGAL::extract_variational_medial_skeleton(
       mesh, CGAL::parameters::lambda(0.2).random_seed(42).number_of_spheres(300));
 
-  std::string saved_file_bvh = CGAL::data_file_path("meshes/elephant_0.2_300_seed_42_BVH.ply");
-  std::string saved_file_kd_tree = CGAL::data_file_path("meshes/elephant_0.2_300_seed_42_KD_tree.ply");
+  const std::string expected_file("data/results/elephant_0.2_300_seed_42.ply");
+  Skeleton expected_skeleton;
+  if(!CGAL::IO::read_PLY(expected_skeleton, expected_file)) {
+    std::cerr << "Cannot read the expected result " << expected_file << std::endl;
+    return false;
+  }
 
-  Skeleton saved_skeleton_kd_tree;
-
-  if(CGAL::IO::read_PLY(saved_skeleton_kd_tree, saved_file_kd_tree)) {
-    if(compare_skeletons(skeleton_kd_tree, saved_skeleton_kd_tree)) {
-      std::cout << "KD-tree Skeletons match after reading from file." << std::endl;
-    } else {
-      std::cerr << "KD-tree  Skeletons do not match after reading from file." << std::endl;
-      return false;
-    }
+  if(!compare_skeletons(skeleton, expected_skeleton)) {
+    std::cerr << "The skeleton differs from the expected result " << expected_file << std::endl;
+    return false;
   }
   return true;
 }
@@ -164,8 +166,7 @@ bool test_API() {
     return false;
   }
   VMAS vmas(mesh);
-  bool success = vmas.sample(
-      CGAL::parameters::lambda(0.2).number_of_spheres(200).concurrency_tag(CGAL::Sequential_tag{}));
+  bool success = vmas.sample(CGAL::parameters::lambda(0.2).number_of_spheres(200));
   if(!success)
   {
     std::cerr << "compute_variational_medial_axis_sampling failed." << std::endl;
@@ -232,7 +233,7 @@ bool test_API() {
   }
 
   // sampling again with the same parameters must start from scratch and give the same skeleton
-  vmas.sample(CGAL::parameters::lambda(0.2).number_of_spheres(200).concurrency_tag(CGAL::Sequential_tag{}));
+  vmas.sample(CGAL::parameters::lambda(0.2).number_of_spheres(200));
   if(vmas.skeleton().vertices() != skeleton.vertices()) {
     std::cerr << "sample() failed: sampling again with the same parameters gives a different skeleton" << std::endl;
     return false;
@@ -242,7 +243,15 @@ bool test_API() {
   return true;
 }
 
-// Test determinism (same parameters should produce same results)
+// Test determinism: the same parameters must give the same skeleton across runs,
+// and the parallel version must give the same skeleton as the sequential one
+template <class Sampling>
+Skeleton run_sampling(const Mesh& mesh, const TestParams& params) {
+  Sampling vmas(mesh);
+  vmas.sample(CGAL::parameters::lambda(params.lambda).number_of_spheres(params.num_spheres));
+  return vmas.skeleton();
+}
+
 bool test_determinism(const TestParams& params, const std::string& mesh_file_path) {
   std::cout << "Testing determinism for " << params.mesh_name << "..." << std::endl;
 
@@ -252,27 +261,27 @@ bool test_determinism(const TestParams& params, const std::string& mesh_file_pat
     return false;
   }
   const int num_runs = 3;
-  std::vector<Skeleton> skeletons;
-  skeletons.reserve(num_runs);
 
-  // Run algorithm multiple times with same parameters
-  for(int i = 0; i < num_runs; ++i) {
-    VMAS vmas(mesh);
-    vmas.sample(CGAL::parameters::lambda(params.lambda)
-                .number_of_spheres(params.num_spheres)
-                //.verbose(true)
-                .concurrency_tag(CGAL::Sequential_tag{}));
-
-    skeletons.push_back(vmas.skeleton());
-  }
-
-  // Compare all results with first one
+  // Sequential runs, compared with the first one
+  const Skeleton reference = run_sampling<VMAS>(mesh, params);
   for(int i = 1; i < num_runs; ++i) {
-    if(!compare_skeletons(skeletons[0], skeletons[i])) {
-      std::cerr << "Determinism test failed: Run " << i << " differs from run 0" << std::endl;
+    if(!compare_skeletons(reference, run_sampling<VMAS>(mesh, params))) {
+      std::cerr << "Determinism test failed: sequential run " << i << " differs from sequential run 0" << std::endl;
       return false;
     }
   }
+
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel runs, compared with the sequential result
+  for(int i = 0; i < num_runs; ++i) {
+    if(!compare_skeletons(reference, run_sampling<Parallel_VMAS>(mesh, params))) {
+      std::cerr << "Determinism test failed: parallel run " << i << " differs from the sequential run" << std::endl;
+      return false;
+    }
+  }
+#else
+  std::cout << "TBB not found: parallel determinism not tested" << std::endl;
+#endif
   return true;
 }
 
@@ -281,11 +290,11 @@ int main() {
 
   std::cout << "=== Variational Medial Axis Sampling Tests ===" << std::endl;
 
-  std::cout << "\n--- Test 1: Correcteness ---" << std::endl;
-  if(test_correcteness()) {
-    std::cout << "Correcteness test passed for elephant" << std::endl;
+  std::cout << "\n--- Test 1: Correctness ---" << std::endl;
+  if(test_correctness()) {
+    std::cout << "Correctness test passed for elephant" << std::endl;
   } else {
-    std::cerr << "Correcteness test failed for elephant" << std::endl;
+    std::cerr << "Correctness test failed for elephant" << std::endl;
     return EXIT_FAILURE;
   }
 
