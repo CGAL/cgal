@@ -113,6 +113,12 @@ Release date: December 2026
 - **Breaking change**: Removed the concept `WeightedPoint`, which was deprecated since CGAL-4.9.
 - **Breaking change**: Removed the member function `vertices_in_conflict()` of the Delaunay and the regular triangulations, which were deprecated since CGAL-3.8.
 
+### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/6.3/Manual/packages.html#PkgSMDS3)
+
+- Introduced the function [`CGAL::is_tetrahedron_soup_a_triangulation()`](https://doc.cgal.org/6.3/SMDS_3/group__PkgSMDS3Functions.html#ga51228a9e912aaa5160355f1c74201eb2),
+  which can be used to check if a soup of tetrahedra defines a valid 3D triangulation that can
+  be handled by [`CGAL::tetrahedron_soup_to_triangulation_3()`](https://doc.cgal.org/6.3/SMDS_3/group__PkgSMDS3Functions.html#gad2f0b256c958cea9aff7fb4f855b53eb).
+
 ### [3D Mesh Generation](https://doc.cgal.org/6.3/Manual/packages.html#PkgMesh3)
 
 - **Breaking change**: The template parameter of `CGAL::Mesh_cell_criteria_3`,
