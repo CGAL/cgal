@@ -100,7 +100,7 @@ struct AABB_tree_graph_helper
       using Iterator = decltype(face_range.begin());
       constexpr bool is_random_access = std::is_base_of_v<std::random_access_iterator_tag, typename std::iterator_traits<Iterator>::iterator_category>;
       auto parallel_call = [&](const auto& range){
-        tbb::parallel_for(std::size_t(0), face_range.size(), [&](std::size_t i){
+        tbb::parallel_for(std::size_t(0), range.size(), [&](std::size_t i){
           face_descriptor f = *(range.begin() + i);
           put(bb_map, f, face_bbox(f, tm, parameters::vertex_point_map(vpm)));
           put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))) );
