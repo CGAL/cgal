@@ -659,7 +659,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<tru
   // by making them use the same line coefficients (which determines the speed of the front).
   //
   // That is achieved by creating a set of input edges, with two input edges being equal if they are collinear.
-  // If a new input edge is not successfully inserted into the same, it takes the line coefficients
+  // If a new input edge is not successfully inserted into the set, it takes the line coefficients
   // of the representative of this class.
 
   auto comparer = [&](Halfedge_handle lLH, Halfedge_handle lRH) -> bool
