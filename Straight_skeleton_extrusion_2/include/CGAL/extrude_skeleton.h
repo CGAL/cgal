@@ -1182,7 +1182,9 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   using SFT = typename SK::FT;
   using S_Point_3 = typename SK::Point_3;
 
-  using XK = typename Extrusion_kernel_selector<SK>::type;
+  using XK = typename internal_np::Lookup_named_param_def<internal_np::extrusion_traits_t,
+                                                          NamedParameters,
+                                                          SK>::type;
   using Point_3 = typename XK::Point_3;
 
   using parameters::choose_parameter;
@@ -1190,6 +1192,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
   SK sk = choose_parameter<SK>(get_parameter(np, CGAL::internal_np::geom_traits));
+  XK xk = choose_parameter<XK>(get_parameter(np, internal_np::extrusion_traits));
 
   const SFT s_height = choose_parameter(get_parameter(np, internal_np::maximum_height), default_extrusion_height<SFT>());
 
@@ -1234,7 +1237,6 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   points.reserve(2 * pwh.outer_boundary().size()); // just a reasonable guess
   faces.reserve(2 * pwh.outer_boundary().size() + 2*pwh.number_of_holes());
 
-  XK xk;
   Extrusion_builder<SK, XK> builder(sk, xk, verbose);
   bool res;
   if(slope != Slope::OUTWARD) // INWARD or VERTICAL
