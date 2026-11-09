@@ -72,7 +72,6 @@ public:
   inline Bbox_2&     operator+=(const Bbox_2 &b);
 
   inline const Bbox_2& bbox() const;
-  inline Bbox_2& bbox();
 
   inline int largest_span_index() const;
 
@@ -158,12 +157,6 @@ Bbox_2::max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const
 inline
 const Bbox_2&
 Bbox_2::bbox() const{
-  return *this;
-}
-
-inline
-Bbox_2&
-Bbox_2::bbox(){
   return *this;
 }
 

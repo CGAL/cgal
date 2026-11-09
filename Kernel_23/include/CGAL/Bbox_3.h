@@ -80,7 +80,6 @@ public:
   Bbox_3& operator+=(const Bbox_3& b);
 
   inline const Bbox_3& bbox() const;
-  inline Bbox_3& bbox();
 
   inline void dilate(int dist);
   inline void scale(double factor);
@@ -156,12 +155,6 @@ Bbox_3::operator!=(const Bbox_3 &b) const
 inline
 const Bbox_3&
 Bbox_3::bbox() const{
-  return *this;
-}
-
-inline
-Bbox_3&
-Bbox_3::bbox(){
   return *this;
 }
 
