@@ -196,9 +196,6 @@ public:
       this->list_it_ = list_it;
     }
 
-    /*!
-    * returns a unique ID of the node.
-    */
     int id() const
     {
       return this->id_;
