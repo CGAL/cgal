@@ -55,7 +55,7 @@ class Two_trees_listing_intersecting_primitives_traits
   typedef ::CGAL::AABB_node<AABBTraits2> Node2;
 
 public:
-  Two_trees_listing_intersecting_primitives_traits(const AABBTraits1& traits1, const AABBTraits2& traits2, OutputIterator out_)
+  Two_trees_listing_intersecting_primitives_traits(const AABBTraits1& traits1, const AABBTraits2& traits2, OutputIterator& out_)
     : m_traits1(traits1), m_traits2(traits2), out(out_)
   {}
 
@@ -101,7 +101,7 @@ public:
 private:
   const AABBTraits1& m_traits1;
   const AABBTraits2& m_traits2;
-  OutputIterator out;
+  OutputIterator& out;
 };
 
 template<typename AABBTraits1, typename AABBTraits2, typename OutputIterator, typename AffTransformation, bool Protected=true, class Use_inverse_transformation=Tag_false>
@@ -114,7 +114,7 @@ class Two_trees_listing_intersecting_primitives_traits_with_transformation
 
 public:
   Two_trees_listing_intersecting_primitives_traits_with_transformation(const AABBTraits1& traits1, const AABBTraits2& traits2,
-                                                                       OutputIterator out_,
+                                                                       OutputIterator& out_,
                                                                        const AffTransformation &tr1, const AffTransformation &tr2)
     : m_traits1(traits1), m_traits2(traits2),
       out(out_),
@@ -200,7 +200,7 @@ public:
 private:
   const AABBTraits1& m_traits1;
   const AABBTraits2& m_traits2;
-  OutputIterator out;
+  OutputIterator& out;
   const AffTransformation& m_tr1;
   const AffTransformation& m_tr2;
   AffTransformation m_tr1_inverse;

@@ -150,11 +150,11 @@ namespace AABB_trees {
             typename OutputIterator,
             typename NamedParameters1 = parameters::Default_named_parameters,
             typename NamedParameters2 = parameters::Default_named_parameters>
-  void all_pairs_of_intersecting_primitives(const AABBTree1 &tree1,
-                                            const AABBTree2 &tree2,
-                                            OutputIterator out,
-                                            const NamedParameters1& np1 = parameters::default_values(),
-                                            const NamedParameters2& np2 = parameters::default_values())
+  OutputIterator all_pairs_of_intersecting_primitives(const AABBTree1 &tree1,
+                                                      const AABBTree2 &tree2,
+                                                      OutputIterator out,
+                                                      const NamedParameters1& np1 = parameters::default_values(),
+                                                      const NamedParameters2& np2 = parameters::default_values())
   {
     using parameters::get_parameter;
     using parameters::choose_parameter;
@@ -167,7 +167,7 @@ namespace AABB_trees {
 
     // Early exit if one of the trees is empty
     if(tree1.empty() || tree2.empty())
-      return;
+      return out;
 
     if constexpr(is_default_parameter<NamedParameters1, internal_np::transformation_t>::value &&
                  is_default_parameter<NamedParameters2, internal_np::transformation_t>::value)
@@ -190,6 +190,8 @@ namespace AABB_trees {
                                                         traversal_traits(tree1.traits(), tree2.traits(), out, tr1, tr2);
       CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
     }
+
+    return out;
   }
 
   /// \ingroup PkgAABBTreeRef
@@ -204,13 +206,14 @@ namespace AABB_trees {
   template< typename Concurrency_tag = Sequential_tag,
             typename AABBTree,
             typename OutputIterator>
-  void all_pairs_of_intersecting_primitives(const AABBTree &tree,
-                                            OutputIterator out)
+  OutputIterator all_pairs_of_intersecting_primitives(const AABBTree &tree,
+                                                      OutputIterator out)
   {
     if(tree.size() <= 1)
-      return;
+      return out;
     CGAL::internal::AABB_tree::Two_trees_listing_intersecting_primitives_traits traversal_traits(tree.traits(), tree.traits(), out);
     CGAL::internal::AABB_tree::one_tree_traversal<Concurrency_tag>(tree, traversal_traits);
+    return out;
   }
 
    /// \ingroup PkgAABBTreeRef
