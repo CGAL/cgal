@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Straight_skeleton_3.h>
 
-#include <CGAL/Straight_skeleton_3/Configuration.h>
+#include <CGAL/Straight_skeleton_3/internal/Configuration.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_transformation.h>

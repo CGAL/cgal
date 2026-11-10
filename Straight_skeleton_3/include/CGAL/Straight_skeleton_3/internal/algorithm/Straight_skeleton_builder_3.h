@@ -102,7 +102,6 @@
 #include <CGAL/Straight_skeleton_3/internal/helpers.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Geom_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters.h>
@@ -110,6 +109,7 @@
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_transformation.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_perturbation.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_self_intersection.h>
+#include <CGAL/Straight_skeleton_3.h>
 #include <CGAL/Straight_skeleton_3/IO/OBJ.h>
 #include <CGAL/Straight_skeleton_3/IO/Face_graph_IO.h>
 

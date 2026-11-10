@@ -20,7 +20,7 @@
 #include <CGAL/license/Straight_skeleton_3.h>
 
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
+#include <CGAL/Straight_skeleton_3.h>
 
 #include <boost/shared_array.hpp>
 

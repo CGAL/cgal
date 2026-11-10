@@ -25,7 +25,7 @@
 #include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
-#include <CGAL/Straight_skeleton_3/Configuration.h>
+#include <CGAL/Straight_skeleton_3/internal/Configuration.h>
 
 #ifdef CGAL_SS3_DUMP_FILES
 # include <CGAL/Straight_skeleton_3/IO/OBJ.h>

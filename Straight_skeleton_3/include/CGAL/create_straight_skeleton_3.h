@@ -13,7 +13,7 @@
 
 #include <CGAL/license/Straight_skeleton_3.h>
 
-#include <CGAL/Straight_skeleton_3/Configuration.h>
+#include <CGAL/Straight_skeleton_3/internal/Configuration.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/IO/Face_graph_IO.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Straight_skeleton_builder_3.h>

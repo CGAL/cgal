@@ -1,7 +1,9 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Straight_skeleton_3/create_straight_skeleton_3.h>
+#include <CGAL/create_straight_skeleton_3.h>
+#include <CGAL/Straight_skeleton_3.h>
+#include <CGAL/Straight_skeleton_3/IO/OBJ.h>
 
 #include <CGAL/Real_timer.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>

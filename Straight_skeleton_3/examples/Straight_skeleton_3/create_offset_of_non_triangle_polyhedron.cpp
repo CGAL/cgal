@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Straight_skeleton_3/create_offset_polyhedra.h>
+#include <CGAL/create_offset_polyhedra.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>

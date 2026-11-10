@@ -6,7 +6,7 @@
 #define CGAL_STRAIGHT_SKELETON_3_TEST_OFFSET_PIPELINE_H
 
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
-#include <CGAL/Straight_skeleton_3/create_offset_polyhedra.h>
+#include <CGAL/create_offset_polyhedra.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
