@@ -31,6 +31,7 @@
 
 #include <cmath>
 #include <exception>
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <sstream>
@@ -66,7 +67,7 @@ namespace IO {
  */
 template <typename GeomTraits,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const std::string& filename,
+bool write_OBJ(const std::filesystem::path& filename,
                std::shared_ptr<internal::HDS::Polyhedron<GeomTraits> > polyhedron,
                const CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -309,7 +310,7 @@ bool write_OBJ(const std::string& filename,
  */
 template <typename GeomTraits,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const std::string& filename,
+bool write_OBJ(const std::filesystem::path& filename,
                const std::shared_ptr<Straight_skeleton_3<GeomTraits> >& skeleton,
                const typename GeomTraits::FT& time,
                const CGAL_NP_CLASS& np = parameters::default_values())

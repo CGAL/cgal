@@ -190,7 +190,7 @@ construct_skeleton(const TriangleMesh& tmesh,
  *    \cgalParamNBegin{config_file_path}
  *      \cgalParamDescription{the path to a configuration file to the algorithm. See the documentation
  *                            of the class `CGAL::Straight_skeletons_3::Configuration` for details.}
- *      \cgalParamType{`std::string`}
+ *      \cgalParamType{`std::filesystem::path`}
  *      \cgalParamDefault{no configuration file, in which case default values are used for all
  *                        configuration options (see the documentation of the class
  *                        `CGAL::Straight_skeletons_3::Configuration` for details).}
