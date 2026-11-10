@@ -397,19 +397,18 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
                              const Triangulation& tr)
 {
   using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Facet = typename Triangulation::Facet;
   using Cell_handle = typename Triangulation::Cell_handle;
   using Cell_circulator = typename Triangulation::Cell_circulator;
+  using VPair = std::pair<Vertex_handle, Vertex_handle>;
 
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
-
   if(tr.is_infinite(v0) || tr.is_infinite(v1))
     return false;
 
   // collect vertices of link(edge) - the "circle" around edge
-  std::vector<Vertex_handle> edge_link_vertices;
-  edge_link_vertices.reserve(12);
-
+  boost::container::small_vector<VPair, 16> ring_edges;
   Cell_circulator circ = tr.incident_cells(edge);
   Cell_circulator done = circ;
   do
@@ -417,72 +416,92 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
     if(tr.is_infinite(circ))
       return false;
 
+    const int i0 = circ->index(v0);
+    const int i1 = circ->index(v1);
+
+    std::array<Vertex_handle, 2> vp;
+    int n = 0;
     for(int k = 0; k < 4; ++k)
     {
-      Vertex_handle vk = circ->vertex(k);
-      if(vk != v0 && vk != v1)
-        edge_link_vertices.push_back(vk);
+      if(k != i0 && k != i1)
+        vp[n++] = circ->vertex(k);
     }
-  } while(++circ != done);
 
-  std::sort(edge_link_vertices.begin(), edge_link_vertices.end());
-  edge_link_vertices.erase(std::unique(edge_link_vertices.begin(), edge_link_vertices.end()),
-                           edge_link_vertices.end());
+    ring_edges.emplace_back(make_vertex_pair(vp[0], vp[1]));
+  }
+  while(++circ != done);
 
-  const std::size_t ring_size = edge_link_vertices.size();
+  // collect ring vertices and sort them to be able to use std::binary_search
+  boost::container::small_vector<Vertex_handle, 16> ring_vertices;
+  for(const VPair& e : ring_edges)
+  {
+    ring_vertices.push_back(e.first);
+    ring_vertices.push_back(e.second);
+  }
+  std::sort(ring_vertices.begin(), ring_vertices.end());
+  ring_vertices.erase(std::unique(ring_vertices.begin(), ring_vertices.end()),
+                       ring_vertices.end());
+  std::sort(ring_edges.begin(), ring_edges.end());
+
+  const std::size_t ring_size = ring_vertices.size();
 
   // collect the intersection of neighbors of v0 and neighbors of v1
-  std::vector<Vertex_handle> neighbors_v0, neighbors_v1;
+  // the ring is included in this intersection
+  boost::container::small_vector<Vertex_handle, 64> neighbors_v0, neighbors_v1;
   tr.adjacent_vertices(v0, std::back_inserter(neighbors_v0));
-  if(neighbors_v0.size() < ring_size)
-    return false; // v0 has fewer neighbors than the link, so there must be a shared neighbor outside the link
 
-  tr.adjacent_vertices(v1, std::back_inserter(neighbors_v1));
-  if(neighbors_v1.size() < ring_size)
-    return false; // v1 has fewer neighbors than the link, so there must be a shared neighbor outside the link
-
-  std::sort(neighbors_v0.begin(), neighbors_v0.end());
-  std::sort(neighbors_v1.begin(), neighbors_v1.end());
-
-  std::size_t common_count = 0;
-  auto it0 = neighbors_v0.begin();
-  auto it1 = neighbors_v1.begin();
-
-  while(it0 != neighbors_v0.end() && it1 != neighbors_v1.end())
+  if(neighbors_v0.size() != ring_size + 1)//o.w. N(v0)\v1 is the ring
   {
-    if(*it0 < *it1)       ++it0;
-    else if(*it1 < *it0)  ++it1;
-    else
+    // so there must be a shared neighbor outside the link
+    tr.adjacent_vertices(v1, std::back_inserter(neighbors_v1));
+    if(neighbors_v1.size() != ring_size + 1)//o.w. N(v1)\v0 is the ring
     {
-      if(!std::binary_search(edge_link_vertices.begin(), edge_link_vertices.end(), *it0))
-        return false;// there is a shared neighbor of v0 and v1 that is not in the link of edge
-      ++common_count;
-      ++it0;
-      ++it1;
+      // there must be a shared neighbor outside the link
+      std::sort(neighbors_v0.begin(), neighbors_v0.end());
+
+      std::size_t count_common = 0;
+      for(const Vertex_handle nv1 : neighbors_v1)
+      {
+        // if nv1 is a neighbor of v0
+        if(std::binary_search(neighbors_v0.begin(), neighbors_v0.end(), nv1)
+          && ++count_common > ring_size)
+          return false;// there is a shared neighbor of v0 and v1 that is not in the link of edge
+      }
     }
   }
 
-  if(common_count != ring_size)
-    return false; // there are missing or extra vertices
+  // Check the chords for the link condition
+  // check the case where :
+  // facets [v0, x, y] and [v1, x, y] exist with x and y in the link of edge
+  // but the edge [x, y] is not in the link of edge, so it is a chord
+  boost::container::small_vector<Cell_handle, 64> cells0;
+  tr.incident_cells(v0, std::back_inserter(cells0));
 
-  if(ring_size == neighbors_v0.size() && ring_size == neighbors_v1.size())
-    return true; // the link is exactly the set of neighbors of v0 and v1
-                 // there is no extra chord edge possible
-
-  // Check the link condition
-  // for each pair of vertices in the link, if they are connected by an edge of the triangulation,
-  // that edge must belong to one of the cells incident to `edge`
-  // (checking that there are no "chords" in the link that would violate the link condition)
-  for(std::size_t i = 0; i < ring_size; ++i)
+  for(const Cell_handle c0 : cells0)
   {
-    const Vertex_handle v_curr = edge_link_vertices[i];
-    const Vertex_handle v_next = edge_link_vertices[(i + 1) % ring_size];
+    if(c0->has_vertex(v1) || tr.is_infinite(c0))
+      continue;
 
-    // check that the facet "closing" the ring exists in the triangulation
-    if(!tr.is_facet(v0, v_curr, v_next) && !tr.is_facet(v1, v_curr, v_next))
-      return false;
+    // c0 is incident to v0 but not to v1
+    std::array<Vertex_handle, 3> vc0 = tr.vertices(Facet(c0, c0->index(v0)));
+
+    for(int a = 0; a < 3; ++a)
+    {
+      for(int b = a + 1; b < 3; ++b)
+      {
+        // check if both vertices are in the ring
+        if(  !std::binary_search(ring_vertices.begin(), ring_vertices.end(), vc0[a])
+          || !std::binary_search(ring_vertices.begin(), ring_vertices.end(), vc0[b]))
+          continue;
+
+        const VPair vp = make_vertex_pair(vc0[a], vc0[b]);
+        if(std::binary_search(ring_edges.begin(), ring_edges.end(), vp))
+          continue;
+        if(tr.is_facet(v1, vc0[a], vc0[b])) // check is_facet as the last condition
+          return false;
+      }
+    }
   }
-
   return true;
 }
 
