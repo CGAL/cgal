@@ -234,7 +234,7 @@ is that the straight skeleton is not uniquely defined in 3D.
 <img src="sps_vertex_split.png" style="max-width:100%;"/>
 </center>
 \cgalFigureCaptionBegin{SPS3VertexSplit}
-Splitting a high-degree vertex.
+Splitting a high-degree vertex: multiple valid combinatorial choices may coexist.
 \cgalFigureCaptionEnd
 
 The ambiguity stemming from the arbitrary choice of vertex split can also arise during event handling:
@@ -266,7 +266,7 @@ even creating multiple disconnected edge graphs (Figure from \cgalCite{cgal:b-mb
 
 Finally, the main difference, which results from the previous vertex behavior observations,
 is that possible topological changes for an arbitrary polyhedron input can be arbitrarily complex:
-faces may partially merge together, vertices may pierce in the direction of an edge, etc.
+sections of parallel faces may collide, vertices may pierce in the direction of an edge, etc.
 Some complex changes can also happen in 2D, for example partial edge merges of polygons,
 but such degenerate events can be decomposed into a series of simple events, followed by a geometric
 merge of identical positions, and an untangling of the skeleton. In 3D, a similar approach is, at
@@ -359,21 +359,20 @@ This choice stems from the recurring computation of the intersection of moving e
 In 3D, the key geometric operation is the intersection of four shifting 3D (supporting) planes,
 answering the question: when and where will these four planes intersect in a single point.
 The position and time correspond to a potential event involving these four facets.
+Exact constructions are furthermore necessary for robustness for example to ensure that all vertices
+lay exactly on the supporting planes of their respective incident facets.
 
-For the computation to be meaningful, these planes must be normalized. This inevitably introduces
-square root computations.
-
-However, due to the mandatory perturbation mechanisms described in \ref Straight_skeleton_3GeneralPosition,
-the use of a traits providing exact square root computations is not recommended: a (tiny) numerical
-error in the normalization of planes is anyway indistinguishable from the perturbation.
-Exact constructions are required to ensure that all vertices lay exactly on the supporting planes
-of their respective incident facets.
+On paper, the computation of the intersection of four planes requires normalization of the planes, which involves
+exact square root computations. However, due to the mandatory perturbation mechanisms described
+in \ref Straight_skeleton_3GeneralPosition, the exactness of the square root is not necessary,
+as the perturbation will absorb any numerical inaccuracy in the normalized plane. Therefore,
+the use of a traits providing exact square root computations is not recommended.
 
 \section Straight_skeleton_3Example Examples
 
 \subsection Straight_skeleton_3CreateStraightSkeleton Construction and Drawing of a Straight Skeleton
 
-The following example illustrates how to construct an outer straight skeleton and draw it.
+The following example illustrates how to construct a 3D straight skeleton and inspect it.
 
 \cgalExample{Straight_skeleton_3/create_straight_skeleton_3.cpp}
 
@@ -386,8 +385,8 @@ input.
 
 \section Straight_skeleton_3ImplementationHistory Implementation History
 
-Mael Rouxel-Labbé created the first version of this package based on a prototype by Gernot Walzl
-and Franz Aurenhammer, and developed it with their assistance.
+Mael Rouxel-Labbé created the first version of this package, based on a prototype by Gernot Walzl
+and Franz Aurenhammer.
 
 */
 
