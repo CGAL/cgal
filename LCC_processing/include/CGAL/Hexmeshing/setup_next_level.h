@@ -250,12 +250,6 @@ namespace CGAL::internal::Hexmeshing
     }
 
     if (identified) {
-      if (lcc.attribute<2>(back_face) != nullptr){
-        lcc.mark_cell<2>(back_face, hdata.debug);
-        lcc.mark_cell<2>(face, hdata.debug2);
-        // debug_stream.push(l_thread_id);
-        std::this_thread::sleep_for(std::chrono::hours(1));
-      }
       CGAL_assertion(lcc.attribute<2>(back_face) == nullptr);
       CGAL_assertion(!lcc.is_free<3>(back_face));
 
