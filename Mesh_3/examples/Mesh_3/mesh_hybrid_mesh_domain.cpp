@@ -172,7 +172,7 @@ typedef CGAL::Mesh_triangulation_3<Domain, K>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr>     Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3>   Mesh_criteria;
 typedef Mesh_criteria::Edge_criteria  Edge_criteria;
 typedef Mesh_criteria::Facet_criteria Facet_criteria;
 typedef Mesh_criteria::Cell_criteria  Cell_criteria;

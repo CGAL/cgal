@@ -19,23 +19,47 @@
 #include <CGAL/Polygon_mesh_processing/internal/clip_convex.h>
 #include <CGAL/Polygon_mesh_processing/internal/Three_point_cut_plane_traits.h>
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/assertions.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/centroid.h>
+#include <CGAL/Dynamic_property_map.h>
+#include <CGAL/enum.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Fraction_traits.h>
+#include <CGAL/global_functions_distance_3.h>
+#include <CGAL/Lazy.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Origin.h>
 #include <CGAL/Profile_counter.h>
+#include <CGAL/property_map.h>
+#include <CGAL/Simple_cartesian.h>
 
+#include <CGAL/utils.h>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/iterator/transform_iterator.hpp>
 
 #include <algorithm>
 #include <array>
+#include <chrono>
+#include <climits>
+#include <cmath>
+#include <cstddef>
 #include <functional>
+#include <iostream>
 #include <iterator>
+#include <limits>
 #include <optional>
 #include <random>
+#include <string_view>
+#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -60,14 +84,23 @@ auto centroid(const PolygonMesh& pm, const GetPointFunctor& gpf)
 
   for(auto f : faces(pm)){
     auto h = halfedge(f, pm);
-    const auto& p1 = gpf(source(h, pm));
-    const auto& p2 = gpf(target(h, pm));
-    const auto& p3 = gpf(target(next(h, pm), pm));
-    auto vol = CGAL::volume(p0, p1, p2, p3);
-    if(is_zero(vol)) continue;
-    total_volume = total_volume + vol;
-    auto tet_centroid = ((p0 - ORIGIN) + (p1 - ORIGIN) + (p2 - ORIGIN) + (p3 - ORIGIN))/4;
-    weighted_center = weighted_center + vol * tet_centroid;
+    const auto v1 = source(h, pm);
+    const auto& p1 = gpf(v1);
+    auto h_next = next(h, pm);
+
+    while(target(h_next, pm) != v1){
+      const auto& p2 = gpf(target(h, pm));
+      const auto& p3 = gpf(target(h_next, pm));
+      auto vol = CGAL::volume(p0, p1, p2, p3);
+      if(!is_zero(vol)){
+        total_volume = total_volume + vol;
+        auto tet_centroid = ((p0 - ORIGIN) + (p1 - ORIGIN) + (p2 - ORIGIN) + (p3 - ORIGIN))/4;
+        weighted_center = weighted_center + vol * tet_centroid;
+      }
+
+      h = h_next;
+      h_next = next(h_next, pm);
+    }
   }
 
   return CGAL::ORIGIN + (weighted_center / total_volume);
@@ -85,7 +118,7 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
   using Plane_3 = typename GT::Plane_3;
   using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
-  if (vertices(pm).size() <= 4)
+  if (faces(pm).size() <= 4)
     return centroid(boost::make_transform_iterator(vertices(pm).begin(), gpf),
                     boost::make_transform_iterator(vertices(pm).end(), gpf));
 
@@ -100,14 +133,19 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
     }
   }
 
+  const Point_3& p0 = gpf(v0);
+
+  if(v1 == vertex_descriptor())
+    return p0;
+
   CGAL_assertion(v1 != vertex_descriptor());
   CGAL_assertion(v1 != v0);
 
-  const Point_3& p0 = gpf(v0);
   const Point_3& p1 = gpf(v1);
   FT max_depth(0);
   vertex_descriptor v2;
   for(vertex_descriptor v: vertices(pm)){
+    if(v == v0 || v == v1) continue;
     const Point_3& p2 = gpf(v);
 #ifdef CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DISTANCE
     FT dist = (CGAL::min)(squared_distance(p0, p2), squared_distance(p1, p2));
@@ -116,7 +154,6 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
       max_depth = dist;
     }
 #else // CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DEPTH
-    if(v == v0 || v == v1) continue;
     Point_3 c = centroid(p0, p1, p2);
     FT centroid_depth = (CGAL::max)( squared_distance(c, Line_3(p0, p1)),
                           (CGAL::max)( squared_distance(c, Line_3(p0, p2)),
@@ -128,7 +165,10 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
 #endif
   }
 
-  CGAL_assertion(v2 != vertex_descriptor());
+
+  if(v2 == vertex_descriptor())
+    return midpoint(p0, p1);
+
   CGAL_assertion(v2 != v0);
   CGAL_assertion(v2 != v1);
 
@@ -137,6 +177,7 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
   max_depth = 0;
   vertex_descriptor v3;
   for(vertex_descriptor v: vertices(pm)){
+    if(v == v0 || v == v1 || v == v2) continue;
     const Point_3& p3 = gpf(v);
 #ifdef CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DISTANCE
     FT dist = (CGAL::min)( squared_distance(p0, p3),
@@ -147,7 +188,6 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
       max_depth = dist;
     }
 #else // CGAL_PMP_KERNEL_POINT_TETRAHEDRON_WITH_MAX_DEPTH
-    if(v == v0 || v == v1 || v == v2) continue;
     Point_3 c = centroid(p0, p1, p2, p3);
     FT centroid_depth = (CGAL::max)(
                           (CGAL::max)( squared_distance(c, Plane_3(p0, p1, p2)),
@@ -160,8 +200,10 @@ typename GT::Point_3 find_intern_point(const PolygonMesh& pm,const GetPointFunct
     }
 #endif
   }
-  CGAL_assertion(v3 != vertex_descriptor());
-  return centroid(p0, p1, p2, gpf(v3));;
+  if(v3 != vertex_descriptor())
+    return centroid(p0, p1, p2, gpf(v3));
+  else
+    return centroid(p0, p1, p2);
 #endif
 }
 
@@ -214,7 +256,7 @@ kernel(const FaceRange& face_range,
   bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
   bool check_euler_characteristic = !choose_parameter(get_parameter(np, internal_np::allow_open_input), false) && std::size_t(std::distance(face_range.begin(), face_range.end()))==faces(pm).size();
-  unsigned seed = choose_parameter(get_parameter(np, internal_np::random_seed), unsigned(-1));
+  unsigned seed = choose_parameter(get_parameter(np, internal_np::random_seed), UINT_MAX);
   auto rng = is_default_parameter<NamedParameters, internal_np::random_seed_t>::value ? std::default_random_engine(): std::default_random_engine(seed);
 
   // Immediate exit if the input is well-formed and not of genus zero
@@ -385,13 +427,33 @@ kernel(const FaceRange& face_range,
         std::cerr << method_name << " computation time: " << duration.count() << " microseconds" << std::endl;
       }
 
-      if(!is_valid(x) || !is_valid(y) || !is_valid(z)) { return false; } // check for NaN
+      if(!is_finite(x) || !is_finite(y) || !is_finite(z)) { return false; } // reject NaN and infinity
       EPoint_3 exact_point(x, y, z);
 
       if(is_inside_kernel(exact_point)) {
         *p = from_exact(exact_point);
         return true;
       }
+
+      x = std::nextafter(x, -std::numeric_limits<double>::infinity());
+      y = std::nextafter(y, -std::numeric_limits<double>::infinity());
+      z = std::nextafter(z, -std::numeric_limits<double>::infinity());
+
+      for(int i = 0; i < 3; ++i) {
+        for(int j = 0; j < 3; ++j) {
+          for(int k = 0; k < 3; ++k) {
+            EPoint_3 candidate_point(x, y, z);
+            if(is_inside_kernel(candidate_point)) {
+              *p = from_exact(candidate_point);
+              return true;
+            }
+            z = std::nextafter(z, -std::numeric_limits<double>::infinity());
+          }
+          y = std::nextafter(y, -std::numeric_limits<double>::infinity());
+        }
+        x = std::nextafter(x, -std::numeric_limits<double>::infinity());
+      }
+
       return false;
     };
 
@@ -412,20 +474,14 @@ kernel(const FaceRange& face_range,
       return;
     }
 
-    // triangulate the kernel, to be able to compute a centroid
-    bool triangulated =
-        CGAL::Polygon_mesh_processing::triangulate_faces(kernel, CGAL::parameters::vertex_point_map(kvpm));
-
-    if(!triangulated &&
-       test_a_method_to_construct_an_inside_point([&] { return find_intern_point<AK>(kernel, to_approx); },
-                                                  "Approximate find_intern_point"))
+    if(test_a_method_to_construct_an_inside_point([&] { return centroid<AK>(kernel, to_approx); },
+                                                  "Approximate centroid"))
     {
       return;
     }
 
-    if(triangulated &&
-       test_a_method_to_construct_an_inside_point([&] { return centroid<AK>(kernel, to_approx); },
-                                                  "Approximate centroid"))
+    if(test_a_method_to_construct_an_inside_point([&] { return find_intern_point<AK>(kernel, to_approx); },
+                                                  "Approximate find_intern_point"))
     {
       return;
     }
@@ -445,29 +501,30 @@ kernel(const FaceRange& face_range,
       return;
     }
 
-    if(triangulated &&
-      test_a_method_to_construct_an_inside_point([&] { return find_intern_point<ExactK>(kernel, to_exactk); },
-                                                  "Exact find_intern_point"))
+    ExactPoint_3 exact_centroid;
+    if(test_a_method_to_construct_an_inside_point([&] { return exact_centroid = centroid<ExactK>(kernel, to_exactk); },
+                                                  "Exact centroid"))
     {
       return;
     }
 
-    ExactPoint_3 exact_centroid;
-    if(triangulated &&
-      test_a_method_to_construct_an_inside_point([&] { return exact_centroid = centroid<ExactK>(kernel, to_exactk); },
-                                                  "Exact centroid"))
+    ExactPoint_3 exact_inner_point;
+    if(test_a_method_to_construct_an_inside_point(
+           [&] { return exact_inner_point = find_intern_point<ExactK>(kernel, to_exactk); },
+           "Exact find_intern_point"))
     {
       return;
     }
 
     CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
 
-    // Not inside if the GT kernel is not EPECK
-    auto result = from_exact(EPoint_3(exact_centroid));
-    if(is_inside_kernel(to_exact(result))) {
-      *p = result;
-      return;
+    if(Algebraic_structure_traits<typename GT::FT>::Is_exact::value) {
+      // If GT is an exact kernel, we can directly use the exact inner point
+      *p = from_exact(EPoint_3(exact_inner_point));
+
+      // Otherwise, we have not found a suitable point inside the kernel.
     }
+    return;
   }
 
   // Convert points of the kernel to the type of the input mesh

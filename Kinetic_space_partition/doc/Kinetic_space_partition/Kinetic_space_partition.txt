@@ -10,14 +10,14 @@ namespace CGAL {
 
 \section Ksp_introduction Introduction
 
-This \cgal component implements the kinetic space partition proposed by Bauchet et. al \cgalCite{bauchet2020kinetic}. It takes as input a set of non-coplanar convex polygons and partitions the bounding box of the input into polyhedra, where each polyhedron and its facets are convex. Each facet of the partition is part of the input polygons or an extension of them.
+This \cgal component implements the kinetic space partition proposed by Bauchet et. al \cgalCite{bauchet2020kinetic}. It takes as input a set of convex polygons and partitions the bounding box of the input into polyhedra, where each polyhedron and its facets are convex. Input polygons that are coplanar up to a small tolerance share a support plane and expand separately. Pieces of several coplanar polygons that initially lie in the same face of the arrangement of intersection lines within their plane are merged into their convex hull, see `CGAL::Kinetic_space_partition_3::insert()`. Each facet of the partition is part of the input polygons or an extension of them.
 
 The kinetic partition homogeneously expands each input polygon along its support plane until collisions occur between them. At each collision, their expansion may stop, they may restrict the propagation along an intersection line between two support planes or they may continue beyond the intersection line. The polygons are split at the beginning of the kinetic simulation and at each collision along the intersection line to be intersection-free.
 
 Whether a polygon is expanded beyond an intersection with another polygon, depends on the user specified `k` parameter. Choosing `k = 1` will cause the expansion of polygons to locally stop at the first intersection with another polygon and choosing `k` equal to the number of input polygons will lead to a full expansion of each polygon to the bounding box.
 
 \section Ksp_algorithm Algorithm
-The first step of the method creates a plane arrangement between the support planes of the input polygons. The computation of a plane arrangement has \cgalBigO{n^3}. To speed up the computation the input data can be decomposed into separate kinetic partitions using an octree. The decomposition limits the expansion of an input polygon to octree nodes it initially intersects. The usage of an octree significantly speeds up the creation of the kinetic partition. However, it adds facets to the partition which originate from the octree and do not belong to an input polygon.
+The first step of the method creates a plane arrangement between the support planes of the input polygons. The computation of a plane arrangement has \cgalBigO{n^3}. To speed up the computation the input data can be decomposed into separate kinetic partitions using an octree. The decomposition limits the expansion of an input polygon to octree nodes it initially intersects. The usage of an octree significantly speeds up the creation of the kinetic partition. However, it adds facets to the partition which originate from the octree and do not belong to an input polygon. The kinetic partitions of the octree nodes are computed independently of each other and are merged into a single conformal partition afterwards. Hence, the octree nodes can be processed in parallel, see Section \ref Ksp_usage.
 The plane arrangement contains all points and lines of the intersections between the support planes and the bounding box. For each support plane, all intersections with the bounding box and other support planes are given by lines, edges and vertices of the arrangement. The kinetic partition created in the second step is a subset of faces of the arrangement depending on the `k` parameter.
 
 \cgalFigureBegin{Ksp_introductionfig,intersection_graph.png}
@@ -43,7 +43,7 @@ The main parameter of this method is `k`, the maximum number of intersections th
 The default bounding box of the partition is axis-aligned. Setting `reorient_bbox` to true aligns the x-axis of the bounding box with the direction of the largest variation in horizontal direction of the input data while maintaining the z-axis.
 
 - `bbox_dilation_ratio`: FT\n
-By default the size bounding box of the input data is increased by 10% to avoid that input polygons are coplanar with the sides of the bounding box.
+By default, the size of the bounding box of the input data is increased by 10% to avoid that input polygons are coplanar with the sides of the bounding box.
 
 - `max_octree_node_size`: unsigned int\n
 A kinetic partition is split into 8 subpartitions using an octree if the number of intersecting polygons is larger than specified. The default value is 40 polygons.
@@ -51,12 +51,22 @@ A kinetic partition is split into 8 subpartitions using an octree if the number 
 - `max_octree_depth`: unsigned int\n
 Limits the maximum depth of the octree decomposition. A limitation is necessary as arbitrary dense polygon configurations exist, e.g., a star. The default value is set to 3.
 
+\subsection Ksp_usage Computing a Partition
+
+After providing the input polygons via `CGAL::Kinetic_space_partition_3::insert()`, there are two ways to compute the kinetic partition:
+
+- `CGAL::Kinetic_space_partition_3::init_and_partition()` decomposes the input using the octree and computes the kinetic partition of each octree node one after the other. The kinetic data structure of an octree node is created right before its propagation and released after its finalization. This way has the lowest memory consumption and is recommended for large data sets or when partitions for several `k` values are not required.
+
+- `CGAL::Kinetic_space_partition_3::initialize()` decomposes the input using the octree and initializes the kinetic data structures of all octree nodes, which are kept afterwards. `CGAL::Kinetic_space_partition_3::partition()` then propagates the kinetic polygons and creates the partition. It can be called several times, e.g., with different values of `k`, without repeating the octree decomposition and the initialization. As the initialized kinetic data structures of all octree nodes exist at the same time, the memory consumption is considerably higher.
+
+All three functions take a template parameter `ConcurrencyTag` that defaults to `CGAL::Parallel_if_available_tag`. \ref thirdpartyTBB is required for a parallel processing. In the parallel version, one kinetic data structure per running thread is processed at the same time, which increases the memory consumption compared to the sequential version. The decomposition by the octree and the merging of the partitions of the octree nodes into a single conformal partition are always performed sequentially.
+
 \section Ksp_result Result
 The kinetic partition can be accessed as a `LinearCellComplex` via `CGAL::Kinetic_space_partition_3::get_linear_cell_complex()`.
 
 \subsection Ksp_examples Examples
 
-The following example reads a set of polygons from a file and creates a kinetic partition. Increasing the `k` parameter to 2 or 3 leads to a more detailed kinetic partition.
+The following example reads a set of polygons from a file and creates a kinetic partition using `CGAL::Kinetic_space_partition_3::initialize()` and `CGAL::Kinetic_space_partition_3::partition()`. Increasing the `k` parameter to 2 or 3 leads to a more detailed kinetic partition. If only a single partition is needed, both calls can be replaced by `CGAL::Kinetic_space_partition_3::init_and_partition()` to reduce the memory consumption.
 
 \cgalExample{Kinetic_space_partition/kinetic_partition.cpp}
 

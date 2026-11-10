@@ -144,7 +144,7 @@ void dump_2d_surface_mesh(
     CGAL_assertion(vertices.size() >= 3);
     const auto face = mesh.add_face(vertices);
     if (face == Mesh::null_face()) {
-      std::cout << "could not dump mesh " << tag << std::endl;
+      KSP::internal::Log_line() << "could not dump mesh " << tag;
       return;
     }
     std::tie(red[face], green[face], blue[face]) =
@@ -391,12 +391,12 @@ public:
     const std::string file_name) const {
 
     if (points.size() != normals.size()) {
-      std::cout << "export_regions_3: number of points and normals are not equal" << std::endl;
+      KSP::internal::Log_line() << "export_regions_3: number of points and normals are not equal";
       return;
     }
 
     if (points.size() != region.size()) {
-      std::cout << "export_regions_3: number of points and region indices are not equal" << std::endl;
+      KSP::internal::Log_line() << "export_regions_3: number of points and region indices are not equal";
       return;
     }
 
@@ -417,7 +417,7 @@ public:
     const std::string file_name) const {
 
     if (points.size() != normals.size()) {
-      std::cout << "export_regions_3: number of points and normals are not equal" << std::endl;
+      KSP::internal::Log_line() << "export_regions_3: number of points and normals are not equal";
       return;
     }
 
@@ -439,7 +439,7 @@ public:
     const std::string file_name) const {
 
     if (points.size() != normals.size() && points.size() != colors.size()) {
-      std::cout << "export_regions_3: number of points and normals or colors are not equal" << std::endl;
+      KSP::internal::Log_line() << "export_regions_3: number of points and normals or colors are not equal";
       return;
     }
 
@@ -694,9 +694,7 @@ private:
     std::ofstream file(file_path.c_str(), std::ios_base::out);
 
     if (!file)
-      std::cerr << std::endl <<
-        "ERROR: WHILE SAVING FILE " << file_path
-      << "!" << std::endl << std::endl;
+      KSP::internal::Log_line(std::string(), std::cerr) << "ERROR: WHILE SAVING FILE " << file_path << "!";
 
     file << stream.str();
     file.close();
@@ -1101,7 +1099,7 @@ void dump_info(
   const std::vector<PFace>& nfaces,
   const std::string &suffix) {
 
-  std::cout << "DEBUG: number of found nfaces: " << nfaces.size() << std::endl;
+  KSP::internal::Log_line() << "DEBUG: number of found nfaces: " << nfaces.size();
   dump_pface(data, pface, "face-curr-" + suffix);
   dump_pedge(data, pedge, "face-edge-" + suffix);
   for (std::size_t i = 0; i < nfaces.size(); ++i) {

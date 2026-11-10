@@ -42,6 +42,7 @@ public:
 
     void set_mirror_index(const int i, const int index)
     {
+        CGAL_assume(std::size_t(i)<mirror_vertices_.size());
         mirror_vertices_[i] = static_cast<std::int_least8_t>(index);
     }
     int mirror_index(const int i) const

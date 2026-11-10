@@ -34,7 +34,7 @@ The default values for the thresholds and the ratio depend on the dimension.
 \cgalHeading{Implementation}
 
 Creates an instance of `Multiscale_sort<Hilbert_sort>`
-where `Hilbert_sort` is an Hilbert sorting object,
+where `Hilbert_sort` is a Hilbert sorting object,
 and calls its `operator()`.
 
 The `threshold_hilbert` is the minimal size of a point set to be

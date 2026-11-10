@@ -512,6 +512,7 @@ triangulate_a_face(
                 ::halfedge_descriptor>& edge_to_hedge,
   const CDT& cdt,
   const VertexPointMap& vpm,
+  bool orientation_flipped,
   OutputBuilder& output_builder,
   UserVisitor& user_visitor)
 {
@@ -577,6 +578,9 @@ triangulate_a_face(
     typename CDT::Vertex_handle cdt_v0=it->vertex(0);
     typename CDT::Vertex_handle cdt_v1=it->vertex(1);
     typename CDT::Vertex_handle cdt_v2=it->vertex(2);
+
+    if (orientation_flipped)
+      std::swap(cdt_v0, cdt_v2);
 
     Node_id i0=cdt_v0->info(), i1=cdt_v1->info(), i2=cdt_v2->info();
 

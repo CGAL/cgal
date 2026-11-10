@@ -34,7 +34,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index> C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 // Triangulation for Remeshing
 typedef CGAL::Triangulation_3<typename Tr::Geom_traits,
@@ -47,7 +47,7 @@ using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
 
 
 // To avoid verbose function and named parameters call
-namespace p = CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
@@ -70,12 +70,12 @@ int main(int argc, char* argv[])
   domain.detect_features();
 
   // Mesh criteria
-  Mesh_criteria criteria(p::edge_size = 0.1,
-                         p::facet_size = 0.1,
-                         p::facet_distance = 0.005);
+  Mesh_criteria criteria(params::edge_size = 0.1,
+                         params::facet_size = 0.1,
+                         params::facet_distance = 0.005);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, p::no_perturb().no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_perturb().no_exude());
 
   timer.stop();
   std::cout << "Meshing done (" << timer.time()
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
   Constraints_pmap constraints_pmap(constraints);
 
   Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3),
-      p::edge_is_constrained_map(constraints_pmap));
+      params::edge_is_constrained_map(constraints_pmap));
 
   //note we use the move semantic, with std::move(c3t3),
   //  to avoid a copy of the triangulation by the function
@@ -101,8 +101,8 @@ int main(int argc, char* argv[])
   //  Then the triangulation is copied and duplicated, and c3t3 remains as is.
 
   CGAL::tetrahedral_isotropic_remeshing(tr,
-    CGAL::create_adaptive_remeshing_sizing_field(tr, p::edge_is_constrained_map(constraints_pmap)),
-    p::number_of_iterations(3)
+    CGAL::create_adaptive_remeshing_sizing_field(tr, params::edge_is_constrained_map(constraints_pmap)),
+    params::number_of_iterations(3)
     .edge_is_constrained_map(constraints_pmap)
     .smooth_constrained_edges(true));
 
