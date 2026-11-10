@@ -201,7 +201,12 @@ namespace CGAL::internal::Hexmeshing
     std::bitset<3> merged_planes = face1_attr.plane | face2_attr.plane;
     auto merge_face = face1 != lcc.null_dart_descriptor ? face1 : face2;
 
-    CGAL_assertion(merge_face != lcc.null_dart_descriptor);
+    // 3-template on the border of the grid: the removed volume had no
+    // neighbour on either side, so there is nothing to sew and no face left
+    // to carry the plane information. Such border templates are already
+    // ignored when setting up the next level (see setup_next_level_face).
+    if (merge_face == lcc.null_dart_descriptor)
+    { return; }
 
     // Merge the two previous face attributes bitsets
     auto& merge_face_attr = get_or_create_attr<2>(lcc, merge_face)->info();
