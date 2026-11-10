@@ -68,6 +68,10 @@ struct lcc_priv{
       cur=lcc.next(cur);
     }
     while(cur!=dh);
+
+    // Flip face orientation for display (normals were pointing inward)
+    std::reverse(f.points.begin(), f.points.end());
+
     for (std::size_t i = 0; i < f.size() ; ++ i){
       const Point& pa = f.points[i];
       const Point& pb = f.points[(i+1)%f.size()];
