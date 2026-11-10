@@ -96,19 +96,19 @@ struct AABB_tree_graph_helper
     if constexpr(Concurrency_tag::is_parallel)
     {
       tbb::parallel_for(
-      tbb::blocked_range<std::size_t>(0, face_range.size()),
-      [&](const tbb::blocked_range<std::size_t>& block)
-      {
-          auto it = std::next(std::begin(face_range), block.begin());
+        tbb::blocked_range<std::size_t>(0, face_range.size()),
+        [&](const tbb::blocked_range<std::size_t>& block)
+        {
+            auto it = std::next(std::begin(face_range), block.begin());
 
-          for (std::size_t i = block.begin(); i != block.end(); ++i, ++it)
-          {
-              face_descriptor f = *it;
+            for (std::size_t i = block.begin(); i != block.end(); ++i, ++it)
+            {
+                face_descriptor f = *it;
 
-              put(bb_map, f, face_bbox(f, tm, parameters::vertex_point_map(vpm)));
-              put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))));
-          }
-      });
+                put(bb_map, f, face_bbox(f, tm, parameters::vertex_point_map(vpm)));
+                put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))));
+            }
+        });
     }
     else
 #endif

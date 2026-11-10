@@ -27,6 +27,10 @@
 #include <CGAL/AABB_trees/intersection.h>
 #include <CGAL/utility.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/concurrent_vector.h>
+#endif
+
 #include <boost/dynamic_bitset.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/functional/hash.hpp>
