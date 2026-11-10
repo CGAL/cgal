@@ -79,6 +79,7 @@ struct AABB_tree_graph_helper
   template<class Concurrency_tag=Sequential_tag, class FaceRange, class VertexPointMap>
   void build(const FaceRange &face_range, Tree& tree, const TriangleMesh& tm, VertexPointMap& vpm){
     using Face_bbox_tag = typename CGAL::dynamic_face_property_t<Bbox_3>;
+    // Reference point do not need to be exact, so we use Epick for them
     using Face_ref_point_tag = typename CGAL::dynamic_face_property_t<Epick::Point_3>;
     using Bbox_map = typename boost::property_map<TriangleMesh, Face_bbox_tag>::const_type;
     using Ref_point_map = typename boost::property_map<TriangleMesh, Face_ref_point_tag>::const_type;
@@ -96,15 +97,13 @@ struct AABB_tree_graph_helper
         tbb::blocked_range<std::size_t>(0, face_range.size()),
         [&](const tbb::blocked_range<std::size_t>& block)
         {
-            auto it = std::next(std::begin(face_range), block.begin());
-
-            for (std::size_t i = block.begin(); i != block.end(); ++i, ++it)
-            {
-                face_descriptor f = *it;
-
-                put(bb_map, f, face_bbox(f, tm, parameters::vertex_point_map(vpm)));
-                put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))));
-            }
+          auto it = std::next(std::begin(face_range), block.begin());
+          for (std::size_t i = block.begin(); i != block.end(); ++i, ++it)
+          {
+            face_descriptor f = *it;
+            put(bb_map, f, face_bbox(f, tm, parameters::vertex_point_map(vpm)));
+            put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))));
+          }
         });
     }
     else
@@ -186,8 +185,8 @@ struct AABB_tree_soup_helper
     CGAL::Bbox_3 operator()(ConstPrimitiveIterator first,
                             ConstPrimitiveIterator beyond) const
     {
-      CGAL::Bbox_3 bbox = get(bpm, first->id());
-      for(++first; first != beyond; ++first)
+      CGAL::Bbox_3 bbox;
+      for(; first != beyond; ++first)
         bbox += get(bpm, first->id());
       return bbox;
     }

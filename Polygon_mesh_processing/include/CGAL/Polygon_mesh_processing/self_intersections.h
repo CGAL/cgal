@@ -344,7 +344,7 @@ bool do_faces_intersect(typename Triangle_mesh_and_triangle_soup_wrapper<TM, GT,
 }
 
 template<typename AABBTraits, typename GT, typename OutputIterator, typename TriangleMesh, typename VertexPointMap>
-class Listing_distinct_intersecting_faces_traits
+class Listing_self_intersecting_faces_traversal_traits
 {
   using FT = typename AABBTraits::FT;
   using Point = typename AABBTraits::Point;
@@ -356,7 +356,7 @@ class Listing_distinct_intersecting_faces_traits
   using Node = ::CGAL::AABB_node<AABBTraits>;
 
 public:
-  Listing_distinct_intersecting_faces_traits(OutputIterator& out_it, const GT& gt, const AABBTraits& traits, const TriangleMesh &tm, const VertexPointMap &vpm)
+  Listing_self_intersecting_faces_traversal_traits(OutputIterator& out_it, const GT& gt, const AABBTraits& traits, const TriangleMesh &tm, const VertexPointMap &vpm)
     : m_out_it(out_it), m_gt(gt), m_traits(traits), m_tm(tm), m_vpm(vpm) {}
 
   constexpr bool go_further() const { return true; }
@@ -385,17 +385,17 @@ private:
 };
 
 template<typename AABBTraits, typename GT, typename OutputIterator, typename TriangleMesh, typename VertexPointMap>
-class Listing_intersecting_faces_two_trees_traits
+class Listing_self_intersecting_faces_one_tree_traversal_traits
 {
   using Primitive = typename AABBTraits::Primitive;
   using Node = ::CGAL::AABB_node<AABBTraits>;
 
 public:
-  Listing_intersecting_faces_two_trees_traits(const AABBTraits& traits,
-                                              const GT& gt,
-                                              OutputIterator& out_,
-                                              const TriangleMesh& tm,
-                                              const VertexPointMap& vpm)
+  Listing_self_intersecting_faces_one_tree_traversal_traits(const AABBTraits& traits,
+                                                            const GT& gt,
+                                                            OutputIterator& out_,
+                                                            const TriangleMesh& tm,
+                                                            const VertexPointMap& vpm)
     : m_traits(traits), m_gt(gt), out(out_), m_tm(tm), m_vpm(vpm) {}
 
     constexpr bool go_further() const { return true; }
@@ -418,13 +418,13 @@ public:
 
   void intersection(const Primitive& primitive1, const Node& node2, std::size_t nb_primitives_2)
   {
-    Listing_distinct_intersecting_faces_traits<AABBTraits, GT, OutputIterator, TriangleMesh, VertexPointMap> traits(out, m_gt, m_traits, m_tm, m_vpm);
+    Listing_self_intersecting_faces_traversal_traits<AABBTraits, GT, OutputIterator, TriangleMesh, VertexPointMap> traits(out, m_gt, m_traits, m_tm, m_vpm);
     node2.traversal( primitive1, traits, nb_primitives_2);
   }
 
   void intersection(const Node& node1, std::size_t nb_primitives_1, const Primitive& primitive2)
   {
-    Listing_distinct_intersecting_faces_traits<AABBTraits, GT, OutputIterator, TriangleMesh, VertexPointMap> traits(out, m_gt, m_traits, m_tm, m_vpm);
+    Listing_self_intersecting_faces_traversal_traits<AABBTraits, GT, OutputIterator, TriangleMesh, VertexPointMap> traits(out, m_gt, m_traits, m_tm, m_vpm);
     node1.traversal( primitive2, traits, nb_primitives_1);
   }
 
@@ -531,7 +531,7 @@ self_intersections_impl(const FaceRange& face_range,
   Wrapper::template build_tree<ConcurrencyTag>(faces_not_degenerated, tree, tmesh, vpmap);
 
   const auto all_pairs_of_intersecting_faces = [&](const AABB_tree& tree, auto out){
-    Listing_intersecting_faces_two_trees_traits<AABB_traits, GT, decltype(out), TM, VPM>
+    Listing_self_intersecting_faces_one_tree_traversal_traits<AABB_traits, GT, decltype(out), TM, VPM>
       traversal_traits(tree.traits(), gt, out, tmesh, vpmap);
     CGAL::internal::AABB_tree::one_tree_traversal<ConcurrencyTag>(tree, traversal_traits);
   };

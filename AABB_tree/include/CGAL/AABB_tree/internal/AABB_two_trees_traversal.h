@@ -26,20 +26,22 @@ namespace CGAL {
 
 namespace internal { namespace AABB_tree {
 
+struct Two_trees_traversal_parallel_cutoff
+{
+  static constexpr std::size_t value = 3000;
+};
+
 template <bool in_order = true,
           typename ConcurrencyTag = Sequential_tag,
           typename AABBTraits_A,
           typename AABBTraits_B,
           typename TwoTreeTraversalTraits>
 void two_trees_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
-                        const ::CGAL::AABB_node<AABBTraits_B>& node_B,
-                        const std::size_t nb_primitives_A,
-                        const std::size_t nb_primitives_B,
-                        TwoTreeTraversalTraits& traversal_traits)
+                         const ::CGAL::AABB_node<AABBTraits_B>& node_B,
+                         const std::size_t nb_primitives_A,
+                         const std::size_t nb_primitives_B,
+                         TwoTreeTraversalTraits& traversal_traits)
 {
-#if CGAL_LINKED_WITH_TBB
-  const std::size_t cutoff_parallel_call = 3000;
-#endif
   auto recursive_call = [](const auto &node_A, const auto &node_B, const std::size_t nb_primitives_A, const std::size_t nb_primitives_B, auto &traversal_traits){
     if(traversal_traits.prefer_A_for_next_step(node_A, node_B, nb_primitives_A, nb_primitives_B))
       two_trees_traversal< in_order, ConcurrencyTag>(node_A, node_B, nb_primitives_A, nb_primitives_B, traversal_traits);
@@ -88,7 +90,10 @@ void two_trees_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
 #if CGAL_LINKED_WITH_TBB
     if constexpr(ConcurrencyTag::is_parallel)
     {
-      if(do_intersect_left && do_intersect_right && nb_primitives_A > cutoff_parallel_call && nb_primitives_B > cutoff_parallel_call)
+      if(do_intersect_left  &&
+         do_intersect_right &&
+         nb_primitives_A > Two_trees_traversal_parallel_cutoff::value &&
+         nb_primitives_B > Two_trees_traversal_parallel_cutoff::value)
       {
         oneapi::tbb::task_group tg;
         tg.run([&]{
@@ -145,9 +150,6 @@ void one_tree_traversal(const ::CGAL::AABB_node<AABBTraits>& node,
                         const std::size_t nb_primitives,
                         TwoTreeTraversalTraits& traversal_traits)
 {
-#if CGAL_LINKED_WITH_TBB
-  const std::size_t cutoff_parallel_call = 3000;
-#endif
   switch(nb_primitives)
   {
   case 2:
@@ -166,7 +168,7 @@ void one_tree_traversal(const ::CGAL::AABB_node<AABBTraits>& node,
 #if CGAL_LINKED_WITH_TBB
     if constexpr(ConcurrencyTag::is_parallel)
     {
-      if(nb_primitives > cutoff_parallel_call)
+      if(nb_primitives > Two_trees_traversal_parallel_cutoff::value)
       {
         oneapi::tbb::task_group tg;
         if(traversal_traits.do_intersect(node.left_child(), node.right_child())){
@@ -225,9 +227,6 @@ void two_trees_partial_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
                                 const std::size_t cutoff,
                                 TwoTreeTraversalTraits& traversal_traits)
 {
-#if CGAL_LINKED_WITH_TBB
-  const std::size_t cutoff_parallel_call = 3000;
-#endif
   auto recursive_call = [&](const auto &node_A, const auto &node_B, const std::size_t nb_primitives_A, const std::size_t nb_primitives_B, auto &traversal_traits){
     if(traversal_traits.prefer_A_for_next_step(node_A, node_B, nb_primitives_A, nb_primitives_B))
       two_trees_partial_traversal< in_order, ConcurrencyTag>(node_A, node_B, nb_primitives_A, nb_primitives_B, cutoff, traversal_traits);
@@ -258,7 +257,10 @@ void two_trees_partial_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
 #if CGAL_LINKED_WITH_TBB
     if constexpr(ConcurrencyTag::is_parallel)
     {
-      if(do_intersect_left && do_intersect_right && nb_primitives_A > cutoff_parallel_call && nb_primitives_B > cutoff_parallel_call)
+      if(do_intersect_left  &&
+         do_intersect_right &&
+         nb_primitives_A > Two_trees_traversal_parallel_cutoff::value &&
+         nb_primitives_B > Two_trees_traversal_parallel_cutoff::value)
       {
         oneapi::tbb::task_group tg;
         tg.run([&]{
