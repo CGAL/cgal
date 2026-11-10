@@ -272,8 +272,8 @@ class Intersection_of_triangle_meshes
 
     std::vector<face_descriptor> tm1_faces_intersecting_bb;
     std::vector<face_descriptor> tm2_faces_intersecting_bb;
-    tm1_faces_intersecting_bb.reserve(std::min(faces(tm1).size(), faces(tm2).size()));
-    tm2_faces_intersecting_bb.reserve(std::min(faces(tm1).size(), faces(tm2).size()));
+    tm1_faces_intersecting_bb.reserve((std::min)(faces(tm1).size(), faces(tm2).size()));
+    tm2_faces_intersecting_bb.reserve((std::min)(faces(tm1).size(), faces(tm2).size()));
 
     for(face_descriptor f: faces(tm1))
       if( !get(is_shared_face_map_1, f) &&
