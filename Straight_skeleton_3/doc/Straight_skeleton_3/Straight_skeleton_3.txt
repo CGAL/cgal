@@ -209,7 +209,7 @@ the orientation of the faces of the input polyhedron.
 Inward and outward offsets of the Thingi10k shape [#61418](https://ten-thousand-models.appspot.com/detail.html?file_id=61418). Offset values from left to right: `-3`, `-2`, `-1`, `0` (input), `1`, `2`, and `3`.
 \cgalFigureCaptionEnd
 
-\section Straight_skeleton_32D3DComparison Comparison with Two-dimensional Straight Skeleton Construction
+\section Straight_skeleton_32D3DComparison Comparison with Two-Dimensional Straight Skeleton Construction
 
 Although the definition of a straight skeleton of a polyhedron is identical in both 2D and 3D,
 there exist some major differences between the two settings.
