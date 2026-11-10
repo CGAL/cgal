@@ -172,9 +172,11 @@ inline size_t read_nodes(const std::string &filename, std::vector<typename Trait
 /*!
  \ingroup PkgHDVFIOClasses
 
- The class `Mesh_object_io` is an intermediate IO class, used to load arbitrary collections of simplices.  and produce simplicial complexes.
+ The class `Mesh_object_io` is an intermediate IO class, used to load and create arbitrary collections of simplices, that is collections without a priori structures, unlike simplicial complexes (closed under the face operation), proper meshes (including only cells of maximal dimension)  or manifolds. These collections are then used as input to produce `Abstract_simplicial_chain_complex`.
 
- The set of simplices stored in a `Mesh_object_io` is arbitrary. It is neither a simplicial complex (closed under the face operation), nor a proper mesh (including only cells of maximal dimension) and requires no manifold property. The collection of simplices stored in a `Mesh_object_io` are simply considered as maximal simplices when generating an associated simplicial complex.
+ The collection of simplices stored in a `Mesh_object_io` are simply considered as maximal simplices when generating an associated `Abstract_simplicial_chain_complex`.
+
+ Simplices are identified by an index together with their %dimension.
 
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
@@ -324,6 +326,10 @@ public:
     }
 
     /** \brief Build a Mesh_object_io representing the bounding box of diagonal `BB_min` - `BBmax`.
+     *
+     * Vertices and simplices are enumerated as indicated in the picture below:
+     * \image html mesh_object_io_bbox.png
+     * \image latex mesh_object_io_bbox.png
      *
      * \param BBmin coordinates of the lower corner of the bounding box.
      * \param BBmax coordinates of the higher corner of the bounding box.
@@ -666,10 +672,13 @@ public:
         return r ;
     }
 
-    /** \brief Returns the bounding box of the object's nodes. */
+    /** \brief Returns the bounding box of the object's nodes.
+*
+     */
     Bbox bbox(double ratio=1.) const {
-        return bounding_box(_nodes.begin(), _nodes.end()) .bbox();
+        Bbox res(bounding_box(_nodes.begin(), _nodes.end()) .bbox());
         // @todo deal with ratio
+        return res;
     }
 private:
     void check_dimension() {

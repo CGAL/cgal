@@ -78,6 +78,27 @@ public:
     using Column_matrix = typename Base::Column_matrix;
     using Row_matrix = typename Base::Row_matrix;
 
+    /*! \brief Hole information returned by the  iterator.
+     *
+     * Information comprises:
+     * - `cell_index` index of the critical cell.
+     * - `dimension` dimension of the critical cell.
+     * - `homology_chain`, `cohomology_chain` associated homology and/or cohomolgy generators.
+     */
+    typedef struct {
+        size_t cell_index; // Index of the critical cell
+        int dimension; // Dimension of the critical cell
+        Column_chain homology_chain, cohomology_chain; // Homology and cohomology generators
+    } Hole_information ;
+
+    /** \brief Iterator mode (determines if `iterator enumerates homology/cohomology generators or both). */
+    enum Iterator_mode {
+        NONE = 0,
+        HOMOLOGY = 0b0010,
+        COHOMOLOGY = 0b0001,
+        BOTH = 0b0011
+    };
+
     /**
      * Builds an "empty" HDVF associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
      *
@@ -713,6 +734,167 @@ public:
         Row_chain coannot1(get_coannotation(chain1, dim)), coannot2(get_coannotation(chain2, dim)) ;
         return coannot1 == coannot2 ;
     }
+
+private:
+    static bool compatible_flags(const Iterator_mode& mode, int hdvf_opt) {
+        if (mode == HOMOLOGY)
+            return ((hdvf_opt == OPT_FULL) || (hdvf_opt == OPT_G));
+        if (mode == COHOMOLOGY)
+            return ((hdvf_opt == OPT_FULL) || (hdvf_opt == OPT_F));
+        if (mode == BOTH)
+            return (hdvf_opt == OPT_FULL);
+        else
+            return true;
+    }
+
+public:
+    /*! \brief Iterator over homology/cohomology generators.
+     *
+     * Given a perfect HDVF, iterates over critical cells and associated homology/cohomlogy generators.
+     */
+    struct iterator
+    {
+        // Iterator tags
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type   = std::ptrdiff_t;
+        using value_type        = Hole_information;
+
+        /*! \brief Iterator constructor
+         *
+         * \param hdvf Constant reference over the HDVF iterated.
+         * \param dimension Dimension of iteration (if positive, iterate over a single dimension, if -1, iterate over all dimensions computed).
+         * \param mode Iteration mode (iterate homology and/or cohomology generators). Default deduces the iteration mode from `hdvf` computation options.
+         *
+         * \exception Invalid_hdvf_options If computation options of the underlying `hdvf` are incompatible (no homology/cohomology generators computed), raises a `%std::runtime_error`
+         */
+        iterator(const Hdvf& hdvf, int dimension = -1, Iterator_mode mode = 0) : _i(0), _mode(mode), _hdvf(hdvf)
+        {
+            // Iteration mode
+            if (_mode == 0) // Get mode from hdvf_opts
+            {
+                if (hdvf.hdvf_opts() == OPT_G)
+                    _mode = HOMOLOGY;
+                else if (hdvf.hdvf_opts() == OPT_F)
+                    _mode = COHOMOLOGY;
+                else if (hdvf.hdvf_opts() == OPT_FULL)
+                    _mode = BOTH;
+                else {
+                    std::cerr << "Cannot iterate homology/cohomolgy generators: incompatible hdvf options" << std::endl;
+                    throw std::runtime_error("Cannot iterate homology/cohomolgy generators: incompatible hdvf options");
+                }
+            }
+            else { // Check the compatibility with HDVF options
+                std::cout << "=== " << compatible_flags(_mode, hdvf.hdvf_opts()) << std::endl;
+                if (!(compatible_flags(_mode, hdvf.hdvf_opts()))) { // _mode is incompatible with computed pieces of the reduction
+                    std::cerr << "Cannot iterate homology/cohomolgy generators: incompatible hdvf options" << std::endl;
+                    throw std::runtime_error("Cannot iterate homology/cohomolgy generators: incompatible hdvf options");
+                }
+            }
+
+            // Dimension(s) and initialisation of criticals visited
+            _criticals.resize(hdvf.complex().dimension()+1);
+            if (dimension < 0)
+            {
+                for (int q = hdvf._min_dimension; q <= hdvf._max_dimension; ++q) {
+                    _criticals[q] = hdvf.psc_flag(CRITICAL, q);
+                }
+                _dim = hdvf._min_dimension;
+            }
+            else {
+                if ((dimension >= hdvf._min_dimension) && (dimension <= hdvf._max_dimension)) {
+                    _criticals[dimension] = hdvf.psc_flag(CRITICAL, dimension);
+                    _dim = dimension;
+                }
+                else
+                    _dim = hdvf.complex().dimension()+1; // Past the end iterator
+            }
+        }
+
+        // Operators
+        /*! \brief Iterator dereference
+         *
+         * \returns A `Hole_information` structure containing all information related to the current persistence hole.
+         */
+        value_type operator*() const
+        {
+            Hole_information res ;
+            const size_t sigma(_criticals.at(_dim).at(_i));
+            res.cell_index = sigma;
+            res.dimension = _dim;
+
+            if (_mode & HOMOLOGY)
+            {
+                res.homology_chain = _hdvf.homology_chain(sigma, _dim);
+            }
+            if (_mode & COHOMOLOGY)
+            {
+                res.cohomology_chain = _hdvf.cohomology_chain(sigma, _dim);
+            }
+            return res ;
+        }
+
+        /**
+         * \brief Prefix increment.
+         *
+         * \returns The reference to the current iterator.
+         */
+        iterator& operator++()
+        {
+            if (_dim <= _hdvf.complex().dimension()) {
+                ++_i;
+                if (_i >= _criticals.at(_dim).size()) {
+                    _i = 0;
+                    ++_dim;
+                    // Skip dimensions without critical cells
+                    while ((_dim <= _hdvf.complex().dimension()) && (_criticals.at(_dim).size() == 0))
+                        ++_dim;
+                }
+            }
+            return *this;
+        }
+
+        /**
+         * \brief Postfix increment.
+         * \returns The pre-increment iterator.
+         */
+        iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+
+        /**
+         * \brief Equality check.
+         * \returns `true` if the indices are equal.
+         */
+        friend bool operator== (const iterator& a, const iterator& b) { return ((a._i == b._i) && (a._dim == b._dim)); };
+
+        /**
+         * \brief Inequality check.
+         * \returns `true` if the indices are different.
+         */
+        friend bool operator!= (const iterator& a, const iterator& b) { return ((a._i != b._i) || (a._dim != b._dim)); };
+
+    private:
+        std::vector<std::vector<size_t>> _criticals; // Criticals to visit
+        size_t _i; // Current index along _criticals in dimension _dim
+        int _dim; // Current dimension visited
+        Iterator_mode _mode; // HDVF_opt considered
+        const Hdvf& _hdvf; // HDVF iterated
+    };
+
+    /**
+     * \brief Iterator to the beginning of homology/cohomology generators.
+     *
+     * \param q If positive, the iterator visits only holes of dimension q, if negative (default), visits holes in any dimension computed (depending on dimension restriction)
+     * \param mode Defines which information is returned by the iterator (HOMOLOGY, COHOMOLOGY or BOTH). This argument must be coherent with the HDVF option chosen for computation. By default, copies the current HDVF options.
+     *
+     * \returns The iterator to the first hole visited.
+     */
+    iterator begin(int q = -1, Iterator_mode mode = Iterator_mode(0)) const { return iterator(*this, q, mode) ; }
+
+    /**
+     * \brief Iterator past-the-end of homology/cohomology generators.
+     *
+     * \returns The past-the-end iterator of  persistent intervals.
+     */
+    iterator end() const { return iterator(*this, this->complex().dimension()+1, Iterator_mode(0)) ; }
 };
 
 // Constructor for the Hdvf class

@@ -525,7 +525,7 @@ public:
         // Operators
         /*! \brief Iterator dereference
          *
-         * \returns A `Persistent_hole` is a structure containing all information related to the current persistence hole.
+         * \returns A `Persistent_hole` structure containing all information related to the current persistence hole.
          */
         value_type operator*() const
         {

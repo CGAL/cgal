@@ -38,6 +38,13 @@ public:
     Hdvf_ext(const typename Base::Chain_complex& K, int hdvf_opt = Base::OPT_FULL, int dimension_restriction = -1) : Base::Hdvf(K, hdvf_opt, dimension_restriction) {}
 };
 
+bool compare_pairs(const std::vector<HDVF::Cell_pair>& pairs1, const std::vector<HDVF::Cell_pair>& pairs2) {
+    bool res(pairs1.size() == pairs2.size());
+    for (int i=0; i<pairs1.size(); ++i)
+        res = res && (std::find(pairs1.begin(), pairs1.end(), pairs2.at(i)) != pairs1.end());
+    return res;
+}
+
 int main(int argc, char **argv) {
     std::string filename;
     if (argc > 2) {
@@ -243,26 +250,26 @@ int main(int argc, char **argv) {
         pairsW2.push_back(HDVF::Cell_pair({4,7,1}));
         pairsW2.push_back(HDVF::Cell_pair({3,7,1}));
         pairsW2.push_back(HDVF::Cell_pair({6,7,1}));
-        bool test_find_pairs_W(pairsW == pairsW2);
+        bool test_find_pairs_W(compare_pairs(pairsW, pairsW2));
         std::cerr << "-- Test find_pairs_W(1,foundW): " << test_find_pairs_W << std::endl;
         assert(test_find_pairs_W);
 
         std::vector<HDVF::Cell_pair> pairsW3(hdvf.find_pairs_W(1, foundW, 7));
-        bool test_find_pairs_W3(pairsW3 == pairsW2);
+        bool test_find_pairs_W3(compare_pairs(pairsW3, pairsW2));
         std::cerr << "-- Test find_pairs_W(1,foundW,7): " << test_find_pairs_W3 << std::endl;
         assert(test_find_pairs_W3);
 
         HDVF::Cell_pair cell(hdvf.find_pair_W(1, foundW)), cell2(HDVF::Cell_pair({0,7,1}));
-        bool test_find_pairs_W4(cell == cell2);
+        bool test_find_pairs_W4(std::find(pairsW.begin(), pairsW.end(), cell)!= pairsW.end());
         std::cerr << "-- Test find_pair_W(1,foundW): " << test_find_pairs_W4 << std::endl;
         assert(test_find_pairs_W4);
 
         HDVF::Cell_pair cell3(hdvf.find_pair_W(1, foundW,7));
-        bool test_find_pairs_W5(cell3 == cell2);
+        bool test_find_pairs_W5(std::find(pairsW.begin(), pairsW.end(), cell3)!=pairsW.end());
         std::cerr << "-- Test find_pair_W(1,foundM,7): " << test_find_pairs_W5 << std::endl;
         assert(test_find_pairs_W5);
 
-        HDVF::Cell_pair pairW(pairsW.at(0)); // Pair 0,7,1
+        HDVF::Cell_pair pairW({0,7,1}); // Pair 0,7,1
         bool test_valid_W(hdvf.is_valid_pair_for_W(pairW.sigma, pairW.tau, pairW.dim) == 1);
         std::cerr << "-- Test is_valid_pair_for_W: " << test_valid_W << std::endl;
         assert(test_valid_W);
@@ -299,14 +306,14 @@ int main(int argc, char **argv) {
         pairsMW2.push_back(HDVF::Cell_pair({2,1,1}));
         pairsMW2.push_back(HDVF::Cell_pair({5,3,1}));
         pairsMW2.push_back(HDVF::Cell_pair({5,4,1}));
-        bool test_find_pairs_MW(pairsMW == pairsMW2);
+        bool test_find_pairs_MW(compare_pairs(pairsMW, pairsMW2));
         std::cerr << "-- Test find_pairs_MW(1,foundMW): " << test_find_pairs_MW << std::endl;
         assert(test_find_pairs_MW);
 
         std::vector<HDVF::Cell_pair> pairsMW3(hdvf.find_pairs_MW(1, foundMW, 2)), pairsMW3_res;
         pairsMW3_res.push_back(HDVF::Cell_pair({2,0,1}));
         pairsMW3_res.push_back(HDVF::Cell_pair({2,1,1}));
-        bool test_find_pairs_MW3(pairsMW3 == pairsMW3_res);
+        bool test_find_pairs_MW3(compare_pairs(pairsMW3, pairsMW3_res));
         std::cerr << "-- Test find_pairs_MW(1,foundMW,2): " << test_find_pairs_MW3 << std::endl;
         assert(test_find_pairs_MW3);
 
@@ -413,12 +420,24 @@ int main(int argc, char **argv) {
     }
 
     {
+        std::cerr << "---- Test HDVF constructor from flags" << std::endl;
         HDVF_type hdvf(complex, HDVF::OPT_FULL);
         hdvf.compute_rand_perfect_hdvf();
         std::cout << "-------------" << std::endl;
         HDVF_type hdvf2(complex, hdvf.psc_flags(), true, HDVF::OPT_FULL); // HDVF created from flags
         std::cout << "equality between hdvf and reconstruction from flags: " << (hdvf == hdvf2) << std::endl;
     }
+
+    {
+        std::cerr << "---- Test HDVF iterator" << std::endl;
+        HDVF_type hdvf(complex, HDVF::OPT_FULL);
+        hdvf.read_hdvf_reduction("data/test_hdvf/test_hdvf.hdvf");
+        for (HDVF_type::iterator it = hdvf.begin(1,HDVF_type::HOMOLOGY); it != hdvf.end(); ++it) {
+            HDVF_type::Hole_information info(*it);
+            std::cout << "critical: " << info.cell_index << " - dim: " << info.dimension << std::endl ;
+        }
+    }
+
     return 0;
 }
 

@@ -23,6 +23,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
+typedef HDVF::Surface_mesh_io<Surface_mesh,Traits> Surface_mesh_io;
 
 int main(int argc, char **argv)
 {
@@ -38,7 +39,7 @@ int main(int argc, char **argv)
     // Load simplicial object
     Surface_mesh sm;
     CGAL::IO::read_polygon_mesh(filename, sm);
-    HDVF::Surface_mesh_io<Surface_mesh,Traits> mesh(sm) ;
+    Surface_mesh_io mesh(sm) ;
 
     mesh.print_infos();
 
