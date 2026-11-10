@@ -281,6 +281,13 @@ If you experience such an issue, we recommend to compile \ceres without `glog` s
 
 \attention In the master branch of \ceres `glog` was dropped as a dependency and `abseil` was added instead. It is not compatible with \visualstudio 2017 or earlier versions.
 
+\subsection thirdpartyOrtools OR-Tools
+
+\ortools (Operations Research Tools) is an open source software suite for optimization.
+In \cgal, \ortools is used by the \ref PkgStraightSkeleton3 package.
+
+Visit the official website of the library at <A HREF="https://developers.google.com/optimization">`https://developers.google.com/optimization`</A> for more information.
+
 \subsection thirdpartyGLPK GLPK
 
 \glpk (GNU Linear Programming Kit) is a library for solving linear programming (LP), mixed integer programming (MIP), and other related problems.

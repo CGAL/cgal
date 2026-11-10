@@ -19,6 +19,8 @@
 
 #include <CGAL/license/Straight_skeleton_3.h>
 
+#ifdef CGAL_LINKED_WITH_ORTOOLS
+
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
@@ -3732,5 +3734,7 @@ public:
 } // namespace internal
 } // namespace Straight_skeletons_3
 } // namespace CGAL
+
+#endif /* CGAL_LINKED_WITH_ORTOOLS */
 
 #endif /* CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_POLYHEDRON_PERTURBATION_H */

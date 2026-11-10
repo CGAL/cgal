@@ -9,6 +9,7 @@ include_directories(BEFORE include)
 find_package(CGAL REQUIRED)
 
 find_package(ortools CONFIG)
+include(CGAL_ortools_support)
 
 if (NOT TARGET ortools::ortools)
   message(STATUS "NOTICE: The OR-Tools library is not found, and the tests will not be compiled.")
@@ -23,5 +24,5 @@ file(
 foreach(cppfile ${cppfiles})
   get_filename_component(target ${cppfile} NAME_WE)
   create_single_source_cgal_program("${cppfile}")
-  target_link_libraries("${target}" PRIVATE ortools::ortools)
+  target_link_libraries("${target}" PRIVATE CGAL::ortools_support)
 endforeach()
