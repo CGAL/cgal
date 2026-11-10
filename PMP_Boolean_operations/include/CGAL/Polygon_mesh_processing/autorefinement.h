@@ -28,6 +28,8 @@
 #include <boost/timer/progress_display.hpp>
 #endif
 
+#include <CGAL/box_intersection_d.h>
+
 // output
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
