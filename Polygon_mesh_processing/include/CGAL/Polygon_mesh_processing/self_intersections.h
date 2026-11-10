@@ -356,7 +356,7 @@ class Listing_distinct_intersecting_faces_traits
   using Node = ::CGAL::AABB_node<AABBTraits>;
 
 public:
-  Listing_distinct_intersecting_faces_traits(OutputIterator out_it, const GT& gt, const AABBTraits& traits, const TriangleMesh &tm, const VertexPointMap &vpm)
+  Listing_distinct_intersecting_faces_traits(OutputIterator& out_it, const GT& gt, const AABBTraits& traits, const TriangleMesh &tm, const VertexPointMap &vpm)
     : m_out_it(out_it), m_gt(gt), m_traits(traits), m_tm(tm), m_vpm(vpm) {}
 
   constexpr bool go_further() const { return true; }
@@ -377,7 +377,7 @@ public:
   }
 
 private:
-  OutputIterator m_out_it;
+  OutputIterator& m_out_it;
   const GT& m_gt;
   const AABBTraits& m_traits;
   const TriangleMesh& m_tm;
@@ -393,7 +393,7 @@ class Listing_intersecting_faces_two_trees_traits
 public:
   Listing_intersecting_faces_two_trees_traits(const AABBTraits& traits,
                                               const GT& gt,
-                                              OutputIterator out_,
+                                              OutputIterator& out_,
                                               const TriangleMesh& tm,
                                               const VertexPointMap& vpm)
     : m_traits(traits), m_gt(gt), out(out_), m_tm(tm), m_vpm(vpm) {}
@@ -436,7 +436,7 @@ public:
 private:
   const AABBTraits& m_traits;
   const GT& m_gt;
-  OutputIterator out;
+  OutputIterator& out;
   const TriangleMesh& m_tm;
   const VertexPointMap& m_vpm;
 };
