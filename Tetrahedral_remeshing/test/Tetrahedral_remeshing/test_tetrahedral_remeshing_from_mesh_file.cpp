@@ -12,21 +12,38 @@
 
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 
+#include <CGAL/Real_timer.h>
+
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
 
 int main(int argc, char* argv[])
 {
-  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1;
+  const char* filename = (argc > 1) ? argv[1] : "data/sphere.mesh";
+  const double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1;
 
   Remeshing_triangulation tr;
 
-  std::ifstream in("data/sphere.mesh");
+  std::ifstream in(filename);
   if (CGAL::SMDS_3::build_triangulation_from_file(in, tr))
     std::cout << "build triangulation ok" << std::endl;
+  else
+    return EXIT_FAILURE;
 
-  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length);
+  CGAL::Real_timer timer;
+  timer.start();
+
+  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
+    CGAL::parameters::number_of_iterations(5));
+
+  timer.stop();
+  std::cout << "Remeshing done in " << timer.time() << " seconds." << std::endl;
+
+  std::ofstream out("data/sphere_remeshed.mesh");
+  CGAL::IO::write_MEDIT(out, tr);
+  out.close();
 
   return EXIT_SUCCESS;
 }
