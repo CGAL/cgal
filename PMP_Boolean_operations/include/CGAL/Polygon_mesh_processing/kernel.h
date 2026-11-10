@@ -75,7 +75,6 @@ kernel(const FaceRange& face_range,
   constexpr bool is_face_to_face_map = !parameters::is_default_parameter<NamedParametersOut, internal_np::face_to_face_map_t>::value;
   auto f2f_map = choose_parameter<DefaultF2FMap>(get_parameter(np_out, internal_np::face_to_face_map));
 
-  using Point_3 = typename GT::Point_3;
   using EPoint_3 = typename EK::Point_3;
   using EVector_3 = typename EK::Vector_3;
   using Plane_3 = typename Three_point_cut_plane_traits<EK>::Plane_3;
@@ -98,10 +97,10 @@ kernel(const FaceRange& face_range,
   // Build the starting cube
   KernelPointMap kvpm = get(CGAL::dynamic_vertex_property_t<EPoint_3>(), kernel);
   if(is_empty(kernel))
-    make_hexahedron(bbox(pm), kernel, parameters::vertex_point_map(vpm_out));
+    make_hexahedron(bbox(pm, parameters::vertex_point_map(vpm)), kernel, parameters::vertex_point_map(vpm_out));
   for(vertex_descriptor v: vertices(kernel))
     put(kvpm, v, to_exact(get(vpm_out, v)));
-  Bbox_3 bb3 = bbox(kernel);
+  Bbox_3 bb3 = bbox(kernel, parameters::vertex_point_map(kvpm));
   vertex_descriptor start_vertex = *vertices(kernel).begin();
   if constexpr(is_face_to_face_map)
     for(face_descriptor f: faces(kernel))
