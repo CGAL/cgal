@@ -262,8 +262,8 @@ bool do_intersect(const Polyline& polyline1,
 #endif
                  )
 {
-  std::array<Polyline, 1> polylines1{{polyline1}};
-  std::array<Polyline, 1> polylines2{{polyline2}};
+  auto polylines1 = make_range(&polyline1,&polyline1+1);
+  auto polylines2 = make_range(&polyline2,&polyline2+1);
 
   return do_intersect(polylines1, polylines2, np);
 }
@@ -623,7 +623,7 @@ bool do_intersect(const TriangleMesh& tm,
 #endif
                  )
 {
-  std::array<Polyline, 1> polylines{{polyline}};
+  auto polylines = make_range(&polyline,&polyline+1);
   return do_intersect(tm, polylines, np);
 }
 
