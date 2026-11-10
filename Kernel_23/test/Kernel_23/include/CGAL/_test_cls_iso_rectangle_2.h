@@ -19,8 +19,12 @@
 #define CGAL__TEST_CLS_ISO_RECTANGLE_2_H
 
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/enum.h>
 #include <cassert>
 #include <CGAL/use.h>
+#include <iostream>
 
 template <class R>
 bool
