@@ -134,6 +134,11 @@ public:
     */
     using Point_3 = typename Geom_traits::Point_3;
 
+    /*!
+    * the type used for the unique identifier of the node.
+    */
+    using Id = int;
+
     using NodeSPtr = std::shared_ptr<Node>;
     using SpokeWPtr = std::weak_ptr<Spoke>;
     using SpokeSPtr = std::shared_ptr<Spoke>;
@@ -196,12 +201,15 @@ public:
       this->list_it_ = list_it;
     }
 
-    int id() const
+    /*!
+    * returns a unique identified to the node.
+    */
+    Id id() const
     {
       return this->id_;
     }
 
-    void set_id(const int id)
+    void set_id(const Id id)
     {
       this->id_ = id;
     }
@@ -371,7 +379,7 @@ public:
   protected:
     Point_3 point_;
     FT time_;
-    int id_;
+    Id id_;
 
     std::list<SpokeWPtr> spokes_;
     std::list<SheetWPtr> sheets_;
@@ -380,7 +388,7 @@ public:
     typename std::list<NodeSPtr>::iterator list_it_;
 
   private:
-    static int next_node_id_;
+    static Id next_node_id_;
   };
 
 public:
@@ -409,6 +417,11 @@ public:
     * the line type used for the supporting line of the spoke.
     */
     using Line_3 = typename Geom_traits::Line_3;
+
+    /*!
+    * the type used for the unique identifier of the node.
+    */
+    using Id = int;
 
     using NodeSPtr = std::shared_ptr<Node>;
     using SpokeWPtr = std::weak_ptr<Spoke>;
@@ -577,12 +590,15 @@ public:
       this->list_it_ = list_it;
     }
 
-    int id() const
+    /*!
+    * returns a unique identified to the spoke.
+    */
+    Id id() const
     {
       return this->id_;
     }
 
-    void set_id(const int id)
+    void set_id(const Id id)
     {
       this->id_ = id;
     }
@@ -723,10 +739,10 @@ public:
 
     typename std::list<SpokeSPtr>::iterator list_it_;
 
-    int id_;
+    Id id_;
 
   private:
-    static int next_spoke_id_;
+    static Id next_spoke_id_;
   };
 
 public:
@@ -754,6 +770,11 @@ public:
     * the plane type used for the supporting plane of the sheet.
     */
     using Plane_3 = typename Geom_traits::Plane_3;
+
+    /*!
+    * the type used for the unique identifier of the node.
+    */
+    using Id = int;
 
     using NodeSPtr = std::shared_ptr<Node>;
     using SpokeSPtr = std::shared_ptr<Spoke>;
@@ -833,12 +854,15 @@ public:
       this->list_it_ = list_it;
     }
 
-    int id() const
+    /*!
+    * returns a unique identified to the sheet.
+    */
+    Id id() const
     {
       return this->id_;
     }
 
-    void set_id(const int id)
+    void set_id(const Id id)
     {
       this->id_ = id;
     }
@@ -1653,12 +1677,15 @@ protected:
 } // namespace CGAL
 
 template <typename GeomTraits>
-int CGAL::Straight_skeleton_3<GeomTraits>::Node::next_node_id_ = 0;
+typename CGAL::Straight_skeleton_3<GeomTraits>::Node::Id
+CGAL::Straight_skeleton_3<GeomTraits>::Node::next_node_id_ = 0;
 
 template <typename GeomTraits>
-int CGAL::Straight_skeleton_3<GeomTraits>::Spoke::next_spoke_id_ = 0;
+typename CGAL::Straight_skeleton_3<GeomTraits>::Spoke::Id
+CGAL::Straight_skeleton_3<GeomTraits>::Spoke::next_spoke_id_ = 0;
 
 template <typename GeomTraits>
-int CGAL::Straight_skeleton_3<GeomTraits>::Sheet::next_sheet_id_ = 0;
+typename CGAL::Straight_skeleton_3<GeomTraits>::Sheet::Id
+CGAL::Straight_skeleton_3<GeomTraits>::Sheet::next_sheet_id_ = 0;
 
 #endif /* CGAL_STRAIGHT_SKELETON_3_SDS_STRAIGHT_SKELETON_3_H */
