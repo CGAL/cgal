@@ -22,17 +22,11 @@ namespace SS3 = CGAL::Straight_skeletons_3;
 
 int main(int argc, char** argv)
 {
-  if (argc == 1) {
-    std::cout << "Usage: " << argv[0] << " <input filename>" << std::endl;
-    std::cout << "  <input filename>: Path to input mesh file (required)" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  const std::filesystem::path mesh_filename = argv[1];
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/part.off");
 
   Mesh sm;
-  if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm) || CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
-    std::cerr << "Error: failed to read input " << mesh_filename << std::endl;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm) || CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
+    std::cerr << "Error: failed to read input " << filename << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -44,7 +38,7 @@ int main(int argc, char** argv)
 
   std::cout << "Input mesh: " << vertices(sm).size() << " NV " << faces(sm).size() << " NF" << std::endl;
 
-  std::vector<FT> save_times = { 1, 2, 3 };
+  std::vector<FT> save_times = { 0.03, 0.06, 0.09 };
 
   // every face has weight 3.0, meaning faces move at thrice the default speed
   CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(3);

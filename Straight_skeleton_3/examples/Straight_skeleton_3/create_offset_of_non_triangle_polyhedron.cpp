@@ -59,17 +59,11 @@ struct Color_preserving_visitor
 
 int main(int argc, char** argv)
 {
-  if (argc == 1) {
-    std::cout << "Usage: " << argv[0] << " <input filename>" << std::endl;
-    std::cout << "  <input filename>: Path to input mesh file (required)" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  const std::filesystem::path mesh_filename = argv[1];
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/3torus.off");
 
   Mesh sm;
-  if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm) || CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
-    std::cerr << "Error: failed to read input " << mesh_filename << std::endl;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm) || CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
+    std::cerr << "Error: failed to read input " << filename << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -92,10 +86,9 @@ int main(int argc, char** argv)
 
   std::cout << "Input mesh: " << vertices(sm).size() << " NV " << faces(sm).size() << " NF (triangulated)" << std::endl;
 
-  std::vector<FT> save_times = { -25, -50, -75 };
+  std::vector<FT> save_times = { 0.1, 0.2, 0.3 };
 
-  // every face has weight 3.0, meaning faces move at thrice the default speed
-  CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(3);
+  CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(1);
 
   std::vector<Mesh> results;
   results.reserve(save_times.size());

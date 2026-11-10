@@ -62,17 +62,11 @@ struct Color_preserving_visitor
 
 int main(int argc, char** argv)
 {
-  if (argc == 1) {
-    std::cout << "Usage: " << argv[0] << " <input filename>" << std::endl;
-    std::cout << "  <input filename>: Path to input mesh file (required)" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  const std::filesystem::path mesh_filename = argv[1];
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/anchor.off");
 
   Mesh sm;
-  if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm) || CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
-    std::cerr << "Error: failed to read input " << mesh_filename << std::endl;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm) || CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
+    std::cerr << "Error: failed to read input " << filename << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -101,7 +95,7 @@ int main(int argc, char** argv)
 
   std::cout << "Input mesh: " << vertices(sm).size() << " NV " << faces(sm).size() << " NF (triangulated)" << std::endl;
 
-  std::vector<FT> save_times = { -25, -50, -75 };
+  std::vector<FT> save_times = { 0.03, 0.06, 0.09 };
 
   // arbitrary weight: every face has weight 3.0 (faces move at thrice the default speed)
   CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(3);
@@ -142,7 +136,7 @@ int main(int argc, char** argv)
 
     // Do some preprocessing to remove nasty elements that were created by perturbation of almost parallel faces
     PMP::remove_almost_degenerate_faces(result_sm,
-                                        CGAL::parameters::cap_threshold(std::cos(175. / 180 * CGAL_PI))
+                                        CGAL::parameters::cap_threshold(std::cos(179. / 180 * CGAL_PI))
                                                          .needle_threshold(10)
                                                          .collapse_length_threshold(threshold_lgth)
                                                          .flip_triangle_height_threshold(threshold_lgth));
