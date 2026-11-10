@@ -593,6 +593,17 @@ bool test_algo_generic(InputStream& is)
     n_afaces++;
   }
 
+  auto inf = ag.infinite_vertex();
+  auto vc = ag.incident_vertices(inf), done(vc);
+  size_type n_inf_deg = 0;
+  do {
+    n_inf_deg++;
+    vc++;
+  } while ( vc != done );
+
+  assert( n_ffaces + n_inf_deg == n_afaces );
+
+  assert( n_fedges + n_inf_deg == n_aedges );
 
   assert( 2 * n_aedges == 3 * n_afaces );
   assert( n_avertices - n_aedges + n_afaces == 2 );
