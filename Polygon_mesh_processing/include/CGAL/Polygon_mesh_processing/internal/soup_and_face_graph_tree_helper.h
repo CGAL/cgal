@@ -25,9 +25,6 @@
 
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/property_map.h>
-#include <fstream>
-#include <sstream>
-#include <set>
 #include <type_traits>
 
 namespace CGAL {

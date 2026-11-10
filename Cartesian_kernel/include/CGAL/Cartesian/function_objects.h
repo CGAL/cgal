@@ -1893,12 +1893,6 @@ public:
       return b;
     }
 
-    Bbox_2&
-    operator()(Bbox_2& b) const
-    {
-      return b;
-    }
-
     Bbox_2
     operator()(const Point_2& p) const
     {
@@ -1973,12 +1967,6 @@ public:
   public:
     const Bbox_3&
     operator()(const Bbox_3& b) const
-    {
-      return b;
-    }
-
-    Bbox_3&
-    operator()(Bbox_3& b) const
     {
       return b;
     }
