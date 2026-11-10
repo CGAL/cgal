@@ -182,7 +182,7 @@ struct Init_id;
 
     /// Copy constructor.
     Cell_attribute_without_info(const Cell_attribute_without_info& acell):
-      mrefcounting(acell.mrefcounting)
+      mrefcounting(acell.mrefcounting), m_for_cc(acell.m_for_cc)
     {}
 
   protected:
