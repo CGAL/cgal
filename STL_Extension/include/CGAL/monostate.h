@@ -16,7 +16,7 @@
 namespace CGAL {
 
 class monostate {
-  void* ptr = nullptr;
+  std::nullptr_t ptr = nullptr;
 };
 
 constexpr bool operator==(monostate, monostate) noexcept
