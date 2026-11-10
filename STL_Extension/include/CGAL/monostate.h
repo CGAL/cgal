@@ -13,6 +13,8 @@
 #ifndef CGAL_MONOSTATE_H
 #define CGAL_MONOSTATE_H
 
+#include<cstddef>
+
 namespace CGAL {
 
 class monostate {
