@@ -17,8 +17,10 @@
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_2_H
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_2_H
 
-#include <cmath>
 #include <CGAL/Handle_for_virtual.h>
+#include <CGAL/aff_transformation_tags.h>
+
+#include <ostream>
 
 namespace CGAL {
 
