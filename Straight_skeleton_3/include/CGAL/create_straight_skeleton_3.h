@@ -23,7 +23,9 @@
 
 #include <CGAL/Named_function_parameters.h>
 
+#include <filesystem>
 #include <memory>
+#include <vector>
 
 namespace CGAL {
 namespace Straight_skeletons_3 {
