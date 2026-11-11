@@ -148,7 +148,8 @@ bool do_intersect_OBB(const Bbox_3& b1,
     const Vector& axis = A[i];
     const FT dist = CGAL::abs(dir * axis);
 
-    const FT ra = axis.squared_length();
+    // After the transformation, vectors of A maybe no longer orthogonal, so we need to project all half-width vectors onto the axis.
+    const FT ra = CGAL::abs(A[0]*axis) + CGAL::abs(A[1]*axis) + CGAL::abs(A[2]*axis);
     const FT rb = CGAL::abs(B[0]*axis) + CGAL::abs(B[1]*axis) + CGAL::abs(B[2]*axis);
     if(dist > ra + rb) return false;
   }
@@ -159,7 +160,8 @@ bool do_intersect_OBB(const Bbox_3& b1,
     const Vector& axis = B[i];
     const FT dist = CGAL::abs(dir * axis);
 
-    const FT rb = axis.squared_length();
+    // After the transformation, vectors of B maybe no longer orthogonal, so we need to project all half-width vectors onto the axis.
+    const FT rb = CGAL::abs(B[0]*axis) + CGAL::abs(B[1]*axis) + CGAL::abs(B[2]*axis);
     const FT ra = CGAL::abs(A[0]*axis) + CGAL::abs(A[1]*axis) + CGAL::abs(A[2]*axis);
     if(dist > ra + rb) return false;
   }
