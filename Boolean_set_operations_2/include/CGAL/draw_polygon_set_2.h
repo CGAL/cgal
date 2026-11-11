@@ -24,6 +24,8 @@
 #include <CGAL/Polygon_set_2.h>
 #include <CGAL/Basic_viewer.h>
 
+#include <boost/utility/base_from_member.hpp>
+
 namespace CGAL {
 
 template <typename DS,
@@ -169,9 +171,10 @@ void compute_elements(const PWH& pwh,
 #if defined(CGAL_USE_BASIC_VIEWER)
 
 template <typename PolygonSet_2, typename GSOptions>
-class Polygon_set_2_basic_viewer_qt : public Basic_viewer
+class Polygon_set_2_basic_viewer_qt : private boost::base_from_member<CGAL::Graphics_scene>, public Basic_viewer
 {
   using Base = Basic_viewer;
+  using Base_from_member = boost::base_from_member<CGAL::Graphics_scene>;
   using Ps = PolygonSet_2;
   using Pwh = typename Ps::Polygon_with_holes_2;
   using Pgn = typename Ps::Polygon_2;
@@ -181,8 +184,9 @@ public:
   Polygon_set_2_basic_viewer_qt(QWidget* parent, const Ps& ps,
                                 GSOptions& gs_options,
                                 const char* title = "Basic Polygon_set_2 Viewer") :
-    Base(parent, graphics_scene, title),
+    Base_from_member(), Base(parent, member, title),
     m_ps(ps),
+    graphics_scene(member),
     gso(gs_options)
   {
     gso.width(CGAL_BASIC_VIEWER_INIT_SIZE_X);
@@ -257,7 +261,7 @@ private:
   //! Indicates whether to draw unbounded polygons with holes.
   bool m_draw_unbounded = false;
 
-  Graphics_scene graphics_scene;
+  Graphics_scene& graphics_scene;
   GSOptions& gso;
 };
 

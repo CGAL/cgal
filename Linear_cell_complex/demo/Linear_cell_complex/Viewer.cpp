@@ -16,7 +16,8 @@
 #include <CGAL/Qt/vec.h>
 
 Viewer::Viewer(QWidget *parent)
-  : Base(parent, m_graphic_buffer, ""),
+  : Base_from_member(), Base(parent, member, ""),
+    m_graphic_buffer(member),
     scene(nullptr),
     m_previous_scene_empty(true)
 {

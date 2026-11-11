@@ -21,6 +21,8 @@
 #include <CGAL/Basic_viewer.h>
 #include <CGAL/Multipolygon_with_holes_2.h>
 
+#include <boost/utility/base_from_member.hpp>
+
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
 
@@ -53,8 +55,9 @@ namespace CGAL {
 
 // Viewer class for Multipolygon_with_holes_2
 template <typename Multipolygon>
-class Mpwh_2_basic_viewer_qt : public Qt::Basic_viewer {
+class Mpwh_2_basic_viewer_qt : private boost::base_from_member<CGAL::Graphics_scene>, public Qt::Basic_viewer {
   using Base = Qt::Basic_viewer;
+  using Base_from_member = boost::base_from_member<CGAL::Graphics_scene>;
   using Mpwh = Multipolygon;
   using Pwh = typename Mpwh::Polygon_with_holes_2;
   using Pgn = typename Mpwh::Polygon_2;
@@ -67,8 +70,8 @@ public:
   /// @param title the title of the window
   Mpwh_2_basic_viewer_qt(QWidget* parent, const Mpwh& mpwh,
                          const char* title = "Basic Multipolygon_with_holes_2 Viewer") :
-    Base(parent, gs, title, true, true, true, false, false),
-    m_mpwh(mpwh) {
+    Base_from_member(), Base(parent, member, title, true, true, true, false, false),
+    gs(member), m_mpwh(mpwh) {
     if (mpwh.number_of_polygons_with_holes() == 0) return;
 
     // mimic the computation of Camera::pixelGLRatio()
@@ -165,7 +168,7 @@ protected:
   }
 
 private:
-  Graphics_scene gs;
+  Graphics_scene& gs;
 
   //! The window width in pixels.
   int m_width = CGAL_BASIC_VIEWER_INIT_SIZE_X;
