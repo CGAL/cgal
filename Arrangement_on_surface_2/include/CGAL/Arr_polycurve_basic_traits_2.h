@@ -107,6 +107,22 @@ public:
     m_own_traits = other.m_own_traits;
   }
 
+  /*! assigns.
+   * If the 'other' polycurve traits owns its subcurve traits, then make
+   * this polycurve traits own its subcurve traits as well (as the copy
+   * constructor does).
+   * \param other the other traits.
+   */
+  Arr_polycurve_basic_traits_2& operator=(const Arr_polycurve_basic_traits_2& other) {
+    if (this == &other) return *this;
+    const Subcurve_traits_2* subcurve_traits = (other.m_own_traits) ?
+      new Subcurve_traits_2() : other.m_subcurve_traits;
+    if (m_own_traits) delete m_subcurve_traits;
+    m_subcurve_traits = subcurve_traits;
+    m_own_traits = other.m_own_traits;
+    return *this;
+  }
+
   /* Destructor
    * Deletes the subcurve traits class in case it was constructed during the
    * construction of this.
