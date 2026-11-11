@@ -48,6 +48,12 @@ function(get_library_version header_path major_macro minor_macro patchlevel_macr
   endif()
 endfunction()
 
+# Load ZLIB's complete config export set (ZLIB::ZLIB + ZLIB::ZLIBSTATIC) first.
+# Otherwise FindZLIB.cmake, used by some earlier package, may define only
+# ZLIB::ZLIB, and a later find_dependency(ZLIB) in config mode (e.g. from
+# PNGConfig.cmake via VTK) fails with "Some (but not all) targets ... defined".
+find_package(ZLIB CONFIG QUIET)
+
 function(check_library cgal_3rdparty_lib)
   set(QT_NO_CREATE_VERSIONLESS_TARGETS ON)
   set(CMAKE_FIND_PACKAGE_QUIET TRUE)
