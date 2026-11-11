@@ -16,6 +16,7 @@
 #define CGAL_GPS_ON_SURFACE_BASE_2_H
 
 #include <algorithm>
+#include <memory>
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
@@ -122,12 +123,13 @@ private:
   using Point_location = typename Arrangement_on_surface_2::Topology_traits::Default_point_location_strategy;
 
 protected:
+  using Shared_traits = std::shared_ptr<const Traits_2>;
+
+  // The traits, shared with the arrangements of the set and of its copies. Traits given by the caller are not owned.
   // Traits* should be removed and only m_traits should be used.
-  // If you, who reads this text, have time, replace m_traits
-  // with m_traits_adaptor and try to do something about m_traits_owner.
-  const Traits_2* m_traits;
+  // If you, who reads this text, have time, replace m_traits with m_traits_adaptor.
+  Shared_traits m_traits;
   CGAL::Arr_traits_adaptor_2<Traits_2> m_traits_adaptor;
-  bool m_traits_owner;
 
 
   Aos_2* m_arr;         // the underlying arrangement
@@ -136,26 +138,23 @@ protected:
 public:
   // constructs default
   Gps_on_surface_base_2() :
-    m_traits(new Traits_2()),
+    m_traits(std::make_shared<Traits_2>()),
     m_traits_adaptor(*m_traits),
-    m_traits_owner(true),
     m_arr(new Aos_2(m_traits))
   {}
 
 
   // constructs with traits object
   Gps_on_surface_base_2(const Traits_2& tr) :
-    m_traits(&tr),
+    m_traits(_non_owning(tr)),
     m_traits_adaptor(*m_traits),
-    m_traits_owner(false),
     m_arr(new Aos_2(m_traits))
   {}
 
-  // copy constructs
+  // copy constructs; the copy shares the traits (with its arrangement, a copy of the arrangement of the other set)
   Gps_on_surface_base_2(const Self& ps) :
-    m_traits(new Traits_2(*(ps.m_traits))),
+    m_traits(ps.m_traits),
     m_traits_adaptor(*m_traits),
-    m_traits_owner(true),
     m_arr(new Aos_2(*(ps.m_arr)))
   {}
 
@@ -163,20 +162,17 @@ public:
   Gps_on_surface_base_2& operator=(const Self& ps) {
     if (this == &ps) return (*this);
 
-    if (m_traits_owner) delete m_traits;
     delete m_arr;
-    m_traits = new Traits_2(*(ps.m_traits));
+    m_traits = ps.m_traits;
     m_traits_adaptor = CGAL::Arr_traits_adaptor_2<Traits_2>(*m_traits);
-    m_traits_owner = true;
     m_arr = new Aos_2(*(ps.m_arr));
     return (*this);
   }
 
   // constructs
   explicit Gps_on_surface_base_2(const Polygon_2& pgn) :
-    m_traits(new Traits_2()),
+    m_traits(std::make_shared<Traits_2>()),
     m_traits_adaptor(*m_traits),
-    m_traits_owner(true),
     m_arr(new Aos_2(m_traits)) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _insert(pgn, *m_arr);
@@ -184,9 +180,8 @@ public:
 
   // constructs
   explicit Gps_on_surface_base_2(const Polygon_2& pgn, const Traits_2& tr) :
-    m_traits(&tr),
+    m_traits(_non_owning(tr)),
     m_traits_adaptor(*m_traits),
-    m_traits_owner(false),
     m_arr(new Aos_2(m_traits)) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _insert(pgn, *m_arr);
@@ -194,9 +189,8 @@ public:
 
   // constructs
   explicit Gps_on_surface_base_2(const Polygon_with_holes_2& pgn_with_holes) :
-    m_traits(new Traits_2()),
+    m_traits(std::make_shared<Traits_2>()),
     m_traits_adaptor(*m_traits),
-    m_traits_owner(true),
     m_arr(new Aos_2(m_traits)) {
     ValidationPolicy::is_valid(pgn_with_holes,*m_traits);
     _insert(pgn_with_holes, *m_arr);
@@ -205,9 +199,8 @@ public:
   // constructs
   explicit Gps_on_surface_base_2(const Polygon_with_holes_2& pgn_with_holes,
                                  const Traits_2& tr) :
-    m_traits(&tr),
+    m_traits(_non_owning(tr)),
     m_traits_adaptor(*m_traits),
-    m_traits_owner(false),
     m_arr(new Aos_2(m_traits)) {
     ValidationPolicy::is_valid(pgn_with_holes,*m_traits);
     _insert(pgn_with_holes, *m_arr);
@@ -215,19 +208,18 @@ public:
 
 protected:
   Gps_on_surface_base_2(Aos_2* arr) :
-    m_traits(new Traits_2()),
+    m_traits(std::make_shared<Traits_2>()),
     m_traits_adaptor(*m_traits),
-    m_traits_owner(true),
     m_arr(arr)
    {}
 
+  /*! wraps traits owned by the caller in a non-owning shared pointer.
+   */
+  static Shared_traits _non_owning(const Traits_2& tr) { return Shared_traits(std::shared_ptr<void>(), &tr); }
+
 public:
   // destructs
-  virtual ~Gps_on_surface_base_2() {
-    delete m_arr;
-
-    if (m_traits_owner) delete m_traits;
-  }
+  virtual ~Gps_on_surface_base_2() { delete m_arr; }
 
   void simplify(const Polygon_2& pgn, Polygon_with_holes_2& res) {
     using Simplifier = Gps_polygon_simplifier<Aos_2>;
