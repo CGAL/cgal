@@ -1,0 +1,223 @@
+// Copyright (c) 1999
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Stefan Schirra
+
+#ifndef CGAL_BALLH3_H
+#define CGAL_BALLH3_H
+
+#include <CGAL/Interval_nt.h>
+#include <CGAL/Homogeneous/predicates_on_pointsH3.h>
+#include <boost/tuple/tuple.hpp>
+#include <CGAL/Kernel/global_functions_3.h>
+
+namespace CGAL {
+
+template <class R_>
+class BallH3
+{
+   typedef typename R_::RT                   RT;
+   typedef typename R_::FT                   FT;
+   typedef typename R_::Point_3              Point_3;
+
+   typedef boost::tuple<Point_3, FT, Orientation>   Rep;
+   typedef typename R_::template Handle<Rep>::type  Base;
+
+   Base base;
+
+public:
+   typedef R_                R;
+
+      BallH3() {}
+
+      BallH3(const Point_3& p, const FT& sq_rad,
+             const Orientation& o = COUNTERCLOCKWISE);
+
+      BallH3(const Point_3& p, const Point_3& q,
+             const Point_3& r, const Point_3& u);
+
+      BallH3(const Point_3& p, const Point_3& q,
+             const Point_3& r,
+             const Orientation& o = COUNTERCLOCKWISE);
+
+      BallH3(const Point_3&  p, const Point_3&  q,
+             const Orientation& o = COUNTERCLOCKWISE);
+
+      BallH3(const Point_3&  p,
+             const Orientation& o = COUNTERCLOCKWISE);
+
+      typename R::Boolean
+      operator==(const BallH3<R>&) const;
+
+      typename R::Boolean
+      operator!=(const BallH3<R>& s) const
+      { return !(*this == s); }
+
+      const Point_3 & center() const;
+
+      const FT & squared_radius() const;
+
+      Orientation orientation() const;
+
+      typename R::Boolean is_degenerate() const;
+
+      BallH3<R> opposite() const;
+
+      typename R::Oriented_side oriented_side(const Point_3& p) const;
+
+      typename R::Boolean
+      has_on_boundary(const Point_3& p) const
+      { return oriented_side(p)==ON_ORIENTED_BOUNDARY; }
+
+      typename R::Boolean
+      has_on_positive_side(const Point_3& p) const
+      { return oriented_side(p)==ON_POSITIVE_SIDE; }
+
+      typename R::Boolean
+      has_on_negative_side(const Point_3& p) const
+      { return oriented_side(p)==ON_NEGATIVE_SIDE; }
+
+      typename R::Bounded_side
+      bounded_side(const Point_3& p) const;
+
+      typename R::Boolean
+      has_on_bounded_side(const Point_3& p) const
+      { return bounded_side(p)==ON_BOUNDED_SIDE; }
+
+      typename R::Boolean
+      has_on_unbounded_side(const Point_3& p) const
+      { return bounded_side(p)==ON_UNBOUNDED_SIDE; }
+};
+
+
+template < class R >
+CGAL_KERNEL_INLINE
+BallH3<R>::BallH3(const typename BallH3<R>::Point_3& center,
+                  const FT& squared_radius,
+                  const Orientation& o)
+{
+  CGAL_kernel_precondition( !( squared_radius < FT(0))
+                          &&( o != COLLINEAR) );
+  base = Rep(center, squared_radius, o);
+}
+
+template <class R>
+CGAL_KERNEL_INLINE
+BallH3<R>::BallH3(const typename BallH3<R>::Point_3& center,
+                  const Orientation& o)
+{
+  CGAL_kernel_precondition( ( o != COLLINEAR) );
+  base = Rep(center, FT(0), o);
+}
+
+template <class R>
+CGAL_KERNEL_MEDIUM_INLINE
+BallH3<R>::BallH3(const typename BallH3<R>::Point_3& p,
+                  const typename BallH3<R>::Point_3& q,
+                  const Orientation& o)
+{
+  CGAL_kernel_precondition( o != COLLINEAR);
+  Point_3 center = midpoint(p,q);
+  FT     squared_radius = squared_distance(p,center);
+  base = Rep(center, squared_radius, o);
+}
+
+template <class R>
+CGAL_KERNEL_MEDIUM_INLINE
+BallH3<R>::BallH3(const typename BallH3<R>::Point_3& p,
+                  const typename BallH3<R>::Point_3& q,
+                  const typename BallH3<R>::Point_3& r,
+                  const Orientation& o)
+{
+  CGAL_kernel_precondition( o != COLLINEAR);
+  Point_3 center = circumcenter(p,q,r);
+  FT     squared_radius = squared_distance(p,center);
+  base = Rep(center, squared_radius, o);
+}
+
+template <class R>
+CGAL_KERNEL_MEDIUM_INLINE
+BallH3<R>::BallH3(const typename BallH3<R>::Point_3& p,
+                  const typename BallH3<R>::Point_3& q,
+                  const typename BallH3<R>::Point_3& r,
+                  const typename BallH3<R>::Point_3& s)
+{
+  Orientation o = CGAL::orientation(p,q,r,s);
+  CGAL_kernel_precondition( o != COLLINEAR);
+  Point_3 center = circumcenter(p,q,r,s);
+  FT     squared_radius = squared_distance(p,center);
+  base = Rep(center, squared_radius, o);
+}
+
+template <class R>
+CGAL_KERNEL_INLINE
+typename R::Boolean
+BallH3<R>::operator==(const BallH3<R>& s) const
+{
+   return    ( orientation() == s.orientation())
+          && ( center() == s.center())
+          && ( squared_radius() == s.squared_radius());
+}
+
+template <class R>
+inline
+const typename BallH3<R>::Point_3 &
+BallH3<R>::center() const
+{ return get_pointee_or_identity(base).template get<0>(); }
+
+template <class R>
+inline
+const typename BallH3<R>::FT &
+BallH3<R>::squared_radius() const
+{ return get_pointee_or_identity(base).template get<1>(); }
+
+template <class R>
+inline
+Orientation
+BallH3<R>::orientation() const
+{ return get_pointee_or_identity(base).template get<2>(); }
+
+template <class R>
+inline
+typename R::Boolean
+BallH3<R>::is_degenerate() const
+{ return squared_radius() <= FT(0) ; }
+
+template <class R>
+CGAL_KERNEL_MEDIUM_INLINE
+typename R::Oriented_side
+BallH3<R>::oriented_side(const typename BallH3<R>::Point_3& p) const
+{ return Oriented_side(static_cast<int>(bounded_side(p)) * static_cast<int>(orientation())); }
+
+template <class R>
+CGAL_KERNEL_INLINE
+typename R::Bounded_side
+BallH3<R>::bounded_side(const typename BallH3<R>::Point_3& p) const
+{
+  return enum_cast<Bounded_side>(CGAL_NTS compare(squared_radius(),
+                                          squared_distance(center(),p)));
+}
+
+template <class R>
+inline
+BallH3<R>
+BallH3<R>::opposite() const
+{
+  return BallH3<R>(center(), squared_radius(),
+                         CGAL::opposite(orientation()) );
+}
+
+} //namespace CGAL
+
+#endif // CGAL_BALLH3_H

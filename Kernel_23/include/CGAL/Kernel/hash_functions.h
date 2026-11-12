@@ -21,6 +21,7 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/Aff_transformation_2.h>
 #include <CGAL/Aff_transformation_3.h>
+#include <CGAL/Ball_3.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Circle_2.h>
@@ -218,6 +219,16 @@ hash_value (const Sphere_3<K>& sphere)
 
 template <typename K>
 inline enable_if_Cartesian_and_hashable_t<K, std::size_t>
+hash_value (const Ball_3<K>& ball)
+{
+  std::size_t result = hash_value(ball.center());
+  boost::hash_combine(result, hash_value(ball.squared_radius()));
+  boost::hash_combine(result, hash_value(ball.orientation()));
+  return result;
+}
+
+template <typename K>
+inline enable_if_Cartesian_and_hashable_t<K, std::size_t>
 hash_value (const Vector_3<K>& vector)
 {
   std::size_t result = hash_value(vector.x());
@@ -271,6 +282,7 @@ template <typename K> struct hash<CGAL::Iso_cuboid_3<K>> : CGAL::Maybe_forward_t
 template <typename K> struct hash<CGAL::Point_3<K>> : CGAL::Maybe_forward_to_hash_value<K> {};
 template <typename K> struct hash<CGAL::Segment_3<K>> : CGAL::Maybe_forward_to_hash_value<K> {};
 template <typename K> struct hash<CGAL::Sphere_3<K>> : CGAL::Maybe_forward_to_hash_value<K> {};
+template <typename K> struct hash<CGAL::Ball_3<K>> : CGAL::Maybe_forward_to_hash_value<K> {};
 template <typename K> struct hash<CGAL::Vector_3<K>> : CGAL::Maybe_forward_to_hash_value<K> {};
 template <typename K> struct hash<CGAL::Weighted_point_3<K>> : CGAL::Maybe_forward_to_hash_value<K> {};
 template <> struct hash<CGAL::Bbox_3> : CGAL::Forward_to_hash_value {};

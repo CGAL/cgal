@@ -57,6 +57,7 @@ CGAL_Kernel_obj(Triangle_3)
 CGAL_Kernel_obj(Tetrahedron_3)
 CGAL_Kernel_obj(Iso_cuboid_3)
 CGAL_Kernel_obj(Sphere_3)
+CGAL_Kernel_obj(Ball_3)
 CGAL_Kernel_obj(Circle_3)
 
 
@@ -372,6 +373,8 @@ CGAL_Kernel_cons(Construct_opposite_segment_3,
                  construct_opposite_segment_3_object)
 CGAL_Kernel_cons(Construct_opposite_sphere_3,
                  construct_opposite_sphere_3_object)
+CGAL_Kernel_cons(Construct_opposite_ball_3,
+                 construct_opposite_ball_3_object)
 CGAL_Kernel_cons(Construct_opposite_triangle_2,
                  construct_opposite_triangle_2_object)
 CGAL_Kernel_cons(Construct_opposite_vector_2,
@@ -458,6 +461,8 @@ CGAL_Kernel_cons(Construct_source_3,
                  construct_source_3_object)
 CGAL_Kernel_cons(Construct_sphere_3,
                  construct_sphere_3_object)
+CGAL_Kernel_cons(Construct_ball_3,
+                 construct_ball_3_object)
 CGAL_Kernel_cons(Construct_supporting_plane_3,
                  construct_supporting_plane_3_object)
 CGAL_Kernel_cons(Construct_target_2,

@@ -161,6 +161,7 @@ public:
   CGAL_kc_pair(Tetrahedron_3)
   CGAL_kc_pair(Iso_cuboid_3)
   CGAL_kc_pair(Sphere_3)
+  CGAL_kc_pair(Ball_3)
   CGAL_kc_pair(Aff_transformation_3)
 
 #undef CGAL_kc_pair

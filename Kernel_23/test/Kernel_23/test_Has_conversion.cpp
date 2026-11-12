@@ -60,6 +60,7 @@ int main()
   assert((CGAL::Has_conversion<SH, FSH, SH::Vector_3, FSH::Vector_3>::value));
 
   assert((CGAL::Has_conversion<SC, ASC, SC::Sphere_3, ASC::Sphere_3>::value));
+  assert((CGAL::Has_conversion<SC, ASC, SC::Ball_3, ASC::Ball_3>::value));
 #if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
   assert((CGAL::Has_conversion<SC, EPECK, SC::Triangle_2, EPECK::Triangle_2>::value));
   assert((CGAL::Has_conversion<EPECK, SC, EPECK::Circle_3, SC::Circle_3>::value));

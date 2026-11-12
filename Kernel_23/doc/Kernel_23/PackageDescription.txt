@@ -109,6 +109,7 @@
 - `CGAL::Segment_3<Kernel>`
 - `CGAL::Circle_3<Kernel>`
 - `CGAL::Sphere_3<Kernel>`
+- `CGAL::Ball_3<Kernel>`
 - `CGAL::Tetrahedron_3<Kernel>`
 - `CGAL::Triangle_3<Kernel>`
 - `CGAL::Vector_3<Kernel>`
@@ -247,6 +248,7 @@
 - `Kernel::Segment_2`
 - `Kernel::Segment_3`
 - `Kernel::Sphere_3`
+- `Kernel::Ball_3`
 - `Kernel::Tetrahedron_3`
 - `Kernel::Triangle_2`
 - `Kernel::Triangle_3`
@@ -397,6 +399,7 @@
 - `Kernel::ConstructOppositeSegment_2`
 - `Kernel::ConstructOppositeSegment_3`
 - `Kernel::ConstructOppositeSphere_3`
+- `Kernel::ConstructOppositeBall_3`
 - `Kernel::ConstructOppositeTriangle_2`
 - `Kernel::ConstructOppositeVector_2`
 - `Kernel::ConstructOppositeVector_3`
@@ -426,6 +429,7 @@
 - `Kernel::ConstructSegment_3`
 - `Kernel::ConstructSource_2`
 - `Kernel::ConstructSphere_3`
+- `Kernel::ConstructBall_3`
 - `Kernel::ConstructSumOfVectors_2`
 - `Kernel::ConstructSumOfVectors_3`
 - `Kernel::ConstructSupportingPlane_3`

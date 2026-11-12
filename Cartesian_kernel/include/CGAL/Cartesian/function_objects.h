@@ -240,6 +240,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::FT              FT;
     typedef typename K::Point_3         Point_3;
     typedef typename K::Sphere_3        Sphere_3;
+    typedef typename K::Ball_3          Ball_3;
     typedef typename K::Circle_3        Circle_3;
     typedef typename K::Tetrahedron_3   Tetrahedron_3;
     typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
@@ -247,6 +248,10 @@ namespace CartesianKernelFunctors {
   public:
     Bounded_side
     operator()( const Sphere_3& s, const Point_3& p) const
+    { return s.rep().bounded_side(p); }
+
+    Bounded_side
+    operator()( const Ball_3& s, const Point_3& p) const
     { return s.rep().bounded_side(p); }
 
     Bounded_side
@@ -1245,11 +1250,16 @@ namespace CartesianKernelFunctors {
     typedef typename K::FT          FT;
     typedef typename K::Point_3     Point_3;
     typedef typename K::Sphere_3    Sphere_3;
+    typedef typename K::Ball_3      Ball_3;
     typedef typename K::Circle_3    Circle_3;
 
 public:
     decltype(auto)
     operator()( const Sphere_3& s) const
+    { return s.rep().squared_radius(); }
+
+    decltype(auto)
+    operator()( const Ball_3& s) const
     { return s.rep().squared_radius(); }
 
     decltype(auto)
@@ -1956,6 +1966,7 @@ public:
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
     typedef typename K::Sphere_3         Sphere_3;
+    typedef typename K::Ball_3           Ball_3;
     typedef typename K::Circle_3         Circle_3;
 
   public:
@@ -1999,6 +2010,29 @@ public:
 
     Bbox_3
     operator()(const Sphere_3& s) const
+    {
+      typename K::Construct_bbox_3 construct_bbox_3;
+      Bbox_3 b = construct_bbox_3(s.center());
+
+      Interval_nt<> x (b.xmin(), b.xmax());
+      Interval_nt<> y (b.ymin(), b.ymax());
+      Interval_nt<> z (b.zmin(), b.zmax());
+
+      Interval_nt<> sqr = CGAL_NTS to_interval(s.squared_radius());
+      Interval_nt<> r = CGAL::sqrt(sqr);
+      Interval_nt<> minx = x-r;
+      Interval_nt<> maxx = x+r;
+      Interval_nt<> miny = y-r;
+      Interval_nt<> maxy = y+r;
+      Interval_nt<> minz = z-r;
+      Interval_nt<> maxz = z+r;
+
+      return Bbox_3(minx.inf(), miny.inf(), minz.inf(),
+                    maxx.sup(), maxy.sup(), maxz.sup());
+    }
+
+    Bbox_3
+    operator()(const Ball_3& s) const
     {
       typename K::Construct_bbox_3 construct_bbox_3;
       Bbox_3 b = construct_bbox_3(s.center());
@@ -3807,6 +3841,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Circle_3         Circle_3;
     typedef typename K::Sphere_3         Sphere_3;
+    typedef typename K::Ball_3           Ball_3;
 
   public:
     Boolean
@@ -3851,8 +3886,16 @@ namespace CartesianKernelFunctors {
     operator()(const Sphere_3 &a, const Circle_3 &p) const
     { return a.rep().has_on(p); }
 
+    Needs_FT<Boolean>
+    operator()(const Ball_3 &a, const Circle_3 &p) const
+    { return a.rep().has_on(p); }
+
     Boolean
     operator()(const Sphere_3 &a, const Point_3 &p) const
+    { return a.rep().has_on(p); }
+
+    Boolean
+    operator()(const Ball_3 &a, const Point_3 &p) const
     { return a.rep().has_on(p); }
 
     Boolean
@@ -4121,6 +4164,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Vector_3       Vector_3;
     typedef typename K::Tetrahedron_3  Tetrahedron_3;
     typedef typename K::Sphere_3       Sphere_3;
+    typedef typename K::Ball_3         Ball_3;
 
   public:
     std::array<Orientation,2>
@@ -4169,6 +4213,12 @@ namespace CartesianKernelFunctors {
 
     Orientation
     operator()(const Sphere_3& s) const
+    {
+      return s.rep().orientation();
+    }
+
+    Orientation
+    operator()(const Ball_3& s) const
     {
       return s.rep().orientation();
     }

@@ -5492,6 +5492,32 @@ public:
 
   \cgalRefines{AdaptableUnaryFunction}
 
+  \sa `CGAL::Ball_3<Kernel>`
+
+*/
+class ConstructOppositeBall_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the ball with the same center and squared radius as
+    `s`, but with opposite orientation.
+  */
+  Kernel::Ball_3 operator()(const Kernel::Ball_3& s);
+
+  /// @}
+
+}; /* end Kernel::ConstructOppositeBall_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines{AdaptableUnaryFunction}
+
   \sa `CGAL::Triangle_2<Kernel>`
 
 */
@@ -6640,6 +6666,81 @@ public:
   /// @}
 
 }; /* end Kernel::ConstructSphere_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines{AdaptableQuaternaryFunction}
+
+  \sa `CGAL::Ball_3<Kernel>`
+
+*/
+class ConstructBall_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    introduces a ball initialized to the ball with center `center`,
+    squared radius `squared_radius` and orientation
+    `orientation`.
+    \pre `orientation != CGAL::COPLANAR` and `squared_radius >= 0`.
+  */
+  Kernel::Ball_3 operator()(const Kernel::Point_3 & center,
+                            const Kernel::FT & squared_radius,
+                            const Orientation & orientation = COUNTERCLOCKWISE);
+
+  /*!
+    introduces a ball initialized to the unique ball which passes
+    through the points `p`, `q`, `r` and `s`. The
+    orientation of the ball is the orientation of the point quadruple
+    `p`, `q`, `r`, `s`.
+    \pre `p`, `q`, `r`, and `s` are not coplanar.
+  */
+  Kernel::Ball_3 operator()( const Kernel::Point_3 & p,
+                               const Kernel::Point_3 & q,
+                               const Kernel::Point_3 & r,
+                               const Kernel::Point_3 & s);
+
+  /*!
+    introduces a ball initialized to the smallest ball which passes
+    through the points `p`, `q`, and `r`. The orientation of
+    the ball is `o`. \pre `o != CGAL::COPLANAR`.
+  */
+  Kernel::Ball_3 operator()(const Kernel::Point_3 & p,
+                            const Kernel::Point_3 & q,
+                            const Kernel::Point_3 & r,
+                            const Orientation& o = COUNTERCLOCKWISE);
+
+  /*!
+    introduces a ball initialized to the smallest ball which passes
+    through the points `p` and `q`. The orientation of
+    the ball is `o`. \pre `o != CGAL::COPLANAR`.
+  */
+  Kernel::Ball_3 operator()(const Kernel::Point_3 & p,
+                            const Kernel::Point_3 & q,
+                            const Orientation & o = COUNTERCLOCKWISE);
+
+  /*!
+    introduces a ball `s` initialized to the ball with center
+    `center`, squared radius zero and orientation `orientation`.
+    \pre `orientation != CGAL::COPLANAR`.
+    \post `s.is_degenerate()` = `true`.
+  */
+  Kernel::Ball_3 operator()( const Kernel::Point_3 & center,
+                               const Orientation & orientation = COUNTERCLOCKWISE);
+
+  /*!
+    introduces a ball initialized to the diametral ball of the circle.
+  */
+  Kernel::Ball_3 operator()( const Kernel::Circle_3 &c);
+
+  /// @}
+
+}; /* end Kernel::ConstructBall_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects

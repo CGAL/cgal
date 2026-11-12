@@ -33,6 +33,7 @@
 #include "_test_cls_segment_3.h"
 #include "_test_fct_segment_3.h"
 #include "_test_cls_sphere_3.h"
+#include "_test_cls_ball_3.h"
 #include "_test_cls_ray_3.h"
 #include "_test_cls_triangle_3.h"
 #include "_test_cls_tetrahedron_3.h"
@@ -59,6 +60,7 @@ _test_3(const R& r)
  && _test_cls_line_3( r )
  && _test_cls_segment_3( r )
  && _test_cls_sphere_3(r)
+ && _test_cls_ball_3(r)
  && _test_cls_ray_3( r )
  && _test_cls_triangle_3( r )
  && _test_cls_tetrahedron_3( r )

@@ -303,10 +303,12 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Compute_squared_ra
   typedef typename K::Point_3     Point_3;
   typedef typename K::Circle_3    Circle_3;
   typedef typename K::Sphere_3    Sphere_3;
+  typedef typename K::Ball_3      Ball_3;
 
   static Tag_true trivial(Point_3);
   static Tag_true trivial(Circle_3);
   static Tag_true trivial(Sphere_3);
+  static Tag_true trivial(Ball_3);
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
@@ -432,6 +434,27 @@ struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_sphere_3<K>
 
   enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_sphere_3<K>, Args...>::value
+  };
+};
+
+template <typename K, typename... Args>
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_ball_3<K>, Args...>
+{
+  typedef typename K::FT         FT;
+  typedef typename K::Point_3    Point_3;
+  typedef typename K::Circle_3   Circle_3;
+
+  static Tag_true trivial(Return_base_tag, Point_3, FT, Orientation);
+  static Tag_true trivial(Return_base_tag, Point_3, Orientation);
+  static Tag_true trivial(Return_base_tag, Circle_3);
+  static Tag_true trivial(Point_3, FT, Orientation);
+  static Tag_true trivial(Point_3, Orientation);
+  static Tag_true trivial(Circle_3);
+
+  static Tag_false trivial(...);
+
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_ball_3<K>, Args...>::value
   };
 };
 
