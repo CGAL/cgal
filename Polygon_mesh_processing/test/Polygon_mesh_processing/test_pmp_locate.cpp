@@ -460,7 +460,7 @@ void test_locate_in_face(const G& g,
   typedef typename boost::property_map_value<G, CGAL::vertex_point_t>::type     Point;
 
   Point p2 = get(CGAL::vertex_point, g, v);
-  PMP::locate_in_face(p2, f, g);
+  loc = PMP::locate_in_face(p2, f, g);
   assert(loc.first == f && is_equal(loc.second[v_id], FT(1)));
 
   // ---------------------------------------------------------------------------
