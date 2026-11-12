@@ -131,7 +131,7 @@ public:
     /*
      * \brief Copy constructor.
      */
-    Filtration_core(const Filtration_core& f) = default; 
+    Filtration_core(const Filtration_core& f) = default;
 
     /* \brief Iterator over a filtration.
      *

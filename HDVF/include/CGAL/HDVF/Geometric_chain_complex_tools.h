@@ -371,7 +371,7 @@ public:
  Technically, starting from a Simplicial_chain_complex `K_init`, the methods `dualize_complex()` builds a `Simplicial_chain_complex`  `L` and a `Sub_chain_complex_mask`  `K`.
  - L : complex built out of K_init together with a closing icosphere
  - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying K_init inside L
- 
+
  Two `dualize_complex()` methods are provided, based repsectively on tetgen and `CGAL::Conforming_constrained_Delaunay_triangulation_3`.
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
