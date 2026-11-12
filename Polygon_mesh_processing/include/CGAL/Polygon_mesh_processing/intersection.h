@@ -772,6 +772,7 @@ intersecting_meshes(const TriangleMeshRange& range,
   CGAL::AABB_trees::all_pairs_of_intersecting_primitives<Concurrency_tag>(tree, std::back_inserter(candidates));
 
   // TODO: we could also do that in parallel, depending on candidates.size()
+  // TODO: tree caching could be added
   for(const auto& p : candidates)
   {
     const TriangleMesh &mesh1 = range[p.first];
