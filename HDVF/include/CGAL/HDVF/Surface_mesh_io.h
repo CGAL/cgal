@@ -340,7 +340,7 @@ public:
     private:
         const HDVFType& _hdvf; // HDVF iterated
         const Surface_mesh_io& _sm_io; // Corresponding Surface_mesh_io
-        HDVFType::iterator _it;
+        typename HDVFType::iterator _it;
     };
 
     /**

@@ -342,6 +342,7 @@ public:
             // Compare _sub
             res = res && (_sub.at(q) == other._sub.at(q));
         }
+        return res;
     }
 };
 

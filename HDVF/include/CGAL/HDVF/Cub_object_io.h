@@ -60,10 +60,11 @@ public:
     int dimension() const { return _dim; }
 
     /** \brief Resets the `Cub_object_io` and sets the dimension of the cubical complex and its size. */
-    int init(int dim, const std::vector<size_t>& size_bb) {
+    void init(int dim, const std::vector<size_t>& size_bb) {
         _dim = dim;
         _N = size_bb;
         _ncubs.resize(_dim+1);
+
     }
 
     /** \brief Returns the number of cubs in each dimension. */
