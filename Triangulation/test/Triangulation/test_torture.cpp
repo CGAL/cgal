@@ -1,11 +1,11 @@
-#include <CGAL/config.h>
-
 #include <CGAL/Epick_d.h>
 #include <CGAL/Triangulation/internal/Combination_enumerator.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/algorithm.h>
-#include <tilted_grid.h>
+
+#include <CGAL/Tilted_grid.h>
+
 #include <vector>
 #include <string>
 #include <fstream>
