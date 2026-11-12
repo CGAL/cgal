@@ -49,7 +49,7 @@ class Tet_object_io : public Mesh_object_io<Traits>
 public:
     /** Builds a `Tet_object_io` from tetgen files.
      *
-     * \param prefix Prefix of tetgen files containing the tetrahedral mesh.
+     * \param prefix Prefix of tetgen files containing the tetrahedral mesh. Tetgen produces a collection of files encoding mesh information in each dimension (vertices, edges, faces, tetrahedra...). `prefix` is the common prefix of these files.
      *
      * \exception File_not_found If the prefix is incorrect (corresponding tetgen files do not exists), raises a `%std::runtime_error`.
      */
