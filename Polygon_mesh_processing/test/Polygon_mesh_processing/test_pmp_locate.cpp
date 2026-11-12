@@ -90,8 +90,11 @@ random_3D_ray(const AABB_tree& aabb_tree, CGAL::Random& rnd)
 template<typename FT>
 bool is_equal(const FT& a, const FT& b)
 {
-  if(std::is_floating_point<FT>::value)
-    return (CGAL::abs(a - b) <= 1e-7); // numeric_limits' epsilon is too restrictive...
+  if(std::is_floating_point<FT>::value){
+    FT d = a - b;
+    d = CGAL::abs(d);
+    return ( d <= 1e-7); // numeric_limits' epsilon is too restrictive...
+  }
   else
     return (a == b);
 }
