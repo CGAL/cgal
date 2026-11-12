@@ -15,6 +15,10 @@
 
 #include<cstddef>
 
+#ifdef __clang__
+#  pragma GCC diagnostic ignored "-Wunused-private-field"
+#endif
+
 namespace CGAL {
 
 class monostate {
@@ -52,5 +56,10 @@ constexpr bool operator>=(monostate, monostate) noexcept
 }
 
 } // namespace CGAL
+
+
+#ifdef __clang__
+#  pragma GCC diagnostic pop
+#endif
 
 #endif
