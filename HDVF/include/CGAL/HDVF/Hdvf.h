@@ -78,27 +78,6 @@ public:
     using Column_matrix = typename Base::Column_matrix;
     using Row_matrix = typename Base::Row_matrix;
 
-    /*! \brief Hole information returned by the  iterator.
-     *
-     * Information comprises:
-     * - `cell_index` index of the critical cell.
-     * - `dimension` dimension of the critical cell.
-     * - `homology_chain`, `cohomology_chain` associated homology and/or cohomolgy generators.
-     */
-    typedef struct {
-        size_t cell_index; // Index of the critical cell
-        int dimension; // Dimension of the critical cell
-        Column_chain homology_chain, cohomology_chain; // Homology and cohomology generators
-    } Hole_information ;
-
-    /** \brief Iterator mode (determines if `iterator enumerates homology/cohomology generators or both). */
-    enum Iterator_mode {
-        NONE = 0,
-        HOMOLOGY = 0b0010,
-        COHOMOLOGY = 0b0001,
-        BOTH = 0b0011
-    };
-
     /**
      * Builds an "empty" HDVF associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
      *
@@ -757,7 +736,7 @@ public:
         // Iterator tags
         using iterator_category = std::forward_iterator_tag;
         using difference_type   = std::ptrdiff_t;
-        using value_type        = Hole_information;
+        using value_type        = Hole_information<Column_chain>;
 
         /*! \brief Iterator constructor
          *
@@ -767,7 +746,7 @@ public:
          *
          * \exception Invalid_hdvf_options If computation options of the underlying `hdvf` are incompatible (no homology/cohomology generators computed), raises a `%std::runtime_error`
          */
-        iterator(const Hdvf& hdvf, int dimension = -1, Iterator_mode mode = 0) : _i(0), _mode(mode), _hdvf(hdvf)
+        iterator(const Hdvf& hdvf, int dimension = -1, Iterator_mode mode = IT_NONE) : _i(0), _mode(mode), _hdvf(hdvf)
         {
             // Iteration mode
             if (_mode == 0) // Get mode from hdvf_opts
@@ -817,7 +796,7 @@ public:
          */
         value_type operator*() const
         {
-            Hole_information res ;
+            value_type res ;
             const size_t sigma(_criticals.at(_dim).at(_i));
             res.cell_index = sigma;
             res.dimension = _dim;
@@ -870,6 +849,9 @@ public:
          * \returns `true` if the indices are different.
          */
         friend bool operator!= (const iterator& a, const iterator& b) { return ((a._i != b._i) || (a._dim != b._dim)); };
+
+        /** \brief Returns iterator mode. */
+        Iterator_mode mode () const { return _mode; }
 
     private:
         std::vector<std::vector<size_t>> _criticals; // Criticals to visit

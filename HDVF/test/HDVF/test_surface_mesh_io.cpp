@@ -11,6 +11,7 @@
 #include <CGAL/HDVF/Surface_mesh_io.h>
 #include <CGAL/Zp.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
+#include <CGAL/HDVF/Hdvf.h>
 
 namespace HDVF = CGAL::Homological_discrete_vector_field;
 
@@ -20,6 +21,7 @@ typedef HDVF::Hdvf_traits_3<K> Traits;
 typedef CGAL::Homological_discrete_vector_field::Surface_mesh_io<SurfaceMesh,Traits> SurfaceMeshIO;
 typedef CGAL::Zp<5, char, true> Coefficient_ring;
 typedef HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> Complex;
+typedef HDVF::Hdvf<Complex> Hdvf_type;
 
 namespace HDVF = CGAL::Homological_discrete_vector_field;
 
@@ -39,15 +41,24 @@ int main() {
 
     SurfaceMesh::face_index fh(*(mesh.faces().begin()));
     SurfaceMesh::halfedge_index he(mesh.halfedge(fh));
-    size_t i(CGAL::Homological_discrete_vector_field::halfedge_handle_to_cell_index(he, 2, mesh_io, complex));
-    SurfaceMesh::halfedge_index he2(CGAL::Homological_discrete_vector_field::cell_index_to_halfedge_handle(i, 2, mesh_io, complex));
+    size_t i(mesh_io.halfedge_handle_to_cell_index(he, 2, complex));
+    SurfaceMesh::halfedge_index he2(mesh_io.cell_index_to_halfedge_handle(i, 2, complex));
 
     std::cout << "he == he2: " << (he==he2) << std::endl;
 
     CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN> chain(complex.number_of_cells(1));
     chain.set_coefficient(0, Coefficient_ring(1.));
     chain.set_coefficient(2, Coefficient_ring(1.));
-    SurfaceMeshIO::Simplex_chain<Coefficient_ring> simplex_chain(HDVF::chain_to_simplex_chain(chain, 1, mesh_io, complex));
+    SurfaceMeshIO::Simplex_chain<Coefficient_ring> simplex_chain(mesh_io.chain_to_simplex_chain(chain, 1, complex));
+
+    // Computation of a perfect HDVF and iteration on generators as Simplex_chain
+    Hdvf_type hdvf(complex);
+    hdvf.compute_perfect_hdvf();
+
+    for (SurfaceMeshIO::iterator<Hdvf_type> it = mesh_io.begin(hdvf); it != mesh_io.end(hdvf); ++it) {
+        SurfaceMeshIO::Hole_information<Coefficient_ring> hole(*it);
+        std::cout << "hole of dimension " << hole.dimension << std::endl;
+    }
 
     return 0;
 }
