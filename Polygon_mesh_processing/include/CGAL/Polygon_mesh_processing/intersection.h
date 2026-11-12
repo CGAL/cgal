@@ -28,6 +28,10 @@
 #include <boost/range/has_range_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/concurrent_vector.h>
+#endif
+
 #include <exception>
 #include <iterator>
 #include <utility>
@@ -757,9 +761,17 @@ intersecting_meshes(const TriangleMeshRange& range,
 
   Tree tree(indexed_bboxes.begin(), indexed_bboxes.end());
 
+#ifdef CGAL_LINKED_WITH_TBB
+  std::conditional_t<Concurrency_tag::is_parallel,
+                     tbb::concurrent_vector<std::pair<std::size_t, std::size_t>>,
+                     std::vector<std::pair<std::size_t, std::size_t>>> candidates;
+#else
   std::vector<std::pair<std::size_t, std::size_t>> candidates;
+#endif
+
   CGAL::AABB_trees::all_pairs_of_intersecting_primitives<Concurrency_tag>(tree, std::back_inserter(candidates));
 
+  // TODO: we could also do that in parallel, depending on candidates.size()
   for(const auto& p : candidates)
   {
     const TriangleMesh &mesh1 = range[p.first];

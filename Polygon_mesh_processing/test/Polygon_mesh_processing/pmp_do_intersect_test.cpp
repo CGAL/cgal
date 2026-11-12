@@ -296,6 +296,14 @@ int test_inter_in_range(const std::vector<std::filesystem::path>& filenames, std
   std::cout << output.size() <<" pairs."<<std::endl;
   if(output.size() != expected)
     return 1;
+#ifdef CGAL_LINKED_WITH_TBB
+  output.clear();
+  CGAL::Polygon_mesh_processing::intersecting_meshes(meshes, std::back_inserter(output),
+    CGAL::parameters::do_overlap_test_of_bounded_sides(volume).concurrency_tag(CGAL::Parallel_tag()));
+  std::cout << output.size() <<" pairs (in parallel)."<<std::endl;
+  if(output.size() != expected)
+    return 1;
+#endif
   return 0;
 }
 
