@@ -433,7 +433,7 @@ int main(int argc, char **argv) {
         HDVF_type hdvf(complex, HDVF::OPT_FULL);
         hdvf.read_hdvf_reduction("data/test_hdvf/test_hdvf.hdvf");
         for (HDVF_type::iterator it = hdvf.begin(1,HDVF::HOMOLOGY); it != hdvf.end(); ++it) {
-            HDVF::Hole_information<HDVF_type::Column_chain> info(*it);
+            HDVF_type::Hole_information info(*it);
             std::cout << "critical: " << info.cell_index << " - dim: " << info.dimension << std::endl ;
         }
     }

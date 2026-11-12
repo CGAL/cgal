@@ -46,16 +46,21 @@ public:
     /** \brief Type of halfedges of the surface mesh. */
     typedef typename boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor ;
 
-    /** Type encoding chains of simplices (with coefficients in `CoefficientRing`, a model of `EuclideanRingWithoutDivision`). */
+    /** \brief Type encoding chains on a surface mesh.
+     *
+     * A chain over a surface mesh is a formal linear combination \f$\lambda_1\sigma_1+\cdots+\lambda_k\sigma_k\f$ of cells \f$\sigma_i\f$ of the surface mesh (all of the same dimension), with coefficients \f$\lambda_i\f$ in `CoefficientRing` (a model of `EuclideanRingWithoutDivision`).
+     *
+     * A `Simplex_chain` encodes such a chain as a map between halfedges (each cell \f$\sigma_i\f$ is identified by its associated halfedge) and coefficients (\f$\lambda_i\f$)
+     */
     template <typename CoefficientRing>
     using Simplex_chain = std::map<halfedge_descriptor, CoefficientRing>;
 
     /*! \brief Hole information returned by the  iterator.
      *
      * Information comprises:
-     * - `cell_index` index of the critical cell.
+     * - `critical_cell` halfedge associated to the critical cell.
      * - `dimension` dimension of the critical cell.
-     * - `homology_chain`, `cohomology_chain` associated homology and/or cohomolgy generators.
+     * - `homology_chain`, `cohomology_chain` associated `Simplex_chain` encoding homology and/or cohomolgy generators.
      */
     template <typename CoefficientRing>
     struct Hole_information {
@@ -194,7 +199,7 @@ public:
         return _io_cell_to_he_index.at(io_cell);
     }
 
-    /** \brief Returns the index of the cell of dimension `q` (in an `AbstractSimplicialChainComplex` `K` built from the `Surface_mesh_io`) associated to a given halfedge handle (in the underlying triangle mesh).
+    /** \brief Returns the index of the cell of dimension `q` (in an `AbstractSimplicialChainComplex` `K` built from the `Surface_mesh_io`) associated to a given halfedge handle of the underlying surface mesh (in the underlying triangle mesh).
      *
      * \tparam _CT type of the complex `K` (a model of `AbstractSimplicialChainComplex`).
      *
@@ -212,7 +217,7 @@ public:
         return K.cell_to_index(s);
     }
 
-    /** \brief Returns the halfedge handle (in the underlying triangle mesh) associated to the cell of index `i` and dimension `q` (in an `AbstractSimplicialChainComplex` `K` built from the `Surface_mesh_io`).
+    /** \brief Returns the halfedge handle of the underlying surface mesh (in the underlying triangle mesh) associated to the cell of index `i` and dimension `q` (in an `AbstractSimplicialChainComplex` `K` built from the `Surface_mesh_io`).
      *
      * \tparam _CT type of the complex `K` (a model of `AbstractSimplicialChainComplex`).
      *
@@ -232,8 +237,6 @@ public:
 
     /** \brief Returns the `Simplex_chain` associated to a given `Sparse_chain`.
      *
-     * Homology/cohomolgy generators computed by HDVFs are represented by sparse chains (where cells are identified by their dimension and index in the abstract simplicial chain complex). A `Simplex_chain` maps such a chain to simplices of a surface mesh (identified by their corresponding halfedge).
-     *
      * \tparam _SCT Type of the the sparse chain `chain` (a model of `SparseChain`).
      * \tparam _CT Type of the complex `K` (a model of `AbstractSimplicialChainComplex`).
      *
@@ -242,7 +245,7 @@ public:
      * \param K Abstract simplicial chain complex built from the `Surface_mesh_io`
      */
     template <typename _SCT, typename _CT>
-    Simplex_chain<typename _CT::Coefficient_ring> chain_to_simplex_chain (const _SCT& chain, int q, const _CT& K) {
+    Simplex_chain<typename _CT::Coefficient_ring> chain_to_simplex_chain (const _SCT& chain, int q, const _CT& K) const {
         typedef typename _CT::Coefficient_ring Coefficient_ring;
         typedef Simplex_chain<Coefficient_ring> SC;
         SC res;
@@ -254,9 +257,9 @@ public:
         return res;
     }
 
-    /*! \brief Iterator over homology/cohomology generators on the underlying surface mesh encoded as `Simplex_chain`.
+    /*! \brief Iterator over homology/cohomology generators of an `Hdvf` computed over a complex built from the initial surface mesh.
      *
-     * Given a perfect HDVF, iterates over critical cells and associated homology/cohomlogy generators.
+     * Given a perfect HDVF, iterates over critical cells and associated homology/cohomlogy generators encoded as `Simplex_chain`.
      */
     template <typename HDVFType>
     struct iterator
@@ -272,7 +275,8 @@ public:
 
         /*! \brief Iterator constructor
          *
-         * \param hdvf Constant reference over the HDVF iterated.
+         * \param sm_io `Surface_mesh_io` built from an initial surface mesh
+         * \param hdvf Constant reference over the HDVF iterated (computed over a complex built from `sm_io`).
          * \param dimension Dimension of iteration (if positive, iterate over a single dimension, if -1, iterate over all dimensions computed).
          * \param mode Iteration mode (iterate homology and/or cohomology generators). Default deduces the iteration mode from `hdvf` computation options.
          *
@@ -283,11 +287,11 @@ public:
         // Operators
         /*! \brief Iterator dereference
          *
-         * \returns A `Hole_information` structure containing all information related to the current persistence hole.
+         * \returns A `Hole_information` structure containing all information related to the current  hole.
          */
         value_type operator*() const
         {
-            value_type hdvf_it_value(*_it);
+            typename HDVFType::Hole_information hdvf_it_value(*_it);
             Hole_information res ;
             const int q(hdvf_it_value.dimension);
             res.critical_cell = _sm_io.cell_index_to_halfedge_handle(hdvf_it_value.cell_index, q, _hdvf.complex());
@@ -312,6 +316,7 @@ public:
         iterator& operator++()
         {
             ++_it;
+            return *this;
         }
 
         /**
@@ -322,25 +327,26 @@ public:
 
         /**
          * \brief Equality check.
-         * \returns `true` if the indices are equal.
+         * \returns `true` if  current critical cells are equal.
          */
         friend bool operator== (const iterator& a, const iterator& b) { return (a._it == b._it); };
 
         /**
          * \brief Inequality check.
-         * \returns `true` if the indices are different.
+         * \returns `true` if  current critical cells are different.
          */
         friend bool operator!= (const iterator& a, const iterator& b) { return (a._it != b._it); };
 
     private:
         const HDVFType& _hdvf; // HDVF iterated
         const Surface_mesh_io& _sm_io; // Corresponding Surface_mesh_io
-        HDVFType::iterator& _it;
+        HDVFType::iterator _it;
     };
 
     /**
      * \brief Iterator to the beginning of homology/cohomology generators.
      *
+     * \param hdvf Constant reference over the HDVF iterated (computed over a complex built from the `Surface_mesh_io`).
      * \param q If positive, the iterator visits only holes of dimension q, if negative (default), visits holes in any dimension computed (depending on dimension restriction)
      * \param mode Defines which information is returned by the iterator (HOMOLOGY, COHOMOLOGY or BOTH). This argument must be coherent with the HDVF option chosen for computation. By default, copies the current HDVF options.
      *
@@ -354,10 +360,10 @@ public:
     /**
      * \brief Iterator past-the-end of homology/cohomology generators.
      *
-     * \returns The past-the-end iterator of  persistent intervals.
+     * \param hdvf Constant reference over the HDVF iterated (computed over a complex built from the `Surface_mesh_io`).
      */
     template <typename HDVFType>
-    iterator<HDVFType> end(const HDVFType& hdvf) const { return iterator<HDVFType>(*this, hdvf, this->complex().dimension()+1, Iterator_mode(0)) ; }
+    iterator<HDVFType> end(const HDVFType& hdvf) const { return iterator<HDVFType>(*this, hdvf, hdvf.complex().dimension()+1, Iterator_mode(0)) ; }
 } ;
 
 

@@ -64,20 +64,6 @@ struct Cell_pair {
     }
 };
 
-/*! \brief Hole information returned by HDVF  iterators.
- *
- * Information comprises:
- * - `cell_index` index of the critical cell.
- * - `dimension` dimension of the critical cell.
- * - `homology_chain`, `cohomology_chain` associated homology and/or cohomolgy generators.
- */
-template <typename ColumnChain>
-struct Hole_information{
-    size_t cell_index; // Index of the critical cell
-    int dimension; // Dimension of the critical cell
-    ColumnChain homology_chain, cohomology_chain; // Homology and cohomology generators
-};
-
 /** \brief HDVF iterator mode (determines if `iterator` enumerates homology/cohomology generators or both).
  *
  * `Iterator mode` must be coherent with the HDVF computation option.

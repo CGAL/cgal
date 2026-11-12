@@ -78,6 +78,19 @@ public:
     using Column_matrix = typename Base::Column_matrix;
     using Row_matrix = typename Base::Row_matrix;
 
+    /*! \brief Hole information returned by  iterator.
+     *
+     * Information comprises:
+     * - `cell_index` index of the critical cell.
+     * - `dimension` dimension of the critical cell.
+     * - `homology_chain`, `cohomology_chain` associated homology and/or cohomolgy generators.
+     */
+    struct Hole_information{
+        size_t cell_index; // Index of the critical cell
+        int dimension; // Dimension of the critical cell
+        Column_chain homology_chain, cohomology_chain; // Homology and cohomology generators
+    };
+
     /**
      * Builds an "empty" HDVF associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
      *
@@ -736,7 +749,7 @@ public:
         // Iterator tags
         using iterator_category = std::forward_iterator_tag;
         using difference_type   = std::ptrdiff_t;
-        using value_type        = Hole_information<Column_chain>;
+        using value_type        = Hole_information;
 
         /*! \brief Iterator constructor
          *
@@ -792,7 +805,7 @@ public:
         // Operators
         /*! \brief Iterator dereference
          *
-         * \returns A `Hole_information` structure containing all information related to the current persistence hole.
+         * \returns A `Hole_information` structure containing all information related to the current  hole.
          */
         value_type operator*() const
         {
@@ -840,13 +853,13 @@ public:
 
         /**
          * \brief Equality check.
-         * \returns `true` if the indices are equal.
+         * \returns `true` if  current critical cells are equal.
          */
         friend bool operator== (const iterator& a, const iterator& b) { return ((a._i == b._i) && (a._dim == b._dim)); };
 
         /**
          * \brief Inequality check.
-         * \returns `true` if the indices are different.
+         * \returns `true` if  current critical cells are different.
          */
         friend bool operator!= (const iterator& a, const iterator& b) { return ((a._i != b._i) || (a._dim != b._dim)); };
 
