@@ -22,8 +22,6 @@
 
 class Viewer : private boost::base_from_member<CGAL::Graphics_scene>, public CGAL::Basic_viewer
 {
-  Q_OBJECT
-
   typedef boost::base_from_member<CGAL::Graphics_scene>  Base_from_member;
   typedef CGAL::Basic_viewer Base;
 
