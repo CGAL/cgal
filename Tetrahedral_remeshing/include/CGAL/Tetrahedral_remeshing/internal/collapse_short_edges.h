@@ -583,70 +583,7 @@ bool collapse_keeps_orientations(const CellRange& star,
   return true;
 }
 
-template<typename C3t3>
-bool is_valid_collapse(const typename C3t3::Edge& edge,
-                       const Collapse_type& collapse_type,
-                       const typename C3t3::Triangulation::Point& new_pos,
-                       const C3t3& c3t3)
-{
-  typedef typename C3t3::Vertex_handle        Vertex_handle;
-  typedef typename C3t3::Cell_handle          Cell_handle;
-  typedef typename C3t3::Triangulation::Point Point;
 
-  const Vertex_handle v0 = edge.first->vertex(edge.second);
-  const Vertex_handle v1 = edge.first->vertex(edge.third);
-
-  if (collapse_type == TO_V1 || collapse_type == TO_MIDPOINT)
-  {
-    std::vector<Cell_handle> cells_to_check;
-    c3t3.triangulation().finite_incident_cells(v0,
-        std::back_inserter(cells_to_check));
-
-    for (const Cell_handle& ch : cells_to_check)
-    {
-      if (!ch->has_vertex(v1))
-      {
-        //check orientation
-        std::array<Point, 4> pts = { ch->vertex(0)->point(),
-                                       ch->vertex(1)->point(),
-                                       ch->vertex(2)->point(),
-                                       ch->vertex(3)->point()};
-        pts[ch->index(v0)] = new_pos;
-        if (CGAL::orientation(point(pts[0]), point(pts[1]), point(pts[2]), point(pts[3]))
-            != CGAL::POSITIVE)
-        {
-          return false;
-        }
-      }
-    }
-  }
-  if (collapse_type == TO_V0 || collapse_type == TO_MIDPOINT)
-  {
-    std::vector<Cell_handle> cells_to_check;
-    c3t3.triangulation().finite_incident_cells(v1,
-        std::back_inserter(cells_to_check));
-
-    for (const Cell_handle& ch : cells_to_check)
-    {
-      if (!ch->has_vertex(v0))
-      {
-        //check orientation
-        std::array<Point, 4> pts = { ch->vertex(0)->point(),
-                                       ch->vertex(1)->point(),
-                                       ch->vertex(2)->point(),
-                                       ch->vertex(3)->point() };
-        pts[ch->index(v1)] = new_pos;
-        if (CGAL::orientation(point(pts[0]), point(pts[1]), point(pts[2]), point(pts[3]))
-            != CGAL::POSITIVE)
-        {
-          return false;
-        }
-      }
-    }
-  }
-
-  return does_satisfy_link_condition(edge, c3t3.triangulation());
-}
 
 template<typename Facet, typename Vh>
 bool facet_has_edge(const Facet& f, const Vh v0, const Vh v1)
@@ -1300,6 +1237,14 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   typedef typename Tr::Vertex_handle     Vertex_handle;
   typedef typename Tr::Cell_handle       Cell_handle;
 
+  // The ring test depends on neither the collapse type nor the new position,
+  // so it settles all three attempts below at once - and it is the cheap one:
+  // one cell circulation, against a star walk plus an orientation predicate
+  // per cell of the star.
+  const bool link_condition = does_satisfy_link_condition(edge, c3t3.triangulation());
+  if(!link_condition)
+    return Vertex_handle();
+
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
 
@@ -1319,13 +1264,6 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     CGAL_assertion(collapse_type == TO_MIDPOINT);
     new_pos = Point(CGAL::midpoint(point(v0->point()), point(v1->point())));
   }
-
-  // The ring test depends on neither the collapse type nor the new position,
-  // so it settles all three attempts below at once - and it is the cheap one:
-  // one cell circulation, against a star walk plus an orientation predicate
-  // per cell of the star.
-  if (!is_valid_collapse(edge, collapse_type, new_pos, c3t3))
-    return Vertex_handle();
 
   // Each attempt below walks the star of v0 and/or of v1, and so do the angle
   // and manifold tests further down. The mesh is not touched in between, so
