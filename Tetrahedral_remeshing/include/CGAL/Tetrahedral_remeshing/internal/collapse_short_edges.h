@@ -509,7 +509,8 @@ template<typename C3t3>
 bool is_valid_collapse(const typename C3t3::Edge& edge,
                        const Collapse_type& collapse_type,
                        const typename C3t3::Triangulation::Point& new_pos,
-                       const C3t3& c3t3)
+                       const C3t3& c3t3,
+                       const bool link_condition_already_checked = false)
 {
   typedef typename C3t3::Vertex_handle        Vertex_handle;
   typedef typename C3t3::Cell_handle          Cell_handle;
@@ -566,8 +567,10 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
       }
     }
   }
-
-  return does_satisfy_link_condition(edge, c3t3.triangulation());
+  if(link_condition_already_checked)
+    return true;
+  else
+    return does_satisfy_link_condition(edge, c3t3.triangulation());
 }
 
 template<typename Facet, typename Vh>
@@ -1142,6 +1145,10 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   typedef typename Tr::Vertex_handle     Vertex_handle;
   typedef typename Tr::Cell_handle       Cell_handle;
 
+  const bool link_condition = does_satisfy_link_condition(edge, c3t3.triangulation());
+  if(!link_condition)
+    return Vertex_handle();
+
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
 
@@ -1162,17 +1169,17 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     new_pos = Point(CGAL::midpoint(point(v0->point()), point(v1->point())));
   }
 
-  if (!is_valid_collapse(edge, collapse_type, new_pos, c3t3))
+  if (!is_valid_collapse(edge, collapse_type, new_pos, c3t3, link_condition))
   {
     if (collapse_type == TO_MIDPOINT)
     {
       // with TO_MIDPOINT, we are authorized to test TO_V0 and TO_V1
-      if (is_valid_collapse(edge, TO_V0, v0->point(), c3t3))
+      if (is_valid_collapse(edge, TO_V0, v0->point(), c3t3, link_condition))
       {
         collapse_type = TO_V0;
         new_pos = v0->point();
       }
-      else if (is_valid_collapse(edge, TO_V1, v1->point(), c3t3))
+      else if (is_valid_collapse(edge, TO_V1, v1->point(), c3t3, link_condition))
       {
         collapse_type = TO_V1;
         new_pos = v1->point();
