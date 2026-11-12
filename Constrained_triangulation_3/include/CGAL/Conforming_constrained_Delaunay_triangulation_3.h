@@ -4392,7 +4392,7 @@ public:
     {
       auto value_returned =
           [this, v0, v1](bool b, bool not_visited,
-                         std::array<Vertex_handle, 3> triangle_vertices = std::array<Vertex_handle, 3>())
+                         std::array<Vertex_handle, 3> triangle_vertices)
       {
         if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug().regions()) {
           std::cerr << cdt_3_format("test_edge {}   {}   return {} {}\n",
@@ -4411,7 +4411,7 @@ public:
       };
       auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
       if(!not_visited)
-        return value_returned(cached_value_it->second, not_visited);
+        return value_returned(cached_value_it->second, not_visited, std::array<Vertex_handle, 3>{});
 
       auto [v0v1_intersects_region, triangle_vertices] =
           does_edge_interior_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region,
@@ -4447,7 +4447,7 @@ public:
 
       non_intersecting_edges_set.insert(make_sorted_pair(v0, v1));
       cached_value_it->second = false;
-      return value_returned(false, not_visited);
+      return value_returned(false, not_visited,std::array<Vertex_handle, 3>{});
     };
 
     auto test_cell = [&](Cell_handle cell) {
