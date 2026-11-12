@@ -11,9 +11,8 @@
 #include <CGAL/use.h>
 #include <CGAL/Random.h>
 
-
-#include "IO/Null_output_stream.h"
-
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/device/null.hpp>
 
 namespace CGAL {
 
@@ -514,7 +513,7 @@ bool test_algo_generic(InputStream& is)
   CGAL_USE_TYPE(Point_2);
   CGAL_USE_TYPE(Edge);
 
-  Null_output_stream   nos;
+  boost::iostreams::stream<boost::iostreams::null_sink>   nos;
 
   // testing creation/constructors
   //--------------------------------------------------------------------
