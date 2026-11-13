@@ -24,7 +24,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="sizeConstraint">
-    <enum>QLayout::SetFixedSize</enum>
+    <enum>QLayout::SizeConstraint::SetFixedSize</enum>
    </property>
    <item>
     <widget class="QLabel" name="objectName">
@@ -55,13 +55,13 @@
       <item row="0" column="0">
        <widget class="QLabel" name="detectComponentsLabel">
         <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
+         <enum>Qt::LayoutDirection::LeftToRight</enum>
         </property>
         <property name="text">
          <string>&amp;Detect all connected components</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
         <property name="buddy">
          <cstring>detectComponents</cstring>
@@ -78,7 +78,7 @@
       <item row="0" column="1">
        <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -94,7 +94,7 @@
    <item>
     <widget class="QGroupBox" name="sharpFeaturesGroup">
      <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
+      <enum>Qt::LayoutDirection::LeftToRight</enum>
      </property>
      <property name="title">
       <string>Sharp features</string>
@@ -106,7 +106,7 @@
          <string>Edge min size</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -116,7 +116,7 @@
          <string>&amp;Protect sharp edges</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
         <property name="buddy">
          <cstring>protect</cstring>
@@ -146,7 +146,7 @@
          <string>Edge approximation error</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -156,7 +156,7 @@
          <string>Edge &amp;size</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
         <property name="buddy">
          <cstring>edgeSizing</cstring>
@@ -172,7 +172,7 @@
          <string>Angle bound for &amp;sharp edges (deg)</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
         <property name="buddy">
          <cstring>sharpEdgesAngle</cstring>
@@ -238,10 +238,10 @@
          <bool>false</bool>
         </property>
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::Shape::StyledPanel</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Plain</enum>
+         <enum>QFrame::Shadow::Plain</enum>
         </property>
         <layout class="QVBoxLayout" name="advancedLayout">
          <item>
@@ -263,7 +263,7 @@
          <item>
           <widget class="QCheckBox" name="manifoldCheckBox">
            <property name="layoutDirection">
-            <enum>Qt::RightToLeft</enum>
+            <enum>Qt::LayoutDirection::RightToLeft</enum>
            </property>
            <property name="text">
             <string>&amp;manifold</string>
@@ -283,7 +283,7 @@
          <item>
           <widget class="QCheckBox" name="facetTopology">
            <property name="layoutDirection">
-            <enum>Qt::RightToLeft</enum>
+            <enum>Qt::LayoutDirection::RightToLeft</enum>
            </property>
            <property name="text">
             <string>force facets vertices on same surface patch</string>
@@ -299,7 +299,7 @@
          <string>Approximation &amp;error</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
         <property name="buddy">
          <cstring>approx</cstring>
@@ -325,7 +325,7 @@
          <string>Facet min. &amp;angle (deg)</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
         <property name="buddy">
          <cstring>facetAngle</cstring>
@@ -362,7 +362,7 @@
          <string>&amp;Facet max. size</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
         <property name="buddy">
          <cstring>facetSizing</cstring>
@@ -395,7 +395,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" alignment="Qt::AlignRight">
+      <item row="3" column="0" alignment="Qt::AlignmentFlag::AlignRight">
        <widget class="QLabel" name="sizingMinLabel">
         <property name="text">
          <string>Facet min. size</string>
@@ -411,6 +411,51 @@
       </item>
       <item row="3" column="2">
        <widget class="QCheckBox" name="noFacetMinSizing">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="normalDeviationLabel">
+        <property name="text">
+         <string>Normal max deviation</string>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QDoubleSpinBox" name="normalDeviation">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="cursor">
+         <cursorShape>IBeamCursor</cursorShape>
+        </property>
+        <property name="locale">
+         <locale language="French" country="France"/>
+        </property>
+        <property name="inputMethodHints">
+         <set>Qt::InputMethodHint::ImhNone</set>
+        </property>
+        <property name="maximum">
+         <double>180.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>90.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QCheckBox" name="noNormalDeviation">
         <property name="text">
          <string/>
         </property>
@@ -445,7 +490,7 @@
          <string>&amp;Tetrahedron max. size</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
         <property name="buddy">
          <cstring>tetSizing</cstring>
@@ -484,11 +529,11 @@
          <string>Tetrahedron shape (radius-edge ratio)</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" alignment="Qt::AlignRight">
+      <item row="1" column="0" alignment="Qt::AlignmentFlag::AlignRight">
        <widget class="QLabel" name="tetMinSizingLabel">
         <property name="text">
          <string>Tetrahedron min. size</string>
@@ -530,7 +575,7 @@
          <string>if unchecked, value inside the domain is greater than isovalue</string>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
+         <enum>Qt::LayoutDirection::LeftToRight</enum>
         </property>
         <property name="text">
          <string/>
@@ -546,26 +591,26 @@
          <string>image value outside the image bounding box</string>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
+         <enum>Qt::LayoutDirection::LeftToRight</enum>
         </property>
         <property name="text">
          <string>Value outside</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
+         <enum>Qt::LayoutDirection::LeftToRight</enum>
         </property>
         <property name="text">
          <string>Iso value</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -575,7 +620,7 @@
          <string>Value inside is less than iso value</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -605,20 +650,20 @@
       <item row="0" column="0">
        <widget class="QLabel" name="useWeights_label">
         <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
+         <enum>Qt::LayoutDirection::RightToLeft</enum>
         </property>
         <property name="text">
          <string>Use Weighted Image</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QCheckBox" name="useWeights_checkbox">
         <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
+         <enum>Qt::LayoutDirection::LeftToRight</enum>
         </property>
         <property name="text">
          <string/>
@@ -640,7 +685,7 @@
          <string>Sigma </string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -664,10 +709,10 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
