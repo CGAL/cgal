@@ -25,6 +25,8 @@
 #include <ostream>
 #include <vector>
 #include <cmath>
+#include <initializer_list>
+#include <type_traits>
 
 namespace CGAL {
 
