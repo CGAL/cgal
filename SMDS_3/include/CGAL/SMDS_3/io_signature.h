@@ -139,6 +139,38 @@ struct Get_io_signature<unsigned short int>
 };
 
 template <>
+struct Get_io_signature<long>
+{
+  std::string operator()() {
+    return "l";
+  }
+};
+
+template <>
+struct Get_io_signature<unsigned long>
+{
+  std::string operator()() {
+    return "ul";
+  }
+};
+
+template <>
+struct Get_io_signature<long long>
+{
+  std::string operator()() {
+    return "ll";
+  }
+};
+
+template <>
+struct Get_io_signature<unsigned long long>
+{
+  std::string operator()() {
+    return "ull";
+  }
+};
+
+template <>
 struct Get_io_signature<double>
 {
   std::string operator()() {
