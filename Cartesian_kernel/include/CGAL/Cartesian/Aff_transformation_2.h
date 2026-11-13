@@ -30,6 +30,53 @@ namespace CGAL {
 
 class Identity_transformation;
 
+namespace Cartesian_impl
+{
+  template <class R_, bool need_local_vector = R_::Has_filtered_predicates &&
+                                               !std::is_floating_point_v<typename R_::FT> >
+  struct Aff_storage_2
+  {
+    using FT = typename R_::FT;
+    using Point_2 = typename R_::Point_2;
+    Aff_storage_2() = default;
+    Aff_storage_2(std::size_t s) : entries(s) {}
+    Aff_storage_2(std::initializer_list<FT> l) : entries(l) {}
+
+    std::vector<FT> entries;
+    FT& operator[](unsigned i){ return entries[i]; }
+    const FT& operator[](unsigned i) const { return entries[i]; }
+    void set_translation(){}
+    Point_2 translate(const Point_2& p) const
+    {
+      return typename R_::Construct_point_2()(p.x()+entries[0], p.y()+entries[1]);
+    }
+  };
+
+  // partial specialization optimising translation for EPECK
+  template <class R_>
+  struct Aff_storage_2<R_, true>
+  {
+    using FT = typename R_::FT;
+    using Point_2 = typename R_::Point_2;
+    Aff_storage_2() = default;
+    Aff_storage_2(std::size_t s) : entries(s) {}
+    Aff_storage_2(std::initializer_list<FT> l) : entries(l) {}
+
+    std::vector<FT> entries;
+    typename R_::Vector_2 t;
+    FT& operator[](unsigned i){ return entries[i]; }
+    const FT& operator[](unsigned i) const { return entries[i]; }
+    void set_translation()
+    {
+      t=typename R_::Vector_2(entries[0], entries[1]);
+    }
+    Point_2 translate(const Point_2& p) const
+    {
+      return typename R_::Construct_translated_point_2()(p, t);
+    }
+  };
+}
+
 
 template < class R_ >
 class Aff_transformationC2
@@ -43,7 +90,7 @@ class Aff_transformationC2
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   enum Variant {IDENTITY_TYPE = 0, SCALING_TYPE, TRANSLATION_TYPE, ROTATION_TYPE, REFLECTION_TYPE, GENERAL_TYPE};
-  std::vector<FT> entries;
+  Cartesian_impl::Aff_storage_2<R_> entries;
   Variant variant;
 
 public:
@@ -72,6 +119,7 @@ public:
   {
     entries[0] = v.x();
     entries[1] = v.y();
+    entries.set_translation();
   }
 
 
@@ -183,7 +231,7 @@ public:
   { if(is_identity()) return p;
     typename R::Construct_point_2 construct_point_2;
     if(is_scaling()) return construct_point_2(entries[0]*p.x(), entries[0]*p.y());
-    if(is_translation()) return construct_point_2(p.x()+entries[0], p.y()+entries[1]);
+    if(is_translation()) return entries.translate(p);
     if(is_rotation())
       return construct_point_2(cosinus() * p.x() - sinus() * p.y(),
                                sinus() * p.x() + cosinus() * p.y());

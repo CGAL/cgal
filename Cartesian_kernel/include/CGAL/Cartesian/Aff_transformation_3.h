@@ -21,12 +21,61 @@
 #include <CGAL/determinant.h>
 #include <CGAL/number_utils.h>
 
+#include <initializer_list>
 #include <ostream>
+#include <type_traits>
 #include <vector>
 #include <cmath>
 
 
 namespace CGAL {
+
+namespace Cartesian_impl
+{
+  template <class R_, bool need_local_vector = R_::Has_filtered_predicates &&
+                                               !std::is_floating_point_v<typename R_::FT> >
+  struct Aff_storage_3
+  {
+    using FT = typename R_::FT;
+    using Point_3 = typename R_::Point_3;
+    Aff_storage_3() = default;
+    Aff_storage_3(std::size_t s) : entries(s) {}
+    Aff_storage_3(std::initializer_list<FT> l) : entries(l) {}
+
+    std::vector<FT> entries;
+    FT& operator[](unsigned i){ return entries[i]; }
+    const FT& operator[](unsigned i) const { return entries[i]; }
+    void set_translation(){}
+    Point_3 translate(const Point_3& p) const
+    {
+      return typename R_::Construct_point_3()(p.x()+entries[0], p.y()+entries[1], p.z()+entries[2]);
+    }
+  };
+
+  // partial specialization optimising translation for EPECK
+  template <class R_>
+  struct Aff_storage_3<R_, true>
+  {
+    using FT = typename R_::FT;
+    using Point_3 = typename R_::Point_3;
+    Aff_storage_3() = default;
+    Aff_storage_3(std::size_t s) : entries(s) {}
+    Aff_storage_3(std::initializer_list<FT> l) : entries(l) {}
+
+    std::vector<FT> entries;
+    typename R_::Vector_3 t;
+    FT& operator[](unsigned i){ return entries[i]; }
+    const FT& operator[](unsigned i) const { return entries[i]; }
+    void set_translation()
+    {
+      t=typename R_::Vector_3(entries[0], entries[1], entries[2]);
+    }
+    Point_3 translate(const Point_3& p) const
+    {
+      return typename R_::Construct_translated_point_3()(p, t);
+    }
+  };
+}
 
 template < class R_ >
 class Aff_transformationC3
@@ -39,23 +88,23 @@ class Aff_transformationC3
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  enum Variant {IDENTITY_TYPE = 0, SCALING_TYPE , TRANSLATION_TYPE, GENERAL_TYPE};
-  std::vector<FT> entries;
+  enum Variant {identity = 0, scaling , translation, general};
+  Cartesian_impl::Aff_storage_3<R_> entries;
   Variant variant;
 
 public:
   typedef R_                               R;
 
   Aff_transformationC3()
-  : variant(IDENTITY_TYPE)
+  : variant(identity)
   {}
 
   Aff_transformationC3(const Identity_transformation)
-  : variant(IDENTITY_TYPE)
+  : variant(identity)
   {}
 
   Aff_transformationC3(const Scaling, const FT &s, const FT &w = FT(1))
-  : entries(1), variant(SCALING_TYPE)
+  : entries(1), variant(scaling)
   {
     if (w != FT(1))
       entries[0] = s/w;
@@ -64,18 +113,19 @@ public:
   }
 
   Aff_transformationC3(const Translation, const Vector_3 &v)
-  : entries(3), variant(TRANSLATION_TYPE)
+  : entries(3), variant(translation)
   {
     entries[0] = v.x();
     entries[1] = v.y();
     entries[2] = v.z();
+    entries.set_translation();
   }
 
-  // General form: without TRANSLATION_TYPE
+  // General form: without translation
   Aff_transformationC3(const FT& m11, const FT& m12, const FT& m13,
                        const FT& m21, const FT& m22, const FT& m23,
                        const FT& m31, const FT& m32, const FT& m33)
-  : entries(12), variant(GENERAL_TYPE)
+  : entries(12), variant(general)
   {
      FT zero(0);
      entries = {m11, m12, m13, zero,
@@ -83,12 +133,12 @@ public:
                 m31, m32, m33, zero };
   }
 
-  // General form: without TRANSLATION_TYPE
+  // General form: without translation
   Aff_transformationC3(const FT& m11, const FT& m12, const FT& m13,
                        const FT& m21, const FT& m22, const FT& m23,
                        const FT& m31, const FT& m32, const FT& m33,
                        const FT& w)
-  : entries(12), variant(GENERAL_TYPE)
+  : entries(12), variant(general)
   {
     FT zero(0);
     entries = {m11/w, m12/w, m13/w, zero,
@@ -96,25 +146,25 @@ public:
                m31/w, m32/w, m33/w, zero};
   }
 
-  // General form: with TRANSLATION_TYPE
+  // General form: with translation
   Aff_transformationC3(
               const FT& m11, const FT& m12, const FT& m13, const FT& m14,
               const FT& m21, const FT& m22, const FT& m23, const FT& m24,
               const FT& m31, const FT& m32, const FT& m33, const FT& m34)
-  : entries(12), variant(GENERAL_TYPE)
+  : entries(12), variant(general)
   {
     entries = {m11, m12, m13, m14,
                m21, m22, m23, m24,
                m31, m32, m33, m34 };
   }
 
-  // General form: with TRANSLATION_TYPE
+  // General form: with translation
   Aff_transformationC3(
               const FT& m11, const FT& m12, const FT& m13, const FT& m14,
               const FT& m21, const FT& m22, const FT& m23, const FT& m24,
               const FT& m31, const FT& m32, const FT& m33, const FT& m34,
               const FT& w)
-  : entries(12), variant(GENERAL_TYPE)
+  : entries(12), variant(general)
   {
     entries = {m11/w, m12/w, m13/w, m14/w,
                m21/w, m22/w, m23/w, m24/w,
@@ -125,7 +175,7 @@ public:
   transform(const Point_3 &p) const
   { if(is_identity()) return p;
     if(is_scaling()) return Point_3(entries[0]*p.x(), entries[0]*p.y(), entries[0]*p.z());
-    if(is_translation()) return Point_3(p.x()+entries[0], p.y()+entries[1], p.z()+entries[2]);
+    if(is_translation()) return entries.translate(p);
     typename R::Construct_point_3 construct_point_3;
     return construct_point_3(entries[0] * p.x() + entries[1] * p.y() + entries[2]  * p.z() + entries[3] ,
                              entries[4] * p.x() + entries[5] * p.y() + entries[6]  * p.z() + entries[7] ,
@@ -223,13 +273,13 @@ public:
 
   bool is_odd() const { return  ! is_even(); }
 
-  bool is_identity() const { return variant == IDENTITY_TYPE; }
+  bool is_identity() const { return variant == identity; }
 
-  bool is_scaling() const { return variant == SCALING_TYPE; }
+  bool is_scaling() const { return variant == scaling; }
 
-  bool is_translation() const { return variant == TRANSLATION_TYPE; }
+  bool is_translation() const { return variant == translation; }
 
-  bool is_general() const { return variant == GENERAL_TYPE; }
+  bool is_general() const { return variant == general; }
 
   bool has_rotation() const {
     if(is_general())
