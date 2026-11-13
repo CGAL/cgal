@@ -77,6 +77,8 @@ public:
     solutions_container solutions;
     CGAL::CircularFunctors::intersect_2<CK>
       ( l, c, std::back_inserter(solutions) );
+
+    CGAL_assume(!solutions.empty());
     typename solutions_container::iterator it = solutions.begin();
 
     CGAL_kernel_precondition( it != solutions.end() );
