@@ -617,7 +617,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   polygons_with_holes(OutputIterator out) const
 {
   typedef Arr_bfs_scanner<Arrangement_on_surface_2, OutputIterator>     Arr_bfs_scanner;
-  Arr_bfs_scanner scanner(this->m_traits, out);
+  Arr_bfs_scanner scanner(this->m_traits.get(), out);
   scanner.scan(*(this->m_arr));
   return (scanner.output_iterator());
 }
@@ -633,7 +633,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
     Arr_bfs_scanner;
   //counting_output_operator CTOR requires a parameter
   std::size_t cc = 0;
-  Arr_bfs_scanner scanner(this->m_traits, Counting_output_iterator(&cc));
+  Arr_bfs_scanner scanner(this->m_traits.get(), Counting_output_iterator(&cc));
   scanner.scan(*(this->m_arr));
   return (scanner.output_iterator().current_counter());
 }
@@ -686,7 +686,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   typedef Arr_bfs_scanner<Arrangement_on_surface_2, OutputItr>     Arr_bfs_scanner;
 
   OutputItr oi (pgn);
-  Arr_bfs_scanner scanner(this->m_traits, oi);
+  Arr_bfs_scanner scanner(this->m_traits.get(), oi);
 
 
   Ccb_halfedge_const_circulator ccb_of_pgn = get_boundary_of_polygon(f);
