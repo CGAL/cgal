@@ -172,6 +172,7 @@ namespace CGAL {
       {
         this->mfree_marks_stack[i]        = i;
         this->mindex_marks[i]             = i;
+        this->mused_marks_stack[i]        = 0;
         this->mnb_marked_darts[i]         = 0;
         this->mnb_times_reserved_marks[i] = 0;
       }
