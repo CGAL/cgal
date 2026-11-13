@@ -281,7 +281,6 @@ public:
   FT cartesian(int i, int j) const {
     if(is_identity()){
       if (i!=j) return FT(0);
-      if (i==3) return FT(1);
       return FT(1);
     }
     if(is_scaling()){
