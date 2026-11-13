@@ -113,6 +113,132 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
 
 }// namespace internal
 
+#ifndef DOXYGEN_RUNNING // Not documented yet, used by CGAL Lab
+/**
+ * \ingroup PMP_intersection_grp
+ *
+ * detects and records intersections between two polylines.
+ *
+ * \attention If a polyline vertex intersects another polyline, the intersection will
+ * be reported twice (even more if it is on a vertex).
+ *
+ * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
+ *         The point type must be from a 3D point from a \cgal Kernel.
+ * \cgalDescribePolylineType
+ * \tparam OutputIterator a model of `OutputIterator` holding objects of type
+ *   `std::pair<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t> >`.
+ * Each pair holds the index of the face and a pair containing the index of the polyline in the range and the index of
+ * the first point of the segment in the polyline.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters" for the algorithm
+ *
+ * @param polylines1 the first range of polylines to check for intersections.
+ * @param polylines2 the second range of polylines to check for intersections.
+ * @param out output iterator to be filled with all pairs of segments that intersect
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *     \cgalParamNBegin{concurrency_tag}
+ *       \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *       \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *       \cgalParamDefault{`CGAL::Sequential_tag`}
+ *       \cgalParamExtra{`np1` only}
+ *    \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ */
+template <class PolylineRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputIterator intersections(const PolylineRange& polylines1,
+                             const PolylineRange& polylines2,
+                             OutputIterator out,
+                             const NamedParameters& np  = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+                  , const std::enable_if_t<
+                      boost::has_range_iterator<
+                      typename boost::mpl::eval_if<
+                        boost::has_range_iterator<PolylineRange>,
+                        boost::range_value<PolylineRange>,
+                        std::false_type >::type
+                    >::value
+                   >* = 0//end enable_if
+#endif
+    )
+{
+  CGAL_USE(np);
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters,
+                                          Sequential_tag
+                                        > ::type;
+
+  using Polyline = typename boost::range_value<PolylineRange>::type;
+  using Point = typename boost::range_value<Polyline>::type;
+  using GT = typename CGAL::Kernel_traits<Point>::Kernel;
+  using Segment_3 = typename GT::Segment_3;
+
+  using Segment_primitive = CGAL::AABB_segment_primitive_3<GT, typename std::vector<Segment_3>::const_iterator>;
+  using Segment_traits = CGAL::AABB_traits_3<GT, Segment_primitive>;
+  using Segment_tree = CGAL::AABB_tree<Segment_traits>;
+
+  Bbox_3 b1;
+  for(const auto& polyline : polylines1)
+    b1 += bbox_3(polyline.begin(), polyline.end());
+  Bbox_3 b2;
+  for(const auto& polyline : polylines2)
+    b2 += bbox_3(polyline.begin(), polyline.end());
+
+  if(!CGAL::do_overlap(b1, b2))
+    return out;
+
+  Bbox_3 bb((std::max)(b1.xmin(),b2.xmin()), (std::max)(b1.ymin(),b2.ymin()), (std::max)(b1.zmin(),b2.zmin()),
+            (std::min)(b1.xmax(),b2.xmax()), (std::min)(b1.ymax(),b2.ymax()), (std::min)(b1.zmax(),b2.zmax()));
+
+  // Store filtered segments and their original indices.
+  std::vector<Segment_3> segments1, segments2;
+  std::vector<std::pair<std::size_t, std::size_t>> segment_indices1, segment_indices2;
+
+  auto collect_segments = [&](const PolylineRange& polylines,
+                              std::vector<Segment_3>& segments,
+                              std::vector<std::pair<std::size_t, std::size_t>>& segment_indices)
+  {
+    std::size_t polyline_index = 0;
+    for(const auto& polyline : polylines)
+    {
+      if(polyline.size() >= 2)
+      {
+        auto pit = std::begin(polyline);
+        auto prev = ++pit;
+
+        for(; pit != std::end(polyline); ++pit, ++prev)
+        {
+          if(do_overlap(bb, prev->bbox()+pit->bbox())){
+            segments.emplace_back(*prev, *pit);
+            segment_indices.emplace_back(polyline_index, std::size_t(prev - std::begin(polyline)));
+          }
+        }
+      }
+      ++polyline_index;
+    }
+  };
+
+  collect_segments(polylines1, segments1, segment_indices1);
+  collect_segments(polylines2, segments2, segment_indices2);
+
+  Segment_tree tree1(segments1.begin(), segments1.end());
+  Segment_tree tree2(segments2.begin(), segments2.end());
+
+  auto output = boost::make_function_output_iterator(
+    [&](const std::pair<typename Segment_primitive::Id, typename Segment_primitive::Id>& ids)
+    {
+      const std::size_t index1 = std::size_t(ids.first - segments1.cbegin());
+      const std::size_t index2 = std::size_t(ids.second - segments2.cbegin());
+
+      *out++ = std::make_pair( segment_indices1[index1], segment_indices2[index2]);
+    });
+  AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, output, parameters::concurrency_tag(Concurrency_tag()));
+  return out;
+}
+#endif
+
 /**
  * \ingroup PMP_intersection_grp
  *
@@ -427,6 +553,154 @@ bool do_intersect(const TriangleMesh& tm1,
   }
   return false;
 }
+
+#ifndef DOXYEGN_RUNNING // Not documented yet, used by Lab
+/**
+ * \ingroup PMP_intersection_grp
+ *
+ * detects and reports all intersections between a face of `tm` and a segment of a polyline of `polylines`.
+ *
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm)` \endlink
+ *
+ * \tparam TriangleMesh a model of `FaceListGraph`
+ * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points. The point type of the range must be the
+ *  same as the value type of the vertex point map.
+ * \cgalDescribePolylineType
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters
+ *
+ * @param tm the triangulated surface mesh to check for intersections
+ * @param polylines the range of polylines to check for intersections.
+ * @param out output iterator receiving pairs consisting of an intersecting face descriptor and a pair containing the
+ *  index of the polyline and the index of the first point of the intersecting segment in that polyline
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{concurrency_tag}
+ *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *     \cgalParamDefault{`CGAL::Sequential_tag`}
+ *     \cgalParamExtra{`np1` only}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm`.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ */
+template <class TriangleMesh,
+          class PolylineRange,
+          class OutputIterator,
+          class NamedParameters = parameters::Default_named_parameters>
+OutputIterator intersections(const TriangleMesh& tm,
+                             const PolylineRange& polylines,
+                             OutputIterator out,
+                             const NamedParameters& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+                , const std::enable_if_t<
+                    boost::has_range_iterator<
+                      typename boost::mpl::eval_if<
+                        boost::has_range_iterator<PolylineRange>,
+                        boost::range_value<PolylineRange>,
+                        std::false_type
+                      >::type
+                    >::value
+                  >* = 0//end enable_if
+#endif
+                 )
+{
+  if (faces(tm).size()==0 || polylines.empty())
+    return out;
+
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  CGAL_precondition(CGAL::is_triangle_mesh(tm));
+
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters,
+                                          Sequential_tag
+                                        >::type;
+
+  using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using Segment_3 = typename GT::Segment_3;
+
+  using AABB_tree_helper = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM>;
+  using Face_tree = typename AABB_tree_helper::Tree;
+
+  using Segment_primitive = CGAL::AABB_segment_primitive_3<GT, typename std::vector<Segment_3>::const_iterator>;
+  using Segment_traits = CGAL::AABB_traits_3<GT, Segment_primitive>;
+  using Segment_tree = CGAL::AABB_tree<Segment_traits>;
+
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, tm));
+
+  Bbox_3 b1;
+  for (face_descriptor f : faces(tm))
+   b1 += Polygon_mesh_processing::face_bbox(f, tm, np);
+  Bbox_3 b2;
+  for(const auto& polyline : polylines)
+    b2 += bbox_3(polyline.begin(), polyline.end());
+
+  if(!CGAL::do_overlap(b1, b2))
+    return out;
+
+  Bbox_3 bb((std::max)(b1.xmin(),b2.xmin()), (std::max)(b1.ymin(),b2.ymin()), (std::max)(b1.zmin(),b2.zmin()),
+            (std::min)(b1.xmax(),b2.xmax()), (std::min)(b1.ymax(),b2.ymax()), (std::min)(b1.zmax(),b2.zmax()));
+
+  // Store filtered segments and their original indices.
+  std::vector<Segment_3> segments;
+  std::vector<std::pair<std::size_t, std::size_t> > segment_indices;
+  std::size_t polyline_index = 0;
+  for (const auto& polyline : polylines)
+  {
+    if(polyline.size() >= 2)
+    {
+      auto pit = std::begin(polyline);
+      auto prev = pit++;
+      for(; pit != std::end(polyline); ++pit, ++prev)
+        if (do_overlap(bb, prev->bbox()+pit->bbox()))
+        {
+          segments.emplace_back(*prev, *pit);
+          segment_indices.emplace_back(polyline_index, std::size_t(std::begin(polyline) - prev));
+        }
+    }
+    ++polyline_index;
+  }
+
+  std::vector<face_descriptor> faces_to_test;
+  for(face_descriptor f : faces(tm))
+    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm, parameters::vertex_point_map(vpm)), bb))
+      faces_to_test.emplace_back(f);
+
+  AABB_tree_helper helper;
+  Face_tree face_tree;
+
+  helper.template build<Concurrency_tag>(faces_to_test, face_tree, tm, vpm);
+  Segment_tree segment_tree(segments.begin(), segments.end());
+
+  auto output = boost::make_function_output_iterator(
+    [&](const auto& ids)
+    {
+      *out++ = std::make_pair(ids.first, segment_indices[std::size_t(ids.second - segments.cbegin())]);
+    });
+  CGAL::AABB_trees::all_pairs_of_intersecting_primitives(face_tree, segment_tree, output, parameters::concurrency_tag(Concurrency_tag()));
+  return out;
+}
+#endif
 
 /**
  * \ingroup PMP_intersection_grp
