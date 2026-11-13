@@ -2227,6 +2227,34 @@ public:
       return arc;
     }
 
+    /*! constructs a full axis-aligned ellipse.
+     * \param center The center with rational coordinates.
+     * \param x_radius The horizontal semi-axis length.
+     * \param y_radius The vertical semi-axis length.
+     * \param orient The orientation of the ellipse.
+     * \pre Both semi-axis lengths are positive.
+     * \pre `orient` is not `COLLINEAR`.
+     */
+    Curve_2 operator()(const Rat_point_2& center,
+                       const Rational& x_radius, const Rational& y_radius,
+                       Orientation orient) const {
+      CGAL_precondition(CGAL::sign(x_radius) == POSITIVE);
+      CGAL_precondition(CGAL::sign(y_radius) == POSITIVE);
+      CGAL_precondition(orient != COLLINEAR);
+
+      const Rational x_squared = x_radius*x_radius;
+      const Rational y_squared = y_radius*y_radius;
+      const Rational x = center.x();
+      const Rational y = center.y();
+      const Rational rat_coeffs[6] = {y_squared, x_squared, Rational(0),
+        -2*y_squared*x, -2*x_squared*y,
+        y_squared*x*x + x_squared*y*y - x_squared*y_squared};
+      Curve_2 arc;
+      arc.set_orientation(orient);
+      m_traits.set_full(arc, rat_coeffs, false);
+      return arc;
+    }
+
     /*! constructs a conic arc that lies on the conic:
      *   `C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0`
      * \param orient The orientation of the arc (clockwise or counterclockwise).
