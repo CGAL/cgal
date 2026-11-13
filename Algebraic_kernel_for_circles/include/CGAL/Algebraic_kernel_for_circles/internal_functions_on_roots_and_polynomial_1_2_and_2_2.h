@@ -20,7 +20,7 @@
 
 #include <CGAL/license/Circular_kernel_2.h>
 
-
+#include <CGAL/Root_of_traits.h>
 
 namespace CGAL {
   namespace AlgebraicFunctors {

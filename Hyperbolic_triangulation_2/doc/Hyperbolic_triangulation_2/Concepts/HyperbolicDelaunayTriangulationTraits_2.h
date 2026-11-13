@@ -80,7 +80,7 @@ public:
                 A predicate object. Must provide the function operator
 
                 `Oriented_side operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 query),`
-                which returns the position of the point `query` relative to the oriented hyperbolic
+                which returns the position of the point `query` relative to the circle supporting the hyperbolic
                 segment with vertices `p` and `q`.
         */
         typedef unspecified_type                         Side_of_oriented_hyperbolic_segment_2;
@@ -104,6 +104,17 @@ public:
 
         */
         typedef unspecified_type                         Is_Delaunay_hyperbolic;
+
+         /*!
+                A predicate object. Must provide the function operator
+
+                `Orientation operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 query),`
+
+                which returns the position of the point `query` relative to the oriented hyperbolic
+                segment with vertices `p` and `q`.
+
+        */
+        typedef unspecified_type                         Hyperbolic_orientation_2;
 
   /// @}
 
@@ -167,6 +178,7 @@ public:
         Side_of_oriented_circle_2              side_of_oriented_circle_2_object();
         Side_of_oriented_hyperbolic_segment_2          side_of_oriented_hyperbolic_segment_2_object();
         Is_Delaunay_hyperbolic                                               is_Delaunay_hyperbolic_object();
+        Hyperbolic_orientation_2                hyperbolic_orientation_2();
   /// @}
 
   /// \name
