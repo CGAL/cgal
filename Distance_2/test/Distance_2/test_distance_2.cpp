@@ -240,6 +240,11 @@ struct Test {
     std::cout << "Point - Triangle\n";
     check_squared_distance (p( 10,  0), T(p(  5,  2), p( 18, 57), p(  2,56)), 29);
     check_squared_distance (p(  5,101), T(p(  0,  0), p(  5,  1), p( 10, 0)), 10000);
+    //degenerate triangles->  a point, a segment (2 cyclic shifts), and a doubled segment
+    check_squared_distance (p(  0,  0), T(p(  5,  5), p(  5,  5), p(  5, 5)), 50);
+    check_squared_distance (p(  5,  0), T(p(  0,  0), p(  1,  0), p(  2, 0)), 9);
+    check_squared_distance (p(  5,  0), T(p(  1,  0), p(  2,  0), p(  0, 0)), 9);
+    check_squared_distance (p(  1, -8), T(p(  7, -7), p(  5, -8), p(  7,-7)), 16);
   }
 
   void L_T()
@@ -252,18 +257,24 @@ struct Test {
   {
     std::cout << "Ray - Triangle\n";
     check_squared_distance (R(p( 1,  3), p( 0, 11)), T(p(  5,  2), p(  8, 57), p(  2,26)), 14.7846);
+    check_squared_distance (R(p( 0,  0), p( 1,  0)), T(p(  0,  5), p(  0,  5), p(  0, 5)), 25);
+    check_squared_distance (R(p( 0, -2), p( 1, -2)), T(p( -5,  1), p(  1,  2), p(  7, 3)), FT(529)/FT(37));
+    check_squared_distance (R(p(-3,  4), p(-4,  0)), T(p( -2,  4), p( -8,  0), p(-14,-4)), 0);
   }
 
   void S_T()
   {
     std::cout << "Segment - Triangle\n";
     check_squared_distance (S(p( 60,  0), p( 6,  0)), T(p(  5,  2), p( 18, 57), p(  2,56)), 5);
+    check_squared_distance (S(p(  0,  0), p( 0,  2)), T(p(  4,  4), p(  4,  4), p(  4, 4)), 20);
   }
 
   void T_T()
   {
     std::cout << "Triangle - Triangle\n";
     check_squared_distance (T(p(  7,  1), p(100, 15), p(103,  7)), T(p(  5,  2), p( 18, 57), p(  2,56)), 5);
+    check_squared_distance (T(p(  0,  0), p(  2,  0), p(  0,  2)), T(p(  4,  2), p(  4,  2), p(  4, 2)), 8);
+    check_squared_distance (T(p(  0,  0), p(  2,  0), p(  0,  2)), T(p(  4,  0), p(  5,  0), p(  6, 0)), 4);
   }
 
   void run()
