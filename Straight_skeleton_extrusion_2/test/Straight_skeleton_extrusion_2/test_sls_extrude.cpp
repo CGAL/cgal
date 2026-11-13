@@ -9,6 +9,7 @@
 #include <CGAL/IO/polygon_mesh_io.h>
 
 namespace PMP = ::CGAL::Polygon_mesh_processing;
+namespace SLSE = ::CGAL::Straight_skeleton_extrusion;
 
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
@@ -203,7 +204,8 @@ bool test(const char* poly_filename,
   std::cout << "\nTest:\n"
             << "\tPolygon: " << poly_filename << "\n"
             << "\tAngles: " << angles_filename << "\n"
-            << "\tHeight: " << height << std::endl;
+            << "\tHeight: " << height << "\n"
+            << "\tKernel: " << typeid(K).name() << std::endl;
 
   Polygon_with_holes_2 pwh;
   if(!read_input_polygon(poly_filename, pwh) || pwh.outer_boundary().is_empty())
@@ -237,6 +239,15 @@ bool test(const char* poly_filename,
   CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::angles(angles).maximum_height(- height));
 
 //  assert(CGAL::IO::write_polygon_mesh(root_name(poly_filename) + "_extruded_down.off", sm, CGAL::parameters::stream_precision(17)));
+
+  volume = PMP::volume(sm);
+  assert(are_equal(volume, expected_volume, rel_eps, true /*verbose*/));
+
+  // With the exact kernel
+  using XK = SLSE::internal::Extrusion_kernel_selector<K>::type;
+
+  clear(sm);
+  CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::angles(angles).maximum_height(- height).extrusion_traits(XK()));
 
   volume = PMP::volume(sm);
   assert(are_equal(volume, expected_volume, rel_eps, true /*verbose*/));

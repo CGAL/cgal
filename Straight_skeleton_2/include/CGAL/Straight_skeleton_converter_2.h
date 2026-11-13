@@ -14,6 +14,7 @@
 #include <CGAL/license/Straight_skeleton_2.h>
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Straight_skeleton_builder_traits_2.h>
 #include <CGAL/Trisegment_2.h>
 
 #include <CGAL/assertions.h>
@@ -42,6 +43,8 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
 
   typedef typename Source_skeleton::Traits Source_traits ;
   typedef typename Target_skeleton::Traits Target_traits ;
+
+  typedef Straight_skeleton_builder_traits_2<Target_traits> Target_builder_traits;
 
   typedef CGAL_SS_i::Segment_2_with_ID<Source_traits> Source_segment_2_with_ID;
   typedef CGAL_SS_i::Segment_2_with_ID<Target_traits> Target_segment_2_with_ID;
@@ -76,19 +79,35 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
   {
     CGAL_assertion( handle_assigned(aV) ) ;
 
-    return Target_vertex( aV->id()
-                        , this->operator()(aV->point())
-                        , this->operator()(aV->time ())
-                        , aV->is_split()
-                        , aV->has_infinite_time()
-                        ) ;
+    if(aV->is_skeleton() && !aV->has_infinite_time())
+    {
+      CGAL_precondition(bool(aV->trisegment()));
+      Target_trisegment_2_with_ID_ptr trisegment = this->operator()(aV->trisegment());
+
+      // @fixme inconsistency issue, see HarmonizeSpeeds
+      auto pt_t = Target_builder_traits().construct_ss_event_time_and_point_2_object()(trisegment);
+      CGAL_postcondition(pt_t.has_value());
+      return Target_vertex(aV->id(),
+                           std::get<1>(*pt_t),
+                           std::get<0>(*pt_t),
+                           aV->is_split(),
+                           aV->has_infinite_time());
+    }
+
+    return Target_vertex(aV->id(),
+                         this->operator()(aV->point()),
+                         this->operator()(aV->time()),
+                         aV->is_split(),
+                         aV->has_infinite_time());
   }
 
   Target_halfedge operator() ( Source_halfedge_const_handle aH ) const
   {
     CGAL_assertion( handle_assigned(aH) ) ;
 
-    return Target_halfedge( aH->id(), aH->slope() ) ;
+    Target_halfedge result(aH->id(), aH->slope());
+    result.set_weight(this->operator()(aH->weight()));
+    return result;
   }
 
   Target_face operator() ( Source_face_const_handle aF ) const
@@ -373,6 +392,22 @@ convert_straight_skeleton_2 ( Source_skeleton const& aSrc )
 
   return c(aSrc);
 
+}
+
+template<class Target_skeleton, class Source_skeleton,
+         std::enable_if_t<!std::is_same<Target_skeleton, Source_skeleton>::value>* = nullptr>
+std::shared_ptr<Target_skeleton>
+convert_straight_skeleton_2 ( std::shared_ptr<Source_skeleton> const& aSrc )
+{
+  CGAL_precondition(bool(aSrc));
+  return convert_straight_skeleton_2<Target_skeleton>(*aSrc);
+}
+
+template<class Skeleton>
+const std::shared_ptr<Skeleton>&
+convert_straight_skeleton_2 ( std::shared_ptr<Skeleton> const& aSrc )
+{
+  return aSrc;
 }
 
 } // end namespace CGAL
