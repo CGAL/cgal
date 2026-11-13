@@ -17,6 +17,7 @@
 #include <cstddef>
 #include <CGAL/Hilbert_sort_middle_base.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Spatial_sorting/internal/Spatial_sorting_helper.h>
 
 namespace CGAL {
 
@@ -93,6 +94,54 @@ public:
     : _k(k), _limit (limit)
   {}
 
+  // Hilbert sort use double representations so two points not strictly equal will treat identically by hilbert sort
+  bool have_equal_representations(Point a, Point b) const{
+    return (to_double(_k.compute_x_2_object()(a)) == to_double(_k.compute_x_2_object()(b))) &&
+           (to_double(_k.compute_y_2_object()(a)) == to_double(_k.compute_y_2_object()(b)));
+  }
+
+  template <int x, bool upx, bool upy, class RandomAccessIterator>
+  void skip_empty_cells (RandomAccessIterator begin, RandomAccessIterator end,
+                         double xmin, double ymin, double xmax, double ymax, Bbox_2 bb) const
+  {
+    const int y = (x + 1) % 2;
+    double xmed= (xmin+xmax)/2;
+    double ymed= (ymin+ymax)/2;
+    const bool x_degen = (xmin == xmed || xmed == xmax);
+    const bool y_degen = (ymin == ymed || ymed == ymax);
+    const bool x_lower = (x==0) ? xmed<=bb.xmin() : xmed<=bb.ymin();
+    const bool y_lower = (x==0) ? ymed<=bb.ymin() : ymed<=bb.xmin();
+    const bool x_upper = (x==0) ? xmed>=bb.xmax() : xmed>=bb.ymax();
+    const bool y_upper = (x==0) ? ymed>=bb.ymax() : ymed>=bb.xmax();
+
+    if(x_degen && y_degen)
+      return;
+
+    if( (!x_degen && !x_lower && !x_upper) || (!y_degen && !y_lower && !y_upper)){
+      // Not contain in one quarter
+      sort<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax);
+      return;
+    }
+
+    CGAL_assertion(!x_upper || !x_lower || (x==0 ? (bb.xmax() == bb.xmin()) : (bb.ymax() == bb.ymin())));
+    CGAL_assertion(!y_upper || !y_lower || (y==0 ? (bb.xmax() == bb.xmin()) : (bb.ymax() == bb.ymin())));
+
+    if( x_lower == upx )
+    {
+      if( y_lower == upy )
+        skip_empty_cells<y, upy, upx> (begin, end, ymin, xmin, ymed, xmed, bb);
+      else
+        skip_empty_cells<x, upx, upy> (begin, end, xmin, ymed, xmed, ymax, bb);
+    }
+    else
+    {
+      if( y_lower == upy )
+        skip_empty_cells<y, !upx, !upy> (begin, end, ymed, xmax, ymin, xmed, bb);
+      else
+        skip_empty_cells<x, upx, upy> (begin, end, xmed, ymed, xmax, ymax, bb);
+    }
+  }
+
   template <int x, bool upx, bool upy, class RandomAccessIterator>
   void sort (RandomAccessIterator begin, RandomAccessIterator end,
              double xmin, double ymin, double xmax, double ymax) const
@@ -109,39 +158,35 @@ public:
     RandomAccessIterator m1 = internal::fixed_hilbert_split (m0, m2, Cmp< y,  upy> (ymed,_k));
     RandomAccessIterator m3 = internal::fixed_hilbert_split (m2, m4, Cmp< y, !upy> (ymed,_k));
 
-    if (m1!=m4)
+    if( ((m2 == m4) && ((m1 == m0) || (m1 == m2))) ||
+        ((m2 == m0) && ((m3 == m2) || (m3 == m4))) )
+    {
+      // All elements are in one quarter
+      bool all_equal = true;
+      for(auto it=begin; it!=end-1; ++it)
+        if(!have_equal_representations(*it, *(it+1))){
+          all_equal = false;
+          break;
+        }
+      if(all_equal) return;
+      Bbox_2 bb=bbox_2(begin, end, Spatial_sorting::internal::Kernel_wrapper_2<Kernel>(_k));
+      skip_empty_cells<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax, bb);
+    }
+    else
+    {
       sort<y, upy, upx> (m0, m1, ymin, xmin, ymed, xmed);
-    if (m1!=m0 || m2!=m4)
       sort<x, upx, upy> (m1, m2, xmin, ymed, xmed, ymax);
-    if (m2!=m0 || m3!=m4)
       sort<x, upx, upy> (m2, m3, xmed, ymed, xmax, ymax);
-    if (m3!=m0)
       sort<y,!upy,!upx> (m3, m4, ymed, xmax, ymin, xmed);
+    }
   }
 
   template <class RandomAccessIterator>
   void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
   {
     if (begin == end) return;
-
-    //Bbox_2 box=bbox_2(begin, end); BUG: WE NEED TO FIX THIS
-    double xmin=to_double(_k.compute_x_2_object()(*begin)),
-           ymin=to_double(_k.compute_y_2_object()(*begin)),
-           xmax=xmin,
-           ymax=ymin;
-
-    for(RandomAccessIterator it=begin+1; it<end; ++it){
-      if ( to_double(_k.compute_x_2_object()(*it)) < xmin)
-        xmin = to_double(_k.compute_x_2_object()(*it));
-      if ( to_double(_k.compute_y_2_object()(*it)) < ymin)
-        ymin = to_double(_k.compute_y_2_object()(*it));
-      if ( to_double(_k.compute_x_2_object()(*it)) > xmax)
-        xmax = to_double(_k.compute_x_2_object()(*it));
-      if ( to_double(_k.compute_y_2_object()(*it)) > ymax)
-        ymax = to_double(_k.compute_y_2_object()(*it));
-    }
-
-    sort <0, false, false> (begin, end, xmin, ymin, xmax, ymax);
+    Bbox_2 box=bbox_2(begin, end, Spatial_sorting::internal::Kernel_wrapper_2<Kernel>(_k));
+    sort <0, false, false> (begin, end, box.xmin(), box.ymin(), box.xmax(), box.ymax());
   }
 };
 
