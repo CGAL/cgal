@@ -363,7 +363,7 @@ public:
   Polytope_distance_d( const Traits&  traits  = Traits())
     : nt_0(0), nt_1(1),
       tco( traits), da_coord (tco.access_coordinates_begin_d_object()),
-      d( -1), solver(0)
+      d( -1), solver(nullptr)
   {}
 
   template < class InputIterator1, class InputIterator2 >
@@ -374,15 +374,20 @@ public:
                        const Traits&  traits = Traits())
     : nt_0(0), nt_1(1),
       tco( traits), da_coord (tco.access_coordinates_begin_d_object()),
-      solver(0)
+      solver(nullptr)
   {
     set( p_first, p_last, q_first, q_last);
   }
 
-  ~Polytope_distance_d() {
-    if (solver)
-      delete solver;
-  }
+  Polytope_distance_d(const Self& other) = delete; 
+
+  Polytope_distance_d(Self&& other) noexcept = delete;
+
+  Self& operator=(const Self& other) = delete;
+
+  Self& operator=(Self&& other) noexcept = delete;
+
+  ~Polytope_distance_d() = default;
 
   // access to point sets
   int  ambient_dimension( ) const { return d; }
@@ -642,7 +647,7 @@ private:
   ET_vector                p_coords;          // realizing point of P
   ET_vector                q_coords;          // realizing point of Q
 
-  Solver                   *solver;    // quadratic programming solver
+  std::unique_ptr<Solver>  solver;    // quadratic programming solver
 
   Index_vector             p_support_indices;
   Index_vector             q_support_indices;
@@ -692,10 +697,9 @@ private:
            D_iterator (boost::counting_iterator<int>(0), D_matrix (d)),
            C_iterator (nt_0));
 
-    delete solver;
     Quadratic_program_options options;
     options.set_pricing_strategy(pricing_strategy(NT()));
-    solver = new Solver(qp, options);
+    solver = std::make_unique<Solver>(qp, options);
     CGAL_assertion(solver->status() == QP_OPTIMAL);
     // compute support and realizing points
     ET  et_0 = 0;
