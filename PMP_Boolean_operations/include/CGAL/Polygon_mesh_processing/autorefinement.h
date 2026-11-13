@@ -28,6 +28,8 @@
 #include <boost/timer/progress_display.hpp>
 #endif
 
+#include <CGAL/box_intersection_d.h>
+
 // output
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -1836,7 +1838,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{concurrency_tag}
- *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
  *     \cgalParamDefault{`CGAL::Sequential_tag`}
  *   \cgalParamNEnd
