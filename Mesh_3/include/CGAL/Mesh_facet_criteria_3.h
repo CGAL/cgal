@@ -106,6 +106,8 @@ public:
     \param min_radius_bound is a uniform lower bound for the radius of
     the surface Delaunay balls. Only facets with a radius larger than that
     bound will be refined.
+    \param normals_variation_bound in degrees, between 2 neighbor
+    facets of the complex, separated by a non-complex edge
 
     @note If one parameter is set to 0, then its corresponding
     criterion is ignored.
@@ -114,10 +116,10 @@ public:
                         const FT& radius_bound,
                         const FT& distance_bound,
                         const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
-                        const FT& min_radius_bound = 0.);
+                        const FT& min_radius_bound = 0.,
+                        const FT& normals_variation_bound = 0.);
 
 #endif
-
 
   /*!
     Returns an object to serve as criteria for facets. The types `SizingField` and
@@ -131,7 +133,8 @@ public:
                         const SizingField & radius_bound,
                         const DistanceField& distance_bound,
                         const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
-                        const FT& min_radius_bound = 0.)
+                        const FT& min_radius_bound = 0.,
+                        const FT& normals_variation_bound = 0.)
     : squared_min_radius_bound_(std::nullopt)
   {
     if (FT(0) != min_radius_bound)
@@ -150,6 +153,8 @@ public:
                   Mesh_3::Is_mesh_domain_field_3<Tr, DistanceField>());
 
     init_topo(topology);
+
+    init_normals_variation(normals_variation_bound);
   }
 
   /// @}
@@ -253,6 +258,14 @@ private:
         break;
       }
     }
+  }
+
+  void init_normals_variation(const FT& normals_variation_bound)
+  {
+    if(FT(0) == normals_variation_bound)
+      return;
+    typedef Mesh_3::Facet_normals_variation_criterion<C3T3, Visitor> Nvar_criterion;
+    criteria_.add(new Nvar_criterion(normals_variation_bound));
   }
 
 private:

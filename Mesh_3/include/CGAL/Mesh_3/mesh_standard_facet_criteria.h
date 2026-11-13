@@ -25,6 +25,7 @@
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/number_utils.h> // for to_double
 
@@ -638,7 +639,110 @@ protected:
 
 }; // end class Facet_on_same_surface_criterion
 
+template<typename C3T3, typename Visitor_>
+class Facet_normals_variation_criterion
+: public Mesh_3::Abstract_criterion<C3T3, Visitor_>
+{
+  typedef typename C3T3::Triangulation Tr;
+  typedef typename Tr::Geom_traits::FT FT;
+  typedef typename Tr::Geom_traits::Vector_3 Vector_3;
 
+  typedef typename Tr::Cell_handle Cell_handle;
+  typedef typename Tr::Facet Facet;
+  typedef typename Tr::Edge Edge;
+
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
+  typedef typename Base::Quality Quality;
+  typedef typename Base::Is_bad Is_bad;
+
+  typedef Facet_normals_variation_criterion<C3T3, Visitor_> Self;
+
+public:
+  /// Constructor
+  Facet_normals_variation_criterion(const FT& bound_degrees)
+      : cosine_bound_(std::cos(bound_degrees * CGAL_PI / 180.0))
+  {}
+
+  /// Destructor
+  virtual ~Facet_normals_variation_criterion() {}
+
+protected:
+  virtual void do_accept(Visitor_& v) const { v.visit(*this); }
+
+  virtual Self* do_clone() const
+  {
+    // Call copy ctor on this
+    return new Self(*this);
+  }
+
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
+  {
+    CGAL_assertion(c3t3.is_in_complex(f));
+    CGAL_assertion(cosine_bound_ <= FT(1));
+
+    using T3_utils = CGAL::Triangulation_utils_3;
+
+    const Tr& tr = c3t3.triangulation();
+    auto cp = tr.geom_traits().construct_point_3_object();
+    auto compare_angle = tr.geom_traits().compare_angle_3_object();
+
+    const Facet& start_facet = f;
+
+    // for each of the 3 neighboring facets, compute unit normal n2 and compare with nf
+    for(const Edge& e : tr.edges(f))
+    {
+      if(c3t3.is_in_complex(e))
+        continue;
+
+      const auto& [vs, vt] = tr.vertices(e);
+      Cell_handle cell = start_facet.first;
+      do
+      {
+        int next_index = T3_utils::next_around_edge(cell->index(vs), cell->index(vt));
+
+        if(cell->neighbor(next_index) == f.first)
+          break; // we have come back to the original facet, stop
+
+        if(c3t3.is_in_complex(cell, next_index))
+        {
+          Facet f2(cell, next_index);
+
+          const auto& vf = tr.vertices(f);
+          const auto& vf2 = tr.vertices(f2);
+          // compare the angle between the two normals, using the 3 points of each facet
+          // with the cosine bound
+          auto res = compare_angle(cp(tr.point(vf[0])),
+                                   cp(tr.point(vf[1])),
+                                   cp(tr.point(vf[2])),
+                                   cp(tr.point(vf2[0])),
+                                   cp(tr.point(vf2[1])),
+                                   cp(tr.point(vf2[2])),
+                                   cosine_bound_);
+
+          // if res == SMALLER, then the angles between the 2 normals is smaller than the bound
+          // and the triangulation is "flat enough"
+          // otherwise :
+          if(res == CGAL::LARGER)
+          {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+            std::cerr << "Bad facet (max cos dh variation = " << cosine_bound_ << ")" << std::endl;
+#endif
+            return Is_bad(Quality(1));
+          }
+        }
+
+        cell = cell->neighbor(next_index);
+      }
+      while(cell != start_facet.first);
+    }
+
+    return Is_bad();
+  }
+
+private:
+  const FT cosine_bound_;
+
+}; // end class Facet_normals_variation_criterion
 
 template <typename C3T3>
 class Facet_criterion_visitor
