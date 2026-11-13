@@ -457,6 +457,23 @@ returns an iterator which points to `value`;
 */
 static const_iterator s_iterator_to(const_reference value);
 
+  /*!
+  returns an iterator which points to `value`, or a null iterator if `value` is null.
+  \pre A non-null `value` points to a live element of a `Compact_container`.
+  */
+  static iterator s_iterator_to(pointer value);
+
+  /*!
+  returns a const iterator which points to `value`, or a null iterator if `value` is null.
+  \pre A non-null `value` points to a live element of a `Compact_container`.
+  */
+  static const_iterator s_iterator_to(const_pointer value);
+
+  /*!
+  returns a null iterator.
+  */
+  static iterator s_iterator_to(std::nullptr_t);
+
 
 
 /// @}
