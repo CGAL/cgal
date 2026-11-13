@@ -43,7 +43,6 @@ int main(int argc, char* argv[])
   double sdistance = 0;
 
   for(vertex_descriptor vd : vertices(tm)){
-    std::cout << vd << "  is at distance " << get(vertex_distance, vd) << " to " << source << std::endl;
     if(get(vertex_distance, vd) > sdistance){
       vfar = vd;
       sdistance = get(vertex_distance, vd);
@@ -55,10 +54,14 @@ int main(int argc, char* argv[])
   hm.add_source(vfar);
   hm.estimate_geodesic_distances(vertex_distance);
 
+  sdistance = 0;
   for(vertex_descriptor vd : vertices(tm)){
-    std::cout << vd << "  is at distance " << get(vertex_distance, vd) << "to the set of two sources" << std::endl;
+    if(get(vertex_distance, vd) > sdistance){
+      vfar = vd;
+      sdistance = get(vertex_distance, vd);
+    }
   }
-
+  std::cout << "The furthest point to the two previous points is at " << tm.point(vfar) << std::endl;
   std::cout << "done" << std::endl;
   return 0;
 }
