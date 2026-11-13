@@ -21,6 +21,7 @@
 #include <string>
 #include <fstream>
 #include <cassert>
+#include <cmath>
 
 
 // ----------------------------------------------------------------------------
@@ -39,24 +40,19 @@ typedef Kernel::Point_3 Point;
 // ----------------------------------------------------------------------------
 
 // Removes outliers
-template<typename Concurrency_tag>
-void test_wlop_simplify_and_regularize(
-                              std::vector<Point>& points, // input point set
-                              std::vector<Point>& output,
-                              double retain_percentage, // percentage of points to remove
-                              double neighbor_radius, // neighborhood size
-                              unsigned int iter_number, // iteration number
-                              bool need_compute_density)
+template <typename Concurrency_tag>
+bool test_wlop_simplify_and_regularize(std::vector<Point>& points, // input point set
+                                       std::vector<Point>& output,
+                                       double retain_percentage, // percentage of points to remove
+                                       double neighbor_radius,   // neighborhood size
+                                       unsigned int iter_number, // iteration number
+                                       bool need_compute_density)
 
 {
   CGAL::Real_timer task_timer; task_timer.start();
   std::cerr << "Running WLOP simplify and regularize, (retain_percentage: "
             << retain_percentage << "%, neighbor_radius="
             << neighbor_radius << ")...\n";
-
-  // Make room for sample points
-  std::vector<Point> points_sampled;
-  points_sampled.resize(static_cast<std::size_t>(points.size() * (retain_percentage / 100.)));
 
   output.clear();
   // Run algorithm
@@ -67,12 +63,26 @@ void test_wlop_simplify_and_regularize(
      number_of_iterations(iter_number).
      require_uniform_sampling(need_compute_density));
 
-  output.clear();
-
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
                       << (memory>>20) << " Mb allocated"
                       << std::endl;
+
+  const std::size_t expected_size = static_cast<std::size_t>(points.size() * (retain_percentage / 100.));
+  if(output.empty() || output.size() != expected_size) {
+    std::cerr << "Error: output size mismatch (expected " << expected_size << ", got " << output.size() << ")"
+              << std::endl;
+    return false;
+  }
+
+  for(const Point& p : output) {
+    if(!std::isfinite(p.x()) || !std::isfinite(p.y()) || !std::isfinite(p.z())) {
+      std::cerr << "Error: non-finite coordinate in output point" << std::endl;
+      return false;
+    }
+  }
+
+  return true;
 }
 
 
@@ -102,8 +112,7 @@ int main(int argc, char * argv[])
   //Algorithm parameters
   const double retain_percentage = 2;   // percentage of points to retain.
   const double neighbor_radius = 0.5;   // neighbors size.
-  const unsigned int iter_number = 25;     // number of iterations.
-  const bool need_compute_density = false;  // if needed to compute density.
+  const unsigned int iter_number = 25;  // number of iterations.
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -134,21 +143,45 @@ int main(int argc, char * argv[])
     }
 
     //***************************************
-    // Test
+    // Test: require_uniform_sampling = false
     //***************************************
-#ifdef CGAL_LINKED_WITH_TBB
-    std::vector<Point> points2(points);
-#endif
+    std::vector<Point> points_seq = points;
     std::vector<Point> output;
-    test_wlop_simplify_and_regularize<CGAL::Sequential_tag>(
-      points, output, retain_percentage, neighbor_radius,
-      iter_number, need_compute_density);
+    if(!test_wlop_simplify_and_regularize<CGAL::Sequential_tag>(points_seq, output, retain_percentage, neighbor_radius,
+                                                                iter_number, false))
+    {
+      accumulated_fatal_err = EXIT_FAILURE;
+    }
 
 #ifdef CGAL_LINKED_WITH_TBB
+    std::vector<Point> points_par = points;
     output.clear();
-    test_wlop_simplify_and_regularize<CGAL::Parallel_tag>(
-      points2, output, retain_percentage, neighbor_radius,
-      iter_number, need_compute_density);
+    if(!test_wlop_simplify_and_regularize<CGAL::Parallel_tag>(points_par, output, retain_percentage, neighbor_radius,
+                                                              iter_number, false))
+    {
+      accumulated_fatal_err = EXIT_FAILURE;
+    }
+#endif // CGAL_LINKED_WITH_TBB
+
+    //***************************************
+    // Test: require_uniform_sampling = true
+    //***************************************
+    points_seq = points;
+    output.clear();
+    if(!test_wlop_simplify_and_regularize<CGAL::Sequential_tag>(points_seq, output, retain_percentage, neighbor_radius,
+                                                                iter_number, true))
+    {
+      accumulated_fatal_err = EXIT_FAILURE;
+    }
+
+#ifdef CGAL_LINKED_WITH_TBB
+    points_par = points;
+    output.clear();
+    if(!test_wlop_simplify_and_regularize<CGAL::Parallel_tag>(points_par, output, retain_percentage, neighbor_radius,
+                                                              iter_number, true))
+    {
+      accumulated_fatal_err = EXIT_FAILURE;
+    }
 #endif // CGAL_LINKED_WITH_TBB
 
 
