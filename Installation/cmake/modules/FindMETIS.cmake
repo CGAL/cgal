@@ -23,6 +23,22 @@
 # Standard CMake modules see CMAKE_ROOT/Modules
 include(FindPackageHandleStandardArgs)
 
+# The name the caller used in find_package() (Metis, METIS, ...). CMake sets
+# <ThatName>_FIND_QUIETLY / _FIND_REQUIRED, so read the flags under that name.
+if(DEFINED CMAKE_FIND_PACKAGE_NAME)
+    set(metis_pkg "${CMAKE_FIND_PACKAGE_NAME}")
+else()
+    set(metis_pkg METIS)
+endif()
+set(metis_quiet "${${metis_pkg}_FIND_QUIETLY}")
+
+# Print a diagnostic only when find_package() was not called with QUIET
+function(metis_msg msg)
+    if(NOT metis_quiet)
+        message(STATUS "${msg}")
+    endif()
+endfunction()
+
 if ( METIS_LIBRARIES AND METIS_INCLUDE_DIRS )
 
     # Do nothing. Variables are set. No need to search again
@@ -59,12 +75,12 @@ else(METIS_LIBRARIES AND METIS_INCLUDE_DIRS)
                       HINTS ${METIS_INCLUDE_DIR}
                       NO_DEFAULT_PATH)
             if(NOT metis_test_include_path)
-                message("Can not locate ${metis_inc_names} in ${METIS_INCLUDE_DIR}")
+                metis_msg("Can not locate ${metis_inc_names} in ${METIS_INCLUDE_DIR}")
             endif()
             set(METIS_INCLUDE_DIR "${metis_test_include_path}")
 
         else()
-            message("METIS_INCLUDE_DIR=${METIS_INCLUDE_DIR} does not exist")
+            metis_msg("METIS_INCLUDE_DIR=${METIS_INCLUDE_DIR} does not exist")
             set(METIS_INCLUDE_DIR "METIS_INCLUDE_DIR-NOTFOUND")
         endif()
 
@@ -84,7 +100,7 @@ else(METIS_LIBRARIES AND METIS_INCLUDE_DIRS)
                           NO_DEFAULT_PATH)
 
             else()
-                 message("METIS_DIR=${METIS_DIR} does not exist")
+                 metis_msg("METIS_DIR=${METIS_DIR} does not exist")
                  set(METIS_INCLUDE_DIR "METIS_INCLUDE_DIR-NOTFOUND")
             endif()
 
@@ -100,7 +116,7 @@ else(METIS_LIBRARIES AND METIS_INCLUDE_DIRS)
     endif()
 
     if ( NOT METIS_INCLUDE_DIR )
-        message("Can not locate METIS include directory")
+        metis_msg("Can not locate METIS include directory")
     endif()
 
     # Search for libraries
@@ -119,7 +135,7 @@ else(METIS_LIBRARIES AND METIS_INCLUDE_DIRS)
                          HINTS ${METIS_LIBRARY_DIR}
                          NO_DEFAULT_PATH)
         else()
-            message("METIS_LIBRARY_DIR=${METIS_LIBRARY_DIR} does not exist")
+            metis_msg("METIS_LIBRARY_DIR=${METIS_LIBRARY_DIR} does not exist")
             set(METIS_LIBRARY "METIS_LIBRARY-NOTFOUND")
         endif()
 
@@ -137,8 +153,8 @@ else(METIS_LIBRARIES AND METIS_INCLUDE_DIRS)
                              NO_DEFAULT_PATH)
 
             else()
-                 message("METIS_DIR=${METIS_DIR} does not exist")
-                 set(METISLIBRARY "METIS_LIBRARY-NOTFOUND")
+                 metis_msg("METIS_DIR=${METIS_DIR} does not exist")
+                 set(METIS_LIBRARY "METIS_LIBRARY-NOTFOUND")
             endif()
 
 
@@ -153,7 +169,7 @@ else(METIS_LIBRARIES AND METIS_INCLUDE_DIRS)
     endif()
 
     if ( NOT METIS_LIBRARY )
-        message("Can not locate METIS library")
+        metis_msg("Can not locate METIS library")
     endif()
 
 
@@ -164,19 +180,10 @@ else(METIS_LIBRARIES AND METIS_INCLUDE_DIRS)
 
 endif(METIS_LIBRARIES AND METIS_INCLUDE_DIRS )
 
-# Send useful message if everything is found
-find_package_handle_standard_args(METIS DEFAULT_MSG
-                                  METIS_LIBRARIES
-                                  METIS_INCLUDE_DIRS)
-
-# find_package_handle_standard_args should set METIS_FOUND but it does not!
-if ( METIS_LIBRARIES AND METIS_INCLUDE_DIRS)
-    set(METIS_FOUND TRUE)
-else()
-    set(METIS_FOUND FALSE)
-endif()
-
-# Define the version
+# Use the caller's package name so QUIET/REQUIRED are honored. This sets both
+# <Name>_FOUND (e.g. Metis_FOUND) and the upper-case METIS_FOUND.
+find_package_handle_standard_args(${metis_pkg}
+                                  REQUIRED_VARS METIS_LIBRARIES METIS_INCLUDE_DIRS)
 
 mark_as_advanced(
   METIS_INCLUDE_DIR
@@ -185,3 +192,6 @@ mark_as_advanced(
   METIS_LIBRARIES
   METIS_LIBRARY_DIR
 )
+
+unset(metis_pkg)
+unset(metis_quiet)

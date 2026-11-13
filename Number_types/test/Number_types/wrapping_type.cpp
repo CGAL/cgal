@@ -1,9 +1,9 @@
 #include <iostream>
-#include <map>
 
 #include <CGAL/config.h>
-#if __has_include(<source_location>)
+#if __has_include(<source_location>) && CGAL_CXX20
 #include <CGAL/NT_wrapper.h>
+#include <map>
 
 struct Map {
   std::map<std::string, std::size_t> m;
