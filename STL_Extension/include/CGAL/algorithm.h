@@ -24,8 +24,11 @@
 #include <CGAL/enum.h>
 #include <CGAL/IO/io.h>
 #include <algorithm>
+#include <cstddef>
 #include <iosfwd>
 #include <iostream>
+#include <iterator>
+#include <numeric>
 
 #include <boost/random/random_number_generator.hpp>
 #include <boost/random.hpp>
@@ -385,6 +388,30 @@ OutputIterator transform_n( InputIterator first, Size n, OutputIterator result, 
     result++;
   }
   return result;
+}
+
+
+// Explicit divide-and-conquer reduction algorithm
+template <std::ptrdiff_t Threshold = 1000, typename RandomIt, typename T, typename BinaryOp>
+T divide_and_conquer_reduce(RandomIt first, RandomIt last, T init, BinaryOp op) {
+    auto distance = std::distance(first, last);
+
+    // Base case / Threshold: if the sub-range is small enough, avoid further splitting
+    if (distance <= Threshold) {
+        return std::accumulate(first, last, init, op);
+    }
+
+    // Divide phase
+    RandomIt mid = std::next(first, distance / 2);
+
+    // Conquer phase (recursively evaluate left and right halves)
+    // Note: In a real parallel setting, you would spawn threads or tasks for these halves
+    // `init` is used for both halves, so it must be the identity element of `op`
+    T left_res  = divide_and_conquer_reduce<Threshold>(first, mid, init, op);
+    T right_res = divide_and_conquer_reduce<Threshold>(mid, last, init, op);
+
+    // Combine phase
+    return op(left_res, right_res);
 }
 } //namespace CGAL
 
