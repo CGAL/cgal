@@ -1,0 +1,16 @@
+Given a set P of points on a curve, the arrangement A(P) is the
+subdivision of the curve into zero-dimensional and, one-dimensional
+cells, called vertices and edges, respectively, induced by the
+points in P. Arrangements are ubiquitous in the computational-geometry
+literature and have many applications in fields like motion planning,
+computer-aided design, geographical information systems, etc.
+
+This package can be used to construct, maintain, alter, and display
+arrangements on a curve. Once an arrangement is constructed, the
+package can be used to obtain results of various queries on the
+arrangement, such as point location. The package also supports
+operations on arrangements, such as computing the overlay of two
+arrangements.
+
+Arrangements and arrangement components can also be extended to store
+additional data.
