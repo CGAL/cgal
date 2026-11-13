@@ -190,12 +190,12 @@ private:
     struct Event_coordinate_1 {
         Event_coordinate_1(){} //added to solve a compilation error of gcc-3.4 (bug?)
         Algebraic_real_1 val;
-        size_type mult_of_prim_res_root;
-        size_type index_of_prim_res_root;
-        size_type mult_of_content_root;
-        size_type index_of_content_root;
-        size_type mult_of_prim_lcoeff_root;
-        size_type index_of_prim_lcoeff_root;
+        size_type mult_of_prim_res_root = 0;
+        size_type index_of_prim_res_root = -1;
+        size_type mult_of_content_root = 0;
+        size_type index_of_content_root = -1;
+        size_type mult_of_prim_lcoeff_root = 0;
+        size_type index_of_prim_lcoeff_root = -1;
         std::optional<Status_line_1> stack;
     };
 

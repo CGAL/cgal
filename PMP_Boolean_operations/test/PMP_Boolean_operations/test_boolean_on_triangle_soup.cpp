@@ -40,7 +40,7 @@ void run(std::string f1, std::string f2)
   std::vector<Triangle> triangles_res;
   CGAL::Real_timer timer;
   timer.start();
-  PMP::compute_union(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res, bo_np);
+  PMP::compute_union_of_triangle_soups(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res, bo_np);
   timer.stop();
   std::cout << "Done in " << timer.time() << "\n";
 
@@ -51,7 +51,7 @@ void run(std::string f1, std::string f2)
   std::vector<Triangle> triangles_res;
   CGAL::Real_timer timer;
   timer.start();
-  PMP::compute_intersection(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res, bo_np);
+  PMP::compute_intersection_of_triangle_soups(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res, bo_np);
   timer.stop();
   std::cout << "Done in " << timer.time() << "\n";
 
@@ -62,7 +62,7 @@ void run(std::string f1, std::string f2)
   std::vector<Triangle> triangles_res;
   CGAL::Real_timer timer;
   timer.start();
-  PMP::compute_difference(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res, bo_np);
+  PMP::compute_difference_of_triangle_soups(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res, bo_np);
   timer.stop();
   std::cout << "Done in " << timer.time() << "\n";
 

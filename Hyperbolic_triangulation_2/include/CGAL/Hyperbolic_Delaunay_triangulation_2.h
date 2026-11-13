@@ -100,7 +100,7 @@ private:
     const Self *t;
 
   public:
-    Non_hyperbolic_tester() {} // needs a default constructor for Filter_iterator
+    Non_hyperbolic_tester() : t(nullptr) {} // needs a default constructor for Filter_iterator
     Non_hyperbolic_tester(const Self *tr) : t(tr) {}
 
     bool operator()(const typename Base::All_vertices_iterator & vit) const { return Base::is_infinite(vit); }

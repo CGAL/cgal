@@ -8,7 +8,7 @@ It provides an upper bound for the distance between two protecting ball centers
 that are consecutive on a 1-feature.
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Mesh_edge_criteria_3<Tr>}
+\cgalHasModels{CGAL::Mesh_edge_criteria_3<C3T3>}
 \cgalHasModelsEnd
 
 \sa `MeshCellCriteria_3`
@@ -26,13 +26,13 @@ public:
 
 /*!
 Point type. Must match the `Point_3` type in
-the triangulation type used by the mesh generation function.
+the triangulation nested in the mesh complex type used by the mesh generation function.
 */
 typedef unspecified_type Point_3;
 
 /*!
-Type for edges of the triangulation. Must match the
-`Edge` type in the triangulation type used by the mesh generation function.
+Type for edges of the triangulation. Must match the `Edge` type in the triangulation
+nested in the mesh complex type used by the mesh generation function.
 */
 typedef unspecified_type Edge;
 

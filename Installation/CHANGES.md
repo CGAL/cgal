@@ -46,6 +46,15 @@ Release date: December 2026
 - Deprecated the existing overload of `snap_rounding_2()`.
 - Added a new overload of `snap_rounding_2()` that automatically dispatch to either `vertical_slab_snap_rounding_2()` or `hot_pixel_snap_rounding_2()`, depending on the provided traits class.
 
+### [3D Mesh Generation](https://doc.cgal.org/6.3/Manual/packages.html#PkgMesh3)
+
+- **Breaking change**: The template parameter of `CGAL::Mesh_cell_criteria_3`,
+  `CGAL::Mesh_edge_criteria_3`, and `CGAL::Mesh_facet_criteria_3` is now the
+  mesh complex type `C3T3`, rather than its triangulation type. Code that
+  explicitly instantiates these criteria classes must be updated accordingly.
+  `CGAL::Mesh_criteria_3` also uses `C3T3` as its template parameter, but
+  continues to accept the triangulation type for backward compatibility.
+
 ### [3D Triangulations](https://doc.cgal.org/6.3/Manual/packages.html#PkgTriangulation3)
 - **Breaking change** Removed the class template `Regular_triangulation_euclidean_traits_3` which was deprecated  since CGAL-4.10
 - **Breaking change** Removed the member function `vertices_in_conflict()` of the Delaunay and the regular triangulation  which were deprecated  since CGAL-3.8
@@ -54,12 +63,6 @@ Release date: December 2026
 ### [Polygon Mesh Processing - Mesh Repair](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPMeshRepair)
 - **Breaking change**: Removed the function `CGAL::Polygon_mesh_processing::smooth_mesh()` which was deprecated since CGAL-5.5.
 - **Breaking change**: Removed the overload of the functions `CGAL::Polygon_mesh_processing::triangulate_hole()`, `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`, and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()` having output iterators for vertices and faces as parameter, which were deprecated since CGAL-6.0.
-
-### [Polygon Mesh Processing - Remeshing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
-- Added a new parameter `edge_is_protected_map` to
-[`void CGAL::Polygon_mesh_processing::isotropic_remeshing()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__local__remeshing__grp.html),
- to distinguish between "constrained" edges that can be resampled while the constrained edges polyline graph remains topologically unchanged,
- and "protected" edges that may not be modified at all by remeshing.
 
 ### [Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations)
 
@@ -74,8 +77,8 @@ Release date: December 2026
 - `corefine()` and its variants now have a named parameter `concurrency_tag`, specifying whether the task should be performed using a single or multiple threads.
 - The running times of `corefine()`, `autorefine()` and their variants have been improved.
 - Added new multithreading compatible functions operating directly on triangle soups, enabling the handling of non-manifold input and output volumes:
-  `CGAL::Polygon_mesh_processing::compute_union()`, `CGAL::Polygon_mesh_processing::compute_intersection()`, and
-  `CGAL::Polygon_mesh_processing::compute_difference()`.
+  `CGAL::Polygon_mesh_processing::compute_union_of_triangle_soups()`, `CGAL::Polygon_mesh_processing::compute_intersection_of_triangle_soups()`, and
+  `CGAL::Polygon_mesh_processing::compute_difference_of_triangle_soups()`.
 
 ### [Stream Support](https://doc.cgal.org/6.3/Manual/packages.html#PkgStreamSupport)
 
@@ -100,6 +103,12 @@ Release date: December 2026
 
 - **Breaking change**:  `CGAL::IO::Color`  is no longer imported into `namespace CGAL`.
 
+### [Meshing and Remeshing of Polygon Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
+- Added a new parameter `edge_is_protected_map` to
+[`CGAL::Polygon_mesh_processing::isotropic_remeshing()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__local__remeshing__grp.html),
+ to distinguish between "constrained" edges that can be resampled while the constrained edges polyline graph remains topologically unchanged,
+ and "protected" edges that may not be modified at all by remeshing.
+ - Fix an API bug in `CGAL::Polygon_mesh_processing::remesh_planar_patches()`: when coplanarity/collinearity criteria are too relaxed, it might happen that some patches cannot be triangulated. To handle such cases, a Boolean is now returned to indicate if all patches could be triangulated (same behavior as `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`). Also those two functions can now produce a (self-intersecting) mesh in case the simplified mesh turned out to be non-manifold (internally calling the function `CGAL::Polygon_mesh_processing::orient_polygon_soup()` on the corners and patches detected). In order to check if a non-manifoldness was worked around, the new named parameter `number_of_corners()` can be used and the filled value shall be compared to the number of vertices of the output mesh.
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
@@ -5132,7 +5141,7 @@ fixes for this release.
     removed.
 - The deprecated linear kernel functors `Construct_supporting_line_2`
     and `Construct_supporting_line_3` have been removed.
-- `Ambiant_dimension` and `Feature_dimension` have been added to
+- `Ambient_dimension` and `Feature_dimension` have been added to
     retrieve the potentially compile-time dimension of a space or of an
     object.
 - `barycenter()` functions have been added.

@@ -28,6 +28,7 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 #endif
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+namespace params = CGAL::parameters;
 
 template<typename Least_squares_fitting_tag>
 void approximate_remeshing(Surface_mesh& sm, double cos_th, double frechet, Least_squares_fitting_tag tag)
@@ -76,7 +77,7 @@ int main()
                                          -0.34672 , 0.644949 ,-0.681048, 0,
                                           0.208907, 0.760948 , 0.61426 , 0);
 
-// testing decimate function
+/// Testing decimate function
   bool OK = true;
   const int nb_meshes=4;
 
@@ -99,8 +100,8 @@ int main()
     std::cout << "  output written to out" << i << ".off\n";
     assert(CGAL::is_valid_polygon_mesh(sm_out));
   }
-// test on cheese
-{
+/// Test on cheese
+  {
     std::cout << "handling decimation of data/cheese.off\n";
     Surface_mesh sm;
     std::ifstream(CGAL::data_file_path("meshes/cheese.off")) >> sm;
@@ -122,29 +123,8 @@ int main()
     approximate_remeshing(sm_lsq, 0.98, 1e-2, CGAL::Tag_true());
     std::ofstream("cheese_out_rg_lsq.off") << sm_lsq;
     assert(CGAL::is_valid_polygon_mesh(sm_lsq));
-}
-
-// testing border non-manifold vertex: not working for now, test kept
-/*
-// in case we find a solution
-  {
-    std::cout << "testing handling of non-manifold patches\n";
-    Surface_mesh sm;
-    std::ifstream("data-decimation/m1.off") >> sm;
-    auto f1 = *std::next(faces(sm).begin(), 594);
-    auto f2 = *std::next(faces(sm).begin(), 2378);
-    CGAL::Euler::remove_face(halfedge(f1, sm), sm);
-    CGAL::Euler::remove_face(halfedge(f2, sm), sm);
-    if (!PMP::remesh_planar_patches(sm))
-    {
-      OK=false;
-      std::cerr << "ERROR: decimate failed to remesh some patches\n";
-    }
-    std::ofstream("nm_m1.off") << std::setprecision(17) << sm;
-    assert(CGAL::is_valid_polygon_mesh(sm));
   }
-*/
-// test duplicated vertex
+/// Test duplicated vertex
   {
     std::cout << "testing handling of duplicated non-manifold vertex\n";
     Surface_mesh sm;
@@ -161,7 +141,7 @@ int main()
     std::ofstream("nmd_m1.off") << std::setprecision(17) << sm_out;
     assert(CGAL::is_valid_polygon_mesh(sm_out));
   }
-  // test duplicated vertex at patch interface
+/// Test duplicated vertex at patch interface
   {
     std::cout << "testing handling of duplicated non-manifold vertex at patch interface\n";
     Surface_mesh sm;
@@ -180,7 +160,7 @@ int main()
   }
   assert(OK);
 
-// testing decimate function with almost coplanar/collinear tests
+/// Testing decimate function with almost coplanar/collinear tests
   for (int i=1; i<=nb_meshes; ++i)
   {
     std::cout << "handling decimation of transformed data/decimation/m" << i << ".off (approximate coplanar/collinear)\n";
@@ -202,7 +182,7 @@ int main()
     assert(CGAL::is_valid_polygon_mesh(sm_out));
   }
 
-//testing decimation of meshes, preserving common interface
+/// Testing decimation of meshes, preserving common interface
   const int nb_meshes_range=9;
   std::vector<Surface_mesh> meshes(nb_meshes_range);
   for (int i=1; i<=nb_meshes_range; ++i)
@@ -232,7 +212,7 @@ int main()
   for (int i=0; i<nb_meshes_range; ++i)
     assert(CGAL::is_valid_polygon_mesh(meshes[i]));
 
-  //testing decimation of meshes, preserving common interface and a patch that fails to simplify at the interface
+/// Testing decimation of meshes, preserving common interface and a patch that fails to simplify at the interface
   meshes.clear();
   meshes.resize(nb_meshes_range);
   for (int i=1; i<=nb_meshes_range; ++i)
@@ -274,7 +254,7 @@ int main()
   for (int i=0; i<nb_meshes_range; ++i)
     assert(CGAL::is_valid_polygon_mesh(meshes[i]));
 
-  //testing decimation of meshes, preserving common interface with almost coplanar/collinear tests
+  // testing decimation of meshes, preserving common interface with almost coplanar/collinear tests
   meshes.clear();
   meshes.resize(nb_meshes_range);
   for (int i=1; i<=nb_meshes_range; ++i)
@@ -304,7 +284,7 @@ int main()
   for (int i=0; i<nb_meshes_range; ++i)
     assert(CGAL::is_valid_polygon_mesh(meshes[i]));
 
-  // test face/vertex maps
+/// Test face/vertex maps
   {
     std::cout << "check face patch ids\n";
     std::cout << "  face map alone\n";
@@ -408,7 +388,8 @@ int main()
   for (int i=0; i<nb_meshes_range; ++i)
     assert(CGAL::is_valid_polygon_mesh(meshes[i]));
 #endif
-// testing decimate function with almost coplanar/collinear tests using RG
+
+/// Testing decimate function with almost coplanar/collinear tests using RG
   for (int i=1; i<=nb_meshes; ++i)
   {
     std::cout << "handling decimation of transformed data/decimation/m" << i << ".off (approximate coplanar/collinear with RG)\n";
@@ -430,8 +411,8 @@ int main()
     assert(CGAL::is_valid_polygon_mesh(sm));
   }
 
-// two examples that fails with approximate but works with RG
-  //PCA first
+/// Two examples that fails with approximate but works with RG
+  // PCA first
   {
     Surface_mesh sm;
     std::cout << "decimate of refined data/decimation/sphere.off using RG\n";
@@ -475,6 +456,47 @@ int main()
     auto vcm=get(CGAL::dynamic_vertex_property_t<std::size_t>(), const_cast<const Surface_mesh&>(sm));
     auto fpm=get(CGAL::dynamic_face_property_t<std::size_t>(), const_cast<const Surface_mesh&>(sm));
     PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::edge_is_constrained_map(ecm).face_patch_map(fpm).vertex_corner_map(vcm));
+  }
+  assert(OK);
+/// Non-manifold tests
+  // testing border non-manifold vertex
+  {
+    std::cout << "testing handling of non-manifold patches\n";
+    Surface_mesh sm, sm_out;
+    std::ifstream("data-decimation/m1.off") >> sm;
+    auto f1 = *std::next(faces(sm).begin(), 594);
+    auto f2 = *std::next(faces(sm).begin(), 2378);
+    CGAL::Euler::remove_face(halfedge(f1, sm), sm);
+    CGAL::Euler::remove_face(halfedge(f2, sm), sm);
+    std::size_t nb_corners;
+
+    if (!PMP::remesh_planar_patches(sm, sm_out, params::default_values(), params::number_of_corners(&nb_corners)))
+    {
+      OK=false;
+      std::cerr << "ERROR: decimate failed to remesh some patches\n";
+    }
+    assert(nb_corners==13);
+    assert(CGAL::is_valid_polygon_mesh(sm_out));
+    assert(vertices(sm_out).size()==14);
+    assert(faces(sm_out).size()==20);
+
+  }
+  assert(OK);
+  // testing border non-manifold vertex
+  {
+    std::cout << "testing handling of non-manifold output\n";
+    Surface_mesh sm, sm_out;
+    std::size_t nb_corners;
+    std::ifstream("data-decimation/two_manifold_cubes_sharing_an_edge.off") >> sm;
+    if (!PMP::remesh_planar_patches(sm, sm_out, params::default_values(), params::number_of_corners(&nb_corners)))
+    {
+      OK=false;
+      std::cerr << "ERROR: decimate failed to remesh some patches\n";
+    }
+    assert(nb_corners==14);
+    assert(CGAL::is_valid_polygon_mesh(sm_out));
+    assert(vertices(sm_out).size()==16);
+    assert(faces(sm_out).size()==24);
   }
   assert(OK);
 

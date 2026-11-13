@@ -256,9 +256,9 @@ bool do_faces_intersect(typename Triangle_mesh_and_triangle_soup_wrapper<TM, GT,
                         typename Triangle_mesh_and_triangle_soup_wrapper<TM, GT, VPM>::face_descriptor fg,
                         const TM& tmesh,
                         const VPM vpmap,
-                        const typename GT::Construct_segment_3& construct_segment,
-                        const typename GT::Construct_triangle_3& construct_triangle,
-                        const typename GT::Do_intersect_3& do_intersect)
+                        const typename GT::Construct_segment_3 construct_segment,
+                        const typename GT::Construct_triangle_3 construct_triangle,
+                        const typename GT::Do_intersect_3 do_intersect)
 {
   using Wrapper = Triangle_mesh_and_triangle_soup_wrapper<TM, GT, VPM>;
   using vertex_descriptor = typename Wrapper::vertex_descriptor;
