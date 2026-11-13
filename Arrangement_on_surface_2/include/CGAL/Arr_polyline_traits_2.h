@@ -193,7 +193,8 @@ public:
       CGAL_precondition(num_seg > 0);
 
       const Segment_traits_2* seg_traits =
-        this->m_poly_traits.subcurves_traits_2();
+        this->m_poly_traits.subcurve_traits_2();
+      auto ctr_seg = seg_traits->construct_x_monotone_curve_2_object();
       CGAL_precondition_code
         (
          typename Segment_traits_2::Compare_x_2 comp_x =
@@ -216,7 +217,7 @@ public:
             (comp_x(get_max_v(xcv[num_seg-1]), p) == EQUAL) &&
             (comp_xy(get_max_v(xcv[num_seg-1]), p) == SMALLER))
            );
-        xcv.push_back(X_monotone_subcurve_2(get_max_v(xcv[num_seg-1]), p));
+        xcv.push_back(ctr_seg(get_max_v(xcv[num_seg-1]), p));
       }
       else {
         // xcv is oriented right-to-left
@@ -230,7 +231,7 @@ public:
             (comp_x(get_min_v(xcv[num_seg-1]), p) == EQUAL) &&
             (comp_xy(get_min_v(xcv[num_seg-1]), p) == LARGER))
            );
-        xcv.push_back(X_monotone_subcurve_2(get_min_v(xcv[num_seg-1]), p));
+        xcv.push_back(ctr_seg(get_min_v(xcv[num_seg-1]), p));
       }
     }
   };
@@ -293,9 +294,10 @@ public:
     }
 
     /*! appends a point `p` to an existing polyline `xcv` at the front. */
-    void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
+    void operator()(X_monotone_curve_2& xcv, const Point_2& p) const
     {
       const auto* geom_traits = this->m_poly_traits.subcurve_traits_2();
+      auto ctr_seg = geom_traits->construct_x_monotone_curve_2_object();
       CGAL_precondition_code
         (
          typedef typename X_monotone_curve_2::size_type size_type;
@@ -307,32 +309,34 @@ public:
       CGAL_precondition(num_seg > 0);
 
       if (geom_traits->compare_endpoints_xy_2_object()(xcv[0]) == SMALLER) {
-        // xcv is oriented left-to-right
-        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-          geom_traits->construct_max_vertex_2_object();
-        CGAL_precondition
-          (
-           (!is_vertical(xcv) &&
-            (comp_x(get_max_v(xcv[0]), p) == LARGER)) ||
-           (is_vertical(xcv) &&
-            (comp_x(get_max_v(xcv[0]), p) == EQUAL) &&
-            (comp_xy(get_max_v(xcv[0]), p) == LARGER))
-           );
-        xcv.push_front(X_monotone_subcurve_2(p, get_max_v(xcv[0])));
-      }
-      else {
-        // xcv is oriented right-to-left
+        // xcv is oriented left-to-right; its source is the minimal vertex of
+        // its first segment, and `p` must lie to its left.
         typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
           geom_traits->construct_min_vertex_2_object();
         CGAL_precondition
           (
            (!is_vertical(xcv) &&
-            (comp_x(get_min_v(xcv[0]), p) == SMALLER)) ||
+            (comp_x(get_min_v(xcv[0]), p) == LARGER)) ||
            (is_vertical(xcv) &&
             (comp_x(get_min_v(xcv[0]), p) == EQUAL) &&
-            (comp_xy(get_min_v(xcv[0]), p) == SMALLER))
+            (comp_xy(get_min_v(xcv[0]), p) == LARGER))
            );
-        xcv.push_front(X_monotone_subcurve_2(p, get_min_v(xcv[0])));
+        xcv.push_front(ctr_seg(p, get_min_v(xcv[0])));
+      }
+      else {
+        // xcv is oriented right-to-left; its source is the maximal vertex of
+        // its first segment, and `p` must lie to its right.
+        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
+          geom_traits->construct_max_vertex_2_object();
+        CGAL_precondition
+          (
+           (!is_vertical(xcv) &&
+            (comp_x(get_max_v(xcv[0]), p) == SMALLER)) ||
+           (is_vertical(xcv) &&
+            (comp_x(get_max_v(xcv[0]), p) == EQUAL) &&
+            (comp_xy(get_max_v(xcv[0]), p) == SMALLER))
+           );
+        xcv.push_front(ctr_seg(p, get_max_v(xcv[0])));
       }
     }
   };
@@ -549,9 +553,10 @@ public:
       ForwardIterator next = begin;
       ForwardIterator curr = next++;
 
+      const auto* geom_traits = this->m_poly_traits.subcurve_traits_2();
+      auto ctr_seg = geom_traits->construct_x_monotone_curve_2_object();
       CGAL_precondition_code
         (
-         const auto* geom_traits = this->m_poly_traits.subcurve_traits_2();
          // Initialize two comparison functors
          auto compare_x = geom_traits->compare_x_2_object();
          auto compare_xy = geom_traits->compare_xy_2_object();
@@ -571,7 +576,7 @@ public:
         CGAL_precondition(compare_xy(*curr, *next) == cmp_xy_res);
         CGAL_precondition(compare_x(*curr, *next) == cmp_x_res);
 
-        segs.push_back(X_monotone_subcurve_2(*curr, *next));
+        segs.push_back(ctr_seg(*curr, *next));
         curr = next++;
       }
 
@@ -591,67 +596,6 @@ public:
   /*! obtains a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
-
-  //
-  class Approximate_2 : public Base::Approximate_2 {
-  protected:
-    using Traits = Arr_polyline_traits_2<Segment_traits_2>;
-
-    /*! The traits (in case it has state) */
-    const Traits& m_traits;
-
-    /*! constructs
-     * \param traits the traits.
-     */
-    Approximate_2(const Traits& traits) :
-      Base::Approximate_2(*(traits.subcurve_traits_2())),
-      m_traits(traits)
-    {}
-
-    friend class Arr_polyline_traits_2<Segment_traits_2>;
-
-  public:
-    using Approximate_number_type = typename Base::Approximate_number_type;
-    using Approximate_point_2 = typename Base::Approximate_point_2;
-    using Approximate_kernel = typename Base::Approximate_kernel;
-
-    /*! obtains an approximation of a point coordinate.
-     * \param p the exact point.
-     * \param i the coordinate index (either 0 or 1).
-     * \pre `i` is either 0 or 1.
-     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
-     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
-     */
-    Approximate_number_type operator()(const Point_2& p, int i) const { return Base::Approximate_2::operator()(p, i); }
-
-    Approximate_point_2 operator()(const Point_2& p) const { return Base::Approximate_2::operator()(p); }
-
-    /*! obtains an approximation of an \f$x\f$-monotone curve. */
-    template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
-                              OutputIterator oi, bool l2r = true) const {
-      if (l2r) {
-        for (auto it = xcv.points_begin(); it != xcv.points_end(); ++it) {
-          const auto& p = *it;
-          auto x = CGAL::to_double(p.x());
-          auto y = CGAL::to_double(p.y());
-          *oi++ = Approximate_point_2(x, y);
-        }
-        return oi;
-      }
-
-      for (auto it = xcv.points_rbegin(); it != xcv.points_rend(); ++it) {
-        const auto& p = *it;
-        auto x = CGAL::to_double(p.x());
-        auto y = CGAL::to_double(p.y());
-        *oi++ = Approximate_point_2(x, y);
-      }
-      return oi;
-    }
-  };
-
-  /*! obtains an Approximate_2 functor object. */
-  Approximate_2 approximate_2_object() const { return Approximate_2(*this); }
 
   /*! obtains the segment traits.
    * \return the segment traits.

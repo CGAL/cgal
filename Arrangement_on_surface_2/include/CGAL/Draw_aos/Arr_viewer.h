@@ -269,7 +269,10 @@ private:
       std::size_t start_idx = Approx_traits::is_null(polyline.front()) ? 2 : 0;
       // skip last two if ends with a sep point.
       std::size_t end_idx = Approx_traits::is_null(polyline.back()) ? polyline.size() - 2 : polyline.size();
-      for (std::size_t i = start_idx; i < end_idx - 1; ++i) {
+      // The polyline may consist of separator pairs only (e.g., when the curve
+      // has no part inside the bounding box), in which case end_idx <= 1 or
+      // end_idx < start_idx. Avoid computing end_idx - 1, which may underflow.
+      for (std::size_t i = start_idx; i + 1 < end_idx; ++i) {
         const auto& src = polyline[i];
         const auto& tgt = polyline[i + 1];
         if (Approx_traits::is_null(src) || Approx_traits::is_null(tgt)) continue;

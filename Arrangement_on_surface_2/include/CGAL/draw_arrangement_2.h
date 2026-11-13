@@ -276,15 +276,14 @@ public:
   }
 
   ///
-  template <typename Kernel, int AtanX, int AtanY>
-  Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ,
-                                      Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY> const&)
+  template <typename Traits, std::enable_if_t<is_or_derived_from_agas_v<Traits>, int> = 0>
+  Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ, const Traits&)
   { return circ; }
 
   /*! finds the halfedge incident to the lexicographically smallest vertex
    * along the CCB, such that there is no other halfedge underneath.
    */
-  template <typename Traits>
+  template <typename Traits, std::enable_if_t<! is_or_derived_from_agas_v<Traits>, int> = 0>
   Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ, const Traits&) {
     // std::cout << "find_smallest()\n";
     const auto* traits = this->m_aos.geometry_traits();
@@ -616,10 +615,6 @@ void draw_impl_agas(const Arrangement& arr, const GSOptions& gso,
   using Halfedge_const_handle = typename Arrangement::Halfedge_const_handle;
   using Face_const_handle = typename Arrangement::Face_const_handle;
   using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
-  using Geom_traits = typename Arrangement::Geometry_traits_2;
-  using Direction_3 = typename Geom_traits::Direction_3;
-  using Point_2 = typename Geom_traits::Point_2;
-  using Agas_template_args = tmpl_args<Geom_traits>;
 
   Arrangement derived_arr(arr);
   auto vertex_map = map_from_pair_ranges<Vertex_const_handle, Vertex_const_handle>(derived_arr.vertex_handles(),
@@ -630,11 +625,7 @@ void draw_impl_agas(const Arrangement& arr, const GSOptions& gso,
                                                                              arr.face_handles());
   // setup tracker and insert the identification curve.
   Arr_insertion_tracker<Arrangement> tracker(derived_arr);
-  Point_2 src(Direction_3(0, 0, -1), Point_2::MIN_BOUNDARY_LOC);
-  Point_2 trg(Direction_3(0, 0, 1), Point_2::MAX_BOUNDARY_LOC);
-  auto ctr_xcv = arr.geometry_traits()->construct_x_monotone_curve_2_object();
-  auto id_curve = ctr_xcv(src, trg, Direction_3(Agas_template_args::atan_y, -Agas_template_args::atan_x, 0));
-  insert(derived_arr, id_curve);
+  insert(derived_arr, construct_identification_curve(*arr.geometry_traits()));
 
   // derived_gso proxies the call to the original gso
   GSOptions derived_gso(gso);
