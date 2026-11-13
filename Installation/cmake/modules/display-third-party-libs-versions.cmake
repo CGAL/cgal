@@ -2,6 +2,7 @@ set(LIBRARIES_TO_CHECK
   Boost
   Ceres
   Eigen3
+  FastFloat
   GLPK
   GMP
   ITK
