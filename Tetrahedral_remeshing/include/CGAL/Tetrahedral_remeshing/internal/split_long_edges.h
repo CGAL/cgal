@@ -185,7 +185,6 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     }
 
     const Cell_handle c = circ;
-    if (c3t3.triangulation().is_infinite(c)) continue;
     if(!positive_orientation_after_edge_split(e, c, m, c3t3))
     {
       const std::optional<Point> steiner = construct_steiner_point(e, c3t3);
