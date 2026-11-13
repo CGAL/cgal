@@ -55,7 +55,7 @@ public:
 
 public:
   CDT* cdt;
-  CGAL::Unique_hash_map<Vertex_handle, Index> v2v;
+  std::unordered_map<Vertex_handle, Index> v2v;
 
 public:
   // Constructor
