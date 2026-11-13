@@ -207,8 +207,8 @@ and library files must be specified by using environment variables.
 | `MPFI_LIBRARIES`     | Full pathname of the compiled \mpfi library | CMake |
 
 
-\subsection installation_fastfloat FastFloat Library
-The CMake config mode shall be used for configuring the FastFloat library.
+\subsection installation_fastfloat fast_float Library
+The CMake config mode shall be used for configuring the \fast_float library.
 You can either set the environment or CMake variable `FastFloat_DIR` to the path of the directory containing
 `FastFloatConfig.cmake`.
 
