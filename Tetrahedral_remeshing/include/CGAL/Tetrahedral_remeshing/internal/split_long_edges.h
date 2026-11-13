@@ -141,15 +141,25 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
 
   //backup subdomain info of incident cells before making changes
   short dimension = 0;
+  typename C3t3::Index vertex_index{};
   if(c3t3.is_in_complex(e))
+  {
     dimension = 1;
+    vertex_index = c3t3.curve_index(e);
+  }
   else
   {
     const std::size_t nb_patches = nb_incident_surface_patches(e, c3t3);
     if(nb_patches == 1)
+    {
       dimension = 2;
+      vertex_index = surface_patch_index(e, c3t3).value();
+    }
     else if(nb_patches == 0)
+    {
       dimension = 3;
+      vertex_index = c3t3.subdomain_index(e.first);
+    }
     else
       CGAL_assertion(false);//e should be in complex
   }
@@ -288,7 +298,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     c3t3.add_to_complex(new_v, v2, curve_index);
   }
 
-  set_index(new_v, c3t3);
+  c3t3.set_index(new_v, vertex_index);
 
   return new_v;
 }
