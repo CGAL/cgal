@@ -51,7 +51,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/utility/result_of.hpp>
+#include <type_traits>
 #include <boost/container/small_vector.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -584,7 +584,7 @@ public:
 
 public:
   template<typename P> // Point or Point_3
-  typename boost::result_of<const Construct_point_3(const P&)>::type
+  std::invoke_result_t<const Construct_point_3&, const P&>
   construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);
@@ -6245,7 +6245,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover& rem
 
       // Spatial sorting can only be applied to bare points, so we need an adaptor
       typedef typename Geom_traits::Construct_point_3 Construct_point_3;
-      typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
+      typedef std::invoke_result_t<const Construct_point_3&, const Point&> Ret;
       typedef boost::function_property_map<Construct_point_3, Point, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
