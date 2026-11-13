@@ -16,9 +16,9 @@
 #include <CGAL/Qt/vec.h>
 
 Viewer::Viewer(QWidget *parent)
-  : Base(parent, m_graphic_buffer, ""),
-    scene(nullptr),
-    m_previous_scene_empty(true)
+  : Base(parent)
+  , scene(nullptr)
+  , m_previous_scene_empty(true)
 {
   m_gs_options.face_color=[](const LCC & alcc,
                              Dart_const_descriptor dh)->CGAL::IO::Color
@@ -54,7 +54,7 @@ void Viewer::setScene(Scene *scene_, bool doredraw)
   scene = scene_;
 
   if (scene->lcc!=nullptr)
-  { CGAL::add_to_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options); }
+  { CGAL::add_to_graphics_scene(*scene->lcc, graphic_buffer(), m_gs_options); }
 
   if (doredraw)
   { Base::redraw(); }
@@ -62,16 +62,16 @@ void Viewer::setScene(Scene *scene_, bool doredraw)
 
 void Viewer::sceneChanged()
 {
-  m_graphic_buffer.clear();
-  CGAL::add_to_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options);
+  graphic_buffer().clear();
+  CGAL::add_to_graphics_scene(*scene->lcc, graphic_buffer(), m_gs_options);
 
   this->camera()->setSceneBoundingBox(
-      CGAL::qglviewer::Vec(m_graphic_buffer.bounding_box().xmin(),
-                           m_graphic_buffer.bounding_box().ymin(),
-                           m_graphic_buffer.bounding_box().zmin()),
-      CGAL::qglviewer::Vec(m_graphic_buffer.bounding_box().xmax(),
-                           m_graphic_buffer.bounding_box().ymax(),
-                           m_graphic_buffer.bounding_box().zmax()));
+      CGAL::qglviewer::Vec(graphic_buffer().bounding_box().xmin(),
+                           graphic_buffer().bounding_box().ymin(),
+                           graphic_buffer().bounding_box().zmin()),
+      CGAL::qglviewer::Vec(graphic_buffer().bounding_box().xmax(),
+                           graphic_buffer().bounding_box().ymax(),
+                           graphic_buffer().bounding_box().zmax()));
   Base::redraw();
   if (m_previous_scene_empty)
   { this->showEntireScene(); }

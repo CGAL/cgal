@@ -21,6 +21,8 @@
 #include <cstdlib>
 #include <type_traits>
 
+#include <boost/utility/base_from_member.hpp>
+
 #include <QWidget>
 
 #include <CGAL/Qt/Basic_viewer.h>
@@ -201,7 +203,8 @@ private:
  * \tparam GSOptions
  */
 template <typename Arrangement, typename GSOptions>
-class Arr_viewer : public Qt::Basic_viewer, Arr_viewport_helpers<Arrangement> {
+class Arr_viewer : private boost::base_from_member<CGAL::Graphics_scene>, public Qt::Basic_viewer, Arr_viewport_helpers<Arrangement> {
+  using Base_from_member = boost::base_from_member<CGAL::Graphics_scene>;
   using Basic_viewer = Qt::Basic_viewer;
   using Helpers = Arr_viewport_helpers<Arrangement>;
   using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
@@ -304,8 +307,9 @@ private:
 
 public:
   Arr_viewer(QWidget* parent, const Arrangement& arr, const GSOptions& gso, const char* title, Bbox_2 initial_bbox) :
-    Basic_viewer(parent, m_gs, title),
+    Base_from_member(), Basic_viewer(parent, member, title),
     Helpers(arr),
+    m_gs(member),
     m_gso(gso),
     m_arr(arr),
     m_coords(*arr.geometry_traits()) {
@@ -343,7 +347,7 @@ public:
   virtual ~Arr_viewer() {}
 
 private:
-  Graphics_scene m_gs;
+  Graphics_scene& m_gs;
   GSOptions m_gso;
   const Arrangement& m_arr;
   bool m_initialized{false};
