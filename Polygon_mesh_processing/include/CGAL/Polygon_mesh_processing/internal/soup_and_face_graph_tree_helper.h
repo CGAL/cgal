@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/predicate.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/AABB_trees/intersection.h>
 #include <CGAL/AABB_tree.h>
@@ -79,13 +79,14 @@ struct AABB_tree_graph_helper
   template<class Concurrency_tag=Sequential_tag, class FaceRange, class VertexPointMap>
   void build(const FaceRange &face_range, Tree& tree, const TriangleMesh& tm, VertexPointMap& vpm){
     using Face_bbox_tag = typename CGAL::dynamic_face_property_t<Bbox_3>;
-    // Reference point do not need to be exact, so we use Epick for them
-    using Face_ref_point_tag = typename CGAL::dynamic_face_property_t<Epick::Point_3>;
+    // Reference point do not need to be exact, so we use Simple_cartesian for them
+    using FloatK = Simple_cartesian<float>;
+    using Face_ref_point_tag = typename CGAL::dynamic_face_property_t<FloatK::Point_3>;
     using Bbox_map = typename boost::property_map<TriangleMesh, Face_bbox_tag>::const_type;
     using Ref_point_map = typename boost::property_map<TriangleMesh, Face_ref_point_tag>::const_type;
 
     using VPM_kernel = typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel;
-    CGAL::Cartesian_converter<VPM_kernel, Epick> to_input;
+    CGAL::Cartesian_converter<VPM_kernel, FloatK> to_input;
 
     Bbox_map bb_map = get(Face_bbox_tag(), tm);
     Ref_point_map rp_map = get(Face_ref_point_tag(), tm);
@@ -196,15 +197,16 @@ struct AABB_tree_soup_helper
   template<class ConcurrencyTag=Sequential_tag, class FaceRange>
   void build(const FaceRange &face_range, Tree& tree, const PointRange& pts, const TriangleRange& triangles, VPM vpm){
     using PM_kernel     = typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::Kernel;
+    using FloatK        = Simple_cartesian<float>;
     using Bbox_map      = Pointer_property_map<Bbox_3>::type;
-    using Ref_point_map = Pointer_property_map<Epick::Point_3>::type;
+    using Ref_point_map = Pointer_property_map<FloatK::Point_3>::type;
 
-    CGAL::Cartesian_converter<PM_kernel, Epick> to_input;
+    CGAL::Cartesian_converter<PM_kernel, FloatK> to_input;
 
     tree.insert(face_range.begin(), face_range.end(), pts, triangles, vpm.vpm);
 
     std::vector<Bbox_3> bb_vector(triangles.size(), Bbox_3());
-    std::vector<Epick::Point_3> rp_vector(triangles.size(), Epick::Point_3());
+    std::vector<FloatK::Point_3> rp_vector(triangles.size(), FloatK::Point_3());
     Bbox_map bb_map = make_property_map(bb_vector);
     Ref_point_map rp_map = make_property_map(rp_vector);
 
