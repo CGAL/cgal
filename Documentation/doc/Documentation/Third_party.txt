@@ -117,7 +117,7 @@ Qt is a cross-platform application and UI framework.
 The component `CGAL_Qt6` is essential to run the \cgal demos and basic viewers.
 It requires \qt6 installed on your system.
 In case \qt is not yet installed on your system, you can download
-it from <A HREF="https://contribute.qt-project.org/">`https://contribute.qt-project.org/`</A>.
+it from <A HREF="https://www.qt.io/development/download-qt-installer-oss">`https://www.qt.io/development/download-qt-installer-oss`</A>.
 
 The exhaustive list of \qt6 components used in demos is:
 `Core`, `Gui`, `Help`, `OpenGL`, `OpenGLWidgets`, `Qml`, `Svg`, `Widgets`,
