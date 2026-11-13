@@ -14,9 +14,9 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(edit_plugin PRIVATE scene_surface_mesh_item
                                             scene_edit_item scene_selection_item)
 
-  if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+  if(TEST "${compilation_of__edit_plugin}")
     set_tests_properties(
-      "compilation of  edit_plugin"
+      "${compilation_of__edit_plugin}"
       PROPERTIES RESOURCE_LOCK Selection_test_resources)
   endif()
 
