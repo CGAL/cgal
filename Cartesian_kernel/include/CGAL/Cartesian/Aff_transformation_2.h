@@ -314,7 +314,7 @@ public:
   bool is_even() const
   {
     if(is_identity()) return true;
-    if(is_scaling()) return !is_zero(entries[0]); // det = s^2 >= 0
+    if(is_scaling()) return !is_zero(entries[0]);
     if(is_translation()) return true;
     if(is_reflection()) return false;
     if(is_rotation()) { return true;}
@@ -341,7 +341,6 @@ public:
   {
     if(is_identity()){
       if (i!=j) return FT(0);
-      if (i==2) return FT(1);
       return FT(1);
     }
     if(is_scaling()){
