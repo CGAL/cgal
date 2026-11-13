@@ -73,6 +73,7 @@ class Mesh_3_plugin :
   Q_PROPERTY(double edges_approx READ get_edges_approx WRITE set_edges_approx)
   Q_PROPERTY(double facets_sizing READ get_facets_sizing WRITE set_facets_sizing)
   Q_PROPERTY(double approx READ get_approx WRITE set_approx)
+  Q_PROPERTY(double facet_normal_deviation READ get_facet_normal_deviation WRITE set_facet_normal_deviation)
   Q_PROPERTY(double tets_sizing READ get_tets_sizing WRITE set_tets_sizing)
   Q_PROPERTY(double tets_shape READ get_tets_shape WRITE set_tets_shape)
   Q_PROPERTY(bool protect_features READ get_protect_features WRITE set_protect_features)
@@ -160,6 +161,7 @@ public Q_SLOTS:
   void set_edges_approx(const double v) { edges_approx = v; };
   void set_facets_sizing(const double v) { facets_sizing = v; };
   void set_approx(const double v) { approx = v; };
+  void set_facet_normal_deviation(const double v) { facet_normal_deviation = v; };
   void set_tets_sizing(const double v) { tets_sizing = v; };
   void set_tets_shape(const double v) { tets_shape = v; };
   void set_manifold_criterion(const bool v) { manifold_criterion = v; }
@@ -174,6 +176,7 @@ public Q_SLOTS:
   double get_edges_approx() { return edges_approx; };
   double get_facets_sizing() { return facets_sizing; };
   double get_approx() { return approx; };
+  double get_facet_normal_deviation() { return facet_normal_deviation; };
   double get_tets_sizing() { return tets_sizing; };
   double get_tets_shape() { return tets_shape; };
   bool get_manifold_criterion() { return manifold_criterion; };
@@ -253,6 +256,7 @@ private:
   int sizing_decimals;
   double approx;
   int approx_decimals;
+  double facet_normal_deviation;
   double edges_sizing;
   double edges_min_sizing;
   double edges_approx;
@@ -486,6 +490,7 @@ void Mesh_3_plugin::set_defaults() {
   facets_sizing = default_sizing;
   facets_min_sizing = 0.1 * default_sizing;
   angle = 25.;
+  facet_normal_deviation = 90.;
   //tetrahedra parameters
   tets_sizing = default_sizing;
   tets_min_sizing = 0.1 * default_sizing;
@@ -568,6 +573,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   Setup_ui_row s6(ui.sizingLabel,    ui.facetSizing,    diag * 10e-6, diag, facets_sizing,     {ui.noFacetSizing});
   Setup_ui_row s7(ui.sizingMinLabel, ui.facetMinSizing, diag * 10e-6, diag, facets_min_sizing, {ui.noFacetMinSizing});
   Setup_ui_row s8(ui.angleLabel,     ui.facetAngle,     0.0,          30.0, angle,             {ui.noAngle});
+//  Setup_ui_row s8b(ui.normalDeviationLabel, ui.normalDeviation, 0.0, 180.0, facet_normal_deviation,  {ui.noNormalDeviation});
 
   //tetrahedra parameters
   Setup_ui_row s9(ui.tetSizingLabel,    ui.tetSizing,    diag * 10e-6, diag,        tets_sizing,     {ui.noTetSizing});
@@ -700,6 +706,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   facets_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
   facets_min_sizing = !ui.noFacetMinSizing->isChecked() ? 0 : ui.facetMinSizing->value();
   approx = !ui.noApprox->isChecked() ? 0 : ui.approx->value();
+  facet_normal_deviation = !ui.noNormalDeviation->isChecked() ? 0 : ui.normalDeviation->value();
   tets_shape = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   tets_sizing = !ui.noTetSizing->isChecked() ? 0 : ui.tetSizing->value();
   tets_min_sizing = !ui.noTetMinSizing->isChecked() ? 0 : ui.tetMinSizing->value();
@@ -777,6 +784,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         facets_sizing,
         facets_min_sizing,
         approx,
+        facet_normal_deviation,
         tets_sizing,
         tets_min_sizing,
         edges_sizing,
@@ -800,6 +808,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         facets_sizing,
         facets_min_sizing,
         approx,
+        facet_normal_deviation,
         tets_sizing,
         tets_min_sizing,
         edges_sizing,
@@ -828,6 +837,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                               facets_sizing,
                               facets_min_sizing,
                               approx,
+                              facet_normal_deviation,
                               tets_sizing,
                               tets_min_sizing,
                               edges_sizing,
@@ -871,6 +881,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         facets_sizing,
         facets_min_sizing,
         approx,
+        facet_normal_deviation,
         tets_sizing,
         tets_min_sizing,
         edges_sizing,
