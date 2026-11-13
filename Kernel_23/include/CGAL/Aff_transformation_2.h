@@ -20,7 +20,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/aff_transformation_tags.h>
 
-#include <iostream>
+#include <ostream>
 
 namespace CGAL {
 
@@ -33,13 +33,9 @@ class Aff_transformation_2 : public R_::Kernel_base::Aff_transformation_2
   typedef typename R_::Direction_2           Direction_2;
   typedef typename R_::Vector_2              Vector_2;
 
-
-  typedef Aff_transformation_2       Self;
-
 public:
 
   typedef CGAL::Dimension_tag<2>            Ambient_dimension;
-
 
   typedef typename R_::Kernel_base::Aff_transformation_2 Rep;
 

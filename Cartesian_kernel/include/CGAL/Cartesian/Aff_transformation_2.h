@@ -28,8 +28,6 @@
 
 namespace CGAL {
 
-class Identity_transformation;
-
 namespace Cartesian_impl
 {
   template <class R_, bool need_local_vector = R_::Has_filtered_predicates &&
@@ -186,44 +184,38 @@ public:
  // General form: without TRANSLATION_TYPE
   Aff_transformationC2(const FT& m11, const FT& m12,
                        const FT& m21, const FT& m22)
-  : entries(6), variant(GENERAL_TYPE)
-  {
-     FT zero(0);
-     entries = {m11, m12, zero,
-                m21, m22, zero};
-  }
+  : entries{m11, m12, FT(0),
+            m21, m22, FT(0)},
+    variant(GENERAL_TYPE)
+  {}
 
   // General form: without TRANSLATION_TYPE
   Aff_transformationC2(const FT& m11, const FT& m12,
                        const FT& m21, const FT& m22,
                        const FT& w)
-  : entries(6), variant(GENERAL_TYPE)
-  {
-    FT zero(0);
-    entries = {m11/w, m12/w, zero,
-               m21/w, m22/w, zero};
-  }
+  : entries{m11/w, m12/w, FT(0),
+            m21/w, m22/w, FT(0)},
+    variant(GENERAL_TYPE)
+  {}
 
   // General form: with TRANSLATION_TYPE
   Aff_transformationC2(
               const FT& m11, const FT& m12, const FT& m13,
               const FT& m21, const FT& m22, const FT& m23)
-  : entries(6), variant(GENERAL_TYPE)
-  {
-    entries = {m11, m12, m13,
-               m21, m22, m23 };
-  }
+  : entries{m11, m12, m13,
+            m21, m22, m23 },
+    variant(GENERAL_TYPE)
+  {}
 
   // General form: with TRANSLATION_TYPE
   Aff_transformationC2(
               const FT& m11, const FT& m12, const FT& m13,
               const FT& m21, const FT& m22, const FT& m23,
               const FT& w)
-  : entries(6), variant(GENERAL_TYPE)
-  {
-    entries = {m11/w, m12/w, m13/w,
-               m21/w, m22/w, m23/w};
-  }
+  : entries{m11/w, m12/w, m13/w,
+            m21/w, m22/w, m23/w},
+    variant(GENERAL_TYPE)
+  {}
 
 
   Point_2
@@ -307,8 +299,7 @@ public:
     if(is_translation())
       return Aff_transformation_2(TRANSLATION, Vector_2(-entries[0], -entries[1]));
     if(is_reflection())
-      return Aff_transformation_2(cartesian(0,0), cartesian(0,1), cartesian(0,2),
-                                  cartesian(1,0), cartesian(1,1), cartesian(1,2));;
+      return *this;
     if(is_rotation())
       return Aff_transformation_2(ROTATION, - sinus(), cosinus(), FT(1));
 
@@ -321,7 +312,7 @@ public:
   bool is_even() const
   {
     if(is_identity()) return true;
-    if(is_scaling()) return true; // det = s^2 >= 0
+    if(is_scaling()) return !is_zero(entries[0]); // det = s^2 >= 0
     if(is_translation()) return true;
     if(is_reflection()) return false;
     if(is_rotation()) { return true;}
@@ -424,7 +415,7 @@ public:
   FT m(int i, int j) const { return cartesian(i,j); }
   FT hm(int i, int j) const { return cartesian(i,j); }
 
-  Aff_transformation_2 operator*(const Aff_transformationC2 &t) const
+  Aff_transformation_2 compose(const Aff_transformationC2 &t) const
   {
     if(is_identity()) return t;
     if(t.is_identity()) return *this;
@@ -433,13 +424,16 @@ public:
     if(is_translation() && t.is_translation())
       return Aff_transformation_2(TRANSLATION, Vector_2(entries[0] + t.entries[0],
                                                         entries[1] + t.entries[1]));
-    return Aff_transformation_2(m(0,0)*t.m(0,0) + m(0,1)*t.m(1,0),
-                              m(0,0)*t.m(0,1) + m(0,1)*t.m(1,1),
-                              m(0,0)*t.m(0,2) + m(0,1)*t.m(1,2) + m(0,2),
-                              m(1,0)*t.m(0,0) + m(1,1)*t.m(1,0),
-                              m(1,0)*t.m(0,1) + m(1,1)*t.m(1,1),
-                              m(1,0)*t.m(0,2) + m(1,1)*t.m(1,2) + m(1,2) );
+    return Aff_transformation_2(t.m(0,0)*m(0,0) + t.m(0,1)*m(1,0),
+                                t.m(0,0)*m(0,1) + t.m(0,1)*m(1,1),
+                                t.m(0,0)*m(0,2) + t.m(0,1)*m(1,2) + t.m(0,2),
+                                t.m(1,0)*m(0,0) + t.m(1,1)*m(1,0),
+                                t.m(1,0)*m(0,1) + t.m(1,1)*m(1,1),
+                                t.m(1,0)*m(0,2) + t.m(1,1)*m(1,2) + t.m(1,2) );
   }
+
+  Aff_transformation_2 operator*(const Aff_transformation_2 &t) const
+  { return t.compose(*this); }
 
   std::ostream &
   print(std::ostream &os) const;

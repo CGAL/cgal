@@ -113,11 +113,8 @@ public:
   }
 
   Aff_transformationC3(const Translation, const Vector_3 &v)
-  : entries(3), variant(translation)
+  : entries{v.x(), v.y(), v.z()}, variant(translation)
   {
-    entries[0] = v.x();
-    entries[1] = v.y();
-    entries[2] = v.z();
     entries.set_translation();
   }
 
@@ -125,38 +122,33 @@ public:
   Aff_transformationC3(const FT& m11, const FT& m12, const FT& m13,
                        const FT& m21, const FT& m22, const FT& m23,
                        const FT& m31, const FT& m32, const FT& m33)
-  : entries(12), variant(general)
-  {
-     FT zero(0);
-     entries = {m11, m12, m13, zero,
-                m21, m22, m23, zero,
-                m31, m32, m33, zero };
-  }
+  : entries{m11, m12, m13, FT(0),
+            m21, m22, m23, FT(0),
+            m31, m32, m33, FT(0)},
+    variant(general)
+  {}
 
   // General form: without translation
   Aff_transformationC3(const FT& m11, const FT& m12, const FT& m13,
                        const FT& m21, const FT& m22, const FT& m23,
                        const FT& m31, const FT& m32, const FT& m33,
                        const FT& w)
-  : entries(12), variant(general)
-  {
-    FT zero(0);
-    entries = {m11/w, m12/w, m13/w, zero,
-               m21/w, m22/w, m23/w, zero,
-               m31/w, m32/w, m33/w, zero};
-  }
+  : entries{m11/w, m12/w, m13/w, FT(0),
+            m21/w, m22/w, m23/w, FT(0),
+            m31/w, m32/w, m33/w, FT(0)},
+    variant(general)
+  {}
 
   // General form: with translation
   Aff_transformationC3(
               const FT& m11, const FT& m12, const FT& m13, const FT& m14,
               const FT& m21, const FT& m22, const FT& m23, const FT& m24,
               const FT& m31, const FT& m32, const FT& m33, const FT& m34)
-  : entries(12), variant(general)
-  {
-    entries = {m11, m12, m13, m14,
-               m21, m22, m23, m24,
-               m31, m32, m33, m34 };
-  }
+  : entries{m11, m12, m13, m14,
+            m21, m22, m23, m24,
+            m31, m32, m33, m34},
+    variant(general)
+  {}
 
   // General form: with translation
   Aff_transformationC3(
@@ -164,12 +156,11 @@ public:
               const FT& m21, const FT& m22, const FT& m23, const FT& m24,
               const FT& m31, const FT& m32, const FT& m33, const FT& m34,
               const FT& w)
-  : entries(12), variant(general)
-  {
-    entries = {m11/w, m12/w, m13/w, m14/w,
-               m21/w, m22/w, m23/w, m24/w,
-               m31/w, m32/w, m33/w, m34/w };
-  }
+  : entries{m11/w, m12/w, m13/w, m14/w,
+            m21/w, m22/w, m23/w, m24/w,
+            m31/w, m32/w, m33/w, m34/w},
+   variant(general)
+  {}
 
   Point_3
   transform(const Point_3 &p) const
@@ -283,7 +274,7 @@ public:
 
   bool has_rotation() const {
     if(is_general())
-      return  !(is_zero(entries[0]) && is_zero(entries[1]) && is_zero(entries[2]) && is_zero(entries[4]) && is_zero(entries[6]) && is_zero(entries[8]) && is_zero(entries[9]));
+      return  !(is_zero(entries[1]) && is_zero(entries[2]) && is_zero(entries[4]) && is_zero(entries[6]) && is_zero(entries[8]) && is_zero(entries[9]));
     return false;
   }
 
