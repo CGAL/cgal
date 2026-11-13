@@ -51,6 +51,13 @@ introduces the integral value i.
 MP_Float(int i);
 
 /*!
+introduces the integral value `i` (exact conversion).
+\tparam Integer a built-in integral type.
+*/
+template<typename Integer>
+MP_Float(Integer i);
+
+/*!
 introduces the floating point value d (exact conversion).
 */
 MP_Float(float d);
