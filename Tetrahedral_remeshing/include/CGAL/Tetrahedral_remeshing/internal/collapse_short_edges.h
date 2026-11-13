@@ -413,9 +413,6 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
   Cell_circulator done = circ;
   do
   {
-    if(tr.is_infinite(circ))
-      return false;
-
     const int i0 = circ->index(v0);
     const int i1 = circ->index(v1);
 
