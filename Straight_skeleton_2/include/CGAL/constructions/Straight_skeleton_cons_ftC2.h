@@ -658,8 +658,8 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
   //   (4)
   //   With weights, the above equations become:
   //
-  //   sage: eq0 = w0*a0*x + w0*b0*y + w0*c0 - t == 0
-  //   sage: eq2 = w2*a2*x + w2*b2*y + w2*c2 - t == 0
+  //   sage: eq0 = w0*a0*x + w0*b0*y + w0*c0 - t = 0
+  //   sage: eq2 = w2*a2*x + w2*b2*y + w2*c2 - t = 0
   //
   //   sage: solve([eq0,eq2], x,y)
   //     [[x == -(b2*t*w2 - (b2*c0*w2 - b0*c2*w2 + b0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0),
@@ -706,12 +706,12 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
       const FT& l2c = l2->c() ;
 
       // Since l0 and l1 are parallel, we cannot solve the system using:
-      //   l0a*x + l0b*y + l0c = 0 (1)
-      //   l1a*x + l1b*y + l1c = 0
-      //   l2a*x + l2b*y + l2c = 0
+      //   l0a*x + l0b*y + l0c - t = 0 (1)
+      //   l1a*x + l1b*y + l1c - t = 0
+      //   l2a*x + l2b*y + l2c - t = 0
       // Instead, we use the equation of the line orthogonal to l0 (and l1).
       // However, rephrasing
-      //   l0a*x + l0b*y + l0c = 0
+      //   l0a*x + l0b*y + l0c - t = 0
       // to
       //   [x, y] = projected_seed + t * N
       // requires the norm (l0a² + l0b²) to be exactly '1', which likely isn't the case

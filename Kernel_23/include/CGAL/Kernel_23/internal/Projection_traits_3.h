@@ -17,11 +17,9 @@
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Triangle_3.h>
 
 #include <CGAL/Kernel/global_functions_2.h>
+#include <CGAL/intersection_3.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 
@@ -418,24 +416,6 @@ public:
 };
 
 template <class R,int dim>
-struct Do_intersect_projected_3
-{
-  template <typename T> bool operator()(const Bbox_2& bbox, const T& obj) const {
-    static constexpr double infinity = std::numeric_limits<double>::infinity();
-    std::array<double, 3> bbox_min = {-infinity, -infinity, -infinity};
-    std::array<double, 3> bbox_max = {infinity, infinity, infinity};
-
-    using Proj = Projector<R, dim>;
-    bbox_min[Proj::x_index] = bbox.xmin();
-    bbox_min[Proj::y_index] = bbox.ymin();
-    bbox_max[Proj::x_index] = bbox.xmax();
-    bbox_max[Proj::y_index] = bbox.ymax();
-    Bbox_3 bbox3(bbox_min[0], bbox_min[1], bbox_min[2], bbox_max[0], bbox_max[1], bbox_max[2]);
-    return do_intersect(bbox3, obj);
-  }
-};
-
-template <class R,int dim>
 class  Intersect_projected_3
 {
 public:
@@ -520,6 +500,62 @@ public:
     Point_3 res(coords[0],coords[1],coords[2]);
     CGAL_assertion(x(res)==pi->x() && y(res)==pi->y());
     return std::make_optional(variant_type(res));
+  }
+};
+
+template <class R,int dim>
+class Do_intersect_projected_3
+{
+public:
+  typedef typename R::FT          FT;
+  typedef typename R::Point_3     Point_3;
+  typedef typename R::Segment_3   Segment_3;
+  typedef typename R::Ray_3       Ray_3;
+  typedef typename R::Point_2     Point_2;
+  typedef typename R::Segment_2   Segment_2;
+  typedef typename R::Ray_2       Ray_2;
+
+  FT x(const Point_3& p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3& p) const { return Projector<R,dim>::y(p); }
+
+  Point_2 project(const Point_3& p) const
+  {
+    return { x(p) , y(p) };
+  }
+
+  typename R::Boolean operator()(const Segment_3& sa, const Segment_3& sb) const
+  {
+    Segment_2 psa(project(sa.source()), project(sa.target()));
+    Segment_2 psb(project(sb.source()), project(sb.target()));
+    return CGAL::do_intersect(psa, psb);
+  }
+
+  typename R::Boolean operator()(const Segment_3& s, const Ray_3& r) const
+  {
+    Segment_2 ps(project(s.source()), project(s.target()));
+    Ray_2 pr(project(r.source()), project(r.point(1)));
+    return CGAL::do_intersect(ps, pr);
+  }
+
+  typename R::Boolean operator()(const Ray_3& ra, const Ray_3& rb) const
+  {
+    Ray_2 pra(project(ra.source()), project(ra.point(1)));
+    Ray_2 prb(project(rb.source()), project(rb.point(1)));
+    return CGAL::do_intersect(pra, prb);
+  }
+
+  template <typename T> bool operator()(const Bbox_2& bbox, const T& obj) const {
+    static constexpr double infinity = std::numeric_limits<double>::infinity();
+    std::array<double, 3> bbox_min = {-infinity, -infinity, -infinity};
+    std::array<double, 3> bbox_max = {infinity, infinity, infinity};
+
+    using Proj = Projector<R, dim>;
+    bbox_min[Proj::x_index] = bbox.xmin();
+    bbox_min[Proj::y_index] = bbox.ymin();
+    bbox_max[Proj::x_index] = bbox.xmax();
+    bbox_max[Proj::y_index] = bbox.ymax();
+    Bbox_3 bbox3(bbox_min[0], bbox_min[1], bbox_min[2], bbox_max[0], bbox_max[1], bbox_max[2]);
+    return do_intersect(bbox3, obj);
   }
 };
 
@@ -806,6 +842,51 @@ public:
   }
 };
 
+
+template <class R, int dim>
+class Construct_bisector_projected_3
+{
+public:
+  typedef typename R::Line_2                    Line_2;
+  typedef typename R::Line_3                    Line_3;
+  typedef typename R::Point_2                   Point_2;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::FT                        FT;
+
+  FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Point_2 project(const Point_3& p) const
+  {
+    return R().construct_point_2_object()(x(p), y(p));
+  }
+
+  Line_3 embed (const Line_2& l) const
+  {
+    Point_2 p0 = l.point(0);
+    Point_2 p1 = l.point(1);
+
+    FT coords_p0[3];
+    coords_p0[Projector<R,dim>::x_index] = p0.x();
+    coords_p0[Projector<R,dim>::y_index] = p0.y();
+    coords_p0[dim] = FT(0);
+
+    FT coords_p1[3];
+    coords_p1[Projector<R,dim>::x_index] = p1.x();
+    coords_p1[Projector<R,dim>::y_index] = p1.y();
+    coords_p1[dim] = FT(0);
+
+    return Line_3(Point_3(coords_p0[0], coords_p0[1], coords_p0[2]),
+                  Point_3(coords_p1[0], coords_p1[1], coords_p1[2]));
+  }
+
+public:
+  Line_3 operator() (const Point_3& p1, const Point_3& p2) const
+  {
+    return embed( CGAL::bisector(project(p1), project(p2)) );
+  }
+};
+
 template <class R, int dim>
 class Construct_weighted_circumcenter_projected_3
 {
@@ -976,8 +1057,8 @@ public:
   typedef Compare_distance_projected_3<Rp,dim>                Compare_distance_2;
   typedef Collinear_are_ordered_along_line_projected_3<Rp,dim> Collinear_are_ordered_along_line_2;
   typedef Squared_distance_projected_3<Rp,dim>                Compute_squared_distance_2;
-  typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
   typedef Do_intersect_projected_3<Rp,dim>                    Do_intersect_2;
+  typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
   typedef Compute_squared_radius_projected<Rp,dim>            Compute_squared_radius_2;
   typedef Compute_scalar_product_projected_3<Rp,dim>          Compute_scalar_product_2;
   typedef Compute_squared_length_projected_3<Rp,dim>          Compute_squared_length_2;
@@ -987,6 +1068,7 @@ public:
   typedef Compute_squared_radius_smallest_orthogonal_circle_projected_3<Rp,dim>
                                                               Compute_squared_radius_smallest_orthogonal_circle_2;
   typedef Construct_radical_axis_projected_3<Rp,dim>          Construct_radical_axis_2;
+  typedef Construct_bisector_projected_3<Rp,dim>            Construct_bisector_2;
   typedef Construct_weighted_circumcenter_projected_3<Rp,dim> Construct_weighted_circumcenter_2;
   typedef Power_side_of_bounded_power_circle_projected_3<Rp,dim> Power_side_of_bounded_power_circle_2;
   typedef Power_side_of_oriented_power_circle_projected_3<Rp, dim> Power_side_of_oriented_power_circle_2;
@@ -1172,16 +1254,16 @@ public:
     return Compute_squared_radius_2();
   }
 
+  Do_intersect_2
+  do_intersect_2_object () const
+  {
+    return Do_intersect_2();
+  }
+
   Intersect_2
   intersect_2_object () const
   {
     return Intersect_2();
-  }
-
-  Do_intersect_2
-  do_intersect_2_object() const
-  {
-    return Do_intersect_2();
   }
 
   Construct_point_2 construct_point_2_object() const
