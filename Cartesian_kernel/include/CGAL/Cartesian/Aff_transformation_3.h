@@ -39,7 +39,7 @@ class Aff_transformationC3
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  enum Variant {identity = 0, scaling , translation, general};
+  enum Variant {IDENTITY_TYPE = 0, SCALING_TYPE , TRANSLATION_TYPE, GENERAL_TYPE};
   std::vector<FT> entries;
   Variant variant;
 
@@ -47,15 +47,15 @@ public:
   typedef R_                               R;
 
   Aff_transformationC3()
-  : variant(identity)
+  : variant(IDENTITY_TYPE)
   {}
 
   Aff_transformationC3(const Identity_transformation)
-  : variant(identity)
+  : variant(IDENTITY_TYPE)
   {}
 
   Aff_transformationC3(const Scaling, const FT &s, const FT &w = FT(1))
-  : entries(1), variant(scaling)
+  : entries(1), variant(SCALING_TYPE)
   {
     if (w != FT(1))
       entries[0] = s/w;
@@ -64,18 +64,18 @@ public:
   }
 
   Aff_transformationC3(const Translation, const Vector_3 &v)
-  : entries(3), variant(translation)
+  : entries(3), variant(TRANSLATION_TYPE)
   {
     entries[0] = v.x();
     entries[1] = v.y();
     entries[2] = v.z();
   }
 
-  // General form: without translation
+  // General form: without TRANSLATION_TYPE
   Aff_transformationC3(const FT& m11, const FT& m12, const FT& m13,
                        const FT& m21, const FT& m22, const FT& m23,
                        const FT& m31, const FT& m32, const FT& m33)
-  : entries(12), variant(general)
+  : entries(12), variant(GENERAL_TYPE)
   {
      FT zero(0);
      entries = {m11, m12, m13, zero,
@@ -83,12 +83,12 @@ public:
                 m31, m32, m33, zero };
   }
 
-  // General form: without translation
+  // General form: without TRANSLATION_TYPE
   Aff_transformationC3(const FT& m11, const FT& m12, const FT& m13,
                        const FT& m21, const FT& m22, const FT& m23,
                        const FT& m31, const FT& m32, const FT& m33,
                        const FT& w)
-  : entries(12), variant(general)
+  : entries(12), variant(GENERAL_TYPE)
   {
     FT zero(0);
     entries = {m11/w, m12/w, m13/w, zero,
@@ -96,25 +96,25 @@ public:
                m31/w, m32/w, m33/w, zero};
   }
 
-  // General form: with translation
+  // General form: with TRANSLATION_TYPE
   Aff_transformationC3(
               const FT& m11, const FT& m12, const FT& m13, const FT& m14,
               const FT& m21, const FT& m22, const FT& m23, const FT& m24,
               const FT& m31, const FT& m32, const FT& m33, const FT& m34)
-  : entries(12), variant(general)
+  : entries(12), variant(GENERAL_TYPE)
   {
     entries = {m11, m12, m13, m14,
                m21, m22, m23, m24,
                m31, m32, m33, m34 };
   }
 
-  // General form: with translation
+  // General form: with TRANSLATION_TYPE
   Aff_transformationC3(
               const FT& m11, const FT& m12, const FT& m13, const FT& m14,
               const FT& m21, const FT& m22, const FT& m23, const FT& m24,
               const FT& m31, const FT& m32, const FT& m33, const FT& m34,
               const FT& w)
-  : entries(12), variant(general)
+  : entries(12), variant(GENERAL_TYPE)
   {
     entries = {m11/w, m12/w, m13/w, m14/w,
                m21/w, m22/w, m23/w, m24/w,
@@ -223,13 +223,13 @@ public:
 
   bool is_odd() const { return  ! is_even(); }
 
-  bool is_identity() const { return variant == identity; }
+  bool is_identity() const { return variant == IDENTITY_TYPE; }
 
-  bool is_scaling() const { return variant == scaling; }
+  bool is_scaling() const { return variant == SCALING_TYPE; }
 
-  bool is_translation() const { return variant == translation; }
+  bool is_translation() const { return variant == TRANSLATION_TYPE; }
 
-  bool is_general() const { return variant == general; }
+  bool is_general() const { return variant == GENERAL_TYPE; }
 
   bool has_rotation() const {
     if(is_general())

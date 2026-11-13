@@ -42,7 +42,7 @@ class Aff_transformationC2
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  enum Variant {identity = 0, scaling, translation, rotation, reflection, general};
+  enum Variant {IDENTITY_TYPE = 0, SCALING_TYPE, TRANSLATION_TYPE, ROTATION_TYPE, REFLECTION_TYPE, GENERAL_TYPE};
   std::vector<FT> entries;
   Variant variant;
 
@@ -50,15 +50,15 @@ public:
   typedef R_                                R;
 
   Aff_transformationC2()
-  : variant(identity)
+  : variant(IDENTITY_TYPE)
   {}
 
   Aff_transformationC2(const Identity_transformation)
-  : variant(identity)
+  : variant(IDENTITY_TYPE)
   {}
 
   Aff_transformationC2(const Scaling, const FT &s, const FT &w = FT(1))
-  : entries(1), variant(scaling)
+  : entries(1), variant(SCALING_TYPE)
   {
     if (w != FT(1))
       entries[0] = s/w;
@@ -68,7 +68,7 @@ public:
 
 
   Aff_transformationC2(const Translation, const Vector_2 &v)
-  : entries(2), variant(translation)
+  : entries(2), variant(TRANSLATION_TYPE)
   {
     entries[0] = v.x();
     entries[1] = v.y();
@@ -80,7 +80,7 @@ public:
                        const Direction_2 &d,
                        const FT &num,
                        const FT &den = FT(1))
-  : entries(2), variant(rotation)
+  : entries(2), variant(ROTATION_TYPE)
   {
     FT sine;
     FT cosine;
@@ -101,7 +101,7 @@ public:
                        const FT &sine,
                        const FT &cosine,
                        const FT &w = FT(1))
-  : entries(2), variant(rotation)
+  : entries(2), variant(ROTATION_TYPE)
   {
     if (w != FT(1)) {
       entries[0] = sine/w;
@@ -116,7 +116,7 @@ public:
   const FT& cosinus() const { return entries[1];}
 
   Aff_transformationC2(const Reflection, const Line_2& l)
-  : entries(4), variant(reflection)
+  : entries(4), variant(REFLECTION_TYPE)
   {
     Vector_2 t;
     if(l.a() == 0)
@@ -135,43 +135,43 @@ public:
   const FT& tx()const { return entries[2];}
   const FT& ty()const { return entries[3];}
 
- // General form: without translation
+ // General form: without TRANSLATION_TYPE
   Aff_transformationC2(const FT& m11, const FT& m12,
                        const FT& m21, const FT& m22)
-  : entries(6), variant(general)
+  : entries(6), variant(GENERAL_TYPE)
   {
      FT zero(0);
      entries = {m11, m12, zero,
                 m21, m22, zero};
   }
 
-  // General form: without translation
+  // General form: without TRANSLATION_TYPE
   Aff_transformationC2(const FT& m11, const FT& m12,
                        const FT& m21, const FT& m22,
                        const FT& w)
-  : entries(6), variant(general)
+  : entries(6), variant(GENERAL_TYPE)
   {
     FT zero(0);
     entries = {m11/w, m12/w, zero,
                m21/w, m22/w, zero};
   }
 
-  // General form: with translation
+  // General form: with TRANSLATION_TYPE
   Aff_transformationC2(
               const FT& m11, const FT& m12, const FT& m13,
               const FT& m21, const FT& m22, const FT& m23)
-  : entries(6), variant(general)
+  : entries(6), variant(GENERAL_TYPE)
   {
     entries = {m11, m12, m13,
                m21, m22, m23 };
   }
 
-  // General form: with translation
+  // General form: with TRANSLATION_TYPE
   Aff_transformationC2(
               const FT& m11, const FT& m12, const FT& m13,
               const FT& m21, const FT& m22, const FT& m23,
               const FT& w)
-  : entries(6), variant(general)
+  : entries(6), variant(GENERAL_TYPE)
   {
     entries = {m11/w, m12/w, m13/w,
                m21/w, m22/w, m23/w};
@@ -283,12 +283,12 @@ public:
 
   bool is_odd() const { return ! is_even(); }
 
-  bool is_identity() const { return variant == identity; }
-  bool is_translation() const { return variant == translation; }
-  bool is_scaling() const { return variant == scaling; }
-  bool is_reflection() const { return variant == reflection; }
-  bool is_rotation() const { return variant == rotation; }
-  bool is_general() const { return variant == general; }
+  bool is_identity() const { return variant == IDENTITY_TYPE; }
+  bool is_translation() const { return variant == TRANSLATION_TYPE; }
+  bool is_scaling() const { return variant == SCALING_TYPE; }
+  bool is_reflection() const { return variant == REFLECTION_TYPE; }
+  bool is_rotation() const { return variant == ROTATION_TYPE; }
+  bool is_general() const { return variant == GENERAL_TYPE; }
 
   bool has_rotation() const {
     if(is_rotation() || is_reflection()) return true;
