@@ -82,7 +82,7 @@ This package provides two cost-driven methods. The first cost-driven method impl
 namely Lindstrom&Turk, is mainly based on \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99},
 with contributions from \cgalCite{hddms-mo-93}, \cgalCite{gh-ssqem-97} and \cgalCite{degn-tpec-98}.
 The second cost-driven method implemented in this package, namely Garland&Heckbert, is mainly based on
-\cgalCite{gh-ssqem-97}, with enhancements from Trettner and Kobbelt \cgalCite{tk-frqmpq-20}.
+\cgalCite{gh-ssqem-97}, with enhancements from \cgalCite{tk-frqmpq-20}.
 
 The algorithm proceeds in two stages. In the first stage, called <I>collection stage</I>,
 an initial <I>collapse cost</I> is assigned to each and every edge in the surface mesh.
@@ -180,7 +180,7 @@ Additional pseudo-faces that are perpendicular to neighboring faces
 are added to quadric matrices of border vertices in order to preserve sharp borders of
 the mesh as much as possible.
 
-An extension of the Garland-Heckbert was proposed by Trettner and Kobbelt \cgalCite{tk-frqmpq-20},
+An extension of the Garland-Heckbert was proposed by \cgalCite{tk-frqmpq-20},
 who proposed the concept of probabilistic quadrics. In this new approach, the energy minimization
 is no longer performed using distances to input planes or polygons as in the classic version;
 instead, input geometry is made uncertain by introducing Gaussian noise in the input (vertex positions and
@@ -188,7 +188,7 @@ face normals). This variance naturally deteriorates the tightness of the result,
 hand it enables creating more uniform triangulations and the approach is more tolerant to noise,
 while still maintaining feature sensitivity.
 
-Another extension of the Garland–Heckbert approach was introduced by Liu et al. \cgalCite{liu2025linequadrics},
+Another extension of the Garland–Heckbert approach was introduced by \cgalCite{liu2025linequadrics},
 who enhance the classic plane-based quadric error metrics with line quadrics.
 More precisely, line quadrics, which encode the distance to a line, are defined at all input vertices using the supporting lines of the normals.
 These quadrics are then combined with the classic plane quadrics, but with a small weight (0.01 by default).

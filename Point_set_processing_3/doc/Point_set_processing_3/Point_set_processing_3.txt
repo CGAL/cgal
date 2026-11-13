@@ -375,7 +375,7 @@ defined by the parameter delta (accuracy).
 
 Using too wide values will slow down the algorithm by increasing the size of the congruent set,
 while using to small values prevents to find a solution. This parameter impacts other steps of
-the algorithm, see the paper \cgalCite{cgal:mam-sffgp-14} for more details.
+the algorithm, see the paper by \cgalCite{cgal:mam-sffgp-14} for more details.
 
 \subsubsection Point_set_processing_3Examples_registration_OpenGR_parameter_normal Parameter: maximum normal deviation
 
@@ -871,8 +871,7 @@ of nearest neighbors or a fixed spherical neighborhood radius.
 \subsection Point_set_processing_3Mst_orient_normals Minimum Spanning Tree
 
 Function `mst_orient_normals()` orients the normals of a set of
-points with unoriented normals using the method described by Hoppe et
-al. in <I>Surface reconstruction from unorganized points</I> \cgalCite{cgal:hddms-srup-92}.
+points with unoriented normals using the method described by \cgalCite{cgal:hddms-srup-92}.
 More specifically, this method constructs a
 Riemannian graph over the input points (the graph of the
 nearest neighbor points) and propagates a seed normal orientation

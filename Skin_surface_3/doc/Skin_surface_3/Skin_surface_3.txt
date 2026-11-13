@@ -14,7 +14,7 @@ namespace CGAL {
 
 \section sectionSkinSurfaceIntro Introduction
 
-Skin surfaces, introduced by Edelsbrunner in \cgalCite{cgal:e-dssd-99},
+Skin surfaces, introduced by \cgalCite{cgal:e-dssd-99},
 have a rich and simple combinatorial and geometric structure that
 makes them suitable for modeling large molecules in biological
 computing. Meshing such surfaces is often required for further

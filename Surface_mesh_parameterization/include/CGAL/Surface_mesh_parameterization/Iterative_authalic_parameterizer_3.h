@@ -60,13 +60,13 @@ namespace Surface_mesh_parameterization {
 /// \ingroup  PkgSurfaceMeshParameterizationMethods
 ///
 /// The class `Iterative_authalic_parameterizer_3` implements the *Iterative Parameterization* algorithm,
-/// as described by Jain et al. \cgalCite{cgal:j-lrsspp-19}.
+/// as described by \cgalCite{cgal:j-lrsspp-19}.
 ///
 /// This parameterization is a fixed border parameterization and is part of the authalic
 /// parameterization family, meaning that it aims to minimize area distortion
 /// between the input surface mesh and the parameterized output.
 /// More precisely, the approach used by this parameterizer is to iteratively redistribute
-/// the \f$ L_2\f$ stretch - as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01} - over the mesh.
+/// the \f$ L_2\f$ stretch - as defined by \cgalCite{cgal:ssgh-tmpm-01} - over the mesh.
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 /// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
