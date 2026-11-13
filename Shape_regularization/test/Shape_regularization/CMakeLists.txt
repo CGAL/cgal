@@ -7,6 +7,9 @@ project(Shape_regularization_Tests)
 
 find_package(CGAL REQUIRED)
 
+
+include_directories(BEFORE "include")
+
 # Find OSQP library and headers.
 find_package(OSQP QUIET)
 include(CGAL_OSQP_support)

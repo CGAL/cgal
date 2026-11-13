@@ -18,7 +18,7 @@
 #include <CGAL/Periodic_2_triangulation_hierarchy_2.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 
-#include "interface_test.h"
+#include <CGAL/p2t2_interface_test.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          K1;

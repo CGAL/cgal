@@ -13,7 +13,7 @@
 #define VDA_TEST_AG
 
 #include <CGAL/Voronoi_diagram_2.h>
-#include "vda_test.h"
+#include <CGAL/Voronoi_diagram_2/vda_test.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Apollonius_graph_2.h>

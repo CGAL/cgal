@@ -16,9 +16,9 @@ typedef CGAL::Simple_cartesian<double> K;
 
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<K> Gt;
 
-#include "Multi_info.h"
+#include <CGAL/Segment_Delaunay_graph_2/Multi_info.h>
 
-#include "test_info.h"
+#include <CGAL/Segment_Delaunay_graph_2/test_info.h>
 
 typedef Multi_info<int>               Info;
 typedef Multi_info_convert_info<int>  Convert_info;
@@ -32,6 +32,6 @@ ST;
 
 typedef CGAL::Segment_Delaunay_graph_2<Gt,ST>  SDG2;
 
-#include "sdg_info_main.h"
+#include <CGAL/Segment_Delaunay_graph_2/sdg_info_main.h>
 
 // Comment for cgal_create_makefile : main()

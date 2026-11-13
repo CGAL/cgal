@@ -14,8 +14,8 @@
 
 
 #include <CGAL/Voronoi_diagram_2.h>
-#include "vda_test.h"
-#include "vda_print_report.h"
+#include <CGAL/Voronoi_diagram_2/vda_test.h>
+#include <CGAL/Voronoi_diagram_2/vda_print_report.h>
 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

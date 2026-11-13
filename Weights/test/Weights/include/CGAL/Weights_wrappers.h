@@ -1,7 +1,7 @@
 #ifndef CGAL_WEIGHTS_TESTS_WRAPPERS_H
 #define CGAL_WEIGHTS_TESTS_WRAPPERS_H
 
-#include "utils.h"
+#include <CGAL/Weights_utils.h>
 
 #include <CGAL/Weights.h>
 

@@ -4,6 +4,8 @@ project(Weights_Tests)
 
 find_package(CGAL REQUIRED)
 
+include_directories(BEFORE "include")
+
 create_single_source_cgal_program("test_uniform_weights.cpp")
 create_single_source_cgal_program("test_shepard_weights.cpp")
 create_single_source_cgal_program("test_inverse_distance_weights.cpp")

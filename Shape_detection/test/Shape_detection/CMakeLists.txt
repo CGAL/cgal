@@ -6,6 +6,8 @@ project(Shape_detection_Tests)
 
 find_package(CGAL REQUIRED)
 
+include_directories(BEFORE "include")
+
 create_single_source_cgal_program("test_efficient_RANSAC_cone_connected_component.cpp")
 create_single_source_cgal_program("test_efficient_RANSAC_cone_parameters.cpp")
 create_single_source_cgal_program("test_efficient_RANSAC_cylinder_connected_component.cpp")

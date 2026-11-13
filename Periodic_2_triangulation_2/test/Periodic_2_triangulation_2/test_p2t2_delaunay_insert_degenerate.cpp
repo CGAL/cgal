@@ -2,7 +2,7 @@
 
 #define CGAL_USE_DELAUNAY
 
-#include "./types.h"
+#include <CGAL/p2t2_types.h>
 #include <CGAL/point_generators_2.h>
 
 

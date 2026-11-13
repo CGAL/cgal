@@ -1,6 +1,6 @@
 // Author(s)     : Nico Kruithof  <Nico@nghk.nl>
 
-#include "./types.h"
+#include <CGAL/p2t2_types.h>
 
 #ifndef N_PTS
 #define N_PTS 10000

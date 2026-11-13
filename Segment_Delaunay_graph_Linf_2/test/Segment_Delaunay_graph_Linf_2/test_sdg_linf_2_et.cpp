@@ -35,7 +35,7 @@ Gt_wi;
 typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>      SDG2;
 typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt_wi>   SDG2_wi;
 
-#include "test_types.h"
-#include "sdg_main.h"
+#include <CGAL/Segment_Delaunay_graph_Linf_2/test_types.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_2/sdg_main.h>
 
 // Comment for cgal_create_makefile : main()
