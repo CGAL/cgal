@@ -568,6 +568,13 @@ public:
       : parray_(std::exchange(pm.parray_, nullptr))
     {}
 
+    Property_map_base& operator=(Property_map_base&& pm) noexcept
+    {
+      if (this != &pm)
+        parray_ = std::exchange(pm.parray_, nullptr);
+      return *this;
+    }
+
     Property_map_base(const Property_map_base& pm)
       : parray_(pm.parray_)
     {}

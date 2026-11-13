@@ -232,7 +232,6 @@ void properties () {
 
 void move () {
   Surface_fixture f;
-
   auto nf = num_faces(f.m);
 
   // test move-constructor
@@ -264,6 +263,65 @@ void move () {
   assert(num_faces(m2) == nf);
 }
 
+void move_issue_regressions () {
+  Sm source;
+  const Sm::Vertex_index v0 = source.add_vertex(Point_3(0, 0, 0));
+  const Sm::Vertex_index v1 = source.add_vertex(Point_3(1, 1, 1));
+  auto custom = source.add_property_map<Sm::Vertex_index, int>("custom", 42).first;
+  custom[v0] = 7;
+
+  Sm destination;
+  destination.add_vertex(Point_3(9, 9, 9));
+  destination = std::move(source);
+  assert(destination.is_valid());
+  assert(source.is_valid());
+  assert((destination.point(v0) == Point_3(0, 0, 0)));
+  assert((destination.point(v1) == Point_3(1, 1, 1)));
+  assert((destination.property_map<Sm::Vertex_index, int>("custom").value()[v0] == 7));
+
+  source.add_vertex(Point_3(8, 8, 8));
+  assert((destination.point(v0) == Point_3(0, 0, 0)));
+  assert((destination.point(v1) == Point_3(1, 1, 1)));
+
+  // Self-move of a property-map handle must preserve the handle.
+  auto point_map = destination.points();
+  point_map = std::move(point_map);
+  assert(point_map);
+  assert((point_map[v0] == Point_3(0, 0, 0)));
+
+  destination = std::move(destination);
+  assert((destination.point(v0) == Point_3(0, 0, 0)));
+
+  // Move construction must also leave the source reusable.
+  Sm constructed(std::move(destination));
+  assert((constructed.point(v1) == Point_3(1, 1, 1)));
+  destination.add_vertex(Point_3(6, 6, 6));
+  assert((constructed.point(v0) == Point_3(0, 0, 0)));
+
+  // Repeated moves and empty/nonempty combinations.
+  Sm empty;
+  empty = std::move(constructed);
+  assert((empty.point(v0) == Point_3(0, 0, 0)));
+  constructed.add_vertex(Point_3(5, 5, 5));
+  Sm nonempty;
+  nonempty.add_vertex(Point_3(4, 4, 4));
+  nonempty = std::move(constructed);
+  assert(nonempty.number_of_vertices() == 1);
+  assert((empty.point(v1) == Point_3(1, 1, 1)));
+
+  // test copy-assignment
+  constructed = empty;
+  assert(empty.is_valid());
+  assert(constructed.is_valid());
+  assert((constructed.point(v0) == Point_3(0, 0, 0)));
+
+  // test copy-constructor
+  Sm m3 {empty};
+  assert(empty.is_valid());
+  assert(m3.is_valid());
+  assert((m3.point(v1) == Point_3(1, 1, 1)));
+}
+
 
 int main()
 {
@@ -279,6 +337,7 @@ int main()
   point_position_accessor();
   properties();
   move();
+  move_issue_regressions();
   std::cout << "done" << std::endl;
   return 0;
 }
