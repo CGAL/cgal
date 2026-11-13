@@ -74,6 +74,7 @@ bool is_degenerate() const;
 /*!
 A point is on `t`, if it is on a vertex, an edge or the
 face of `t`.
+  \pre `t` is not degenerate.
 */
 bool has_on(const Point_3<Kernel> &p) const;
 

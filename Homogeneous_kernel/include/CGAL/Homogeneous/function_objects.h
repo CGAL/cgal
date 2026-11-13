@@ -3934,6 +3934,7 @@ namespace HomogeneousKernelFunctors {
     Boolean
     operator()( const Triangle_3& t, const Point_3& p) const
     {
+      CGAL_kernel_precondition(!t.is_degenerate());
       if (!t.is_degenerate() )
       {
         Plane_3 sup_pl = t.supporting_plane();

@@ -53,6 +53,9 @@ In three-dimensional space, the types `Type1` and
 - `Sphere_3<Kernel>`
 - `Triangle_3<Kernel>`.
 - `Tetrahedron_3<Kernel>`.
+
+\pre When a `Triangle_3<Kernel>` is tested against a `Point_3<Kernel>`,
+the triangle is not degenerate.
 */
 bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 
