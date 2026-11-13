@@ -164,6 +164,21 @@ private:
   const PointMap m_pm;
 };
 
+template <typename PointRange, typename PolygonRange>
+bool polygon_soup_indices_are_valid(const PointRange& points, const PolygonRange& polygons) {
+  using Polygon = typename boost::range_value<PolygonRange>::type;
+  using V_ID = typename boost::range_value<Polygon>::type;
+
+  const std::size_t nb_points = boost::size(points);
+
+  for (const Polygon& polygon : polygons) {
+    for (const V_ID id : polygon) {
+      if (static_cast<std::size_t>(id) >= nb_points) return false;
+    }
+  }
+  return true;
+}
+
 } // namespace internal
 
 /**
@@ -253,6 +268,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * polygon mesh. This can be checked using the function
 * \link CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()
 * `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)` \endlink.
+* @pre all polygon indices are valid indices in the range `points`.
 *
 * @tparam PolygonMesh a model of `MutableFaceGraph`
 * @tparam PointRange a model of the concept `RandomAccessContainer`
@@ -333,6 +349,8 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
                                   const NamedParameters_PS& np_ps = parameters::default_values(),
                                   const NamedParameters_PM& np_pm = parameters::default_values())
 {
+  CGAL_precondition_msg(internal::polygon_soup_indices_are_valid(points, polygons),
+                        "Input soup contains a polygon index that is not a valid point index.");
   CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
                         "Input soup needs to define a valid polygon mesh! See is_polygon_soup_a_polygon_mesh() for further information.");
 
