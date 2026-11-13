@@ -453,15 +453,15 @@ void test_locate_in_face(const G& g,
   assert(loc.first == f && is_equal(loc.second[(h_id + 2) % 3], FT(0)));
 
   loc = PMP::locate_in_face(p, f, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K()));
-  int v_id = CGAL::vertex_index_in_face(v, f, g);
-  assert(loc.first == f && is_equal(loc.second[v_id], FT(1)));
+  index = CGAL::vertex_index_in_face(v, f, g);
+  assert(index >= 0 && index < 3 && loc.first == f && is_equal(loc.second[index], FT(1)));
 
   // Internal vertex point pmap
   typedef typename boost::property_map_value<G, CGAL::vertex_point_t>::type     Point;
 
   Point p2 = get(CGAL::vertex_point, g, v);
   loc = PMP::locate_in_face(p2, f, g);
-  assert(loc.first == f && is_equal(loc.second[v_id], FT(1)));
+  assert(loc.first == f && is_equal(loc.second[index], FT(1)));
 
   // ---------------------------------------------------------------------------
   loc.second[0] = FT(0.2);
