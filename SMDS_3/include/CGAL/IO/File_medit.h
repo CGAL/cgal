@@ -468,7 +468,9 @@ struct Vertex_index_functor<VertexHandle, false>
 // IO functions
 //-------------------------------------------------------
 
+
 CGAL_GENERATE_MEMBER_DETECTOR(meshing_info); // check if the vertex is a model of MeshVertexBase_3
+
 
 template <class Tr,
           class Vertices_range,

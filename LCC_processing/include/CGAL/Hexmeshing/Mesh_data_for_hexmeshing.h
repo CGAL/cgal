@@ -80,8 +80,25 @@ namespace CGAL::internal
                       bbox.zmin() + (bbox.z_span()/2)};
 
       double max_size=(std::max)((std::max)(bbox.x_span(), bbox.y_span()), bbox.z_span());
-      grid = Hexmeshing::Grid::make_centered_cube
-          (center, max_size / (cube_cells_per_dim-2), cube_cells_per_dim);
+      CGAL_precondition_msg(max_size > 0, "the input mesh has an empty bounding box");
+
+      // Inflate the box by a small relative margin on each side, so that the
+      // input mesh never touches the inner faces of the padding layer.
+      // Otherwise its extreme points lie exactly on those faces, the
+      // box/triangle test reports an intersection, and padding cells get
+      // identified for refinement.
+      constexpr double relative_margin = 0.01; // 1% of the largest extent, per side
+      const double inflated_size = max_size * (1. + 2. * relative_margin);
+      const double cell_size = inflated_size / (cube_cells_per_dim-2);
+
+      // The two-refinement handles planes by pairs (only odd planes are
+      // explored), so with an odd number of cells the last layer along each
+      // axis is never refined. Since the mesh touches the padding layer, that
+      // layer can be identified, which breaks the next level. Add one padding
+      // layer to get an even number of cells.
+      const int dims = cube_cells_per_dim + (cube_cells_per_dim % 2);
+
+      grid = Hexmeshing::Grid::make_centered_cube(center, cell_size, dims);
     }
 
     const TriangleMesh& poly;

@@ -554,39 +554,6 @@ private:
 };
 
 
-using cgal_types::C3t3_wrapper;
-
-
-/*!
-* \ingroup pkgMeshSmoothing3Classes
-*
-* \brief smooth a c3t3 mesh structure
-*
-* The class `C3t3_smoother` provides a wrapper around `Mesh_smoother` to use it with a CGAL `C3t3` mesh structure.
-* Facets of the `C3t3` mesh structure are defined as boundary, and edges of the `C3t3` mesh structure are used as curve network.
-* It is still required to define the wished boundary queries.
-*
-* \tparam C3t3 Type of the input mesh complex, model of `MeshComplex_3InTriangulation_3`
-*
-* \sa `CGAL::Mesh_smoothing_3::Mesh_smoother`
-*
-*/
-template<
-    typename C3t3,
-    typename ConcurrencyTag = Mesh_smoothing_3::Parallel_if_available_tag
->
-class C3t3_smoother : public Mesh_smoother <C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, ConcurrencyTag> {
-private:
-    C3t3_wrapper<C3t3> mesh_wrapper;
-
-public:
-    C3t3_smoother(C3t3 &c3t3)
-    : Mesh_smoother<C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, ConcurrencyTag>(mesh_wrapper, mesh_wrapper, mesh_wrapper)
-    , mesh_wrapper(c3t3)
-    {}
-};
-
-
 } } // end of CGAL::Mesh_smoothing_3
 
 #endif // DOXYGEN_RUNNING

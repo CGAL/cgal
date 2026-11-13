@@ -15,6 +15,7 @@
 
 #include "Scene_surface_mesh_item.h"
 #include "Scene_c3t3_item.h"
+#include "Scene_lcc_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
 
@@ -40,6 +41,7 @@
 #include <CGAL/IO/output_to_vtu.h>
 #include <CGAL/boost/graph/IO/VTK.h>
 #include <CGAL/IO/VTK.h>
+#include<CGAL/Linear_cell_complex/IO/VTK.h>
 #include <CGAL/iterator.h>
 
 #include <vtkSmartPointer.h>
@@ -204,7 +206,8 @@ public:
   {
 
     return (qobject_cast<const Scene_facegraph_item*>(item)
-            || qobject_cast<const Scene_c3t3_item*>(item));
+            || qobject_cast<const Scene_c3t3_item*>(item)
+            || qobject_cast<const Scene_lcc_item*>(item));
   }
 
 
@@ -244,11 +247,9 @@ public:
         CGAL::IO::write_VTP(os, *mesh);
       }
     }
-    else
+    else if (const Scene_c3t3_item* c3t3_item = qobject_cast<const Scene_c3t3_item*>(item))
     {
-      const Scene_c3t3_item* c3t3_item =
-          qobject_cast<const Scene_c3t3_item*>(item);
-      if(!c3t3_item || extension != "vtu")
+      if(extension != "vtu")
         return false;
 
       std::ofstream os(output_filename.data(), std::ios::binary);
@@ -256,6 +257,12 @@ public:
       const C3t3& c3t3 = c3t3_item->c3t3();
 
       CGAL::IO::output_to_vtu(os, c3t3);
+    }
+    else if (Scene_lcc_item* lcc_item = qobject_cast<Scene_lcc_item*>(item))
+    {
+      if(extension != "vtk")
+        return false;
+      CGAL::IO::write_VTK(output_filename.data(), *lcc_item->lcc());
     }
     items.pop_front();
     return true;

@@ -19,11 +19,11 @@ class CGAL_Lab_c3t3_binary_io_plugin :
 
 public:
   QString name() const override { return "C3t3_io_plugin"; }
-  QString nameFilters() const override { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.tetra.am)"; }
+  QString nameFilters() const override { return "binary files (*.cgal);;medit (*.mesh);;maya (*.ma);;avizo (*.tetra.am)"; }
   QString saveNameFilters() const override{
-    return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.tetra.am);;OFF files (*.off)"; }
+    return "binary files (*.cgal);;medit (*.mesh);;maya (*.ma);;avizo (*.tetra.am);;OFF files (*.off)"; }
   QString loadNameFilters() const override {
-    return "binary files (*.cgal);;ascii (*.mesh);;avizo (*.tetra.am)"; }
+    return "binary files (*.cgal);;medit (*.mesh);;avizo (*.tetra.am)"; }
   bool canLoad(QFileInfo) const override;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 
