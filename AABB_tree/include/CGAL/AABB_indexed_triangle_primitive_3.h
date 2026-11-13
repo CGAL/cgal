@@ -83,7 +83,7 @@ struct Reference_point_from_triangle_soup_property_map
 
 /*!
  * \ingroup PkgAABBTreeRef
- * Primitive type that uses as an identifier an index into a range of triplets of indices as its `value_type`.
+ * Primitive type that uses as an identifier an index into a range of triplets of indices.
  * The range of triplets and the range of points must not be invalidated
  * while the AABB tree holding this primitive is in use.
  *
