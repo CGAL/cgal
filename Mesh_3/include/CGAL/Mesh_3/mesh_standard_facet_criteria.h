@@ -683,23 +683,10 @@ protected:
     using T3_utils = CGAL::Triangulation_utils_3;
 
     const Tr& tr = c3t3.triangulation();
+    auto cp = tr.geom_traits().construct_point_3_object();
     auto compare_angle = tr.geom_traits().compare_angle_3_object();
-    auto scalar_product = tr.geom_traits().compute_scalar_product_3_object();
-    auto opp = tr.geom_traits().construct_opposite_vector_3_object();
 
-    auto unit_normal = [&](const Facet& f) -> Vector_3
-    {
-      auto normal = tr.geom_traits().construct_normal_3_object();
-      auto scale = tr.geom_traits().construct_scaled_vector_3_object();
-
-      const auto& t = tr.triangle(f);
-      Vector_3 n = normal(t[0], t[1], t[2]);
-      return scale(n, FT(1) / CGAL::sqrt(n.squared_length()));
-    };
-
-    // compute n1 = unit normal to f
     const Facet& start_facet = f;
-    const Vector_3 start_normal = unit_normal(start_facet);
 
     // for each of the 3 neighboring facets, compute unit normal n2 and compare with nf
     for(const Edge& e : tr.edges(f))
@@ -708,7 +695,6 @@ protected:
         continue;
 
       const auto& [vs, vt] = tr.vertices(e);
-
       Cell_handle cell = start_facet.first;
       do
       {
@@ -721,38 +707,28 @@ protected:
         {
           Facet f2(cell, next_index);
 
-          const Vector_3 n2 = unit_normal(f2);
+          const auto& vf = tr.vertices(f);
+          const auto& vf2 = tr.vertices(f2);
+          // compare the angle between the two normals, using the 3 points of each facet
+          // with the cosine bound
+          auto res = compare_angle(cp(tr.point(vf[0])),
+                                   cp(tr.point(vf[1])),
+                                   cp(tr.point(vf[2])),
+                                   cp(tr.point(vf2[0])),
+                                   cp(tr.point(vf2[1])),
+                                   cp(tr.point(vf2[2])),
+                                   cosine_bound_);
 
-          if(scalar_product(start_normal, n2) < 0.)
+          // if res == SMALLER, then the angles between the 2 normals is smaller than the bound
+          // and the triangulation is "flat enough"
+          // otherwise :
+          if(res == CGAL::LARGER)
           {
 #ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
-            std::cerr << "Bad facet (normals are opposite)" << std::endl;
+            std::cerr << "Bad facet (max cos dh variation = " << cosine_bound_ << ")" << std::endl;
 #endif
             return Is_bad(Quality(1));
           }
-
-//          const auto& vf = tr.vertices(f);
-//          const auto& vf2 = tr.vertices(f2);
-//          // compare the angle between the two normals, using the 3 points of each facet
-//          // with the cosine bound
-//          auto res = compare_angle(vf[0]->point().point(),
-//                                   vf[1]->point().point(),
-//                                   vf[2]->point().point(),
-//                                   vf2[0]->point().point(),
-//                                   vf2[1]->point().point(),
-//                                   vf2[2]->point().point(),
-//                                   cosine_bound_);
-//
-//          // if res == SMALLER, then the angles between the 2 normals is smaller than the bound
-//          // and the triangulation is "flat enough"
-//          // otherwise :
-//          if(res == CGAL::LARGER)
-//          {
-//#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
-//            std::cerr << "Bad facet (max cos dh variation = " << cosine_bound_ << ")" << std::endl;
-//#endif
-//            return Is_bad(Quality(1));
-//          }
         }
 
         cell = cell->neighbor(next_index);
