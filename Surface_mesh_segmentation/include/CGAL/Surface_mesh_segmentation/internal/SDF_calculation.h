@@ -80,8 +80,9 @@ private:
   typedef typename GeomTraits::FT         FT;
 
   typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor   face_handle;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_handle;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor   vertex_descriptor;
 
   typedef AABB_face_graph_triangle_primitive<Polyhedron, VertexPointPmap> Primitive;
   typedef AABB_traits_SDF<GeomTraits, Primitive, fast_bbox_intersection>
@@ -153,7 +154,7 @@ public:
     face_iterator it, end;
     for(it = faces(mesh).begin(), end = faces(mesh).end(); it!=end; it++)
     {
-        halfedge_handle h = halfedge(*it, mesh);
+        halfedge_descriptor h = halfedge(*it, mesh);
         Point_ref a(get(vertex_point_map, target(h, mesh)));
         h = next(h, mesh);
         Point_ref b(get(vertex_point_map,target(h, mesh)));
@@ -180,7 +181,7 @@ public:
 
   /**
    * Calculates SDF values for each facet in a range, and stores them in @a sdf_values. Note that sdf values are neither smoothed nor normalized.
-   * @tparam FacetValueMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `double` as value type
+   * @tparam FacetValueMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_descriptor` as key and `double` as value type
    * @tparam InputIterator Iterator over polyhedrons. Its value type is `pointer to polyhedron`.
    * @param facet_begin range begin
    * @param facet_end range past-the-end
@@ -370,7 +371,7 @@ private:
    * @return calculated SDF value
    */
   std::optional<double> calculate_sdf_value_of_facet(
-    face_handle facet,
+    face_descriptor facet,
     double cone_angle,
     bool accept_if_acute,
     const Disk_samples_list& disk_samples) const {
@@ -384,9 +385,9 @@ private:
     normal=scale_functor(normal,
                          FT(1.0/std::sqrt(to_double(normal.squared_length()))));
     if (normal!=normal) return std::nullopt;
-    CGAL::internal::SkipPrimitiveFunctor<face_handle>
+    CGAL::internal::SkipPrimitiveFunctor<face_descriptor>
     skip(facet);
-    CGAL::internal::FirstIntersectionVisitor<face_handle>
+    CGAL::internal::FirstIntersectionVisitor<face_descriptor>
     visitor;
 
     return calculate_sdf_value_of_point(center, normal, skip, visitor, cone_angle,
@@ -455,9 +456,12 @@ private:
 
     if(accept_if_acute) {
       // check whether the ray makes acute angle with intersected facet
-      const Point& min_v1 = get(vertex_point_map,target(halfedge(min_id,mesh),mesh));
-      const Point& min_v2 = get(vertex_point_map,target(next(halfedge(min_id,mesh),mesh),mesh));
-      const Point& min_v3 = get(vertex_point_map,target(prev(halfedge(min_id,mesh),mesh),mesh));
+      vertex_descriptor v1 = target(halfedge(min_id,mesh),mesh);
+      vertex_descriptor v2 = target(next(halfedge(min_id,mesh),mesh),mesh);
+      vertex_descriptor v3 = target(prev(halfedge(min_id,mesh),mesh),mesh);
+      const Point& min_v1 = get(vertex_point_map,v1);
+      const Point& min_v2 = get(vertex_point_map,v2);
+      const Point& min_v3 = get(vertex_point_map,v3);
       Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
 
       if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),
@@ -496,9 +500,12 @@ private:
 
     if(accept_if_acute) {
       // check whether the ray makes acute angle with intersected facet
-      const Point& min_v1 = get(vertex_point_map,target(halfedge(min_id,mesh),mesh));
-      const Point& min_v2 = get(vertex_point_map,target(next(halfedge(min_id,mesh),mesh),mesh));
-      const Point& min_v3 = get(vertex_point_map,target(prev(halfedge(min_id,mesh),mesh),mesh));
+      vertex_descriptor v1 = target(halfedge(min_id,mesh),mesh);
+      vertex_descriptor v2 = target(next(halfedge(min_id,mesh),mesh),mesh);
+      vertex_descriptor v3 = target(prev(halfedge(min_id,mesh),mesh),mesh);
+      const Point& min_v1 = get(vertex_point_map,v1);
+      const Point& min_v2 = get(vertex_point_map,v2);
+      const Point& min_v3 = get(vertex_point_map,v3);
       Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
 
       if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),

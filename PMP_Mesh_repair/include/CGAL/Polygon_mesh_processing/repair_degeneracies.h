@@ -434,11 +434,14 @@ struct Filter_wrapper_for_cap_needle_removal
   bool flip(halfedge_descriptor h)
   {
     CGAL_assertion(!is_border(h, m_tm));
-
-    const Point_3& o1 = get(m_vpm, target(next(h, m_tm), m_tm));
-    const Point_3& o2 = get(m_vpm, target(next(opposite(h, m_tm), m_tm), m_tm));
-    const Point_3& src =  get(m_vpm, source(h,m_tm));
-    const Point_3& tgt =  get(m_vpm, target(h,m_tm));
+    vertex_descriptor vtn = target(next(h, m_tm), m_tm);
+    vertex_descriptor vtno = target(next(opposite(h, m_tm), m_tm), m_tm);
+    vertex_descriptor vs = source(h, m_tm);
+    vertex_descriptor vt = target(h, m_tm);
+    const Point_3& o1 = get(m_vpm, vtn);
+    const Point_3& o2 = get(m_vpm, vtno);
+    const Point_3& src =  get(m_vpm, vs);
+    const Point_3& tgt =  get(m_vpm, vt);
 
     if (!m_functor(o1, o2, src))
       return false;

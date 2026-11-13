@@ -78,7 +78,8 @@ void compute(Poly* pMesh,
     FT min_edge_len = std::numeric_limits<FT>::infinity();
     for(typename boost::graph_traits<Poly>::halfedge_descriptor he : halfedges_around_target(v, *pMesh))
     {
-      const Point& p = get( vpmap, target(opposite(he, *pMesh ), *pMesh));
+      typename boost::graph_traits<Poly>::vertex_descriptor vp = target(opposite(he, *pMesh ), *pMesh);
+      const Point& p = get( vpmap, vp);
       points.push_back(p);
       FT edge_len = std::sqrt(CGAL::squared_distance(central_point,p));
       min_edge_len = edge_len < min_edge_len ? edge_len : min_edge_len; // avoids #undef min

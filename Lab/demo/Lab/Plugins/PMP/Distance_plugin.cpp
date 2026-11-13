@@ -282,11 +282,14 @@ private:
     {
       //Lines
       typedef Kernel::Point_3                Point;
+      typedef boost::graph_traits<Face_graph>::vertex_descriptor      vertex_descriptor;
       typedef boost::graph_traits<Face_graph>::edge_descriptor        edge_descriptor;
 
       for(edge_descriptor he : edges(*poly)){
-        const Point& a = get(vpmap,target(he,*poly));
-        const Point& b = get(vpmap,source(he,*poly));
+        vertex_descriptor va = target(he,*poly);
+        vertex_descriptor vb = source(he,*poly);
+        const Point& a = get(vpmap,va);
+        const Point& b = get(vpmap,vb);
         {
 
           edge_vertices.push_back(a.x());

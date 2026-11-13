@@ -310,6 +310,7 @@ The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
 
 
 \subsection thirdpartyVTK VTK
+<b>Version 9.0 or later</b>
 
 \vtk is the Visualization Toolkit.
 In \cgal, this library is used in some examples of the \ref PkgMesh3 package.

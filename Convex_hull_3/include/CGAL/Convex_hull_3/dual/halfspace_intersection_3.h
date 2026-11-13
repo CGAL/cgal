@@ -133,22 +133,27 @@ namespace CGAL
             // Compute the equations of the facets of the polyhedron
             typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
             typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+            typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
             typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpmap  = get(CGAL::vertex_point, P);
 
             for(face_descriptor fd : faces(P))
                 {
                   halfedge_descriptor h = halfedge(fd,P), done(h);
-                  Point const& p1 = get(vpmap, target(h,P));
+                  vertex_descriptor v = target(h,P);
+                  Point const& p1 = get(vpmap, v);
                   h = next(h,P);
-                  Point const& p2 = get(vpmap, target(h,P));
+                  v = target(h,P);
+                  Point const& p2 = get(vpmap, v);
                   h = next(h,P);
-                  Point p3 = get(vpmap, target(h,P));
+                  v = target(h,P);
+                  Point p3 = get(vpmap, v);
 
                   while( h!=done && collinear(p1,p2,p3) )
                   {
                     h = next(h,P);
-                    p3 = get(vpmap, target(h,P));
+                    v = target(h,P);
+                    p3 = get(vpmap, v);
                   }
                   if (h==done) continue; //degenerate facet, skip it
 
