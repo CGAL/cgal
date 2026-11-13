@@ -478,7 +478,6 @@ self_intersections_impl(const FaceRange& face_range,
   using vertex_descriptor = typename Wrapper::vertex_descriptor;
 
   using AABB_tree = typename Wrapper::Tree;
-  using AABB_traits = typename AABB_tree::AABB_traits;
 
   CGAL_precondition(Wrapper::is_pure_triangle(tmesh));
 
@@ -530,11 +529,6 @@ self_intersections_impl(const FaceRange& face_range,
   AABB_tree tree;
   Wrapper::template build_tree<ConcurrencyTag>(faces_not_degenerated, tree, tmesh, vpmap);
 
-  const auto all_pairs_of_intersecting_faces = [&](const AABB_tree& tree, auto out){
-    Listing_self_intersecting_faces_one_tree_traversal_traits<AABB_traits, GT, decltype(out), TM, VPM>
-      traversal_traits(tree.traits(), gt, out, tmesh, vpmap);
-    CGAL::internal::AABB_tree::one_tree_traversal<ConcurrencyTag>(tree, traversal_traits);
-  };
 #if !defined(CGAL_LINKED_WITH_TBB)
   static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
@@ -549,7 +543,10 @@ self_intersections_impl(const FaceRange& face_range,
 
     Face_pairs face_pairs;
     if(throw_on_SI)
-      all_pairs_of_intersecting_faces(tree, throwing_filter);
+    {
+      Listing_self_intersecting_faces_one_tree_traversal_traits traversal_traits(tree.traits(), gt, throwing_filter, tmesh, vpmap);
+      CGAL::internal::AABB_tree::one_tree_traversal<ConcurrencyTag>(tree, traversal_traits);
+    }
     else if(do_limit)
     {
       try
@@ -557,7 +554,8 @@ self_intersections_impl(const FaceRange& face_range,
         std::atomic<unsigned int> atomic_counter(counter);
         std::atomic<bool> atomic_flag(false);
         Throw_iterator count_filter(atomic_counter, atomic_flag, maximum_number, std::back_inserter(face_pairs));
-        all_pairs_of_intersecting_faces(tree, count_filter);
+        Listing_self_intersecting_faces_one_tree_traversal_traits traversal_traits(tree.traits(), gt, count_filter, tmesh, vpmap);
+        CGAL::internal::AABB_tree::one_tree_traversal<ConcurrencyTag>(tree, traversal_traits);
       }
       catch(const CGAL::internal::Throw_at_output_exception&)
       {
@@ -569,7 +567,9 @@ self_intersections_impl(const FaceRange& face_range,
     }
     else
     {
-      all_pairs_of_intersecting_faces(tree, std::back_inserter(face_pairs));
+      auto l_out = std::back_inserter(face_pairs);
+      Listing_self_intersecting_faces_one_tree_traversal_traits traversal_traits(tree.traits(), gt, l_out, tmesh, vpmap);
+      CGAL::internal::AABB_tree::one_tree_traversal<ConcurrencyTag>(tree, traversal_traits);
     }
 
     // Sequentially write into the output iterator
@@ -582,7 +582,10 @@ self_intersections_impl(const FaceRange& face_range,
 
   // Sequential version of the code
   if(throw_on_SI)
-    all_pairs_of_intersecting_faces(tree, throwing_filter);
+  {
+    Listing_self_intersecting_faces_one_tree_traversal_traits traversal_traits(tree.traits(), gt, throwing_filter, tmesh, vpmap);
+    CGAL::internal::AABB_tree::one_tree_traversal<ConcurrencyTag>(tree, traversal_traits);
+  }
   else if(do_limit)
   {
     using Count_and_throw_filter = std::function<void(const std::pair<face_descriptor, face_descriptor>&) >;
@@ -596,7 +599,9 @@ self_intersections_impl(const FaceRange& face_range,
 
     try
     {
-      all_pairs_of_intersecting_faces(tree, boost::make_function_output_iterator(max_inter_counter));
+      auto l_out = boost::make_function_output_iterator(max_inter_counter);
+      Listing_self_intersecting_faces_one_tree_traversal_traits traversal_traits(tree.traits(), gt, l_out, tmesh, vpmap);
+      CGAL::internal::AABB_tree::one_tree_traversal<ConcurrencyTag>(tree, traversal_traits);
     }
     catch (const CGAL::internal::Throw_at_output_exception&)
     {
@@ -604,7 +609,10 @@ self_intersections_impl(const FaceRange& face_range,
     }
   }
   else
-    all_pairs_of_intersecting_faces(tree, out);
+  {
+    Listing_self_intersecting_faces_one_tree_traversal_traits traversal_traits(tree.traits(), gt, out, tmesh, vpmap);
+    CGAL::internal::AABB_tree::one_tree_traversal<ConcurrencyTag>(tree, traversal_traits);
+  }
   return out;
 }
 

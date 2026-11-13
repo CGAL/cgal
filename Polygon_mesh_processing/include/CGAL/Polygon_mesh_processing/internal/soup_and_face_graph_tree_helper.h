@@ -88,8 +88,10 @@ struct AABB_tree_graph_helper
     using VPM_kernel = typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel;
     CGAL::Cartesian_converter<VPM_kernel, FloatK> to_input;
 
-    Bbox_map bb_map = get(Face_bbox_tag(), tm);
-    Ref_point_map rp_map = get(Face_ref_point_tag(), tm);
+    // we put a default value for case the property vector is not fully allocated.
+    // For exampe maps using a unordered map would have an issue with the concurrent insertion
+    Bbox_map bb_map = get(Face_bbox_tag(), tm, Bbox_3());
+    Ref_point_map rp_map = get(Face_ref_point_tag(), tm, Epick::Point_3(0.,0.,0.));
 
 #ifdef CGAL_LINKED_WITH_TBB
     if constexpr(Concurrency_tag::is_parallel)

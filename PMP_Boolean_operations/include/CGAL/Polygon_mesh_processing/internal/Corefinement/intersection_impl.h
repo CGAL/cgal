@@ -323,12 +323,8 @@ class Intersection_of_triangle_meshes
         std::size_t eid = non_manifold_feature_map_2.non_manifold_edges.empty()
                           ? NM_NID
                           : get(non_manifold_feature_map_2.e_nm_id, ed);
-        if (eid!=NM_NID){
-          if (non_manifold_feature_map_2.non_manifold_edges[eid].front()!=ed) continue;
-          else
-            // make sure the halfedge used is consistent with stored one
-            h = halfedge(non_manifold_feature_map_2.non_manifold_edges[eid].front(), tm2);
-        }
+        if (eid!=NM_NID && non_manifold_feature_map_2.non_manifold_edges[eid].front()!=ed) continue;
+
         if( !get(is_shared_edge_map_2, ed) && (is_border_edge(h, tm2) || h < opposite(h, tm2)))
           callback12(hf1[0], h);
       }
@@ -337,12 +333,8 @@ class Intersection_of_triangle_meshes
         std::size_t eid = non_manifold_feature_map_1.non_manifold_edges.empty()
                           ? NM_NID
                           : get(non_manifold_feature_map_1.e_nm_id, ed);
-        if (eid!=NM_NID){
-          if (non_manifold_feature_map_1.non_manifold_edges[eid].front()!=ed) continue;
-          else
-            // make sure the halfedge used is consistent with stored one
-            h = halfedge(non_manifold_feature_map_1.non_manifold_edges[eid].front(), tm1);
-        }
+        if (eid!=NM_NID && non_manifold_feature_map_1.non_manifold_edges[eid].front()!=ed) continue;
+
         if( !get(is_shared_edge_map_1, ed) && (is_border_edge(h, tm1) || h < opposite(h, tm1)))
           callback21(hf2[0], h);
       }
