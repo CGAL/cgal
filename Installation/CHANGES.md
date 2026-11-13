@@ -60,6 +60,11 @@ Release date: December 2026
 - **Breaking change** Removed the member function `vertices_in_conflict()` of the Delaunay and the regular triangulation  which were deprecated  since CGAL-3.8
 - Removed the concept `WeightedPoint`
 
+### [Polygon Mesh Processing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPolygonMeshProcessing)
+- `CGAL::Polygon_mesh_processing::do_intersect()` and `CGAL::Polygon_mesh_processing::self_intersections()` functions now have a named parameter `concurrency_tag`,
+   specifying whether the task should be performed using a single or multiple threads.
+- The running times of the functions above have been improved.
+
 ### [Polygon Mesh Processing - Mesh Repair](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPMeshRepair)
 - **Breaking change**: Removed the function `CGAL::Polygon_mesh_processing::smooth_mesh()` which was deprecated since CGAL-5.5.
 - **Breaking change**: Removed the overload of the functions `CGAL::Polygon_mesh_processing::triangulate_hole()`, `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`, and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()` having output iterators for vertices and faces as parameter, which were deprecated since CGAL-6.0.
