@@ -18,8 +18,26 @@
 #ifndef CGAL__TEST_CLS_AFF_TRANSFORMATION_2_H
 #define CGAL__TEST_CLS_AFF_TRANSFORMATION_2_H
 
+#include <CGAL/Aff_transformation_2.h>
+#include <CGAL/aff_transformation_tags.h>
+#include <CGAL/Circle_2.h>
+#include <CGAL/Direction_2.h>
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Line_2.h>
+#include <CGAL/Origin.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Ray_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Triangle_2.h>
 #include <CGAL/use.h>
 #include <CGAL/utils.h>
+#include <CGAL/Vector_2.h>
+#include <CGAL/Weighted_point_2.h>
+
+#include <cassert>
+#include <iostream>
+#include <ostream>
+#include <type_traits>
 
 template <class R>
 bool
@@ -140,22 +158,23 @@ _test_cls_aff_transformation_2(const R& )
                                       CGAL::Point_2<R>(2,1)));
 
  CGAL::Aff_transformation_2<R> a[14];
+ bool preserve_iso_rectangles[14];
 
+ a[0] = ident;  preserve_iso_rectangles[0] = true;
+ a[1] = gat1;  preserve_iso_rectangles[1] = false;
+ a[2] = gat2;  preserve_iso_rectangles[2] = false;
+ a[3] = gat3;  preserve_iso_rectangles[3] = false;
+ a[4] = scale11;  preserve_iso_rectangles[4] = true;
+ a[5] = gscale;  preserve_iso_rectangles[5] = false;
+ a[6] = gtrans;  preserve_iso_rectangles[6] = true;
+ a[7] = translate;  preserve_iso_rectangles[7] = true;
+ a[8] = xrefl;  preserve_iso_rectangles[8] = false;
+ a[9] = gat5;  preserve_iso_rectangles[9] = false;
+ a[10]= gat6;  preserve_iso_rectangles[10] = false;
+ a[11]= rot90;  preserve_iso_rectangles[11] = true;
+ a[12]= rot2;  preserve_iso_rectangles[12] = false;
+ a[13]= rot3;  preserve_iso_rectangles[13] = false;
 
- a[0] = ident;
- a[1] = gat1;
- a[2] = gat2;
- a[3] = gat3;
- a[4] = scale11;
- a[5] = gscale;
- a[6] = gtrans;
- a[7] = translate;
- a[8] = xrefl;
- a[9] = gat5;
- a[10]= gat6;
- a[11]= rot90;
- a[12]= rot2;
- a[13]= rot3;
 
  CGAL::Aff_transformation_2<R> inv;
 
@@ -170,14 +189,18 @@ _test_cls_aff_transformation_2(const R& )
     tray = ray.transform( a[i] );
     tlin = lin.transform( a[i] );
     ttri = tri.transform( a[i] );
-    tisor= isor.transform( a[i]);
     assert( twp4.point() == tp4 );
     assert( twp4.weight() == wp4.weight() );
     assert( tseg == CGAL::Segment_2<R>(tp1, tp2) );
     assert( tray == CGAL::Ray_2<R>(tp3, tp2) );
     assert( tlin == CGAL::Line_2<R>(tp2, tp4) || nonexact);
     assert( ttri == CGAL::Triangle_2<R>(tp2, tp3, tp4) );
-    assert( tisor== CGAL::Iso_rectangle_2<R>( tp3, tp4 ) );
+
+    if(preserve_iso_rectangles[i])
+    {
+       tisor= isor.transform( a[i]);
+       assert( tisor== CGAL::Iso_rectangle_2<R>( tp3, tp4 ) );
+    }
 
     inv = a[i].inverse();
     tp4  = tp4.transform(  inv );

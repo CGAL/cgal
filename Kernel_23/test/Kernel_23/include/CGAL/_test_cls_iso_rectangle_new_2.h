@@ -18,6 +18,11 @@
 #ifndef CGAL__TEST_CLS_ISO_RECTANGLE_NEW_2_H
 #define CGAL__TEST_CLS_ISO_RECTANGLE_NEW_2_H
 
+#include <CGAL/enum.h>
+
+#include <cassert>
+#include <iostream>
+
 template <class R>
 bool
 _test_cls_iso_rectangle_new_2(const R& )
