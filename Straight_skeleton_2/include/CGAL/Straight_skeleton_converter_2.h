@@ -27,16 +27,15 @@
 
 namespace CGAL {
 
-template<class Source_skeleton_
-        ,class Target_skeleton_
-        ,class NT_converter = typename internal::Default_converter<typename Source_skeleton_::Traits
-                                                               ,typename Target_skeleton_::Traits
-                                                               >::Type
+template<class Source_skeleton_,
+         class Target_skeleton_,
+         class NT_converter = typename internal::Default_converter<typename Source_skeleton_::Traits,
+                                                                   typename Target_skeleton_::Traits>::Type
         >
-struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source_skeleton_::Traits
-                                                               , typename Target_skeleton_::Traits
-                                                               , NT_converter
-                                                               >
+struct Straight_skeleton_items_converter_2
+  : Cartesian_converter<typename Source_skeleton_::Traits,
+                        typename Target_skeleton_::Traits,
+                        NT_converter>
 {
   typedef Source_skeleton_ Source_skeleton ;
   typedef Target_skeleton_ Target_skeleton ;
@@ -87,6 +86,7 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
       // @fixme inconsistency issue, see HarmonizeSpeeds
       auto pt_t = Target_builder_traits().construct_ss_event_time_and_point_2_object()(trisegment);
       CGAL_postcondition(pt_t.has_value());
+
       return Target_vertex(aV->id(),
                            std::get<1>(*pt_t),
                            std::get<0>(*pt_t),
@@ -186,8 +186,19 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
 
     return rT;
   }
+};
 
-} ;
+// specialization of the item converter for souce = target, to avoid making copies
+template <class Skel,
+          class NT_converter>
+struct Straight_skeleton_items_converter_2<Skel, Skel, NT_converter>
+  : Cartesian_converter<typename Skel::Traits,
+                        typename Skel::Traits,
+                        NT_converter>
+{
+  template <typename T>
+  const T& operator()(const T& t) const { return t; }
+};
 
 template<class Source_skeleton_, class Target_skeleton_, class Items_converter_>
 struct Straight_skeleton_converter_2
@@ -365,8 +376,15 @@ private :
   mutable std::vector<Target_vertex_handle>   Target_vertices ;
   mutable std::vector<Target_halfedge_handle> Target_halfedges;
   mutable std::vector<Target_face_handle>     Target_faces    ;
+};
 
-} ;
+// specialization for souce = target, to avoid making copies
+template<class Skeleton_, class Items_converter_>
+struct Straight_skeleton_converter_2<Skeleton_, Skeleton_, Items_converter_>
+{
+  template <typename T>
+  const T& operator()(const T& t) const { return t; }
+};
 
 template<class Target_skeleton, class Source_skeleton, class Items_converter>
 std::shared_ptr<Target_skeleton>
@@ -377,7 +395,6 @@ convert_straight_skeleton_2 ( Source_skeleton const& aSrc, Items_converter const
   Skeleton_converter c(ic) ;
 
   return c(aSrc);
-
 }
 
 template<class Target_skeleton, class Source_skeleton>
