@@ -37,7 +37,7 @@ struct Vertex_converter
     Vertex v;
     v.set_point(Wp{src.point()});
       switch(src.ccdt_3_data().vertex_type()) {
-      case CDT_3_vertex_type::CORNER:
+      case CDT_3_vertex_type::INPUT_VERTEX:
         v.set_dimension(0);
         v.set_index(0);
         break;

@@ -177,14 +177,15 @@ namespace Mesh_2 {
 
         auto is_conform = ( angle(a, p, b) != OBTUSE );
 #if CGAL_MESH_2_DEBUG_BAD_EDGES
+        With_point_tag wpt{{-1}, &tr};
         if(!is_conform) {
-          std::cerr << "  edge " << CGAL::IO::oformat(va, CGAL::With_point_tag{})
-                    << " -- " << CGAL::IO::oformat(vb, CGAL::With_point_tag{})
+          std::cerr << "  edge " << CGAL::IO::oformat(va, wpt)
+                    << " -- " << CGAL::IO::oformat(vb, wpt)
                     << " is encroached by ";
           if(encroaching_vertex != Vertex_handle()) {
-            std::cerr << IO::oformat(encroaching_vertex, With_point_tag{}) << std::endl;
+            std::cerr << IO::oformat(encroaching_vertex, wpt) << std::endl;
           } else {
-            std::cerr << "point " << CGAL::IO::oformat(p) << std::endl;
+            std::cerr << "point " << CGAL::IO::oformat(p, wpt) << std::endl;
           }
         }
 #endif // CGAL_MESH_2_DEBUG_BAD_EDGES
@@ -384,12 +385,15 @@ protected:
     }
   }
 
+  With_point_tag<Tr> with_point_tag;
+
   public:
   /** \name CONSTRUCTORS */
 
   Refine_edges_base(Tr& tr_) :
     Container(Is_a_constrained_edge(tr_)),
     tr(tr_), is_a_constrained_edge(tr_),
+    with_point_tag{{-1}, &tr_},
     converter(tr_)
   {
   }
@@ -420,8 +424,8 @@ protected:
     bool result = tr.is_flipable(fh, i);
 #if CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
     std::cerr << "  is_flippable("
-              << IO::oformat(fh->vertex(tr.cw(i)), With_point_tag{}) << ", "
-              << IO::oformat(fh->vertex(tr.ccw(i)), With_point_tag{}) << ") = "
+              << IO::oformat(fh->vertex(tr.cw(i)), with_point_tag) << ", "
+              << IO::oformat(fh->vertex(tr.ccw(i)), with_point_tag) << ") = "
               << (result ? "true" : "false") << std::endl;
 #endif // CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
     return result;
@@ -564,7 +568,7 @@ protected:
     if( zone.locate_type == Tr::VERTEX ) {
 #ifdef CGAL_MESH_2_DEBUG_INSERTIONS
       std::cerr << "insert(p, zone): returned existing vertex "
-                << IO::oformat(zone.fh->vertex(zone.i), With_point_tag{})
+                << IO::oformat(zone.fh->vertex(zone.i), with_point_tag)
                 << std::endl;
 #endif // CGAL_MESH_2_DEBUG_INSERTIONS
       for(auto [f, i]: zone.edges_to_flip) {
@@ -573,8 +577,8 @@ protected:
         auto va = f->vertex(Tr::cw(i));
         auto vb = f->vertex(Tr::ccw(i));
         std::cerr << "  flipping edge ("
-                  << IO::oformat(va, With_point_tag{}) << ", "
-                  << IO::oformat(vb, With_point_tag{}) << ")\n";
+                  << IO::oformat(va, with_point_tag) << ", "
+                  << IO::oformat(vb, with_point_tag) << ")\n";
 #endif // CGAL_MESH_2_DEBUG_INSERTIONS
         triangulation_ref_impl().flip(f, i);
       }
@@ -587,7 +591,7 @@ protected:
                                                 zone.faces.end()
                                                 );
 #ifdef CGAL_MESH_2_DEBUG_INSERTIONS
-    std::cerr << " inserted new vertex " << IO::oformat(v, With_point_tag{}) << std::endl;
+    std::cerr << " inserted new vertex " << IO::oformat(v, with_point_tag) << std::endl;
 #endif // CGAL_MESH_2_DEBUG_INSERTIONS
     return v;
   }
@@ -626,8 +630,8 @@ protected:
     auto p = midpoint(va->point(), vb->point());
 
 #ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
-    std::cerr << "refinement_point_impl(Edge: " << IO::oformat(va, With_point_tag{}) << ", "
-              << IO::oformat(vb, With_point_tag{}) << ") = ";
+    std::cerr << "refinement_point_impl(Edge: " << IO::oformat(va, with_point_tag) << ", "
+              << IO::oformat(vb, with_point_tag) << ") = ";
     std::cerr << p << '\n';
 #endif // CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
     return maybe_snap_to_existing_vertex(edge, p);
@@ -686,7 +690,7 @@ protected:
       {
 #ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
         std::cerr << "return point of existing vertex "
-                  << IO::oformat(closest_encroaching_vertex->vertex, With_point_tag{}) << std::endl;
+                  << IO::oformat(closest_encroaching_vertex->vertex, with_point_tag) << std::endl;
   #endif // CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
         p = closest_encroaching_vertex->vertex->point();
         return p;
@@ -810,8 +814,8 @@ protected:
     const Vertex_handle& vb = e.first->vertex(tr.ccw(e.second));
 #if CGAL_MESH_2_DEBUG_BAD_EDGES
     std::cerr << "  add_constrained_edge_to_be_conformed("
-              << IO::oformat(va, With_point_tag{}) << ", "
-              << IO::oformat(vb, With_point_tag{}) << ")\n";
+              << IO::oformat(va, with_point_tag) << ", "
+              << IO::oformat(vb, with_point_tag) << ")\n";
 #endif
     this->add_bad_element(std::make_pair(va, vb)); // see the Container
                                                    // base class
@@ -823,8 +827,8 @@ protected:
   {
 #if CGAL_MESH_2_DEBUG_BAD_EDGES
     std::cerr << "  add_constrained_edge_to_be_conformed("
-              << IO::oformat(va, With_point_tag{}) << ", "
-              << IO::oformat(vb, With_point_tag{}) << ")\n";
+              << IO::oformat(va, with_point_tag) << ", "
+              << IO::oformat(vb, with_point_tag) << ")\n";
 #endif
     this->add_bad_element(std::make_pair(va, vb)); // see the Container
                                                    // base class

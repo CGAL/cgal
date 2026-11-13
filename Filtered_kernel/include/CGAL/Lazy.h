@@ -228,7 +228,7 @@ print_dag(const Return_base_tag&, std::ostream& os, int level)
 
 
 struct Depth_base {
-#ifdef CGAL_PROFILE
+#if defined(CGAL_PROFILE) || defined(CGAL_LAZY_USE_DEPTH)
   mutable int depth_;
 
   Depth_base()

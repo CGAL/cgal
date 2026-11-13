@@ -17,6 +17,7 @@
 
 #include <CGAL/basic.h>
 
+#include <array>
 #include <list>
 #include <vector>
 #include <map>
@@ -42,7 +43,6 @@
 #include <boost/random/variate_generator.hpp>
 
 #include <CGAL/utility.h>
-#include <array>
 
 namespace CGAL
 {
@@ -329,6 +329,22 @@ public:
   }
 
   //\}
+
+  std::array<Vertex_handle, 3> vertices(Face_handle f) const {
+    return _tds.vertices(f);
+  }
+
+  std::array<Vertex_handle, 2> vertices(Face_handle f, int i) const {
+    return _tds.vertices(f, i);
+  }
+
+  std::array<Vertex_handle, 2> vertices(Edge e) const {
+    return _tds.vertices(e);
+  }
+
+  std::array<Vertex_handle, 1> vertices(Vertex_handle v) const {
+    return _tds.vertices(v);
+  }
 
   /// \name Number of simplices
   //\{

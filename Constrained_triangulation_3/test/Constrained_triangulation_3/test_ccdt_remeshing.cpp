@@ -11,6 +11,7 @@
 #include <CGAL/tetrahedral_remeshing.h>
 
 #include <algorithm>
+#include <cstddef>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
@@ -49,20 +50,25 @@ int main(int argc, char* argv[])
   namespace Tet_remesh = CGAL::Tetrahedral_remeshing;
   Tr tr = Tet_remesh::get_remeshing_triangulation(std::move(cdt));
 
+  auto number_of_constrained_facets = [](const Tr& tr) {
+    auto n = std::count_if(tr.finite_facets().begin(), tr.finite_facets().end(),
+                         [](const auto& f) {
+                           auto [c, i] = f;
+                           return c->is_facet_on_surface(i);
+                         });
+    return static_cast<std::size_t>(n);
+  };
+
+  auto nb = number_of_constrained_facets(tr);
+  assert(nb == nb_cstr_facets);
+
   CGAL::tetrahedral_isotropic_remeshing(tr, 2.,
                                         CGAL::parameters::number_of_iterations(3)
                                         .remesh_boundaries(false));
 
   std::cout << "Number of vertices in tr: " << tr.number_of_vertices() << std::endl;
 
-  auto nb = 0u;
-  for(auto f : tr.finite_facets())
-  {
-    const Tr::Cell_handle c = f.first;
-    const int i = f.second;
-    if(c->is_facet_on_surface(i))
-      ++nb;
-  }
+  nb = number_of_constrained_facets(tr);
   assert(nb == nb_cstr_facets);
 
   return EXIT_SUCCESS;
