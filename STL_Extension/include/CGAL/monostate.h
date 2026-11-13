@@ -16,6 +16,7 @@
 #include<cstddef>
 
 #ifdef __clang__
+#  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wunused-private-field"
 #endif
 
