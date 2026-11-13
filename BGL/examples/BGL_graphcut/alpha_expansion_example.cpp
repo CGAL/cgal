@@ -9,7 +9,7 @@ struct Vertex_property
 
 struct Edge_property
 {
-  double weight;
+  double weight = 0;
 };
 
 using Graph = boost::adjacency_list <boost::setS,
