@@ -513,7 +513,8 @@ bool test_algo_generic(InputStream& is)
   CGAL_USE_TYPE(Point_2);
   CGAL_USE_TYPE(Edge);
 
-  boost::iostreams::stream<boost::iostreams::null_sink>   nos;
+  boost::iostreams::stream<boost::iostreams::null_sink>   nos{boost::iostreams::null_sink{}};
+  //  or nos.open(boost::iostreams::null_sink{});
 
   // testing creation/constructors
   //--------------------------------------------------------------------
