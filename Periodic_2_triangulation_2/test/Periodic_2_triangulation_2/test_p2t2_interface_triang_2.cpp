@@ -1,7 +1,7 @@
 // Author(s)     : Nico Kruithof  <Nico@nghk.nl>
 
-#include "types.h"
-#include "interface_test.h"
+#include <CGAL/p2t2_types.h>
+#include <CGAL/p2t2_interface_test.h>
 
 #include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>

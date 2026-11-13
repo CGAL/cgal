@@ -1,6 +1,6 @@
 // Author(s)     : Nico Kruithof  <Nico@nghk.nl>
 
-#include "./types.h"
+#include <CGAL/p2t2_types.h>
 
 Face_handle test_point_location(const Triangulation &t,
                                 const Point &query,
