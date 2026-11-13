@@ -805,6 +805,17 @@ function(test_point_location_circle_segments)
 endfunction()
 
 #---------------------------------------------------------------------#
+# point location with polylines
+#---------------------------------------------------------------------#
+function(test_point_location_polylines)
+  set(nt ${CGAL_GMPQ_NT})
+  set(kernel ${CARTESIAN_KERNEL})
+  set(geom_traits ${POLYLINE_GEOM_TRAITS})
+  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
+  compile_and_run_with_flags(test_point_location polylines "${flags}")
+endfunction()
+
+#---------------------------------------------------------------------#
 # point location with linear objects
 #---------------------------------------------------------------------#
 function(test_point_location_linear)
@@ -1046,6 +1057,28 @@ function(test_polyline_traits)
     APPROXIMATE ARE_MERGEABLE
     COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
     DO_INTERSECT)
+endfunction()
+
+#---------------------------------------------------------------------#
+# polyline traits that always construct curves directed left to right
+#---------------------------------------------------------------------#
+function(test_polyline_traits_left_to_right)
+  set(nt ${CGAL_GMPQ_NT})
+  set(kernel ${CARTESIAN_KERNEL})
+  set(geom_traits ${POLYLINE_GEOM_TRAITS})
+  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DCGAL_ALWAYS_LEFT_TO_RIGHT")
+
+  compile_test_with_flags(test_traits polylines_left_to_right "${flags}")
+
+  # Curves that differ only in direction become identical, which changes the
+  # expected results of some of the are_mergeable cases of the merge test.
+  execute_commands_old_structure(polylines polyline_traits
+    APPROXIMATE ARE_MERGEABLE
+    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
+    DO_INTERSECT MERGE)
+  run_trapped_test(test_traits
+    data/empty.zero data/polylines/merge.xcv
+    data/empty.zero data/polylines/merge_left_to_right polyline_traits)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1409,6 +1442,7 @@ compile_and_run(construction_test_suite_generator)
 test_segment_traits()
 test_non_caching_segment_traits()
 test_polyline_traits()
+test_polyline_traits_left_to_right()
 test_polycurve_conic_traits()
 test_polycurve_circular_arc_traits()
 test_polycurve_bezier_traits()
@@ -1453,6 +1487,7 @@ test_point_location_segments()
 test_point_location_segments_conversion()
 test_point_location_circle_segments()
 test_point_location_linear()
+test_point_location_polylines()
 
 test_point_location_dynamic_segments()
 
