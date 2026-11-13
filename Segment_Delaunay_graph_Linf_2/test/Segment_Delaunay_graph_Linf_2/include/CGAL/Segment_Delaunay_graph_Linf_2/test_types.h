@@ -12,7 +12,9 @@
 #include <string>
 #include <sstream>
 
-#include "IO/Null_output_stream.h"
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/device/null.hpp>
+
 #include "IO/io_aux.h"
 
 #include <cstring> // for std::strcpy, and std::strcat
@@ -138,7 +140,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname,
     site_list.push_back(s4);
   }
 
-  Null_output_stream null_os;
+  boost::iostreams::stream<boost::iostreams::null_sink> null_os{boost::iostreams::null_sink{}};
 
   Geom_traits gt;
 
