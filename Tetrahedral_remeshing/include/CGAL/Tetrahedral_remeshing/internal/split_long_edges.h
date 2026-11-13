@@ -103,6 +103,7 @@ construct_steiner_point(const typename C3t3::Edge& e,
     do
     {
       Cell_handle c = circ;
+      if (c3t3.triangulation().is_infinite(c)) continue;
       if(!positive_orientation_after_edge_split(e, c, steiner, c3t3))
       {
         steiner_successful = false;
