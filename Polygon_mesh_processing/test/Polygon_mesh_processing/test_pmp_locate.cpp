@@ -149,7 +149,6 @@ void test_constructions(const G& g,
   typedef typename PMP::descriptor_variant<G>                                descriptor_variant;
 
   typedef typename boost::property_traits<VPM>::value_type                        Point;
-  typedef typename boost::property_traits<VPM>::reference                         Point_reference;
   typedef typename K::FT                                                          FT;
   typedef typename Point_to_bare_point<K, Point::Ambient_dimension::value>::type  Bare_point;
 
@@ -160,9 +159,9 @@ void test_constructions(const G& g,
   halfedge_descriptor h = halfedge(f, g);
   vertex_descriptor v = source(h, g);
 
-  Point_reference p = get(vpm, v);
-  Point_reference q = get(vpm, target(h, g));
-  Point_reference r = get(vpm, target(next(h, g), g));
+  Point p = get(vpm, v);
+  Point q = get(vpm, target(h, g));
+  Point r = get(vpm, target(next(h, g), g));
 
   const Bare_point bp(p);
   const Bare_point bq(q);
@@ -420,7 +419,6 @@ void test_locate_in_face(const G& g,
 {
   std::cout << "  test locate_in_face()..." << std::endl;
 
-  typedef typename boost::property_traits<VPM>::reference                    Point_reference;
   typedef typename K::FT                                                     FT;
 
   typedef typename boost::graph_traits<G>::vertex_descriptor                 vertex_descriptor;
@@ -435,7 +433,7 @@ void test_locate_in_face(const G& g,
 
   Face_location loc;
   FT a = 0.1;
-  Point_reference p = get(vpm, v);
+  auto p = get(vpm, v);
 
   loc = PMP::locate_vertex<FT>(v, g);
 
@@ -501,8 +499,6 @@ struct Locate_with_AABB_tree_Tester // 2D case
   {
     std::cout << "  test locate_with_AABB_tree (2D)..." << std::endl;
 
-    typedef typename boost::property_traits<VPM>::reference                    Point_reference;
-
     typedef typename K::FT                                                     FT;
     typedef typename K::Ray_2                                                  Ray_2;
     typedef typename K::Ray_3                                                  Ray_3;
@@ -530,8 +526,8 @@ struct Locate_with_AABB_tree_Tester // 2D case
     Intrinsic_point_to_Point_3 to_p3;
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_a;
-    Point_reference p_a = get(vpm, v);
-    const Point_3& p3_a = to_p3(p_a);
+    auto p_a = get(vpm, v);
+    auto p3_a = to_p3(p_a);
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_b;
     WrappedVPM vpm_b(vpm);
@@ -616,8 +612,6 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
   {
     std::cout << "  test locate_with_AABB_tree (3D)..." << std::endl;
 
-    typedef typename boost::property_traits<VPM>::reference                    Point_reference;
-
     typedef typename K::FT                                                     FT;
     typedef typename K::Ray_3                                                  Ray_3;
 
@@ -639,7 +633,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_a;
-    Point_reference p3_a = get(vpm, v);
+    auto p3_a = get(vpm, v);
 
     // below tests the case where the value type of the VPM is not Kernel::Point_3
     typedef My_3D_Point<K>                                                     Custom_point;
@@ -653,7 +647,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     Custom_map custom_map;
     for(vertex_descriptor vd : vertices(g))
     {
-      const Point_reference p = get(vpm, vd);
+      const auto p = get(vpm, vd);
       custom_map[vd] = Custom_point(p.x(), p.y(), p.z());
     }
 
