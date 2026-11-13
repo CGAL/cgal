@@ -443,8 +443,13 @@ among the parts of the mesh partition.
 
 The second example uses the more recently introduced Garland-Heckbert policies to reduce the
 number of edges by a given ratio. Here, the load is as well balanced as the partition is in
-terms of face count. However, the partition is more likely to introduce artifacts in the output
-triangle mesh, and the seams between parts may be visible.
+terms of face count.
+In this setting, the criterion is applied locally within each part, so the result may differ
+significantly from what a global criterion would produce. In particular, the partition is
+independent of the local geometry: a densely tessellated planar region, for instance,
+could be prioritized by a global criterion but may be split arbitrarily across parts.
+The partition is also likely to introduce visual artifacts in the output triangle mesh,
+such as visible seams along part boundaries.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_gh_edge_count_parallel.cpp}
 
