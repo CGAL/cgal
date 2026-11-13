@@ -948,6 +948,13 @@ public:
     return (_cover[0] == 1) && (_cover[1] == 1);
   }
 
+
+  /// Disables automatic conversion to 1-sheet covering
+  void disable_auto_convert() { _auto_convert_enabled = false; }
+
+  /// Enables automatic conversion to 1-sheet covering
+  void enable_auto_convert() { _auto_convert_enabled = true; }
+
   /// [Undoc] Combines two offsets, where the first offset is defined by the
   /// virtual vertex and the second by the face.
   Offset combine_offsets(const Offset& o_c, const Offset& o_t) const
@@ -1165,7 +1172,7 @@ protected:
   {
     // Fall back to 1-cover if the criterion that the longest edge is shorter
     // than sqrt(0.166) is fulfilled.
-    if (_too_long_edge_counter == 0 && !is_1_cover())
+    if (_auto_convert_enabled && _too_long_edge_counter == 0 && !is_1_cover())
       {
         CGAL_expensive_assertion( is_valid() );
         this->convert_to_1_sheeted_covering();
@@ -1514,6 +1521,9 @@ protected:
   /// Number of edges that are too long
   size_t _too_long_edge_counter;
 
+  /// Toggle to allow or prevent automatic conversion to 1-sheet covering
+  bool _auto_convert_enabled = true;
+
 private:
   /// map of offsets for periodic copies of vertices
   Virtual_vertex_map _virtual_vertices;
@@ -1676,6 +1686,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::copy_triangulation(
   _domain = tr._domain;
   _edge_length_threshold = tr._edge_length_threshold;
   _too_long_edge_counter = tr._too_long_edge_counter;
+  _auto_convert_enabled = tr._auto_convert_enabled;
   if (tr.is_1_cover())
     {
       _tds = tr.tds();
@@ -1703,6 +1714,8 @@ void Periodic_2_triangulation_2<Gt, Tds>::swap(Periodic_2_triangulation_2 &tr)
   std::swap(tr._edge_length_threshold, _edge_length_threshold);
   std::swap(tr._too_long_edges, _too_long_edges);
   std::swap(tr._too_long_edge_counter, _too_long_edge_counter);
+
+  std::swap(tr._auto_convert_enabled, _auto_convert_enabled);
 
   std::swap(tr._virtual_vertices, _virtual_vertices);
   std::swap(tr._virtual_vertices_reverse, _virtual_vertices_reverse);
