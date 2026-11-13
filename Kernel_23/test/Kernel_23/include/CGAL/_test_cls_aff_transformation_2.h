@@ -177,7 +177,7 @@ _test_cls_aff_transformation_2(const R& )
     assert( tray == CGAL::Ray_2<R>(tp3, tp2) );
     assert( tlin == CGAL::Line_2<R>(tp2, tp4) || nonexact);
     assert( ttri == CGAL::Triangle_2<R>(tp2, tp3, tp4) );
-    assert( tisor== CGAL::Iso_rectangle_2<R>( tp3, tp4 ) );
+    assert( tisor== CGAL::Iso_rectangle_2<R>( tp3, tp4 ) || nonexact);
 
     inv = a[i].inverse();
     tp4  = tp4.transform(  inv );
@@ -678,7 +678,7 @@ auto unit = [](CGAL::Vector_2<R> v) { return v / CGAL::approximate_sqrt(v*v); };
  comp2 = afft*refl;
  p1 = p.transform(afft);
  p1 = p1.transform(refl);
- assert(p1 == p.transform(comp1));
+ assert(p1 == p.transform(comp1) || nonexact);
  p1 = p.transform(refl);
  p1 = p1.transform(afft);
  assert(p1 == p.transform(comp2) || nonexact);

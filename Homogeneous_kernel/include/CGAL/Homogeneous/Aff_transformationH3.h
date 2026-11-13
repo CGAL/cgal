@@ -460,6 +460,22 @@ public:
                   const RT& m20, const RT& m21, const RT& m22,
                                                                const RT& m33);
 
+  Aff_transformationH3(
+                  const RT& m00, const RT& m01, const RT& m02, const RT& m03,
+                  const RT& m10, const RT& m11, const RT& m12, const RT& m13,
+                  const RT& m20, const RT& m21, const RT& m22, const RT& m23)
+    : Aff_transformationH3(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, RT(1))
+  {}
+
+
+  //  General form without translation
+  Aff_transformationH3(
+                  const RT& m00, const RT& m01, const RT& m02,
+                  const RT& m10, const RT& m11, const RT& m12,
+                  const RT& m20, const RT& m21, const RT& m22)
+    : Aff_transformationH3(m00, m01, m02, m10, m11, m12, m20, m21, m22, RT(1))
+  {}
+
   Point_3
   transform(const Point_3& p) const;
 
