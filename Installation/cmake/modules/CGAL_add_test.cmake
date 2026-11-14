@@ -36,6 +36,12 @@ if(CGAL_RUN_TESTS_THROUGH_SSH)
   find_program(scp_executable scp)
 endif()
 
+if(CMAKE_GENERATOR MATCHES "Visual Studio" OR CMAKE_GENERATOR MATCHES "Ninja")
+  set(CGAL_COMPILATION_TESTS_MODE "PROJECT")
+else()
+  set(CGAL_COMPILATION_TESTS_MODE "SINGLE_TARGET")
+endif()
+
 # Process a list, and replace items contains a file pattern (like
 # `*.off`) by the sublist that corresponds to the globbing of the
 # pattern in the directory `${CMAKE_CURRENT_SOURCE_DIR}`.
@@ -79,39 +85,49 @@ endfunction()
 
 function(cgal_add_compilation_test exe_name)
   cmake_policy(SET CMP0064 NEW)
-  if(NOT CMAKE_VS_MSBUILD_COMMAND)
-    if(TEST "compilation of  ${exe_name}")
+  if(CGAL_COMPILATION_TESTS_MODE STREQUAL "SINGLE_TARGET")
+    set("compilation_of__${exe_name}" "compilation of  ${exe_name}" CACHE INTERNAL "name of the compilation test for target ${exe_name}" FORCE)
+    if(TEST "${compilation_of__${exe_name}}")
       return()
     endif()
-    add_test(NAME "compilation of  ${exe_name}"
+    add_test(NAME "${compilation_of__${exe_name}}"
       COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
-    set_property(TEST "compilation of  ${exe_name}"
+    set_property(TEST "${compilation_of__${exe_name}}"
       APPEND PROPERTY LABELS "${PROJECT_NAME}")
-    set_property(TEST "compilation of  ${exe_name}"
+    set_property(TEST "${compilation_of__${exe_name}}"
       APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
-  elseif(NOT TARGET "compilation_of__${PROJECT_NAME}")#CMAKE_VS_MSBUILD_COMMAND
-    #this target is just a flag, to deal with the scope problem with the tests
-    add_custom_target("compilation_of__${PROJECT_NAME}")
-    set(SOLUTION_FILE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln")
-    if(MSVC_VERSION GREATER_EQUAL 1950)
-      set(SOLUTION_FILE "${SOLUTION_FILE}x")
+  elseif(CGAL_COMPILATION_TESTS_MODE STREQUAL "PROJECT")
+    set("compilation_of__${exe_name}" "compilation of  ${PROJECT_NAME}" CACHE INTERNAL "name of the compilation test for target ${exe_name}" FORCE)
+    if(NOT TARGET "compilation_of__${PROJECT_NAME}")
+      #this target is just a flag, to deal with the scope problem with the tests
+      add_custom_target("compilation_of__${PROJECT_NAME}")
+      if(CMAKE_VS_MSBUILD_COMMAND)
+        set(SOLUTION_FILE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln")
+        if(MSVC_VERSION GREATER_EQUAL 1950)
+          set(SOLUTION_FILE "${SOLUTION_FILE}x")
+        endif()
+        add_test(NAME "${compilation_of__${exe_name}}"
+          COMMAND ${TIME_COMMAND} "${CMAKE_VS_MSBUILD_COMMAND}" "${SOLUTION_FILE}" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
+      elseif(CMAKE_GENERATOR MATCHES "Ninja")
+        cmake_path(RELATIVE_PATH CMAKE_CURRENT_BINARY_DIR BASE_DIRECTORY "${CMAKE_BINARY_DIR}" OUTPUT_VARIABLE RELATIVE_DIR)
+        add_test(NAME "${compilation_of__${exe_name}}"
+          COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${RELATIVE_DIR}/all" --config "$<CONFIG>")
+      endif()
+      set_property(TEST "${compilation_of__${exe_name}}"
+        APPEND PROPERTY LABELS "${PROJECT_NAME}")
+      set_property(TEST "${compilation_of__${exe_name}}"
+        APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+      set_tests_properties("${compilation_of__${exe_name}}"
+        PROPERTIES RESOURCE_LOCK "CGAL_COMPILATION_TESTS")
+      #because of the scope of the tests, this part cannot go in the relevant CMakeLists
+      if("${PROJECT_NAME}" STREQUAL "Polyhedron_Demo")
+        set_tests_properties("${compilation_of__${exe_name}}" PROPERTIES TIMEOUT 2400)
+      elseif("${PROJECT_NAME}" STREQUAL "Mesh_3_Tests" OR "${PROJECT_NAME}" STREQUAL "Mesh_3_Examples")
+        set_tests_properties("${compilation_of__${exe_name}}" PROPERTIES TIMEOUT 1600)
+      endif()
     endif()
-    add_test(NAME "compilation of  ${PROJECT_NAME}"
-      COMMAND ${TIME_COMMAND} "${CMAKE_VS_MSBUILD_COMMAND}" "${SOLUTION_FILE}" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
-    set_property(TEST "compilation of  ${PROJECT_NAME}"
-      APPEND PROPERTY LABELS "${PROJECT_NAME}")
-    set_property(TEST "compilation of  ${PROJECT_NAME}"
-      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
-    set_tests_properties("compilation of  ${PROJECT_NAME}"
-      PROPERTIES RUN_SERIAL TRUE)
-    #because of the scope of the tests, this part cannot go in the relevant CMakeLists
-    if("${PROJECT_NAME}" STREQUAL "Polyhedron_Demo")
-      set_tests_properties("compilation of  Polyhedron_Demo" PROPERTIES TIMEOUT 2400)
-    elseif("${PROJECT_NAME}" STREQUAL "Mesh_3_Tests" OR "${PROJECT_NAME}" STREQUAL "Mesh_3_Examples")
-      set_tests_properties("compilation of  ${PROJECT_NAME}" PROPERTIES TIMEOUT 1600)
-    endif()
+  endif()
 
-  endif()#CMAKE_VS_MSBUILD_COMMAND
   if(NOT TARGET ALL_CGAL_TARGETS)
     add_custom_target( ALL_CGAL_TARGETS )
   endif()
@@ -134,13 +150,14 @@ function(cgal_add_compilation_test exe_name)
       # detect that the test has already been created.
       add_custom_target("compilation_of__CGAL_Qt6_moc_and_resources")
       add_dependencies( "compilation_of__CGAL_Qt6_moc_and_resources" CGAL_Qt6_moc_and_resources )
-      add_test(NAME "compilation of  CGAL_Qt6_moc_and_resources"
+      set(compilation_of__CGAL_Qt6_moc_and_resources "compilation of  CGAL_Qt6_moc_and_resources" CACHE INTERNAL "name of the compilation test for target CGAL_Qt6_moc_and_resources" FORCE)
+      add_test(NAME "${compilation_of__CGAL_Qt6_moc_and_resources}"
         COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "CGAL_Qt6_moc_and_resources" --config "$<CONFIG>")
-      set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"
+      set_property(TEST "${compilation_of__CGAL_Qt6_moc_and_resources}"
         APPEND PROPERTY LABELS "CGAL_build_system" "Installation")
-      set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"
+      set_property(TEST "${compilation_of__CGAL_Qt6_moc_and_resources}"
         PROPERTY FIXTURES_SETUP "CGAL_Qt6_moc_and_resources_Fixture")
-      set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"
+      set_property(TEST "${compilation_of__CGAL_Qt6_moc_and_resources}"
         APPEND PROPERTY DEPENDS "check build system")
     endif()
   endif()
@@ -163,13 +180,7 @@ function(cgal_setup_test_properties test_name)
   endif()
 
   if(exe_name)
-    if(NOT CMAKE_VS_MSBUILD_COMMAND)
-      set_property(TEST "${test_name}"
-        APPEND PROPERTY DEPENDS "compilation of  ${exe_name}")
-    else()#CMAKE_VS_MSBUILD_COMMAND
-      set_property(TEST "${test_name}"
-        APPEND PROPERTY DEPENDS "compilation of  ${PROJECT_NAME}")
-    endif()#CMAKE_VS_MSBUILD_COMMAND
+    set_property(TEST "${test_name}" APPEND PROPERTY DEPENDS "${compilation_of__${exe_name}}")
   endif()
 
   get_filename_component(_source_dir_abs ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
@@ -250,13 +261,8 @@ function(cgal_setup_test_properties test_name)
     if(exe_name)
       set_property(TEST ${test_name}
         APPEND PROPERTY FIXTURES_REQUIRED "${exe_name}")
-      if(NOT CMAKE_VS_MSBUILD_COMMAND)
-        set_property(TEST "compilation of  ${exe_name}"
-          PROPERTY FIXTURES_SETUP "${exe_name}")
-      else()#CMAKE_VS_MSBUILD_COMMAND
-        set_property(TEST "compilation of  ${PROJECT_NAME}"
-          PROPERTY FIXTURES_SETUP "${exe_name}")
-      endif()#CMAKE_VS_MSBUILD_COMMAND
+      set_property(TEST "${compilation_of__${exe_name}}"
+        APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
       if((ANDROID OR CGAL_RUN_TESTS_THROUGH_SSH) AND NOT TEST push_of__${exe_name})
         if(ANDROID)
           add_test(NAME "push_of__${exe_name}"
@@ -266,7 +272,7 @@ function(cgal_setup_test_properties test_name)
             COMMAND ${scp_executable} $<TARGET_FILE:${exe_name}> ${SSH_HOST}:${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}/)
         endif()
         set_property(TEST "push_of__${exe_name}"
-          APPEND PROPERTY DEPENDS "compilation of  ${exe_name}")
+          APPEND PROPERTY DEPENDS "${compilation_of__${exe_name}}")
         set_property(TEST "push_of__${exe_name}"
           APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
         set_property(TEST "push_of__${exe_name}"

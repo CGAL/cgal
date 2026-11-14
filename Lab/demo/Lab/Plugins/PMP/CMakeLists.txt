@@ -71,13 +71,13 @@ if(TARGET CGAL::Eigen3_support)
                          ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP CDT_3)
   target_link_libraries(remesh_planar_patches_plugin PRIVATE scene_surface_mesh_item  CGAL::Eigen3_support)
 
-  if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+  if(TEST "${compilation_of__extrude_plugin}")
     set_tests_properties(
-      "compilation of  extrude_plugin"
-      "compilation of  fairing_plugin"
-      "compilation of  hole_filling_plugin"
-      "compilation of  remesh_planar_patches_plugin"
-      "compilation of  smoothing_plugin"
+      "${compilation_of__extrude_plugin}"
+      "${compilation_of__fairing_plugin}"
+      "${compilation_of__hole_filling_plugin}"
+      "${compilation_of__remesh_planar_patches_plugin}"
+      "${compilation_of__smoothing_plugin}"
       PROPERTIES RESOURCE_LOCK Selection_test_resources)
   endif()
 else()
@@ -184,14 +184,14 @@ target_link_libraries(
                               scene_polylines_item
                               CGAL::Eigen3_support)
 
-if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+if(TEST "${compilation_of__degenerated_faces_plugin}")
   set_tests_properties(
-    "compilation of  degenerated_faces_plugin"
-    "compilation of  engrave_text_plugin"
-    "compilation of  isotropic_remeshing_plugin"
-    "compilation of  join_and_split_plugin"
-    "compilation of  random_perturbation_plugin"
-    "compilation of  selection_plugin"
-    "compilation of  triangulate_facets_plugin"
+    "${compilation_of__degenerated_faces_plugin}"
+    "${compilation_of__engrave_text_plugin}"
+    "${compilation_of__isotropic_remeshing_plugin}"
+    "${compilation_of__join_and_split_plugin}"
+    "${compilation_of__random_perturbation_plugin}"
+    "${compilation_of__selection_plugin}"
+    "${compilation_of__triangulate_facets_plugin}"
     PROPERTIES RESOURCE_LOCK Selection_test_resources)
 endif()
