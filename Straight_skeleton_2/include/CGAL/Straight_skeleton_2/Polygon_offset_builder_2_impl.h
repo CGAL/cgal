@@ -160,8 +160,18 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateSeed( FT aTime, Halfedge_con
       // the next hook will be found at the previous bisector's target, which would be a mistake.
       // So, we modify the seed to be the target() of the previous halfedge instead.
       if ( lPos == SOURCE )
+      {
+        CGAL_POLYOFFSET_TRACE(2,"Pos at source on " << e2str(*rSeed) << "...");
         rSeed = rSeed->prev() ;
-      CGAL_POLYOFFSET_TRACE(2,"Pos at source switched to pos at target on " << e2str(*rSeed) ) ;
+        CGAL_POLYOFFSET_TRACE(2,"... switched to pos at target on " << e2str(*rSeed) ) ;
+
+        // The previous rSeed was filtered in LocateHook, we need the same checks here
+        if ( IsVisited(rSeed) || rSeed->slope() == ZERO ) // @todo check that prev is not a bisector too?
+        {
+          CGAL_POLYOFFSET_TRACE(2,"Switched seed is already visited or degenerate. Discarded" ) ;
+          rSeed = Halfedge_const_handle();
+        }
+      }
     }
     else
     {
