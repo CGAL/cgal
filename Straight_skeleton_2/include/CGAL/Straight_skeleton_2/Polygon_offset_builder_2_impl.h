@@ -271,8 +271,13 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
       lHook = lHook->opposite();
     }
 
-    Visit(lLastHook);
-    visited_hooks.push_back(lLastHook);
+    // If a trace is not complete, halfedge visited flags are reset. However, we must not
+    // reset hooks that were genuinely visited from another offset contour.
+    if ( !IsVisited(lLastHook) )
+    {
+      Visit(lLastHook);
+      visited_hooks.push_back(lLastHook);
+    }
 
     CGAL_POLYOFFSET_TRACE(2,"Marking last hook, B" << lLastHook->id() << ", as visited." ) ;
   }
