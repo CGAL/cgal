@@ -241,6 +241,8 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
 
   ContainerPtr lPoly( new Container() ) ;
 
+  mLastPoint = std::nullopt ;
+
   mVisitor.on_offset_contour_started();
 
   Halfedge_const_handle lHook = aSeed ;
