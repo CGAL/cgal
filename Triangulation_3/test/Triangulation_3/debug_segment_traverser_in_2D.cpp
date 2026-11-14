@@ -1,7 +1,18 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_3.h>
+#include <CGAL/intersections.h>
 
 #include <iostream>
+#include <vector>
+#include <cstdlib>
+
+#define TEST_ASSERT(cond) do { \
+    if (!(cond)) { \
+        std::cerr << "Assertion failed: " << #cond << " at " << __FILE__ << ":" << __LINE__ << std::endl; \
+        std::abort(); \
+    } \
+} while(0)
+
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Tr = CGAL::Triangulation_3<K>;
@@ -104,62 +115,58 @@ R"_tr(2
 7 24 32
 )_tr";
 
-void dump_triangulation(const Tr& tr) {
-  std::ofstream off("triangulation.polylines.txt");
-  off.precision(17);
-  for(auto f : tr.finite_facets()) {
-    off << "4 " << f.first->vertex((f.second+1)%4)->point() << " "
-                << f.first->vertex((f.second+2)%4)->point() << " "
-                << f.first->vertex((f.second+3)%4)->point() << " "
-                << f.first->vertex((f.second+1)%4)->point()
-                << '\n';
-  }
-}
-
-template <typename Point>
-void dump_segment(Point pa, Point pb)
-{
-  std::ofstream seg("segment.polylines.txt");
-  seg.precision(17);
-  seg << "2  " << pa << "  " << pb << '\n';
-}
-
-template <typename Point>
-void dump_triangle(Point a, Point b, Point c, int i)
-{
-  std::stringstream ss;
-  ss << "triangle_" << i << ".polylines.txt";
-  std::ofstream tri(ss.str());
-  tri.precision(17);
-  tri << "4  " << a << "  " << b << "  " << c << "  " << a << '\n';
-}
-
 int main()
 {
-  std::cerr.precision(17);
-  std::cout.precision(17);
-
   Tr tr;
   std::istringstream iss(triangulation_content);
   iss >> tr;
-  assert(tr.is_valid());
-  std::cerr << "dimension: " << tr.dimension() << std::endl;
-  std::cerr << "number of vertices: " << tr.number_of_vertices() << std::endl;
-  std::cerr << "number of facets: " << tr.number_of_facets() << std::endl;
-  std::cerr << "number of cells: " << tr.number_of_cells() << std::endl;
-  dump_triangulation(tr);
-  dump_segment(segment[0], segment[1]);
+  TEST_ASSERT(tr.is_valid());
+  TEST_ASSERT(tr.dimension() == 2);
+
   Tr::Vertex_handle va, vb;
   const bool va_ok = tr.is_vertex(segment[0], va);
   const bool vb_ok = tr.is_vertex(segment[1], vb);
-  assert(va_ok && vb_ok);
+  TEST_ASSERT(va_ok && vb_ok);
+
   auto it = tr.segment_traverser_cells_begin(va, vb);
   const auto end = tr.segment_traverser_cells_end();
-  for (int i = 0; it != end; ++it, ++i) {
-    std::cerr << "current cell: " << it->vertex(0)->point() << " "
-              << it->vertex(1)->point() << " " << it->vertex(2)->point()
-              << '\n';
-    dump_triangle(it->vertex(0)->point(), it->vertex(1)->point(),
-                  it->vertex(2)->point(), i);
+
+  std::vector<Tr::Cell_handle> visited;
+  for (; it != end; ++it) {
+    visited.push_back(it);
   }
+
+  // Verify traverser invariants on Laurent's reproducing dataset:
+  // 1. Exactly 5 cells visited
+  TEST_ASSERT(visited.size() == 5);
+
+  // 2. Start cell contains va
+  int idx = -1;
+  TEST_ASSERT(visited.front()->has_vertex(va, idx));
+
+  // 3. End cell contains vb
+  TEST_ASSERT(visited.back()->has_vertex(vb, idx));
+
+  K::Segment_3 seg(segment[0], segment[1]);
+  // 4. Every cell intersects the segment geometrically in a non-zero length Segment_3
+  for (auto c : visited) {
+    TEST_ASSERT(!c->has_vertex(tr.infinite_vertex()));
+    K::Triangle_3 tri(c->vertex(0)->point(), c->vertex(1)->point(), c->vertex(2)->point());
+    auto isect = CGAL::intersection(tri, seg);
+    TEST_ASSERT(isect.has_value());
+    TEST_ASSERT(std::holds_alternative<K::Segment_3>(*isect));
+    K::Segment_3 iseg = std::get<K::Segment_3>(*isect);
+    TEST_ASSERT(iseg.source() != iseg.target());
+  }
+
+  // 5. Consecutive cells share an edge
+  for (size_t i = 0; i + 1 < visited.size(); ++i) {
+    Tr::Cell_handle c1 = visited[i];
+    Tr::Cell_handle c2 = visited[i+1];
+    bool are_neighbors = (c1->neighbor(0) == c2 || c1->neighbor(1) == c2 || c1->neighbor(2) == c2);
+    TEST_ASSERT(are_neighbors);
+  }
+
+  std::cout << "Laurent's reproducer test passed with all invariants verified!" << std::endl;
+  return 0;
 }
