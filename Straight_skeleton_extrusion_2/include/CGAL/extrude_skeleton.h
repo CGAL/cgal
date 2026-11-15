@@ -191,11 +191,13 @@ class Skeleton_offset_correspondence_builder_visitor
   using SS_Halfedge_const_handle = typename StraightSkeleton_2::Halfedge_const_handle;
 
   using HDS = typename StraightSkeleton_2::Base;
+  using HDS_Vertex_const_handle = typename HDS::Vertex_const_handle;
   using HDS_Halfedge_const_handle = typename HDS::Halfedge_const_handle;
 
 public:
   Skeleton_offset_correspondence_builder_visitor(const FT& height,
                                                  std::vector<Point_3>& points,
+                                                 CGAL::unordered_flat_map<HDS_Vertex_const_handle, std::size_t>& vertex_point_ids,
                                                  CGAL::unordered_flat_map<HDS_Halfedge_const_handle, std::size_t>& halfedge_point_ids,
                                                  std::vector<std::vector<HDS_Halfedge_const_handle> >& contour_halfedges
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
@@ -205,6 +207,7 @@ public:
                                                 )
     : m_height(height),
       m_points(points),
+      m_vertex_point_ids(vertex_point_ids),
       m_halfedge_point_ids(halfedge_point_ids),
       m_contour_halfedges(contour_halfedges)
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
@@ -213,10 +216,25 @@ public:
 #endif
   { }
 
+private:
+  // Same as Polygon_offset_builder_2::Compare_offset_against_event_time(), plus contour nodes.
+  CGAL::Comparison_result compare_height_to_node_time(HDS_Vertex_const_handle node) const
+  {
+    if(node->is_contour())
+      return CGAL::LARGER; // abs height is > 0
+    if(node->has_infinite_time())
+      return CGAL::SMALLER;
+
+    return static_cast<CGAL::Comparison_result>(
+      OffsetBuilderTraits().compare_offset_against_event_time_2_object()(CGAL::abs(m_height),
+                                                                         node->trisegment()));
+  }
+
 public:
   void on_offset_contour_started() const
   {
-    m_contour_halfedges.emplace_back();
+    // std::cout << "~~ new contour ~~" << std::endl;
+    m_tentative_contour.clear();
   }
 
   // can't modify the position yet because we need arrange_polygons() to still work properly
@@ -228,13 +246,8 @@ public:
   {
     CGAL_precondition(hook->is_bisector());
 
-    HDS_Halfedge_const_handle canonical_hook = (hook < hook->opposite()) ? hook : hook->opposite();
-    m_contour_halfedges.back().push_back(canonical_hook);
-
-    const std::size_t n = m_points.size();
-    auto res = m_halfedge_point_ids.emplace(canonical_hook, n);
-    if (res.second) // successful insertion, never investigated this halfedge before
-      m_points.push_back(Point_3{op.x(), op.y(), m_height});
+    // std::cout << "-> on offset point(" << op << ", " << " on H" << hook->id() << ")" << std::endl;
+    m_tentative_contour.emplace_back(op, hook);
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
     CGAL_precondition(m_snapped_positions.count(op) == 0);
@@ -269,11 +282,75 @@ public:
 #endif
   }
 
+  void on_offset_contour_finished(const bool is_complete) const
+  {
+    if(!is_complete)
+      return;
+
+    m_contour_halfedges.emplace_back();
+    std::vector<HDS_Halfedge_const_handle>& contour = m_contour_halfedges.back();
+
+     std::vector<std::size_t> ids; // as to detect consecutive hooks sharing the same point
+
+     for(const auto& e : m_tentative_contour)
+     {
+        const Point_2& op = e.first;
+        HDS_Halfedge_const_handle hook = e.second;
+        HDS_Halfedge_const_handle canonical_hook = (hook < hook->opposite()) ? hook : hook->opposite();
+
+        // the visitor could have given the hook position...
+        HDS_Vertex_const_handle node;
+        if(compare_height_to_node_time(hook->vertex()) == CGAL::EQUAL)
+          node = hook->vertex();
+        // else if, because the slope is non-zero for hooks
+        else if(compare_height_to_node_time(hook->opposite()->vertex()) == CGAL::EQUAL)
+          node = hook->opposite()->vertex();
+
+        std::size_t id = m_points.size();
+        if(node != HDS_Vertex_const_handle())
+        {
+          auto vres = m_vertex_point_ids.emplace(node, id);
+          if(vres.second) // successful insertion, never investigated this vertex before
+          {
+            // can't be a known halfedge with hook at source/target and unknown vertex
+            CGAL_assertion(m_halfedge_point_ids.count(canonical_hook) == 0);
+
+            m_points.push_back(Point_3{op.x(), op.y(), m_height});
+          }
+          else
+          {
+            id = vres.first->second;
+          }
+
+          m_halfedge_point_ids.emplace(canonical_hook, id);
+        }
+        else
+        {
+          auto res = m_halfedge_point_ids.emplace(canonical_hook, id);
+          if(res.second) // successful insertion, never investigated this halfedge before
+            m_points.push_back(Point_3{op.x(), op.y(), m_height});
+        }
+
+        // Two consecutive hooks can share a node at the offset time (offset contouring removes such
+        // duplicates geometrically, which is not reliable with inexact constructions)
+        if(!ids.empty() && ids.back() == id)
+          continue;
+
+        ids.push_back(id);
+        contour.push_back(canonical_hook);
+     }
+
+    if(ids.size() > 1 && ids.front() == ids.back())
+      contour.pop_back();
+   }
+
 private:
   const FT& m_height;
   std::vector<Point_3>& m_points;
+  CGAL::unordered_flat_map<HDS_Vertex_const_handle, std::size_t>& m_vertex_point_ids;
   CGAL::unordered_flat_map<HDS_Halfedge_const_handle, std::size_t>& m_halfedge_point_ids;
   std::vector<std::vector<HDS_Halfedge_const_handle> >& m_contour_halfedges;
+  mutable std::vector<std::pair<Point_2, HDS_Halfedge_const_handle> > m_tentative_contour;
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
   const FT m_vertical_weight;
@@ -1076,7 +1153,7 @@ public:
     if(!is_default_extrusion_height)
     {
       std::vector<std::vector<HDS_Halfedge_const_handle> > contour_halfedges;
-      Visitor visitor(*m_height, m_points, m_halfedge_point_ids, contour_halfedges);
+      Visitor visitor(*m_height, m_points, m_vertex_point_ids, m_halfedge_point_ids, contour_halfedges);
       Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
       ob.construct_offset_contours(CGAL::abs(*m_height), CGAL::Emptyset_iterator());
       construct_top_horizontal_faces(contour_halfedges);
@@ -1225,8 +1302,8 @@ public:
       collect_contour_halfedges(*ss_ptr, bot_contour_halfedges);
       CGAL_assertion(bot_contour_halfedges.size() == 2);
 
-      // accumulate the result without triangulating anything yet: we need all the holes too
-      Visitor visitor(*m_height, m_points, m_halfedge_point_ids, top_contour_halfedges);
+      // accumulate the result without triangulating anything yet: we need all the holes in one place
+      Visitor visitor(*m_height, m_points, m_vertex_point_ids, m_halfedge_point_ids, top_contour_halfedges);
       Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
       ob.construct_offset_contours(CGAL::abs(*m_height), CGAL::Emptyset_iterator());
       CGAL_assertion(top_contour_halfedges.size() >= 2);
@@ -1286,10 +1363,11 @@ public:
       collect_contour_halfedges(*ss_ptr, bot_contour_halfedges);
 
       // accumulate the result without triangulating anything yet: we need all the holes too
-      Visitor visitor(*m_height, m_points, m_halfedge_point_ids, top_contour_halfedges);
+      Visitor visitor(*m_height, m_points, m_vertex_point_ids, m_halfedge_point_ids, top_contour_halfedges);
       Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
       ob.construct_offset_contours(CGAL::abs(*m_height), CGAL::Emptyset_iterator());
-      // no frame contour to drop here: we constructed an interior skeleton for the reversed hole
+
+      // no frame contour to drop here: we used an interior skeleton for the reversed hole
 
       // lateral faces
       const bool invert_faces = is_positive(*m_height);
