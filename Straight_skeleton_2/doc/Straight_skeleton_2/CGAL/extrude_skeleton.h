@@ -31,7 +31,7 @@ namespace CGAL {
 *   \cgalParamNBegin{weights}
 *     \cgalParamDescription{a range of weights, one for each edge of the input polygon}
 *     \cgalParamType{a model of `Range` whose value type is a model of `Range` whose value type is `FT`}
-*     \cgalParamDefault{an empty range (uniform weights are used)}
+*     \cgalParamDefault{Uniform weights (`1`) are used.}
 *     \cgalParamExtra{Weights should be finite and all of the same sign.
 *                     Negative weights are used to signify exterior extrusion.
 *                     Contrary to weighted skeleton functions, a weight `0` can here be used to signify a vertical extrusion of this edge.}
@@ -43,7 +43,7 @@ namespace CGAL {
 *                           edge, the angle is the dihedral angle between the `z=0` plane and the desired
 *                           extrusion plane.}
 *     \cgalParamType{a model of `Range` whose value type is a model of `Range` whose value type is `FT`}
-*     \cgalParamDefault{an empty range (uniform weights are used)}
+*     \cgalParamDefault{Uniform weights (`1`) are used.}
 *     \cgalParamExtra{Angles are measured in degrees and should be strictly within `0` and `180` degrees
 *                     and should be either all acute (inward extrusion) or all obtuse (outward extrusion).}
 *     \cgalParamExtra{This parameter is ignored if the `weights` parameter is provided.}
