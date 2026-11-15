@@ -204,12 +204,13 @@ public:
                                                , const FT vertical_weight
                                                , std::map<Point_2, Point_2>& snapped_positions
 #endif
-                                                )
+                                               , const bool ignore_first_contour = false) // for outer skeletons
     : m_height(height),
       m_points(points),
       m_vertex_point_ids(vertex_point_ids),
       m_halfedge_point_ids(halfedge_point_ids),
-      m_contour_halfedges(contour_halfedges)
+      m_contour_halfedges(contour_halfedges),
+      m_skip_next_contour(ignore_first_contour)
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
     , m_vertical_weight(vertical_weight)
     , m_snapped_positions(snapped_positions)
@@ -284,7 +285,14 @@ public:
 
   void on_offset_contour_finished(const bool is_complete) const
   {
+    // if we have to ignore the first contour, that means it's the outer frame's
+    // and the outer frame should be the first contour, and a complete contour.
+    CGAL_assertion(!m_skip_next_contour || is_complete);
+
     if(!is_complete)
+      return;
+
+    if(std::exchange(m_skip_next_contour, false))
       return;
 
     m_contour_halfedges.emplace_back();
@@ -351,6 +359,7 @@ private:
   CGAL::unordered_flat_map<HDS_Halfedge_const_handle, std::size_t>& m_halfedge_point_ids;
   std::vector<std::vector<HDS_Halfedge_const_handle> >& m_contour_halfedges;
   mutable std::vector<std::pair<Point_2, HDS_Halfedge_const_handle> > m_tentative_contour;
+  mutable bool m_skip_next_contour;
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
   const FT m_vertical_weight;
@@ -1302,17 +1311,16 @@ public:
       collect_contour_halfedges(*ss_ptr, bot_contour_halfedges);
       CGAL_assertion(bot_contour_halfedges.size() == 2);
 
-      // accumulate the result without triangulating anything yet: we need all the holes in one place
-      Visitor visitor(*m_height, m_points, m_vertex_point_ids, m_halfedge_point_ids, top_contour_halfedges);
-      Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
-      ob.construct_offset_contours(CGAL::abs(*m_height), CGAL::Emptyset_iterator());
-      CGAL_assertion(top_contour_halfedges.size() >= 2);
-
-      // filter the outer frame contours & offsets
+      // filter the outer frame
       std::swap(bot_contour_halfedges[0], bot_contour_halfedges.back());
       bot_contour_halfedges.pop_back();
-      std::swap(top_contour_halfedges[0], top_contour_halfedges.back());
-      top_contour_halfedges.pop_back();
+
+      // accumulate the result without triangulating anything yet: we need all the holes in one place
+      Visitor visitor(*m_height, m_points, m_vertex_point_ids, m_halfedge_point_ids, top_contour_halfedges, true /*ignore the first contour*/);
+      Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
+      ob.construct_offset_contours(CGAL::abs(*m_height), CGAL::Emptyset_iterator());
+
+      // nothing to purge from the top contour since we ignore it in the callback
 
       // lateral faces
       const bool invert_faces = is_positive(*m_height);
