@@ -1334,8 +1334,14 @@ public:
     for(auto hit=pwh.holes_begin(); hit!=pwh.holes_end(); ++hit, ++hole_id)
     {
       using I_Polygon_2 = CGAL::cpp20::remove_cvref_t<decltype(*pwh.holes_begin())>;
-      I_Polygon_2 hole = *hit; // intentional copy
-      hole.reverse_orientation();
+
+      // reverse the hole and its weights
+      std::vector<IPoint_2> hole(std::cbegin(*hit), std::cend(*hit));
+      std::reverse(hole.begin(), hole.end());
+
+      auto hole_speeds = speeds[1 + hole_id];
+      std::reverse(hole_speeds.begin(), hole_speeds.end());
+      std::rotate(hole_speeds.begin(), std::prev(hole_speeds.end()), hole_speeds.end()); // one to the right
 
       // this is roughly "CGAL::create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2()",
       // but we need the intermediate straight skeleton to build the lateral faces
@@ -1346,9 +1352,12 @@ public:
                                              CGAL::abs(s_height),
                                              CGAL_SS_i::vertices_begin(hole),
                                              CGAL_SS_i::vertices_end(hole),
-                                             std::begin(no_holes), std::end(no_holes),
-                                             std::begin(speeds[1 + hole_id]), std::end(speeds[1 + hole_id]),
-                                             std::begin(no_hole_speeds), std::end(no_hole_speeds),
+                                             std::cbegin(no_holes),
+                                             std::cend(no_holes),
+                                             std::cbegin(hole_speeds),
+                                             std::cend(hole_speeds),
+                                             std::cbegin(no_hole_speeds),
+                                             std::cend(no_hole_speeds),
                                              m_sk);
 
       if(!s_ss_ptr)
