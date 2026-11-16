@@ -14,6 +14,8 @@
 #ifndef CGAL_SPHERE_PACKING_H_
 #define CGAL_SPHERE_PACKING_H_
 
+#if defined(CGAL_LINKED_WITH_PROTOSPHERE)
+
 #include <CGAL/license/Sphere_packing.h>
 
 #include <CGAL/disable_warnings.h>
@@ -292,5 +294,7 @@ OutputIterator pack_spheres(const TriangleMesh& tm, OutputIterator out, const Na
 } //namespace CGAL
 
 #include <CGAL/enable_warnings.h>
+
+#endif // #if defined(CGAL_LINKED_WITH_PROTOSPHERE)
 
 #endif // CGAL_SPHERE_PACKING_H_
