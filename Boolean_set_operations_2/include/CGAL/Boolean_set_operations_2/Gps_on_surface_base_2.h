@@ -27,7 +27,6 @@
 #include <CGAL/enum.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Arrangement_on_surface_2.h>
-#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_do_intersect_overlay_2.h>
@@ -126,10 +125,7 @@ protected:
   using Shared_traits = std::shared_ptr<const Traits_2>;
 
   // The traits, shared with the arrangements of the set and of its copies. Traits given by the caller are not owned.
-  // Traits* should be removed and only m_traits should be used.
-  // If you, who reads this text, have time, replace m_traits with m_traits_adaptor.
   Shared_traits m_traits;
-  CGAL::Arr_traits_adaptor_2<Traits_2> m_traits_adaptor;
 
 
   Aos_2* m_arr;         // the underlying arrangement
@@ -139,7 +135,6 @@ public:
   // constructs default
   Gps_on_surface_base_2() :
     m_traits(std::make_shared<Traits_2>()),
-    m_traits_adaptor(*m_traits),
     m_arr(new Aos_2(m_traits))
   {}
 
@@ -147,14 +142,12 @@ public:
   // constructs with traits object
   Gps_on_surface_base_2(const Traits_2& tr) :
     m_traits(_non_owning(tr)),
-    m_traits_adaptor(*m_traits),
     m_arr(new Aos_2(m_traits))
   {}
 
   // copy constructs; the copy shares the traits (with its arrangement, a copy of the arrangement of the other set)
   Gps_on_surface_base_2(const Self& ps) :
     m_traits(ps.m_traits),
-    m_traits_adaptor(*m_traits),
     m_arr(new Aos_2(*(ps.m_arr)))
   {}
 
@@ -164,7 +157,6 @@ public:
 
     delete m_arr;
     m_traits = ps.m_traits;
-    m_traits_adaptor = CGAL::Arr_traits_adaptor_2<Traits_2>(*m_traits);
     m_arr = new Aos_2(*(ps.m_arr));
     return (*this);
   }
@@ -172,7 +164,6 @@ public:
   // constructs
   explicit Gps_on_surface_base_2(const Polygon_2& pgn) :
     m_traits(std::make_shared<Traits_2>()),
-    m_traits_adaptor(*m_traits),
     m_arr(new Aos_2(m_traits)) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _insert(pgn, *m_arr);
@@ -181,7 +172,6 @@ public:
   // constructs
   explicit Gps_on_surface_base_2(const Polygon_2& pgn, const Traits_2& tr) :
     m_traits(_non_owning(tr)),
-    m_traits_adaptor(*m_traits),
     m_arr(new Aos_2(m_traits)) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _insert(pgn, *m_arr);
@@ -190,7 +180,6 @@ public:
   // constructs
   explicit Gps_on_surface_base_2(const Polygon_with_holes_2& pgn_with_holes) :
     m_traits(std::make_shared<Traits_2>()),
-    m_traits_adaptor(*m_traits),
     m_arr(new Aos_2(m_traits)) {
     ValidationPolicy::is_valid(pgn_with_holes,*m_traits);
     _insert(pgn_with_holes, *m_arr);
@@ -200,7 +189,6 @@ public:
   explicit Gps_on_surface_base_2(const Polygon_with_holes_2& pgn_with_holes,
                                  const Traits_2& tr) :
     m_traits(_non_owning(tr)),
-    m_traits_adaptor(*m_traits),
     m_arr(new Aos_2(m_traits)) {
     ValidationPolicy::is_valid(pgn_with_holes,*m_traits);
     _insert(pgn_with_holes, *m_arr);
@@ -210,7 +198,6 @@ protected:
   // constructs given an arrangement, which the set adopts; the set shares the traits of the arrangement
   Gps_on_surface_base_2(Aos_2* arr) :
     m_traits(arr->shared_geometry_traits()),
-    m_traits_adaptor(*m_traits),
     m_arr(arr)
    {}
 
