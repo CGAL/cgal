@@ -598,6 +598,8 @@ public:
 
     if constexpr(is_exact_kernel<K>)
     {
+      // if we have gone through the trouble of using an exact kernel, the position is likely better
+      // than the one computed with XK, so update the XK position with the (converted-back) value.
       const auto& kp = compute_skeleton_halfedge_point<K>(canonical, *m_height);
       m_points[id] = to_xk(kp);
 
@@ -707,7 +709,7 @@ public:
     using Border = std::vector<typename K::Point_3>;
 
 #if 0
-    // Below is not both redundant and not complete: we are checking for degeneracies
+    // Below is both redundant and not complete: we are checking for degeneracies
     // created during offset contouring by SLS2. However, the CDT can itself create
     // degenerate constraints with an inexact kernel, either because of numerical issues
     // during projection with a PCDT, or numerical issues creating a vertical segment
@@ -1440,7 +1442,8 @@ void convert_angles(AngleRange& angles)
 // - the weight of vertical slabs
 template <typename FT, typename WeightRange>
 std::tuple<Slope, bool, FT>
-preprocess_weights(WeightRange& weights, bool verbose = false)
+preprocess_weights(WeightRange& weights,
+                   bool verbose = false)
 {
   CGAL_precondition(!weights.empty());
 
@@ -1539,19 +1542,17 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
   SK sk = choose_parameter<SK>(get_parameter(np, CGAL::internal_np::geom_traits));
-
   XK xk = choose_parameter<XK>(get_parameter(np, internal_np::extrusion_traits));
+
   if(verbose)
     std::cout << "XK is " << typeid(XK).name() << std::endl;
 
-  const SFT s_height = choose_parameter(get_parameter(np, internal_np::maximum_height), 0);
-
   Slope slope;
-  bool valid_input;
+  bool is_valid_input;
   IFT i_vertical_weight;
-  std::tie(slope, valid_input, i_vertical_weight) = preprocess_weights<IFT>(weights, verbose);
+  std::tie(slope, is_valid_input, i_vertical_weight) = preprocess_weights<IFT>(weights, verbose);
 
-  if(!valid_input)
+  if(!is_valid_input)
   {
     if(verbose)
       std::cerr << "Error: invalid input weights" << std::endl;
@@ -1571,6 +1572,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   // End of preprocessing, start the actual skeleton computation
 
+  const SFT s_height = choose_parameter(get_parameter(np, internal_np::maximum_height), 0);
   if(slope != Slope::INWARD && s_height == 0)
   {
     if(verbose)
@@ -1612,6 +1614,11 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   for(const Point_3& p : points)
     output_points.push_back(to_ok(p));
 
+#ifdef CGAL_SLS_OUTPUT_FILES
+  CGAL::IO::write_polygon_soup("result_soup.off", output_points, faces,
+                               CGAL::parameters::stream_precision(17));
+#endif
+
   CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(faces));
   PMP::polygon_soup_to_polygon_mesh(output_points, faces, out,
                                     CGAL::parameters::all_default(),
@@ -1619,6 +1626,10 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
 #ifdef CGAL_SLS_DEBUG_DRAW
   CGAL::draw(out);
+#endif
+
+#ifdef CGAL_SLS_OUTPUT_FILES
+  CGAL::IO::write_polygon_mesh("result.off", out, CGAL::parameters::stream_precision(17));
 #endif
 
   CGAL_postcondition(is_valid_polygon_mesh(out));
