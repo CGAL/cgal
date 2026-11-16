@@ -207,8 +207,9 @@ public:
   }
 
 protected:
+  // constructs given an arrangement, which the set adopts; the set shares the traits of the arrangement
   Gps_on_surface_base_2(Aos_2* arr) :
-    m_traits(std::make_shared<Traits_2>()),
+    m_traits(arr->shared_geometry_traits()),
     m_traits_adaptor(*m_traits),
     m_arr(arr)
    {}
