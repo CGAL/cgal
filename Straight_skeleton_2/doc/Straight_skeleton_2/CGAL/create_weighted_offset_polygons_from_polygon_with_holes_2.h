@@ -25,10 +25,11 @@ This is equivalent to `arrange_offset_polygons_2(create_interior_weighted_skelet
 \sa `CGAL::create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
+template<class OfKPolygon, class FT, class InKPolygon,  class InKWeights, class OfK, class SsK>
 std::vector< std::shared_ptr< OfKPolygon > >
-create_interior_weighted_skeleton_and_offset_polygons_with_holes_2(FT offset,
+create_interior_weighted_skeleton_and_offset_polygons_with_holes_2(const FT& offset,
                                                                    const InKPolygon& poly_with_holes,
+                                                                   const InKWeights& aWeights,
                                                                    OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
                                                                    SsK ssk = CGAL::Exact_predicates_inexact_constructions_kernel);
 
@@ -64,11 +65,10 @@ having reversed the orientation of all other polygons.
 \sa `CGAL::create_interior_weighted_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
+template<class OfKPolygon, class FT, class InKPolygon, class InKWeights, class OfK, class SsK>
 std::vector<std::shared_ptr<OfKPolygon> >
-create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2(FT offset,
-                                                                   const InKPolygon&
-                                                                   poly_with_holes,
+create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2(const FT& offset,
+                                                                   const InKPolygon& poly_with_holes,
                                                                    const InKWeights& weights,
                                                                    OfK ofk = Exact_predicates_inexact_constructions_kernel(),
                                                                    SsK ssk = Exact_predicates_inexact_constructions_kernel());
