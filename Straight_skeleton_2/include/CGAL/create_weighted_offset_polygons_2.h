@@ -25,6 +25,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Default.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/tags.h>
 
