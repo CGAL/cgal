@@ -115,16 +115,6 @@ public:
   using Top_side_category = typename Arr::Top_side_category;
   using Right_side_category = typename Arr::Right_side_category;
 
-  // a side is either oblivious or open (unbounded)
-  static_assert(std::is_same<Left_side_category, Arr_oblivious_side_tag>::value ||
-                         std::is_same<Left_side_category, Arr_open_side_tag>::value);
-  static_assert(std::is_same<Bottom_side_category, Arr_oblivious_side_tag>::value ||
-                         std::is_same<Bottom_side_category, Arr_open_side_tag>::value);
-  static_assert(std::is_same<Top_side_category, Arr_oblivious_side_tag>::value ||
-                         std::is_same<Top_side_category, Arr_open_side_tag>::value);
-  static_assert(std::is_same<Right_side_category, Arr_oblivious_side_tag>::value ||
-                         std::is_same<Right_side_category, Arr_open_side_tag>::value);
-
   using Halfedge_handle = typename Arr::Halfedge_handle;
   using Vertex_handle = typename Arr::Vertex_handle;
 
