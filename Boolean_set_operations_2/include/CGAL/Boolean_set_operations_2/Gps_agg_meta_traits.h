@@ -153,7 +153,7 @@ public:
       using Intersection_base_point = const std::pair<Base_point_2, Multiplicity>;
       using Intersection_base_result = std::variant<Intersection_base_point, Base_x_monotone_curve_2>;
 
-      const auto* base_traits = m_traits.m_base_traits;
+      const auto* base_traits = m_traits.m_base_traits.get();
       auto base_cmp_xy = base_traits->compare_xy_2_object();
       auto base_cmp_endpoints = base_traits->compare_endpoints_xy_2_object();
       auto base_ctr_min_vertex = base_traits->construct_min_vertex_2_object();

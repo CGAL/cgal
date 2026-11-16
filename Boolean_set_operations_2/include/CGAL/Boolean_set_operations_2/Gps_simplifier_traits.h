@@ -129,7 +129,7 @@ public:
       using Intersection_base_point = const std::pair<Base_point_2, Multiplicity>;
       using Intersection_base_result = std::variant<Intersection_base_point, Base_x_monotone_curve_2>;
 
-      const auto* base_traits = m_traits.m_base_traits;
+      const auto* base_traits = m_traits.m_base_traits.get();
       auto base_cmp_xy = base_traits->compare_xy_2_object();
       auto base_cmp_endpoints = base_traits->compare_endpoints_xy_2_object();
       auto base_ctr_min_vertex = base_traits->construct_min_vertex_2_object();
@@ -214,7 +214,7 @@ public:
   public:
     void operator()(const X_monotone_curve_2& cv, const Point_2 & p,
                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const {
-      const auto* base_traits = m_traits.m_base_traits;
+      const auto* base_traits = m_traits.m_base_traits.get();
       auto base_split = base_traits->split_2_object();
       base_split(cv.base(), p.base(), c1.base(), c2.base());
       const Curve_data& cv_data = cv.data();
@@ -243,7 +243,7 @@ public:
       * \return The left endpoint.
       */
     Point_2 operator()(const X_monotone_curve_2 & cv) const {
-      const auto* base_traits = m_traits.m_base_traits;
+      const auto* base_traits = m_traits.m_base_traits.get();
       auto base_ctr_min_vertex = base_traits->construct_min_vertex_2_object();
 
       if (! m_traits.is_valid_index(cv.data().index()))
@@ -282,7 +282,7 @@ public:
       * \return The left endpoint.
       */
     Point_2 operator() (const X_monotone_curve_2 & cv) const {
-      const auto* base_traits = m_traits.m_base_traits;
+      const auto* base_traits = m_traits.m_base_traits.get();
       auto base_ctr_max_vertex = base_traits->construct_max_vertex_2_object();
       if (! m_traits.is_valid_index(cv.data().index()))
         return Point_2(base_ctr_max_vertex(cv.base()), m_traits.invalid_index());
@@ -320,7 +320,7 @@ public:
       * \return The left endpoint.
       */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
-      const auto* base_traits = m_traits.m_base_traits;
+      const auto* base_traits = m_traits.m_base_traits.get();
       auto base_cmp_xy = base_traits->compare_xy_2_object();
 
       //if one of the indexes is invalid, compare p1 and p2
