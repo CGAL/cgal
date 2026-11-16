@@ -182,7 +182,24 @@ protected:
 
   Oriented_side side_of_oriented_sphere(const Point& p0, const Point& p1,
                                         const Point& p2, const Point& p3,
-                                        const Point& t, bool perturb = false) const;
+                                        const Point& t, bool perturb = false) const
+  {
+    CGAL_precondition(orientation(p0, p1, p2, p3) == POSITIVE);
+
+    Oriented_side os =
+        geom_traits().side_of_oriented_sphere_3_object()(p0, p1, p2, p3, t);
+
+    if(os != ON_ORIENTED_BOUNDARY || !perturb)
+      return os;
+
+    return perturbed_side_of_oriented_sphere(p0, p1, p2, p3, t);
+  }
+
+  // symbolic perturbation for the degenerate case of `side_of_oriented_sphere()`,
+  // apart so that the common case is cheap (and can be inlined)
+  Oriented_side perturbed_side_of_oriented_sphere(const Point& p0, const Point& p1,
+                                                  const Point& p2, const Point& p3,
+                                                  const Point& p) const;
 
   Bounded_side coplanar_side_of_bounded_circle(const Point& p, const Point& q,
                                                const Point& r, const Point& s, bool perturb = false) const;
@@ -1369,18 +1386,10 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
 template < class Gt, class Tds, class Lds >
 Oriented_side
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
-side_of_oriented_sphere(const Point& p0, const Point& p1, const Point& p2,
-                        const Point& p3, const Point& p, bool perturb) const
+perturbed_side_of_oriented_sphere(const Point& p0, const Point& p1, const Point& p2,
+                                  const Point& p3, const Point& p) const
 {
-  CGAL_precondition(orientation(p0, p1, p2, p3) == POSITIVE);
-
-  Oriented_side os =
-      geom_traits().side_of_oriented_sphere_3_object()(p0, p1, p2, p3, p);
-
-  if(os != ON_ORIENTED_BOUNDARY || !perturb)
-    return os;
-
-  // We are now in a degenerate case => we do a symbolic perturbation.
+  // We are in a degenerate case => we do a symbolic perturbation.
 
   // We sort the points lexicographically.
   const Point * points[5] = {&p0, &p1, &p2, &p3, &p};
