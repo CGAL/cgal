@@ -16,7 +16,11 @@
 #include <CGAL/license/Boolean_set_operations_2.h>
 
 #include <memory>
+#include <ostream>
 #include <type_traits>
+
+#include <CGAL/enum.h>
+#include <CGAL/Arr_tags.h>
 
 namespace CGAL {
 
