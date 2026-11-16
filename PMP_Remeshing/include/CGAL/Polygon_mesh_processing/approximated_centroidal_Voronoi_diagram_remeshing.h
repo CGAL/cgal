@@ -1316,6 +1316,9 @@ acvd_impl(TriangleMesh& tmesh,
         put(vertex_cluster_pmap, v, static_cast<int>(clusters.size()));
         CGAL_assertion(get(vertex_cluster_pmap, v) == static_cast<int>(clusters.size()));
         clusters.emplace_back();
+        // make sure the new cluster will grow from its seed
+        for (halfedge_descriptor hd : halfedges_around_source(v, tmesh))
+          clusters_edges_active.push(hd);
       }
 
       if (nm_clusters_picked.size() == nm_clusters.size())
