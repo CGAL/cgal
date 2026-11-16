@@ -1236,6 +1236,8 @@ private:
 
   std::optional<FT> mMaxTime ;
 
+  bool mInvalidInput = false ;
+
   PQ mPQ ;
 
   //Output
@@ -1381,6 +1383,151 @@ private :
                                                     typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());
   }
 
+private:
+
+  // Marks the input as invalid: `construct_skeleton()` will return a null skeleton.
+  // Unlike degenerate vertices (which are removed), invalid weights cannot be repaired.
+  void SetInvalidInput ( char const* aWhy )
+  {
+    CGAL_STSKEL_BUILDER_TRACE(0,"Invalid input: " << aWhy);
+    CGAL_USE(aWhy);
+    mInvalidInput = true ;
+  }
+
+  // Removes coincident consecutive vertices in a contour.
+  // If weights are passed, removal of a point is mirrored into the weight range.
+  template <class Input_point, class Input_weight>
+  static void RemoveCoincidentVertices ( std::vector<Input_point>& aPoints,
+                                         std::vector<Input_weight>* aWeights )
+  {
+    CGAL_precondition( !aWeights || aWeights->size() == aPoints.size() ) ;
+
+    if ( aPoints.empty() )
+      return ;
+
+    // keep the first vertex of each sequence of coincident vertices
+    std::size_t lLast = 0 ;
+    for ( std::size_t i = 1 ; i < aPoints.size() ; ++i )
+    {
+      if ( AreVerticesEqual()(aPoints[lLast], aPoints[i]) )
+        continue ;
+
+      ++lLast ;
+      aPoints[lLast] = aPoints[i] ;
+      if ( aWeights )
+        (*aWeights)[lLast] = (*aWeights)[i] ;
+    }
+
+    aPoints.resize(lLast + 1) ;
+    if ( aWeights )
+      aWeights->resize(lLast + 1) ;
+
+    while ( aPoints.size() > 1 && AreVerticesEqual()(aPoints.front(), aPoints.back()) )
+    {
+      aPoints.pop_back() ;
+      if ( aWeights )
+      {
+        aWeights->front() = aWeights->back() ;
+        aWeights->pop_back() ;
+      }
+    }
+
+    // a single remaining vertex is degenerate anyway, keep the same behavior as before
+    if ( aPoints.size() == 1 )
+    {
+      aPoints.clear() ;
+      if ( aWeights )
+        aWeights->clear() ;
+    }
+  }
+
+  template <class WeightIterator, class WeightConverter>
+  bool ConvertAndCheckWeights ( WeightIterator aWeightsBegin,
+                                WeightIterator aWeightsEnd,
+                                WeightConverter const& wcvt,
+                                std::vector<FT>& rWeights )
+  {
+    for ( ; aWeightsBegin != aWeightsEnd ; ++aWeightsBegin )
+    {
+      const auto& lInputWeight = *aWeightsBegin ;
+      if ( ! CGAL_NTS is_valid(lInputWeight) || ! CGAL_NTS is_finite(lInputWeight) )
+      {
+        SetInvalidInput("weight is not a finite number") ;
+        return false ;
+      }
+
+      FT lWeight = wcvt(lInputWeight) ;
+      if ( ! CGAL_NTS is_positive(lWeight) )
+      {
+        SetInvalidInput("weight is not (strictly) positive") ;
+        return false ;
+      }
+
+      rWeights.push_back(lWeight) ;
+    }
+
+    return true ;
+  }
+
+  // Collinear consecutive contour edges must have equal weights.
+  bool CheckCollinearEdgesWeights ( std::vector<Point_2> const& aPoints,
+                                    std::vector<FT> const& aWeights )
+  {
+    CGAL_precondition( aPoints.size() == aWeights.size() ) ;
+
+    typename K::Collinear_2 collinear = K().collinear_2_object() ;
+
+    const std::size_t lN = aPoints.size() ;
+    for ( std::size_t i = 0 ; i < lN ; ++i )
+    {
+      const std::size_t lPrev = (i == 0) ? lN - 1 : i - 1 ;
+      const std::size_t lNext = (i + 1 == lN) ? 0 : i + 1 ;
+      if ( aWeights[i] != aWeights[lNext] && collinear(aPoints[lPrev], aPoints[i], aPoints[lNext]) )
+      {
+        SetInvalidInput("collinear consecutive contour edges have different weights") ;
+        return false ;
+      }
+    }
+
+    return true ;
+  }
+
+  std::size_t LastContourSize() const
+  {
+    CGAL_precondition( !mContourHalfedges.empty() ) ;
+    Halfedge_handle lFirstBorder = mContourHalfedges.back()->next() ;
+    std::size_t lN = 0 ;
+    Halfedge_handle lBorder = lFirstBorder ;
+    do
+    {
+      ++lN ;
+      lBorder = lBorder->next() ;
+    }
+    while ( lBorder != lFirstBorder ) ;
+    return lN ;
+  }
+
+  // Assigns the weights, in order, to the edges of the last entered contour
+  template <class WeightIterator, class WeightConverter>
+  void AssignWeightsToLastContour ( WeightIterator aWeightsBegin,
+                                    WeightIterator aWeightsEnd,
+                                    WeightConverter const& wcvt )
+  {
+    CGAL_precondition( !mContourHalfedges.empty() ) ;
+    Halfedge_handle lBorder = mContourHalfedges.back()->next() ;
+    CGAL_precondition_code(std::size_t lN = 0 ;)
+    for ( ; aWeightsBegin != aWeightsEnd ; ++aWeightsBegin, lBorder = lBorder->next() )
+    {
+      CGAL_assertion(lBorder->opposite()->is_border());
+      FT lWeight = wcvt(*aWeightsBegin) ;
+      CGAL_STSKEL_BUILDER_TRACE(4, "Assign " << lWeight << " to E" << lBorder->id());
+      lBorder->set_weight(lWeight);
+      CGAL_precondition_code(++lN ;)
+    }
+
+    CGAL_precondition( lN == LastContourSize() ) ;
+  }
+
 public:
 
   // This compares INPUT vertices so there is no need to filter it.
@@ -1404,14 +1551,8 @@ public:
     {
       typedef typename std::iterator_traits<InputPointIterator>::value_type Input_point;
 
-      typedef std::vector<Input_point> Input_point_vector ;
-
-      // Remove coincident consecutive vertices
-      Input_point_vector lList;
-      std::unique_copy(aBegin,aEnd,std::back_inserter(lList),AreVerticesEqual());
-
-      while ( lList.size() > 0 && CGAL::compare_xy(lList.front(),lList.back()) == EQUAL )
-        lList.pop_back();
+      std::vector<Input_point> lList(aBegin, aEnd);
+      RemoveCoincidentVertices(lList, static_cast<std::vector<FT>*>(nullptr));
 
       if ( lList.size() >= 3 )
       {
@@ -1439,10 +1580,80 @@ public:
     return enter_contour(aBegin, aEnd, Cartesian_converter<K,K>(), aCheckValidity);
   }
 
-  template <typename WeightIterator, typename Converter>
-  Straight_skeleton_builder_2& enter_contour_weights(WeightIterator aWeightsBegin,
-                                                     WeightIterator aWeightsEnd,
-                                                     const Converter& cvt)
+  template <class InputPointIterator, class WeightIterator, class Converter, class WeightConverter>
+  Straight_skeleton_builder_2& enter_weighted_contour ( InputPointIterator     aBegin
+                                                      , InputPointIterator     aEnd
+                                                      , WeightIterator         aWeightsBegin
+                                                      , WeightIterator         aWeightsEnd
+                                                      , Converter const&       cvt
+                                                      , WeightConverter const& wcvt
+                                                      , bool                   aCheckValidity = true
+                                                      )
+  {
+    if ( ! aCheckValidity )
+    {
+      enter_valid_contour(aBegin, aEnd, cvt) ;
+      AssignWeightsToLastContour(aWeightsBegin, aWeightsEnd, wcvt) ;
+      return *this ;
+    }
+
+    typedef typename std::iterator_traits<InputPointIterator>::value_type Input_point;
+
+    std::vector<Input_point> lInputPoints(aBegin, aEnd) ;
+
+    std::vector<FT> lWeights ;
+    if ( ! ConvertAndCheckWeights(aWeightsBegin, aWeightsEnd, wcvt, lWeights) )
+      return *this ;
+
+    if ( lWeights.size() != lInputPoints.size() )
+    {
+      SetInvalidInput("number of weights differs from the number of vertices of the contour") ;
+      return *this ;
+    }
+
+    RemoveCoincidentVertices(lInputPoints, &lWeights) ;
+
+    if ( lInputPoints.size() < 3 )
+    {
+      CGAL_STSKEL_BUILDER_TRACE(0,"Degenerate contour (fewer than 3 non-degenerate vertices).");
+      return *this ;
+    }
+
+    std::vector<Point_2> lPoints ;
+    lPoints.reserve(lInputPoints.size()) ;
+    for ( const Input_point& p : lInputPoints )
+      lPoints.push_back(cvt(p)) ;
+
+    if ( ! CheckCollinearEdgesWeights(lPoints, lWeights) )
+      return *this ;
+
+    enter_valid_contour(lPoints.begin(), lPoints.end(), Cartesian_converter<K,K>()) ;
+    AssignWeightsToLastContour(lWeights.begin(), lWeights.end(), NT_converter<FT,FT>()) ;
+
+    return *this ;
+  }
+
+  template <class InputPointIterator, class WeightIterator>
+  Straight_skeleton_builder_2& enter_weighted_contour ( InputPointIterator aBegin
+                                                      , InputPointIterator aEnd
+                                                      , WeightIterator     aWeightsBegin
+                                                      , WeightIterator     aWeightsEnd
+                                                      , bool               aCheckValidity = true
+                                                      )
+  {
+    return enter_weighted_contour(aBegin, aEnd, aWeightsBegin, aWeightsEnd,
+                                  Cartesian_converter<K,K>(), NT_converter<FT,FT>(), aCheckValidity);
+  }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  // Deprecated since CGAL 6.4: weights must now be entered along with their contour, using `enter_weighted_contour()`.
+  template <class WeightIterator, class WeightConverter>
+  CGAL_DEPRECATED_MSG("use enter_weighted_contour() instead")
+  Straight_skeleton_builder_2& enter_contour_weights ( WeightIterator         aWeightsBegin
+                                                     , WeightIterator         aWeightsEnd
+                                                     , WeightConverter const& wcvt
+                                                     , bool                   aCheckValidity = true
+                                                     )
   {
     const auto lWeightsN = std::distance(aWeightsBegin, aWeightsEnd);
     CGAL_assertion(std::size_t(lWeightsN) <= mSSkel->SSkel::Base::size_of_faces());
@@ -1463,12 +1674,16 @@ public:
     return *this;
   }
 
-  template <typename WeightIterator>
-  Straight_skeleton_builder_2& enter_contour_weights(WeightIterator aWeightsBegin,
-                                                     WeightIterator aWeightsEnd)
+  template <class WeightIterator>
+  CGAL_DEPRECATED_MSG("use enter_weighted_contour() instead")
+  Straight_skeleton_builder_2& enter_contour_weights ( WeightIterator aWeightsBegin
+                                                     , WeightIterator aWeightsEnd
+                                                     , bool           aCheckValidity = true
+                                                     )
   {
-    return enter_contour_weights(aWeightsBegin, aWeightsEnd, NT_converter<FT,FT>());
+    return enter_contour_weights(aWeightsBegin, aWeightsEnd, NT_converter<FT,FT>(), aCheckValidity);
   }
+#endif // CGAL_NO_DEPRECATED_CODE
 } ;
 
 } // namespace CGAL

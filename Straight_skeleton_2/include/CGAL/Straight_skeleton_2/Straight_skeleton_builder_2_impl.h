@@ -2443,6 +2443,12 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
 template<class Gt, class Ss, class V>
 bool Straight_skeleton_builder_2<Gt,Ss,V>::Run()
 {
+  if ( mInvalidInput )
+  {
+    CGAL_STSKEL_BUILDER_TRACE(0,"Invalid input, no skeleton constructed.");
+    return false ;
+  }
+
   InitPhase();
   Propagate();
   return FinishUp();
