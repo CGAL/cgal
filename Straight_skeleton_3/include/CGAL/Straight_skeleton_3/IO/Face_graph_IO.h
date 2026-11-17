@@ -61,14 +61,14 @@ void save_colored_mesh(const PolygonMesh& pmesh,
 
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
-  using value_type = typename CGAL::cpp20::remove_cvref<decltype(values[face_descriptor()])>::type;
+  using value_type = typename CGAL::cpp20::remove_cvref<decltype(values.at(face_descriptor()))>::type;
 
   std::cout << "Saving colored mesh to " << fullpath << std::endl;
 
   // get a unique vector of values
   std::vector<value_type> unique_values;
   for (auto f : faces(pmesh)) {
-    unique_values.push_back(values[f]);
+    unique_values.push_back(values.at(f));
   }
 
   std::sort(unique_values.begin(), unique_values.end());
@@ -92,7 +92,7 @@ void save_colored_mesh(const PolygonMesh& pmesh,
 
   for (auto f : faces(pmesh)) {
     // std::cout << "facet " << f << " with value " << values[f] << " gets color " << colors[values[f]] << std::endl;
-    put(face_color, f, colors[values[f]]);
+    put(face_color, f, colors[values.at(f)]);
   }
 
   std::ofstream out(fullpath);
@@ -169,7 +169,7 @@ public:
     std::vector<VertexSPtr> vertices(result->vertices().begin(), result->vertices().end());
 
     auto weight_pmap = choose_parameter(get_parameter(np, CGAL::internal_np::face_weight),
-                                        CGAL::Constant_property_map<std::size_t, FT>(1));
+                                        CGAL::Constant_property_map<face_descriptor, FT>(1));
 
     int facet_id_new = -1;
     for (face_descriptor fd : faces(tmesh)) {
@@ -315,7 +315,7 @@ public:
                                                   square(bbox.zmax() - bbox.zmin()));
 
     // Use shape detection to analyze the mesh
-    std::vector<std::size_t> region_ids(num_faces(tmesh));
+    CGAL::unordered_flat_map<face_descriptor, std::size_t> region_ids;
     boost::vector_property_map<Plane_3> plane_map; // supporting planes of the regions detected
 
     const FT max_distance = epsilon * diag_length;
@@ -329,13 +329,13 @@ public:
     // algorithm) can have nasty folds.
 
     PMP::region_growing_of_planes_on_faces(tmesh,
-                                           CGAL::make_random_access_property_map(region_ids),
+                                           boost::make_assoc_property_map(region_ids),
                                            CGAL::parameters::region_primitive_map(plane_map)
                                                             .maximum_distance(max_distance)
                                                             .cosine_of_maximum_angle(-1.));
 
     CGAL_SS3_IO_TRACE_CODE(for (face_descriptor f : faces(tmesh)))
-    CGAL_SS3_IO_TRACE_V(16, "facet " << f << " is in region " << region_ids[f]);
+    CGAL_SS3_IO_TRACE_V(16, "facet " << f << " is in region " << region_ids.at(f));
 
 #ifdef CGAL_SS3_DUMP_FILES
     static int region_dump_id = -1;
@@ -346,17 +346,23 @@ public:
     std::vector<EdgeWPtr> edges_to_remove;
     for (edge_descriptor ed : edges(tmesh)) {
       halfedge_descriptor hd = halfedge(ed, tmesh);
-      if (region_ids[face(hd, tmesh)] == region_ids[face(opposite(hd, tmesh), tmesh)]) {
+      if (region_ids.at(face(hd, tmesh)) == region_ids.at(face(opposite(hd, tmesh), tmesh))) {
         edges_to_remove.push_back(e2e.at(ed));
       }
     }
 
     Transformation::merge_facet_pairs(edges_to_remove, polyhedron);
 
+    // the ID of a facet of the polyhedron is the position of its input face in 'faces(tmesh)'
+    std::vector<std::size_t> region_of_facet_id;
+    region_of_facet_id.reserve(region_ids.size());
+    for (face_descriptor f : faces(tmesh)) {
+      region_of_facet_id.push_back(region_ids.at(f));
+    }
+
     // merge facet pairs arbitrarily keeps one of the two facets, so we need the correct plane
     for (FacetSPtr f : polyhedron->facets()) {
-      // abusing the fact that polyhedron and input mesh facets are in the same order...
-      const Plane_3& pl = get(plane_map, region_ids[f->id()]);
+      const Plane_3& pl = get(plane_map, region_of_facet_id[f->id()]);
       f->set_plane(outward_offsetting ? pl.opposite() : pl);
     }
 
@@ -435,7 +441,7 @@ public:
 
     // Write facets
     auto weight_pmap = choose_parameter(get_parameter(np, CGAL::internal_np::face_weight),
-                                        CGAL::Constant_property_map<std::size_t, FT>(1));
+                                        CGAL::Constant_property_map<face_descriptor, FT>(1));
 
     CGAL::unordered_flat_map<face_descriptor, std::size_t> default_f2i;
     auto f2i = choose_parameter(get_parameter(np, internal_np::face_to_face_map),
