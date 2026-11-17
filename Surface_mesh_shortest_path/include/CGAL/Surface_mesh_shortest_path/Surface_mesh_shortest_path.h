@@ -2998,7 +2998,7 @@ public:
     using parameters::get_parameter;
 
     Vertex_point_map vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                            get_const_property_map(vertex_point, tm));
+                                            get_const_property_map(CGAL::vertex_point, tm));
     Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
     const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
 
@@ -3063,7 +3063,7 @@ public:
     using parameters::get_parameter;
 
     Vertex_point_map vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                            get_const_property_map(vertex_point, tm));
+                                            get_const_property_map(CGAL::vertex_point, tm));
     Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
     const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
 
@@ -3135,7 +3135,8 @@ public:
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    Vertex_point_map vertexPointMap = choose_parameter(get_parameter(np, internal_np::vertex_point), get(CGAL::vertex_point, tm));
+    Vertex_point_map vertexPointMap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                                       get_const_property_map(CGAL::vertex_point, tm));
     Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
     const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
 
@@ -3199,7 +3200,8 @@ public:
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    Vertex_point_map vertexPointMap = choose_parameter(get_parameter(np, internal_np::vertex_point), get(CGAL::vertex_point, tm));
+    Vertex_point_map vertexPointMap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                                       get_const_property_map(CGAL::vertex_point, tm));
     Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
     const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
 
