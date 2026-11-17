@@ -349,7 +349,7 @@ public:
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
-  std::ptrdiff_t insert(InputIterator first, InputIterator last,
+  std::ptrdiff_t BOOST_NOINLINE insert(InputIterator first, InputIterator last,
                         std::enable_if_t<
                           std::is_convertible<
                               typename std::iterator_traits<InputIterator>::value_type,
@@ -358,7 +358,7 @@ public:
                         >* = nullptr)
 #else
   template < class InputIterator >
-  std::ptrdiff_t insert(InputIterator first, InputIterator last)
+  std::ptrdiff_t BOOST_NOINLINE insert(InputIterator first, InputIterator last)
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   {
 #ifdef CGAL_TRIANGULATION_3_PROFILING
