@@ -180,7 +180,7 @@ struct Output_processor
  *
  * \tparam TriangleMeshIn must be a model of `FaceListGraph`, `HalfedgeListGraph`
  * \tparam PolygonMeshOut must be a model of `MutableFaceGraph`, `FaceListGraph`, `HalfedgeListGraph`
- * \tparam FT must be a number type convertible to `geom_traits::FT`
+ * \tparam IFT must be a number type convertible to `geom_traits::FT`
  * \tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
  * \tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
  *
