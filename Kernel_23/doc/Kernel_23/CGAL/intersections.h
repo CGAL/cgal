@@ -44,6 +44,7 @@ The types `Type1` and `Type2` can be any of the following:
 In three-dimensional space, the types `Type1` and
 `Type2` can be any of the following:
 
+- `Ball_3<Kernel>`
 - `Bbox_3`.
 - `Line_3<Kernel>`
 - `Point_3<Kernel>`

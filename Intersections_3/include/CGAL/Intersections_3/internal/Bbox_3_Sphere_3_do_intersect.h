@@ -28,10 +28,10 @@ do_intersect(const typename K::Sphere_3& sphere,
              const CGAL::Bbox_3& bbox,
              const K& k)
 {
-  return do_intersect_sphere_box_3(sphere,
+  return do_intersect_sphere_box_3(sphere.center(), sphere.squared_radius(),
                                    bbox.xmin(), bbox.ymin(), bbox.zmin(),
                                    bbox.xmax(), bbox.ymax(), bbox.zmax(),
-                                   k);
+                                   k, true);
 }
 
 template <class K>
