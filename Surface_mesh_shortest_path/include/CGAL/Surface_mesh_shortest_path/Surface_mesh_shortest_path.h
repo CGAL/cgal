@@ -3071,8 +3071,6 @@ public:
       traits.construct_barycentric_coordinates_in_triangle_3_object());
     typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p);
 
-    std::cout << "cp = " << result.first << std::endl;
-
     face_descriptor f = result.second;
     Barycentric_coordinates b = cbcit3(triangle_from_face(f, tm, vpm), result.first);
 
