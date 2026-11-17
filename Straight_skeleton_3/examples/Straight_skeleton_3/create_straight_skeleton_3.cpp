@@ -110,20 +110,34 @@ int main(int argc, char** argv)
     std::cout << std::endl;
   }
 
-  // Walking within a sheet with next()
+  // Walking along the spokes of a sheet.
+  // Note that spokes are not consistently oriented along the boundary of a sheet!
   const SheetSPtr& sheet = *(straight_skeleton->sheets().begin());
-  SpokeSPtr spoke = *sheet->spokes().begin();
+  const SpokeSPtr first_spoke = *sheet->spokes().begin();
+  SpokeSPtr spoke = first_spoke;
+  NodeSPtr node = spoke->source();
 
-  while (spoke->has_target()) {
-    const NodeSPtr& node = spoke->target();
-    std::cout << "Walking in sheet " << sheet->id() << " from spoke " << spoke->id() << " to node " << node->id() << std::endl;
-    if (SpokeSPtr next_spoke = spoke->next(sheet, node)) {
-      std::cout << "  Next spoke in sheet: " << next_spoke->id() << std::endl;
-      spoke = next_spoke;
-    } else {
+  for (;;) {
+    if (node == spoke->source() && !spoke->has_target()) {
+      std::cout << "  Spoke " << spoke->id() << " is unbounded." << std::endl;
+      break;
+    }
+
+    node = spoke->other(node);
+    std::cout << "Walking in sheet " << sheet->id() << " along spoke " << spoke->id() << " to node " << node->id() << std::endl;
+
+    SpokeSPtr next_spoke = spoke->next(sheet, node);
+    if (!next_spoke) {
       std::cout << "  No next spoke in sheet." << std::endl;
       break;
     }
+    if (next_spoke == first_spoke) {
+      std::cout << "  Back at the first spoke." << std::endl;
+      break;
+    }
+
+    std::cout << "  Next spoke in sheet: " << next_spoke->id() << std::endl;
+    spoke = next_spoke;
   }
 
   const FT skel_time_bound = - CGAL::abs(time_bound);
