@@ -1157,65 +1157,6 @@ public:
     std::cout << "Offset construction took " << timer.time() << " seconds" << std::endl;
 #endif
 
-#ifdef CGAL_SLS_OUTPUT_FILES
-    auto generate_colors = [](int n, float saturation = 0.70f, float lightness = 0.55f)
-    {
-      std::vector<std::array<int, 3>> palette;
-      palette.reserve(n);
-
-      // Start at a random hue so every run gives a fresh palette
-      std::random_device rd;
-      std::mt19937 gen(rd());
-      std::uniform_real_distribution<float> dist(0.0f, 360.0f);
-      float startHue = dist(gen);
-
-      // Golden angle in degrees (~137.508) maximizes perceptual distance
-      constexpr float goldenAngle = 137.507764f;
-
-      for (int i = 0; i < n; ++i) {
-        float h = std::fmod(startHue + i * goldenAngle, 360.0f);
-
-        // HSL to RGB conversion
-        float c = (1.0f - std::abs(2.0f * lightness - 1.0f)) * saturation;
-        float x = c * (1.0f - std::abs(std::fmod(h / 60.0f, 2.0f) - 1.0f));
-        float m = lightness - c / 2.0f;
-
-        float r = 0, g = 0, b = 0;
-        if (h < 60)       { r = c; g = x; b = 0; }
-        else if (h < 120) { r = x; g = c; b = 0; }
-        else if (h < 180) { r = 0; g = c; b = x; }
-        else if (h < 240) { r = 0; g = x; b = c; }
-        else if (h < 300) { r = x; g = 0; b = c; }
-        else              { r = c; g = 0; b = x; }
-
-        palette.push_back({ int(std::round((r + m) * 255.0f)),
-                            int(std::round((g + m) * 255.0f)),
-                            int(std::round((b + m) * 255.0f)) });
-      }
-      return palette;
-    };
-
-    auto palette = generate_colors(m_current_cid);
-
-    std::ofstream outc("colored_faces.off");
-    outc.precision(17);
-    outc << "COFF\n";
-    outc << m_points.size() << " " << m_faces.size() << " 0\n";
-
-    for (const Point_3& p : m_points)
-      outc << p << " 255 255 255\n";
-
-    for (std::size_t pos=0; pos<m_faces.size(); ++pos)
-    {
-      const std::vector<std::size_t>& f = m_faces[pos];
-      const auto& c = palette[m_colors[pos]];
-      outc << f.size();
-      for (std::size_t vid : f)
-        outc << " " << vid;
-      outc << " " << c[0] << " " << c[1] << " " << c[2] << "\n";
-    }
-#endif
-
     points = std::move(m_points);
     faces = std::move(m_faces);
 
