@@ -28,6 +28,7 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
+#include <CGAL/Projection_traits_yz_3.h>
 #include <CGAL/Random.h>
 
 #include <limits>
@@ -223,12 +224,16 @@ public:
     CGAL_SS3_DEBUG_SPTR(facet);
     const Plane_3& pl = facet->supporting_plane();
     const Vector_3 normal = pl.orthogonal_vector();
-    if (is_zero(normal.z())) {
+    if (!is_zero(normal.z())) {
+      using Traits_2 = CGAL::Projection_traits_xy_3<GeomTraits>;
+      Traits_2 traits;
+      return is_self_intersecting_facet(facet, traits);
+    } else if (!is_zero(normal.y())) {
       using Traits_2 = CGAL::Projection_traits_xz_3<GeomTraits>;
       Traits_2 traits;
       return is_self_intersecting_facet(facet, traits);
     } else {
-      using Traits_2 = CGAL::Projection_traits_xy_3<GeomTraits>;
+      using Traits_2 = CGAL::Projection_traits_yz_3<GeomTraits>;
       Traits_2 traits;
       return is_self_intersecting_facet(facet, traits);
     }
@@ -577,12 +582,16 @@ public:
 
     const Plane_3& pl = facet->supporting_plane();
     const Vector_3 normal = pl.orthogonal_vector();
-    if (is_zero(normal.z())) {
+    if (!is_zero(normal.z())) {
+      using Traits_2 = CGAL::Projection_traits_xy_3<GeomTraits>;
+      Traits_2 traits;
+      return (bounded_side(point, facet, traits) != CGAL::ON_UNBOUNDED_SIDE);
+    } else if (!is_zero(normal.y())) {
       using Traits_2 = CGAL::Projection_traits_xz_3<GeomTraits>;
       Traits_2 traits;
       return (bounded_side(point, facet, traits) != CGAL::ON_UNBOUNDED_SIDE);
     } else {
-      using Traits_2 = CGAL::Projection_traits_xy_3<GeomTraits>;
+      using Traits_2 = CGAL::Projection_traits_yz_3<GeomTraits>;
       Traits_2 traits;
       return (bounded_side(point, facet, traits) != CGAL::ON_UNBOUNDED_SIDE);
     }
