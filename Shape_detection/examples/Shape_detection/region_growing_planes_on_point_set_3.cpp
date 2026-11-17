@@ -92,8 +92,7 @@ int main(int argc, char *argv[]) {
   std::vector<Point_3> unassigned_points;
   unassigned_points.reserve(unassigned_items.size());
   for (const Region_type::Item &item : unassigned_items) {
-    const Point_3& point = get(point_set.point_map(), item);
-    unassigned_points.push_back(point);
+    unassigned_points.push_back(get(point_set.point_map(), item));
   }
 
   return EXIT_SUCCESS;
