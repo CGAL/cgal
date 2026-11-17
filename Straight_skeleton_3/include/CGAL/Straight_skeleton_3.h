@@ -146,9 +146,9 @@ public:
     using SheetSPtr = std::shared_ptr<Sheet>;
 
   public:
-    Node() {
-      id_ = next_node_id_++;
-    }
+    Node()
+      : id_(-1)
+    { }
 
     static NodeSPtr create()
     {
@@ -389,9 +389,6 @@ public:
     StraightSkeletonWPtr skel_;
 
     typename std::list<NodeSPtr>::iterator list_it_;
-
-  private:
-    static Id next_node_id_;
   };
 
 public:
@@ -437,14 +434,14 @@ public:
     {
       node_src_ = node_src;
       direction_ = direction;
-      id_ = next_spoke_id_++;
+      id_ = -1;
     }
 
     Spoke(const NodeSPtr& node_src, const NodeSPtr& node_tgt)
     {
       node_src_ = node_src;
       node_tgt_ = node_tgt;
-      id_ = next_spoke_id_++;
+      id_ = -1;
     }
 
     ~Spoke() {
@@ -753,9 +750,6 @@ public:
     typename std::list<SpokeSPtr>::iterator list_it_;
 
     Id id_;
-
-  private:
-    static Id next_spoke_id_;
   };
 
 public:
@@ -797,9 +791,9 @@ public:
     using FacetSPtr = typename Polyhedron::FacetSPtr;
 
   public:
-    Sheet() {
-      id_ = next_sheet_id_++;
-    }
+    Sheet()
+      : id_(-1)
+    { }
 
     ~Sheet()
     {
@@ -1054,11 +1048,8 @@ public:
     // these are edges of the *mutable* polyhedron, whose active movement traces the sheet
     std::list<EdgeWPtr> edges_;
 
-    int id_;
+    Id id_;
     Plane_3 plane_;
-
-  private:
-    static int next_sheet_id_;
   };
 
 public:
@@ -1085,6 +1076,8 @@ public:
 
   void add_node(NodeSPtr node)
   {
+    if (node->id() == -1)
+      node->set_id(next_node_id_++);
     typename std::list<NodeSPtr>::iterator it = nodes_.insert(nodes_.end(), node);
     node->set_skeleton(this->shared_from_this());
     node->set_list_it(it);
@@ -1104,6 +1097,8 @@ public:
 
   void add_spoke(SpokeSPtr spoke)
   {
+    if (spoke->id() == -1)
+      spoke->set_id(next_spoke_id_++);
     typename std::list<SpokeSPtr>::iterator it = spokes_.insert(spokes_.end(), spoke);
     spoke->set_skeleton(this->shared_from_this());
     spoke->set_list_it(it);
@@ -1123,9 +1118,19 @@ public:
 
   void add_sheet(SheetSPtr sheet)
   {
+    if (sheet->id() == -1)
+      sheet->set_id(next_sheet_id_++);
     typename std::list<SheetSPtr>::iterator it = sheets_.insert(sheets_.end(), sheet);
     sheet->set_skeleton(this->shared_from_this());
     sheet->set_list_it(it);
+  }
+
+  // Contours are not skeleton spokes and are not stored in `spokes_`,
+  // but they share the spoke ID space.
+  void index_contour(SpokeSPtr contour)
+  {
+    if (contour->id() == -1)
+      contour->set_id(next_spoke_id_++);
   }
 
   bool remove_sheet(SheetSPtr sheet)
@@ -1685,20 +1690,12 @@ protected:
   std::list<NodeSPtr> nodes_;
   std::list<SpokeSPtr> spokes_;
   std::list<SheetSPtr> sheets_;
+
+  typename Node::Id next_node_id_ = 0;
+  typename Spoke::Id next_spoke_id_ = 0;
+  typename Sheet::Id next_sheet_id_ = 0;
 };
 
 } // namespace CGAL
-
-template <typename GeomTraits>
-typename CGAL::Straight_skeleton_3<GeomTraits>::Node::Id
-CGAL::Straight_skeleton_3<GeomTraits>::Node::next_node_id_ = 0;
-
-template <typename GeomTraits>
-typename CGAL::Straight_skeleton_3<GeomTraits>::Spoke::Id
-CGAL::Straight_skeleton_3<GeomTraits>::Spoke::next_spoke_id_ = 0;
-
-template <typename GeomTraits>
-typename CGAL::Straight_skeleton_3<GeomTraits>::Sheet::Id
-CGAL::Straight_skeleton_3<GeomTraits>::Sheet::next_sheet_id_ = 0;
 
 #endif /* CGAL_STRAIGHT_SKELETON_3_SDS_STRAIGHT_SKELETON_3_H */

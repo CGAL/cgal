@@ -973,6 +973,7 @@ public:
       // Contours are useful to get a closed polygon (with holes) to draw sheets.
       SpokeSPtr contour = std::make_shared<Spoke>(Hds_utils::get_node(edge->source()),
                                               Hds_utils::get_node(edge->target()));
+      skeleton_->index_contour(contour);
       sheet->add_contour(contour);
 
       skeleton_->add_sheet(sheet);
@@ -2254,7 +2255,7 @@ public:
       event->set_point(vanish_point(edge));
       event->set_edge(edge);
 
-      queue.push(event);
+      push_event(event, queue);
     }
 
 #ifdef CGAL_SS3_RUN_TIMERS
@@ -2423,7 +2424,7 @@ public:
         event->set_vertex_2(v2);
         event->set_facet_1(facet_1);
         event->set_facet_2(facet_2);
-        queue.push(event);
+        push_event(event, queue);
       }
     }
 
@@ -2617,7 +2618,7 @@ public:
         event->set_vertex_2(v2);
         event->set_facet_1(facet_1);
         event->set_facet_2(facet_2);
-        queue.push(event);
+        push_event(event, queue);
       }
     }
 
@@ -2791,7 +2792,7 @@ public:
         event->set_vertex_2(v2);
         event->set_facet_1(facet_1);
         event->set_facet_2(facet_2);
-        queue.push(event);
+        push_event(event, queue);
       }
     }
 
@@ -2927,7 +2928,7 @@ public:
     event->set_time(*event_time);
     event->set_edge_1(edge_1);
     event->set_edge_2(edge_2);
-    queue.push(event);
+    push_event(event, queue);
   }
 
   void collect_surface_events(const std::list<EdgeSPtr>& edges,
@@ -3070,7 +3071,7 @@ public:
         event->set_time(*event_time);
         event->set_edge_1(edge_1);
         event->set_edge_2(edge_2);
-        queue.push(event);
+        push_event(event, queue);
       }
     }
 
@@ -3144,7 +3145,7 @@ public:
     event->set_time(*event_time);
     event->set_edge_1(edge_1);
     event->set_edge_2(edge_2);
-    queue.push(event);
+    push_event(event, queue);
   }
 
   void collect_polyhedron_split_events(const std::list<EdgeSPtr>& edges,
@@ -3336,7 +3337,7 @@ public:
         event->set_vertex_2(v2);
         event->set_facet_1(facet_1);
         event->set_facet_2(facet_2);
-        queue.push(event);
+        push_event(event, queue);
       }
     }
 
@@ -3537,7 +3538,7 @@ public:
         event->set_time(*event_time);
         event->set_edge_1(edge_1);
         event->set_edge_2(edge_2);
-        queue.push(event);
+        push_event(event, queue);
       }
     }
 
@@ -3654,7 +3655,7 @@ public:
     event->set_time(*event_time);
     event->set_edge_1(edge_1);
     event->set_edge_2(edge_2);
-    queue.push(event);
+    push_event(event, queue);
   }
 
   void collect_edge_split_events_with_boxd(const std::list<EdgeSPtr>& edges_1,
@@ -3868,7 +3869,7 @@ public:
           event->set_time(*event_time);
           event->set_facet(facet);
           event->set_vertex(vertex);
-          queue.push(event);
+          push_event(event, queue);
         }
       }
     }
@@ -4518,6 +4519,7 @@ public:
       //   is costly. Thus, it's cheaper to delay the check, even if that means computing the event time.
       //
       // "event = ..." is because is_actual_event can change the event type
+      const int event_id = event->id();
       event = is_actual_event(event, time_future_bound);
       if (!event) {
         CGAL_SS3_CORE_TRACE_V(8, "Skipping non-event");
@@ -4525,6 +4527,8 @@ public:
         queue.pop();
         continue;
       }
+      if (event->id() == -1) // a specialized event keeps the ID of the queued event
+        event->set_id(event_id);
 
       break;
     }
@@ -5579,6 +5583,7 @@ public:
     auto initialize_specialized_event = [](const Generic_vertex_event_sptr& event,
                                            auto& specialized_event)
     {
+      specialized_event->set_id(event->id());
       specialized_event->set_time(event->time());
       specialized_event->set_point(event->point());
       specialized_event->set_vertex_1(event->get_vertex_1());
@@ -6884,6 +6889,15 @@ public:
   }
 
 private:
+  // IDs are only used to break ties between events in the queue: later pushes have higher IDs
+  void push_event(const Abstract_event_sptr& event, PQ& queue)
+  {
+    CGAL_precondition(event->id() == -1);
+    event->set_id(next_event_id_++);
+    queue.push(event);
+  }
+
+private:
   PolyhedronSPtr polyhedron_;
   Abstract_vertex_splitter_sptr vertex_splitter_;
   int edge_event_;
@@ -6896,6 +6910,7 @@ private:
 
   std::list<Abstract_event_sptr> events_;
   StraightSkeletonSPtr skeleton_;
+  int next_event_id_ = 0;
 
   int step_id_;
 
