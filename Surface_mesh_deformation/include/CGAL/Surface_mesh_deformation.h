@@ -234,9 +234,9 @@ public:
 #ifndef DOXYGEN_RUNNING
   #if !defined(CGAL_EIGEN3_ENABLED)
   static_assert(!(std::is_same<ST, Default>::value),
-                "Error: You must either provide 'ST' or link CGAL with the Eigen library");
+                "Error: You must either provide the template parameter 'ST' or link with the target CGAL::Eigen3_support");
   static_assert(!(std::is_same<CR, Default>::value),
-                "Error: You must either provide 'CR' or link CGAL with the Eigen library");
+                "Error: You must either provide the template parameter 'CR' or link with the target CGAL::Eigen3_support");
   #endif
 
   typedef typename Default::Get<

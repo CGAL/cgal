@@ -189,7 +189,7 @@ public:
   #ifndef DOXYGEN_RUNNING
   #if !defined(CGAL_EIGEN3_ENABLED)
   static_assert(!(std::is_same<SolverTraits_, Default>::value),
-                "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
+                "Error: You must either provide the template parameter 'SolverTraits_' or link with the target CGAL::Eigen3_support");
   #endif
 
   typedef typename Default::Get<

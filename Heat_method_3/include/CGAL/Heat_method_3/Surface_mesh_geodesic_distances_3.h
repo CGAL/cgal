@@ -768,7 +768,8 @@ class Surface_mesh_geodesic_distances_3
   typedef LA LA_type;
 #endif
 
-  static_assert(!std::is_same_v<LA_type, Default>, " Error: CGAL::Eigen3_support target is not linked and no type is provided for LA");
+  static_assert(!std::is_same_v<LA_type, Default>,
+                "Error: You must either provide the template parameter 'LA' or link with the target CGAL::Eigen3_support");
 
   typedef typename Default::Get<
     VertexPointMap,

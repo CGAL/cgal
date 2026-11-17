@@ -118,7 +118,8 @@ public:
   typedef SolverTraits_                                                          Solver_traits;
 #endif
 
-  static_assert(!std::is_same_v<Solver_traits, Default>, " Error: CGAL::Eigen3_support target is not linked and no type is provided for SolverTraits_");
+  static_assert(!std::is_same_v<Solver_traits, Default>,
+                "Error: You must either provide the template parameter 'SolverTraits_' or link with the target CGAL::Eigen3_support");
 
   /// Triangle mesh type
   typedef TriangleMesh_                                                          Triangle_mesh;
