@@ -266,9 +266,7 @@ public:
 
       // compute and keep worst angle
       Dihedral_angle_cosine curr_max_cos
-        = (std::max)(max_cos_dihedral_angle_in_range(triangulation, cells_to_remove, false),
-                     max_cos_dihedral_angle_in_range(triangulation, cells_to_update, false));
-
+        = max_cos_dihedral_angle_in_range(triangulation, cells_to_update, false);
 
       vh0->set_point(Point_3(v0_new_pos.x(), v0_new_pos.y(), v0_new_pos.z()));
       vh1->set_point(Point_3(v0_new_pos.x(), v0_new_pos.y(), v0_new_pos.z()));
@@ -1173,8 +1171,7 @@ Angle_verdict collapse_keeps_angles_acceptable(const typename C3t3::Edge& edge,
   tr.incident_cells(v1, std::back_inserter(cells_to_update));
 
   const Dihedral_angle_cosine curr_max_cos
-    = (std::max)(max_cos_dihedral_angle_in_range(tr, cells_to_remove, false),
-                 max_cos_dihedral_angle_in_range(tr, cells_to_update, false));
+    = max_cos_dihedral_angle_in_range(tr, cells_to_update, false);
 
   const double angle_margin = 1e-9;
   const double acceptable_sq = acceptable_max_cos.signed_square_value();
