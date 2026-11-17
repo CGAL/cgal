@@ -536,6 +536,11 @@ public:
       return bool(node_tgt_);
     }
 
+    /*!
+    * returns the endpoint of the spoke that is not `node`, which is a null pointer
+    * if `node` is the source of an unbounded spoke.
+    * \pre `node` is either the source or the target of this spoke.
+    */
     NodeSPtr other(const NodeSPtr& node) const
     {
       CGAL_precondition(node == node_src_ || node == node_tgt_);
