@@ -658,8 +658,8 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
   //   (4)
   //   With weights, the above equations become:
   //
-  //   sage: eq0 = w0*a0*x + w0*b0*y + w0*c0 - t = 0
-  //   sage: eq2 = w2*a2*x + w2*b2*y + w2*c2 - t = 0
+  //   sage: eq0 = w0*a0*x + w0*b0*y + w0*c0 - t == 0
+  //   sage: eq2 = w2*a2*x + w2*b2*y + w2*c2 - t == 0
   //
   //   sage: solve([eq0,eq2], x,y)
   //     [[x == -(b2*t*w2 - (b2*c0*w2 - b0*c2*w2 + b0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0),
