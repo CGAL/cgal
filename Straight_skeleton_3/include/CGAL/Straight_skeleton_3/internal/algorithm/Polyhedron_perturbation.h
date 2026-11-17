@@ -13,8 +13,6 @@
 
 #include <CGAL/license/Straight_skeleton_3.h>
 
-#ifdef CGAL_LINKED_WITH_ORTOOLS
-
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
@@ -35,9 +33,11 @@
 #include <CGAL/Random.h>
 #include <CGAL/Real_timer.h>
 
-#include "ortools/sat/cp_model.h"
-#include "ortools/sat/cp_model_checker.h"
-#include "ortools/sat/sat_parameters.pb.h"
+#ifdef CGAL_LINKED_WITH_ORTOOLS
+# include "ortools/sat/cp_model.h"
+# include "ortools/sat/cp_model_checker.h"
+# include "ortools/sat/sat_parameters.pb.h"
+#endif
 
 #include <algorithm>
 #ifdef CGAL_SS3_DUMP_FILES
@@ -988,6 +988,11 @@ public:
   //
   static bool apply_plane_perturbation_V4(const PolyhedronSPtr& polyhedron)
   {
+#ifndef CGAL_LINKED_WITH_ORTOOLS
+# pragma message("Error: You must link with the target CGAL::ortools_support")
+    CGAL_USE(polyhedron);
+    return false;
+#else // CGAL_LINKED_WITH_ORTOOLS
     namespace PMP = CGAL::Polygon_mesh_processing;
     namespace pred = PMP::Corefinement;
 
@@ -3661,6 +3666,7 @@ public:
     CGAL_postcondition(polyhedron && polyhedron->is_consistent());
 
     return true;
+#endif // CGAL_LINKED_WITH_ORTOOLS
   }
 
   // Perturbation to ensure generic configuration.
@@ -3737,7 +3743,5 @@ public:
 } // namespace internal
 } // namespace Straight_skeletons_3
 } // namespace CGAL
-
-#endif /* CGAL_LINKED_WITH_ORTOOLS */
 
 #endif /* CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_POLYHEDRON_PERTURBATION_H */
