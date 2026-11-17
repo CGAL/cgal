@@ -2563,7 +2563,7 @@ public:
   \param f a face of the input face graph
   \param location the barycentric coordinates of the query point on face `f`
   \return a pair containing the distance to the source point and an
-    iterator to the source point.  If no source point was reachable (which can
+    iterator to the source point. If no source point was reachable (which can
     occur when the graph is disconnected), the distance will be a negative
     value and the source point iterator will be equal to `source_points_end()`.
   */
@@ -2643,7 +2643,7 @@ public:
   \param visitor a model of `SurfaceMeshShortestPathVisitor` to receive the shortest path
 
   \return a pair containing the distance to the source point and an
-    iterator to the source point.  If no source point was reachable (which can
+    iterator to the source point. If no source point was reachable (which can
     occur when the graph is disconnected), the distance will be a negative
     value and the source point iterator will be equal to `source_points_end()`.
   */
@@ -2704,7 +2704,7 @@ public:
     surface of the input face graph from the given query location to the closest
     source point.
 
-  \param f a face of on the input face graph
+  \param f a face of the input face graph
   \param location the barycentric coordinates of the query point on face `f`
   \param output an OutputIterator to receive the shortest path points, as `Point_3` objects
 
@@ -2738,7 +2738,7 @@ public:
     - `static Point_3 point(face_descriptor f, Barycentric_coordinates location, const Triangle_mesh& tm,
                             Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
 
-  \param f a face of on the input face graph
+  \param f a face of the input face graph
   \param location the barycentric coordinates of the query point on face `f`
   */
   Point_3 point(const face_descriptor f,
@@ -2966,7 +2966,7 @@ public:
       \cgalParamDefault{`0`}
       \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
                       might be an inexact construction, thus leading to sometimes surprising values
-                      (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+                      (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
                       The coordinates will be snapped towards `0` and `1` if the difference is smaller
                       than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
     \cgalParamNEnd
@@ -2974,7 +2974,7 @@ public:
   */
   template <class AABBTraits, class NamedParameters = parameters::Default_named_parameters>
   Face_location locate(const Point_3& p,
-                      const NamedParameters& np = parameters::default_values()) const
+                       const NamedParameters& np = parameters::default_values()) const
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -3029,7 +3029,7 @@ public:
       \cgalParamDefault{`0`}
       \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
                       might be an inexact construction, thus leading to sometimes surprising values
-                      (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+                      (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
                       The coordinates will be snapped towards `0` and `1` if the difference is smaller
                       than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
     \cgalParamNEnd
@@ -3104,7 +3104,7 @@ public:
       \cgalParamDefault{`0`}
       \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
                       might be an inexact construction, thus leading to sometimes surprising values
-                      (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+                      (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
                       The coordinates will be snapped towards `0` and `1` if the difference is smaller
                       than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
     \cgalParamNEnd
@@ -3166,7 +3166,7 @@ public:
       \cgalParamDefault{`0`}
       \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
                       might be an inexact construction, thus leading to sometimes surprising values
-                      (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+                      (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
                       The coordinates will be snapped towards `0` and `1` if the difference is smaller
                       than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
     \cgalParamNEnd

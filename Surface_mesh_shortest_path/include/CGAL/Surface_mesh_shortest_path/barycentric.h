@@ -140,9 +140,9 @@ enum Barycentric_coordinates_type
   BARYCENTRIC_COORDINATES_INVALID = 0,
   /// if the coordinates have exactly one non-zero weight equal to 1, and the rest are zero
   BARYCENTRIC_COORDINATES_ON_VERTEX,
-  ///if the coordinates have exactly one zero weight, and the rest sum to 1
+  /// if the coordinates have exactly one zero weight, and the rest sum to 1
   BARYCENTRIC_COORDINATES_ON_BOUNDARY,
-  /// if the coordinates have no non-zero weight, and they all sum to 1
+  /// if the coordinates have no zero weight, and they all sum to 1
   BARYCENTRIC_COORDINATES_ON_BOUNDED_SIDE,
   /// if the weights of the coordinates do not sum to 1
   BARYCENTRIC_COORDINATES_ON_UNBOUNDED_SIDE
