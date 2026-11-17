@@ -307,6 +307,11 @@ typedef Mesh_cell_criteria_3<C3t3> Cell_criteria;
  *                           get all possible values.}
  *     \cgalParamDefault{CGAL::FACET_VERTICES_ON_SURFACE}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{facet_normals_variation}
+ *     \cgalParamDescription{a lower bound (in degrees) for the angle between the
+ *                           normals of two neighbor facets of
+ *                           the complex, separated by a non-complex edge.}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{cell_radius_edge_ratio}
  *     \cgalParamDescription{ an upper bound for the radius-edge ratio of the mesh tetrahedra.}
  *   \cgalParamNEnd
