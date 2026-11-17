@@ -1215,7 +1215,7 @@ locate_on_halfedge(const typename boost::graph_traits<TriangleMesh>::halfedge_de
 ///     \cgalParamDefault{`0`}
 ///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
 ///                     might be an inexact construction, thus leading to sometimes surprising values
-///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
 ///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
 ///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
 ///   \cgalParamNEnd
@@ -1272,7 +1272,8 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
   if(snap_tolerance != FT(0))
   {
 #ifdef CGAL_PMP_LOCATE_DEBUG
-    std::cerr << "Warning: point " << query << " is not in the input face" << std::endl;
+    if(!is_in_face(coords))
+      std::cerr << "Warning: point " << query << " is not in the input face" << std::endl;
     std::cerr << "Coordinates: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
 #endif
 
@@ -1751,7 +1752,7 @@ build_AABB_tree(const TriangleMesh& tm,
 ///     \cgalParamDefault{`0`}
 ///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
 ///                     might be an inexact construction, thus leading to sometimes surprising values
-///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
 ///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
 ///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
 ///   \cgalParamNEnd
@@ -1849,7 +1850,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 ///     \cgalParamDefault{`0`}
 ///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
 ///                     might be an inexact construction, thus leading to sometimes surprising values
-///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
 ///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
 ///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
 ///   \cgalParamNEnd
@@ -1942,7 +1943,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
 ///     \cgalParamDefault{`0`}
 ///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
 ///                     might be an inexact construction, thus leading to sometimes surprising values
-///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
 ///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
 ///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
 ///   \cgalParamNEnd
@@ -2078,7 +2079,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 ///     \cgalParamDefault{`0`}
 ///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
 ///                     might be an inexact construction, thus leading to sometimes surprising values
-///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
 ///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
 ///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
 ///   \cgalParamNEnd

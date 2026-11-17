@@ -760,7 +760,6 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     }
 
     if (std::is_same<typename boost::property_traits<VPM>::value_type, Point_3>::value) {
-      std::cout << "new tests!" << std::endl;
       vertex_descriptor v0 = source(halfedge(f, g), g);
       const Point_3 p0 = get(vpm, v0);
       vertex_descriptor v1 = target(halfedge(f, g), g);
