@@ -104,6 +104,7 @@ ALIASES                = "cgal=%CGAL" \
                          "zlib=zlib" \
                          "ceres=Ceres" \
                          "glpk=GLPK" \
+                         "ortools=OR-Tools" \
                          "scip=SCIP" \
                          "osqp=OSQP" \
                          "rs=RS" \

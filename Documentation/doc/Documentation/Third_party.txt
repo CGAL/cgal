@@ -284,7 +284,9 @@ If you experience such an issue, we recommend to compile \ceres without `glog` s
 \subsection thirdpartyOrtools OR-Tools
 
 \ortools (Operations Research Tools) is an open source software suite for optimization.
-In \cgal, \ortools is used by the \ref PkgStraightSkeleton3 package.
+In \cgal, \ortools is a mandatory dependency of the \ref PkgStraightSkeleton3 package.
+In order to use \ortools in \cgal programs, the executables should be linked with the CMake
+imported target `CGAL::ortools_support` provided in `CGAL_ortools_support.cmake`.
 
 Visit the official website of the library at <A HREF="https://developers.google.com/optimization">`https://developers.google.com/optimization`</A> for more information.
 

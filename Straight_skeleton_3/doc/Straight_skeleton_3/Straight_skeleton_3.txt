@@ -16,7 +16,7 @@ namespace CGAL {
 \section Straight_skeleton_3Introduction Introduction
 
 This package implements weighted straight skeletons of three-dimensional polyhedra.
-The approach is a direct extension of the method is used in the package
+The approach is a direct extension of the method used in the package
 \ref PkgStraightSkeleton2Ref "2D Straight Skeleton".
 
 \subsection Straight_skeleton_3Straight Straight Skeletons of Polyhedra
@@ -66,15 +66,15 @@ or \ref PkgPolygonMeshProcessing.
 We first define a <em>convex domain</em> as a bounded, non-empty intersection of a finite
 number of halfspaces of the Euclidean three-space \f$ \mathbb{R}^3\f$. A <em>domain</em> is then
 a bounded subset of \f$ \mathbb{R}^3\f$ which can be expressed as the finite union of convex domains.
-A domain can thus have holes, handles, disconnected connected components, etc.
+A domain can thus have voids, handles, several connected components, etc.
 
 The boundary of a domain can be represented as a structural complex, which consists of vertices,
 edges, faces, and symmetric incidence relations between these elements \cgalCite{k-ugpdd-99}.
-Such combinatorial entity is called a polyhedron. Its vertices embed into \f$ \mathbb{R}^3\f$ as 3D points;
+Such a combinatorial entity is called a polyhedron. Its vertices embed into \f$ \mathbb{R}^3\f$ as 3D points;
 its edges as straight line segments between two points; and faces as planar, possibly non-convex
 polygons (possibly with holes).
 
-With the definition above, a polyhedron forms 2-manifold structure in a combinatorial sense.
+With the definition above, a polyhedron forms a 2-manifold structure in a combinatorial sense.
 In our context, we furthermore append to this definition that it must also be <em>geometrically manifold</em>:
 there should not be so-called touching elements such as a vertex or an edge touching the
 interior of a non-incident face. Formally, the geometric intersection of two non-incident elements
@@ -87,8 +87,8 @@ We call the structural elements of an input polyhedron <em>contour elements</em>
 
 \note A polyhedron is a surface structure whose two-dimensional elements are generally called <em> faces</em>.
 The 3D straight skeleton, despite also being a 2-dimensional structure embedded in 3D space,
-induces naturally a division of space into 3D cells. As a three-dimensional structure usually
-use the term <em>facet</em> for two-dimensional elements, we shall refer to polyhedron faces
+naturally induces a division of space into 3D cells. As the term <em>facet</em> is usually
+used for the two-dimensional elements of a three-dimensional structure, we shall refer to polyhedron faces
 as contour <em>facets</em>, for consistency.
 
 Given a contour facet called the <em>source facet</em>, its <em>offset facet</em> at time `t` is a facet
@@ -113,7 +113,7 @@ of the polyhedron must be modified to retain the validity of the polyhedron duri
 </center>
 \cgalFigureCaptionBegin{SPS3PierceEvent}
 A concave vertex (left, green dot) hits a facet (below) during wavefront propagation, forming a tunnel (right).
-The polyhedron's combinatorial structure must be updated to represent the newly created hole.
+The polyhedron's combinatorial structure must be updated to represent the newly created tunnel.
 \cgalFigureCaptionEnd
 
 The straight skeleton is composed of three types of elements: nodes, spokes, and sheets.
@@ -129,11 +129,13 @@ They describe the geometry traced by the moving elements of the input polyhedron
   It is the trace of a moving polyhedron edge during offsetting. A sheet lives on the bisector plane
   of the two planes supporting the incident contour facets.
 
-The straight skeleton forms a unique partition of the interior of the polyhedron into <I>straight skeleton regions</I>,
-corresponding to the monotone areas traced by the continuous inward offsetting of the contour facets.
+The straight skeleton forms a partition of the interior of the polyhedron into <I>straight skeleton regions</I>,
+corresponding to the monotone volumes traced by the continuous inward offsetting of the contour facets.
 Each region corresponds uniquely to one contour facet, which is a facet of that region.
 Regions are bounded by the angular bisectors of the supporting planes of the contour facets,
 and each such region is itself a connected polyhedron, as defined in Section \ref Straight_skeleton_3PolyhedronDef.
+Note that, contrary to the 2D setting, this partition is in general not unique
+(see Section \ref Straight_skeleton_32D3DComparison).
 
 \cgalFigureAnchor{SPS3Nomenclature}
 <center>
@@ -172,6 +174,7 @@ This \cgal package supports positive multiplicative weights: if the supporting p
 is described through the equation `ax+by+cz+d=0`, and the supporting plane of the offset facet
 at distance `t` is `ax+by+cz+d-t=0` then with a multiplicative weight `w`, the equation becomes
 `ax+by+cz+d-wt=0`. Therefore, a larger weight encodes a faster moving front.
+Face offsetting of polygon meshes with variable offset rates is also discussed in \cgalCite{cgal:rha-fopmv-16}.
 
 \cgalFigureAnchor{SPS3Weight}
 <center>
@@ -194,9 +197,11 @@ surface itself during translation (and modification) of its faces is itself of i
 We call the surface modified by events up till time `t` the <I>offset polyhedron</I> at time `t`.
 
 An offset polyhedron can have fewer, the same number of, or more faces than its source polyhedron;
-it can even consist of multiple connected components. If the source polyhedron is hole-free, its offsets are
-also hole-free. However, if the source polyhedron has holes, an offset polyhedron may also contain
-holes, or it may have none at all (e.g., if the offset distance is sufficiently large).
+it can even consist of multiple connected components. Its topology can also change in other ways:
+an inward offset may gain tunnels (e.g., when a thin wall vanishes, see \cgalFigureRef{SPS3PierceEvent}),
+and voids of the source polyhedron may grow and eventually open to the outside, or disappear.
+Conversely, an outward offset can enclose new voids, for example when the narrow neck of
+a bottle-shaped polyhedron closes, while existing voids shrink and eventually vanish.
 
 Outward offsetting, similarly to exterior straight skeletons, is achieved by reversing
 the orientation of the faces of the input polyhedron.
@@ -284,7 +289,7 @@ we require that the polyhedron must be in <em>general position</em>: all combina
 must intersect in a unique point.
 
 Under this strong assumption, it is proven that one can decompose the construction of a 3D straight
-skeleton in a succcession of events classified in 13 different event types. These events are direct
+skeleton in a succession of events classified in 13 different event types. These events are direct
 extensions of the 2D straight skeleton events, and can be regrouped in two categories:
 <em>vanish events</em> and <em>contact events</em>. Vanish events are local combinatorial changes
 stemming from the collapse of edges (thus akin to the edge event in 2D); contact events are interaction
@@ -302,7 +307,7 @@ edge split event (right).
 
 In addition, under the hypothesis of general position, the topologies of the polyhedron
 and straight skeleton become simpler: vertices of an (offset) polyhedron have degree 3,
-each spoke is incident to exactly three sheets, and each node is incident to four spokes and four sheets.
+each spoke is incident to exactly three sheets, and each node that corresponds to an event is incident to four spokes and six sheets.
 
 \subsection Straight_skeleton_3GeneralPositionInPractice In Practice: Input Perturbation
 
@@ -310,7 +315,7 @@ The hypothesis stipulated in the previous section makes it possible to use an ev
 but in practice very few polyhedra actually satisfy such a demanding requirement.
 For example, an input as simple as the unit cube is not in general position (parallel faces).
 Most real-world polyhedra also have high-degree vertices, which automatically make the input violate
-the hypothesis since by definition this means N plans going through a point.
+the hypothesis since by definition this means that more than three planes go through a point.
 
 To make this package still usable with non-trivial models, a pre-processing step is performed
 with the goal of constructing a polyhedron that is in general position and that is arbitrarily close
@@ -319,16 +324,14 @@ The perturbation step is essentially composed of two stages: first, it performs 
 random nudge of the plane coefficients; secondly, it recovers an embedding of the polyhedron
 by reconstructing a valid surface at all high-degree vertices, splitting them into degree 3 vertices.
 
-The magnitude of said nudge of course impacts the closeness to the input. By default,
-the perturbation value is chosen very small (1e-7 times the local coordinate magnitude), with
-the idea that the effect is thus invisible as it becomes diluted in the numerical errors
-that arise while performing inexact computations, or during input/output manipulations
-(which pratically always using limited precision).
-The magnitude of the perturbation can be adjusted by users such that it is below a meaningfulness
-threshold with respect to their data. There is of course a downside to using infinitesimal nudges as
-computations become slower and, like most exact computation algorithms, the embedding back
-into real-world coordinates could suffer from self-intersections if there is not enough
-room in the floating point world to embed back exact numbers.
+The magnitude of said nudge of course impacts the closeness to the input. By default, the (normalized)
+plane coefficients are nudged by a random relative amount of the order of `1e-10`. The idea is that the effect
+is invisible as it becomes diluted in the numerical errors that arise while performing inexact
+computations, or during input/output manipulations (which almost always use limited precision).
+
+There is of course a downside to using infinitesimal nudges as computations become slower and,
+like most exact computation algorithms, the embedding back into real-world coordinates could suffer
+from self-intersections if there is not enough room in the floating point world to embed back exact numbers.
 
 The goal of this package is thus to provide valid results that are arbitrarily close to the correct result.
 
@@ -340,7 +343,7 @@ of the polyhedron, called <em>events</em>, are detected and treated in a chronol
 
 \subsection Straight_skeleton_3API API
 
-Contrary to the 2D, the extraction of an offset polyhedron at a given time `t` is more complex
+Contrary to the 2D case, the extraction of an offset polyhedron at a given time `t` is more complex
 than drawing an isoline at height `t` of an existing straight skeleton. As such,
 functions of this package compute the straight skeleton <em>and</em> offset polyhedra
 simultaneously.
@@ -348,31 +351,61 @@ simultaneously.
 The main function to construct offset polyhedra is `CGAL::create_straight_skeleton_and_offset_polyhedra_3()`.
 If offset polyhedra are not of interest, one may simply call `CGAL::create_straight_skeleton_3()`,
 which merely builds and returns the straight skeleton structure, using the class `CGAL::Straight_skeleton_3`.
+A straight skeleton can be written to a file using `CGAL::Straight_skeletons_3::IO::write_OBJ()`.
+
+\subsection Straight_skeleton_3InputOutput Input and Output
+
+The input must be a non-empty, closed, outward-oriented, and self-intersection-free triangle mesh.
+Inputs with non-triangular faces must be triangulated beforehand, for example using
+`CGAL::Polygon_mesh_processing::triangulate_faces()`.
+
+The offset polyhedra are always triangle meshes. Since they are built from the perturbed polyhedron,
+they may contain very small or very thin triangles; the example
+\ref Straight_skeleton_3/create_offset_and_remesh.cpp shows how to clean up such outputs.
+
+An offset at a time beyond which the polyhedron has entirely vanished is an empty mesh.
+
+\subsection Straight_skeleton_3Performance Performance
+
+The running time of 3D straight skeletons and offset polyhedra grows quickly with the number
+of facets of the input and the number of events. High-degree vertices are particularly costly,
+as the perturbation step must split each of them. Note also that computing an offset polyhedron
+at a time `t` requires the computation of all events up to `t`: small offsets are thus muc
+cheaper than large ones and users should specificy a range of offset times rather than
+calling the functions with a single time as to avoid recomputing the same events.
+
+\subsection Straight_skeleton_3Dependencies Dependencies
+
+This package requires the third party libraries \ref thirdpartyOrtools "OR-Tools", used during the perturbation step
+to choose a valid split of high-degree vertices, and \ref thirdpartyEigen "Eigen". In CMake, programs
+using this package must be linked against the targets `CGAL::ortools_support` and `CGAL::Eigen3_support`.
 
 \subsection Straight_skeleton_3TraitsChoice Kernel Choice
 
-The current algorithm requires a kernel providing <em>at least</em> exact predicates
-and exact constructions, possibly with exact square roots. Users should by default use
+The current algorithm requires a kernel providing exact predicates and exact constructions;
+exact square roots are not required (see below). Users should by default use
 `CGAL::Exact_predicates_exact_constructions_kernel`.
 
 This choice stems from the recurring computation of the intersection of moving elements.
 In 3D, the key geometric operation is the intersection of four shifting 3D (supporting) planes,
 answering the question: when and where will these four planes intersect in a single point.
 The position and time correspond to a potential event involving these four facets.
-Exact constructions are furthermore necessary for robustness for example to ensure that all vertices
-lay exactly on the supporting planes of their respective incident facets.
+Exact constructions are furthermore necessary for robustness, for example to ensure that all vertices
+lie exactly on the supporting planes of their respective incident facets.
 
 On paper, the computation of the intersection of four planes requires normalization of the planes, which involves
 exact square root computations. However, due to the mandatory perturbation mechanisms described
 in \ref Straight_skeleton_3GeneralPosition, the exactness of the square root is not necessary,
 as the perturbation will absorb any numerical inaccuracy in the normalized plane. Therefore,
-the use of a traits providing exact square root computations is not recommended.
+the use of a kernel providing exact square root computations is not recommended, as it is
+slower without benefit.
 
 \section Straight_skeleton_3Example Examples
 
 \subsection Straight_skeleton_3CreateStraightSkeleton Construction and Drawing of a Straight Skeleton
 
 The following example illustrates how to construct a 3D straight skeleton and inspect it.
+With the default time bound (a positive value), it computes an exterior skeleton.
 
 \cgalExample{Straight_skeleton_3/create_straight_skeleton_3.cpp}
 
@@ -382,6 +415,20 @@ The following example illustrates how to construct multiple offset polyhedra fro
 input.
 
 \cgalExample{Straight_skeleton_3/create_offset_polyhedra.cpp}
+
+\subsection Straight_skeleton_3FaceCorrespondence Tracking Input Faces
+
+The following example shows how to triangulate an input with polygonal faces, and how to use the named parameter
+`face_to_face_map` to find, for each face of an offset polyhedron, the input face it originates from.
+Here, this correspondence is used to transfer face colors from the input to the offset polyhedra.
+
+\cgalExample{Straight_skeleton_3/create_offset_of_non_triangle_polyhedron.cpp}
+
+\subsection Straight_skeleton_3OffsetRemesh Post-processing Offset Polyhedra
+
+following example shows how to clean- up and recover planar faces in offset polyhedra.
+
+\cgalExample{Straight_skeleton_3/create_offset_and_remesh.cpp}
 
 \section Straight_skeleton_3ImplementationHistory Implementation History
 

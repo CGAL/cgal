@@ -57,29 +57,31 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  * default values or can be loaded and overridden at runtime from an `INI` configuration file,
  * provided it follows the format detailed below.
  *
+ * \warning In the current implementation, loading a configuration file discards all default values:
+ * entries that are absent from the file are not set to their default values. A configuration file
+ * must therefore specify all entries.
+ *
  * \cgalHeading{%Configuration File Entries}
  *
  * The configuration file is organized in sections, each containing key-value pairs.
  * The following entries are recognized:
  *
  * [Preprocessing]
- * - **`truncate_precision`:** Positive floating-point value controlling numerical truncation precision.
- *                             Coordinates of the input polyhedron are rounded to the nearest
- *                             multiple of this value. %Default is `1e-7`.
- * - **`translate_and_scale_polyhedron`:** Boolean (`TRUE`/`FALSE`) to enable translation and scaling
- *                                         of the input polyhedron to fit within a unit cube.
- *                                         %Default is `FALSE`.
+ * - **`truncate_precision`:** Currently unused. %Default is `1e-7`.
+ * - **`translate_and_scale_polyhedron`:** Currently unused. %Default is `FALSE`.
  * - **`merge_coplanar_faces`:** Boolean to enable or disable merging of (almost) coplanar faces.
  *                               %Default is `TRUE`.
- * - **`coplanarity_epsilon`:** Non-negative floating-point value for coplanarity checks.
- *                              This value controls the threshold for considering two facet normals
- *                              as coplanar: if the squared Euclidean distance between their normalized
- *                              normals is less than `coplanarity_epsilon` squared, the facets are
- *                              considered coplanar and may be merged.
+ * - **`coplanarity_epsilon`:** Non-negative floating-point value for coplanarity checks, when
+ *                              `merge_coplanar_faces` is enabled. Adjacent faces are merged into
+ *                              a region if all their vertices are within a distance of
+ *                              `coplanarity_epsilon` times the length of the diagonal of the bounding box
+ *                              of the input from the supporting plane of the region.
  *                              %Default is `1e-7`.
- * - **`perturbation_epsilon`:** Positive floating-point value used to create the pertubation to ensure
- *                               general position. The value is used to nudge the coordinates of the planes.
+ * - **`perturbation_epsilon`:** Positive floating-point value used to create the perturbation to ensure
+ *                               general position. The value is used to nudge the coefficients of the planes.
  *                               %Default is `1e-10`.
+ * - **`seed`:** Non-negative integer used to seed the random number generator of the perturbation.
+ *               %Default is `0`.
  * - **`check_degenerate_configuration`:** Boolean to enable or disable checking if the result of the
  *                                         perturbation mechanism is indeed a valid polyhedron (and try again
  *                                         in the extremely unlikely event that the perturbation
@@ -90,16 +92,17 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  * - **`vertex_splitter`:** String to choose the high-degree vertex splitting strategy. Available options:
  *                          `Combi_vertex_splitter`, `Convex_vertex_splitter`.
  *                           %Default is `Combi_vertex_splitter`.
- * - **`selected_combinatorial_split`:** Positive index of the valid combinatorial split combination
+ * - **`selected_combinatorial_split`:** Non-negative index of the valid combinatorial split combination
  *                                       to use, when `Combi_vertex_splitter` is selected.
  *                                       %Default is `0`.
  * - **`convex_split_optimization`:** String (`min` or `max`) used to specify optimization strategy, when
  *                                    `Convex_vertex_splitter` is selected. The measure being optimized
  *                                    is the number of convex edges in the resulting split configuration.
  *                                    %Default is `max`.
- * - **`edge_event`:** String to choose how a degenerate edge event is handled. Available options: `convex`, `reflex`, `split`.
+ * - **`edge_event`:** String to choose how a degenerate edge event is handled. Available options: `convex`, `reflex`, `flip`.
  *                     %Default is `convex`.
- * - **`const_offset`** Positive floating-point value used to insert periodic events at fixed time intervals.
+ * - **`const_offset`:** Negative floating-point value used to insert periodic events at fixed time intervals
+ *                      (time is negative during the propagation).
  *                      %Default is `0` (disabled).
  * - **`save_at_stable_times`:** Non-negative time delta used to avoid saving too close to an event.
  *                               A value of `0` disables this behavior.

@@ -31,7 +31,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.4}
-\cgalPkgDependsOn{ }
+\cgalPkgDependsOn{\ref thirdpartyOrtools, \ref thirdpartyEigen}
 \cgalPkgBib{cgal:c-sspo3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgShortInfoEnd

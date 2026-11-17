@@ -302,9 +302,11 @@ bool write_OBJ(const std::filesystem::path& filename,
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{the precision of the stream `os`}
+ *     \cgalParamDefault{`6`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
+ * \return `true` if the writing was successful, `false` otherwise.
  *
  * \pre `time <= 0`
  */

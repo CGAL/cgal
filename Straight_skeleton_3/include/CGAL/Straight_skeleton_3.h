@@ -59,10 +59,10 @@ class Polyhedron_transformation;
  *
  * A 3D straight skeleton is composed of nodes, spokes, and sheets.
  *
- * - Nodes are points at which topological changes have occurred during the propagation of the faces
- *   of the polyhedron.
+ * - Nodes are either vertices of the input polyhedron, or points at which topological changes (events)
+ *   have occurred during the propagation of the faces of the polyhedron.
  * - Spokes connect two nodes, and represent the trace of a vertex of the polyhedron during
- *   the propagation of the faces of the polyhedron. The vertex spawned at the source of the spoke,
+ *   the propagation of the faces of the polyhedron. The vertex spawns at the source of the spoke,
  *   and disappears at the target of the spoke.
  * - Sheets are 2D surfaces connecting spokes and nodes, representing the trace of the edges
  *   of the polyhedron during the propagation of the faces.
@@ -111,8 +111,8 @@ public:
   * \ingroup PkgStraightSkeleton3Classes
   *
   * The class `Node` represents a node of the straight skeleton, i.e., a combinatorial entity
-  * representing a point in 3D space at which an event has occurred during the propagation
-  * of the faces of the polyhedron.
+  * representing either a vertex of the input polyhedron, or a point in 3D space at which an event
+  * has occurred during the propagation of the faces of the polyhedron.
   *
   * A node stores its 3D position, the time at which it was created, and the incident spokes and sheets.
   *
@@ -202,7 +202,7 @@ public:
     }
 
     /*!
-    * returns a unique identified to the node.
+    * returns a unique identifier of the node.
     */
     Id id() const
     {
@@ -324,6 +324,9 @@ public:
       return this->sheets_;
     }
 
+    /*!
+    * returns the number of spokes incident to the node.
+    */
     unsigned int degree() const
     {
       unsigned int result = 0;
@@ -419,7 +422,7 @@ public:
     using Line_3 = typename Geom_traits::Line_3;
 
     /*!
-    * the type used for the unique identifier of the node.
+    * the type used for the unique identifier of the spoke.
     */
     using Id = int;
 
@@ -551,6 +554,9 @@ public:
       node_tgt->add_spoke(this->shared_from_this());
     }
 
+    /*!
+    * returns whether the spoke stores a direction, see `direction()`.
+    */
     bool has_direction() const
     {
       return this->direction_.has_value();
@@ -559,6 +565,8 @@ public:
     /*!
     * returns the direction of the spoke, i.e., the direction in which the vertex of the polyhedron
     * is moving.
+    *
+    * \pre `has_direction()`
     */
     const Vector_3& direction() const
     {
@@ -591,7 +599,7 @@ public:
     }
 
     /*!
-    * returns a unique identified to the spoke.
+    * returns a unique identifier of the spoke.
     */
     Id id() const
     {
@@ -772,7 +780,7 @@ public:
     using Plane_3 = typename Geom_traits::Plane_3;
 
     /*!
-    * the type used for the unique identifier of the node.
+    * the type used for the unique identifier of the sheet.
     */
     using Id = int;
 
@@ -855,7 +863,7 @@ public:
     }
 
     /*!
-    * returns a unique identified to the sheet.
+    * returns a unique identifier of the sheet.
     */
     Id id() const
     {

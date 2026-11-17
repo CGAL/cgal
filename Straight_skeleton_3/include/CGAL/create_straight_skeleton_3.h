@@ -145,17 +145,18 @@ construct_skeleton(const TriangleMesh& tmesh,
  *
  * constructs the interior or exterior straight skeleton of a 3D polyhedron.
  *
- * A positive time value signifies outward construction, while a negative value corresponds to inward construction.
+ * A positive time value signifies outward construction (exterior skeleton), while a negative value
+ * corresponds to inward construction (interior skeleton).
  *
  * Face weights may be passed to represent different front speeds. These values must always be positive
  * since they represent absolute speeds.
  *
- * The upper bound `max_time` defines how far the straight skeleton is constructed,
- * i.e. nodes at a time greater than `max_time` are not computed. This may result
+ * The bound `max_time` defines how far the straight skeleton is constructed,
+ * i.e. nodes at a time greater than `|max_time|` in absolute value are not computed. This may result
  * in the presence of unbounded spokes and sheets in the straight skeleton.
  *
- * \warning An epsilon geometric perturbation is always applied to the input mesh as to avoid
- * degenerate configurations, See \ref Straight_skeleton_3GeneralPosition for more information.
+ * \warning An epsilon geometric perturbation is always applied to the input mesh so as to avoid
+ * degenerate configurations; see \ref Straight_skeleton_3GeneralPosition for more information.
  *
  * \tparam TriangleMesh must be a model of `FaceListGraph`, `HalfedgeListGraph`
  * \tparam FT must be a model of `FieldNumberType` compatible with the type of `geom_traits`
@@ -187,6 +188,7 @@ construct_skeleton(const TriangleMesh& tmesh,
  *                     as key type and `FT` as value type}
  *      \cgalParamDefault{A constant property map with uniform weight `1` for all faces.}
  *      \cgalParamExtra{Precondition: all face weights must be positive.}
+ *      \cgalParamExtra{Adjacent coplanar faces must have the same weight.}
  *    \cgalParamNEnd
  * \cond SKIP_IN_MANUAL
  *    \cgalParamNBegin{config_file_path}
@@ -199,6 +201,8 @@ construct_skeleton(const TriangleMesh& tmesh,
  *    \cgalParamNEnd
  * \endcond
  *  \cgalNamedParamsEnd
+ *
+ * \returns a pointer to the straight skeleton, or a null pointer if the construction failed.
  *
  * \pre The value `max_time` must be either positive or negative (non-zero).
  * \pre The input `tmesh` must be a non-empty, closed, and self-intersection-free triangle mesh.
@@ -225,6 +229,10 @@ create_straight_skeleton_3(const TriangleMesh& tmesh,
  * constructs the complete interior straight skeleton of a 3D polyhedron.
  *
  * See the other overload for a comprehensive documentation of the parameters.
+ *
+ * \returns a pointer to the straight skeleton, or a null pointer if the construction failed.
+ *
+ * \pre The input `tmesh` must be a non-empty, closed, and self-intersection-free triangle mesh.
  */
 template <typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>

@@ -159,7 +159,7 @@ struct Output_processor
 /*!
  * \ingroup PkgStraightSkeleton3OffsettingFunctions
  *
- * This function generates face offsets of an input triangle mesh at user-specified target times.
+ * generates face offsets of an input triangle mesh at user-specified target times.
  *
  * The offset polyhedra are constructed by progressively translating the faces of the input mesh
  * along their normal directions at a speed proportional to their weight and treating events
@@ -171,18 +171,23 @@ struct Output_processor
  * range correspond to inward offsetting. Face weights represent absolute speeds and as such
  * must always be positive.
  *
- * \warning An epsilon geometric perturbation is always applied to the input mesh as to avoid
- * degenerate configurations, See \ref Straight_skeleton_3GeneralPosition for more information.
+ * The offset polyhedra are always triangle meshes. If the polyhedron has entirely vanished
+ * at a requested time, the corresponding offset polyhedron is an empty mesh.
+ *
+ * \warning An epsilon geometric perturbation is always applied to the input mesh so as to avoid
+ * degenerate configurations; see \ref Straight_skeleton_3GeneralPosition for more information.
  *
  * \tparam TriangleMeshIn must be a model of `FaceListGraph`, `HalfedgeListGraph`
  * \tparam PolygonMeshOut must be a model of `MutableFaceGraph`, `FaceListGraph`, `HalfedgeListGraph`
+ * \tparam FT must be the number type `geom_traits::FT`
  * \tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
  * \tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param tmesh the input triangle mesh whose faces are to be offset
  * \param save_times the times at which the offset polyhedra are to be constructed
- * \param results a vector of the offset polyhedra, corresponding to the save times, sorted
- *                in increasing order of absolute values.
+ * \param results a vector to which the offset polyhedra are appended, one per save time,
+ *                in increasing order of the absolute values of the save times
+ *                (independently of the order of `save_times`).
  * \param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters"
  *              among the ones listed below
  *  \cgalNamedParamsBegin
@@ -207,6 +212,7 @@ struct Output_processor
  *                     as key type and `FT` as value type}
  *      \cgalParamDefault{A constant property map with uniform weight `1` for all faces.}
  *      \cgalParamExtra{Precondition: all face weights must be positive.}
+ *      \cgalParamExtra{Adjacent coplanar faces must have the same weight.}
  *    \cgalParamNEnd
  * \cond SKIP_IN_MANUAL
  *    \cgalParamNBegin{config_file_path}
@@ -220,7 +226,9 @@ struct Output_processor
  * \endcond
  *  \cgalNamedParamsEnd
  *
- * \param nps_out a variadic sequence of optional \ref bgl_namedparameters "Named Parameters" to specify output options for each of the constructed offset polyhedra.
+ * \param nps_out a variadic sequence of optional \ref bgl_namedparameters "Named Parameters" to specify output options
+ *                for each of the constructed offset polyhedra: the `i`-th sequence applies to the `i`-th
+ *                offset polyhedron appended to `results`, that is in increasing order of the absolute values of the save times.
  *  \cgalNamedParamsBegin
  *   \cgalParamNBegin{do_not_triangulate_faces}
  *     \cgalParamDescription{a Boolean used to specify whether the faces of the offset meshes
@@ -232,9 +240,11 @@ struct Output_processor
  *    \cgalParamNBegin{face_to_face_map}
  *     \cgalParamDescription{a property map filled by this function, associating to an output face
  *                           its corresponding input face.}
- *     \cgalParamType{a class model of `WritablePropertyMap` with `std::pair<boost::graph_traits<PolygonMeshOut>::%face_descriptor, const PolygonMeshOut&>`
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%face_descriptor`
  *                    as key type and `boost::graph_traits<TriangleMeshIn>::%face_descriptor` as value type}
  *     \cgalParamDefault{unused}
+ *     \cgalParamExtra{Adjacent coplanar input faces are merged before construction. For an output face
+ *                     originating from such merged faces, the associated input face is one of them.}
  *   \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *

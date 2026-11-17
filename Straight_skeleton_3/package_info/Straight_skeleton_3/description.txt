@@ -1,0 +1,1 @@
+Weighted straight skeletons of 3D polyhedra, and straight skeleton-based inward and outward polyhedron offsetting.
