@@ -132,6 +132,22 @@ private:
                        arete.first->vertex(arete.third) );
   }
 
+  bool is_bad_edge(const Edge& e) const
+  {
+    const auto st = this->r_c3t3_.face_status(e);
+    if(st != C3t3::SINGULAR && (m_with_boundary || st != C3t3::BOUNDARY))
+      return false;
+    return !this->r_c3t3_.is_in_complex(e); // protected feature edge: non-manifold by design
+  }
+
+  bool is_bad_vertex(const Vertex_handle v) const
+  {
+    if(v->in_dimension() <= 1)
+      return false; // on a protected curve or corner
+    return this->r_c3t3_.has_incident_facets_in_complex(v)
+        && this->r_c3t3_.face_status(v) == C3t3::SINGULAR;
+  }
+
   FT compute_sq_distance_to_facet_center(const Facet& f,
                                          const Vertex_handle v) const
   {
@@ -371,9 +387,7 @@ public:
            eit = this->r_tr_.finite_edges_begin(), end = this->r_tr_.finite_edges_end();
          eit != end; ++eit)
     {
-      if ( (this->r_c3t3_.face_status(*eit) == C3t3::SINGULAR) ||
-           ( (!m_with_boundary) &&
-             (this->r_c3t3_.face_status(*eit) == C3t3::BOUNDARY) ) )
+      if (is_bad_edge(*eit))
       {
         const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(*eit);
         if (is_smaller_than_min_size(sq_dist))
@@ -416,7 +430,7 @@ public:
            end = this->r_tr_.finite_vertices_end();
          vit != end; ++vit)
     {
-      if( this->r_c3t3_.face_status(vit) == C3t3::SINGULAR )
+      if( is_bad_vertex(vit))
       {
         const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(vit);
         if (is_smaller_than_min_size(sq_dist))
@@ -588,10 +602,7 @@ public:
           // This test is not efficient because
           // edges are tried to be inserted several times
           // TODO one day: test if the edge is still singular
-          if ( (this->r_c3t3_.face_status(edge) == C3t3::SINGULAR) ||
-               ( (!m_with_boundary) &&
-                 (this->r_c3t3_.face_status(edge) == C3t3::BOUNDARY) )
-               )
+          if(is_bad_edge(edge))
           {
             const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(edge);
             if (is_smaller_than_min_size(sq_dist))
@@ -640,10 +651,7 @@ public:
            vit = vertices.begin(), end = vertices.end();
          vit != end; ++vit)
     {
-      if ( this->r_c3t3_.has_incident_facets_in_complex(*vit)  &&
-           (this->r_c3t3_.face_status(*vit) == C3t3::SINGULAR)
-           // !this->r_c3t3_.is_regular_or_boundary_for_vertices(*vit)
-           )
+      if (is_bad_vertex(*vit))
       {
         const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(*vit);
         if (is_smaller_than_min_size(sq_dist))
@@ -667,10 +675,7 @@ public:
       }
     }
 
-    if ( this->r_c3t3_.has_incident_facets_in_complex(v) &&
-         (this->r_c3t3_.face_status(v) == C3t3::SINGULAR)
-         // !this->r_c3t3_.is_regular_or_boundary_for_vertices(v)
-         )
+    if (is_bad_vertex(v))
     {
       const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(v);
       if (is_smaller_than_min_size(sq_dist))
