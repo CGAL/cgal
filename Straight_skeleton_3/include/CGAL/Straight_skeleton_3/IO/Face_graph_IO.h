@@ -149,6 +149,9 @@ public:
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(vertex_point, tmesh));
 
+    using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+    GT gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
     const bool outward_offsetting = choose_parameter(get_parameter(np, internal_np::outward_offsetting), false);
 
     CGAL_warning(CGAL::is_triangle_mesh(tmesh));
@@ -207,7 +210,8 @@ public:
         hd = next(hd, tmesh);
       } while (hd != start_hd);
 
-      Vector_3 n = Polygon_mesh_processing::compute_face_normal(fd, tmesh);
+      Vector_3 n = Polygon_mesh_processing::compute_face_normal(fd, tmesh, parameters::vertex_point_map(vpm)
+                                                                                      .geom_traits(gt));
       if (outward_offsetting)
         n = -n;
 
@@ -268,6 +272,10 @@ public:
 
     const bool outward_offsetting = choose_parameter(get_parameter(np, internal_np::outward_offsetting), false);
 
+    using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+    VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_const_property_map(vertex_point, tmesh));
+
     ConfigurationSPtr config = Configuration::get_instance();
     const bool merge_faces = config->get_Boolean("Preprocessing", "merge_coplanar_faces");
     const double epsilon = config->get_double("Preprocessing", "coplanarity_epsilon");
@@ -309,7 +317,7 @@ public:
     using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
     using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
 
-    const CGAL::Bbox_3 bbox = PMP::bbox(tmesh);
+    const CGAL::Bbox_3 bbox = PMP::bbox(tmesh, parameters::vertex_point_map(vpm));
     const FT diag_length = CGAL::approximate_sqrt(square(bbox.xmax() - bbox.xmin()) +
                                                   square(bbox.ymax() - bbox.ymin()) +
                                                   square(bbox.zmax() - bbox.zmin()));
@@ -332,7 +340,9 @@ public:
                                            boost::make_assoc_property_map(region_ids),
                                            CGAL::parameters::region_primitive_map(plane_map)
                                                             .maximum_distance(max_distance)
-                                                            .cosine_of_maximum_angle(-1.));
+                                                            .cosine_of_maximum_angle(-1.)
+                                                            .vertex_point_map(vpm)
+                                                            .geom_traits(GeomTraits()));
 
     CGAL_SS3_IO_TRACE_CODE(for (face_descriptor f : faces(tmesh)))
     CGAL_SS3_IO_TRACE_V(16, "facet " << f << " is in region " << region_ids.at(f));
