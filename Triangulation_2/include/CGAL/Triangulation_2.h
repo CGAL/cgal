@@ -629,26 +629,7 @@ public:
 
   Oriented_side
   side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
-                          const Point &p, bool perturb) const
-  {
-    //CGAL_precondition( orientation(p0, p1, p2) == POSITIVE );
-    // no reason for such precondition and it invalidates fast removal in Delaunay
-
-    typename Gt::Side_of_oriented_circle_2 pred = geom_traits().side_of_oriented_circle_2_object();
-    Oriented_side os = pred(construct_point(p0), construct_point(p1),
-                            construct_point(p2), construct_point(p));
-
-    if ((os != ON_ORIENTED_BOUNDARY) || (! perturb))
-      return os;
-
-    return perturbed_side_of_oriented_circle(p0, p1, p2, p);
-  }
-
-  // symbolic perturbation for the degenerate case of `side_of_oriented_circle()`,
-  // apart so that the common case is cheap (and can be inlined)
-  Oriented_side
-  perturbed_side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
-                                    const Point &p) const;
+                          const Point &p, bool perturb) const;
 
   Oriented_side
   side_of_oriented_circle(Face_handle f, const Point & p, bool perturb = false) const;
@@ -3612,10 +3593,20 @@ oriented_side(Face_handle f, const Point &p) const
 template <class Gt, class Tds >
 Oriented_side
 Triangulation_2<Gt, Tds>::
-perturbed_side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
-                                  const Point &p) const
+side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
+                        const Point &p, bool perturb) const
 {
-  // We are in a degenerate case => we do a symbolic perturbation.
+  //CGAL_precondition( orientation(p0, p1, p2) == POSITIVE );
+  // no reason for such precondition and it invalidates fast removal in Delaunay
+
+  typename Gt::Side_of_oriented_circle_2 pred = geom_traits().side_of_oriented_circle_2_object();
+  Oriented_side os = pred(construct_point(p0), construct_point(p1),
+                          construct_point(p2), construct_point(p));
+
+  if ((os != ON_ORIENTED_BOUNDARY) || (! perturb))
+    return os;
+
+  // We are now in a degenerate case => we do a symbolic perturbation.
 
   // We sort the points lexicographically.
   const Point * points[4] = {&p0, &p1, &p2, &p};
