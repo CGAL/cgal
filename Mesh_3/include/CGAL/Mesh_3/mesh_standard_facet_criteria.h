@@ -660,7 +660,7 @@ class Facet_normals_variation_criterion
 public:
   /// Constructor
   Facet_normals_variation_criterion(const FT& bound_degrees)
-      : cosine_bound_(std::cos(bound_degrees * CGAL_PI / 180.0))
+    : cosine_bound_(std::cos(CGAL::to_double(bound_degrees * CGAL_PI / 180.0)))
   {}
 
   /// Destructor
