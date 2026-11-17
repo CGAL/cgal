@@ -55,17 +55,16 @@
 #include <CGAL/unordered_flat_map.h>
 #include <CGAL/utility.h>
 
-#include <boost/algorithm/clamp.hpp>
 #include <boost/range/value_type.hpp>
 
 #include <algorithm>
 #include <iostream>
-#include <map>
 #include <memory>
 #include <optional>
 #include <random>
 #include <type_traits>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 namespace CGAL {
@@ -95,86 +94,12 @@ enum class Slope
   VERTICAL
 };
 
-// @todo Is this postprocessing really necessary? Do users really care if the point
-// is not perfectly above the input contour edge (it generally cannot be anyway if the kernel
-// is not exact except for some specific cases)?
-// #define CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-
-// The purpose of this visitor is to snap back almost-vertical (see preprocess_weights()) edges
-// to actual vertical slabs.
-template <typename HDS, typename XK>
-typename XK::Point_2
-snap_point_to_contour_halfedge_plane(const typename XK::Point_2& op,
-                                     typename HDS::Halfedge_const_handle ch)
-{
-  using FT = typename XK::FT;
-  using Segment_2 = typename XK::Segment_2;
-  using Line_2 = typename XK::Line_2;
-
-  using Vertex_const_handle = typename HDS::Vertex_const_handle;
-
-  const Vertex_const_handle sv = ch->opposite()->vertex();
-  const Vertex_const_handle tv = ch->vertex();
-
-  if(sv->point().x() == tv->point().x())
-  {
-    // vertical edge
-    // std::cout << "vertical edge, snapping " << op << " to " << sv->point().x() << " "  << op.y() << std::endl;
-    return { sv->point().x(), op.y() };
-  }
-  else if(sv->point().y() == tv->point().y())
-  {
-    // horizontal edge
-    // std::cout << "horizontal edge, snapping " << op << " to " << op.x() << " " << sv->point().y() << std::endl;
-    return { op.x(), sv->point().y() };
-  }
-  else
-  {
-    // Project orthogonally onto the halfedge
-    // @todo should the projection be along the direction of the other offset edge sharing this point?
-    Segment_2 s { sv->point(), tv->point() };
-    std::optional<Line_2> line = CGAL_SS_i::compute_normalized_line_coeffC2(s);
-    CGAL_assertion(bool(line)); // otherwise the skeleton would have failed already
-
-    FT px, py;
-    CGAL::line_project_pointC2(line->a(),line->b(),line->c(), op.x(),op.y(), px,py);
-    // std::cout << "snapping " << op << " to " << px << " " << py << std::endl;
-    return { px, py };
-  }
-}
-
-template <typename HDS, typename XK>
-void snap_skeleton_vertex(typename HDS::Halfedge_const_handle hds_h,
-                          typename HDS::Halfedge_const_handle contour_h,
-                          std::map<typename XK::Point_2,
-                                   typename XK::Point_2>& snapped_positions)
-{
-  typename HDS::Vertex_const_handle hds_tv = hds_h->vertex();
-
-  // this re-applies snapping towards contour_h even if the point was already snapped towards another contour
-  auto insert_result = snapped_positions.emplace(hds_tv->point(), hds_tv->point());
-  insert_result.first->second = snap_point_to_contour_halfedge_plane<HDS, XK>(insert_result.first->second, contour_h);
-
-  // std::cout << "snap_skeleton_vertex(V" << hds_tv->id() << " pt: " << hds_h->vertex()->point() << ")"
-  //           << " to " << insert_result.first->second << std::endl;
-}
-
-template <typename XK, typename PointRange>
-void apply_snapping(PointRange& points,
-                    const std::map<typename XK::Point_2,
-                                   typename XK::Point_2>& snapped_positions)
-{
-  using Point_3 = typename XK::Point_3;
-
-  for(Point_3& p3 : points)
-  {
-    auto it = snapped_positions.find({ p3.x(), p3.y() });
-    if(it != snapped_positions.end())
-      p3 = Point_3{it->second.x(), it->second.y(), p3.z()};
-  }
-}
-#endif // CGAL_SLS_SNAP_TO_VERTICAL_SLABS
+// Vertical slabs cannot be represented with (strictly) positive weights.
+// The workaround is to give a very large weight (see preprocess_weights()), which creates
+// near vertical faces.
+// If the macro below is defined, the points of these faces are moved onto the vertical planes
+// after the output mesh has been constructed.
+#define CGAL_SLS_SNAP_TO_VERTICAL_SLABS
 
 template <typename StraightSkeleton_2,
           typename OffsetBuilderTraits,
@@ -199,22 +124,14 @@ public:
                                                  std::vector<Point_3>& points,
                                                  CGAL::unordered_flat_map<HDS_Vertex_const_handle, std::size_t>& vertex_point_ids,
                                                  CGAL::unordered_flat_map<HDS_Halfedge_const_handle, std::size_t>& halfedge_point_ids,
-                                                 std::vector<std::vector<HDS_Halfedge_const_handle> >& contour_halfedges
-#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-                                               , const FT vertical_weight
-                                               , std::map<Point_2, Point_2>& snapped_positions
-#endif
-                                               , const bool ignore_first_contour = false) // for outer skeletons
+                                                 std::vector<std::vector<HDS_Halfedge_const_handle> >& contour_halfedges,
+                                                 const bool ignore_first_contour = false) // for outer skeletons
     : m_height(height),
       m_points(points),
       m_vertex_point_ids(vertex_point_ids),
       m_halfedge_point_ids(halfedge_point_ids),
       m_contour_halfedges(contour_halfedges),
       m_skip_next_contour(ignore_first_contour)
-#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    , m_vertical_weight(vertical_weight)
-    , m_snapped_positions(snapped_positions)
-#endif
   { }
 
 private:
@@ -238,10 +155,6 @@ public:
     m_tentative_contour.clear();
   }
 
-  // can't modify the position yet because we need arrange_polygons() to still work properly
-  //
-  // @fixme on paper one could create a polygon thin-enough w.r.t. the max weight value
-  // such that there is a skeleton vertex that wants to be snapped to two different sides...
   void on_offset_point(const Point_2& op,
                        SS_Halfedge_const_handle hook) const
   {
@@ -249,38 +162,6 @@ public:
 
     // std::cout << "-> on offset point(" << op << ", " << " on H" << hook->id() << ")" << std::endl;
     m_tentative_contour.emplace_back(op, hook);
-
-#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    CGAL_precondition(m_snapped_positions.count(op) == 0);
-
-    SS_Halfedge_const_handle contour_h1 = hook->defining_contour_edge();
-    CGAL_assertion(contour_h1->opposite()->is_border());
-    SS_Halfedge_const_handle contour_h2 = hook->opposite()->defining_contour_edge();
-    CGAL_assertion(contour_h2->opposite()->is_border());
-
-    const bool is_h1_vertical = (contour_h1->weight() == m_vertical_weight);
-    const bool is_h2_vertical = (contour_h2->weight() == m_vertical_weight);
-
-    // if both are vertical, it's the common vertex
-    // @fixme not sure the common vertex always exists?...
-    if(is_h1_vertical && is_h2_vertical)
-    {
-      CGAL_assertion(contour_h1->vertex() == contour_h2->opposite()->vertex() ||
-                     contour_h2->vertex() == contour_h1->opposite()->vertex());
-      if(contour_h1->vertex() == contour_h2->opposite()->vertex())
-        m_snapped_positions[op] = contour_h1->vertex()->point();
-      else
-        m_snapped_positions[op] = contour_h2->vertex()->point();
-    }
-    else if(is_h1_vertical)
-    {
-      m_snapped_positions[op] = snap_point_to_contour_halfedge_plane<HDS, XK>(op, contour_h1);
-    }
-    else if(is_h2_vertical)
-    {
-      m_snapped_positions[op] = snap_point_to_contour_halfedge_plane<HDS, XK>(op, contour_h2);
-    }
-#endif
   }
 
   void on_offset_contour_finished(const bool is_complete) const
@@ -360,11 +241,6 @@ private:
   std::vector<std::vector<HDS_Halfedge_const_handle> >& m_contour_halfedges;
   mutable std::vector<std::pair<Point_2, HDS_Halfedge_const_handle> > m_tentative_contour;
   mutable bool m_skip_next_contour;
-
-#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-  const FT m_vertical_weight;
-  std::map<Point_2, Point_2>& m_snapped_positions;
-#endif
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,6 +254,7 @@ class Extrusion_builder
   using SFT = typename SK::FT;
   using FT = typename XK::FT;
   using Point_2 = typename XK::Point_2;
+  using Line_2 = typename XK::Line_2;
   using Point_3 = typename XK::Point_3;
   using Vector_3 = typename XK::Vector_3;
 
@@ -424,10 +301,11 @@ private:
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
   // This is to deal with vertical slabs: we temporarily give a non-vertical slope to be able
-  // to construct the SLS, and we then snap back the position to the vertical planes.
-  // Note that points in non-vertical faces are also changed a bit
-  CGAL::unordered_flat_map<HDS_Vertex_const_handle, std::size_t> m_snapped_vps;
-  CGAL::unordered_flat_map<HDS_Halfedge_const_handle, std::size_t> m_snapped_hps;
+  // to construct the skeleton, and we then snap back the positions to the vertical planes afterwards.
+  // Points of non-vertical faces that are shared with vertical faces are also moved.
+  //
+  // point id -> the vertical contour edges whose (lateral) faces contain this point
+  CGAL::unordered_flat_map<std::size_t, std::vector<HDS_Halfedge_const_handle> > m_vertical_slabs;
 #endif
 
   Slope m_slope;
@@ -454,8 +332,7 @@ private:
     m_vertex_point_ids.clear();
     m_halfedge_point_ids.clear();
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    m_snapped_vps.clear();
-    m_snapped_hps.clear();
+    m_vertical_slabs.clear();
 #endif
     m_points.clear();
     m_faces.clear();
@@ -473,10 +350,14 @@ public:
   template <typename K> // XK or EK
   typename K::Point_3 compute_skeleton_vertex_point(HDS_Vertex_const_handle vertex) const
   {
-    const typename K::FT s = (m_height.has_value() && is_negative(*m_height)) ? -1 : 1;
+    const double s = (m_height.has_value() && is_negative(*m_height)) ? -1. : 1.;
+
     if constexpr(std::is_same_v<K, XK>)
     {
-      return { vertex->point().x(), vertex->point().y(), s * vertex->time() };
+      FT time = vertex->time(); // FT here is XK::FT
+      if (m_height.has_value())
+        time = boost::algorithm::clamp(time, FT(0), CGAL::abs(*m_height));
+      return { vertex->point().x(), vertex->point().y(), s * time };
     }
     else
     {
@@ -486,7 +367,10 @@ public:
       using K_straight_skeleton_2 = CGAL::Straight_skeleton_2<K>;
       using Items_converter = CGAL::Straight_skeleton_items_converter_2<Straight_skeleton_2, K_straight_skeleton_2>;
       const auto k_vertex = Items_converter()(vertex);
-      return { k_vertex.point().x(), k_vertex.point().y(), s * k_vertex.time() };
+      const typename K::FT& time = k_vertex.time();
+      // if K is not XK, K is exact, so the time is correct
+      CGAL_assertion(!m_height.has_value() || time <= CGAL::abs(*m_height));
+      return { k_vertex.point().x(), k_vertex.point().y(), s * time };
     }
   }
 
@@ -954,37 +838,23 @@ public:
         auto [point, pid] = skeleton_halfedge_point_and_id<K>(hds_off_h);
         face_points[0].push_back(point);
         point_ids[0].push_back(pid);
+
+#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
+        if(is_vertical)
+          add_vertical_slab(pid, contour_h);
+#endif
       }
 
       if(tc != CGAL::SMALLER)
       {
-#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-        if(is_vertical && !hds_tv->is_contour())
-          snap_skeleton_vertex<HDS, XK>(hds_h, contour_h, snapped_positions);
-#endif
-
         auto [point, pid] = skeleton_vertex_point_and_id<K>(hds_tv);
         face_points[0].push_back(point);
         point_ids[0].push_back(pid);
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-        clamp, probably when snapping happens?
-
-        using K_FT = typename K::FT;
-        CGAL::Cartesian_converter<XK, K> to_k;
-        const K_FT& k_abs_height = to_k(abs_height);
-        const KFT time = boost::algorithm::clamp(point.z(), KFT(0), k_abs_height);
-        point = K_point_3(point.x(), point.y(), is_positive(*m_height) ? time : - time);
-
-        if constexpr(!std::is_same_v<K, XK>)
-        {
-          auto it = snapped_positions.find(hds_tv->point());
-          if(it != snapped_positions.end())
-          {
-            const auto snapped = converter(it->second);
-            point = K_point_3(snapped.x(), snapped.y(), point.z());
-          }
-        }
+        // contour vertices are already on the vertical planes
+        if(is_vertical && !hds_tv->is_contour())
+          add_vertical_slab(pid, contour_h);
 #endif
       }
 
@@ -1009,8 +879,6 @@ public:
                                  const bool invert_faces,
                                  const bool use_exact)
   {
-    HDS_Halfedge_const_handle contour_h = hds_f->halfedge()->defining_contour_edge();
-
     if constexpr(!is_exact_kernel<XK>)
     {
       if(use_exact)
@@ -1053,6 +921,110 @@ public:
         std::cerr << "Error: Failed to triangulate lateral face" << std::endl;
     }
   }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
+  void add_vertical_slab(const std::size_t pid,
+                         HDS_Halfedge_const_handle contour_h)
+  {
+    std::vector<HDS_Halfedge_const_handle>& slabs = m_vertical_slabs[pid];
+    if(std::find(slabs.begin(), slabs.end(), contour_h) == slabs.end())
+      slabs.push_back(contour_h);
+  }
+
+  // orthogonal projection onto the supporting line of the (vertical) contour edge `slab`
+  Point_2 project_onto_slab(const Point_2& p,
+                            HDS_Halfedge_const_handle slab) const
+  {
+    const Point_2& s = slab->opposite()->vertex()->point();
+    const Point_2& t = slab->vertex()->point();
+
+    // axis-aligned slabs: keep the exact coordinate of the input
+    if(s.x() == t.x())
+      return { s.x(), p.y() };
+    if(s.y() == t.y())
+      return { p.x(), s.y() };
+
+    return m_xk.construct_projected_point_2_object()(m_xk.construct_line_2_object()(s, t), p);
+  }
+
+  // Moves the points of the vertical faces onto the vertical planes above their contour edges.
+  void snap_to_vertical_slabs()
+  {
+    auto cl2 = m_xk.construct_line_2_object();
+    auto collinear = m_xk.collinear_2_object();
+    auto cp2 = m_xk.construct_point_2_object();
+    auto cp3 = m_xk.construct_point_3_object();
+    auto inter_2 = m_xk.intersect_2_object();
+
+    auto have_same_supporting_line = [&](HDS_Halfedge_const_handle h0,
+                                         HDS_Halfedge_const_handle h1)
+    {
+      const Point_2& s0 = h0->opposite()->vertex()->point();
+      const Point_2& t0 = h0->vertex()->point();
+      return collinear(s0, t0, h1->opposite()->vertex()->point()) &&
+             collinear(s0, t0, h1->vertex()->point());
+    };
+
+    for(const auto& [pid, slabs] : m_vertical_slabs)
+    {
+      Point_3& p = m_points[pid];
+      const Point_2 p2 = cp2(p.x(), p.y());
+
+      if(slabs.size() > 2)
+      {
+        if(m_verbose)
+          std::cerr << "Warning: point " << p << " is on " << slabs.size() << " distinct vertical slabs??" << std::endl;
+      }
+
+      // keep a single slab per supporting line (e.g., consecutive collinear vertical edges)
+      std::vector<HDS_Halfedge_const_handle> lines;
+      for(HDS_Halfedge_const_handle w : slabs)
+      {
+        bool is_new = std::none_of(lines.begin(), lines.end(),
+                                   [&](HDS_Halfedge_const_handle l) { return have_same_supporting_line(l, w); });
+        if(is_new)
+          lines.push_back(w);
+      }
+
+      std::optional<Point_2> snapped;
+      if(lines.size() == 1)
+      {
+        snapped = project_onto_slab(p2, lines[0]);
+      }
+      else if(lines.size() >= 2)
+      {
+        // The point must be on both planes, i.e., above the intersection of the two lines.
+        // For consecutive contour edges, that is their common vertex.
+        if(lines[0]->vertex() == lines[1]->opposite()->vertex())
+        {
+          snapped = lines[0]->vertex()->point();
+        }
+        else if(lines[1]->vertex() == lines[0]->opposite()->vertex())
+        {
+          snapped = lines[1]->vertex()->point();
+        }
+        else
+        {
+          const Line_2 l0 = cl2(lines[0]->opposite()->vertex()->point(), lines[0]->vertex()->point());
+          const Line_2 l1 = cl2(lines[1]->opposite()->vertex()->point(), lines[1]->vertex()->point());
+          const auto inter = inter_2(l0, l1);
+          CGAL_assertion(bool(inter)); // since lines are not collinear
+          if(inter)
+          {
+            if(const Point_2* ip = std::get_if<Point_2>(&*inter))
+              snapped = *ip;
+          }
+        }
+      }
+
+      p = cp3(snapped->x(), snapped->y(), p.z());
+    }
+  }
+#endif // CGAL_SLS_SNAP_TO_VERTICAL_SLABS
 
 public:
   // This is roughly "CGAL::create_interior_weighted_skeleton_and_offset_polygons_with_holes_2()",
@@ -1177,7 +1149,7 @@ public:
     }
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    apply_snapping<XK>(snapped_positions);
+    snap_to_vertical_slabs();
 #endif
 
 #ifdef CGAL_SLS_EXTRUSION_TIMERS
@@ -1398,7 +1370,7 @@ public:
     construct_top_horizontal_faces(top_contour_halfedges);
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    apply_snapping<XK>(points, snapped_positions);
+    snap_to_vertical_slabs();
 #endif
 
     points = std::move(m_points);
