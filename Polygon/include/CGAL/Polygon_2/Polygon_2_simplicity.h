@@ -472,7 +472,7 @@ sweep(Tree *tree)
 
 template <class Iterator, class PolygonTraits>
 bool is_simple_polygon(Iterator points_begin, Iterator points_end,
-                       const PolygonTraits& polygon_traits)
+                       PolygonTraits polygon_traits)
 {
     typedef Iterator ForwardIterator;
     typedef i_polygon::Vertex_data<ForwardIterator, PolygonTraits> Vertex_data;

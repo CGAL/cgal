@@ -18,6 +18,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_facet_topology.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #include <CGAL/utility.h>
 #include <CGAL/Time_stamper.h>
@@ -28,7 +29,6 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/unordered_set.hpp>
 
-#include <set>
 #include <vector>
 #include <atomic>
 
@@ -71,6 +71,8 @@ public:
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
 
 protected:
+  typedef Triangulation_helpers<Tr>                              Th;
+
   typedef typename Tr::Geom_traits                               GT;
   typedef typename GT::FT                                        FT;
 
@@ -136,10 +138,10 @@ private:
     typename GT::Compute_weight_3 cw = this->r_tr_.geom_traits().compute_weight_3_object();
     typename GT::Construct_point_3 cp = this->r_tr_.geom_traits().construct_point_3_object();
 
-    const Bare_point& fcenter = f.first->get_facet_surface_center(f.second);
+    const Bare_point& fcenter = this->r_c3t3_.surface_center(f.first, f.second);
     const Weighted_point& wp = this->r_tr_.point(v);
 
-    return this->r_tr_.min_squared_distance(fcenter, cp(wp)) - cw(wp);
+    return Th().min_squared_distance(this->r_tr_, fcenter, cp(wp)) - cw(wp);
   }
 
   std::pair<Facet, FT>
@@ -158,7 +160,7 @@ private:
     typename std::vector<Facet>::iterator fit = facets.begin();
     while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
     CGAL_assertion(fit!=facets.end());
-    CGAL_assertion_code(std::size_t facet_counter = 1);
+    CGAL_assertion_code(int facet_counter = 1);
 
     Facet biggest_facet = *fit++;
     FT biggest_sq_dist = compute_sq_distance_to_facet_center(biggest_facet, v);
@@ -187,8 +189,7 @@ private:
       ++fit;
       while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
     }
-    CGAL_assertion(v->cached_number_of_incident_facets() ==
-                   facet_counter);
+    CGAL_assertion(v->cached_number_of_incident_facets() == facet_counter);
     CGAL_assertion(this->r_c3t3_.is_in_complex(biggest_facet));
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "Biggest facet squared radius: "

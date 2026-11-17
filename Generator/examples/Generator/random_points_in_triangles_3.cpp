@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <fstream>
-using namespace CGAL;
-typedef Simple_cartesian<double>                           K;
+
+typedef CGAL::Simple_cartesian<double>                     K;
 typedef K::Point_3                                         Point;
 
 
@@ -20,7 +20,7 @@ int main()
   }
 
   // Create the generator, input is the vector of Triangle_3
-  Random_points_in_triangles_3<Point> g(triangles);
+  CGAL::Random_points_in_triangles_3<Point> g(triangles);
   // Get 100 random points in cdt
   std::copy_n(g, 1000, std::back_inserter(points));
 

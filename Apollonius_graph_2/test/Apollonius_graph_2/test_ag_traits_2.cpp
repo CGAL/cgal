@@ -12,7 +12,7 @@ typedef CGAL::MP_Float exact_type;
 
 typedef CGAL::Integral_domain_without_division_tag Method_tag;
 
-#include "./include/test.h"
+#include <CGAL/ag_2_test.h>
 
 typedef CGAL::Simple_cartesian<double> CK;
 typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;

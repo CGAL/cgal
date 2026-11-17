@@ -117,7 +117,7 @@ Qt is a cross-platform application and UI framework.
 The component `CGAL_Qt6` is essential to run the \cgal demos and basic viewers.
 It requires \qt6 installed on your system.
 In case \qt is not yet installed on your system, you can download
-it from <A HREF="https://contribute.qt-project.org/">`https://contribute.qt-project.org/`</A>.
+it from <A HREF="https://www.qt.io/development/download-qt-installer-oss">`https://www.qt.io/development/download-qt-installer-oss`</A>.
 
 The exhaustive list of \qt6 components used in demos is:
 `Core`, `Gui`, `Help`, `OpenGL`, `OpenGLWidgets`, `Qml`, `Svg`, `Widgets`,
@@ -139,6 +139,19 @@ executables should be linked with the CMake imported target
 `CGAL::Eigen3_support` provided in `CGAL_Eigen3_support.cmake`.
 
 The \eigen web site is <A HREF="https://libeigen.gitlab.io/">`https://libeigen.gitlab.io/`</A>.
+
+\subsection thirdpartyFastFloat fast_float Library
+<b>Version 6.0.0 or later</b>
+
+The \fast_float library provides fast header-only implementations for the \cpp `from_chars()` functions for `float` and `double` types as well as integer types.
+
+The \fast_float web site is <A HREF="https://github.com/fastfloat/fast_float">`https://github.com/fastfloat/fast_float`</A>.
+
+In order to use \fast_float in \cgal programs, the executables should be linked with the CMake imported target
+`CGAL::FastFloat_support` provided in `CGAL_FastFloat_support.cmake`. It is also possible to automate this
+even further by making it a dependency of the target `CGAL::CGAL` by setting the environment or cmake variable
+CGAL_WITH_FASTFLOAT to ON.
+
 
 \subsection thirdpartyOpenGR OpenGR
 
@@ -319,6 +332,7 @@ The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
 
 
 \subsection thirdpartyVTK VTK
+<b>Version 9.0 or later</b>
 
 \vtk is the Visualization Toolkit.
 In \cgal, this library is used in some examples of the \ref PkgMesh3 package.

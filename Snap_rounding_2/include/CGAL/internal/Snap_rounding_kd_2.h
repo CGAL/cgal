@@ -51,7 +51,7 @@ private:
 public:
 
   Point_2 orig;
-  SAVED_OBJECT object;
+  SAVED_OBJECT object = nullptr;
 
   Point_with_hot_pixel_history(const Base& p, const Point_2& inp_orig, SAVED_OBJECT obj) : Base(p), orig(inp_orig), object(obj) {}
 

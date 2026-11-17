@@ -332,6 +332,14 @@ void test_issue_9640(){
   assert(CGAL::is_valid_polygon_mesh(out));
 }
 
+template<class Mesh>
+void test_pr_9768(){
+  Mesh m, out;
+  bool res = CGAL::IO::read_polygon_mesh("data-clip/data_pr_9768.off", m);
+  assert(res);
+  test_kernel_on_mesh(m, 10, 15, 7);
+}
+
 template<class Mesh, class K>
 void tests(){
   using P = typename K::Point_3;
@@ -509,6 +517,7 @@ void tests(){
   test_clip_convex_on_mesh(m, opposite(pl), 8, 12, 6);
 
   test_issue_9640<Mesh>();
+  test_pr_9768<Mesh>();
 }
 
 int main(/*int argc, char** argv*/)

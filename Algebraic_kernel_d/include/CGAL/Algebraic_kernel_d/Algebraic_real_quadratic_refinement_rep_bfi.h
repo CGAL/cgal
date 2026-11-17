@@ -229,21 +229,25 @@ protected:
 
         bool poly_changed = (P!=this->polynomial());
         if(poly_changed) {
-            f_bfi_ = std::nullopt;
+            f_bfi_.reset();
         }
         if(poly_changed || LOW != this->low()) {
-            f_low_bfi_ = low_bfi_ = std::nullopt;
+            f_low_bfi_.reset();
+            low_bfi_.reset();
         }
         if(poly_changed || HIGH != this->high()) {
-            f_high_bfi_ = high_bfi_ = std::nullopt;
+            f_high_bfi_.reset();
+            high_bfi_.reset();
         }
         Base::set_implicit_rep(P,LOW,HIGH,dummy_bool);
     }
 
     virtual void set_explicit_rep(const Field& m) const {
-        f_bfi_ = std::nullopt;
-        f_low_bfi_ = low_bfi_ = std::nullopt;
-        f_high_bfi_ = high_bfi_ = std::nullopt;
+        f_bfi_.reset();
+        f_low_bfi_.reset();
+        low_bfi_.reset();
+        f_high_bfi_.reset();
+        high_bfi_.reset();
         Base::set_explicit_rep(m);
     }
 
@@ -256,13 +260,15 @@ public:
         if(this->is_rational()) return;
 
         if(old_low_!=this->low_) {
-            f_low_bfi_ = low_bfi_ = std::nullopt;
+            f_low_bfi_.reset();
+            low_bfi_.reset();
         }
         if(old_high_!=this->high_) {
-            f_high_bfi_ = high_bfi_ = std::nullopt;
+            f_high_bfi_.reset();
+            high_bfi_.reset();
         }
         if(old_pol != this->polynomial()) {
-            f_bfi_ = std::nullopt;
+            f_bfi_.reset();
         }
     }
 
@@ -490,7 +496,7 @@ public:
         Poly f_old = this->polynomial();
         Base::simplify();
         if(f_old != this->polynomial()) {
-            f_bfi_ = std::nullopt;
+            f_bfi_.reset();
         }
     }
 };

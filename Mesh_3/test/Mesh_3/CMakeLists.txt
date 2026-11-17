@@ -58,6 +58,7 @@ create_single_source_cgal_program( "test_mesh_cell_base_3.cpp")
 create_single_source_cgal_program( "test_min_edge_length.cpp")
 create_single_source_cgal_program( "test_max_edge_distance.cpp")
 create_single_source_cgal_program( "test_remeshing_polyhedron.cpp" )
+create_single_source_cgal_program( "test_meshing_experimental_compact_cell_base.cpp" )
 
 foreach(target
     surface_mesh_to_tetrahedral_mesh
@@ -92,6 +93,7 @@ foreach(target
     test_min_size_criteria
     test_meshing_polyhedral_complex_with_manifold_and_min_size
     test_remeshing_polyhedron
+    test_meshing_experimental_compact_cell_base
     )
   if(TARGET ${target})
     target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
@@ -119,6 +121,7 @@ if(TARGET CGAL::TBB_support)
       test_min_edge_length
       test_max_edge_distance
       test_min_size_criteria
+      test_meshing_experimental_compact_cell_base
       )
     if(TARGET ${target})
       target_link_libraries(${target} PRIVATE CGAL::TBB_support)

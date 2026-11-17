@@ -33,7 +33,7 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<
   Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index>;
 
 // Criteria
-using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+using Mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
 
 // Triangulation for Remeshing
 using Triangulation_3 = CGAL::Triangulation_3<Tr::Geom_traits,
@@ -44,7 +44,7 @@ using Constraints_set = std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>
 using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
@@ -73,25 +73,25 @@ int main(int argc, char* argv[])
 
   // Mesh criteria
   const double size = 0.072;
-  Mesh_criteria criteria(edge_size = size,
-                         facet_angle = 25,
-                         facet_size = size,
-                         facet_distance = 0.1 * size,
-                         cell_radius_edge_ratio = 2,
-                         cell_size = size);
+  Mesh_criteria criteria(params::edge_size(size).
+                         facet_angle(25).
+                         facet_size(size).
+                         facet_distance(0.1 * size).
+                         cell_radius_edge_ratio(2).
+                         cell_size(size));
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_perturb().no_exude());
 
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
 
   Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3),
-    edge_is_constrained_map(constraints_pmap));
+    params::edge_is_constrained_map(constraints_pmap));
 
   // Remeshing
   CGAL::tetrahedral_isotropic_remeshing(tr, size,
-    number_of_iterations(nb_iter)
+    params::number_of_iterations(nb_iter)
     .edge_is_constrained_map(constraints_pmap));
 
   std::ofstream out("out_remeshed.mesh");

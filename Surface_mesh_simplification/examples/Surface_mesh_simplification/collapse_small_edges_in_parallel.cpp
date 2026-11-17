@@ -151,7 +151,7 @@ int main(int argc, char** argv)
           << " #E = " << num_edges(final_mesh)
           << " #F = " << num_faces(final_mesh) << std::endl;
 
-  std::ofstream("simplified_mesh.off") << std::setprecision(17) << final_mesh;
+  std::ofstream("simplified_mesh_parallel.off") << std::setprecision(17) << final_mesh;
 
   return EXIT_SUCCESS;
 }

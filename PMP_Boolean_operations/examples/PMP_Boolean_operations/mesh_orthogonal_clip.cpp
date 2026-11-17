@@ -13,10 +13,10 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 int main(int argc, char** argv)
 {
   const std::filesystem::path fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
-  const std::string oname = (argc > 2) ? argv[2] : "clipped.off";
+  const std::filesystem::path ofname = (argc > 2) ? argv[2] : fname.stem().concat("-clipped").concat(fname.extension().native());
 
-  Mesh m;
-  if (!CGAL::IO::read_polygon_mesh(fname, m) || is_empty(m))
+  Mesh mesh;
+  if (!CGAL::IO::read_polygon_mesh(fname, mesh) || is_empty(mesh))
   {
     std::cerr << "ERROR: cannot read " << fname << "\n";
     return EXIT_FAILURE;
@@ -27,14 +27,14 @@ int main(int argc, char** argv)
 
   PMP::Orthogonal_cut_plane_traits<K> cut_traits;
   PMP::Orthogonal_cut_plane_traits<K>::Plane_3 pl(0, 0);
-  PMP::clip(m, pl, CGAL::parameters::geom_traits(cut_traits));
+  PMP::clip(mesh, pl, CGAL::parameters::geom_traits(cut_traits));
 
   timer.stop();
 
   std::cout << "Clip computation of " << fname << " done in " << timer.time() << std::endl;
-  std::cout << "Output containing " << vertices(m).size() << " vertices wrote in " << oname << std::endl;
+  std::cout << "Output containing " << vertices(mesh).size() << " vertices written in " << ofname << std::endl;
 
-  CGAL::IO::write_polygon_mesh("kernel.off", m, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh(ofname, mesh, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

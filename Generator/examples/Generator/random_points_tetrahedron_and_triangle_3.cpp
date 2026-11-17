@@ -4,11 +4,11 @@
 #include <CGAL/Random.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                 K;
-typedef K::Point_3                                                                                                         Point_3;
-typedef K::Triangle_3                                                                                                 Triangle_3;
-typedef K::Tetrahedron_3                                                                                         Tetrahedron_3;
-typedef CGAL::Random_points_in_triangle_3<Point_3>                                         Point_generator_i;
-typedef CGAL::Random_points_in_tetrahedron_3<Point_3>                                 Point_generator_ii;
+typedef K::Point_3                                                          Point_3;
+typedef K::Triangle_3                                                       Triangle_3;
+typedef K::Tetrahedron_3                                                    Tetrahedron_3;
+typedef CGAL::Random_points_in_triangle_3<Point_3>                          Point_generator_i;
+typedef CGAL::Random_points_in_tetrahedron_3<Point_3>                       Point_generator_ii;
 
 int main() {
         std::cout << "This example does two things:" << std::endl;

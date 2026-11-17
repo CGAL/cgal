@@ -5,11 +5,10 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
 
-using namespace CGAL;
 
-typedef Simple_cartesian<int>         K;
+typedef CGAL::Simple_cartesian<int>         K;
 typedef K::Point_2                    Point;
-typedef Creator_uniform_2<int,Point>  Creator;
+typedef CGAL::Creator_uniform_2<int,Point>  Creator;
 
 int main() {
     // Create test point set. Prepare a vector for 400 points.
@@ -19,7 +18,7 @@ int main() {
     // Create 250 points from a 16 x 16 grid. Note that the double
     // arithmetic _is_ sufficient to produce exact integer grid points.
     // The distance between neighbors is 34 pixel = 510 / 15.
-    points_on_square_grid_2( 255.0, 250, std::back_inserter(points),Creator());
+    CGAL::points_on_square_grid_2( 255.0, 250, std::back_inserter(points),Creator());
 
     // Lower, left corner.
     assert( points[0].x() == -255);
@@ -30,7 +29,7 @@ int main() {
     assert( points[249].y() == 255);
 
     // Create 250 points within a disc of radius 150.
-    Random_points_in_disc_2<Point,Creator> g( 150.0);
+    CGAL::Random_points_in_disc_2<Point,Creator> g( 150.0);
     std::copy_n( g, 250, std::back_inserter(points));
 
     // Check that we have really created 500 points.

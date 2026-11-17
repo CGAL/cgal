@@ -200,7 +200,7 @@ public:
     m_point_types.push_back(Vertex_and_constraint);
   }
 
-  void start_constraint() { m_curr_cst_begin = m_points.size(); }
+  void start_constraint() { m_curr_cst_begin = static_cast<int>(m_points.size()); }
 
   void end_constraint() {
     CGAL_assertion_msg(m_curr_cst_begin.has_value(), "Call start_constraint() before end_constraint().");
@@ -213,7 +213,7 @@ public:
       return;
     }
     add_boundary_helper_point(m_points.back(), m_points[cst_begin]);
-    m_cst_ranges.emplace_back(cst_begin, m_points.size());
+    m_cst_ranges.emplace_back(cst_begin, static_cast<int>(m_points.size()));
   }
 
   /*! \brief Converts the triangulator to a triangulated face, moving internal data to the result.

@@ -102,6 +102,8 @@ void test_cover(const Mesh& mesh,
   using FG_Traits = CGAL::AABB_traits_3<GT, FG_Primitive>;
   using FG_Tree = CGAL::AABB_tree<FG_Traits>;
 
+  using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
+
   CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
   const double diag_length = std::sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
                                        CGAL::square(bbox.ymax() - bbox.ymin()) +
@@ -123,9 +125,12 @@ void test_cover(const Mesh& mesh,
     if(CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, mesh, np))
       continue;
 
-    const Point& p0 = get(vpm, target(halfedge(f, mesh), mesh));
-    const Point& p1 = get(vpm, target(next(halfedge(f, mesh), mesh), mesh));
-    const Point& p2 = get(vpm, source(halfedge(f, mesh), mesh));
+    vertex_descriptor vth = target(halfedge(f, mesh), mesh);
+    vertex_descriptor vtnh = target(next(halfedge(f, mesh), mesh), mesh);
+    vertex_descriptor vsh = source(halfedge(f, mesh), mesh);
+    const Point& p0 = get(vpm, vth);
+    const Point& p1 = get(vpm, vtnh);
+    const Point& p2 = get(vpm, vsh);
 
     const Triangle_3 tr = gt.construct_triangle_3_object()(p0, p1, p2);
     tree.split_and_insert(tr);
