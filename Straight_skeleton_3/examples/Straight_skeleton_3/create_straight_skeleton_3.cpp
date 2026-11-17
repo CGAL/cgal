@@ -48,16 +48,11 @@ int main(int argc, char** argv)
 
   std::cout << "Input mesh: " << vertices(sm).size() << " NV " << faces(sm).size() << " NF" << std::endl;
 
-
-  // every face has weight 2.0, meaning faces move at twice the default speed
-  CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(2);
-
   CGAL::Real_timer timer;
   timer.start();
 
   // Main call
-  auto straight_skeleton = CGAL::create_straight_skeleton_3(sm, time_bound,
-                                                            CGAL::parameters::face_weight_map(face_weight_map));
+  auto straight_skeleton = CGAL::create_straight_skeleton_3(sm, time_bound);
 
   timer.stop();
   std::cout << "Elapsed: " << timer.time() << std::endl;
