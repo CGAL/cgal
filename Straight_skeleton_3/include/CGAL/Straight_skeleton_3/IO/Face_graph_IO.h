@@ -275,6 +275,9 @@ public:
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(vertex_point, tmesh));
 
+    using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+    GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+
     ConfigurationSPtr config = Configuration::get_instance();
     const bool merge_faces = config->get_Boolean("Preprocessing", "merge_coplanar_faces");
     const double epsilon = config->get_double("Preprocessing", "coplanarity_epsilon");
@@ -341,7 +344,7 @@ public:
                                                             .maximum_distance(max_distance)
                                                             .cosine_of_maximum_angle(-1.)
                                                             .vertex_point_map(vpm)
-                                                            .geom_traits(GeomTraits()));
+                                                            .geom_traits(gt));
 
     CGAL_SS3_IO_TRACE_CODE(for (face_descriptor f : faces(tmesh)))
     CGAL_SS3_IO_TRACE_V(16, "facet " << f << " is in region " << get(rim, f));

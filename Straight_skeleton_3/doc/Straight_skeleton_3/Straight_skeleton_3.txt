@@ -92,7 +92,7 @@ used for the two-dimensional elements of a three-dimensional structure, we shall
 as contour <em>facets</em>, for consistency.
 
 Given a contour facet called the <em>source facet</em>, its <em>offset facet</em> at time `t` is a facet
-parallel and with the same orientation and such that the Euclidean distance between the planes
+parallel and with the same orientation and such that the Euclidean distance between the (normalized) planes
 supporting both facets is exactly `t`. In mathematical terms, if the supporting plane of the source facet
 is described through the equation `ax+by+cz+d=0`, then the supporting plane of the offset facet
 at a time `t` is `ax+by+cz+d-t=0`. In our setting, an offset facet shall always be located on the bounded
@@ -353,15 +353,11 @@ If offset polyhedra are not of interest, one may simply call `CGAL::create_strai
 which merely builds and returns the straight skeleton structure, using the class `CGAL::Straight_skeleton_3`.
 A straight skeleton can be written to a file using `CGAL::Straight_skeletons_3::IO::write_OBJ()`.
 
-\subsection Straight_skeleton_3InputOutput Input and Output
+\subsection Straight_skeleton_3InputOutput Input
 
 The input must be a non-empty, closed, outward-oriented, and self-intersection-free triangle mesh.
 Inputs with non-triangular faces must be triangulated beforehand, for example using
 `CGAL::Polygon_mesh_processing::triangulate_faces()`.
-
-The offset polyhedra are always triangle meshes. Since they are built from the perturbed polyhedron,
-they may contain very small or very thin triangles; the example
-\ref Straight_skeleton_3/create_offset_and_remesh.cpp shows how to clean up such outputs.
 
 An offset at a time beyond which the polyhedron has entirely vanished is an empty mesh.
 
@@ -370,9 +366,9 @@ An offset at a time beyond which the polyhedron has entirely vanished is an empt
 The running time of 3D straight skeletons and offset polyhedra grows quickly with the number
 of facets of the input and the number of events. High-degree vertices are particularly costly,
 as the perturbation step must split each of them. Note also that computing an offset polyhedron
-at a time `t` requires the computation of all events up to `t`: small offsets are thus muc
-cheaper than large ones and users should specificy a range of offset times rather than
-calling the functions with a single time as to avoid recomputing the same events.
+at a time `t` requires the computation of all events up to `t`: small offsets are thus much cheaper
+than large ones. To avoid recomputing the same events, pass all offset times in a single call
+rather than calling the function once per time.
 
 \subsection Straight_skeleton_3Dependencies Dependencies
 
@@ -426,7 +422,7 @@ Here, this correspondence is used to transfer face colors from the input to the 
 
 \subsection Straight_skeleton_3OffsetRemesh Post-processing Offset Polyhedra
 
-following example shows how to clean- up and recover planar faces in offset polyhedra.
+The following example shows how to clean up offset polyhedra and recover their planar faces.
 
 \cgalExample{Straight_skeleton_3/create_offset_and_remesh.cpp}
 

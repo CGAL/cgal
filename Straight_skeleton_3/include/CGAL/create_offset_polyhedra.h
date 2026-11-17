@@ -188,7 +188,7 @@ struct Output_processor
  * \param input_save_times the times at which the offset polyhedra are to be constructed
  * \param results a vector to which the offset polyhedra are appended, one per save time,
  *                in increasing order of the absolute values of the save times
- *                (independently of the order of `save_times`).
+ *                (independently of the order of `input_save_times`).
  * \param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters"
  *              among the ones listed below
  *  \cgalNamedParamsBegin
