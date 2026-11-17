@@ -85,11 +85,15 @@ construct_skeleton(const TriangleMesh& tmesh,
   const std::filesystem::path save_path = choose_parameter(get_parameter(np, internal_np::io_path),
                                                            std::filesystem::current_path());
 
+  CGAL_precondition_code(auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                                      get_const_property_map(vertex_point, tmesh));)
+  CGAL_precondition_code(auto pmp_np = parameters::vertex_point_map(vpm).geom_traits(
+                                         choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits)));)
   CGAL_precondition(!CGAL::is_empty(tmesh));
   CGAL_precondition(CGAL::is_closed(tmesh));
   CGAL_warning(CGAL::is_triangle_mesh(tmesh));
-  CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || !PMP::does_self_intersect(tmesh));
-  CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || PMP::is_outward_oriented(tmesh));
+  CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || !PMP::does_self_intersect(tmesh, pmp_np));
+  CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || PMP::is_outward_oriented(tmesh, pmp_np));
 
   std::vector<FT> save_times(input_save_times.begin(), input_save_times.end());
 
