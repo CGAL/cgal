@@ -180,12 +180,12 @@ struct Output_processor
  *
  * \tparam TriangleMeshIn must be a model of `FaceListGraph`, `HalfedgeListGraph`
  * \tparam PolygonMeshOut must be a model of `MutableFaceGraph`, `FaceListGraph`, `HalfedgeListGraph`
- * \tparam FT must be the number type `geom_traits::FT`
+ * \tparam FT must be a number type convertible to `geom_traits::FT`
  * \tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
  * \tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param tmesh the input triangle mesh whose faces are to be offset
- * \param save_times the times at which the offset polyhedra are to be constructed
+ * \param input_save_times the times at which the offset polyhedra are to be constructed
  * \param results a vector to which the offset polyhedra are appended, one per save time,
  *                in increasing order of the absolute values of the save times
  *                (independently of the order of `save_times`).
@@ -255,11 +255,11 @@ struct Output_processor
  * \pre The input mesh is a closed, outward-oriented, triangle mesh without self-intersections.
  */
 template <typename TriangleMeshIn, typename PolygonMeshOut,
-          typename FT,
+          typename IFT,
           typename NamedParametersIn = parameters::Default_named_parameters,
           typename... NamedParametersOut>
 bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh,
-                                                     const std::vector<FT>& save_times,
+                                                     const std::vector<IFT>& input_save_times,
                                                      std::vector<PolygonMeshOut>& results,
                                                      const NamedParametersIn& np_in = parameters::default_values(),
                                                      const NamedParametersOut&... nps_out)
@@ -273,9 +273,12 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
 
   using Geom_traits = typename GetGeomTraits<TriangleMeshIn, NamedParametersIn>::type;
 
+  using FT = typename Geom_traits::FT;
+
   using Polyhedron = SS3i::HDS::Polyhedron<Geom_traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
+  const std::vector<FT> save_times(input_save_times.begin(), input_save_times.end());
   const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
 
   // visitor to collect the results at save times

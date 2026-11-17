@@ -25,6 +25,7 @@
 
 #include <filesystem>
 #include <memory>
+#include <type_traits>
 #include <vector>
 
 namespace CGAL {
@@ -32,11 +33,11 @@ namespace Straight_skeletons_3 {
 namespace internal {
 
 template <typename TriangleMesh,
-          typename FT,
+          typename IFT,
           typename NamedParameters>
 std::shared_ptr<CGAL::Straight_skeleton_3<typename GetGeomTraits<TriangleMesh, NamedParameters>::type> >
 construct_skeleton(const TriangleMesh& tmesh,
-                   std::vector<FT> save_times, // intentional copy
+                   const std::vector<IFT>& input_save_times,
                    const NamedParameters& np)
 {
   namespace SS3 = CGAL::Straight_skeletons_3;
@@ -50,6 +51,10 @@ construct_skeleton(const TriangleMesh& tmesh,
   using parameters::get_parameter_reference;
 
   using Geom_traits = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+  using FT = typename Geom_traits::FT;
+
+  static_assert(std::is_same_v<typename CGAL::Algebraic_structure_traits<FT>::Is_exact, CGAL::Tag_true>,
+                "The construction of 3D straight skeletons requires a kernel with exact constructions.");
 
   using Polyhedron = SS3i::HDS::Polyhedron<Geom_traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
@@ -85,6 +90,8 @@ construct_skeleton(const TriangleMesh& tmesh,
   CGAL_warning(CGAL::is_triangle_mesh(tmesh));
   CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || !PMP::does_self_intersect(tmesh));
   CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || PMP::is_outward_oriented(tmesh));
+
+  std::vector<FT> save_times(input_save_times.begin(), input_save_times.end());
 
   const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
 
@@ -159,7 +166,7 @@ construct_skeleton(const TriangleMesh& tmesh,
  * degenerate configurations; see \ref Straight_skeleton_3GeneralPosition for more information.
  *
  * \tparam TriangleMesh must be a model of `FaceListGraph`, `HalfedgeListGraph`
- * \tparam FT must be a model of `FieldNumberType` compatible with the type of `geom_traits`
+ * \tparam FT must be a number type convertible to `geom_traits::FT`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param tmesh the input triangle mesh whose straight skeleton is to be constructed

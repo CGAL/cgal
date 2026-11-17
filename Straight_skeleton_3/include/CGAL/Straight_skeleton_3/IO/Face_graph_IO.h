@@ -150,7 +150,7 @@ public:
                                get_const_property_map(vertex_point, tmesh));
 
     using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
-    GT gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+    GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
     const bool outward_offsetting = choose_parameter(get_parameter(np, internal_np::outward_offsetting), false);
 
