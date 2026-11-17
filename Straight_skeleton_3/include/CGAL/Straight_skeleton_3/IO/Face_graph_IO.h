@@ -378,11 +378,6 @@ public:
     IO::write_OBJ("results/coplanar_merge_after.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
-#if 0
-    // @todo test again the usefulness of this
-    Transformation::truncate_precision(polyhedron);
-#endif
-
 #ifdef CGAL_SS3_DUMP_FILES
     IO::write_OBJ("results/converted.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif

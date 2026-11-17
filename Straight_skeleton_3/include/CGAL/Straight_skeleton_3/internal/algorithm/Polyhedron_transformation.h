@@ -225,39 +225,6 @@ public:
     }
   }
 
-  static void truncate_precision(PolyhedronSPtr polyhedron)
-  {
-    CGAL_SS3_DEBUG_SPTR(polyhedron);
-
-    ConfigurationSPtr config = Configuration::get_instance();
-    double range = config->get_double("Preprocessing", "truncate_precision");
-    if (range == 0.) {
-      return;
-    }
-
-    CGAL_SS3_TRANSF_TRACE_V(4, "Lower precision of input polyhedron");
-    CGAL_SS3_TRANSF_TRACE_V(4, "  truncate precision: " << range);
-
-    double exp = std::ceil(std::log2(1.0 / range));
-    double scale = std::pow(2.0, exp);
-    CGAL_SS3_TRANSF_TRACE_V(8, "  scale = " << scale);
-
-    for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      const Point_3& p = vertex->point();
-      CGAL_SS3_TRANSF_TRACE_V(32, "    Truncated from: " << vertex->point());
-
-      double rx = std::round(CGAL::to_double(p.x()*scale)) / scale;
-      double ry = std::round(CGAL::to_double(p.y()*scale)) / scale;
-      double rz = std::round(CGAL::to_double(p.z()*scale)) / scale;;
-
-      vertex->set_point(Point_3{rx, ry, rz});
-      CGAL_SS3_TRANSF_TRACE_V(32, "    Truncated to: " << vertex->point());
-    }
-
-    polyhedron->init_planes();
-    normalize_facet_planes(polyhedron);
-  }
-
   static bool has_coplanar_facets(const EdgeSPtr& edge,
                                   const double epsilon)
   {

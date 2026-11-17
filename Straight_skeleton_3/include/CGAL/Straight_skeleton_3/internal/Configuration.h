@@ -67,7 +67,6 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  * The following entries are recognized:
  *
  * [Preprocessing]
- * - **`truncate_precision`:** Currently unused. %Default is `1e-7`.
  * - **`translate_and_scale_polyhedron`:** Currently unused. %Default is `FALSE`.
  * - **`merge_coplanar_faces`:** Boolean to enable or disable merging of (almost) coplanar faces.
  *                               %Default is `TRUE`.
@@ -177,7 +176,6 @@ public:
   {
     // Set default values for all parameters
     properties_.clear();
-    properties_["Preprocessing.truncate_precision"] = "1e-7";
     properties_["Preprocessing.translate_and_scale_polyhedron"] = "FALSE";
     properties_["Preprocessing.merge_coplanar_faces"] = "TRUE";
     properties_["Preprocessing.coplanarity_epsilon"] = "1e-7";
