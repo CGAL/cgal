@@ -225,12 +225,9 @@ namespace Barycentric_coordinates {
       const Point_2 &second_vertex,
       const Traits &b_traits = Traits()) :
     vertex(),
-    barycentric_traits(b_traits),
-    scalar_product_2(barycentric_traits.compute_scalar_product_2_object()),
-    squared_distance_2(barycentric_traits.compute_squared_distance_2_object()),
-    equal_2(barycentric_traits.equal_2_object())
+    barycentric_traits(b_traits)
     {
-      CGAL_precondition( !equal_2(first_vertex, second_vertex) );
+      CGAL_precondition( !barycentric_traits.equal_2_object()(first_vertex, second_vertex) );
 
       vertex.resize(2);
       vertex[0] = first_vertex;
@@ -300,7 +297,7 @@ namespace Barycentric_coordinates {
       output_stream << "The internal data structure is segment." << std::endl;
 
       output_stream << std::endl << "DEGENERACY: " << std::endl << std::endl;
-      if(!equal_2(vertex[0], vertex[1])) output_stream << "This segment is not degenerate." << std::endl;
+      if(!barycentric_traits.equal_2_object()(vertex[0], vertex[1])) output_stream << "This segment is not degenerate." << std::endl;
       else output_stream << "This segment is degenerate. The correct computation is not expected!" << std::endl;
 
       output_stream << std::endl << "TYPE OF COORDINATES: " << std::endl << std::endl;
@@ -321,14 +318,13 @@ namespace Barycentric_coordinates {
     FT b_first;
     FT opposite_scalar_product;
 
-    typename Traits::Compute_scalar_product_2 scalar_product_2;
-    typename Traits::Compute_squared_distance_2 squared_distance_2;
-    typename Traits::Equal_2 equal_2;
-
     // Compute segment coordinates.
     template<class OutputIterator>
     std::optional<OutputIterator> segment_coordinates_2(
       const Point_2 &query_point, OutputIterator &output) {
+
+      const auto scalar_product_2 = barycentric_traits.compute_scalar_product_2_object();
+      const auto squared_distance_2 = barycentric_traits.compute_squared_distance_2_object();
 
       // Project point on the segment and compute the first coordinate.
       opposite_scalar_product = scalar_product_2(query_point - vertex[1], vertex[0] - vertex[1]);
