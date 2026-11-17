@@ -1036,9 +1036,7 @@ public:
     for (const VertexSPtr& v : polyhedron->vertices()) {
       input_bbox += v->point().bbox();
     }
-    const double input_diagonal = std::sqrt(CGAL::square(input_bbox.x_span()) +
-                                            CGAL::square(input_bbox.y_span()) +
-                                            CGAL::square(input_bbox.z_span()));
+    const double input_diagonal = std::sqrt(input_bbox.squared_diagonal_length());
     const double characteristic_length = (input_diagonal > 0) ? input_diagonal : 1.0;
     const double relative_tol = 1e-7; // @fixme hardcoded
 
