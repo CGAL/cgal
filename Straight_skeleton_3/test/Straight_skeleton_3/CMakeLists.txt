@@ -11,8 +11,16 @@ find_package(CGAL REQUIRED)
 find_package(ortools CONFIG)
 include(CGAL_ortools_support)
 
-if (NOT TARGET ortools::ortools)
+if (NOT TARGET CGAL::ortools_support)
   message(STATUS "NOTICE: The OR-Tools library is not found, and the tests will not be compiled.")
+  return()
+endif()
+
+find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
+
+if (NOT TARGET CGAL::Eigen3_support)
+  message(STATUS "NOTICE: The OR-Tools library is not found, and the examples will not be compiled.")
   return()
 endif()
 
@@ -24,5 +32,5 @@ file(
 foreach(cppfile ${cppfiles})
   get_filename_component(target ${cppfile} NAME_WE)
   create_single_source_cgal_program("${cppfile}")
-  target_link_libraries("${target}" PRIVATE CGAL::ortools_support)
+  target_link_libraries("${target}" PRIVATE CGAL::ortools_support CGAL::Eigen3_support)
 endforeach()
