@@ -316,7 +316,7 @@ namespace Barycentric_coordinates {
     // Internal global variables.
     Vertex_range vertex;
 
-    const Traits &barycentric_traits;
+    const Traits barycentric_traits;
 
     FT b_first;
     FT opposite_scalar_product;
