@@ -86,7 +86,7 @@ public:
    T&            inf(Item it) const { return it->i; }
 
    explicit chained_map(std::size_t n = default_size);
-   chained_map(std::size_t n = default_size, const T& d);
+   chained_map(std::size_t n, const T& d);
    chained_map(const chained_map<T, Allocator>& D);
    chained_map& operator=(const chained_map<T, Allocator>& D);
    chained_map(chained_map<T, Allocator>&& D)
