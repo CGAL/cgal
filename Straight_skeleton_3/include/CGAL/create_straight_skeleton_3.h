@@ -220,15 +220,19 @@ construct_skeleton(const TriangleMesh& tmesh,
  */
 template <typename TriangleMesh,
           typename FT,
-          typename NamedParameters = parameters::Default_named_parameters>
+          typename CGAL_NP_TEMPLATE_PARAMETERS
+#ifndef DOXYGEN_RUNNING
+          , typename = std::enable_if_t<!is_named_function_parameter<FT> >
+#endif
+          >
 #ifdef DOXYGEN_RUNNING
 std::shared_ptr<CGAL::Straight_skeleton_3<geom_traits> >
 #else
-std::shared_ptr<CGAL::Straight_skeleton_3<typename GetGeomTraits<TriangleMesh, NamedParameters>::type> >
+std::shared_ptr<CGAL::Straight_skeleton_3<typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type> >
 #endif
 create_straight_skeleton_3(const TriangleMesh& tmesh,
                            const FT& max_time,
-                           const NamedParameters& np = parameters::default_values())
+                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
   // this indirection is because we add a visitor when we are constructing offset polyhedra
   return Straight_skeletons_3::internal::construct_skeleton(tmesh, std::vector<FT>{ max_time }, np);
@@ -246,16 +250,16 @@ create_straight_skeleton_3(const TriangleMesh& tmesh,
  * \pre The input `tmesh` must be a non-empty, closed, and self-intersection-free triangle mesh.
  */
 template <typename TriangleMesh,
-          typename NamedParameters = parameters::Default_named_parameters>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 #ifdef DOXYGEN_RUNNING
 std::shared_ptr<CGAL::Straight_skeleton_3<geom_traits> >
 #else
-std::shared_ptr<CGAL::Straight_skeleton_3<typename GetGeomTraits<TriangleMesh, NamedParameters>::type> >
+std::shared_ptr<CGAL::Straight_skeleton_3<typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type> >
 #endif
 create_straight_skeleton_3(const TriangleMesh& tmesh,
-                           const NamedParameters& np = parameters::default_values())
+                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  using FT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type::FT;
+  using FT = typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::FT;
   return Straight_skeletons_3::internal::construct_skeleton(tmesh, std::vector<FT>{ }, np);
 }
 
