@@ -79,13 +79,13 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  * - **`perturbation_epsilon`:** Positive floating-point value used to create the perturbation to ensure
  *                               general position. The value is used to nudge the coefficients of the planes.
  *                               %Default is `1e-10`.
- * - **`seed`:** Non-negative integer used to seed the random number generator of the perturbation.
- *               %Default is `0`.
  * - **`check_degenerate_configuration`:** Boolean to enable or disable checking if the result of the
  *                                         perturbation mechanism is indeed a valid polyhedron (and try again
  *                                         in the extremely unlikely event that the perturbation
  *                                         created a degenerate configuration).
  *                                         %Default is `FALSE`.
+ * - **`seed`:** Non-negative integer used to seed the random number generator of the perturbation.
+ *               %Default is `0`.
  *
  * [Algorithm]
  * - **`vertex_splitter`:** String to choose the high-degree vertex splitting strategy. Available options:
