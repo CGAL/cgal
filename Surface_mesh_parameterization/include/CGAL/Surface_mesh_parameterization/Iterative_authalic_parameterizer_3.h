@@ -48,6 +48,7 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <type_traits>
 #include <unordered_set>
 
 #define CGAL_SMP_IA_DEBUG_L0 0
@@ -116,6 +117,8 @@ public:
   /// Solver traits type
   typedef SolverTraits_                                                          Solver_traits;
 #endif
+
+  static_assert(!std::is_same_v<Solver_traits, Default>, " Error: CGAL::Eigen3_support target is not linked and no type is provided for SolverTraits_");
 
   /// Triangle mesh type
   typedef TriangleMesh_                                                          Triangle_mesh;

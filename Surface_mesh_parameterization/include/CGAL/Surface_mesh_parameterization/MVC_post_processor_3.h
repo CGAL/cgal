@@ -39,6 +39,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <type_traits>
 
 /// \file MVC_post_processor_3.h
 
@@ -98,6 +99,8 @@ public:
   /// Solver traits type
   typedef SolverTraits_                                       Solver_traits;
 #endif
+
+  static_assert(!std::is_same_v<Solver_traits, Default>, " Error: CGAL::Eigen3_support target is not linked and no type is provided for SolverTraits_");
 
   /// Triangle mesh type
   typedef TriangleMesh_                                       Triangle_mesh;
