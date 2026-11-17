@@ -52,23 +52,23 @@ namespace IO {
 namespace utils {
 
 // Simple helper function to draw a mesh whose faces are colored according to the weights (speeds).
-template<typename PolygonMesh, typename Values>
+template<typename PolygonMesh, typename VM>
 void save_colored_mesh(const PolygonMesh& pmesh,
-                       const Values& values,
+                       const VM& vm,
                        const std::filesystem::path& fullpath)
 {
   using Color = CGAL::IO::Color;
 
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
-  using value_type = typename CGAL::cpp20::remove_cvref<decltype(values.at(face_descriptor()))>::type;
+  using value_type = typename CGAL::cpp20::remove_cvref<decltype(get(vm, face_descriptor{}))>::type;
 
   std::cout << "Saving colored mesh to " << fullpath << std::endl;
 
   // get a unique vector of values
   std::vector<value_type> unique_values;
   for (auto f : faces(pmesh)) {
-    unique_values.push_back(values.at(f));
+    unique_values.push_back(get(vm, f));
   }
 
   std::sort(unique_values.begin(), unique_values.end());
@@ -91,8 +91,7 @@ void save_colored_mesh(const PolygonMesh& pmesh,
   auto face_color = nc_pmesh.template add_property_map<face_descriptor, Color>("f:color").first;
 
   for (auto f : faces(pmesh)) {
-    // std::cout << "facet " << f << " with value " << values[f] << " gets color " << colors[values[f]] << std::endl;
-    put(face_color, f, colors[values.at(f)]);
+    put(face_color, f, colors[get(vm, f)]);
   }
 
   std::ofstream out(fullpath);
@@ -336,8 +335,8 @@ public:
     // The reason behind this is that some input data (and results of this skeleton/offsetting
     // algorithm) can have nasty folds.
 
-    PMP::region_growing_of_planes_on_faces(tmesh,
-                                           boost::make_assoc_property_map(region_ids),
+    auto rim = boost::make_assoc_property_map(region_ids);
+    PMP::region_growing_of_planes_on_faces(tmesh, rim,
                                            CGAL::parameters::region_primitive_map(plane_map)
                                                             .maximum_distance(max_distance)
                                                             .cosine_of_maximum_angle(-1.)
@@ -345,18 +344,18 @@ public:
                                                             .geom_traits(GeomTraits()));
 
     CGAL_SS3_IO_TRACE_CODE(for (face_descriptor f : faces(tmesh)))
-    CGAL_SS3_IO_TRACE_V(16, "facet " << f << " is in region " << region_ids.at(f));
+    CGAL_SS3_IO_TRACE_V(16, "facet " << f << " is in region " << get(rim, f));
 
 #ifdef CGAL_SS3_DUMP_FILES
     static int region_dump_id = -1;
-    utils::save_colored_mesh(tmesh, region_ids, "results/regions_" + std::to_string(++region_dump_id) + ".ply");
+    utils::save_colored_mesh(tmesh, rim, "results/regions_" + std::to_string(++region_dump_id) + ".ply");
 #endif // CGAL_SS3_DUMP_FILES
 
     // merge the facets incident to an unconstrained edge (i.e., the edge is interior to a region)
     std::vector<EdgeWPtr> edges_to_remove;
     for (edge_descriptor ed : edges(tmesh)) {
       halfedge_descriptor hd = halfedge(ed, tmesh);
-      if (region_ids.at(face(hd, tmesh)) == region_ids.at(face(opposite(hd, tmesh), tmesh))) {
+      if (get(rim, face(hd, tmesh)) == get(rim, face(opposite(hd, tmesh), tmesh))) {
         edges_to_remove.push_back(e2e.at(ed));
       }
     }
