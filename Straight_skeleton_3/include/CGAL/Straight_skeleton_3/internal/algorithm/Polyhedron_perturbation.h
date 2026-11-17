@@ -1025,7 +1025,16 @@ public:
 
     CGAL::unordered_flat_map<VertexSPtr, std::array<double, 3> > vertex_tolerances;
 
-    const double characteristic_length = 1.0; // @fixme use the bbox's diagonal?
+    // The tolerance is relative to the coordinate magnitude, with the bbox diagonal as lower bound
+    // so that it scales with the input
+    CGAL::Bbox_3 input_bbox;
+    for (const VertexSPtr& v : polyhedron->vertices()) {
+      input_bbox += v->point().bbox();
+    }
+    const double input_diagonal = std::sqrt(CGAL::square(input_bbox.x_span()) +
+                                            CGAL::square(input_bbox.y_span()) +
+                                            CGAL::square(input_bbox.z_span()));
+    const double characteristic_length = (input_diagonal > 0) ? input_diagonal : 1.0;
     const double relative_tol = 1e-7; // @fixme hardcoded
 
     // @fixme the vertex tolerance must be bounded by the LFS, otherwise we can't guarantee
