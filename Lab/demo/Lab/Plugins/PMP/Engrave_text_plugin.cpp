@@ -605,7 +605,7 @@ public Q_SLOTS:
 
         Face_location loc = Surface_mesh_shortest_path::locate(
               Point_3(p_2.x(), p_2.y(), 0),
-              aabb_tree, *sm, uv_map_3);
+              aabb_tree, *sm, CGAL::parameters::vertex_point_map(uv_map_3));
         visu_item->polylines.back().push_back(
               Surface_mesh_shortest_path::point(loc.first, loc.second,  *sm, sm->points()));
       }
@@ -903,7 +903,7 @@ private:
           const EPICK::Point_2& pt=fit->vertex(i)->point();
           Face_location loc = Surface_mesh_shortest_path::locate(
                 Point_3(pt.x(), pt.y(), 0),
-                aabb_tree, *sm, uv_map_3);
+                aabb_tree, *sm, CGAL::parameters::vertex_point_map(uv_map_3));
           it->second = add_vertex(Surface_mesh_shortest_path::point(loc.first, loc.second,
                                                                     *sm, sm->points()), tm);
         }
