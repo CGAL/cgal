@@ -87,11 +87,12 @@ struct Output_processor
     auto def_f2f_pm = boost::make_assoc_property_map(def_f2f);
     auto f2f = choose_parameter(get_parameter(np_out, internal_np::face_to_face_map), def_f2f_pm);
 
+    // input face IDs are the positions of the faces in 'faces(tmesh)'
+    const std::vector<face_descriptor_in> input_faces(faces(tmesh).begin(), faces(tmesh).end());
     for (face_descriptor_out fo : faces(result_t)) {
       std::size_t index = get(of2fi_pm, fo);
-      CGAL_assertion(index < num_faces(tmesh));
-      face_descriptor_in fi = *(std::next(faces(tmesh).begin(), index));
-      put(f2f, fo, fi);
+      CGAL_assertion(index < input_faces.size());
+      put(f2f, fo, input_faces[index]);
     }
 
     CGAL_postcondition(result_t.is_valid());
