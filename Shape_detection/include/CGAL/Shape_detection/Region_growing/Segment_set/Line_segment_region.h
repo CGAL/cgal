@@ -132,7 +132,7 @@ public:
 
     \pre `maximum_distance >= 0`
     \pre `maximum_angle >= 0 && maximum_angle <= 180`
-    \pre `cosine_of_maximum_angle >= 0 && cosine_of_maximum_angle <= 1`
+    \pre `cosine_of_maximum_angle >= -1 && cosine_of_maximum_angle <= 1`
     \pre `minimum_region_size > 0`
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
