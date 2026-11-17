@@ -31,7 +31,7 @@ _test_cls_triangle_new_2(const R& )
  typedef typename R::Triangle_2 Triangle_2;
 
  typename R::Construct_point_2 construct_point;
- typename R::Triangle_2 it;
+ typename R::Triangle_2 it(Point_2(CGAL::ORIGIN), Point_2(CGAL::ORIGIN), Point_2(CGAL::ORIGIN));
  Triangle_2 t0(it); // af:  CGAL::Triangle_2<R> t0(it);
 
  RT n0 =  0;
