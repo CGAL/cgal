@@ -57,9 +57,7 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  * default values or can be loaded and overridden at runtime from an `INI` configuration file,
  * provided it follows the format detailed below.
  *
- * \warning In the current implementation, loading a configuration file discards all default values:
- * entries that are absent from the file are not set to their default values. A configuration file
- * must therefore specify all entries.
+ * Entries that are absent from the configuration file keep their default values.
  *
  * \cgalHeading{%Configuration File Entries}
  *
@@ -126,9 +124,9 @@ public:
     return instance;
   }
 
+  // entries of the stream override existing values, other entries are left unchanged
   void parse(std::istream& input)
   {
-    properties_.clear();
     std::string section;
     std::string line;
     while (std::getline(input, line)) {
