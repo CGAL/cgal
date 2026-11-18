@@ -421,7 +421,7 @@ convert_straight_skeleton_2 ( std::shared_ptr<Source_skeleton> const& aSrc )
 }
 
 template<class Skeleton>
-const std::shared_ptr<Skeleton>&
+std::shared_ptr<Skeleton>
 convert_straight_skeleton_2 ( std::shared_ptr<Skeleton> const& aSrc )
 {
   return aSrc;
