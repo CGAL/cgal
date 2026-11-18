@@ -425,8 +425,8 @@ void check_extrusion(const std::string& name,
   using FT = typename K::FT;
   using Point_3 = typename K::Point_3;
 
-  using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
-  using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
+  using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
 
   const int failures_n = failure_count();
 

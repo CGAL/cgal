@@ -24,7 +24,7 @@ struct Inward_tests
   using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
 
   using Mesh = CGAL::Surface_mesh<Point_3>;
-  using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
 
   using Input = SST::Extrusion_input<K>;
   using Weights = typename Input::Weights;

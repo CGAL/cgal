@@ -254,7 +254,7 @@ bool test(const char* poly_filename,
   assert(are_equal(volume, expected_volume, rel_eps, true /*verbose*/));
 
   // With the exact kernel
-  using XK = SLSE::internal::Extrusion_kernel_selector<K>::type;
+  using XK = typename SLSE::internal::Extrusion_kernel_selector<K>::type;
 
   clear(sm);
   CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::angles(angles).maximum_height(- height).extrusion_traits(XK()));
