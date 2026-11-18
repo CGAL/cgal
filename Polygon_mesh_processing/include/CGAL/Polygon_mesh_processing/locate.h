@@ -907,7 +907,8 @@ is_in_face(const Barycentric_coordinates<FT>& bar)
 ///        coordinates correspond to a point within the face (boundary included),
 ///        that is, if all the barycentric coordinates are non-negative.
 ///
-/// \details This function is deprecated. Use `is_in_face()` instead.
+/// \deprecated This function is deprecated since \cgal 6.3.
+///             Use `is_in_face(const Barycentric_coordinates<FT>&)` instead.
 ///
 /// \tparam FT must be a model of `FieldNumberType`
 /// \tparam TriangleMesh must be a model of `FaceGraph`
@@ -916,7 +917,7 @@ is_in_face(const Barycentric_coordinates<FT>& bar)
 /// \param tm a triangulated surface mesh
 ///
 template <typename FT, typename TriangleMesh>
-CGAL_DEPRECATED_MSG("This function is deprecated. Use is_in_face() instead.")
+CGAL_DEPRECATED_MSG("This function is deprecated. Use is_in_face(const Barycentric_coordinates<FT>&) instead.")
 bool
 is_in_face(const Barycentric_coordinates<FT>& bar,
            const TriangleMesh&)
