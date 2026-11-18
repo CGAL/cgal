@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #ifdef CGAL_USE_GMPXX
 #include <CGAL/gmpxx.h>
 #endif
@@ -21,7 +21,7 @@
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 using EPECK_with_sqrt = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
-using SC_rational = CGAL::Simple_cartesian<CGAL::Gmpq>;
+using SC_rational = CGAL::Simple_cartesian<CGAL::Exact_rational>;
 
 namespace SSE = CGAL::Straight_skeleton_extrusion;
 namespace SST = CGAL::Straight_skeletons_2::Extrusion_tests;
@@ -167,7 +167,7 @@ int main(int, char**)
   const auto ref = run_kernel<EPECK>("EPECK");
   compare("EPICK", run_kernel<EPICK>("EPICK"), ref);
   compare("EPECK_with_sqrt", run_kernel<EPECK_with_sqrt>("EPECK_with_sqrt"), ref);
-  compare("SC<Gmpq>", run_kernel<SC_rational>("Simple_cartesian<Gmpq>"), ref);
+  compare("SC<Exact_rational>", run_kernel<SC_rational>("Simple_cartesian<Exact_rational>"), ref);
 #ifdef CGAL_USE_GMPXX
   compare("SC<mpq_class>", run_kernel<CGAL::Simple_cartesian<mpq_class> >("Simple_cartesian<mpq_class>"), ref);
 #endif
