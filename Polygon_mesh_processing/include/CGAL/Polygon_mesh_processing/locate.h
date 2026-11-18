@@ -2127,7 +2127,7 @@ template <typename TriangleMesh, typename NamedParameters = parameters::Default_
 Face_location<TriangleMesh, FT>
 locate(const Ray& ray,
 #else
-typename internal::Location_traits<TriangleMesh>::Face_location
+typename internal::Location_traits<TriangleMesh, NamedParameters>::Face_location
 locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::Ray& ray,
 #endif
        const TriangleMesh& tm,
