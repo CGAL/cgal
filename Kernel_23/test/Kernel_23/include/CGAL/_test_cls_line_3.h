@@ -19,6 +19,7 @@
 #define CGAL__TEST_CLS_LINE_3_H
 
 #include <CGAL/use.h>
+#include <CGAL/Origin.h>
 
 template <class R>
 bool

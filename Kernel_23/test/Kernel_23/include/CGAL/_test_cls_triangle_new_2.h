@@ -18,6 +18,8 @@
 #ifndef CGAL__TEST_CLS_TRIANGLE_NEW_2_H
 #define CGAL__TEST_CLS_TRIANGLE_NEW_2_H
 
+#include <CGAL/Origin.h>
+
 template <class R>
 bool
 _test_cls_triangle_new_2(const R& )
