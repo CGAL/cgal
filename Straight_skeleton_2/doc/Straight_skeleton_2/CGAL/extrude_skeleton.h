@@ -15,7 +15,7 @@ namespace CGAL {
 *
 * It is possible to crop the extruded skeleton at a maximum height using the optional
 * `maximum_height()` named parameter. A maximum height must be specified if the weights (or angles)
-* associated to the edges of the input polygon correspond an outward extrusion, i.e. if no weight
+* associated to the edges of the input polygon correspond to an outward extrusion, i.e. if no weight
 * is greater than zero (or no angle is smaller than `90` degrees).
 *
 * @tparam Polygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
@@ -73,7 +73,7 @@ namespace CGAL {
 *   \cgalParamNBegin{vertex_point_map}
 *     \cgalParamDescription{a property map associating points to the vertices of `out`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `InK::Point_2` as value type.}
+*                    as key type and `OutK::Point_3` as value type, where `OutK` is a \cgal Kernel.}
 *     \cgalParamDefault{the internal property map for `CGAL::vertex_point_t` of `out`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd

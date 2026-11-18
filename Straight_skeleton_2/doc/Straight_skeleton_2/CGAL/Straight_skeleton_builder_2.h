@@ -188,7 +188,7 @@ template<class InputPointIterator>
 Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPointIterator aEnd );
 
 /*!
-defines the contours of a polygon with holes, and the <I>weights</I> associated to its edges:
+defines a <I>contour</I> of the polygon with holes, as `enter_contour()` does, along with the <I>weights</I> associated to its edges:
 the `i`-th weight in the range `[aWeightsBegin, aWeightsEnd)` is associated to the contour edge
 between the `i-1`-th and `i`-th vertices.
 
