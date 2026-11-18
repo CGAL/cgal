@@ -758,18 +758,18 @@ is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
   return false;
 }
 
-// \ingroup PMP_locate_grp
-//
-// \brief Given a set of barycentric coordinates, returns whether they correspond
-//        to a vertex of a face.
-//
-// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
-//          the point is on a vertex when one of the coefficients is equal to `1`.
-//
-// \tparam FT must be a model of `FieldNumberType`
-//
-// \param bar an array of barycentric coordinates
-//
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a set of barycentric coordinates, returns whether they correspond
+///        to a vertex of a face.
+///
+/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+///          the point is on a vertex when one of the coefficients is equal to `1`.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+///
+/// \param bar an array of barycentric coordinates
+///
 template <typename FT>
 bool
 is_on_vertex(const Barycentric_coordinates<FT>& bar)
@@ -808,18 +808,18 @@ is_on_vertex(const Face_location<TriangleMesh, FT>& loc,
   return is_on_vertex(loc.second);
 }
 
-// \ingroup PMP_locate_grp
-//
-// \brief Given a set of barycentric coordinates, returns whether they correspond
-//        to a point on an edge of a face.
-//
-// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
-//          the point is on a halfedge when one of the coefficients is equal to `0`.
-//
-// \tparam FT must be a model of `FieldNumberType`
-//
-// \param bar an array of barycentric coordinates
-//
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a set of barycentric coordinates, returns whether they correspond
+///        to a point on an edge of a face.
+///
+/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+///          the point is on a halfedge when one of the coefficients is equal to `0`.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+///
+/// \param bar an array of barycentric coordinates
+///
 template <typename FT>
 bool
 is_on_halfedge(const Barycentric_coordinates<FT>& bar)
@@ -858,20 +858,20 @@ is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
   return is_on_halfedge(loc.second);
 }
 
-// \ingroup PMP_locate_grp
-//
-// \brief Given a set of barycentric coordinates, returns whether those barycentric
-//        coordinates correspond to a point within the face (boundary included),
-//        that is, if all the barycentric coordinates are non-negative.
-//
-// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
-//          the correspondence between the coordinates in `bar` and the vertices of the
-//          face is the same as for `Face_location`.
-//
-// \tparam FT must be a model of `FieldNumberType`
-//
-// \param bar an array of barycentric coordinates
-//
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a set of barycentric coordinates, returns whether those barycentric
+///        coordinates correspond to a point within the face (boundary included),
+///        that is, if all the barycentric coordinates are non-negative.
+///
+/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+///          the correspondence between the coordinates in `bar` and the vertices of the
+///          face is the same as for `Face_location`.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+///
+/// \param bar an array of barycentric coordinates
+///
 template <typename FT>
 bool
 is_in_face(const Barycentric_coordinates<FT>& bar)
