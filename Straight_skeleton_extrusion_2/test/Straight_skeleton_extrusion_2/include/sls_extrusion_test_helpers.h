@@ -434,7 +434,6 @@ void check_extrusion(const std::string& name,
 
   const bool capped = in.height.has_value();
   const double dir = (in.height && CGAL::is_negative(*in.height)) ? -1. : 1.;
-  const double h_abs = in.height ? std::abs(CGAL::to_double(*in.height)) : std::numeric_limits<double>::max();
 
   // 1. Mesh validity
   CGAL_SLS_CHECK_MSG(num_faces(m) > 0, name);
