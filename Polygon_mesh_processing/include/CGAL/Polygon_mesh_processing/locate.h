@@ -1995,6 +1995,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 
   typedef typename Geom_traits::FT                                                           FT;
   typedef typename Geom_traits::Point_3                                                      Point_3;
+  typedef typename Geom_traits::Segment_3                                                    Segment_3;
   typedef typename Geom_traits::Ray_3                                                        Ray_3;
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor                        face_descriptor;
@@ -2019,28 +2020,36 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   tree.all_intersections(ray_3, std::back_inserter(intersections));
 
   bool found = false;
-  FT nearest_distance = 0;
   Point_3 nearest_point = CGAL::ORIGIN;
+  FT nearest_distance = 0;
   face_descriptor nearest_face;
+
+  auto record_intersection = [&](const Point_3& intersection_point, const face_descriptor f)
+  {
+    FT distance = CGAL::squared_distance(intersection_point, ray_3.source());
+
+    if(!found || distance < nearest_distance)
+    {
+      found = true;
+      nearest_point = intersection_point;
+      nearest_distance = distance;
+      nearest_face = f;
+    }
+  };
 
   for(std::size_t i = 0; i < intersections.size(); ++i)
   {
-    if(intersections[i])
+    if(!intersections[i])
+      continue;
+
+    if(const Point_3* intersection_point = std::get_if<Point_3>(&(intersections[i]->first)))
     {
-      Point_3* intersection_point = std::get_if<Point_3>(&(intersections[i]->first));
-
-      if(intersection_point)
-      {
-        FT distance = CGAL::squared_distance(*intersection_point, ray_3.source());
-
-        if(!found || distance < nearest_distance)
-        {
-          found = true;
-          nearest_point = *intersection_point;
-          nearest_distance = distance;
-          nearest_face = intersections[i]->second;
-        }
-      }
+      record_intersection(*intersection_point, intersections[i]->second);
+    }
+    else if(const Segment_3* intersection_segment = std::get_if<Segment_3>(&(intersections[i]->first)))
+    {
+      record_intersection(intersection_segment->source(), intersections[i]->second);
+      record_intersection(intersection_segment->target(), intersections[i]->second);
     }
   }
 
