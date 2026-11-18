@@ -122,6 +122,9 @@ struct Location_traits
 } // end namespace internal
 
 // forward declarations
+template <typename FT>
+bool is_in_face(const Barycentric_coordinates<FT>& bar);
+
 template <typename FT, typename TriangleMesh>
 bool is_in_face(const Face_location<TriangleMesh, FT>& loc,
                 const TriangleMesh& tm);
