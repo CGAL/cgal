@@ -1729,8 +1729,8 @@ build_AABB_tree(const TriangleMesh& tm,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                                          get_const_property_map(boost::vertex_point, tm));
+  const VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                              get_const_property_map(boost::vertex_point, tm));
 
   return internal::build_AABB_tree(tm, outTree, vpm);
 }
@@ -1890,6 +1890,9 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
        const TriangleMesh& tm,
        const NamedParameters& np = parameters::default_values())
 {
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
   // Wrap the input VPM with a one converting to 3D (costs nothing if the input VPM
   // already has value type Kernel::Point_3)
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type          VertexPointMap;
@@ -1905,19 +1908,17 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   typedef internal::Point_to_Point_3<TriangleMesh, Intrinsic_point>                      P_to_P3;
   typedef typename AABB_face_graph_traits::Point_3                                       Point_3;
 
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
   static_assert(std::is_same<Point_3, typename P_to_P3::Point_3>::value);
 
   const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                           get_const_property_map(boost::vertex_point, tm));
-  const Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
   const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
 
   AABB_tree<AABB_face_graph_traits> tree;
   const WrappedVPM wrapped_vpm(vpm);
-
   build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm)
                                        .geom_traits(gt)
                                        .snapping_tolerance(snap_tolerance));
@@ -2121,6 +2122,9 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
        const TriangleMesh& tm,
        const NamedParameters& np = parameters::default_values())
 {
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type     VertexPointMap;
 
   // Wrap the input VPM with a one converting to 3D (costs nothing if the input VPM
@@ -2128,28 +2132,21 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>              VPM;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type               Geom_traits;
-  typedef typename Geom_traits::FT                                                  FT;
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM>                     AABB_face_graph_primitive;
   typedef CGAL::AABB_traits_3<Geom_traits, AABB_face_graph_primitive>               AABB_face_graph_traits;
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
 
-  const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                                          get_const_property_map(boost::vertex_point, tm));
-  const Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
-  const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+  const VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                              get_const_property_map(boost::vertex_point, tm));
 
   AABB_tree<AABB_face_graph_traits> tree;
   const VPM wrapped_vpm(vpm);
-
   build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm)
                                        .geom_traits(gt)
                                        .snapping_tolerance(snap_tolerance));
 
-  return locate_with_AABB_tree(ray, tree, tm, parameters::vertex_point_map(wrapped_vpm)
-                                                         .geom_traits(gt)
-                                                         .snapping_tolerance(snap_tolerance));
+  return locate_with_AABB_tree(ray, tree, tm, np);
 }
 
 /// @}
