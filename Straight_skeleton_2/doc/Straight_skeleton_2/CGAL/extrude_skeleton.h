@@ -87,7 +87,6 @@ namespace CGAL {
 * @sa `CGAL::Straight_skeleton_2`
 */
 template <typename Polygon,
-          typename FT,
           typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 bool extrude_skeleton(const Polygon& polygon,
