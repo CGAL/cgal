@@ -1811,8 +1811,6 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   const Point_3 p3 = P_to_P3()(p);
   typename AABB_tree<AABB_traits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p3);
 
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                     Geom_traits;
-
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
