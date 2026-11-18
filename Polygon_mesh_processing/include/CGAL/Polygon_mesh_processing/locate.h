@@ -1544,46 +1544,36 @@ locate_in_common_face(Face_location<TriangleMesh, FT>& first_location,
 
 namespace internal {
 
-template <typename TriangleMesh,
-          typename Point,
-          int dim = CGAL::Ambient_dimension<Point>::value>
-struct Point_to_Point_3 // 2D case
+template <typename Kernel>
+struct Point_to_Point_3
 {
-  typedef typename GetGeomTraits<TriangleMesh>::type::Point_3    Point_3;
-
-  Point_3 operator()(const Point& p) const { return Point_3(p.x(), p.y(), 0); }
-};
-
-template <typename TriangleMesh>
-struct Point_to_Point_3<TriangleMesh,
-                        typename GetGeomTraits<TriangleMesh>::type::Point_3,
-                        3> // 3D case with nothing to do
-{
-  typedef typename GetGeomTraits<TriangleMesh>::type::Point_3    Point_3;
+  typedef typename Kernel::Point_3                                         Point_3;
 
   const Point_3& operator()(const Point_3& p) const { return p; }
+
+  // 2D points, and 3D points that are not `Point_3` (e.g. weighted points)
+  template <typename Point>
+  Point_3 operator()(const Point& p) const
+  {
+    if constexpr(CGAL::Ambient_dimension<Point>::value == 2)
+      return Point_3(p.x(), p.y(), 0);
+    else
+      return Point_3(p.x(), p.y(), p.z());
+  }
 };
 
-template <typename TriangleMesh, typename Point>
-struct Point_to_Point_3<TriangleMesh, Point, 3> // Generic 3D case
+template <typename Kernel>
+struct Ray_to_Ray_3
 {
-  typedef typename GetGeomTraits<TriangleMesh>::type::Point_3    Point_3;
-
-  Point_3 operator()(const Point& p) const { return Point_3(p.x(), p.y(), p.z()); }
-};
-
-template <typename TriangleMesh>
-struct Ray_to_Ray_3 // 2D case
-{
-  typedef typename GetGeomTraits<TriangleMesh>::type                       Geom_traits;
-  typedef typename Geom_traits::Ray_2                                      Ray_2;
-  typedef typename Geom_traits::Ray_3                                      Ray_3;
-  typedef Point_to_Point_3<TriangleMesh, typename Geom_traits::Point_2>    P2_to_P3;
+  typedef typename Kernel::Ray_2                                           Ray_2;
+  typedef typename Kernel::Ray_3                                           Ray_3;
+  typedef typename Kernel::Point_3                                         Point_3;
 
   Ray_3 operator()(const Ray_2& r) const
   {
-    P2_to_P3 to_p3;
-    return Ray_3(to_p3(r.source()), to_p3(r.second_point()));
+    const auto& s = r.source();
+    const auto& t = r.second_point();
+    return Ray_3(Point_3(s.x(), s.y(), 0), Point_3(t.x(), t.y(), 0));
   }
 
   const Ray_3& operator()(const Ray_3& r) const { return r; }
@@ -1602,7 +1592,7 @@ private:
 public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::property_traits<VPM>::value_type                Point;
-  typedef Point_to_Point_3<TriangleMesh, Point>                           P_to_P3;
+  typedef Point_to_Point_3<typename CGAL::Kernel_traits<Point>::Kernel>   P_to_P3;
 
   typedef typename CGAL::Kernel_traits<Point>::Kernel                     K;
   typedef typename K::Point_3                                             Point_3;
@@ -1805,7 +1795,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
                       const NamedParameters& np = parameters::default_values())
 {
   typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point         Point;
-  typedef internal::Point_to_Point_3<TriangleMesh, Point>                                  P_to_P3;
+  typedef internal::Point_to_Point_3<typename CGAL::Kernel_traits<Point>::Kernel>          P_to_P3;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                      Geom_traits;
   typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>       Primitive;
@@ -1900,7 +1890,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   // already has value type Kernel::Point_3)
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type          VertexPointMap;
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>                   WrappedVPM;
-  typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point       Intrinsic_point;
+  typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point       Point;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                    Geom_traits;
   typedef typename Geom_traits::FT                                                       FT;
@@ -1908,7 +1898,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, WrappedVPM>                   AABB_face_graph_primitive;
   typedef CGAL::AABB_traits_3<Geom_traits, AABB_face_graph_primitive>                    AABB_face_graph_traits;
 
-  typedef internal::Point_to_Point_3<TriangleMesh, Intrinsic_point>                      P_to_P3;
+  typedef internal::Point_to_Point_3<typename CGAL::Kernel_traits<Point>::Kernel>        P_to_P3;
   typedef typename AABB_face_graph_traits::Point_3                                       Point_3;
 
   static_assert(std::is_same<Point_3, typename P_to_P3::Point_3>::value);
@@ -2005,7 +1995,8 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type              VertexPointMap;
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>                       WrappedVPM;
-  typedef internal::Ray_to_Ray_3<TriangleMesh>                                               R_to_R3;
+  typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point           Point;
+  typedef internal::Ray_to_Ray_3<typename CGAL::Kernel_traits<Point>::Kernel>                R_to_R3;
 
   typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>         Primitive;
   typedef typename CGAL::AABB_traits_3<Geom_traits, Primitive>                               AABB_traits;

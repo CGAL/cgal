@@ -589,15 +589,16 @@ struct Locate_with_AABB_tree_Tester // 2D case
     vertex_descriptor v = target(h, g);
 
     // ---------------------------------------------------------------------------
-    typedef typename boost::property_traits<VPM>::value_type                   Intrinsic_point;
-    typedef PMP::internal::Point_to_Point_3<G, Intrinsic_point>                Intrinsic_point_to_Point_3;
+    typedef typename boost::property_traits<VPM>::value_type                   Point;
+    typedef typename CGAL::Kernel_traits<Point>::Kernel                        PK;
+    typedef PMP::internal::Point_to_Point_3<PK>                                Point_to_Point_3;
     typedef PMP::internal::Point_to_Point_3_VPM<G, VPM>                        WrappedVPM;
     typedef CGAL::AABB_face_graph_triangle_primitive<G, WrappedVPM>            AABB_face_graph_primitive;
     typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive>                  AABB_face_graph_traits;
 
     static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
 
-    Intrinsic_point_to_Point_3 to_p3;
+    Point_to_Point_3 to_p3;
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_a;
     Point_reference p_a = get(vpm, v);
