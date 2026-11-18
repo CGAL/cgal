@@ -405,10 +405,13 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 /// The correspondence between the returned coordinates `(w0, w1, w2)` and the three points
 /// is the following: `w0` corresponds to `p`, `w1` corresponds to `q`, and `w2` corresponds to `r`.
 ///
-/// If `p`, `q`, and `r` are collinear, `query` is projected onto the line defined by `p`, `q`,
-/// and `r`, and the barycentric coordinates are computed with respect to the two points
-/// realizing the longest segment, with lexicographic tie-breaking.
-// If all three points coincide, the coordinates returned are `(1, 0, 0)`.
+/// If `p`, `q`, and `r` are collinear, the barycentric coordinates are computed with respect
+/// to the two points realizing the longest segment, and the coordinate of the third point is `0`.
+/// Ties in segment lengths are broken in favor of the segment `pq`, and then of the segment `pr`.
+/// If all three points coincide, the coordinates returned are `(1, 0, 0)`.
+///
+/// If `query` does not lie in the affine hull of `p`, `q`, and `r`, the coordinates
+/// of the orthogonal projection of `query` onto this affine hull are returned.
 ///
 /// \tparam GeomTraits the type of a geometric traits. Must be a model of `Kernel` and be compatible
 ///                    with the template parameter `Point`.
@@ -417,8 +420,6 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 /// \param p,q,r three points with respect to whom the barycentric coordinates of `query` will be computed
 /// \param query the query point whose barycentric coordinates will be computed
 /// \param gt an instance of the geometric traits
-///
-/// \pre `query` lies in the affine hull of `p`, `q`, and `r`.
 ///
 template <typename GeomTraits, typename Point>
 Barycentric_coordinates<typename GeomTraits::FT>
