@@ -1644,8 +1644,7 @@ void build_AABB_tree(const TriangleMesh& tm,
 {
   typename boost::graph_traits<TriangleMesh>::face_iterator ffirst, fbeyond;
   std::tie(ffirst, fbeyond) = faces(tm);
-  outTree.rebuild(ffirst, fbeyond, tm, wrapped_vpm);
-  outTree.build();
+  outTree.rebuild(ffirst, fbeyond, tm, wrapped_vpm); // also builds the tree
 }
 
 template <typename TriangleMesh, typename AABBTraits, typename VPM>
