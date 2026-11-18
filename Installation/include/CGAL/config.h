@@ -296,7 +296,7 @@ using std::max;
 // See https://clang.llvm.org/docs/LanguageExtensions.html
 //
 // Some of those macro have been standardized. See C++20 feature testing:
-//   https://en.cppreference.com/w/cpp/feature_test
+//   https://en.cppreference.com/cpp/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif

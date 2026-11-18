@@ -48,7 +48,7 @@ the location of third-party software during configuration.
 
 \cgal heavily uses the \stl, and in particular adopted many of its design ideas. You can find online
 documentation for the \stl at various web sites, for instance,
-<A HREF="https://en.cppreference.com/w/">`https://en.cppreference.com `</A>,
+<A HREF="https://en.cppreference.com">`https://en.cppreference.com `</A>,
 or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`https://msdn.microsoft.com`</A>.
 
 The \stl comes with the compiler, and as such no installation is required.

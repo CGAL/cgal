@@ -302,7 +302,7 @@ and harmonic coordinates computed at each image pixel with respect to the vertic
 \subsection aff_example Affine Coordinates
 
 This is an example, where we show how a
-<a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>
+<a href="https://en.cppreference.com/cpp/language/lambda">lambda expression</a>
 can be used to define a model of generalized barycentric coordinates. To make this example
 useful, we implement affine generalized coordinates for a set of scattered points.
 The used `Kernel` is inexact.

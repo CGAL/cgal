@@ -127,7 +127,7 @@ public:
     // \name Creation
 
     // Creates the class `Mean_value_2` that implements the behavior of mean value coordinates for any query point that does not belong to the polygon's boundary.
-    // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
+    // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="https://en.cppreference.com/cpp/container/vector">`std::vector`</a>.
     Mean_value_2(const std::vector<typename Traits::Point_2> &vertices, const Traits &b_traits) :
         vertex(vertices),
         barycentric_traits(b_traits),

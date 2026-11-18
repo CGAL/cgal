@@ -89,7 +89,7 @@ auto make_prevent_deref_range(R&& range)
                  " rvalue references to avoid dangling references");
   // Note: If CGAL were allowed to use C++20, we could use `std::ranges::begin/end`.
   // That would allow this to work with rvalue ranges when `std::borrowed_range<R>` is `true`.
-  // See https://en.cppreference.com/w/cpp/ranges/begin.html#Notes
+  // See https://en.cppreference.com/cpp/ranges/begin.html#Notes
   using std::begin;
   using std::end;
   return make_range(make_prevent_deref(begin(range)), make_prevent_deref(end(range)));
