@@ -764,7 +764,7 @@ is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
 ///        to a vertex of a face.
 ///
 /// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
-///          the point is on a vertex when one of the coefficients is equal to `1`.
+///          the point is on a vertex when all coefficients are non-negative and one of them is equal to `1`.
 ///
 /// \tparam FT must be a model of `FieldNumberType`
 ///
@@ -774,6 +774,11 @@ template <typename FT>
 bool
 is_on_vertex(const Barycentric_coordinates<FT>& bar)
 {
+  // a coefficient equal to `1` alone only means that the point is on the line
+  // going through the vertex and parallel to the opposite edge
+  if(!is_in_face(bar))
+    return false;
+
   for(int i=0; i<3; ++i)
     if(bar[i] == FT(1))
       return true;
@@ -814,7 +819,7 @@ is_on_vertex(const Face_location<TriangleMesh, FT>& loc,
 ///        to a point on an edge of a face.
 ///
 /// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
-///          the point is on a halfedge when one of the coefficients is equal to `0`.
+///          the point is on a halfedge when all coefficients are non-negative and one of them is equal to `0`.
 ///
 /// \tparam FT must be a model of `FieldNumberType`
 ///
@@ -824,6 +829,10 @@ template <typename FT>
 bool
 is_on_halfedge(const Barycentric_coordinates<FT>& bar)
 {
+  // a coefficient equal to `0` alone only means that the point is on the supporting line of an edge
+  if(!is_in_face(bar))
+    return false;
+
   for(int i=0; i<3; ++i)
     if(bar[i] == FT(0))
       return true;
