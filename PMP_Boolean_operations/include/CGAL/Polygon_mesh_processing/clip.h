@@ -94,6 +94,8 @@ void close_and_triangulate(TriangleMesh& tm, VertexPointMap vpm, typename Traits
         first=false;
       }
       vertex_descriptor src = source(h, tm), tgt = target(h, tm);
+      // TODO: in case of degenerate edges, we don't triangulate but it's kind of an issue on our side
+      if (src==tgt) return;
       points.emplace_back(get(vpm, tgt), tgt);
       csts.emplace_back(src, tgt);
     }
@@ -103,10 +105,6 @@ void close_and_triangulate(TriangleMesh& tm, VertexPointMap vpm, typename Traits
 
   CDT cdt(p_traits);
   cdt.insert(points.begin(), points.end());
-
-  // TODO: in case of degenerate edges, we don't triangulate but it's kind of an issue on our side
-  if (cdt.number_of_vertices()!=points.size()) return;
-
 
   typedef CGAL::dynamic_vertex_property_t<typename CDT::Vertex_handle> V_tag;
   typename boost::property_map<TriangleMesh, V_tag>::type v2v = get(V_tag(), tm);
