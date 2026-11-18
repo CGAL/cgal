@@ -707,15 +707,16 @@ volume(const TriangleMesh& tmesh,
   typename GT::Compute_volume_3 cv3;
   typename GT::Construct_point_3 cp3;
 
-  CGAL::Bbox_3 bb = bbox(tmesh);
-  Point_3 origin = cp3(bb.xmin() + 0.5 * (bb.xmax() - bb.xmin()),
-                       bb.ymin() + 0.5 * (bb.ymax() - bb.ymin()),
-                       bb.zmin() + 0.5 * (bb.zmax() - bb.zmin()));
-
   FT volume = 0;
+  if(is_empty(tmesh))
+    return volume;
 
-    ::CGAL::internal::Evaluate<FT> evaluate;
+  const CGAL::Bbox_3 bb = bbox(tmesh, np);
+  const Point_3 origin = cp3(bb.xmin() + 0.5 * (bb.xmax() - bb.xmin()),
+                             bb.ymin() + 0.5 * (bb.ymax() - bb.ymin()),
+                             bb.zmin() + 0.5 * (bb.zmax() - bb.zmin()));
 
+  ::CGAL::internal::Evaluate<FT> evaluate;
 
   for(face_descriptor f : faces(tmesh))
   {
