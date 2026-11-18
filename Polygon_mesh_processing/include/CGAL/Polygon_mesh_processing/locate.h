@@ -811,7 +811,7 @@ is_on_vertex(const Barycentric_coordinates<FT>& bar)
 template <typename FT, typename TriangleMesh>
 bool
 is_on_vertex(const Face_location<TriangleMesh, FT>& loc,
-             const TriangleMesh& tm)
+             const TriangleMesh&)
 {
   return is_on_vertex(loc.second);
 }
@@ -865,7 +865,7 @@ is_on_halfedge(const Barycentric_coordinates<FT>& bar)
 template <typename FT, typename TriangleMesh>
 bool
 is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
-               const TriangleMesh& tm)
+               const TriangleMesh&)
 {
   return is_on_halfedge(loc.second);
 }
@@ -919,11 +919,8 @@ template <typename FT, typename TriangleMesh>
 CGAL_DEPRECATED_MSG("This function is deprecated. Use is_in_face() instead.")
 bool
 is_in_face(const Barycentric_coordinates<FT>& bar,
-           const TriangleMesh& tm)
+           const TriangleMesh&)
 {
-  CGAL_USE(tm);
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
   return is_in_face(bar);
 }
 
@@ -951,7 +948,7 @@ is_in_face(const Barycentric_coordinates<FT>& bar,
 template <typename FT, typename TriangleMesh>
 bool
 is_in_face(const Face_location<TriangleMesh, FT>& loc,
-           const TriangleMesh& tm)
+           const TriangleMesh&)
 {
   return is_in_face(loc.second);
 }
