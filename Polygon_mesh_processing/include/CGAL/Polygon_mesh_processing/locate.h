@@ -277,12 +277,18 @@ struct Barycentric_coordinate_calculator // 2D version
     typename K::Construct_point_2 cp2 = k.construct_point_2_object();
     typename K::Construct_vector_2 cv2 = k.construct_vector_2_object();
     typename K::Compute_scalar_product_2 csp2 = k.compute_scalar_product_2_object();
+    typename K::Collinear_2 collinear2 = k.collinear_2_object();
 
     const typename K::Point_2& p = cp2(ip);
     const typename K::Point_2& q = cp2(iq);
     const typename K::Point_2& r = cp2(ir);
     const typename K::Point_2& query = cp2(iquery);
 
+    if(collinear2(p, q, r))
+      return barycentric_coordinates_on_longest_edge<FT>(p, q, r, query, cv2, csp2);
+
+    // above checks with predicate, but a null denominator can still happen for almost degenerate
+    // triangles with an inexact number type
     Vector_2 v0 = cv2(p, q);
     Vector_2 v1 = cv2(p, r);
     Vector_2 v2 = cv2(p, query);
@@ -316,12 +322,18 @@ struct Barycentric_coordinate_calculator<K, P, 3 /*3D specialization*/>
     typename K::Construct_point_3 cp3 = k.construct_point_3_object();
     typename K::Construct_vector_3 cv3 = k.construct_vector_3_object();
     typename K::Compute_scalar_product_3 csp3 = k.compute_scalar_product_3_object();
+    typename K::Collinear_3 collinear3 = k.collinear_3_object();
 
     const typename K::Point_3& p = cp3(ip);
     const typename K::Point_3& q = cp3(iq);
     const typename K::Point_3& r = cp3(ir);
     const typename K::Point_3& query = cp3(iquery);
 
+    if(collinear3(p, q, r))
+      return barycentric_coordinates_on_longest_edge<FT>(p, q, r, query, cv3, csp3);
+
+    // above checks with predicate, but a null denominator can still happen for almost degenerate
+    // triangles with an inexact number type
     Vector_3 v0 = cv3(p, q);
     Vector_3 v1 = cv3(p, r);
     Vector_3 v2 = cv3(p, query);
