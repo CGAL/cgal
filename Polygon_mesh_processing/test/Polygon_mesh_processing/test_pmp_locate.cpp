@@ -572,6 +572,8 @@ struct Locate_with_AABB_tree_Tester // 2D case
     typedef typename boost::property_traits<VPM>::reference                    Point_reference;
 
     typedef typename K::FT                                                     FT;
+    typedef typename K::Point_2                                                Point_2;
+    typedef typename K::Vector_2                                               Vector_2;
     typedef typename K::Ray_2                                                  Ray_2;
     typedef typename K::Ray_3                                                  Ray_3;
     typedef typename K::Point_3                                                Point_3;
@@ -649,9 +651,35 @@ struct Locate_with_AABB_tree_Tester // 2D case
     if(loc.first != boost::graph_traits<G>::null_face() && std::is_same<K, EPECK>())
       assert(PMP::is_in_face(loc, g));
 
+    Face_location loc_no_tree = PMP::locate(r2, g, CGAL::parameters::vertex_point_map(vpm));
+    assert(loc_no_tree.first == loc.first);
+
     Ray_3 r3 = random_3D_ray<CGAL::AABB_tree<AABB_face_graph_traits> >(tree_b, rnd);
     loc = PMP::locate_with_AABB_tree(r3, tree_b, g, CGAL::parameters::vertex_point_map(vpm_b)
                                                                      .geom_traits(K()));
+
+    // ---------------------------------------------------------------------------
+    // A ray starting inside a face
+    const Point_3 c3 = CGAL::centroid(to_p3(get(vpm, source(h, g))),
+                                      to_p3(get(vpm, target(h, g))),
+                                      to_p3(get(vpm, target(next(h, g), g))));
+    const Point_2 c(c3.x(), c3.y());
+    loc = PMP::locate_with_AABB_tree(Ray_2(c, Vector_2(1, 0.123)), tree_a, g, CGAL::parameters::vertex_point_map(vpm));
+    assert(loc.first == f);
+    assert(is_equal(CGAL::squared_distance(to_p3(PMP::construct_point(loc, g, CGAL::parameters::vertex_point_map(vpm))), c3), FT(0)));
+
+    // A ray starting outside of the mesh
+    const CGAL::Bbox_3& bbox = tree_a.bbox();
+    const Point_2 outside(bbox.xmin() - 1, bbox.ymin() - 1);
+    const Point_3 outside_3(outside.x(), outside.y(), 0);
+    loc = PMP::locate(Ray_2(outside, c), g, CGAL::parameters::vertex_point_map(vpm));
+    assert(loc.first != boost::graph_traits<G>::null_face());
+    const Point_3 entry = to_p3(PMP::construct_point(loc, g, CGAL::parameters::vertex_point_map(vpm)));
+    assert(CGAL::squared_distance(outside_3, entry) <= CGAL::squared_distance(outside_3, c3));
+    if (std::is_same<K, EPECK>()) {
+      assert(CGAL::collinear(outside_3, c3, entry));
+      assert(PMP::is_on_mesh_border(loc, g));
+    }
   }
 };
 
@@ -805,6 +833,80 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
   }
 };
 
+
+// The intersection of a ray and a face is a segment if they are coplanar: always the case for a mesh
+// with 2D points, and for a ray that is in the plane of a face for a mesh with 3D points
+template <typename K, typename Point>
+void test_rays_on_unit_square()
+{
+  typedef typename K::FT                                                          FT;
+  typedef CGAL::Surface_mesh<Point>                                               Mesh;
+  typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::const_type    VPM;
+  typedef typename PMP::internal::Location_traits<Mesh>::Ray                      Ray;
+
+  typedef PMP::internal::Point_to_Point_3_VPM<Mesh, VPM>                          WrappedVPM;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Mesh, WrappedVPM>              AABB_face_graph_primitive;
+  typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive>                       AABB_face_graph_traits;
+
+  constexpr bool is_3D = (CGAL::Ambient_dimension<Point>::value == 3);
+
+  auto make_point = [](const FT x, const FT y) {
+    if constexpr(is_3D)
+      return Point(x, y, 0);
+    else
+      return Point(x, y);
+  };
+
+  Mesh m;
+  const auto a = m.add_vertex(make_point(0, 0)),
+             b = m.add_vertex(make_point(1, 0)),
+             c = m.add_vertex(make_point(1, 1)),
+             d = m.add_vertex(make_point(0, 1));
+  m.add_face(a, b, c);
+  m.add_face(a, c, d);
+
+  CGAL::AABB_tree<AABB_face_graph_traits> tree;
+  PMP::build_AABB_tree(m, tree);
+
+  // enters through the edge [d, a]
+  auto loc = PMP::locate_with_AABB_tree(Ray(make_point(-1, 0.25), make_point(2, 0.25)), tree, m);
+  assert(loc.first != Mesh::null_face());
+  assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m), make_point(0, 0.25)), FT(0)));
+
+  // starts on the boundary of the mesh
+  loc = PMP::locate(Ray(make_point(0.25, 0.), make_point(2, 0.)), m);
+  assert(loc.first != Mesh::null_face());
+  assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m), make_point(0.25, 0.)), FT(0)));
+
+  // starts inside of the mesh
+  loc = PMP::locate(Ray(make_point(0.25, 0.5), make_point(2, 0.5)), m);
+  assert(loc.first != Mesh::null_face());
+  assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m), make_point(0.25, 0.5)), FT(0)));
+
+  // goes through the vertex `c`: the nearest point to the source is `c`
+  loc = PMP::locate(Ray(make_point(2, 2), make_point(-1, -1)), m);
+  assert(loc.first != Mesh::null_face());
+  assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m), make_point(1, 1)), FT(0)));
+
+  // misses the mesh
+  loc = PMP::locate(Ray(make_point(-1, 2), make_point(2, 2)), m);
+  assert(loc.first == Mesh::null_face());
+
+  if constexpr(is_3D)
+  {
+    // not coplanar
+    loc = PMP::locate(Ray(Point(0.5, 0.25, 1), Point(0.5, 0.25, -1)), m);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m), make_point(0.5, 0.25)), FT(0)));
+  }
+}
+
+template <typename K>
+void test_rays_on_unit_square()
+{
+  std::cout << "  test rays on a unit square..." << std::endl;
+  test_rays_on_unit_square<K, typename K::Point_2>();
+  test_rays_on_unit_square<K, typename K::Point_3>();
+}
 
 template<typename K, typename G, typename VPM>
 void test_locate(const G& g,
@@ -972,6 +1074,7 @@ void test_polyhedron(const std::string fname, CGAL::Random& rnd)
 template <typename K>
 void test(CGAL::Random& rnd)
 {
+  test_rays_on_unit_square<K>();
   test_2D_triangulation<K>("data/stair.xy", rnd);
 //  test_2D_surface_mesh<K>("data/blobby_2D.off", rnd); // temporarily disabled, until Surface_mesh's IO is "fixed"
   test_surface_mesh_3D<K>(CGAL::data_file_path("meshes/mech-holes-shark.off"), rnd);
@@ -994,5 +1097,6 @@ int main()
   test<EPICK>(rnd);
   test<Exact_kernel>(rnd);
 
+  std::cout << "Done" << std::endl;
   return EXIT_SUCCESS;
 }

@@ -1919,8 +1919,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   AABB_tree<AABB_face_graph_traits> tree;
   const WrappedVPM wrapped_vpm(vpm);
   build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm)
-                                       .geom_traits(gt)
-                                       .snapping_tolerance(snap_tolerance));
+                                       .geom_traits(gt));
 
   const Point_3 p3 = P_to_P3()(p);
   return locate_with_AABB_tree(p3, tree, tm, parameters::vertex_point_map(wrapped_vpm)
@@ -2151,8 +2150,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   AABB_tree<AABB_face_graph_traits> tree;
   const VPM wrapped_vpm(vpm);
   build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm)
-                                       .geom_traits(gt)
-                                       .snapping_tolerance(snap_tolerance));
+                                       .geom_traits(gt));
 
   return locate_with_AABB_tree(ray, tree, tm, np);
 }
