@@ -89,7 +89,7 @@ struct AABB_tree_graph_helper
     CGAL::Cartesian_converter<VPM_kernel, FloatK> to_input;
 
     // we put a default value for case the property vector is not fully allocated.
-    // For exampe maps using a unordered map would have an issue with the concurrent insertion
+    // For example maps using a unordered map would have an issue with the concurrent insertion
     Bbox_map bb_map = get(Face_bbox_tag(), tm, Bbox_3());
     Ref_point_map rp_map = get(Face_ref_point_tag(), tm, FloatK::Point_3(0.f,0.f,0.f));
 
