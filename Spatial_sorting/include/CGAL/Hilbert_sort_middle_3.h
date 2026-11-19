@@ -123,7 +123,7 @@ public:
     static std::array<Sort_fn<RandomAccessIterator>, sizeof...(I)>
     make_sort_table(std::index_sequence<I...>)
     {
-      return {{ &Hilbert_sort_middle_3::template sort<int(I&8), bool(I&4), bool(I&2), bool(I&1), RandomAccessIterator>... }};
+      return {{ &Hilbert_sort_middle_3::template sort<int(I/8), bool(I&4), bool(I&2), bool(I&1), RandomAccessIterator>... }};
     }
 
     template <class RandomAccessIterator>
@@ -174,7 +174,7 @@ public:
         CGAL_assertion(!z_upper || !z_lower || lo[z] == hi[z]);
 
         // new state: axis, flags, and cell (same transitions as in sort())
-        auto set = [&](int d, bool u0, bool u1, bool u2, double min0, double min1, double min2, double max3, double max4, double max5) {
+        auto set = [&](int d, bool u0, bool u1, bool u2, double min0, double min1, double min2, double max0, double max1, double max2) {
           x = d;
           upx = u0; upy = u1; upz = u2;
           xmin = min0; ymin = min1; zmin = min2;
