@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Surface_sweep_2_Examples)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 create_single_source_cgal_program("plane_sweep.cpp")

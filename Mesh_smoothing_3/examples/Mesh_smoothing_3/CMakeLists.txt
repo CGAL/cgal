@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Mesh_smoothing_3_Examples)
 
 message(STATUS "CGAL_DIR: ${CGAL_DIR}")

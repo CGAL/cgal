@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 # cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Linear_cell_complex_Demo)
 
 # Find includes in corresponding build directories

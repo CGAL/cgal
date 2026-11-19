@@ -2,7 +2,7 @@
 # This file is the CGALConfig.cmake for a header-only CGAL installation
 #
 
-cmake_minimum_required(VERSION 3.22...3.31)
+cmake_minimum_required(VERSION 3.22...4.4)
 
 # For CGAL_CreateSingleSourceCGALProgram.cmake
 set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )

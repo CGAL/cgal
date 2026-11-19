@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.14...4.4)
 include_guard(GLOBAL)
 
 function(process_CGAL_subdirectory entry subdir type_name)

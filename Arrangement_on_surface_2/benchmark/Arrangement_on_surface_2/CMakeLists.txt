@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(do_intersect)
 find_package(Boost CONFIG ${BOOST_MIN_VERSION} REQUIRED COMPONENTS program_options)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
