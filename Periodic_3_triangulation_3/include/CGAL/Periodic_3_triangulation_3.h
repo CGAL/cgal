@@ -1971,6 +1971,11 @@ public:
   {
     return Triangulation_data_structure::vertices(c);
   }
+  /// Edges around a facet
+  static std::array<Edge, 3> edges(const Facet& f)
+  {
+    return Triangulation_data_structure::edges(f);
+  }
 
 private:
   /** @name Checking helpers */
