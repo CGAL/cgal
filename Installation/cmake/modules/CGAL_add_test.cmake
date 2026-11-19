@@ -228,7 +228,7 @@ function(cgal_setup_test_properties test_name)
       else()
         add_test(NAME "cleanup of ${PROJECT_NAME}"
           COMMAND
-          ${CMAKE_COMMAND} -E remove_directory
+          ${CMAKE_COMMAND} -E rm -R
           ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
           )
       endif()

@@ -221,7 +221,7 @@ list(APPEND test_config_lst "test_config_file_non_standard")
 foreach(tgt ${test_config_lst})
   #add_custom_target(${tgt}_target)
   add_test(NAME "${tgt}_SetupFixture"  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/build-${tgt}")
-  add_test(NAME "${tgt}_CleanupFixture"  COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_BINARY_DIR}/build-${tgt}")
+  add_test(NAME "${tgt}_CleanupFixture"  COMMAND ${CMAKE_COMMAND} -E rm -R "${CMAKE_BINARY_DIR}/build-${tgt}")
   add_test(NAME compile__${tgt}
     COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/build-${tgt}" --config "$<CONFIG>")
     add_test(NAME exec__${tgt}
