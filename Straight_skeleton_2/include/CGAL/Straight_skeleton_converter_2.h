@@ -188,18 +188,6 @@ struct Straight_skeleton_items_converter_2
   }
 };
 
-// specialization of the item converter for souce = target, to avoid making copies
-template <class Skel,
-          class NT_converter>
-struct Straight_skeleton_items_converter_2<Skel, Skel, NT_converter>
-  : Cartesian_converter<typename Skel::Traits,
-                        typename Skel::Traits,
-                        NT_converter>
-{
-  template <typename T>
-  const T& operator()(const T& t) const { return t; }
-};
-
 template<class Source_skeleton_, class Target_skeleton_, class Items_converter_>
 struct Straight_skeleton_converter_2
 {
@@ -376,14 +364,6 @@ private :
   mutable std::vector<Target_vertex_handle>   Target_vertices ;
   mutable std::vector<Target_halfedge_handle> Target_halfedges;
   mutable std::vector<Target_face_handle>     Target_faces    ;
-};
-
-// specialization for souce = target, to avoid making copies
-template<class Skeleton_, class Items_converter_>
-struct Straight_skeleton_converter_2<Skeleton_, Skeleton_, Items_converter_>
-{
-  template <typename T>
-  const T& operator()(const T& t) const { return t; }
 };
 
 template<class Target_skeleton, class Source_skeleton, class Items_converter>

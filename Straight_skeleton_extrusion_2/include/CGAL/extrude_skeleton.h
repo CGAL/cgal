@@ -444,7 +444,12 @@ public:
     {
       HDS_Vertex_const_handle seed = (halfedge->slope() == CGAL::POSITIVE) ? halfedge->opposite()->vertex()
                                                                            : halfedge->vertex();
-      seed_event = Items_converter()(seed->trisegment());
+
+      // The trisegment is only read here, so there is no need to (deep) copy it if K == XK
+      if constexpr(std::is_same_v<K, XK>)
+        seed_event = seed->trisegment();
+      else
+        seed_event = Items_converter()(seed->trisegment());
     }
 
     K_OB_traits ob_traits;
