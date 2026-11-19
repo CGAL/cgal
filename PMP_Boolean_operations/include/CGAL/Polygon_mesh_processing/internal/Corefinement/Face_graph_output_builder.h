@@ -30,6 +30,10 @@
 #include <boost/dynamic_bitset.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/tbb.h>
+#endif
+
 // required to handle the multiple types of edge constrained maps
 // for the different output types. CGAL_COREF_FUNCTION_CALL_DEF
 // must be defined prior to using this macro.
@@ -2585,7 +2589,6 @@ public:
                 if (it!=std::prev(patches_of_tm1[i].shared_edges.end()))
                   std::swap(patches_of_tm1[i].shared_edges.back(), *it);
                 patches_of_tm1[i].shared_edges.pop_back();
-                patches_of_tm1[i].border_edges.emplace(opposite(*it, tm1));
               }
 
               // compute new shared vertices

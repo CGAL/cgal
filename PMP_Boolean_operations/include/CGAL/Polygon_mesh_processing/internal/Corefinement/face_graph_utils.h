@@ -663,7 +663,7 @@ struct Patch_description{
   std::vector<halfedge_descriptor> interior_edges;
   std::vector<halfedge_descriptor> shared_edges;
 
-  // Three sets used only for patch with borders not shared, their are empty if not
+  // Three sets used only for patch with borders not shared, they are empty if not
   std::set<halfedge_descriptor> border_edges;
   std::set<halfedge_descriptor> border_with_shared_target;
   std::set<halfedge_descriptor> border_with_shared_source;
@@ -673,6 +673,8 @@ struct Patch_description{
   Patch_description(): is_initialized(false) {};
 };
 
+// A patch is supposed to be manifold, only the shared edges may be shared with other patches
+// and a patch is topologically a disk.
 // shared_edges will be filled by halfedges pointing in the patch
 // that are inside `is_intersection_edge`, thus mesh boundary halfedges
 // are not necessarily inside.
@@ -708,7 +710,7 @@ void extract_patch_simplices(
   for(halfedge_descriptor h : patch.shared_edges){
     shared_vertices.insert( target(h,pm) );
     // if the model is not closed i.e. patch_shared_halfedge is not cycle-only
-    if(!patch.interior_edges.empty())
+    if(!patch.border_edges.empty())
       shared_vertices.insert( source(h,pm) );
   }
 
@@ -898,10 +900,10 @@ void import_polyline(
   output_shared_edges.push_back(add_edge(output));
   halfedge_descriptor h_out = halfedge(output_shared_edges.back(),output);
 
-  auto set_output_vertex = [&](vertex_descriptor v, halfedge_descriptor h_out){
+  auto set_output_vertex = [&](vertex_descriptor v, halfedge_descriptor h){
     user_visitor.before_vertex_copy(v, pm1, output);
     vertex_descriptor new_v = add_vertex(output);
-    set_halfedge(new_v, h_out, output);
+    set_halfedge(new_v, h, output);
     put(vpm_out, new_v, get(vpm1, v));
     user_visitor.after_vertex_copy(v, pm1, new_v, output);
     return new_v;
@@ -1108,23 +1110,23 @@ void process_borders_after_appending_patches(
     }
     if(reverse_patch_orientation){
       for(halfedge_descriptor h : patch.border_with_shared_source){
-        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
+        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), output);
         if(!is_border(h_out, output)) h_out = opposite(h_out, output);
         border_halfedges_target_to_link.push_back(h_out);
       }
       for(halfedge_descriptor h : patch.border_with_shared_target){
-        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
+        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), output);
         if(!is_border(h_out, output)) h_out = opposite(h_out, output);
         border_halfedges_source_to_link.push_back(h_out);
       }
     } else {
       for(halfedge_descriptor h : patch.border_with_shared_target){
-        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
+        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), output);
         if(!is_border(h_out, output)) h_out = opposite(h_out, output);
         border_halfedges_target_to_link.push_back(h_out);
       }
       for(halfedge_descriptor h : patch.border_with_shared_source){
-        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
+        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), output);
         if(!is_border(h_out, output)) h_out = opposite(h_out, output);
         border_halfedges_source_to_link.push_back(h_out);
       }
@@ -1649,13 +1651,6 @@ void disconnect_patches(
       CGAL_assertion( src != GT::null_vertex() );
       CGAL_assertion( tgt != GT::null_vertex() );
 
-      /* halfedge(edge(h, g)) == h is a requirement of the concept and so the if is useless, TODO Sebastien can you confirm
-      put(new_tm1_edge_to_tm2_edge,
-        patch.shared_edges[k]==halfedge(edge(patch.shared_edges[k], tm1), tm1)
-        ? edge(new_patch_border[k], tm1)
-        : edge(opposite(new_patch_border[k], tm1), tm1),
-      e);
-      */
       put(new_tm1_edge_to_tm2_edge, edge(new_patch_border[k], tm1), e);
       put(new_tm1_vertex_to_tm2_vertex, target(new_patch_border[k], tm1), tgt);
       put(new_tm1_vertex_to_tm2_vertex, source(new_patch_border[k], tm1), src);
@@ -1738,8 +1733,6 @@ void compute_inplace_operation_delay_removal_and_insideout(
   // For the patches scheduled to be removed, their patch descriptions
   // in patches_of_tm1 will be updated so that is_intersection_edge are
   // the newly created halfedges within disconnect_patches.
-  // Note that disconnected_patches_edge_to_tm2_edge also refers to those halfedges
-  //init the map with the previously filled one (needed when reusing patches in two operations)
   disconnected_patches_edge_to_tm2_edge=tm1_edge_to_tm2_edge;
   disconnected_patches_vertex_to_tm2_vertex=tm1_vertex_to_tm2_vertex;
   disconnect_patches(tm1, ~patches_of_tm1_to_keep, patches_of_tm1,
@@ -1900,17 +1893,6 @@ void compute_inplace_operation(
   copy_constraint_status<TriangleMesh>(tm1, edge_cst_map_in1, edge_cst_map_out);
   copy_constraint_status<TriangleMesh>(tm1, edge_mark_map_in1, edge_mark_map_out);
 
-  if (reverse_patch_orientation_tm1){
-    Polygon_mesh_processing::reverse_face_orientations_of_mesh_with_polylines(tm1);
-    // here we need to update the mapping to use the correct border
-    // halfedges while appending the patches from tm2
-    for(edge_descriptor e2: edges(tm2)){
-      edge_descriptor e1 = get(tm2_edge_to_tm1_edge, e2);
-      if (e1 != edge(boost::graph_traits<TriangleMesh>::null_halfedge(), tm1))
-        put(tm2_edge_to_tm1_edge, e2, edge(opposite(halfedge(e1, tm1), tm1), tm1));
-    }
-  }
-
   //we import patches from tm2
   if ( reverse_patch_orientation_tm2 )
     append_patches_to_triangle_mesh<true>(tm1,
@@ -2018,7 +2000,7 @@ void compute_inplace_operation(
   using E2E_tag = typename CGAL::dynamic_edge_property_t<edge_descriptor>;
   using Edge_to_edge_map = typename boost::property_map<TriangleMesh, E2E_tag>::const_type;
 
-  Edge_to_edge_map tm2_edge_to_tm1_edge = get(E2E_tag(), tm2);
+  Edge_to_edge_map tm2_edge_to_tm1_edge = get(E2E_tag(), tm2, edge(GT::null_halfedge(), tm2));
   Vertex_to_vertex_map tm2_vertex_to_tm1_vertex = get(V2V_tag(), tm2, GT::null_vertex());
 
   //maps intersection edges from tm2 to the equivalent in tm1
