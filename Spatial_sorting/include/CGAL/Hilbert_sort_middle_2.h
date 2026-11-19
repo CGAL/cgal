@@ -15,7 +15,9 @@
 #include <CGAL/config.h>
 #include <functional>
 #include <cstddef>
+#include <utility>
 #include <CGAL/Hilbert_sort_middle_base.h>
+#include <CGAL/FPU.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Spatial_sorting/internal/Spatial_sorting_helper.h>
 
@@ -100,45 +102,82 @@ public:
            (to_double(_k.compute_y_2_object()(a)) == to_double(_k.compute_y_2_object()(b)));
   }
 
-  template <int x, bool upx, bool upy, class RandomAccessIterator>
-  void skip_empty_cells (RandomAccessIterator begin, RandomAccessIterator end,
-                         double xmin, double ymin, double xmax, double ymax, Bbox_2 bb) const
+  template <class RandomAccessIterator>
+  void dispatch_sort (int x, bool upx, bool upy,
+                      RandomAccessIterator begin, RandomAccessIterator end,
+                      double xmin, double ymin, double xmax, double ymax) const
   {
-    const int y = (x + 1) % 2;
-    double xmed= (xmin+xmax)/2;
-    double ymed= (ymin+ymax)/2;
-    const bool x_degen = (xmin == xmed || xmed == xmax);
-    const bool y_degen = (ymin == ymed || ymed == ymax);
-    const bool x_lower = (x==0) ? xmed<=bb.xmin() : xmed<=bb.ymin();
-    const bool y_lower = (x==0) ? ymed<=bb.ymin() : ymed<=bb.xmin();
-    const bool x_upper = (x==0) ? xmed>=bb.xmax() : xmed>=bb.ymax();
-    const bool y_upper = (x==0) ? ymed>=bb.ymax() : ymed>=bb.xmax();
-
-    if(x_degen && y_degen)
-      return;
-
-    if( (!x_degen && !x_lower && !x_upper) || (!y_degen && !y_lower && !y_upper)){
-      // Not contain in one quarter
-      sort<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax);
-      return;
+    switch ((x << 2) | (int(upx) << 1) | int(upy)) {
+      case 0:  sort<0, false, false>(begin, end, xmin, ymin, xmax, ymax); break;
+      case 1:  sort<0, false, true >(begin, end, xmin, ymin, xmax, ymax); break;
+      case 2:  sort<0, true,  false>(begin, end, xmin, ymin, xmax, ymax); break;
+      case 3:  sort<0, true,  true >(begin, end, xmin, ymin, xmax, ymax); break;
+      case 4:  sort<1, false, false>(begin, end, xmin, ymin, xmax, ymax); break;
+      case 5:  sort<1, false, true >(begin, end, xmin, ymin, xmax, ymax); break;
+      case 6:  sort<1, true,  false>(begin, end, xmin, ymin, xmax, ymax); break;
+      default: sort<1, true,  true >(begin, end, xmin, ymin, xmax, ymax); break;
     }
+  }
 
-    CGAL_assertion(!x_upper || !x_lower || (x==0 ? (bb.xmax() == bb.xmin()) : (bb.ymax() == bb.ymin())));
-    CGAL_assertion(!y_upper || !y_lower || (y==0 ? (bb.xmax() == bb.xmin()) : (bb.ymax() == bb.ymin())));
+  // Descends through the cells containing all the points without recursion:
+  // reaching a cell of denormal size can take ~1075 levels.
+  template <class RandomAccessIterator>
+  void skip_empty_cells (int x, bool upx, bool upy,
+                         RandomAccessIterator begin, RandomAccessIterator end,
+                         double xmin, double ymin, double xmax, double ymax, const Bbox_2& bb) const
+  {
+    const double lo[2] = { bb.xmin(), bb.ymin() };
+    const double hi[2] = { bb.xmax(), bb.ymax() };
+    for(;;)
+    {
+      const int y = (x + 1) % 2;
+      const double xmed= CGAL_IA_FORCE_TO_DOUBLE((xmin+xmax)/2);
+      const double ymed= CGAL_IA_FORCE_TO_DOUBLE((ymin+ymax)/2);
+      const bool x_degen = (xmin == xmed || xmed == xmax);
+      const bool y_degen = (ymin == ymed || ymed == ymax);
+      const bool x_lower = xmed <= lo[x], x_upper = xmed >= hi[x];
+      const bool y_lower = ymed <= lo[y], y_upper = ymed >= hi[y];
 
-    if( x_lower == upx )
-    {
-      if( y_lower == upy )
-        skip_empty_cells<y, upy, upx> (begin, end, ymin, xmin, ymed, xmed, bb);
+      if(x_degen && y_degen)
+        return;
+
+      if( (!x_degen && !x_lower && !x_upper) || (!y_degen && !y_lower && !y_upper)){
+        // Not contained in one quarter
+        dispatch_sort(x, upx, upy, begin, end, xmin, ymin, xmax, ymax);
+        return;
+      }
+
+      CGAL_assertion(!x_upper || !x_lower || lo[x] == hi[x]);
+      CGAL_assertion(!y_upper || !y_lower || lo[y] == hi[y]);
+
+      if( x_lower == upx )
+      {
+        if( y_lower == upy ) {          // first quarter
+          std::swap(xmin, ymin);
+          xmax = ymed;
+          ymax = xmed;
+          std::swap(upx, upy);
+          x = y;
+        } else {                        // second quarter
+          ymin = ymed;
+          xmax = xmed;
+        }
+      }
       else
-        skip_empty_cells<x, upx, upy> (begin, end, xmin, ymed, xmed, ymax, bb);
-    }
-    else
-    {
-      if( y_lower == upy )
-        skip_empty_cells<y, !upx, !upy> (begin, end, ymed, xmax, ymin, xmed, bb);
-      else
-        skip_empty_cells<x, upx, upy> (begin, end, xmed, ymed, xmax, ymax, bb);
+      {
+        if( y_lower == upy ) {          // fourth quarter
+          xmin = ymed;
+          std::swap(xmax, ymin);
+          ymax = xmed;
+          std::swap(upx, upy);
+          upx = !upx;
+          upy = !upy;
+          x = y;
+        } else {                        // third quarter
+          xmin = xmed;
+          ymin = ymed;
+        }
+      }
     }
   }
 
@@ -149,8 +188,8 @@ public:
     const int y = (x + 1) % 2;
     if (end - begin <= _limit) return;
 
-    double xmed= (xmin+xmax)/2;
-    double ymed= (ymin+ymax)/2;
+    double xmed= CGAL_IA_FORCE_TO_DOUBLE((xmin+xmax)/2);
+    double ymed= CGAL_IA_FORCE_TO_DOUBLE((ymin+ymax)/2);
 
     RandomAccessIterator m0 = begin, m4 = end;
 
@@ -170,7 +209,7 @@ public:
         }
       if(all_equal) return;
       Bbox_2 bb=bbox_2(begin, end, Spatial_sorting::internal::Kernel_wrapper_2<Kernel>(_k));
-      skip_empty_cells<x, upx, upy> (begin, end, xmin, ymin, xmax, ymax, bb);
+      skip_empty_cells (x, upx, upy, begin, end, xmin, ymin, xmax, ymax, bb);
     }
     else
     {
