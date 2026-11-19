@@ -33,6 +33,7 @@
 #include <queue>
 #include <string>
 #include <sstream>
+#include <tuple>
 #include <utility>
 
 namespace CGAL {
@@ -519,6 +520,18 @@ public:
   public:
     Split_event_compare ( Self* aBuilder, Vertex_handle aV ) : mBuilder(aBuilder), mV(aV) {}
 
+    static bool Event_less ( EventPtr const& aA, EventPtr const& aB )
+    {
+      auto key = [](EventPtr const& aE)
+      {
+        return std::make_tuple(int(aE->type()),
+                               aE->triedge().e0()->id(),
+                               aE->triedge().e1()->id(),
+                               aE->triedge().e2()->id());
+      };
+      return key(aA) < key(aB);
+    }
+
     bool operator() ( EventPtr const& aA, EventPtr const& aB ) const
     {
       CGAL_precondition( aA->type() != Event::cEdgeEvent || aB->type() != Event::cEdgeEvent ) ;
@@ -527,7 +540,7 @@ public:
       {
         Comparison_result res = mBuilder->CompareEvents(aA,aB);
         if ( res == EQUAL )
-          return aA < aB;
+          return Event_less(aA, aB);
         return ( res == LARGER ) ;
       }
 
@@ -540,7 +553,7 @@ public:
       // i.e. `true` if the angle is larger
       Comparison_result res = mBuilder->CompareEventsSupportAngles(aA, aB);
       if ( res == EQUAL )
-        return aA < aB;
+        return Event_less(aA, aB);
       return ( res == LARGER ) ;
     }
 
