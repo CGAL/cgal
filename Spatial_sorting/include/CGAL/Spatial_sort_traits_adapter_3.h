@@ -16,6 +16,7 @@
 #include <boost/call_traits.hpp>
 
 #include <CGAL/property_map.h>
+#include <CGAL/Bbox_3.h>
 
 namespace CGAL{
 
