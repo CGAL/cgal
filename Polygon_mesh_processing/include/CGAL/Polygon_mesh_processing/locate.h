@@ -1818,7 +1818,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   // So, wrap the VPM (again) to give a Point_3. If it's already wrapped, we're just forwarding a const& anyway.
   const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                           get_const_property_map(boost::vertex_point, tm));
-  const Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
   const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
 
   const WrappedVPM wrapped_vpm(vpm);
