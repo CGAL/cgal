@@ -10,13 +10,17 @@ namespace CGAL {
 * by associating a height to the vertices of the skeleton, which corresponds to the time
 * at the vertex. The input polygon is placed at `z = 0`.
 *
-* The result is a closed, 2-manifold surface triangle mesh. Note that this mesh can have non-local
-* self-intersections if a maximal height is provided due to possible (geometric) non-manifold occurrences.
+* A maximum height can be specified to crop the extrusion, using the named parameter `maximum_height()`.
+* In particular, it *must* be specified if the weights (or angles) associated to the edges
+* of the input polygon correspond to an outward extrusion, i.e. if no weight is greater than zero
+* (i.e., no angle is smaller than `90` degrees).
+* By default, the extrusion is upwards, but a negative height can be used to construct a downward
+* extrusion.
 *
-* It is possible to crop the extruded skeleton at a maximum height using the optional
-* `maximum_height()` named parameter. A maximum height must be specified if the weights (or angles)
-* associated to the edges of the input polygon correspond to an outward extrusion, i.e. if no weight
-* is greater than zero (or no angle is smaller than `90` degrees).
+* The result is a closed, combinatorially 2-manifold surface triangle mesh. Nonetheless,
+* if a maximal height, the result can exhibit geometric self-intersections by creating
+* non-manifold occurences (for example, extruding to the height of a saddle point and creating two
+* cones sharing their apex).
 *
 * @tparam Polygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
                   or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
@@ -52,10 +56,11 @@ namespace CGAL {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{maximum_height}
-*     \cgalParamDescription{the maximum height of the extrusion}
+*     \cgalParamDescription{the maximum height of the extrusion. A positive value correspond to an upward extrusion,
+*                           and a negative value to a downward extrusion.}
 *     \cgalParamType{`FT`, a model of `FieldNumberType` convertible to the kernel type of the polygon.}
-*     \cgalParamDefault{unused}
-*     \cgalParamExtra{This parameter should not be null, but can be negative; in this case, the polygon is extruded downwards.}
+*     \cgalParamDefault{no maximum height}
+*     \cgalParamExtra{This parameter should not be null and must be passed in case of outward extrusion.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{verbose}
