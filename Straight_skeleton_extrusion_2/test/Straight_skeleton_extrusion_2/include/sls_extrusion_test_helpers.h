@@ -117,6 +117,7 @@ int test_exit_code()
 #if defined(CGAL_NDEBUG) || (defined(NDEBUG) && !defined(CGAL_DEBUG))
 constexpr bool has_cgal_preconditions = false;
 constexpr bool has_cgal_assertions = false;
+constexpr bool has_cgal_postconditions = false;
 #else
 # ifdef CGAL_NO_PRECONDITIONS
 constexpr bool has_cgal_preconditions = false;
