@@ -562,7 +562,8 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
           Matrix m(d+1,d+1);
           if(CGAL::Is_stored<Sqdo>::value) {
             Sqdo sqdo(this->kernel());
-            for(int i=0;f!=e;++f,++i) {
+            for(int i=0;i<=d;++f,++i) {
+              CGAL_assertion(f!=e);
               Point const& p=*f;
               for(int j=0;j<d;++j){
                 RT const& x=c(p,j);
@@ -571,7 +572,8 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
               m(i,d) = sqdo(p) - sqdo(p0);
             }
           } else {
-            for(int i=0;f!=e;++f,++i) {
+            for(int i=0;i<=d;++f,++i) {
+              CGAL_assertion(f!=e);
               Point const& p=*f;
               m(i,d) = 0;
               for(int j=0;j<d;++j){
@@ -581,6 +583,7 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
               }
             }
           }
+          CGAL_assertion(f==e);
           if(d%2)
             return -LA::sign_of_determinant(std::move(m));
           else
