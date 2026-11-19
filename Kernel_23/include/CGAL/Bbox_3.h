@@ -82,6 +82,8 @@ public:
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
 
+  inline const Bbox_3& bbox() const;
+
   inline void dilate(int dist);
   inline void scale(double factor);
   inline void pad(double offset);
@@ -154,6 +156,12 @@ bool
 Bbox_3::operator!=(const Bbox_3 &b) const
 {
   return ! (b == *this);
+}
+
+inline
+const Bbox_3&
+Bbox_3::bbox() const{
+  return *this;
 }
 
 inline

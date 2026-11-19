@@ -5,7 +5,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 #include <cstdlib>
 #include <iostream>
@@ -66,7 +66,6 @@ test_faces_intersections(const std::filesystem::path& filename1,
                          const bool expected)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
-  typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
 
   std::ifstream input1(filename1);
   std::ifstream input2(filename2);
@@ -83,30 +82,16 @@ test_faces_intersections(const std::filesystem::path& filename1,
 
   std::cout << "Reading files: " << filename1 <<", "<< filename2 << std::endl;
 
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
-
-  std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  CGAL::Polygon_mesh_processing::internal::compute_face_face_intersection(
-        m1, m2,
-        std::back_inserter(intersected_tris),
-        CGAL::parameters::default_values(),
-        CGAL::parameters::default_values());
-
-  bool intersecting_1 = !intersected_tris.empty();
-
-  std::cout << "intersections test took " << timer.time() << " sec." << std::endl;
-  std::cout << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
-
-  timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(m1, m2);
+  bool intersecting = CGAL::Polygon_mesh_processing::do_intersect(m1, m2);
+  timer.stop();
 
   std::cout << "does_intersect test took " << timer.time() << " sec." << std::endl;
-  std::cout << (intersecting_2 ? "There are intersections." :
-                                 "There are no intersections.") << std::endl;
+  std::cout << (intersecting ? "There are intersections." :
+                               "There are no intersections.") << std::endl;
 
-  assert(intersecting_1 == intersecting_2);
-  assert(intersecting_1 == expected);
+  assert(intersecting == expected);
 
   std::cout << filename1 << "and " <<filename2  << " passed the tests." << std::endl << std::endl;
 
@@ -141,29 +126,16 @@ test_faces_polyline_intersections(const std::filesystem::path filename1,
 
   std::cout << "Reading files: " << filename1 <<", "<< filename2 << std::endl;
 
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
-
-  std::vector<std::pair<std::size_t, std::size_t> > intersected_tris;
-  CGAL::Polygon_mesh_processing::internal::compute_face_polyline_intersection(
-        m, points,
-        std::back_inserter(intersected_tris),
-        CGAL::parameters::default_values());
-
-  bool intersecting_1 = !intersected_tris.empty();
-
-  std::cout << "intersections test took " << timer.time() << " sec." << std::endl;
-  std::cout << intersected_tris.size() << " intersections." << std::endl;
-
-  timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(m,points);
+  bool intersecting = CGAL::Polygon_mesh_processing::do_intersect(m,points);
+  timer.stop();
 
   std::cout << "does_intersect test took " << timer.time() << " sec." << std::endl;
-  std::cout << (intersecting_2 ? "There are intersections." :
-                                 "There are no intersections.") << std::endl;
+  std::cout << (intersecting ? "There are intersections." :
+                               "There are no intersections.") << std::endl;
 
-  assert(intersecting_1 == intersecting_2);
-  assert(intersecting_1 == expected);
+  assert(intersecting == expected);
 
   std::cout << filename1 << "and " <<filename2  << " passed the tests." << std::endl << std::endl;
 
@@ -198,33 +170,16 @@ test_faces_polylines_intersections(const std::filesystem::path& filename1,
 
   std::cout << "Reading files: " << filename1 <<", "<< filename2 << std::endl;
 
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
-
-  std::vector<std::pair<std::size_t,
-      std::pair<std::size_t, std::size_t> > > intersected_tris;
-
-  CGAL::Polygon_mesh_processing::internal::compute_face_polylines_intersection(
-        faces(m),
-        points,
-        m,
-        std::back_inserter(intersected_tris),
-        CGAL::parameters::default_values());
-
-  bool intersecting_1 = !intersected_tris.empty();
-
-  std::cout << "intersections test took " << timer.time() << " sec." << std::endl;
-  std::cout << intersected_tris.size() << " intersections." << std::endl;
-
-  timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(m,points);
+  bool intersecting = CGAL::Polygon_mesh_processing::do_intersect(m,points);
+  timer.stop();
 
   std::cout << "does_intersect test took " << timer.time() << " sec." << std::endl;
-  std::cout << (intersecting_2 ? "There are intersections." :
-                                 "There are no intersections.") << std::endl;
+  std::cout << (intersecting ? "There are intersections." :
+                               "There are no intersections.") << std::endl;
 
-  assert(intersecting_1 == intersecting_2);
-  assert(intersecting_1 == expected);
+  assert(intersecting == expected);
 
   std::cout << filename1 << "and " <<filename2  << " passed the tests." << std::endl << std::endl;
 
@@ -259,36 +214,16 @@ test_polylines_polylines_intersections(const std::filesystem::path filename1,
 
   std::cout << "Reading files: " << filename1 <<", "<< filename2 << std::endl;
 
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
-
-  std::vector<
-        std::pair<
-          std::pair<std::size_t, std::size_t>,
-          std::pair<std::size_t, std::size_t>
-        >
-      > intersected_segs;
-
-  CGAL::Polygon_mesh_processing::internal::compute_polylines_polylines_intersection(
-        polys1,
-        polys2,
-        std::back_inserter(intersected_segs),
-        K());
-
-  bool intersecting_1 = !intersected_segs.empty();
-
-  std::cout << "intersections test took " << timer.time() << " sec." << std::endl;
-  std::cout << intersected_segs.size() << " intersections." << std::endl;
-
-  timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(polys1, polys2);
+  bool intersecting = CGAL::Polygon_mesh_processing::do_intersect(polys1, polys2);
+  timer.stop();
 
   std::cout << "does_intersect test took " << timer.time() << " sec." << std::endl;
-  std::cout << (intersecting_2 ? "There are intersections." :
-                                 "There are no intersections.") << std::endl;
+  std::cout << (intersecting ? "There are intersections." :
+                               "There are no intersections.") << std::endl;
 
-  assert(intersecting_1 == intersecting_2);
-  assert(intersecting_1 == expected);
+  assert(intersecting == expected);
 
   std::cout << filename1 << "and " <<filename2  << " passed the tests." << std::endl << std::endl;
 
@@ -326,30 +261,16 @@ test_polylines_intersections(const std::filesystem::path& filename1,
 
   std::cout << "Reading files: " << filename1 <<", "<< filename2 << std::endl;
 
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
-
-  std::vector<std::pair<std::size_t, std::size_t> > intersected_polys;
-  CGAL::Polygon_mesh_processing::internal::compute_polyline_polyline_intersection(
-        points1, points2,
-        std::back_inserter(intersected_polys),
-        K());
-
-  bool intersecting_1 = !intersected_polys.empty();
-
-  std::cout << "intersections test took " << timer.time() << " sec." << std::endl;
-  std::cout << intersected_polys.size() << " intersections." << std::endl;
-
-  timer.reset();
-
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(points1, points2);
+  bool intersecting = CGAL::Polygon_mesh_processing::do_intersect(points1, points2);
+  timer.stop();
 
   std::cout << "does_intersect test took " << timer.time() << " sec." << std::endl;
-  std::cout << (intersecting_2 ? "There are intersections." :
-                                 "There are no intersections.") << std::endl;
+  std::cout << (intersecting ? "There are intersections." :
+                               "There are no intersections.") << std::endl;
 
-  assert(intersecting_1 == intersecting_2);
-  assert(intersecting_1 == expected);
+  assert(intersecting == expected);
 
   std::cout << filename1 << "and " <<filename2  << " passed the tests." << std::endl << std::endl;
 
@@ -375,6 +296,14 @@ int test_inter_in_range(const std::vector<std::filesystem::path>& filenames, std
   std::cout << output.size() <<" pairs."<<std::endl;
   if(output.size() != expected)
     return 1;
+#ifdef CGAL_LINKED_WITH_TBB
+  output.clear();
+  CGAL::Polygon_mesh_processing::intersecting_meshes(meshes, std::back_inserter(output),
+    CGAL::parameters::do_overlap_test_of_bounded_sides(volume).concurrency_tag(CGAL::Parallel_tag()));
+  std::cout << output.size() <<" pairs (in parallel)."<<std::endl;
+  if(output.size() != expected)
+    return 1;
+#endif
   return 0;
 }
 
