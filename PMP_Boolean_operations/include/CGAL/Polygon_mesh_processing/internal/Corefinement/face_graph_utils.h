@@ -1426,6 +1426,8 @@ auto fill_new_triangle_mesh(
   Edge_to_edge_map tm1_to_output_edges = get(E2E_tag(), tm1, edge(GT::null_halfedge(), tm1)),
                    tm2_to_output_edges = get(E2E_tag(), tm2, edge(GT::null_halfedge(), tm2));
 
+  CGAL_assertion(vertices(output).size()==0 && edges(output).size()==0 && faces(output).size()==0);
+
   // this is the minimal number of edges that will be marked (intersection edge).
   // We cannot easily have the total number since some patch interior edges might be marked
   output_shared_edges.reserve(std::accumulate(polylines.lengths.begin(),polylines.lengths.end(),std::size_t(0)) );
@@ -1892,6 +1894,9 @@ void compute_inplace_operation(
   // transfer marks of edges of patches kept to the output edge mark property
   copy_constraint_status<TriangleMesh>(tm1, edge_cst_map_in1, edge_cst_map_out);
   copy_constraint_status<TriangleMesh>(tm1, edge_mark_map_in1, edge_mark_map_out);
+
+  if (reverse_patch_orientation_tm1)
+    Polygon_mesh_processing::reverse_face_orientations_of_mesh_with_polylines(tm1);
 
   //we import patches from tm2
   if ( reverse_patch_orientation_tm2 )

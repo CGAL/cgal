@@ -201,7 +201,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type.
   *                    If an edge marked as constrained in `tm1` (`tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
   *     \cgalParamDefault{a constant property map returning `false` for any edge}
-  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
+  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations are not safe to write concurrently.}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{edge_is_marked_map}
@@ -210,7 +210,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *     \cgalParamDefault{unused}
-  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
+  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations are not safe to write concurrently.}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{face_index_map}
@@ -260,7 +260,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *                           If an edge marked as constrained in `tm1` (`tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
-  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
+  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations are not safe to write concurrently.}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{edge_is_marked_map}
@@ -269,7 +269,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *     \cgalParamDefault{unused}
-  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
+  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations are not safe to write concurrently.}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
@@ -558,7 +558,7 @@ corefine_and_compute_boolean_operations(
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type
   *                    If an edge marked as constrained in `tm1` (`tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
   *     \cgalParamDefault{a constant property map returning `false` for any edge}
-  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
+  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations are not safe to write concurrently.}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{edge_is_marked_map}
@@ -567,7 +567,7 @@ corefine_and_compute_boolean_operations(
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *     \cgalParamDefault{unused}
-  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
+  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations are not safe to write concurrently.}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{face_index_map}
@@ -615,7 +615,7 @@ corefine_and_compute_boolean_operations(
   *                           An edge of `tm_out` is constrained if the edge corresponds to a (part of a) constrained edge in `tm1` or `tm2`.}
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
-  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
+  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations are not safe to write concurrently.}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{edge_is_marked_map}
@@ -624,7 +624,7 @@ corefine_and_compute_boolean_operations(
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *     \cgalParamDefault{unused}
-  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
+  *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations are not safe to write concurrently.}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
@@ -764,7 +764,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type.
  *                    If an edge marked as constrained in is split during corefinement, the resulting sub-edges will be marked as constrained.}
  *     \cgalParamDefault{a constant property map returning `false` for any edge}
- *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
+ *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations are not safe to write concurrently.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{edge_is_marked_map}
@@ -773,7 +773,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
  *                    as key type and `bool` as value type}
  *     \cgalParamDefault{unused}
- *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
+ *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations are not safe to write concurrently.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{visitor}
@@ -926,7 +926,6 @@ namespace experimental {
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
  *                    as key type and `bool` as value type}
  *     \cgalParamDefault{a constant property map returning `false` for any edge}
- *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{face_index_map}
@@ -1032,7 +1031,6 @@ autorefine(      TriangleMesh& tm,
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
  *                    as key type and `bool` as value type}
  *     \cgalParamDefault{a constant property map returning `false` for any edge}
- *     \cgalParamExtra{if multiple threads are used, write must be thread safe. std::vector<bool> specializations have not thread safe writing capabilities.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{face_index_map}

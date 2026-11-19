@@ -12,7 +12,7 @@
 #ifndef CGAL_SURFACE_MESH_BOOLEAN_OPERATIONS_UTILS_H
 #define CGAL_SURFACE_MESH_BOOLEAN_OPERATIONS_UTILS_H
 
-#include <CGAL/license/Surface_mesh.h>
+#include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
@@ -343,7 +343,7 @@ auto fill_new_triangle_mesh(
   t.start();
   std::cout << "Progress fill new triangle mesh" << std::endl;
 #endif
-  output.clear();
+  CGAL_assertion(output.is_empty());
 
   output_shared_edges.reserve( std::accumulate(polylines.lengths.begin(), polylines.lengths.end(), std::size_t(0)) );
   std::size_t nb_polylines = polylines.lengths.size();

@@ -2600,6 +2600,7 @@ public:
               }
 
               // update interior_vertices and border with shared vertices
+              std::set<vertex_descriptor> new_vertices;
               for(halfedge_descriptor h : new_borders)
               {
                 if ( shared_vertices.count( target(h, tm1) ) )
@@ -2609,7 +2610,14 @@ public:
 
                 if ( shared_vertices.count( source(h, tm1) ) )
                   patches_of_tm1[i].border_with_shared_source.emplace(h);
+                else
+                  patches_of_tm1[i].interior_vertices.push_back( source(h, tm1) );
               }
+              patches_of_tm1[i].interior_vertices.insert(
+                patches_of_tm1[i].interior_vertices.end(),
+                new_vertices.begin(),
+                new_vertices.end()
+              );
 
               // Remove elements from borders_with_shared_vertices if the vertices are no longer shared
               std::vector<halfedge_descriptor> border_targets_to_erase;
@@ -2653,6 +2661,8 @@ public:
               auto it = std::find( patches_of_tm1[pid].interior_vertices.begin(),
                                    patches_of_tm1[pid].interior_vertices.end(),
                                    vd); // Linear time, expensive
+              if (it==patches_of_tm1[pid].interior_vertices.end())
+                continue;
               if (it!=std::prev(patches_of_tm1[pid].interior_vertices.end()))
                 std::swap(*it, patches_of_tm1[pid].interior_vertices.back());
               patches_of_tm1[pid].interior_vertices.pop_back();
