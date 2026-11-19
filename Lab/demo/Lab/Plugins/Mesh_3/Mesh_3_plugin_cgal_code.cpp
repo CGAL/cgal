@@ -50,7 +50,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
             << "  edge distance bound: " << edge_distance << std::endl
             << "  facets size bound: " << facet_sizing << std::endl
             << "  approximation bound: " << facet_approx << std::endl
-            << "  normal deviation bound: " << facet_normal_angle << std::endl;
+            << "  normal angle bound: " << facet_normal_angle << std::endl;
   if (!surface_only)
     std::cerr << "  tetrahedra size bound: " << tet_sizing << std::endl;
 
@@ -102,7 +102,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
             "<li>Edge distance bound: %4</li>"
             "<li>Facets size bound: %5</li>"
             "<li>Approximation bound: %6</li>"
-            "<li>Normal deviation bound: %7</li>")
+            "<li>Normal angle bound: %7</li>")
     .arg(facet_angle)
     .arg(edge_size)
     .arg(edge_min_size)
@@ -170,7 +170,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
     << "  edge distance bound: " << edge_distance << std::endl
     << "  facets size bound: " << facet_sizing << std::endl
     << "  approximation bound: " << facet_approx << std::endl
-    << "  normal deviation bound: " << facet_normal_angle << std::endl;
+    << "  normal angle bound: " << facet_normal_angle << std::endl;
   if (!surface_only)
     std::cerr << "  tetrahedra size bound: " << tet_sizing << std::endl;
 
@@ -217,7 +217,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
       "<li>Edge distance bound: %4</li>"
       "<li>Facets size bound: %5</li>"
       "<li>Approximation bound: %6</li>"
-      "<li>Normal deviation bound: %7</li>")
+      "<li>Normal angle bound: %7</li>")
     .arg(facet_angle)
     .arg(edge_size)
     .arg(edge_min_size)
@@ -383,7 +383,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       "<li>Edge distance bound: %4</li>"
       "<li>Facets size bound: %5</li>"
       "<li>Approximation bound: %6</li>"
-      "<li>Normal deviation bound: %7</li>")
+      "<li>Normal angle bound: %7</li>")
     .arg(facet_angle)
     .arg(edge_size)
     .arg(edge_min_size)
