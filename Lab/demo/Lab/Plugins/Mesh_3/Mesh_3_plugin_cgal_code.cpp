@@ -28,7 +28,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
                                  const double facet_sizing,
                                  const double facet_min_sizing,
                                  const double facet_approx,
-                                 const double facet_normal_deviation,
+                                 const double facet_normal_angle,
                                  const double tet_sizing,
                                  const double tet_min_sizing,
                                  const double edge_size,
@@ -50,7 +50,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
             << "  edge distance bound: " << edge_distance << std::endl
             << "  facets size bound: " << facet_sizing << std::endl
             << "  approximation bound: " << facet_approx << std::endl
-            << "  normal deviation bound: " << facet_normal_deviation << std::endl;
+            << "  normal deviation bound: " << facet_normal_angle << std::endl;
   if (!surface_only)
     std::cerr << "  tetrahedra size bound: " << tet_sizing << std::endl;
 
@@ -109,7 +109,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
     .arg(edge_distance)
     .arg(facet_sizing)
     .arg(facet_approx)
-    .arg(facet_normal_deviation);
+    .arg(facet_normal_angle);
   if (!surface_only)
     tooltip += QString("<li>Tetrahedra size bound: %1</li>" )
         .arg(tet_sizing);
@@ -120,7 +120,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;
-  param.facet_normal_deviation = facet_normal_deviation;
+  param.facet_normal_angle = facet_normal_angle;
   param.tet_sizing = tet_sizing;
   param.facet_min_sizing = facet_min_sizing;
   param.tet_min_sizing = tet_min_sizing;
@@ -148,7 +148,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
                                  const double facet_sizing,
                                  const double facet_min_sizing,
                                  const double facet_approx,
-                                 const double facet_normal_deviation,
+                                 const double facet_normal_angle,
                                  const double tet_sizing,
                                  const double tet_min_sizing,
                                  const double edge_size,
@@ -170,7 +170,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
     << "  edge distance bound: " << edge_distance << std::endl
     << "  facets size bound: " << facet_sizing << std::endl
     << "  approximation bound: " << facet_approx << std::endl
-    << "  normal deviation bound: " << facet_normal_deviation << std::endl;
+    << "  normal deviation bound: " << facet_normal_angle << std::endl;
   if (!surface_only)
     std::cerr << "  tetrahedra size bound: " << tet_sizing << std::endl;
 
@@ -224,7 +224,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
     .arg(edge_distance)
     .arg(facet_sizing)
     .arg(facet_approx)
-    .arg(facet_normal_deviation);
+    .arg(facet_normal_angle);
   if (!surface_only)
     tooltip += QString("<li>Tetrahedra size bound: %1</li>")
     .arg(tet_sizing);
@@ -235,7 +235,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;
-  param.facet_normal_deviation = facet_normal_deviation;
+  param.facet_normal_angle = facet_normal_angle;
   param.tet_sizing = tet_sizing;
   param.facet_min_sizing = facet_min_sizing;
   param.tet_min_sizing = tet_min_sizing;
@@ -264,7 +264,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double facet_sizing,
                                  const double facet_min_sizing,
                                  const double facet_approx,
-                                 const double facet_normal_deviation,
+                                 const double facet_normal_angle,
                                  const double tet_sizing,
                                  const double tet_min_sizing,
                                  const double edge_size,
@@ -297,7 +297,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.facet_sizing = facet_sizing;
   param.facet_min_sizing = facet_min_sizing;
   param.facet_approx = facet_approx;
-  param.facet_normal_deviation = facet_normal_deviation;
+  param.facet_normal_angle = facet_normal_angle;
   param.tet_sizing = tet_sizing;
   param.tet_min_sizing = tet_min_sizing;
   param.tet_shape = tet_shape;
@@ -331,7 +331,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const double facet_sizing,
                                  const double facet_min_sizing,
                                  const double facet_approx,
-                                 const double facet_normal_deviation,
+                                 const double facet_normal_angle,
                                  const double tet_sizing,
                                  const double tet_min_sizing,
                                  const double edge_size,
@@ -361,7 +361,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.facet_sizing = facet_sizing;
   param.facet_min_sizing = facet_min_sizing;
   param.facet_approx = facet_approx;
-  param.facet_normal_deviation = facet_normal_deviation;
+  param.facet_normal_angle = facet_normal_angle;
   param.tet_sizing = tet_sizing;
   param.tet_min_sizing = tet_min_sizing;
   param.facet_min_sizing = facet_min_sizing;
@@ -390,7 +390,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     .arg(edge_distance)
     .arg(facet_sizing)
     .arg(facet_approx)
-    .arg(facet_normal_deviation);
+    .arg(facet_normal_angle);
   if (!surface_only)
     tooltip += QString("<li>Tetrahedra size bound: %1</li>")
     .arg(tet_sizing);

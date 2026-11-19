@@ -106,7 +106,7 @@ public:
     \param min_radius_bound is a uniform lower bound for the radius of
     the surface Delaunay balls. Only facets with a radius larger than that
     bound will be refined.
-    \param normals_variation_bound is an upper bound, in degrees, between the normal vectors of two neighbor
+    \param normal_angle_bound is an upper bound, in degrees, between the normal vectors of two neighbor
     facets of the complex, separated by a an edge that is not in the 1D complex
 
     @note If one parameter is set to 0, then its corresponding
@@ -117,7 +117,7 @@ public:
                         const FT& distance_bound,
                         const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
                         const FT& min_radius_bound = 0.,
-                        const FT& normals_variation_bound = 0.);
+                        const FT& normal_angle_bound = 0.);
 
 #endif
 
@@ -134,7 +134,7 @@ public:
                         const DistanceField& distance_bound,
                         const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
                         const FT& min_radius_bound = 0.,
-                        const FT& normals_variation_bound = 0.)
+                        const FT& normal_angle_bound = 0.)
     : squared_min_radius_bound_(std::nullopt)
   {
     if (FT(0) != min_radius_bound)
@@ -154,7 +154,7 @@ public:
 
     init_topo(topology);
 
-    init_normals_variation(normals_variation_bound);
+    init_normal_angle(normal_angle_bound);
   }
 
   /// @}
@@ -260,12 +260,12 @@ private:
     }
   }
 
-  void init_normals_variation(const FT& normals_variation_bound)
+  void init_normal_angle(const FT& normal_angle_bound)
   {
-    if(FT(0) == normals_variation_bound)
+    if(FT(0) == normal_angle_bound)
       return;
-    typedef Mesh_3::Facet_normals_variation_criterion<C3T3, Visitor> Nvar_criterion;
-    criteria_.add(new Nvar_criterion(normals_variation_bound));
+    typedef Mesh_3::Facet_normal_angle_criterion<C3T3, Visitor> Nvar_criterion;
+    criteria_.add(new Nvar_criterion(normal_angle_bound));
   }
 
 private:

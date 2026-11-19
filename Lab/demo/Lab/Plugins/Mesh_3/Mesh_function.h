@@ -60,7 +60,7 @@ struct Mesh_parameters
   double facet_sizing;
   double facet_min_sizing;
   double facet_approx;
-  double facet_normal_deviation;
+  double facet_normal_angle;
 
   double tet_shape;
   double tet_sizing;
@@ -396,7 +396,7 @@ launch()
                                         p_.facet_approx,
                                         CGAL::FACET_VERTICES_ON_SURFACE,
                                         p_.facet_min_sizing,
-                                        p_.facet_normal_deviation),
+                                        p_.facet_normal_angle),
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing,
                                        p_.tet_min_sizing));

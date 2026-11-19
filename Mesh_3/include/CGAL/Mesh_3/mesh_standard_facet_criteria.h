@@ -640,7 +640,7 @@ protected:
 }; // end class Facet_on_same_surface_criterion
 
 template<typename C3T3, typename Visitor_>
-class Facet_normals_variation_criterion
+class Facet_normal_angle_criterion
 : public Mesh_3::Abstract_criterion<C3T3, Visitor_>
 {
   typedef typename C3T3::Triangulation Tr;
@@ -655,16 +655,16 @@ class Facet_normals_variation_criterion
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad Is_bad;
 
-  typedef Facet_normals_variation_criterion<C3T3, Visitor_> Self;
+  typedef Facet_normal_angle_criterion<C3T3, Visitor_> Self;
 
 public:
   /// Constructor
-  Facet_normals_variation_criterion(const FT& bound_degrees)
+  Facet_normal_angle_criterion(const FT& bound_degrees)
     : cosine_bound_(std::cos(CGAL::to_double(bound_degrees * CGAL_PI / 180.0)))
   {}
 
   /// Destructor
-  virtual ~Facet_normals_variation_criterion() {}
+  virtual ~Facet_normal_angle_criterion() {}
 
 protected:
   virtual void do_accept(Visitor_& v) const { v.visit(*this); }
@@ -742,7 +742,7 @@ protected:
 private:
   const FT cosine_bound_;
 
-}; // end class Facet_normals_variation_criterion
+}; // end class Facet_normal_angle_criterion
 
 template <typename C3T3>
 class Facet_criterion_visitor
