@@ -686,7 +686,7 @@ protected:
     auto cp = tr.geom_traits().construct_point_3_object();
     auto compare_angle = tr.geom_traits().compare_angle_3_object();
 
-    const Facet& start_facet = f;
+    const Cell_handle start_cell = f.first;
 
     // for each of the 3 neighboring facets, compute unit normal n2 and compare with nf
     for(const Edge& e : tr.edges(f))
@@ -695,7 +695,7 @@ protected:
         continue;
 
       const auto& [vs, vt] = tr.vertices(e);
-      Cell_handle cell = start_facet.first;
+      Cell_handle cell = start_cell;
       do
       {
         int next_index = T3_utils::next_around_edge(cell->index(vs), cell->index(vt));
@@ -733,7 +733,7 @@ protected:
 
         cell = cell->neighbor(next_index);
       }
-      while(cell != start_facet.first);
+      while(cell != start_cell);
     }
 
     return Is_bad();
