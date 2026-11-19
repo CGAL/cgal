@@ -1537,6 +1537,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::is_default_parameter;
 
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
   SK sk = choose_parameter<SK>(get_parameter(np, CGAL::internal_np::geom_traits));
@@ -1544,6 +1545,10 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   if(verbose)
     std::cout << "XK is " << typeid(XK).name() << std::endl;
+
+  constexpr bool has_height = !is_default_parameter<NamedParameters, internal_np::maximum_height_t>::value;
+  CGAL_precondition(!has_height || !is_zero(choose_parameter(get_parameter(np, internal_np::maximum_height), 0)));
+  CGAL_USE(has_height);
 
   Slope slope;
   bool is_valid_input;
