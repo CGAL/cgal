@@ -1068,8 +1068,12 @@ public:
       }
       else if(lines.size() >= 2)
       {
-        // The point must be on both planes, i.e., above the intersection of the two lines.
-        // For consecutive contour edges, that is their common vertex.
+        // On paper, one could build a polygon very large such that we get a node
+        // with 3 edges assigned the fake vertical weight...
+        // @fixme scale the weight by the characteristic size of the polgyon?
+        CGAL_warning_msg(lines.size() == 2, "a point is on more than two vertical slabs");
+
+        // check the simple case of consecutive edges to avoid computations
         if(lines[0]->vertex() == lines[1]->opposite()->vertex())
         {
           snapped = lines[0]->vertex()->point();
@@ -1083,7 +1087,8 @@ public:
           const Line_2 l0 = cl2(lines[0]->opposite()->vertex()->point(), lines[0]->vertex()->point());
           const Line_2 l1 = cl2(lines[1]->opposite()->vertex()->point(), lines[1]->vertex()->point());
           const auto inter = inter_2(l0, l1);
-          CGAL_assertion(bool(inter)); // since lines are not collinear
+          // The lines are distinct, but they can be parallel (same reason as above)
+          CGAL_warning_msg(bool(inter), "parallel (but distinct) lines?...");
           if(inter)
           {
             if(const Point_2* ip = std::get_if<Point_2>(&*inter))
@@ -1092,7 +1097,8 @@ public:
         }
       }
 
-      p = cp3(snapped->x(), snapped->y(), p.z());
+      if(snapped)
+        p = cp3(snapped->x(), snapped->y(), p.z());
     }
   }
 #endif // CGAL_SLS_SNAP_TO_VERTICAL_SLABS
