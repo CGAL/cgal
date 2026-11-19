@@ -106,8 +106,8 @@ public:
     \param min_radius_bound is a uniform lower bound for the radius of
     the surface Delaunay balls. Only facets with a radius larger than that
     bound will be refined.
-    \param normals_variation_bound in degrees, between two neighbor
-    facets of the complex, separated by a non-complex edge
+    \param normals_variation_bound is an upper bound, in degrees, between the normal vectors of two neighbor
+    facets of the complex, separated by a an edge that is not in the 1D complex
 
     @note If one parameter is set to 0, then its corresponding
     criterion is ignored.
