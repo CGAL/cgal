@@ -834,7 +834,7 @@ namespace AABB_tree {
     for (; node != end; ++node)
     {
       CGAL_assertion(node->range() == range);
-      CGAL_assertion(node->first_primtive() == &(*first));
+      CGAL_assertion(node->first_primitive() == &(*first));
       if (range == 2)
       {
         node->set_bbox(compute_bbox(first, first + 2));
@@ -883,6 +883,7 @@ namespace AABB_tree {
       for (node--; node != begin; --node)
         if(node->is_internal_node())
           node->set_bbox(node->left_child().bbox() + node->right_child().bbox());
+      CGAL_assertion(node->is_internal_node());
       node->set_bbox(node->left_child().bbox() + node->right_child().bbox());
     }
   }
@@ -977,19 +978,6 @@ namespace AABB_tree {
 } // end of namespace AABB_tree
 } // end of namespace internal
 
-  // Now unused by build
-  template<typename Tr>
-  template<typename ConcurrencyTag, typename NodeIterator, typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
-  void
-  AABB_tree<Tr>::expand(NodeIterator node,
-                        ConstPrimitiveIterator first,
-                        std::size_t range,
-                        const ComputeBbox& compute_bbox,
-                        const SplitPrimitives& split_primitives)
-  {
-    internal::AABB_tree::sequential_expand(node, first, range, compute_bbox, split_primitives);
-  }
-
 #ifndef DOXYGEN_RUNNING
   // Build the data structure, after calls to insert(..)
   template<typename Tr>
@@ -998,6 +986,7 @@ namespace AABB_tree {
     const ComputeBbox& compute_bbox,
     const SplitPrimitives& split_primitives)
   {
+    if(m_primitives.size() <= 1) return;
     clear_nodes();
     // allocates tree nodes
     m_nodes.resize(m_primitives.size()-1);
@@ -1011,7 +1000,7 @@ namespace AABB_tree {
                                         SplitPrimitives,
                                         postprocess_bbox_computation>;
 
-    if(ConcurrencyTag::is_parallel && m_primitives.size() > Range::grain_size) {
+    if constexpr(ConcurrencyTag::is_parallel){
       Range range(m_nodes.begin(),
                   m_primitives.begin(),
                   m_primitives.size(),
@@ -1029,7 +1018,6 @@ namespace AABB_tree {
     }
     else
 #endif
-    if(m_primitives.size() > 1)
     {
       // constructs the tree
       internal::AABB_tree::sequential_expand<postprocess_bbox_computation>
