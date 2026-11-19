@@ -134,8 +134,8 @@ private:
 
   bool is_bad_edge(const Edge& e) const
   {
-    const auto st = this->r_c3t3_.face_status(e);
-    if(st != C3t3::SINGULAR && (m_with_boundary || st != C3t3::BOUNDARY))
+    const auto face_status = this->r_c3t3_.face_status(e);
+    if(face_status != C3t3::SINGULAR && (m_with_boundary || face_status != C3t3::BOUNDARY))
       return false;
     return !this->r_c3t3_.is_in_complex(e); // protected feature edge: non-manifold by design
   }
