@@ -417,9 +417,9 @@
        </widget>
       </item>
       <item row="5" column="0">
-       <widget class="QLabel" name="normalDeviationLabel">
+       <widget class="QLabel" name="facetNormalAngleLabel">
         <property name="text">
-         <string>Normal max deviation</string>
+         <string>Facet normal angle</string>
         </property>
         <property name="scaledContents">
          <bool>false</bool>
@@ -430,7 +430,7 @@
        </widget>
       </item>
       <item row="5" column="1">
-       <widget class="QDoubleSpinBox" name="normalDeviation">
+       <widget class="QDoubleSpinBox" name="facetNormalAngle">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -455,7 +455,7 @@
        </widget>
       </item>
       <item row="5" column="2">
-       <widget class="QCheckBox" name="noNormalDeviation">
+       <widget class="QCheckBox" name="noFacetNormalAngle">
         <property name="text">
          <string/>
         </property>

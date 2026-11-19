@@ -176,6 +176,8 @@ log() const
     res << QString("facet min size: %1").arg(facet_min_sizing);
   if(is_valid(facet_approx))
     res << QString("facet approx error: %1").arg(facet_approx);
+  if(is_valid(facet_normal_angle))
+    res << QString("facet normal angle: %1").arg(facet_normal_angle);
   if(is_valid(tet_shape))
     res << QString("tet shape (radius-edge): %1").arg(tet_shape);
   if(is_valid(tet_sizing))

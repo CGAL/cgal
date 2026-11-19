@@ -573,7 +573,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   Setup_ui_row s6(ui.sizingLabel,    ui.facetSizing,    diag * 10e-6, diag, facets_sizing,     {ui.noFacetSizing});
   Setup_ui_row s7(ui.sizingMinLabel, ui.facetMinSizing, diag * 10e-6, diag, facets_min_sizing, {ui.noFacetMinSizing});
   Setup_ui_row s8(ui.angleLabel,     ui.facetAngle,     0.0,          30.0, angle,             {ui.noAngle});
-//  Setup_ui_row s8b(ui.normalDeviationLabel, ui.normalDeviation, 0.0, 180.0, facet_normal_angle,  {ui.noNormalDeviation});
+//  Setup_ui_row s8b(ui.facetNormalAngleLabel, ui.facetNormalAngle, 0.0, 180.0, facet_normal_angle,  {ui.nofacetNormalAngle});
 
   //tetrahedra parameters
   Setup_ui_row s9(ui.tetSizingLabel,    ui.tetSizing,    diag * 10e-6, diag,        tets_sizing,     {ui.noTetSizing});
@@ -706,7 +706,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   facets_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
   facets_min_sizing = !ui.noFacetMinSizing->isChecked() ? 0 : ui.facetMinSizing->value();
   approx = !ui.noApprox->isChecked() ? 0 : ui.approx->value();
-  facet_normal_angle = !ui.noNormalDeviation->isChecked() ? 0 : ui.normalDeviation->value();
+  facet_normal_angle = !ui.noFacetNormalAngle->isChecked() ? 0 : ui.facetNormalAngle->value();
   tets_shape = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   tets_sizing = !ui.noTetSizing->isChecked() ? 0 : ui.tetSizing->value();
   tets_min_sizing = !ui.noTetMinSizing->isChecked() ? 0 : ui.tetMinSizing->value();
