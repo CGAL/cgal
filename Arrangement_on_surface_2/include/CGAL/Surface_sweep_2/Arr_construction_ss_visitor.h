@@ -977,8 +977,14 @@ relocate_in_new_face(Halfedge_handle he)
 
       Halfedge_handle he_on_face = m_sc_he_table[*itr];
       if (he_on_face == invalid_he) {
-        // If the halfedge handle is invalid, then we have an index for an
-        // isolated vertex. Move this vertex to the new face, if necessary.
+        // The indices are not necessarily mapped in the order they are
+        // assigned; hence, an index that is not mapped yet may be smaller
+        // than indices that are. Such an index belongs to he itself (see
+        // above), and is ignored.
+        if (! m_iso_verts_map.is_defined(*itr)) continue;
+
+        // Otherwise, we have an index for an isolated vertex. Move this vertex
+        // to the new face, if necessary.
         Vertex_handle v = m_iso_verts_map[*itr];
         CGAL_assertion(v != m_invalid_vertex);
         // There are cases where the vertex is not isolated. For example,
