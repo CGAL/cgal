@@ -291,7 +291,8 @@ struct Outward_tests
     CGAL_SLS_CHECK(num_faces(m) == 0);
 
     in.with_height(0);
-    CGAL_SLS_CHECK(extrude(in, m) == Outcome::RETURNED_FALSE);
+    CGAL_SLS_CHECK(extrude(in, m) == (SST::has_cgal_preconditions ? Outcome::PRECONDITION_EXCEPTION
+                                                                   : Outcome::RETURNED_FALSE));
 
     Input ina(sq);
     ina.with_angles(Input::uniform(ina.pwh, 100.));
