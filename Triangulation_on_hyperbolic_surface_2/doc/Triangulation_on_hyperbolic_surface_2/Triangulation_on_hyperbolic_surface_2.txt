@@ -23,7 +23,7 @@ For the case of the Bolza surface, which is the most symmetric surface of genus 
 
 \section Section_Hyperbolic_Surface_Triangulations_Background Hyperbolic Surfaces
 
-We assume some familiarity with basic notions from covering space theory and from the theory of hyperbolic surfaces. See for instance  \cgalCite{cgal:b-gdg-83}\cgalCite{cgal:b-gscrs-92}.
+We assume some familiarity with basic notions from covering space theory and from the theory of hyperbolic surfaces. See for instance  \cgalCite{cgal:b-gdg-83}, \cgalCite{cgal:b-gscrs-92}.
 The <em>Poincaré disk</em> \f$ \mathbb{D} \f$ is a model of the hyperbolic plane whose point set is the open unit disk of the complex plane \f$ \mathbb{C} \f$.
 In this package, every hyperbolic surface \f$ S \f$ is closed (compact and without boundary) and orientable.
 The Poincaré disk \f$ \mathbb{D} \f$ is a universal covering space for \f$ S \f$, whose projection map \f$ \pi: \mathbb{D} \to S \f$ is a local isometry.
@@ -150,8 +150,8 @@ The example below generates a convex fundamental domain of a surface of genus tw
 
 \section Section_Hyperbolic_Surface_Implementation_History Design and Implementation History
 
-This package implements the Delaunay flip algorithm described in the hyperbolic setting by Vincent Despré, Jean-Marc Schlenker and Monique Teillaud in \cgalCite{despre2020flipping} using the data structure for representing triangulations presented in \cgalCite{despre2022experimental}).
-It also implements the generation of domains described by Vincent Despré, Loïc Dubois, Benedikt Kolbe and Monique Teillaud in \cgalCite{despre2022experimental}, based on results of Aline Aigon-Dupuy, Peter Buser, Michel Cibils, Alfred F Künzle and Frank Steiner \cgalCite{aigon2005hyperbolic}.
+This package implements the Delaunay flip algorithm described in the hyperbolic setting by \cgalCite{despre2020flipping} using the data structure for representing triangulations presented in \cgalCite{despre2022experimental}).
+It also implements the generation of domains described by \cgalCite{despre2022experimental}, based on results of \cgalCite{aigon2005hyperbolic}.
 The code and the documentation of the package were written by Loïc Dubois, under regular discussions with Vincent Despré, Marc Pouget and Monique Teillaud.
 The authors acknowledge support from the grants <a href="https://sos.loria.fr/">SoS</a> and <a href="https://perso.math.u-pem.fr/sabourau.stephane/min-max/min-max.html">MIN-MAX</a> of the French National Research Agency ANR.
 

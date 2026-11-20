@@ -211,7 +211,7 @@ coverage of the convex hull of the vertices).
 \section secTetRemeshingHistory Implementation History
 
 This package implements the uniform version of the "Multi-Material Adaptive Volume Remesher"
-algorithm for quality tetrahedral remeshing, described by Noura Faraj et al. in \cgalCite{faraj2016mvr}.
+algorithm for quality tetrahedral remeshing, described by \cgalCite{faraj2016mvr}.
 
 A first version of the code was written by Noura Faraj, Jean-Marc Thiery, and Tamy Boubekeur.
 Jane Tournois worked on the finalization of the code, the API, and documentation.

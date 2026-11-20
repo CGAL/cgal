@@ -5,7 +5,7 @@ namespace Surface_mesh_simplification {
 \ingroup PkgSurfaceMeshSimplificationRef
 
 The class `GarlandHeckbert_probabilistic_triangle_policies` regroups the cost and placement policies
-based on the "Probabilistic Triangle" strategy of Trettner and Kobbelt \cgalCite{tk-frqmpq-20}.
+based on the "Probabilistic Triangle" strategy of \cgalCite{tk-frqmpq-20}.
 This policy enhances the original Garland-Heckbert quadric error metrics,
 by adding notions of variance (i.e., noise) to the positions of the vertices and the normals of faces.
 Compared to the "classic" triangle strategy, this strategy sacrifices tightness to the input
