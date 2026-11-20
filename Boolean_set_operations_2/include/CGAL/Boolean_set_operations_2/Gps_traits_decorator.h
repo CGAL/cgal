@@ -15,6 +15,13 @@
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
+#include <memory>
+#include <ostream>
+#include <type_traits>
+
+#include <CGAL/enum.h>
+#include <CGAL/Arr_tags.h>
+
 namespace CGAL {
 
 template <class Traits_, class Curve_data_, class Point_data_>
@@ -52,14 +59,14 @@ public:
   typedef typename Base::Right_side_category       Right_side_category;
 
   // a side is either oblivious or open (unbounded)
-  static_assert(std::is_same< Left_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Left_side_category, Arr_open_side_tag >::value);
-  static_assert(std::is_same< Bottom_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Bottom_side_category, Arr_open_side_tag >::value);
-  static_assert(std::is_same< Top_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Top_side_category, Arr_open_side_tag >::value);
-  static_assert(std::is_same< Right_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Right_side_category, Arr_open_side_tag >::value);
+  static_assert(std::is_same_v<Left_side_category, Arr_oblivious_side_tag> ||
+                std::is_same_v<Left_side_category, Arr_open_side_tag>);
+  static_assert(std::is_same_v<Bottom_side_category, Arr_oblivious_side_tag> ||
+                std::is_same_v<Bottom_side_category, Arr_open_side_tag>);
+  static_assert(std::is_same_v<Top_side_category, Arr_oblivious_side_tag> ||
+                std::is_same_v<Top_side_category, Arr_open_side_tag>);
+  static_assert(std::is_same_v<Right_side_category, Arr_oblivious_side_tag> ||
+                std::is_same_v<Right_side_category, Arr_open_side_tag>);
 
   class Ex_point_2
   {
@@ -179,31 +186,31 @@ public:
   typedef Ex_point_2                Point_2;
   typedef Ex_x_monotone_curve_2     X_monotone_curve_2;
 
-  protected:
+protected:
+  using Shared_base_traits = std::shared_ptr<const Base>;
 
-  //Data members
-  const Base* m_base_traits;
-  bool m_traits_owner;
+  // The base traits, shared with the copies of the decorator. Base traits
+  // given by the caller are not owned.
+  Shared_base_traits m_base_traits;
+
+  /*! wraps base traits owned by the caller in a non-owning shared pointer.
+   */
+  static Shared_base_traits _non_owning(const Base& base_traits)
+  { return Shared_base_traits(std::shared_ptr<void>(), &base_traits); }
 
 public:
+  /*! constructs default. */
+  Gps_traits_decorator() : m_base_traits(std::make_shared<Base>()) {}
 
-  Gps_traits_decorator() :
-    m_base_traits(new Base()),
-    m_traits_owner(true)
-  {}
+  /*! constructs given a shared base-traits object.
+   */
+  explicit Gps_traits_decorator(Shared_base_traits base_traits) : m_base_traits(std::move(base_traits)) {}
 
-  Gps_traits_decorator(const Base& base_traits) :
-    m_base_traits(&base_traits),
-    m_traits_owner(false)
-  {}
-
-  ~Gps_traits_decorator()
-  {
-    if (m_traits_owner) {
-      delete m_base_traits;
-      m_base_traits = nullptr;
-    }
-  }
+  /*! constructs given a base-traits object. The caller retains ownership of
+   * the base traits and must keep it alive as long as the decorator (or any
+   * copy of it) exists.
+   */
+  Gps_traits_decorator(const Base& base_traits) : m_base_traits(_non_owning(base_traits)) {}
 
   class Compare_x_2
   {
