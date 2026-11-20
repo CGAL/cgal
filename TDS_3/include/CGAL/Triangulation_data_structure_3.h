@@ -1634,6 +1634,14 @@ public:
              c->vertex(2),
              c->vertex(3)};
   }
+  static std::array<Edge, 3> edges(const Facet& f)
+  {
+    const int i = f.second;
+    return std::array<Edge, 3>{
+      Edge(f.first, vertex_triple_index(i, 0), vertex_triple_index(i, 1)),
+      Edge(f.first, vertex_triple_index(i, 1), vertex_triple_index(i, 2)),
+      Edge(f.first, vertex_triple_index(i, 2), vertex_triple_index(i, 0))};
+  }
 
   bool is_small_hole(std::size_t s)
   {

@@ -100,6 +100,9 @@ protected:
   std::optional<FT> m_squared_facet_min_size ;
 
 private:
+  const C3t3& c3t3() const { return this->r_c3t3_; }
+  const Tr& tr()     const { return this->r_tr_; }
+
   // computes and return an ordered pair of Vertex
   EdgeVV make_edgevv(const Vertex_handle vh1,
                      const Vertex_handle vh2) const {
@@ -120,7 +123,7 @@ private:
     int index1=0, index2=0; // initialize to avoid g++ 4.8 -Wmaybe-uninitialized
 
     CGAL_assume_code(bool is_edge =)
-    this->r_tr_.is_edge(v1, v2, c, index1, index2);
+    tr().is_edge(v1, v2, c, index1, index2);
     CGAL_assume(is_edge);
 
     return make_triple( c, index1, index2 );
@@ -132,33 +135,49 @@ private:
                        arete.first->vertex(arete.third) );
   }
 
+  bool is_bad_edge(const Edge& e) const
+  {
+    const auto face_status = c3t3().face_status(e);
+    if(face_status != C3t3::SINGULAR && (m_with_boundary || face_status != C3t3::BOUNDARY))
+      return false;
+    return !c3t3().is_in_complex(e); // protected feature edge: non-manifold by design
+  }
+
+  bool is_bad_vertex(const Vertex_handle v) const
+  {
+    if(v->in_dimension() <= 1)
+      return false; // on a protected curve or corner
+    return c3t3().has_incident_facets_in_complex(v)
+        && c3t3().face_status(v) == C3t3::SINGULAR;
+  }
+
   FT compute_sq_distance_to_facet_center(const Facet& f,
                                          const Vertex_handle v) const
   {
-    typename GT::Compute_weight_3 cw = this->r_tr_.geom_traits().compute_weight_3_object();
-    typename GT::Construct_point_3 cp = this->r_tr_.geom_traits().construct_point_3_object();
+    typename GT::Compute_weight_3 cw = tr().geom_traits().compute_weight_3_object();
+    typename GT::Construct_point_3 cp = tr().geom_traits().construct_point_3_object();
 
-    const Bare_point& fcenter = this->r_c3t3_.surface_center(f.first, f.second);
-    const Weighted_point& wp = this->r_tr_.point(v);
+    const Bare_point& fcenter = c3t3().surface_center(f.first, f.second);
+    const Weighted_point& wp = tr().point(v);
 
-    return Th().min_squared_distance(this->r_tr_, fcenter, cp(wp)) - cw(wp);
+    return Th().min_squared_distance(tr(), fcenter, cp(wp)) - cw(wp);
   }
 
   std::pair<Facet, FT>
   biggest_incident_facet_in_complex(const Vertex_handle v) const
   {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-    std::cerr << "Bad vertex: " << this->r_tr_.point(v) << std::endl;
+    std::cerr << "Bad vertex: " << tr().point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::vector<Facet> facets;
     facets.reserve(64);
-    if(this->r_tr_.is_parallel())
-      this->r_tr_.incident_facets_threadsafe(v, std::back_inserter(facets));
+    if(tr().is_parallel())
+      tr().incident_facets_threadsafe(v, std::back_inserter(facets));
     else
-      this->r_tr_.incident_facets(v, std::back_inserter(facets));
+      tr().incident_facets(v, std::back_inserter(facets));
 
     typename std::vector<Facet>::iterator fit = facets.begin();
-    while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
+    while(fit != facets.end() && !c3t3().is_in_complex(*fit)) ++fit;
     CGAL_assertion(fit!=facets.end());
     CGAL_assertion_code(int facet_counter = 1);
 
@@ -169,7 +188,7 @@ private:
               << " incident faces, with squared sizes:\n";
     std::cerr << "    " << biggest_sq_dist << "\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-    while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
+    while(fit != facets.end() && !c3t3().is_in_complex(*fit)) ++fit;
 
     for (; fit != facets.end(); )
     {
@@ -187,10 +206,10 @@ private:
         biggest_sq_dist = current_sq_dist;
       }
       ++fit;
-      while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
+      while(fit != facets.end() && !c3t3().is_in_complex(*fit)) ++fit;
     }
     CGAL_assertion(v->cached_number_of_incident_facets() == facet_counter);
-    CGAL_assertion(this->r_c3t3_.is_in_complex(biggest_facet));
+    CGAL_assertion(c3t3().is_in_complex(biggest_facet));
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "Biggest facet squared radius: "
               << biggest_sq_dist
@@ -208,12 +227,12 @@ private:
     // use the list of incident facets in the complex
     Vertex_handle fev = edge_to_edgevv(arete).first;
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-    std::cerr << "Bad edge: (" << this->r_tr_.point(fev)
-              << ", " << this->r_tr_.point(arete.first->vertex(arete.third))
+    std::cerr << "Bad edge: (" << tr().point(fev)
+              << ", " << tr().point(arete.first->vertex(arete.third))
               << ")\n  incident facets squared sizes:\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-    Tr_facet_circulator fcirc = this->r_tr_.incident_facets(arete);
-    while(!this->r_c3t3_.is_in_complex(*fcirc)) ++fcirc;
+    Tr_facet_circulator fcirc = tr().incident_facets(arete);
+    while(!c3t3().is_in_complex(*fcirc)) ++fcirc;
     Facet first_facet = *fcirc;
     Facet biggest_facet = *fcirc;
     FT biggest_sq_dist = compute_sq_distance_to_facet_center(biggest_facet,
@@ -225,7 +244,7 @@ private:
 
     for (++fcirc; *fcirc != first_facet; ++fcirc)
     {
-      while(!this->r_c3t3_.is_in_complex(*fcirc)) ++fcirc;
+      while(!c3t3().is_in_complex(*fcirc)) ++fcirc;
       if(*fcirc == first_facet) break;
       const FT current_sq_dist =
         compute_sq_distance_to_facet_center(*fcirc, fev);
@@ -272,14 +291,14 @@ private:
 #endif // CGAL_LINKED_WITH_TBB
     {
     //Sequential
-    if ( this->r_c3t3_.is_in_complex(f) ) {
+    if ( c3t3().is_in_complex(f) ) {
       // foreach edge of f
       const Cell_handle cell = f.first;
       const int i = f.second;
       for(int j = 0; j < 3; ++j)
       {
-        const int edge_index_va = this->r_tr_.vertex_triple_index(i, j);
-        const int edge_index_vb = this->r_tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
+        const int edge_index_va = tr().vertex_triple_index(i, j);
+        const int edge_index_vb = tr().vertex_triple_index(i, (j == 2) ? 0 : (j+1));
         const Vertex_handle edge_va = cell->vertex(edge_index_va);
         const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
         m_bad_edges.left.erase( make_edgevv(edge_va, edge_vb));
@@ -310,7 +329,7 @@ private:
           if(m_bad_vertices.erase(c->vertex(j)) > 0) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
             std::cerr << "m_bad_vertices.erase("
-                      << this->r_tr_.point(c, j) << ")\n";
+                      << tr().point(c, j) << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           }
     }
@@ -368,12 +387,10 @@ public:
     int n = 0;
 #endif
     for (typename Tr::Finite_edges_iterator
-           eit = this->r_tr_.finite_edges_begin(), end = this->r_tr_.finite_edges_end();
+           eit = tr().finite_edges_begin(), end = tr().finite_edges_end();
          eit != end; ++eit)
     {
-      if ( (this->r_c3t3_.face_status(*eit) == C3t3::SINGULAR) ||
-           ( (!m_with_boundary) &&
-             (this->r_c3t3_.face_status(*eit) == C3t3::BOUNDARY) ) )
+      if (is_bad_edge(*eit))
       {
         const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(*eit);
         if (is_smaller_than_min_size(sq_dist))
@@ -388,7 +405,7 @@ public:
 #endif // CGAL_LINKED_WITH_TBB
         { // Sequential
           m_bad_edges.insert(Bad_edge(edge_to_edgevv(*eit),
-                                      (this->r_c3t3_.face_status(*eit) ==
+                                      (c3t3().face_status(*eit) ==
                                        C3t3::SINGULAR ? 0 : 1)));
         }
 #ifdef CGAL_MESH_3_VERBOSE
@@ -412,11 +429,11 @@ public:
     int n = 0;
 #endif
     for (typename Tr::Finite_vertices_iterator
-           vit = this->r_tr_.finite_vertices_begin(),
-           end = this->r_tr_.finite_vertices_end();
+           vit = tr().finite_vertices_begin(),
+           end = tr().finite_vertices_end();
          vit != end; ++vit)
     {
-      if( this->r_c3t3_.face_status(vit) == C3t3::SINGULAR )
+      if( is_bad_vertex(vit))
       {
         const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(vit);
         if (is_smaller_than_min_size(sq_dist))
@@ -424,7 +441,7 @@ public:
 
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         std::cerr << "m_bad_vertices.insert("
-                  << this->r_tr_.point(vit) << ")\n";
+                  << tr().point(vit) << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #ifdef CGAL_LINKED_WITH_TBB
         // Parallel
@@ -448,9 +465,9 @@ public:
     std::cerr << "Bad vertices queue:\n";
     for(Vertex_handle v2 : m_bad_vertices)
     {
-      std::cerr << this->r_tr_.point(v2) << std::endl;
+      std::cerr << tr().point(v2) << std::endl;
     }
-    CGAL::dump_c3t3(this->r_c3t3_, "dump-at-scan-vertices");
+    CGAL::dump_c3t3(c3t3(), "dump-at-scan-vertices");
 #  endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #endif
   }
@@ -478,7 +495,7 @@ public:
 #endif // not defined CGAL_NO_ATOMIC
 
       if(this->m_maximal_number_of_vertices_ !=0 &&
-         this->r_tr_.number_of_vertices() >=
+         tr().number_of_vertices() >=
          this->m_maximal_number_of_vertices_)
       {
         return true;
@@ -509,9 +526,9 @@ public:
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         const EdgeVV& edgevv = m_bad_edges.right.begin()->second;
         std::cerr << "Bad edge "
-                  << this->r_tr_.point(edgevv.first)
+                  << tr().point(edgevv.first)
                   << " - "
-                  << this->r_tr_.point(edgevv.second)
+                  << tr().point(edgevv.second)
                   << "\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         return biggest_incident_facet_in_complex(first_bad_edge).first;
@@ -522,14 +539,14 @@ public:
         std::cerr << "Bad vertices queue:\n";
         for(Vertex_handle v2 : m_bad_vertices)
         {
-          std::cerr << this->r_tr_.point(v2) << std::endl;
+          std::cerr << tr().point(v2) << std::endl;
         }
-        std::cerr << "Bad vertex " << this->r_tr_.point(v) << "\n";
+        std::cerr << "Bad vertex " << tr().point(v) << "\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-        CGAL_assertion(this->r_c3t3_.has_incident_facets_in_complex(v));
-        if(this->r_c3t3_.face_status(v) != C3t3::SINGULAR) {
-          dump_c3t3(this->r_c3t3_, "dump-crash");
-          CGAL_error_msg("this->r_c3t3_.face_status(v) != C3t3::SINGULAR");
+        CGAL_assertion(c3t3().has_incident_facets_in_complex(v));
+        if(c3t3().face_status(v) != C3t3::SINGULAR) {
+          dump_c3t3(c3t3(), "dump-crash");
+          CGAL_error_msg("c3t3().face_status(v) != C3t3::SINGULAR");
         }
         return biggest_incident_facet_in_complex(v).first;
       }
@@ -564,7 +581,7 @@ public:
     typedef std::vector<Facet> Facets;
     Facets facets;
     facets.reserve(64);
-    this->r_tr_.incident_facets (v, std::back_inserter(facets));
+    tr().incident_facets (v, std::back_inserter(facets));
 
     // foreach f in star(v)
     for (typename Facets::iterator fit = facets.begin();
@@ -576,11 +593,11 @@ public:
       const int i = fit->second;
       for(int j = 0; j < 3; ++j)
       {
-        const int edge_index_va = this->r_tr_.vertex_triple_index(i, j);
-        const int edge_index_vb = this->r_tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
+        const int edge_index_va = tr().vertex_triple_index(i, j);
+        const int edge_index_vb = tr().vertex_triple_index(i, (j == 2) ? 0 : (j+1));
         Edge edge(cell, edge_index_va, edge_index_vb);
         // test if edge is in Complex
-        if ( this->r_c3t3_.face_status(edge) != C3t3::NOT_IN_COMPLEX ) {
+        if ( c3t3().face_status(edge) != C3t3::NOT_IN_COMPLEX ) {
           // test if edge is not regular to store it as a "bad_edge"
           // e.g., more than or equal to 3 incident facets (SINGULAR)
           // or less than or equal to 1
@@ -588,10 +605,7 @@ public:
           // This test is not efficient because
           // edges are tried to be inserted several times
           // TODO one day: test if the edge is still singular
-          if ( (this->r_c3t3_.face_status(edge) == C3t3::SINGULAR) ||
-               ( (!m_with_boundary) &&
-                 (this->r_c3t3_.face_status(edge) == C3t3::BOUNDARY) )
-               )
+          if(is_bad_edge(edge))
           {
             const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(edge);
             if (is_smaller_than_min_size(sq_dist))
@@ -607,7 +621,7 @@ public:
 #endif // CGAL_LINKED_WITH_TBB
             { // Sequential
               m_bad_edges.insert(Bad_edge(edge_to_edgevv(edge),
-                                          (this->r_c3t3_.face_status(edge) ==
+                                          (c3t3().face_status(edge) ==
                                            C3t3::SINGULAR ? 0 : 1)));
             }
           }
@@ -629,7 +643,7 @@ public:
     // foreach v' in star of v
     std::vector<Vertex_handle> vertices;
     vertices.reserve(64);
-    this->r_tr_.incident_vertices(v, std::back_inserter(vertices));
+    tr().incident_vertices(v, std::back_inserter(vertices));
 
     // is_regular_or_boundary_for_vertices
     // is used here also incident edges are not known to be
@@ -640,10 +654,7 @@ public:
            vit = vertices.begin(), end = vertices.end();
          vit != end; ++vit)
     {
-      if ( this->r_c3t3_.has_incident_facets_in_complex(*vit)  &&
-           (this->r_c3t3_.face_status(*vit) == C3t3::SINGULAR)
-           // !this->r_c3t3_.is_regular_or_boundary_for_vertices(*vit)
-           )
+      if (is_bad_vertex(*vit))
       {
         const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(*vit);
         if (is_smaller_than_min_size(sq_dist))
@@ -651,7 +662,7 @@ public:
 
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         std::cerr << "m_bad_vertices.insert("
-                  << this->r_tr_.point(*vit) << ")\n";
+                  << tr().point(*vit) << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #ifdef CGAL_LINKED_WITH_TBB
         // Parallel
@@ -667,10 +678,7 @@ public:
       }
     }
 
-    if ( this->r_c3t3_.has_incident_facets_in_complex(v) &&
-         (this->r_c3t3_.face_status(v) == C3t3::SINGULAR)
-         // !this->r_c3t3_.is_regular_or_boundary_for_vertices(v)
-         )
+    if (is_bad_vertex(v))
     {
       const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(v);
       if (is_smaller_than_min_size(sq_dist))
@@ -678,7 +686,7 @@ public:
 
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       std::cerr << "m_bad_vertices.insert("
-                << this->r_tr_.point(v) << ")\n";
+                << tr().point(v) << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #ifdef CGAL_LINKED_WITH_TBB
       // Parallel
