@@ -442,19 +442,32 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
 
   const std::size_t ring_size = ring_vertices.size();
 
+  // collect the star of v0
+  boost::container::small_vector<Cell_handle, 64> cells0;
+  tr.incident_cells(v0, std::back_inserter(cells0));
+
   // collect the intersection of neighbors of v0 and neighbors of v1
   // the ring is included in this intersection
-  boost::container::small_vector<Vertex_handle, 64> neighbors_v0, neighbors_v1;
-  tr.adjacent_vertices(v0, std::back_inserter(neighbors_v0));
+  boost::container::small_vector<Vertex_handle, 64> neighbors_v0;
+  for(const Cell_handle c0 : cells0)
+  {
+    const int index_v0 = c0->index(v0);
+    for(int k = 1; k < 4; ++k)
+      neighbors_v0.push_back(c0->vertex((index_v0+k) % 4));
+  }
+  std::sort(neighbors_v0.begin(), neighbors_v0.end());
+  neighbors_v0.erase(std::unique(neighbors_v0.begin(), neighbors_v0.end()),
+                     neighbors_v0.end());
 
   if(neighbors_v0.size() != ring_size + 1)//o.w. N(v0)\v1 is the ring
   {
     // so there must be a shared neighbor outside the link
+    boost::container::small_vector<Vertex_handle, 64> neighbors_v1;
     tr.adjacent_vertices(v1, std::back_inserter(neighbors_v1));
     if(neighbors_v1.size() != ring_size + 1)//o.w. N(v1)\v0 is the ring
     {
       // there must be a shared neighbor outside the link
-      std::sort(neighbors_v0.begin(), neighbors_v0.end());
+      // (neighbors_v0 is already sorted)
 
       std::size_t count_common = 0;
       for(const Vertex_handle nv1 : neighbors_v1)
@@ -471,9 +484,6 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
   // check the case where :
   // facets [v0, x, y] and [v1, x, y] exist with x and y in the link of edge
   // but the edge [x, y] is not in the link of edge, so it is a chord
-  boost::container::small_vector<Cell_handle, 64> cells0;
-  tr.incident_cells(v0, std::back_inserter(cells0));
-
   for(const Cell_handle c0 : cells0)
   {
     if(c0->has_vertex(v1))
