@@ -65,6 +65,8 @@ a conforming constrained Delaunay triangulation in 3D, an instance of the class 
 - `CGAL::Conforming_constrained_Delaunay_triangulation_3<Traits, Triangulation>`
 - `CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<Traits, Vertex_base>`
 - `CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<Traits, Cell_base>`
+- `CGAL::Constrained_triangulation_insertion_exception`
+- `CGAL::Non_planar_plc_facet_exception`
 
 \cgalCRPSection{Draw a 3D Constrained Triangulation}
 
