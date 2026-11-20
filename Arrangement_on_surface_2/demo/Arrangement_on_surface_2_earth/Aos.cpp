@@ -1109,9 +1109,9 @@ namespace {
     for (const auto& js_vertex : js_vertices) {
       std::size_t point_id = js_vertex["point"];
       const auto& point = points[point_id];
-      CGAL::Arr_parameter_space ps_x, ps_y;
+      CGAL::Arr_parameter_space ps_x = CGAL::INTERIOR, ps_y = CGAL::INTERIOR;
       switch (point.location()) {
-      case Point::NO_BOUNDARY_LOC: ps_x = ps_y = CGAL::INTERIOR; break;
+      case Point::NO_BOUNDARY_LOC: break;
       case Point::MIN_BOUNDARY_LOC:
         ps_x = CGAL::INTERIOR;
         ps_y = CGAL::ARR_BOTTOM_BOUNDARY;
@@ -1124,6 +1124,7 @@ namespace {
         ps_x = CGAL::INTERIOR;
         ps_y = CGAL::ARR_TOP_BOUNDARY;
         break;
+      default: CGAL_unreachable();
       }
       vertices[k++] = arr_access.new_vertex(&point, ps_x, ps_y);
     }

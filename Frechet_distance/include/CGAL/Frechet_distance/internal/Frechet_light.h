@@ -87,6 +87,7 @@ public:
 
 private:
     CurvePair curve_pair;
+    CInterval m_origin;
 
     typename Curve::IFT distance;
 
@@ -1267,10 +1268,10 @@ void FrechetLight<C>::initCertificate(Inputs const& initial_inputs)
     auto const& curve1 = *curve_pair[0];
     auto const& curve2 = *curve_pair[1];
 
-    CInterval origin = CInterval(0, 0);
-    certSetValues(origin, origin, 0, -1);
-    certSetValues(*initial_inputs.begin1, origin, 0, 1);
-    certSetValues(*initial_inputs.begin2, origin, 0, 0);
+    m_origin = CInterval(0, 0);
+    certSetValues(m_origin, m_origin, 0, -1);
+    certSetValues(*initial_inputs.begin1, m_origin, 0, 1);
+    certSetValues(*initial_inputs.begin2, m_origin, 0, 0);
 
     visAddUnknown(initial_inputs.begin1->end, CPoint(curve1.size() - 1, 0),
                   {0, 0}, 1);

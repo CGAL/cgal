@@ -19,6 +19,7 @@
 #define CGAL__TEST_CLS_LINE_3_H
 
 #include <CGAL/use.h>
+#include <CGAL/Origin.h>
 
 template <class R>
 bool
@@ -31,7 +32,7 @@ _test_cls_line_3(const R& )
 
  const bool nonexact = std::is_floating_point<RT>::value;
 
- typename R::Line_3 il;
+ typename R::Line_3 il(CGAL::Point_3<R>(CGAL::ORIGIN), CGAL::Vector_3<R>(RT(1), RT(0), RT(0)));
  CGAL::Line_3<R> l0( il ); CGAL_USE(l0);
  CGAL::Line_3<R> l1; CGAL_USE(l1);
 
