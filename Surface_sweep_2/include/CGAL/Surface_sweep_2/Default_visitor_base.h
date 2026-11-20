@@ -44,7 +44,7 @@ namespace Surface_sweep_2 {
  * to the actual visitor type (the `Visitor_` template parameter) and in turn to
  * the correct base surface-sweep type.
  *
- * \tparam GeometryTraits_2 the* geometry traits trype.
+ * \tparam GeometryTraits_2 the geometry traits type.
  * \tparam Event_ the sweep event type.
  * \tparam Subcurve_ the sweep subcurve type.
  * \tparam Allocator_ the allocator used to allocate events and subcurves during the sweep.
@@ -189,6 +189,25 @@ public:
 
   /*! records that an overlap has been found */
   void found_overlap(Subcurve* /* sc1 */, Subcurve* /* sc2 */, Subcurve* /* ov_sc */) {}
+
+  /*! records that an intersection point of two subcurves has been found. It
+   * is invoked for every intersection point the sweep processes, whether the
+   * event associated with it is new or already exists. It is not invoked for
+   * an intersection point that the sweep skips, because the point does not lie
+   * after the current event. It is also invoked for the closed ends of an
+   * overlap of the two subcurves whose events the sweep pushes. The given point
+   * is the one constructed by the traits; it may carry data that the point of
+   * the event lacks.
+   * \param e the event associated with the intersection point.
+   * \param xp the intersection point.
+   * \param sc1 the first subcurve.
+   * \param sc2 the second subcurve.
+   * \param is_new whether the event has been created for the intersection
+   *        point, in which case its point is `xp`.
+   */
+  void found_intersection_point(Event* /* e */, const Point_2& /* xp */, Subcurve* /* sc1 */,
+                                Subcurve* /* sc2 */, bool /* is_new */)
+  {}
 
   /*! obtains the first subcurve in the status line. */
   Status_line_iterator status_line_begin() { return m_surface_sweep->status_line_begin(); }

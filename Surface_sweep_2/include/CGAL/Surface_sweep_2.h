@@ -22,6 +22,7 @@
  */
 
 #include <list>
+#include <variant>
 #include <vector>
 
 #include <CGAL/No_intersection_surface_sweep_2.h>
@@ -120,6 +121,10 @@ protected:
                                      // Contains all of the new sub-curves
                                      // created by an overlap.
 
+  std::vector<Subcurve*> m_overlaps_with_left_event;
+                                     // The overlap subcurves whose left
+                                     // events have not been handled yet.
+
   Intersection_vector m_x_objects;   // Auxiliary vector for storing the
                                      // intersection objects.
 
@@ -147,28 +152,30 @@ public:
 protected:
   using Subcurve_vector = typename std::vector<Subcurve*>;
 
-  /*! Complete the sweep process (complete the data structures). */
+  /*! completes the sweep process (complete the data structures). */
   virtual void _complete_sweep();
 
-  /*! Handle the subcurves to the left of the current event point. */
+  /*! handles the subcurves to the left of the current event point. */
   virtual void _handle_left_curves();
 
-  /*! Handle the overlap on the right curves of the current event point. */
+  /*! handles the overlap on the right curves of the current event point. */
   void _handle_overlaps_in_right_curves();
 
-  /*! clip the last curve of a subcurve if it is not in the status line and with a left end not being the current event*/
-  void _clip_non_active_curve_at_current_event(Subcurve*);
+  /*! clips the last curve of a subcurve if it is not in the status line and
+   * with a left end not being the current event.
+   */
+  bool _clip_non_active_curve_at_current_event(Subcurve*);
 
-  /*! Handle the subcurves to the right of the current event point. */
+  /*! handles the subcurves to the right of the current event point. */
   virtual void _handle_right_curves();
 
-  /*! Add a subcurve to the right of an event point.
+  /*! adds a subcurve to the right of an event point.
    * \param event The event point.
    * \param curve The subcurve to add.
    */
   virtual bool _add_curve_to_right(Event* event, Subcurve* curve);
 
-  /*! create an overlap subcurve from overlap_cv between c1 and c2.
+  /*! creates an overlap subcurve from overlap_cv between c1 and c2.
    * \param overlap_cv the overlapping curve.
    * \param c1 first subcurve contributing to the overlap.
    * \param c2 second subcurve contributing to the overlap.
@@ -185,7 +192,7 @@ protected:
                                  Subcurve* first_parent,
                                  Event* event_on_overlap);
 
-  /*! Compute intersections between the two given curves.
+  /*! computes intersections between the two given curves.
    * If the two curves intersect, create a new event (or use the event that
    * already exists in the intersection point) and insert the curves to the
    * event.
@@ -198,21 +205,17 @@ protected:
    * bottom neighbors become neighbors. This method finds these cases and
    * looks for the intersection point, if one exists.
    * \param leftCurve A pointer to the curve that is about to be deleted.
-   * \param remove_for_good Whether the aubcurve is removed for good.
+   * \param remove_for_good Whether the subcurve is removed for good.
    */
-  void _remove_curve_from_status_line(Subcurve* leftCurve,
-                                      bool remove_for_good);
+  void _remove_curve_from_status_line(Subcurve* leftCurve, bool remove_for_good);
 
-  /*! Create an intersection-point event between two curves.
+  /*! creates an intersection-point event between two curves.
    * \param xp The intersection point.
    * \param mult Its multiplicity.
    * \param c1 The first curve.
    * \param c2 The second curve.
    */
-  void _create_intersection_point(const Point_2& xp,
-                                  Multiplicity mult,
-                                  Subcurve*& c1,
-                                  Subcurve*& c2);
+  void _create_intersection_point(const Point_2& xp, Multiplicity mult, Subcurve*& c1, Subcurve*& c2);
 };
 
 } // namespace Surface_sweep_2
