@@ -1,4 +1,7 @@
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
 
@@ -6,9 +9,18 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/property_map.h>
+#include <CGAL/use.h>
+
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+#include <boost/property_map/property_map.hpp>
+
+#include <cassert>
+#include <map>
 #include <sstream>
 #include <iostream>
-#include <unordered_map>
 
 
 namespace CGAL {
@@ -65,11 +77,15 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
 
   VCM vcm_np = choose_parameter<Default_VCM>(get_parameter(np, internal_np::vertex_is_constrained));
 
+  auto vcmap = choose_parameter(get_parameter(np, internal_np::vertex_color_map),
+                                CGAL::dynamic_vertex_property_t<bool>{}, mesh, false);
 
   //demonstrates usage for those values.
   for(auto v : vertices(mesh))
   {
     std::cout<<"vertex #"<<get(vim, v)<<" : "<<get(vpm, v)<<" : "<<get(vcm_np, v)<<std::endl;
+    put(vcmap, v, true);
+    assert(get(vcmap, v));
   }
 
   if (!do_project_is_default)
@@ -114,7 +130,17 @@ int main()
   typedef boost::associative_property_map<VCmap> Vertex_constrained_pmap;
   Vertex_constrained_pmap vcm_pmap(vcm);
   CGAL::my_function_with_named_parameters(sm);
+
+  VCmap colors;
+  for(auto v : vertices(sm))
+    colors[v] = false;
+  Vertex_constrained_pmap color_pmap(colors);
+
   CGAL::my_function_with_named_parameters(sm, CGAL::parameters::vertex_is_constrained_map(vcm_pmap)
+                                          .vertex_color_map(color_pmap)
                                           .do_project(true));
+  for(auto v : vertices(sm))
+    assert(colors[v]);
+
   return 0;
 }
