@@ -18,6 +18,8 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/iterator.h>
+#include <CGAL/exceptions.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
@@ -1115,6 +1117,70 @@ void match_faces(const PolygonMesh1& m1,
   {
     *m1_only++ = it.second;
   }
+}
+
+/*!
+ * \ingroup PMP_mesh_repair_grp
+ *
+ * tests whether two polygon meshes are equal.
+ *
+ * Two meshes are considered equal if they have the same vertices, edges
+ * and faces, and their faces can be matched by `PMP::match_faces()`.
+ *
+ * @tparam PolygonMesh1 a model of `HalfedgeListGraph` and `FaceListGraph`
+ * @tparam PolygonMesh2 a model of `HalfedgeListGraph` and `FaceListGraph`
+ *
+ * @param m1_only output iterator collecting the faces that are only in `m1`
+ * @param m2_only output iterator collecting the faces that are only in `m2`
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `m1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh1>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type. `%Point_3` must be `LessThanComparable`.}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, m1)`}
+ *     \cgalParamExtra{The same holds for `m2` and `PolygonMesh2` and the point type must be the same for both meshes.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{vertex_index_map}
+ *     \cgalParamDescription{a property map associating to each vertex of `m1` a unique index between `0` and `num_vertices(m1) - 1`, and similarly for `m2`.}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+ *                     a face index property map, either using the internal property map if it exists
+ *                     or using an external map. The latter might result in  - slightly - worsened performance
+ *                     in case of non-constant complexity for index access. The same holds for `m2` and `PolygonMesh2`.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ */
+template <typename PolygonMesh1,
+          typename PolygonMesh2,
+          typename NamedParameters1 = parameters::Default_named_parameters,
+          typename NamedParameters2 = parameters::Default_named_parameters>
+bool are_equal(const PolygonMesh1& m1,
+               const PolygonMesh2& m2,
+               const NamedParameters1& np1 = parameters::default_values(),
+               const NamedParameters2& np2 = parameters::default_values())
+{
+  if (vertices(m1).size() != vertices(m2).size() ||
+      edges(m1).size()    != edges(m2).size()    ||
+      faces(m1).size()    != faces(m2).size())
+    return false;
+
+  auto throw_at_output = boost::make_function_output_iterator(CGAL::internal::Throw_at_output{});
+  try
+  {
+    match_faces(m1, m2, CGAL::Emptyset_iterator(), throw_at_output, throw_at_output, np1, np2);
+  }
+  catch (const CGAL::internal::Throw_at_output_exception&)
+  {
+    return false;
+  }
+
+  return true;
 }
 
 } // namespace Polygon_mesh_processing
