@@ -2880,7 +2880,10 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   }
 
   // Updates facets
-  typedef std::set<std::pair<Vertex_handle, Surface_patch_index> > Vertex_to_proj_set;
+  // A vertex may be incident to restricted facets of several surface patches,
+  // but update_mesh() may destroy the vertex during move
+  // so keep only one projection per vertex
+  typedef std::unordered_map<Vertex_handle, Surface_patch_index> Vertex_to_proj_set;
   Vertex_to_proj_set vertex_to_proj;
 
 #ifdef CGAL_LINKED_WITH_TBB
