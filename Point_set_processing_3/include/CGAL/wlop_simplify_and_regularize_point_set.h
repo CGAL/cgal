@@ -523,19 +523,23 @@ wlop_simplify_and_regularize_point_set(
 
   if (require_uniform_sampling)//default value is false
   {
-    original_density_weights.reserve(number_of_original);
-    //todo: this part could also be parallelized if needed
-    for (it = first_original_iter, i = 0; it != points.end() ; ++it, ++i)
-    {
-      FT density = simplify_and_regularize_internal::
-                   compute_density_weight_for_original_point<Kernel, Kd_Tree>
-                                         (
-                                           get(point_map, *it),
-                                           original_kd_tree,
-                                           radius);
+    // Build tree explicitly because lazy build on first query is not thread-safe.
+    original_kd_tree.build();
 
-      original_density_weights.push_back(density);
-    }
+    original_density_weights.resize(number_of_original);
+
+    typedef boost::zip_iterator<boost::tuple<typename PointRange::iterator, typename std::vector<FT>::iterator>>
+        Density_zip_iterator;
+
+    CGAL::for_each<ConcurrencyTag>(
+        CGAL::make_range(boost::make_zip_iterator(boost::make_tuple(points.begin(), original_density_weights.begin())),
+                         boost::make_zip_iterator(boost::make_tuple(points.end(), original_density_weights.end()))),
+        [&](const typename Density_zip_iterator::reference& t) {
+          get<1>(t) = simplify_and_regularize_internal::compute_density_weight_for_original_point<Kernel, Kd_Tree>(
+              get(point_map, get<0>(t)), original_kd_tree, radius);
+
+          return true;
+        });
   }
 
   for (unsigned int iter_n = 0; iter_n < iter_number; ++iter_n)
