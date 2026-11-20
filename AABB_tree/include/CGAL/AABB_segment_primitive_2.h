@@ -30,11 +30,7 @@ namespace internal {
     //classical typedefs
     typedef Iterator key_type;
     typedef typename GeomTraits::Point_2 value_type;
-    using reference = std::conditional_t<
-      std::is_reference_v<decltype(*std::declval<key_type&>())>,
-      const typename GeomTraits::Point_2&,
-      typename GeomTraits::Point_2
-    >;
+    using reference = decltype(typename GeomTraits::Construct_source_2()(typename GeomTraits::Segment_2()));
     typedef boost::readable_property_map_tag category;
     typedef Source_of_segment_2_iterator_property_map<GeomTraits, Iterator> Self;
 
