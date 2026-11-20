@@ -1,4 +1,5 @@
 // Copyright (c) 2002,2011,2014 Utrecht University (The Netherlands), Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2026 Ziyang Men.
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -9,7 +10,8 @@
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>),
 //               : Waqar Khan <wkhan@mpi-inf.mpg.de>,
-//                 Clement Jamin (clement.jamin.pro@gmail.com)
+//                 Clement Jamin (clement.jamin.pro@gmail.com),
+//                 Ziyang Men (ziyang.meme@gmail.com)
 
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
@@ -55,10 +57,9 @@
   internally. Note that of course, in that case, parallel build will
   be disabled.
  */
-#if defined(CGAL_LINKED_WITH_TBB) && !defined(CGAL_DISABLE_TBB_STRUCTURE_IN_KD_TREE)
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
 #  include <tbb/parallel_invoke.h>
-#  include <tbb/concurrent_vector.h>
-#  define CGAL_TBB_STRUCTURE_IN_KD_TREE
+#  include <CGAL/Concurrent_compact_container.h>
 #endif
 
 namespace CGAL {
@@ -108,8 +109,8 @@ private:
   Splitter split;
 
 #if defined(CGAL_TBB_STRUCTURE_IN_KD_TREE)
-  tbb::concurrent_vector<Internal_node> internal_nodes;
-  tbb::concurrent_vector<Leaf_node> leaf_nodes;
+  Concurrent_compact_container<Internal_node> internal_nodes;
+  Concurrent_compact_container<Leaf_node> leaf_nodes;
 #else
   boost::container::deque<Internal_node> internal_nodes;
   boost::container::deque<Leaf_node> leaf_nodes;
@@ -117,18 +118,18 @@ private:
 
   Node_handle tree_root;
 
+  // A node of at most this many points builds its subtree with the sequential
+  // code; above it the children are built in parallel, and so are the node's
+  // bounding boxes, partition and median.
+  static constexpr std::size_t serial_build_cutoff = 1000;
+
   Kd_tree_rectangle<FT,D>* bbox;
+  // put in tree order by build(); a leaf holds an iterator range of it
   std::vector<Point_d> pts;
 
   // Store a contiguous copy of the point coordinates
   // for faster queries (reduce the number of cache misses)
   std::vector<FT> points_cache;
-
-  // Instead of storing the points in arrays in the Kd_tree_node
-  // we put all the data in a vector in the Kd_tree.
-  // and we only store an iterator range in the Kd_tree_node.
-  //
-  std::vector<const Point_d*> data;
 
   // Dimension of the points
   int dim_;
@@ -152,12 +153,12 @@ private:
   Node_handle
   create_leaf_node(Point_container& c)
   {
+    c.leave_buffer();
     Leaf_node node(static_cast<unsigned int>(c.size()));
-    std::ptrdiff_t tmp = c.begin() - data.begin();
-    node.data = pts.begin() + tmp;
+    node.data = c.begin();
 
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
-    return &*(leaf_nodes.push_back(node));
+    return &*(leaf_nodes.insert(node));
 #else
     leaf_nodes.emplace_back (node);
     return &(leaf_nodes.back());
@@ -168,11 +169,19 @@ private:
   Node_handle new_internal_node()
   {
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
-    return &*(internal_nodes.push_back(Internal_node()));
+    return &*(internal_nodes.insert(Internal_node()));
 #else
     internal_nodes.emplace_back ();
     return &(internal_nodes.back());
 #endif
+  }
+
+  // A container becomes an internal node when it holds more points than a
+  // bucket and they are not all equal.
+  bool needs_internal_node(const Point_container& c) const
+  {
+    return c.size() > split.bucket_size()
+      && !CGAL::is_zero(c.max_tight_spread());
   }
 
   // TODO: Similar to the leaf_init function above, a part of the code should be
@@ -196,7 +205,14 @@ private:
     if (try_parallel_internal_node_creation (nh, c, c_low, tag))
       return;
 
-    if (c_low.size() > split.bucket_size() && !CGAL::is_zero(c_low.max_tight_spread()))
+    create_children (nh, c, c_low, tag);
+  }
+
+  template <typename ConcurrencyTag>
+  void
+  create_children(Internal_node_handle nh, Point_container& c, Point_container& c_low, const ConcurrencyTag& tag)
+  {
+    if (needs_internal_node(c_low))
     {
       nh->lower_ch = new_internal_node();
       create_internal_node (nh->lower_ch, c_low, tag);
@@ -204,7 +220,7 @@ private:
     else
       nh->lower_ch = create_leaf_node(c_low);
 
-    if (c.size() > split.bucket_size() && !CGAL::is_zero(c.max_tight_spread()))
+    if (needs_internal_node(c))
     {
       nh->upper_ch = new_internal_node();
       create_internal_node (nh->upper_ch, c, tag);
@@ -250,18 +266,16 @@ private:
   inline bool try_parallel_internal_node_creation (Internal_node_handle nh, Point_container& c,
                                                    Point_container& c_low, const Parallel_tag& tag)
   {
-    /*
-      The two child branches are computed in parallel if and only if:
-
-      * both branches lead to internal nodes (if at least one branch
-        is a leaf, it's useless)
-
-      * the current number of points is sufficiently high to be worth
-        the cost of launching new threads. Experimentally, using 10
-        times the bucket size as a limit gives the best timings.
-    */
-    if (c_low.size() > split.bucket_size() && c.size() > split.bucket_size()
-        && (c_low.size() + c.size() > 10 * split.bucket_size()))
+    // A subtree of at most serial_build_cutoff points is built by the
+    // sequential code on the current thread. Above that, the two child
+    // branches are computed in parallel if both lead to internal nodes (if
+    // at least one branch is a leaf, it's useless).
+    if (c_low.size() + c.size() <= serial_build_cutoff)
+    {
+      create_children (nh, c, c_low, Sequential_tag());
+      return true;
+    }
+    if (needs_internal_node(c_low) && needs_internal_node(c))
     {
       nh->lower_ch = new_internal_node();
       nh->upper_ch = new_internal_node();
@@ -316,7 +330,9 @@ public:
     Experimentally, the options giving the best timings is the one
     kept, namely:
 
-    * nodes are stored in `tbb::concurrent_vector` structures
+    * nodes are stored in `Concurrent_compact_container` structures;
+      `tbb::concurrent_vector` ones contend on their shared counter
+      across sockets from 32 threads on
     * the parallel computations are launched using
       `tbb::parallel_invoke`
   */
@@ -333,30 +349,40 @@ public:
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
     dim_ = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
 
-    data.reserve(pts.size());
-    for(std::size_t i = 0; i < pts.size(); i++){
-      data.push_back(&pts[i]);
+    internal::Kd_tree_build_context<Point_d, FT> context = { serial_build_cutoff, {}, {}, nullptr, nullptr };
+    bool parallel = std::is_convertible<ConcurrencyTag, Parallel_tag>::value;
+    std::vector<Point_d> scratch_points;
+    std::vector<unsigned char> scratch_flags;
+    std::vector<FT> scratch_keys;
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+    if (parallel) {
+      scratch_points.resize(pts.size());
+      scratch_flags.resize(pts.size());
+      scratch_keys.resize(pts.size());
+      context.points = pts.begin();
+      context.buffer = scratch_points.begin();
+      context.flags = scratch_flags.data();
+      context.keys = scratch_keys.data();
     }
+#endif
 
 #ifndef CGAL_TBB_STRUCTURE_IN_KD_TREE
     static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
+#ifndef CGAL_HAS_THREADS
+    static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but CGAL_HAS_THREADS is not defined.");
+#endif
 
-    Point_container c(dim_, data.begin(), data.end(),traits_);
+    Point_container c(dim_, pts.begin(), pts.end(),traits_, parallel ? &context : nullptr);
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
-    if (c.size() <= split.bucket_size() || CGAL::is_zero(c.max_tight_spread())){
+    if (!needs_internal_node(c)){
       tree_root = create_leaf_node(c);
     }else {
        tree_root = new_internal_node();
        create_internal_node (tree_root, c, ConcurrencyTag());
     }
-
-    //Reorder vector for spatial locality
-    std::vector<Point_d> ptstmp;
-    ptstmp.resize(pts.size());
-    for (std::size_t i = 0; i < pts.size(); ++i)
-      ptstmp[i] = *data[i];
 
     // Cache?
     if (Enable_points_cache::value)
@@ -364,17 +390,8 @@ public:
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits_.construct_cartesian_const_iterator_d_object();
       points_cache.reserve(dim_ * pts.size());
       for (std::size_t i = 0; i < pts.size(); ++i)
-        points_cache.insert(points_cache.end(), construct_it(ptstmp[i]), construct_it(ptstmp[i], 0));
+        points_cache.insert(points_cache.end(), construct_it(pts[i]), construct_it(pts[i], 0));
     }
-
-    for(std::size_t i = 0; i < leaf_nodes.size(); ++i){
-      std::ptrdiff_t tmp = leaf_nodes[i].begin() - pts.begin();
-      leaf_nodes[i].data = ptstmp.begin() + tmp;
-    }
-    pts.swap(ptstmp);
-
-    data.clear();
-    data.shrink_to_fit();
 
     built_ = true;
   }
@@ -450,7 +467,6 @@ public:
     if(is_built()){
       internal_nodes.clear();
       leaf_nodes.clear();
-      data.clear();
       delete bbox;
       built_ = false;
     }
