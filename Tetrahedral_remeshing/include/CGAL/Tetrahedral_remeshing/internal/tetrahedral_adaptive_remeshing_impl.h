@@ -359,7 +359,10 @@ private:
       }
 
       for (Vertex_handle vi : tr().vertices(cit))
+      {
         set_dimension(vi, 3);
+        m_c3t3.set_index(vi, m_c3t3.subdomain_index(cit));
+      }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
@@ -389,7 +392,10 @@ private:
         m_c3t3.add_to_complex(f, patch);
 
         for (Vertex_handle vij : tr().vertices(f))
+        {
           set_dimension(vij, 2);
+          m_c3t3.set_index(vij, patch);
+        }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbf;
@@ -420,8 +426,11 @@ private:
           m_c3t3.remove_from_complex(e);
         m_c3t3.add_to_complex(e, curve_id);
 
-        for (Vertex_handle v : tr().vertices(e))
+        for(Vertex_handle v : tr().vertices(e))
+        {
           set_dimension(v, 1);
+          m_c3t3.set_index(v, curve_id);
+        }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbe;
@@ -449,17 +458,13 @@ private:
           m_c3t3.add_to_complex(vit, ++corner_id);
 
         set_dimension(vit, 0);
-        vit->set_index(corner_id);
+        m_c3t3.set_index(vit, corner_id);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbv;
 #endif
       }
     }
-
-    // set all indices depending on underlying dimension
-    for (Vertex_handle v : tr().finite_vertex_handles())
-      set_index(v, m_c3t3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     std::cout << "C3t3 ready :" << std::endl;
