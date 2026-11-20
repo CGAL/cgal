@@ -13,7 +13,7 @@ int main()
 
 #else
 
-#include "./types.h"
+#include <CGAL/p2p2_types.h>
 #include <CGAL/Triangulation_2.h>
 #include <ctime>
 

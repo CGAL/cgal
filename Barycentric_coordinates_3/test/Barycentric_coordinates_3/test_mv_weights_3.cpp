@@ -5,7 +5,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
 
-#include "include/utils.h"
+#include <CGAL/Barycentric_coordinates_3_utils.h>
 
 // Typedefs.
 using SCKER = CGAL::Simple_cartesian<double>;

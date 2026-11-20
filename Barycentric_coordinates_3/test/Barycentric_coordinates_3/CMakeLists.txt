@@ -4,7 +4,10 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Barycentric_coordinates_3_Tests)
 
+
 find_package(CGAL REQUIRED)
+
+include_directories(BEFORE "include")
 
 include(CGAL_CreateSingleSourceCGALProgram)
 

@@ -13,12 +13,12 @@
 #define VDA_TEST_PT
 
 #include <CGAL/Voronoi_diagram_2.h>
-#include "vda_test.h"
+#include <CGAL/Voronoi_diagram_2/vda_test.h>
 
 #include <CGAL/Simple_cartesian.h>
-#include "Delaunay_graph_concept.h"
-#include "Adaptation_traits_concept.h"
-#include "Adaptation_policy_concept.h"
+#include <CGAL/Voronoi_diagram_2/Delaunay_graph_concept.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_traits_concept.h>
+#include <CGAL/Voronoi_diagram_2/Adaptation_policy_concept.h>
 
 
 typedef CGAL::Simple_cartesian<double>              K;

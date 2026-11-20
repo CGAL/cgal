@@ -1,5 +1,5 @@
-#include "include/utils.h"
-#include "include/wrappers.h"
+#include <CGAL/Weights_utils.h>
+#include <CGAL/Weights_wrappers.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

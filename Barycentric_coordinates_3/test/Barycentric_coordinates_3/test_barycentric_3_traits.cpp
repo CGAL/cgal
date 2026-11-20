@@ -222,7 +222,7 @@ public:
 #include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
-#include "include/utils.h"
+#include <CGAL/Barycentric_coordinates_3_utils.h>
 
 // Typedefs.
 using Mesh = CGAL::Surface_mesh<Custom_barycentric_traits::Point_3>;

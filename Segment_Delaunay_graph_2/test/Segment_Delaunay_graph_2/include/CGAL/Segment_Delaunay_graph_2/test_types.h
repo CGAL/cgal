@@ -12,7 +12,9 @@
 #include <string>
 #include <sstream>
 
-#include "IO/Null_output_stream.h"
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/device/null.hpp>
+
 #include "IO/io_aux.h"
 
 #include <cstring> // for std::strcpy, and std::strcat
@@ -59,9 +61,9 @@ struct Level_finder
 };
 
 template<class Gt, class SDGDS, class LTag>
-struct Level_finder< Segment_Delaunay_graph_Linf_2<Gt,SDGDS,LTag> >
+struct Level_finder< Segment_Delaunay_graph_2<Gt,SDGDS,LTag> >
 {
-  typedef Segment_Delaunay_graph_Linf_2<Gt,SDGDS,LTag> SDG;
+  typedef Segment_Delaunay_graph_2<Gt,SDGDS,LTag> SDG;
 
   typedef typename SDG::size_type      size_type;
   typedef typename SDG::Vertex_handle  Vertex_handle;
@@ -138,7 +140,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname,
     site_list.push_back(s4);
   }
 
-  Null_output_stream null_os;
+  boost::iostreams::stream<boost::iostreams::null_sink> null_os{boost::iostreams::null_sink{}};
 
   Geom_traits gt;
 
@@ -168,7 +170,8 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname,
   start_testing("assignment operator");
   sdg.insert(site_list.begin(), site_list.end());
 
-  sdg = (Segment_Delaunay_graph_2&)sdg;
+  Segment_Delaunay_graph_2 tmp;
+  tmp = sdg;
   sdg2 = sdg;
 
   assert( sdg.is_valid() );
@@ -534,7 +537,6 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname,
     sdg.clear();
 
     std::istringstream iss(input);
-
     sdg.file_input(iss);
     assert( sdg.is_valid() );
 

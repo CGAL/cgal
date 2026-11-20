@@ -1,6 +1,6 @@
 // Author(s)     : Nico Kruithof  <Nico@nghk.nl>
 
-#include "./types.h"
+#include <CGAL/p2t2_types.h>
 
 void insert_in_edge(Triangulation &t, const Point &p)
 {

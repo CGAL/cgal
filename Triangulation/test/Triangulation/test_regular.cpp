@@ -4,7 +4,6 @@
 #include <CGAL/Regular_triangulation.h>
 #include <CGAL/algorithm.h>
 
-#include <tilted_grid.h>
 #include <vector>
 #include <string>
 #include <fstream>

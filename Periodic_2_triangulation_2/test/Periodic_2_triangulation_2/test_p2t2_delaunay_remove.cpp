@@ -2,7 +2,7 @@
 
 #define CGAL_USE_DELAUNAY 1
 
-#include "./types.h"
+#include <CGAL/p2t2_types.h>
 
 const int N_PTS = 75;
 

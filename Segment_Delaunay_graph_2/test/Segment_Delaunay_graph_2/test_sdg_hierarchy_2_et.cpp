@@ -27,8 +27,8 @@ Gt_wi;
 typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt>      SDG2;
 typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt_wi>   SDG2_wi;
 
-#include "test_types_hierarchy.h"
-#include "sdg_hierarchy_main.h"
+#include <CGAL/Segment_Delaunay_graph_2/test_types_hierarchy.h>
+#include <CGAL/Segment_Delaunay_graph_2/sdg_hierarchy_main.h>
 
 // Comment for cgal_create_makefile : main()
 
