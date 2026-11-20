@@ -11,3 +11,6 @@ tarballs, for examples all the files in the `doc/` and `test/`
 sub-directories of CGAL packages. For all those files, unless they have an
 explicit license notice, the license is the Creative Commons CC0 1.0. The text can be found 
 at https://creativecommons.org/publicdomain/zero/1.0/ .
+
+Please be aware that this is a development branch. Where applicable, further modifications that
+differ from the master branch are provisionally under exclusive copyright.

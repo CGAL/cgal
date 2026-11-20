@@ -30,6 +30,12 @@
 #include <CGAL/Classification/Feature/Height_above.h>
 #include <CGAL/Classification/Feature/Vertical_range.h>
 
+#include <CGAL/Classification/Feature/Betti_numbers.h>
+#include <CGAL/Classification/Feature/Compactness.h>
+#include <CGAL/Classification/Feature/Coverage.h>
+#include <CGAL/Classification/Feature/Fractal_dimensionality.h>
+#include <CGAL/Classification/Feature/Skeletonise.h>
+
 #include <CGAL/Classification/internal/verbosity.h>
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/bounding_box.h>
@@ -386,6 +392,50 @@ public:
     typedef Feature::Echo_scatter<GeomTraits, PointRange, PointMap, EchoMap> Echo_scatter;
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Echo_scatter> (i, m_input, echo_map, grid(i), radius_neighbors(i));
+  }
+
+  /*!
+    \brief generates geometric features based on surface mesh information.
+
+    At each scale, generates novel feature descriptors, namely:
+    - `CGAL::Classification::Feature::Betti_numbers`
+    - `CGAL::Classification::Feature::Compactness`
+    - `CGAL::Classification::Feature::Coverage`
+    - `CGAL::Classification::Feature::Fractal_dimensionality`
+    - `CGAL::Classification::Feature::Skeleton`
+
+    \tparam Mesh of `Surface_mesh` should be a closed and manifold, for example constructed using Alpha Wrapping.
+
+    \param features the feature set where the features are instantiated.
+    \param mesh to describe surface.
+   */
+  template <typename Mesh>
+  void generate_novel_point_based_features(Feature_set& features, Mesh mesh) {
+      std::cout << "generate_novel_point_based_features" << std::endl;
+      using Betti_numbers = Classification::Feature::Betti_numbers<GeomTraits, PointRange, PointMap, Mesh, ConcurrencyTag>;
+      using Compactness = CGAL::Classification::Feature::Compactness<GeomTraits, PointRange, PointMap, Mesh, ConcurrencyTag>;
+      using Coverage = CGAL::Classification::Feature::Coverage<GeomTraits, PointRange, PointMap, Mesh, ConcurrencyTag>;
+      using Fractal_dimensionality = CGAL::Classification::Feature::Fractal_dimensionality<GeomTraits, PointRange, PointMap, ConcurrencyTag>;
+      using Skeleton = CGAL::Classification::Feature::Skeleton<GeomTraits, PointRange, PointMap, Mesh>;
+
+      std::cout << "Betti numbers" << std::endl;
+      for (std::size_t i = 0; i < m_scales.size(); ++i)
+        features.add_multidimensional_feature_with_scale_id<Betti_numbers>(i, 2, m_input, m_input.point_map(), grid(i), radius_neighbors(i), mesh);
+      
+      std::cout << "Compactness" << std::endl;
+      for (std::size_t i = 0; i < m_scales.size(); ++i)
+        features.add_with_scale_id<Compactness>(i, m_input, m_input.point_map(), grid(i), radius_neighbors(i), mesh);
+
+      std::cout << "Coverage" << std::endl;
+      for (std::size_t i = 0; i < m_scales.size(); ++i)
+          features.add_with_scale_id<Coverage>(i, m_input, m_input.point_map(), mesh, radius_neighbors(i));
+
+      std::cout << "Fractal dimensionality" << std::endl;
+      for (std::size_t i = 0; i < m_scales.size(); ++i)
+          features.add_with_scale_id<Fractal_dimensionality>(i, m_input, m_input.point_map(), radius_neighbors(i));
+
+      std::cout << "Skeleton" << std::endl;
+      features.add_multidimensional_feature<Skeleton>(2, m_input, m_input.point_map(), mesh);
   }
 
   /// @}
