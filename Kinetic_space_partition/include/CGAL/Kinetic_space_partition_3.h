@@ -892,7 +892,7 @@ public:
   }
 
   /*!
-   \brief exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Kinetic_linear_cell_complex_min_items`.
+   \brief exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Kinetic_space_partition_3::Linear_cell_complex_min_items`.
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
    The input polygon index of a face refers to the input polygon the face originates from. If the face originates from several coplanar input polygons, one of them is provided.

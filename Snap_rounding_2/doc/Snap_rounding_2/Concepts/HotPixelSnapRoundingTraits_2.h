@@ -174,7 +174,7 @@ namespace HPSRTraits_2{
   Represents an iso rectangle
   \cgalRefines{DefaultConstructible,CopyConstructible,Assignable}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Iso_rectangle_2 `Snap_rounding_traits_2::Iso_rectangle_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Iso_rectangle_2 `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>::Iso_rectangle_2` \endlink}
   \cgalHasModelsEnd
 */
 class IsoRectangle_2
@@ -185,7 +185,7 @@ class IsoRectangle_2
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Construct_vertex_2 `Snap_rounding_traits_2::Construct_vertex_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Construct_vertex_2 `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>::Construct_vertex_2` \endlink}
   \cgalHasModelsEnd
 */
 class ConstructVertex_2
@@ -204,7 +204,7 @@ class ConstructVertex_2
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Construct_segment_2 `Snap_rounding_traits_2::Construct_segment_2`  \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Construct_segment_2 `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>::Construct_segment_2`  \endlink}
   \cgalHasModelsEnd
 */
 class ConstructSegment_2
@@ -223,7 +223,7 @@ class ConstructSegment_2
   \cgalConcept
   \cgalRefines{AdaptableQuaternaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Construct_iso_rectangle_2 `Snap_rounding_traits_2::Construct_iso_rectangle_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Construct_iso_rectangle_2 `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>::Construct_iso_rectangle_2` \endlink}
   \cgalHasModelsEnd
 */
 class ConstructIsoRectangle_2
@@ -246,7 +246,7 @@ class ConstructIsoRectangle_2
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Compare_x_2 `Snap_rounding_traits_2::Compare_x_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Compare_x_2 `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>::Compare_x_2` \endlink}
   \cgalHasModelsEnd
 */
 class CompareX_2
@@ -264,7 +264,7 @@ class CompareX_2
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Compare_y_2 `Snap_rounding_traits_2::Compare_y_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Compare_y_2 `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>::Compare_y_2` \endlink}
   \cgalHasModelsEnd
 */
 class CompareY_2
@@ -283,7 +283,7 @@ class CompareY_2
   \cgalConcept
   \cgalRefines{AdaptableQuaternaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Snap_2 `Snap_rounding_traits_2::Snap_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Snap_2 `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>::Snap_2` \endlink}
   \cgalHasModelsEnd
 */
 class Snap_2
@@ -304,7 +304,7 @@ class Snap_2
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Integer_grid_point_2 `Snap_rounding_traits_2::Integer_grid_point_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Integer_grid_point_2 `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>::Integer_grid_point_2` \endlink}
   \cgalHasModelsEnd
 
 */
@@ -327,7 +327,7 @@ class IntegerGridPoint_2
   \cgalConcept
   \cgalRefines{AdaptableTernaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Minkowski_sum_with_pixel_2 `Snap_rounding_traits_2::Minkowski_sum_with_pixel_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Minkowski_sum_with_pixel_2 `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>::Minkowski_sum_with_pixel_2` \endlink}
   \cgalHasModelsEnd
 */
 class MinkowskiSumWithPixel_2
