@@ -124,6 +124,9 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
@@ -132,27 +135,28 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
   EdgeConstraintMap ecmap
     = choose_parameter<EdgeConstraintMap>(get_parameter(np, internal_np::edge_is_constrained));
 
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  std::set<face_descriptor> already_processed;
+  using Face_bool_tag = typename CGAL::dynamic_face_property_t<bool>;
+  using Bool_map = typename boost::property_map<PolygonMesh, Face_bool_tag>::const_type;
+
+  Bool_map already_processed = get(Face_bool_tag(), pmesh, false);
   std::vector< face_descriptor > stack;
   stack.push_back(seed_face);
   while (!stack.empty())
+  {
+    seed_face=stack.back();
+    stack.pop_back();
+    if (get(already_processed, seed_face)) continue;
+    put(already_processed, seed_face, true);
+    *out++=seed_face;
+    for(halfedge_descriptor hd: halfedges_around_face(halfedge(seed_face, pmesh), pmesh) )
     {
-      seed_face=stack.back();
-      stack.pop_back();
-      if (!already_processed.insert(seed_face).second) continue;
-      *out++=seed_face;
-      for(halfedge_descriptor hd :
-                    halfedges_around_face(halfedge(seed_face, pmesh), pmesh) )
-      {
-        if(! get(ecmap, edge(hd, pmesh))){
-          face_descriptor neighbor = face( opposite(hd, pmesh), pmesh );
-          if ( neighbor != boost::graph_traits<PolygonMesh>::null_face() )
-            stack.push_back(neighbor);
-        }
+      if(! get(ecmap, edge(hd, pmesh))){
+        face_descriptor neighbor = face( opposite(hd, pmesh), pmesh );
+        if ( neighbor != boost::graph_traits<PolygonMesh>::null_face() )
+          stack.push_back(neighbor);
       }
     }
+  }
   return out;
 }
 

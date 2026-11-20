@@ -80,7 +80,7 @@ class Mesh_3_plugin :
   Q_PROPERTY(bool manifold_criterion READ get_manifold_criterion WRITE set_manifold_criterion)
 
   typedef CGAL::Mesh_facet_topology Mesh_facet_topology;
-  Q_ENUMS(Mesh_facet_topology)
+  Q_ENUM(Mesh_facet_topology)
   Q_PROPERTY(Mesh_facet_topology facet_topology
              READ get_facet_topology
              WRITE set_facet_topology)

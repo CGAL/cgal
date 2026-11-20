@@ -14,7 +14,7 @@ typedef Kernel::Point_3 Point;
 typedef std::array<unsigned short, 4> Color;
 typedef std::pair<Point, Color> PointWithColor;
 
-int main(int argc, char* argv[])
+int main()
 {
   std::ifstream is("data/colored_points.las");
 

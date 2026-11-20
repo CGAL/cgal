@@ -124,6 +124,14 @@ int main()
     std::ofstream("cheese_out_rg_lsq.off") << sm_lsq;
     assert(CGAL::is_valid_polygon_mesh(sm_lsq));
   }
+// test with a pinched vertex on the CCB of a patch
+  {
+    Surface_mesh sm, sm_out;
+    std::ifstream("data-decimation/pinched_ccb.off") >> sm;
+    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::do_not_triangulate_faces(true));
+    assert(vertices(sm_out).size()==8);
+    assert(faces(sm_out).size()==9);
+  }
 /// Test duplicated vertex
   {
     std::cout << "testing handling of duplicated non-manifold vertex\n";

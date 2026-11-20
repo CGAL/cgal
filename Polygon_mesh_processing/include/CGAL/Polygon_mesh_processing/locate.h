@@ -597,7 +597,6 @@ construct_point(const Face_location<TriangleMesh, FT>& loc,
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type  VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type            Point;
-  typedef typename boost::property_traits<VertexPointMap>::reference             Point_reference;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -609,12 +608,11 @@ construct_point(const Face_location<TriangleMesh, FT>& loc,
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
   halfedge_descriptor hd = halfedge(loc.first, tm);
-  const Point_reference p0 = get(vpm, source(hd, tm));
-  const Point_reference p1 = get(vpm, target(hd, tm));
-  const Point_reference p2 = get(vpm, target(next(hd, tm), tm));
 
   internal::Barycentric_point_constructor<Geom_traits, Point> bp_constructor;
-  return bp_constructor(p0, loc.second[0], p1, loc.second[1], p2, loc.second[2], gt);
+  return bp_constructor(get(vpm, source(hd, tm)), loc.second[0],
+                        get(vpm, target(hd, tm)), loc.second[1],
+                        get(vpm, target(next(hd, tm), tm)), loc.second[2], gt);
 }
 
 /// \name Location Predicates

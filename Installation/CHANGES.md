@@ -32,16 +32,25 @@ Release date: December 2026
 
 ### [Polygon Mesh Processing - Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations) (major changes)
 
+- Added parallel versions for all corefinement-based operations (including Boolean operations):
+  - [`CGAL::Polygon_mesh_processing::corefine()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__grp.html#ga54baccf4fbd1b1ada67465ec1d4bddc1)
+  - [`CGAL::Polygon_mesh_processing::corefine_and_compute_union()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__grp.html#ga95f618914f8d54d840065204b029492f)
+  - [`CGAL::Polygon_mesh_processing::corefine_and_compute_difference()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__grp.html#ga02fa6ed9116a759ecfb87063392f5455)
+  - [`CGAL::Polygon_mesh_processing::corefine_and_compute_intersection()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__grp.html#ga3ff96d36cad8f37efcdada916c46fbbe)
+  - [`CGAL::Polygon_mesh_processing::corefine_and_compute_boolean_operations()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__grp.html#ga7c9ebe739f9b4eb2961ff4a9733258d0)<br>
+  A named parameter `concurrency_tag` is used to control whether the task should be performed
+  using a single or multiple threads.
+- All functions above have had their runtime significantly improved.
+- Corefinement-based operations (including Boolean operations) have been optimized to better handle
+  configurations where some identical faces were shared between the input meshes, leading to
+  a significant speed-up in those cases.
 - Added new, multithreading-compatible functions operating directly on triangle soups,
-  enabling the handling of non-manifold input and output volumes:
+  enabling the handling of non-manifold inputs and output volumes:
   - [`CGAL::Polygon_mesh_processing::compute_union_of_triangle_soups()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__soup__grp.html#gaba4ca69504579964c53b11222416a91b),
   - [`CGAL::Polygon_mesh_processing::compute_intersection_of_triangle_soups()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__soup__grp.html#ga1cd9f060faac08f2b5b9528444b1532c), and
   - [`CGAL::Polygon_mesh_processing::compute_difference_of_triangle_soups()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__boolop__soup__grp.html#ga570e1882afe964725f62a8809ca6b6b3).
-- Corefinement-based operations (including Boolean operations) have been optimized to better handle
-  configurations where some identical faces are shared between the input meshes, leading to
-  a significant speed-up in those cases.
 - Added a new named parameter `edge_is_constrained_map()` to the [`CGAL::Polygon_mesh_processing::clip()`](https://doc.cgal.org/6.3/PMP_Boolean_operations/group__PMP__clip__grp.html)
-  functions which can be used to preserve constrained edges when clipping a mesh.
+  functions, which can be used to preserve constrained edges when clipping a mesh.
 - **Breaking change** Added a new named parameter `edge_is_marked_map()` to the corefinement-based functions
   that will specifically collect new intersection edges.
   Previously, `edge_is_constrained_map()` was storing both input constrained edges (updated when split)
@@ -132,6 +141,11 @@ Release date: December 2026
   `CGAL::Mesh_criteria_3` also uses `C3T3` as its template parameter, but
   continues to accept the triangulation type for backward compatibility.
 
+### [Polygon Mesh Processing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPolygonMeshProcessing)
+- `CGAL::Polygon_mesh_processing::do_intersect()` and `CGAL::Polygon_mesh_processing::self_intersections()` functions now have a named parameter `concurrency_tag`,
+   specifying whether the task should be performed using a single or multiple threads.
+- The running times of the functions above have been improved.
+
 ### [Polygon Mesh Processing - Remeshing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
 
 - Added a new parameter `edge_is_protected_map` to
@@ -160,6 +174,13 @@ Release date: December 2026
   `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`,
   and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()` using output iterators
   for vertices and faces as parameters, which were deprecated since CGAL-6.0.
+
+### [Surface Mesh Simplification](https://doc.cgal.org/6.3/Manual/packages.html#PkgSurfaceMeshSimplification)
+
+- Two examples have been added to illustrate how to perform parallel mesh simplification using
+  [METIS](https://github.com/KarypisLab/METIS) for mesh partitioning:
+  - [collapse_small_edges_in_parallel.cpp](https://doc.cgal.org/6.3/Surface_mesh_simplification/Surface_mesh_simplification_2collapse_small_edges_in_parallel_8cpp-example.html)
+  - [edge_collapse_gh_edge_count_parallel.cpp](https://doc.cgal.org/6.3/Surface_mesh_simplification/Surface_mesh_simplification_2edge_collapse_gh_edge_count_parallel_8cpp-example.html)
 
 ### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
 

@@ -72,11 +72,15 @@ CGAL_add_named_parameter(read_only_one_object_t, read_only_one_object, read_only
 
 // List of named parameters that we use in the package 'Stream_support'
 CGAL_add_named_parameter(tetrahedra_t, tetrahedra, tetrahedra)
+CGAL_add_named_parameter(hexahedra_t, hexahedra, hexahedra)
+CGAL_add_named_parameter(quadrilaterals_t, quadrilaterals, quadrilaterals)
 CGAL_add_named_parameter(edges_t, edges, edges)
 CGAL_add_named_parameter(ridges_t, ridges, ridges)
 CGAL_add_named_parameter(corners_t, corners, corners)
 CGAL_add_named_parameter(tetrahedron_refs_t, tetrahedron_refs, tetrahedron_refs)
+CGAL_add_named_parameter(hexahedron_refs_t, hexahedron_refs, hexahedron_refs)
 CGAL_add_named_parameter(triangle_refs_t, triangle_refs, triangle_refs)
+CGAL_add_named_parameter(quadrilateral_refs_t, quadrilateral_refs, quadrilateral_refs)
 CGAL_add_named_parameter(edge_refs_t, edge_refs, edge_refs)
 CGAL_add_named_parameter(point_refs_t, point_refs, point_refs)
 

@@ -1124,7 +1124,8 @@ double max_distance_to_triangle_mesh(const PointRange& points,
   Tree tree(tgt);
   tree.insert(faces(tm).first, faces(tm).second, tm, vpm);
 
-  const Point_3& hint = get(vpm, *vertices(tm).first);
+  auto vd = *vertices(tm).first;
+  const Point_3& hint = get(vpm, vd);
 
   return internal::max_distance_to_mesh_impl<Concurrency_tag>(points_cpy, tree, hint, gt);
 }

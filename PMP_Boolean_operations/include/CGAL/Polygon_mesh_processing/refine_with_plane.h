@@ -150,16 +150,41 @@ struct Orthogonal_cut_plane_traits
   Construct_direction_3 construct_direction_3_object() const { return Construct_direction_3(); }
   Compare_projection_along_direction_3 compare_projection_along_direction_3_object() const { return Compare_projection_along_direction_3(); }
 
-#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
-// for does self-intersect
+#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_AABB_TREE
   using Segment_3 = typename Kernel::Segment_3;
   using Triangle_3 = typename Kernel::Triangle_3;
   using Construct_segment_3 = typename Kernel::Construct_segment_3;
   using Construct_triangle_3 =typename  Kernel::Construct_triangle_3;
   using Do_intersect_3 = typename Kernel::Do_intersect_3;
+  using Construct_sphere_3 = typename Kernel::Construct_sphere_3;
+  using Sphere_3 = typename Kernel::Sphere_3;
+  using Iso_cuboid_3 = typename Kernel::Iso_cuboid_3;
+  using Cartesian_const_iterator_3 = typename Kernel::Cartesian_const_iterator_3;
+  using Construct_cartesian_const_iterator_3 = typename Kernel::Construct_cartesian_const_iterator_3;
+  using Construct_min_vertex_3 = typename Kernel::Construct_min_vertex_3;
+  using Construct_max_vertex_3 = typename Kernel::Construct_max_vertex_3;
+  using Construct_center_3 = typename Kernel::Construct_center_3;
+  using Compute_squared_radius_3 = typename Kernel::Compute_squared_radius_3;
+  using Construct_iso_cuboid_3 = typename Kernel::Construct_iso_cuboid_3;
+  using Equal_3 = typename Kernel::Equal_3;
+  using Less_x_3 = typename Kernel::Less_x_3;
+  using Less_y_3 = typename Kernel::Less_y_3;
+  using Less_z_3 = typename Kernel::Less_z_3;
+
+  Construct_sphere_3 construct_sphere_3_object() const { return Construct_sphere_3(); }
   Construct_segment_3 construct_segment_3_object() const { return Construct_segment_3(); }
   Construct_triangle_3 construct_triangle_3_object() const { return Construct_triangle_3(); }
   Do_intersect_3 do_intersect_3_object() const { return Do_intersect_3(); }
+  Construct_cartesian_const_iterator_3 construct_cartesian_const_iterator_3_object() const { return Construct_cartesian_const_iterator_3(); }
+  Construct_min_vertex_3 construct_min_vertex_3_object() const { return Construct_min_vertex_3(); }
+  Construct_max_vertex_3 construct_max_vertex_3_object() const { return Construct_max_vertex_3(); }
+  Construct_center_3 construct_center_3_object() const { return Construct_center_3(); }
+  Compute_squared_radius_3 compute_squared_radius_3_object() const { return Compute_squared_radius_3(); }
+  Construct_iso_cuboid_3 construct_iso_cuboid_3_object() const { return Construct_iso_cuboid_3(); }
+  Equal_3 equal_3_object() const { return Equal_3(); }
+  Less_x_3 less_x_3_object() const { return Less_x_3(); }
+  Less_y_3 less_y_3_object() const { return Less_y_3(); }
+  Less_z_3 less_z_3_object() const { return Less_z_3(); }
 #endif
 };
 #endif

@@ -1537,8 +1537,10 @@ void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
   VPmap vpm = get(CGAL::vertex_point, mesh);
   for(auto h : path_halfedges)
   {
-    const Point& p1 = get(vpm, target(h, mesh));
-    const Point& p2 = get(vpm, source(h, mesh));
+    fg_vertex_descriptor v1 = target(h, mesh);
+    fg_vertex_descriptor v2 = source(h, mesh);
+    const Point& p1 = get(vpm, v1);
+    const Point& p2 = get(vpm, v2);
     path_length += CGAL::approximate_sqrt(CGAL::squared_distance(p1, p2));
     item->temp_selected_edges.insert(edge(h, *item->polyhedron()));
   }

@@ -30,6 +30,7 @@ create_single_source_cgal_program( "wlop_simplify_and_regularize_test.cpp" )
 create_single_source_cgal_program( "bilateral_smoothing_test.cpp" )
 create_single_source_cgal_program( "edge_aware_upsample_test.cpp" )
 create_single_source_cgal_program( "structuring_test.cpp" )
+create_single_source_cgal_program( "test_callback_lifetime.cpp" )
 
 #Use LAS
 #disable if MSVC 2017
@@ -71,6 +72,9 @@ if(TARGET CGAL::Eigen3_support)
 
   create_single_source_cgal_program("psp_jet_includes.cpp")
   target_link_libraries(psp_jet_includes PRIVATE CGAL::Eigen3_support)
+
+  # Also tests the callback of the jet functions when Eigen is available
+  target_link_libraries(test_callback_lifetime PRIVATE CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()

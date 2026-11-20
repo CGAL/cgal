@@ -256,7 +256,8 @@ private:
         for(fg_halfedge_descriptor hf_around_facet : halfedges_around_face(hd,poly)){
           CGAL_assertion(visited.find(hf_around_facet) == visited.end());
           visited.insert(hf_around_facet);
-          const Point_3& p = get(vpm,target(hf_around_facet, poly));
+          fg_vertex_descriptor v = target(hf_around_facet, poly);
+          const Point_3& p = get(vpm,v);
           polyline_data.polyline->polylines.front().push_back(p);
           center += CGAL::qglviewer::Vec(p.x(), p.y(), p.z());
           ++counter;
@@ -292,9 +293,11 @@ private:
       boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,poly);
       /* use polyline points to measure distance - might hurt performance for large holes */
       for(fg_halfedge_descriptor hf_around_facet : halfedges_around_face(it->halfedge,poly)){
-        const Point_3& p_1 = get(vpm,target(hf_around_facet,poly));
+        fg_vertex_descriptor v_1 = target(hf_around_facet, poly);
+        const Point_3& p_1 = get(vpm, v_1);
         const CGAL::qglviewer::Vec& pos_it_1 = camera->projectedCoordinatesOf(CGAL::qglviewer::Vec(p_1.x(), p_1.y(), p_1.z()));
-        const Point_3& p_2 = get(vpm,target(opposite(hf_around_facet,poly),poly));
+        fg_vertex_descriptor v_2 = target(opposite(hf_around_facet,poly),poly);
+        const Point_3& p_2 = get(vpm, v_2);
         const CGAL::qglviewer::Vec& pos_it_2 = camera->projectedCoordinatesOf(CGAL::qglviewer::Vec(p_2.x(), p_2.y(), p_2.z()));
         Kernel::Segment_2 s(Kernel::Point_2(pos_it_1.x, pos_it_1.y), Kernel::Point_2(pos_it_2.x, pos_it_2.y));
         double dist = CGAL::squared_distance(s, xy);

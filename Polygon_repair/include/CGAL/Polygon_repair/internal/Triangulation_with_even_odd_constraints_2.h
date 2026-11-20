@@ -34,7 +34,7 @@ public:
   class Interior_tester {
     const Triangulation_with_even_odd_constraints_2 *t;
   public:
-    Interior_tester() {}
+    Interior_tester() : t(nullptr) {}
     Interior_tester(const Triangulation_with_even_odd_constraints_2 *tr) : t(tr) {}
 
     bool operator()(const All_faces_iterator & fit) const {

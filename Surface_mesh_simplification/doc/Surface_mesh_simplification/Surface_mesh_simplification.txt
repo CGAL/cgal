@@ -426,6 +426,33 @@ using behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_ch
 
 Note that these policies depend on the third party \ref thirdpartyEigen library.
 
+
+\subsection Surface_mesh_simplificationExampleParallel Example Using Parallelism
+
+When using only local criteria such as collapsing and stopping based on edge length, a trivial parallelization is possible using a divide-and-conquer approach.
+The mesh is first partitioned with the help of the \ref thirdpartyMETIS library.
+Each patch is copied and simplified independently.
+Finally, the result is reassembled and a final pass is performed sequentially for the boundaries of the patches.
+
+The first example uses the classical Lindstrom-Turk placement to collapse all edges shorter
+than a given threshold. The work can be dispatched across multiple threads, and the final mesh
+still satisfies the criterion. The resulting speed-up coefficient depends on the distribution of short edges
+among the parts of the mesh partition.
+
+\cgalExample{Surface_mesh_simplification/collapse_small_edges_in_parallel.cpp}
+
+The second example uses the more recently introduced Garland-Heckbert policies to reduce the
+number of edges by a given ratio. Here, the load is as well balanced as the partition is in
+terms of face count.
+In this setting, the criterion is applied locally within each part, so the result may differ
+significantly from what a global criterion would produce. In particular, the partition is
+independent of the local geometry: a densely tessellated planar region, for instance,
+could be prioritized by a global criterion but may be split arbitrarily across parts.
+The partition is also likely to introduce visual artifacts in the output triangle mesh,
+such as visible seams along part boundaries.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_gh_edge_count_parallel.cpp}
+
 \section SimplificationDesign Design and Implementation History
 
 The core of the package, as well as most of the simplification strategies, are the work of Fernando Cacciola,

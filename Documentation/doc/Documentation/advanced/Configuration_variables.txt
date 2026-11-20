@@ -53,7 +53,7 @@ used in conjunction with those for the specific build type.
 \section installation_additional_flags Additional Compiler and Linker Flags
 
 The following variables can be used to <I>add</I> flags without overriding the ones
-defined by cmake.
+defined by CMake.
 
 
 | Program               | Both Debug and Release      |  Release Only                        |  Debug Only  |
@@ -83,7 +83,7 @@ and will serverly limit performances.
 | Variable              | Description                                                           | Type        | %Default Value |
 | :-                    | :-                    | :-   |  :-            |
 | `CGAL_DIR`            | Full-path to the binary directory where \cgal was configured          |Either CMake or Environment | none |
-| `Qt6_DIR`             | Full-path to the Qt cmake directory  |CMake| platform-dependent|
+| `Qt6_DIR`             | Full-path to the Qt CMake directory  |CMake| platform-dependent|
 
 
 \section installation_variables_third_party Variables Providing Information About 3rd-Party Libraries
@@ -101,7 +101,7 @@ other but never both.
 
 \section installation_boost Boost Libraries
 
-Starting from \boost 1.72, the cmake config mode can be used for configuring the \boost version
+Starting from \boost 1.72, the CMake config mode can be used for configuring the \boost version
 to use by setting the environment variable `Boost_DIR` to the path containing the file
 `BoostConfig.cmake`. For example if you manually installed \boost 1.77 with `--prefix=<path>`,
 then you should set `Boost_DIR=<path>/lib/cmake/Boost-1.77.0`.
@@ -207,6 +207,10 @@ and library files must be specified by using environment variables.
 | `MPFI_LIBRARIES`     | Full pathname of the compiled \mpfi library | CMake |
 
 
+\subsection installation_fastfloat fast_float Library
+The CMake config mode shall be used for configuring the \fast_float library.
+You can either set the environment or CMake variable `FastFloat_DIR` to the path of the directory containing
+`FastFloatConfig.cmake`.
 
 \section installation_rs RS and RS3 Library
 

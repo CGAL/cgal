@@ -1146,11 +1146,15 @@ protected:
     const Weighted_point& p;
     const Self *t;
 
+    Conflict_tester_3() = delete;
+
   public:
     Conflict_tester_3(const Weighted_point& pt, const Self *tr)
       : p(pt), t(tr)
     {
     }
+
+    Conflict_tester_3(const Conflict_tester_3& other) = default;
 
     bool operator()(const Cell_handle c) const
     {
@@ -1173,11 +1177,15 @@ protected:
     const Weighted_point& p;
     const Self *t;
 
+    Conflict_tester_2() = delete;
+
   public:
     Conflict_tester_2(const Weighted_point& pt, const Self *tr)
       : p(pt), t(tr)
     {
     }
+
+    Conflict_tester_2(const Conflict_tester_2& other) = default;
 
     bool operator()(const Cell_handle c) const
     {
@@ -1201,11 +1209,15 @@ protected:
     const Weighted_point& p;
     const Self *t;
 
+    Conflict_tester_1() = delete;
+
   public:
     Conflict_tester_1(const Weighted_point& pt, const Self *tr)
       : p(pt), t(tr)
     {
     }
+
+    Conflict_tester_1(const Conflict_tester_1& other) = default;
 
     bool operator()(const Cell_handle c) const
     {
@@ -1229,11 +1241,15 @@ protected:
     const Weighted_point& p;
     const Self *t;
 
+    Conflict_tester_0() = delete;
+
   public:
     Conflict_tester_0(const Weighted_point& pt, const Self *tr)
       : p(pt), t(tr)
     {
     }
+
+    Conflict_tester_0(const Conflict_tester_0& other) = default;
 
     bool operator()(const Cell_handle c) const
     {
@@ -1262,8 +1278,12 @@ protected:
     mutable std::vector<Vertex_handle> vertices;
     mutable std::vector<Weighted_point> hidden_points;
 
+    Hidden_point_visitor() = delete;
+
   public:
     Hidden_point_visitor(Self *tr) : t(tr) {}
+
+    Hidden_point_visitor(const Hidden_point_visitor& other) = default;
 
     template <class InputIterator>
     void process_cells_in_conflict(InputIterator start, InputIterator end) const

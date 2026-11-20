@@ -262,6 +262,8 @@ file(REMOVE ${release_dir}/include/CGAL/license/generate_files.cmake)
 file(REMOVE ${release_dir}/include/CGAL/license/README.md)
 file(REMOVE ${release_dir}/include/CGAL/license/gpl.h.in)
 file(REMOVE ${release_dir}/include/CGAL/license/package_list.txt)
+file(REMOVE ${release_dir}/AGENTS.md)
+file(REMOVE ${release_dir}/AI-GUIDELINES.md)
 
 if(PUBLIC AND NOT TESTSUITE) # we are not creating an internal release.
   # Taken from create_new_release.
