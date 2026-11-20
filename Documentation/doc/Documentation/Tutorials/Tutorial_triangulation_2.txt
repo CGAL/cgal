@@ -1,0 +1,175 @@
+namespace CGAL {
+/*!
+\example Triangulation_2/Tutorial_Triangulation_2.cpp
+*/
+
+/*!
+
+\page Tutorial_Triangulation_2 Getting Started With 2D Triangulations
+\cgalAutoToc
+
+\author Andreas Fabri
+
+A 2D triangulation is a decomposition of the 2D plane in vertices and triangular faces.
+
+In the first section we will walk you through the API of a class representing a Delaunay
+triangulation which operates on a set of points,
+followed by a section covering the API of a class representing a constrained Delaunay triangulation
+which operates on a set of points and segments.
+
+Note that this tutorial is not about computational geometry, so we assume you are familiar
+with Delaunay triangulation with and without constraints.
+
+\section  Tutorial_Delaunay_2   Defining the Type of %Triangulation
+
+In the example code of this section we use a class template `Delaunay_triangulation_2`
+together with a <em>kernel</em> which provides types for points, segments or triangles, as well as
+<em>predicates</em>, for example the incircle test needed for the empty circle property
+of this type of triangulations.
+
+So we start with some `#include` and some `using` statements to define types.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-include
+
+\section  Tutorial_Delaunay_2_Insert Inserting Points
+
+When we insert a set of points in the triangulation, it generates a set of finite
+vertices corresponding to the points, and the decomposition of the convex hull
+of the points in finite triangular faces.
+Additionally, the triangulation generates infinite faces, which are incident to the edges of the convex hull
+and which have as third vertex a single infinite vertex. When we draw the triangulation
+we only draw finite vertices and faces.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-construction
+
+FIGURE
+
+We inserted a range of points from a `std::array` but the insert functions
+can take any range type, e.g., a `std::vector` or `std::list`.
+When we insert an individual point we obtained a <em>vertex handle</em> `vh`.
+A handle is a pointer to a vertex object, and no surprise when we write
+`v->point()` into `std::cout` we will see `1 1` on the console.
+
+\section  Tutorial_Delaunay_2_Enumerate  Enumerating Vertices and Faces
+
+Just like the standard containers, the triangulation provides iterators to enumerate
+its elements, that is either all or only the finite vertices and faces.
+When we iterate over all elements we often have to check whether they
+are finite.   It makes no sense to access the point of the infinite
+vertex, or to compute the area of an infinite face.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-traversal
+
+\section  Tutorial_Delaunay_2_Navigation About Incidence Relationships
+
+We next see how to navigate between vertices and faces.
+For vertex `vh` we can obtain one incident face calling `vh->face()`.
+We next enumerate the faces incident to vertex handle `vh`. As there is no
+natural begin and end of incident faces the function call `dt.incident_faces(vh)`
+returns a <em>circulator</em>. Just like an iterator you can increment and dereference a circulator.
+While for an iterator you test for being past-the-end,
+for a circulator you test if you are again where you started
+using a `do`-loop.
+
+While a vertex can have an arbitrary number of incident faces, a face has
+always three incident vertices, which we access in the nested `for`-loop.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-incident
+
+The call `dt.incident_vertices()` returns a circulator over the one-ring
+of a vertex. If you pass it a vertex on the convex hull, the infinite
+vertex is in the one-ring.  If you pass it the infinite vertex,
+you will circulate over the vertices of the convex hull.
+
+Let's return to our vertex `vh` and its incident face `fh` and determine
+the index of `vh` in `fh`. The index is either 0, 1, or 2, in counterclockwise
+order. The triangulation class has static functions `cw()` and `ccw()`
+for computing the index of the clockwise and counterclockwise neighbor vertex.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-cw
+
+With the `neighbor()` function we can obtain the
+face opposite to `vh`. And symmetrically, we now obtain the index of
+`fh` in `nh`, and finally the vertex opposite to `fh`.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-index
+
+FIGURE
+
+\section  Tutorial_Delaunay_2_Auto Real Types instead of Auto
+
+We saw a lot of `auto` instead of real types. Depending on your
+programming style you may like them or you may prefer writing
+some more `using` statemenmts.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-using
+
+and then use them like this, so that when reading the code it is
+absolutely clear of what type a variable is.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-noauto
+
+\section  Tutorial_Delaunay_2_Edges Edges
+
+In a triangulation we also have <em>edges</em>. However, they are just a `std::pair`
+and hold a face handle and an index. No surprise that the index is the one
+of the vertex opposite to the edge. The `mirror()` function,
+which for an edge returns the edge seen from the other side,
+is there for convenience. Note that an edge and its mirror edge are
+not equal.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-edge
+
+The triangulation offers iterators to enumerate all edges,
+and circulators to enumerate the edges incident to a vertex.
+
+\section  Tutorial_Delaunay_2_Locate Point Location
+
+Given a 2D point `p`
+we want to determine where in the triangulation it is. The `locate()` function
+returns a face handle we store in `fh`. The point may be on a
+vertex of `fh`, on an edge of `fh`, inside `fh` in case it is a finite face,
+or it may be outside the convex hull.
+The function writes this information in the non-const parameter `lt` of type `Locate_type`.
+And it additionally writes into the non-const parameter `li`, the locate index,
+the index of the vertex or edge in face `fh` , in case `lt` is `Delaunay::VERTEX`  or
+`Delaunay::EDGE`.  If `lt` is `Delaunay::FACE` or `Delaunay::OUTSIDE_CONVEX_HULL`
+the locate index has no meaning.
+
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-locate
+
+The function `Delaunay::locate()` has another optional parameter, namely a face
+from where to start the point location. Let's explain how point location works
+to understand why the hint is important. Without the hint the algorithm starts
+at an arbitrary vertex, and traverses faces in the direction of the query point.
+So when you have query points which have some spatial coherence you better pass
+the result of a previous point location query as hint where to start for the current one.
+You might have a look at the function `hilbert_sort()` to learn more about what
+we mean with spatial coherence.
+
+\section  Tutorial_Delaunay_2_Line_face_circulator  Walking Along a Line
+
+Concerning the traversal of a triangulation we finish with the
+<em>line face circulator</em>.   This circulator enables to traverse all faces
+that are intersected by a line defined by two points `p0` and `p1`, and is
+obtained by the call `dt.line_walk(p0,p1)`. The traversal starts where `p0` is
+located. It is a circulator as the traversal  wraps around where the line intersects
+the convex hull. Note that the points, and even the line may be outside of the convex hull.
+We refer to the Reference Manual for explaining in detail which faces are traversed
+in case the line passes through a vertex. Again a hint can be given for the point
+location of the first point. You may think that the `line_walk()` function gets used
+to get from `p0` to `p1`, but that is not the case.  Instead a "zigag" walk is performed
+that makes less geometric tests.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-linewalk
+
+We invite you to have a look at the examples in the User Manual which
+show how to enrich vertices and faces with information, how to operate
+on 3D points when the triangulation is 2.5D and represents a terrain, and more.
+
+
+
+*/
+
+} // namespace CGAL
