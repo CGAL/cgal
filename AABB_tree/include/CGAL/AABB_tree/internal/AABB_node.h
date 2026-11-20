@@ -37,12 +37,12 @@ private:
 
 public:
   typedef typename AABBTraits::Bounding_box Bounding_box;
+  typedef AABBTraits AABB_traits;
 
   /// Constructor
   AABB_node()
     : m_bbox()
-    , m_p_left_child(nullptr)
-    , m_p_right_child(nullptr)      { };
+    , m_p_first_primitive(nullptr) { };
 
   AABB_node(Self&& node) = default;
 
@@ -83,85 +83,93 @@ public:
 
 
 private:
-  typedef AABBTraits AABB_traits;
   typedef AABB_node<AABB_traits> Node;
   typedef typename AABB_traits::Primitive Primitive;
 
 
 public:
-  /// Helper functions
-  const Node& left_child() const
-                     { return *static_cast<Node*>(m_p_left_child); }
-  const Node& right_child() const
-                     { return *static_cast<Node*>(m_p_right_child); }
-  const Primitive& left_data() const
-                     { return *static_cast<Primitive*>(m_p_left_child); }
-  const Primitive& right_data() const
-                     { return *static_cast<Primitive*>(m_p_right_child); }
-  template <class Left, class Right>
-  void set_children(Left& l, Right& r)
+  void set_data(Primitive& first, std::size_t range)
   {
-    m_p_left_child = static_cast<void*>(std::addressof(l));
-    m_p_right_child = static_cast<void*>(std::addressof(r));
+    m_p_first_primitive = &first;
+    m_range = range;
   }
   void set_bbox(const Bounding_box& bbox)
   {
     m_bbox = bbox;
   }
 
-  Node& left_child() { return *static_cast<Node*>(m_p_left_child); }
-  Node& right_child() { return *static_cast<Node*>(m_p_right_child); }
-  Primitive& left_data() { return *static_cast<Primitive*>(m_p_left_child); }
-  Primitive& right_data() { return *static_cast<Primitive*>(m_p_right_child); }
+  // We exploit how the nodes are storing, let i the node index of this
+  // Index of the left child is i+1
+  // Index of the right child is i+left_child.range = i+range/2
+  // left_data is the first primitive
+  // right_data is first primitive + 1
+  Node& left_child() { return *(this + 1); }
+  Node& right_child() { return *(this + m_range / 2); }
+  Primitive& left_data() { return *(m_p_first_primitive); }
+  Primitive& right_data() { return *(m_p_first_primitive+1); }
+
+  const Node& left_child() const { return *(this + 1); }
+  const Node& right_child() const { return *(this + m_range / 2); }
+  const Primitive& left_data() const { return *(m_p_first_primitive); }
+  const Primitive& right_data() const { return *(m_p_first_primitive+1); }
+
+  bool is_leaf() const { CGAL_assertion(m_range >= 2); return m_range == 2; }
+  bool is_internal_node() const { CGAL_assertion(m_range >= 2); return m_range > 3; }
+  std::size_t range() const { CGAL_assertion(m_range >= 2); return m_range; }
+  Primitive* first_primitive() const { return m_p_first_primitive; }
 
 private:
   /// node bounding box
   Bounding_box m_bbox;
-
-  /// children nodes, either pointing towards children (if children are not leaves),
-  /// or pointing toward input primitives (if children are leaves).
-  void *m_p_left_child;
-  void *m_p_right_child;
-
+  /// currently used only by leaf
+  Primitive* m_p_first_primitive;
+  std::size_t m_range;
 };  // end class AABB_node
-
 
 template<typename Tr>
 template<class Traversal_traits, class Query>
 void
 AABB_node<Tr>::traversal(const Query& query,
                          Traversal_traits& traits,
-                         const std::size_t nb_primitives) const
+                         const std::size_t /*nb_primitives*/) const
 {
-  // Recursive traversal
-  switch(nb_primitives)
+  // Mixed iterative/recursive version
+  // Keep iterative while only one child do intersect
+  // Did one recursive call if two children do_intersect and continue the current while
+  const auto* current = this;
+  while( traits.go_further() )
   {
-  case 2:
-    traits.intersection(query, left_data());
-    if( traits.go_further() )
+    if(current->range() == 2)
     {
-      traits.intersection(query, right_data());
+      traits.intersection(query, current->left_data());
+      if( traits.go_further() )
+        traits.intersection(query, current->right_data());
+      return;
     }
-    break;
-  case 3:
-    traits.intersection(query, left_data());
-    if( traits.go_further() && traits.do_intersect(query, right_child()) )
+    else if(current->range() == 3)
     {
-      right_child().traversal(query, traits, 2);
+      // Treat directly the three primitives
+      traits.intersection(query, current->left_data());
+      if( traits.go_further() )
+        traits.intersection(query, current->right_child().left_data());
+      if( traits.go_further() )
+        traits.intersection(query, current->right_child().right_data());
+      return;
     }
-    break;
-  default:
-    if( traits.do_intersect(query, left_child()) )
+    else
     {
-      left_child().traversal(query, traits, nb_primitives/2);
-      if( traits.go_further() && traits.do_intersect(query, right_child()) )
+      bool do_intersect_left  = traits.do_intersect(query, current->left_child());
+      bool do_intersect_right = traits.do_intersect(query, current->right_child());
+      if(do_intersect_left && do_intersect_right)
       {
-        right_child().traversal(query, traits, nb_primitives-nb_primitives/2);
+        current->left_child().traversal(query, traits, current->left_child().range());
+        if( traits.go_further() )
+          current = &current->right_child();
       }
-    }
-    else if( traits.do_intersect(query, right_child()) )
-    {
-      right_child().traversal(query, traits, nb_primitives-nb_primitives/2);
+      else if(!do_intersect_left && !do_intersect_right)
+        return;
+      else
+        current = do_intersect_left ? &current->left_child() : &current->right_child();
     }
   }
 }
