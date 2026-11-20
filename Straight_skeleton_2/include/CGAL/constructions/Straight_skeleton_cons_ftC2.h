@@ -528,69 +528,6 @@ construct_degenerate_seed_pointC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_
   return compute_seed_pointC2( tri, tri->degenerate_seed_id(), aCaches ) ;
 }
 
-template <class K, class Caches>
-std::optional< Rational< typename K::FT> >
-compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
-                                Caches& aCaches )
-{
-  typedef typename K::Boolean Boolean ;
-  typedef typename K::FT FT ;
-  typedef typename K::Point_2 Point_2 ;
-  typedef typename K::Segment_2 Segment_2 ;
-  typedef typename K::Line_2 Line_2 ;
-  typedef typename K::Direction_2 Direction_2 ;
-  typedef typename K::Ray_2 Ray_2 ;
-
-  typedef std::optional<Line_2> Optional_line_2 ;
-
-  CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing artificial isec time [" << typeid(FT).name() << "]");
-  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
-
-  CGAL_precondition(tri->e0() == tri->e1());
-  CGAL_precondition(bool(tri->child_l()));
-
-  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->e0(), tri->w0(), aCaches) ;
-  if( !l0 )
-    return std::nullopt;
-
-  const Segment_2& contour_seg = tri->e0();
-  Direction_2 perp_dir ( contour_seg.source().y() - contour_seg.target().y() ,
-                         contour_seg.target().x() - contour_seg.source().x() ) ;
-  std::optional< typename K::Point_2 > seed = construct_offset_lines_isecC2(tri->child_l(), aCaches ) ;
-
-  if(!seed)
-    return std::nullopt;
-
-  const Ray_2 ray(*seed, perp_dir);
-  const Segment_2& opp_seg = tri->e2();
-  Boolean inter_exist = K().do_intersect_2_object()(ray, opp_seg);
-  if (!inter_exist) // no intersection
-    return cgal_make_optional(Rational<FT>(FT(0),FT(0))) ; // does not exist
-
-  // Compute the intersection point and evaluate the time from the line equation of the contour edge
-  auto inter_res = K().intersect_2_object()(ray, opp_seg);
-
-  FT t;
-
-  if(const Segment_2* seg = std::get_if<Segment_2>(&*inter_res))
-  {
-    // get the segment extremity closest to the seed
-    Boolean res = (K().compare_distance_2_object()(*seed, seg->source(), seg->target()) == CGAL::SMALLER);
-    t = res ? l0->a() * seg->source().x() + l0->b() * seg->source().y() + l0->c()
-            : l0->a() * seg->target().x() + l0->b() * seg->target().y() + l0->c();
-  }
-  else
-  {
-    const Point_2* inter_pt = std::get_if<Point_2>(&*inter_res);
-    if(!CGAL_NTS is_finite(inter_pt->x()) || !CGAL_NTS is_finite(inter_pt->y()))
-      return std::nullopt;
-    t = l0->a() * inter_pt->x() + l0->b() * inter_pt->y() + l0->c() ;
-  }
-
-  bool ok = CGAL_NTS is_finite(t);
-  return cgal_make_optional(ok, Rational<FT>(t, FT(1))) ;
-}
-
 // Given 3 oriented straight line segments: e0, e1, e2
 // such that two and only two of these edges are collinear, not necessarily consecutive but with the same orientaton;
 // returns the OFFSET DISTANCE (n/d) at which a line perpendicular to the collinear edge passing through
@@ -598,6 +535,11 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
 //
 // NOTE: The result is an explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
+//
+// NOTE: that this is also used for artificial events (see `Straight_skeleton_builder_2::EnforceSimpleConnectedness()`),
+// whose trisegments are (e0, e0, e2) with the hole vertex the ray is shot from as left child: the ray is
+// the line orthogonal to e0 through the degenerate seed, and e2 is the contour edge of the face on the other side
+// of the bisector that is hit by the ray. Note that the event is on the line, which might be behind the seed.
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
@@ -613,9 +555,6 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
 
   typedef std::optional<Point_2> Optional_point_2 ;
   typedef std::optional<Line_2>  Optional_line_2 ;
-
-  if(tri->e0() == tri->e1()) // marker for artificial bisectors: they have the same face on both sides
-    return compute_artifical_isec_timeC2(tri, aCaches) ;
 
   CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing degenerate offset lines isec time [" << typeid(FT).name() << "]");
   CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
@@ -845,58 +784,6 @@ construct_normal_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment
   return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }
 
-// Given a contour halfedge and a bisector halfedge, constructs the intersection
-// between the line orthogonal to the contour halfedge through a given seed and the bisector halfedge.
-// This is an artificial vertex added to recover simply-connectedness of a skeleton face
-// in weighted skeletons of polygons with holes.
-template <class K, class Caches>
-std::optional< typename K::Point_2 >
-construct_artifical_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
-                             Caches& aCaches )
-{
-  typedef typename K::Point_2 Point_2 ;
-  typedef typename K::Segment_2 Segment_2 ;
-  typedef typename K::Ray_2 Ray_2 ;
-  typedef typename K::Direction_2 Direction_2 ;
-
-  CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing artificial isec point [" << typeid(typename K::FT).name() << "]");
-  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
-
-  CGAL_precondition(tri->e0() == tri->e1());
-  CGAL_precondition(bool(tri->child_l()));
-
-  const Segment_2& contour_seg = tri->e0();
-  Direction_2 perp_dir ( contour_seg.source().y() - contour_seg.target().y() ,
-                         contour_seg.target().x() - contour_seg.source().x() ) ;
-  std::optional< typename K::Point_2 > seed = construct_offset_lines_isecC2(tri->child_l(), aCaches) ;
-
-  if(!seed)
-    return std::nullopt;
-
-  const Ray_2 ray(*seed, perp_dir);
-  const Segment_2& opp_seg = tri->e2();
-  auto inter_res = K().intersect_2_object()(ray, opp_seg);
-  if (!inter_res) // shouldn't be here if there is no intersection
-    return std::nullopt;
-
-  if(const Point_2* inter_pt = std::get_if<Point_2>(&*inter_res))
-  {
-    bool ok = CGAL_NTS is_finite(inter_pt->x()) && CGAL_NTS is_finite(inter_pt->y()) ;
-    return cgal_make_optional(ok, *inter_pt) ;
-  }
-  else if(const Segment_2* seg = std::get_if<Segment_2>(&*inter_res))
-  {
-    // get the segment extremity closest to the seed
-    const Point_2& pt = (K().compare_distance_2_object()(*seed,
-                                                         seg->source(),
-                                                         seg->target()) == CGAL::SMALLER) ? seg->source()
-                                                                                          : seg->target() ;
-    return cgal_make_optional(pt);
-  }
-
-  return std::nullopt;
-}
-
 // Given 3 oriented line segments e0, e1 and e2
 // such that their offsets at a certain distance intersect in a single point,
 // returns the coordinates (x,y) of such a point.
@@ -921,9 +808,6 @@ construct_degenerate_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
 
   typedef std::optional<Point_2> Optional_point_2 ;
   typedef std::optional<Line_2>  Optional_line_2 ;
-
-  if(tri->e0() == tri->e1()) // marker for artificial bisectors: they have the same face on both sides
-    return construct_artifical_isecC2(tri, aCaches) ;
 
   CGAL_STSKEL_TRAITS_TRACE("\n~~ Computing degenerate offset lines isec point [" << typeid(FT).name() << "]");
   CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);

@@ -783,6 +783,96 @@ private :
     return r ;
   }
 
+  // Artificial events are the intersections of a ray shot from the extreme vertex of a hole of a face
+  // orthogonally to the contour edge of the face, with a skeleton bisector of that face.
+  //
+  // The triedge of an artificial event is (contour, contour, other_contour), where:
+  // - "contour, contour" (aka e0 == e1) is a marker for artificial bisector
+  // - `other_contour` is the contour of the face on the other side of the skeleton bisector.
+  // The left child of the trisegment is the seed of the ray.
+  Triedge CreateArtificialTriedge ( Halfedge_handle aContourH, Halfedge_handle aBisector ) const
+  {
+    CGAL_precondition( !aContourH->is_border() && aContourH->opposite()->is_border() && aBisector->is_bisector() ) ;
+    CGAL_precondition( aBisector->defining_contour_edge() == aContourH ) ;
+    Halfedge_handle aOContourH = aBisector->opposite()->defining_contour_edge();
+    CGAL_assertion( aContourH != aOContourH );
+    return Triedge( aContourH, aContourH, aOContourH ) ;
+  }
+
+  Trisegment_2_ptr CreateArtificialTrisegment ( Halfedge_handle aContourH,
+                                                Halfedge_handle aBisector,
+                                                Vertex_handle aSeed ) const
+  {
+    CGAL_precondition( aSeed->is_skeleton() && !aSeed->has_infinite_time() ) ;
+    Trisegment_2_ptr lRes = CreateTrisegment( CreateArtificialTriedge( aContourH, aBisector ), aSeed ) ;
+    CGAL_postcondition( lRes->collinearity() == TRISEGMENT_COLLINEARITY_01 );
+    return lRes;
+  }
+
+  Trisegment_2_ptr const& GetTrisegment ( Trisegment_2_ptr const& aTrisegment ) const
+  {
+    return aTrisegment ;
+  }
+
+  // Oriented side of the point of `aQ` w.r.t. the line orthogonal to the contour edge `aContourH`
+  // and going through the point of `aS`.
+  Oriented_side OrientedSideWrtOrthogonalLine ( Halfedge_const_handle aContourH,
+                                                Trisegment_2_ptr const& aQ,
+                                                Trisegment_2_ptr const& aS ) const
+  {
+    CGAL_precondition( aQ != nullptr && aS != nullptr ) ;
+
+    // OK to give twice the same segment here, because the predicate will take the orthogonal line
+    // through the left child, which is what we want.
+    return mTraits.oriented_side_of_event_point_wrt_bisector_2_object()( aQ,
+                                                                         CreateSegment<Traits>(aContourH),
+                                                                         aContourH->weight(),
+                                                                         CreateSegment<Traits>(aContourH),
+                                                                         aContourH->weight(),
+                                                                         aS,
+                                                                         true /*primary is e0*/ ) ;
+  }
+
+  // Compares the positions of two points (given as vertices or trisegments) known to be on the supporting
+  // line of the bisector `aBisector`, along the bisector.
+  //
+  // Two configurations:
+  // - If the time is not constant along the bisector, the time is a parameter of the supporting line
+  //   and the positions can be compared through times.
+  // - The time is constant, meaning the bisector is parallel to the defining contour edges
+  //   and the positions can be compared along that direction.
+  template <typename A, typename B>
+  Comparison_result CompareAlongBisector ( Halfedge_handle aBisector, A const& aA, B const& aB ) const
+  {
+    CGAL_precondition( aBisector->is_bisector() ) ;
+
+    Vertex_handle lSV = aBisector->opposite()->vertex() ;
+    Vertex_handle lTV = aBisector->vertex() ;
+    CGAL_precondition( !lSV->has_infinite_time() && !lTV->has_infinite_time() ) ;
+
+    const Comparison_result lSTRes = CompareEvents( lSV, lTV ) ;
+    if ( lSTRes != EQUAL )
+    {
+      // not constant time ==> CompareEvents() will compare times
+      const Comparison_result lRes = CompareEvents( aA, aB ) ;
+      return ( lSTRes == SMALLER ) ? lRes : CGAL::opposite(lRes) ;
+    }
+
+    // Constant time
+    CGAL_assertion( lSV->is_skeleton() && lTV->is_skeleton() ) ; // can't be incident to the border
+
+    Halfedge_const_handle lContourH = aBisector->defining_contour_edge() ;
+    const Oriented_side lSTSide = OrientedSideWrtOrthogonalLine( lContourH, GetTrisegment(lSV), GetTrisegment(lTV) ) ;
+    const Oriented_side lSide = OrientedSideWrtOrthogonalLine( lContourH, GetTrisegment(aA), GetTrisegment(aB) ) ;
+
+    if ( lSide == ON_ORIENTED_BOUNDARY )
+      return EQUAL ;
+    else if ( lSTSide == ON_ORIENTED_BOUNDARY ) // zero-length bisector (?...)
+      return LARGER ; // arbitrary but consistent
+    else
+      return ( lSide == lSTSide ) ? SMALLER : LARGER ;
+  }
+
   Vertex_handle GetPrevInLAV ( Vertex_handle aV )
   {
     return GetVertex ( GetVertexData(aV).mPrevInLAV ) ;
@@ -968,6 +1058,11 @@ private :
     return aSeedNode->is_skeleton() ? aSeedNode->has_infinite_time() ? SMALLER
                                                                      : CompareEvents( aTrisegment, GetTrisegment(aSeedNode) )
                                     : LARGER  ;
+  }
+
+  Comparison_result CompareEvents( Vertex_handle aSeedNode, Trisegment_2_ptr const& aTrisegment ) const
+  {
+    return CGAL::opposite( CompareEvents( aTrisegment, aSeedNode ) ) ;
   }
 
   Comparison_result CompareEvents( Vertex_handle aLNode, Vertex_handle aRNode ) const
