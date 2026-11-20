@@ -31,8 +31,11 @@
 #define CGAL_GMPXX_H
 
 #include <cstring> // needed by GMP 4.1.4 since <gmpxx.h> misses it.
-#include <gmpxx.h>
+#include <limits>
+#include <type_traits>
 #include <utility>
+
+#include <gmpxx.h>
 
 #include <CGAL/mpz_class.h>
 #include <CGAL/mpq_class.h>
@@ -48,6 +51,54 @@ class Algebraic_structure_traits< ::__gmp_expr<T,U> >
 template < typename T, typename U >
 class Real_embeddable_traits< ::__gmp_expr<T,U> >
     : public Real_embeddable_traits< ::__gmp_expr<T,T> >{};
+
+
+template <class NT1, class NT2> struct NT_converter;
+
+namespace internal {
+
+template <class Integer, class Target>
+struct Gmpxx_long_long_converter
+{
+  typedef Integer argument_type;
+  typedef Target result_type;
+
+  Target operator()(Integer value) const
+  {
+    using Long = std::conditional_t<std::is_signed_v<Integer>, long, unsigned long>;
+    if constexpr(std::numeric_limits<Long>::digits >= std::numeric_limits<Integer>::digits)
+      return Target(static_cast<Long>(value));
+    else
+    {
+      unsigned long long magnitude = static_cast<unsigned long long>(value);
+      if(value < 0)
+        magnitude = 0 - magnitude;
+      mpz_class integer;
+      mpz_import(integer.get_mpz_t(), 1, 1, sizeof(magnitude), 0, 0, &magnitude);
+      if(value < 0)
+        mpz_neg(integer.get_mpz_t(), integer.get_mpz_t());
+      return Target(integer);
+    }
+  }
+};
+
+} // namespace internal
+
+template <>
+struct NT_converter<long long, mpz_class>
+  : internal::Gmpxx_long_long_converter<long long, mpz_class> {};
+
+template <>
+struct NT_converter<unsigned long long, mpz_class>
+  : internal::Gmpxx_long_long_converter<unsigned long long, mpz_class> {};
+
+template <>
+struct NT_converter<long long, mpq_class>
+  : internal::Gmpxx_long_long_converter<long long, mpq_class> {};
+
+template <>
+struct NT_converter<unsigned long long, mpq_class>
+  : internal::Gmpxx_long_long_converter<unsigned long long, mpq_class> {};
 
 } //namespace CGAL
 
