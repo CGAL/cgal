@@ -3,12 +3,23 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Surface_mesh.h>
 
+// #define CGAL_SLS_DEBUG_DRAW
+#ifdef CGAL_SLS_DEBUG_DRAW
+  #include <CGAL/Straight_skeleton_2/IO/print.h>
+  #include <CGAL/draw_straight_skeleton_2.h>
+  #include <CGAL/draw_polygon_2.h>
+  #include <CGAL/draw_polygon_with_holes_2.h>
+  #include <CGAL/draw_triangulation_2.h>
+  #include <CGAL/draw_surface_mesh.h>
+#endif
+
 #include <CGAL/extrude_skeleton.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/IO/polygon_mesh_io.h>
 
 namespace PMP = ::CGAL::Polygon_mesh_processing;
+namespace SLSE = ::CGAL::Straight_skeleton_extrusion;
 
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
@@ -203,7 +214,8 @@ bool test(const char* poly_filename,
   std::cout << "\nTest:\n"
             << "\tPolygon: " << poly_filename << "\n"
             << "\tAngles: " << angles_filename << "\n"
-            << "\tHeight: " << height << std::endl;
+            << "\tHeight: " << height << "\n"
+            << "\tKernel: " << typeid(K).name() << std::endl;
 
   Polygon_with_holes_2 pwh;
   if(!read_input_polygon(poly_filename, pwh) || pwh.outer_boundary().is_empty())
@@ -241,6 +253,15 @@ bool test(const char* poly_filename,
   volume = PMP::volume(sm);
   assert(are_equal(volume, expected_volume, rel_eps, true /*verbose*/));
 
+  // With the exact kernel
+  using XK = typename SLSE::internal::Extrusion_kernel_selector<K>::type;
+
+  clear(sm);
+  CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::angles(angles).maximum_height(- height).extrusion_traits(XK()));
+
+  volume = PMP::volume(sm);
+  assert(are_equal(volume, expected_volume, rel_eps, true /*verbose*/));
+
   return true;
 }
 
@@ -270,6 +291,8 @@ void test()
   test<K>("data/polygon_020.dat", "data/angles_020.dat",  70, 1550161.8131298050);
   test<K>("data/polygon_021.dat", "data/angles_021.dat",  70, 37631800.885042846);
   test<K>("data/polygon_022.dat", "data/angles_022.dat",  20, 7702444.2118858183);
+  test<K>("data/polygon_023.dat", "data/angles_023.dat",   1, 17.333333333333332);
+  test<K>("data/polygon_024.dat", "data/angles_024.dat",   1, 5.333333333333333);
 }
 
 int main(int, char**)

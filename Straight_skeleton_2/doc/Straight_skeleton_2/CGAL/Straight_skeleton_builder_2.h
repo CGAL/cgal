@@ -164,7 +164,7 @@ Straight_skeleton_builder_2(std::optional<FT> max_time = std::nullopt,
 /// @{
 
 /*!
-defines the <I>contours</I> that form the <I>non-degenerate strictly-simple polygon with holes</I>
+defines the <I>contours</I> that form a <I>non-degenerate strictly-simple polygon with holes</I>
 whose <I>straight skeleton</I> is to be built.
 
 Each contour must be input in turn starting with the <I>outer contour</I> and following with the holes (if any).
@@ -177,8 +177,8 @@ or touches a hole. It is possible however to enter a contour that touches itself
 that its interior region is still well defined and singly-connected (see the User Manual for examples).
 
 The sequence `[aBegin,aEnd)` must iterate over each 2D point that corresponds to a vertex
-of the contour being entered. Vertices cannot be coincident (except consecutively since the method
-simply skip consecutive coincident vertices). Consecutive collinear edges are allowed.
+of the contour being entered. Vertices cannot be coincident, except consecutively; in this
+case, the method will simply keep a single vertex. Consecutive collinear edges are allowed.
 
 \tparam InputPointIterator must be a model `InputIterator` whose `value_type` is `Point_2`.
 
@@ -188,6 +188,33 @@ template<class InputPointIterator>
 Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPointIterator aEnd );
 
 /*!
+defines a <I>contour</I> of the polygon with holes, as `enter_contour()` does, along with the <I>weights</I> associated to its edges:
+the `i`-th weight in the range `[aWeightsBegin, aWeightsEnd)` is associated to the contour edge
+between the `i-1`-th and `i`-th vertices.
+
+The requirements on the vertices are the same as for `enter_contour()`.
+Consecutive coincident vertices are skipped, along with the weights of the
+corresponding (zero-length) edges. If fewer than three distinct vertices remain,
+neither the contour nor its weights are entered.
+
+If any of the conditions below is not fulfilled, the contour and its weights are discarded
+and the subsequent call to `construct_skeleton()` will return a null skeleton:
+- `std::distance(aWeightsBegin,aWeightsEnd)` is equal to `std::distance(aBegin,aEnd)`;
+- weights are (strictly) positive, finite numbers;
+- collinear consecutive contour edges have equal weights.
+
+\tparam InputPointIterator must be a model `InputIterator` whose `value_type` is `Point_2`.
+\tparam WeightIterator must be a model `InputIterator` whose `value_type` is `FT`.
+
+\returns `*this`
+*/
+template<class InputPointIterator, class WeightIterator>
+Straight_skeleton_builder_2& enter_weighted_contour( InputPointIterator aBegin, InputPointIterator aEnd,
+                                                     WeightIterator aWeightsBegin, WeightIterator aWeightsEnd );
+
+/*!
+\deprecated This function is deprecated since \cgal 6.4, use `enter_weighted_contour()` instead.
+
 defines the <I>weights</I> of the contour last entered through `enter_contour()`.
 
 \tparam WeightIterator must be a model `InputIterator` whose `value_type` is `FT`.
@@ -203,8 +230,8 @@ Straight_skeleton_builder_2& enter_contour_weights( WeightIterator aBegin, Weigh
 
 /*!
 constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined
-by the contours entered first by calling `enter_contour()`. All the contours of the polygon with holes
-must be entered before calling `construct_skeleton()`.
+by the contours entered first by calling `enter_contour()` or `enter_weighted_contour()`.
+All the contours of the polygon with holes must be entered before calling `construct_skeleton()`.
 
 After `construct_skeleton()` completes, you cannot enter more contours and/or call `construct_skeleton()` again.
 If you need another straight skeleton for another polygon you must instantiate and use another builder.

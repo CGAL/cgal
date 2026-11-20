@@ -25,6 +25,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Default.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/tags.h>
 
@@ -94,15 +95,17 @@ create_partial_interior_weighted_straight_skeleton_2 ( const FT& aMaxTime,
 
   SsBuilder ssb( lOptMaxTime ) ;
 
-  ssb.enter_contour ( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, conv ) ;
-  ssb.enter_contour_weights ( aOuterContour_WeightsBegin, aOuterContour_WeightsEnd, wconv ) ;
+  ssb.enter_weighted_contour ( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd,
+                               aOuterContour_WeightsBegin, aOuterContour_WeightsEnd,
+                               conv, wconv ) ;
 
   for(HoleIterator hi = aHolesBegin; hi != aHolesEnd && aHoles_WeightsBegin != aHoles_WeightsEnd; ++ hi, ++aHoles_WeightsBegin)
   {
     CGAL_precondition(std::distance(CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi)) ==
                       std::distance(aHoles_WeightsBegin->begin(), aHoles_WeightsBegin->end()));
-    ssb.enter_contour(CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), conv);
-    ssb.enter_contour_weights(aHoles_WeightsBegin->begin(), aHoles_WeightsBegin->end(), wconv);
+    ssb.enter_weighted_contour(CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi),
+                               aHoles_WeightsBegin->begin(), aHoles_WeightsBegin->end(),
+                               conv, wconv);
   }
 
   return ssb.construct_skeleton();

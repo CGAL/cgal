@@ -659,7 +659,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<tru
   // by making them use the same line coefficients (which determines the speed of the front).
   //
   // That is achieved by creating a set of input edges, with two input edges being equal if they are collinear.
-  // If a new input edge is not successfully inserted into the same, it takes the line coefficients
+  // If a new input edge is not successfully inserted into the set, it takes the line coefficients
   // of the representative of this class.
 
   auto comparer = [&](Halfedge_handle lLH, Halfedge_handle lRH) -> bool
@@ -2117,8 +2117,6 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
     if( holes.empty() )
       continue;
 
-    const Direction_2 orth_dir = CreatePerpendicularDirection( contour_h ) ;
-
     CGAL_STSKEL_BUILDER_TRACE(4, "E" << contour_h->id() << " has " << holes.size() << " hole(s)." );
 
     // First, order the holes such that extreme points (one by hole) are from closest
@@ -2135,9 +2133,6 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
     for(auto hole_hi = holes.begin(); hole_hi != holes.end(); ++hole_hi)
     {
       Halfedge_handle extreme_h = *hole_hi;
-
-      typename K::Ray_2 r ( extreme_h->vertex()->point(), orth_dir ) ;
-
       CGAL_STSKEL_BUILDER_TRACE(4, "Shooting ray from " << extreme_h->vertex()->point() );
 
       EventPtr closest_artificial_event = nullptr;
@@ -2148,13 +2143,27 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
         if(h->vertex()->has_infinite_time() || h->prev()->vertex()->has_infinite_time())
           return;
 
-        Triedge artificial_triedge(contour_h, contour_h, h);
-        Trisegment_2_ptr artificial_trisegment = CreateTrisegment(artificial_triedge, extreme_h->vertex());
+        // The intersection of the ray with the supporting line of the bisector
+        Trisegment_2_ptr artificial_trisegment = CreateArtificialTrisegment(contour_h, h, extreme_h->vertex());
         CGAL_assertion(bool(artificial_trisegment->child_l()));
 
         if(!ExistEvent(artificial_trisegment))
           return;
 
+        // The event is the intersection of the bisector with the line orthogonal to the contour edge
+        // through the seed: check that it is on the ray
+        if(CompareEvents(artificial_trisegment, extreme_h->vertex()) != CGAL::LARGER)
+          return;
+
+        // Check that the intersection is on the halfedge
+        if(CompareAlongBisector(h, artificial_trisegment, h->prev()->vertex()) == CGAL::SMALLER ||
+           CompareAlongBisector(h, artificial_trisegment, h->vertex()) == CGAL::LARGER)
+          return;
+
+        // This is not a valid triedge because h is not a contour halfedge, but the event must know
+        // which halfedge is intersected by the ray. The pair of identical contour halfedges
+        // at e0 and e1 is the marker for artificial events.
+        Triedge artificial_triedge(contour_h, contour_h, h);
         EventPtr artificial_event = EventPtr(new ArtificialEvent(artificial_triedge, artificial_trisegment, extreme_h->vertex()));
         if(closest_artificial_event == nullptr ||
            CompareEvents(artificial_event, closest_artificial_event) == CGAL::SMALLER)
@@ -2208,8 +2217,10 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
 
   CGAL_STSKEL_BUILDER_TRACE(2, artifical_events.size() << " artificial events to add");
 
-  // Splits need to be sorted right to left such that consecutive splits do not tangle the HDS
-  // Since we can have splits from both side of an edge, we sort events globally
+  // An edge might be split multiple times, possibly from both sides. Splits keep the canonical halfedge
+  // (the halfedge with the smallest ID of the pair) on the part that is closest to its target (see below),
+  // so the splits of an edge are applied from the source to the target of its canonical halfedge.
+  // Since we can have splits from both side of an edge, we sort events globally.
   std::sort(artifical_events.begin(), artifical_events.end(),
             [&](const auto& e1, const auto& e2)
             {
@@ -2225,14 +2236,11 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
               if(!is_same_edge)
                 return canonical_split_h_1->id() < canonical_split_h_2->id(); // arbitrary
 
-              Halfedge_handle contour_h = canonical_split_h_1->defining_contour_edge();
-
-              // @fixme this should be a predicate...
-              const Point_2& split_p_1 = artificial_event_1->point();
-              const Point_2& split_p_2 = artificial_event_2->point();
-
-              return K().left_turn_2_object()( contour_h->vertex()->point(), split_p_1, split_p_2 );
-              } );
+              // Events of both sides are on the supporting line of the edge
+              return CompareAlongBisector(canonical_split_h_1,
+                                          artificial_event_1->trisegment(),
+                                          artificial_event_2->trisegment()) == CGAL::SMALLER;
+            } );
 
   // Apply the splits
 
@@ -2271,6 +2279,15 @@ extreme_h /     \                          extreme_h /     \
     FT split_t = artificial_event->time() ;
 
     CGAL_STSKEL_BUILDER_TRACE(4, "Splitting E" << split_h->id() << " at pos " << split_p << " time " << split_t );
+    // Previous splits might have shortened `split_h`, but `split_h` is still the "opposite" halfedge
+
+    // The ray might hit the bisector exactly at one of its vertices.
+    CGAL_assertion(CompareAlongBisector(split_h, artificial_event->trisegment(), split_h_sv) != CGAL::SMALLER &&
+                   CompareAlongBisector(split_h, artificial_event->trisegment(), split_h_tv) != CGAL::LARGER);
+
+    const bool is_split_at_target = (CompareAlongBisector(split_h, artificial_event->trisegment(), split_h_tv) == CGAL::EQUAL);
+    const bool is_split_at_source = !is_split_at_target &&
+                                    (CompareAlongBisector(split_h, artificial_event->trisegment(), split_h_sv) == CGAL::EQUAL);
 
     // Create the new "vertical" (w.r.t. the contour edge) halfedges
     Halfedge new_up(mEdgeID++), new_down(mEdgeID++);
@@ -2289,7 +2306,7 @@ extreme_h /     \                          extreme_h /     \
     extreme_h->HBase_base::set_next( new_up_h );
     new_up_h->HBase_base::set_prev( extreme_h );
 
-    if(split_p == split_h_tv->point())
+    if(is_split_at_target)
     {
       new_up_h->HBase_base::set_vertex( split_h_tv );
 
@@ -2299,7 +2316,7 @@ extreme_h /     \                          extreme_h /     \
       split_h->HBase_base::set_next( new_down_h );
       new_down_h->HBase_base::set_prev( split_h );
     }
-    else if (split_p == split_h_sv->point())
+    else if(is_split_at_source)
     {
       new_up_h->HBase_base::set_vertex( split_h_sv );
 
@@ -2315,10 +2332,8 @@ extreme_h /     \                          extreme_h /     \
       Vertex_handle new_v = mSSkel->SSkel::Base::vertices_push_back( Vertex (mVertexID++, split_p, split_t, false, false) ) ;
       InitVertexData(new_v);
 
-      // This is not a valid triedge because split_h is not a contour halfedge, but we need
-      // to know which skeleton bisector the line orthogonal to contour_h interscets.
       // The pair of identical contour halfedges at e0 and e1 is the marker for artificial vertices
-      SetVertexTriedge(new_v, artificial_event->triedge());
+      SetVertexTriedge(new_v, CreateArtificialTriedge(artificial_event->triedge().e0(), split_h));
       SetTrisegment(new_v, artificial_event->trisegment());
 
       new_up_h->HBase_base::set_vertex( new_v ) ;
@@ -2443,6 +2458,12 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
 template<class Gt, class Ss, class V>
 bool Straight_skeleton_builder_2<Gt,Ss,V>::Run()
 {
+  if ( mInvalidInput )
+  {
+    CGAL_STSKEL_BUILDER_TRACE(0,"Invalid input, no skeleton constructed.");
+    return false ;
+  }
+
   InitPhase();
   Propagate();
   return FinishUp();

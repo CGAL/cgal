@@ -160,8 +160,18 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateSeed( FT aTime, Halfedge_con
       // the next hook will be found at the previous bisector's target, which would be a mistake.
       // So, we modify the seed to be the target() of the previous halfedge instead.
       if ( lPos == SOURCE )
+      {
+        CGAL_POLYOFFSET_TRACE(2,"Pos at source on " << e2str(*rSeed) << "...");
         rSeed = rSeed->prev() ;
-      CGAL_POLYOFFSET_TRACE(2,"Pos at source switched to pos at target on " << e2str(*rSeed) ) ;
+        CGAL_POLYOFFSET_TRACE(2,"... switched to pos at target on " << e2str(*rSeed) ) ;
+
+        // The previous rSeed was filtered in LocateHook, we need the same checks here
+        if ( IsVisited(rSeed) || rSeed->slope() == ZERO ) // @todo check that prev is not a bisector too?
+        {
+          CGAL_POLYOFFSET_TRACE(2,"Switched seed is already visited or degenerate. Discarded" ) ;
+          rSeed = Halfedge_const_handle();
+        }
+      }
     }
     else
     {
@@ -208,9 +218,10 @@ void Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::AddOffsetVertex( FT          
 
   CGAL_POLYOFFSET_TRACE(1,"Found offset point p=" << p2str(*lP) << " at offset " << aTime << " along bisector " << e2str(*aHook) << " reaching " << v2str(*aHook->vertex()) ) ;
 
+  mVisitor.on_offset_point(*lP,aHook);
+
   if ( lP != mLastPoint )
   {
-    mVisitor.on_offset_point(*lP,aHook);
     aPoly->push_back(*lP);
     mLastPoint = lP ;
   }
@@ -229,6 +240,8 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
   CGAL_POLYOFFSET_TRACE(1,"\nTracing new offset polygon" ) ;
 
   ContainerPtr lPoly( new Container() ) ;
+
+  mLastPoint = std::nullopt ;
 
   mVisitor.on_offset_contour_started();
 
@@ -258,8 +271,13 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
       lHook = lHook->opposite();
     }
 
-    Visit(lLastHook);
-    visited_hooks.push_back(lLastHook);
+    // If a trace is not complete, halfedge visited flags are reset. However, we must not
+    // reset hooks that were genuinely visited from another offset contour.
+    if ( !IsVisited(lLastHook) )
+    {
+      Visit(lLastHook);
+      visited_hooks.push_back(lLastHook);
+    }
 
     CGAL_POLYOFFSET_TRACE(2,"Marking last hook, B" << lLastHook->id() << ", as visited." ) ;
   }

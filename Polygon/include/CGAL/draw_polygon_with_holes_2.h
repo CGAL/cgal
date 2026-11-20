@@ -233,6 +233,49 @@ void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2,
 
 #undef CGAL_P2_WITH_HOLES_TYPE
 
+#define CGAL_GP2_WITH_HOLES_TYPE CGAL::General_polygon_with_holes_2<P>
+
+template <class P, class GSOptions>
+void add_to_graphics_scene(const CGAL_GP2_WITH_HOLES_TYPE& p2,
+                           CGAL::Graphics_scene& graphics_scene,
+                           const GSOptions &gs_options)
+{
+  draw_function_for_ph2_with_holes::compute_elements(p2, graphics_scene, gs_options);
+}
+
+template <class P>
+void add_to_graphics_scene(const CGAL_GP2_WITH_HOLES_TYPE& p2,
+                           CGAL::Graphics_scene& graphics_scene)
+{
+  Graphics_scene_options<CGAL_GP2_WITH_HOLES_TYPE,
+                  typename CGAL_GP2_WITH_HOLES_TYPE::General_polygon_2::Vertex_const_iterator,
+                  typename CGAL_GP2_WITH_HOLES_TYPE::General_polygon_2::Vertex_const_iterator,
+                  void*> gs_options;
+
+  add_to_graphics_scene(p2, graphics_scene, gs_options);
+}
+
+// Specialization of draw function.
+template<class P, class GSOptions>
+void draw(const CGAL_GP2_WITH_HOLES_TYPE& ap2, const GSOptions &gs_options,
+          const char* title="Polygon with Holes Basic Viewer")
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(ap2, buffer, gs_options);
+  draw_graphics_scene(buffer, title);
+}
+
+template<class P>
+void draw(const CGAL_GP2_WITH_HOLES_TYPE& ap2,
+          const char* title="Polygon with Holes Basic Viewer")
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(ap2, buffer);
+  draw_graphics_scene(buffer, title);
+}
+
+#undef CGAL_GP2_WITH_HOLES_TYPE
+
 } // End namespace CGAL
 
 #endif // CGAL_DRAW_POLYGON_WITH_HOLES_2_H

@@ -19,6 +19,7 @@
 #include <CGAL/create_weighted_offset_polygons_2.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Default.h>
 
 #include <type_traits>
 #include <vector>
