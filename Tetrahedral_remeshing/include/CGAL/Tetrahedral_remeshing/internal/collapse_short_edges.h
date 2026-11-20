@@ -476,7 +476,7 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
 
   for(const Cell_handle c0 : cells0)
   {
-    if(c0->has_vertex(v1) || tr.is_infinite(c0))
+    if(c0->has_vertex(v1))
       continue;
 
     // c0 is incident to v0 but not to v1
