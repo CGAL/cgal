@@ -221,6 +221,16 @@ void test(const Cont &)
   typename Cont::const_iterator s_cit = Cont::s_iterator_to(const_cast<typename Cont::const_reference>(*c9.begin()));
   assert(s_cit == c9.begin());
 
+  typename Cont::pointer pointer = &*c9.begin();
+  typename Cont::const_pointer const_pointer = pointer;
+  static_assert(std::is_same_v<decltype(Cont::s_iterator_to(pointer)), typename Cont::iterator>);
+  static_assert(std::is_same_v<decltype(Cont::s_iterator_to(const_pointer)), typename Cont::const_iterator>);
+  assert(Cont::s_iterator_to(pointer) == c9.begin());
+  assert(Cont::s_iterator_to(const_pointer) == c9.begin());
+  assert(Cont::s_iterator_to(typename Cont::pointer(nullptr)) == nullptr);
+  assert(Cont::s_iterator_to(typename Cont::const_pointer(nullptr)) == nullptr);
+  assert(Cont::s_iterator_to(nullptr) == nullptr);
+
 
   c10 = Cont();
 
