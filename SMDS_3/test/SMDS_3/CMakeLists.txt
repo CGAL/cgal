@@ -6,6 +6,7 @@ project(SMDS_3_Tests)
 
 find_package(CGAL REQUIRED)
 
+create_single_source_cgal_program( "test_integer_io_signature.cpp")
 create_single_source_cgal_program( "test_simplicial_cb_vb.cpp")
 create_single_source_cgal_program( "test_tet_soup_to_c3t3.cpp")
 
