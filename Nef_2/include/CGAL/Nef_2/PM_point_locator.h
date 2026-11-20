@@ -741,7 +741,7 @@ public:
       //        std::cerr << s << std::endl;
       //        std::cerr << point(source(circ)) << "->" << point(target(circ)) << std::endl;
       auto o = intersection(s, Segment(point(source(circ)),
-                                         point(target(circ))));
+                                       point(target(circ))));
 
       if(assign(i,o)) {
         CGAL_NEF_TRACEN("intersection in point " << i);
