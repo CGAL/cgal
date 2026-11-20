@@ -493,61 +493,85 @@ private:
                                 FT&)
 #endif
   {
+    using Cell_handle = typename Tr::Cell_handle;
+
     const typename Tr::Point backup = v->point(); //backup v's position
     const typename Tr::Geom_traits::Point_3 pv = point(backup);
 
-    double frac = 1.0;
     typename Tr::Geom_traits::Vector_3 move(pv, final_pos);
 
-    const Dihedral_angle_cosine curr_max_cos = m_flip_smooth_steps
-      ? max_cosine(tr, inc_cells)
-      : Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);//Dummy unused value
+    //keep track of positive orientation from before move
+    const bool may_have_bad = tr.may_have_badly_oriented_cells();
+    boost::container::small_vector<bool, 64> was_positive;
+    if (may_have_bad)
+    {
+      was_positive.reserve(inc_cells.size());
+      for(const Cell_handle c : inc_cells)
+        was_positive.push_back(is_well_oriented(tr, c));
+    }
+    const auto positive_before
+      = [&](const std::size_t i) { return !may_have_bad || was_positive[i]; };
 
-    const bool check_orientation = need_to_check_orientation_after_change(tr, inc_cells);
+    // Dihedral angles are meaningless for inverted cells : only the cells that
+    // are positive before the move are taken into account.
+    Dihedral_angle_cosine curr_max_cos = cosine_of_90_degrees(); // = 0.
+    std::size_t i = 0;
+    for(const Cell_handle c : inc_cells)
+    {
+      if(positive_before(i++) && is_selected(c))
+      {
+        const Dihedral_angle_cosine cos_dh = max_cos_dihedral_angle(tr, c, false);
+        if(curr_max_cos < cos_dh)
+          curr_max_cos = cos_dh;
+      }
+    }
 
-    bool valid_try = true;
-    bool valid_orientation = true;
-    bool angles_improved = true;
+    bool valid_move = false;
+    double frac = 1.0;
     do
     {
       v->set_point(typename Tr::Point(pv + frac * move));
 
-      valid_try = true;
-      valid_orientation = true;
-      angles_improved = true;
-
-      for (const typename Tr::Cell_handle& ci : inc_cells)
+      // orientation is cheaper than angles, so test it first
+      bool valid_try = true;
+      i = 0;
+      for (const Cell_handle ci : inc_cells)
       {
-        if(check_orientation && !is_well_oriented(tr, ci))
+        if(positive_before(i++) && !is_well_oriented(tr, ci))
         {
-          frac = 0.5 * frac;
           valid_try = false;
-          valid_orientation = false;
           break;
         }
-        else if (m_flip_smooth_steps) //check that dihedral angles get improved
+      }
+
+      // keep the move only if the worst angle does not get smaller
+      if(valid_try && m_flip_smooth_steps) //check that dihedral angles get improved
+      {
+        i = 0;
+        for(const Cell_handle ci : inc_cells)
         {
-          if(is_selected(ci))
+          if(  positive_before(i++)
+            && is_selected(ci)
+            && curr_max_cos < max_cos_dihedral_angle(tr, ci, false))
           {
-            Dihedral_angle_cosine max_cos_ci = max_cos_dihedral_angle(tr, ci, false);
-            if (curr_max_cos < max_cos_ci)
-            {
-              // keep move only if new cosine is smaller than previous one
-              // i.e. if angle is larger
-              frac = 0.5 * frac;
-              valid_try = false;
-              angles_improved = false;
-              break;
-            }
+            // keep move only if new cosine is smaller than previous one
+            // i.e. if angle is larger
+            valid_try = false;
+            break;
           }
         }
       }
+
+      if (valid_try)
+      {
+        valid_move = true;
+        break;
+      }
+      frac*=0.5;
     }
-    while(!valid_try && frac > 0.1);
+    while(frac > 0.1);//last try is 0.125, after 4 attempts
 
     // if move failed, cancel move
-    bool valid_move =  valid_orientation && angles_improved;
-
     if(!valid_move)
       v->set_point(backup);
 
