@@ -1,0 +1,39 @@
+// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
+
+/// \defgroup PkgPACKAGERef Reference Manual
+/// \defgroup PkgPACKAGEConcepts Concepts
+/// \ingroup PkgPACKAGERef
+
+/// \defgroup PkgPACKAGEAlgorithmClasses Algorithm Classes
+/// \ingroup PkgPACKAGERef
+
+/// \defgroup PkgPACKAGETraitsClasses Traits Classes
+/// \ingroup PkgPACKAGERef
+
+/// \defgroup PkgPACKAGEMiscellaneous Miscellaneous
+/// \ingroup PkgPACKAGERef
+
+/*!
+\addtogroup PkgPACKAGERef
+\cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGE}
+\cgalPkgPicture{pkg-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{PACKAGE AUTHOR}
+\cgalPkgDesc{PACKAGE DESCRIPTION.
+The package provides ... }
+\cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGERef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{X.X}
+\cgalPkgDependsOn{\ref PkgDEPENDENCY}
+\cgalPkgBib{cgal:x-x}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{DEMO 1,demo1.zip}
+\cgalPkgDemo{DEMO 2,demo2.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+*/
