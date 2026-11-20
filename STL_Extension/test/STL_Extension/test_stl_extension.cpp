@@ -48,7 +48,6 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/tuple.h>
 #include <CGAL/assertions.h>
-#include <boost/typeof/typeof.hpp>
 
 #include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 #include <CGAL/result_of.h>
@@ -8207,15 +8206,15 @@ void test_make_sorted_pair() {
   int i=2;
   assert( CGAL::make_sorted_pair(1,i) == std::make_pair(1,i) );
   static_assert( std::is_same<
-                          BOOST_TYPEOF(CGAL::make_sorted_pair<long>(1L,i)),
+                          decltype(CGAL::make_sorted_pair<long>(1L,i)),
                           std::pair<long,long> >::value);
   assert( (CGAL::make_sorted_pair<long>(i,1L) == std::pair<long,long>(1L,2L)) );
 
   static_assert(  std::is_same<
-                          BOOST_TYPEOF(CGAL::make_sorted_pair<double>(1,2L)),
+                          decltype(CGAL::make_sorted_pair<double>(1,2L)),
                           std::pair<double,double> >::value) ;
   static_assert(  std::is_same<
-                          BOOST_TYPEOF(CGAL::make_sorted_pair<int>(1,2L)),
+                          decltype(CGAL::make_sorted_pair<int>(1,2L)),
                           std::pair<int,int> >::value);
 }
 
