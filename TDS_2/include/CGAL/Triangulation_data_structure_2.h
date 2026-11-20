@@ -17,6 +17,7 @@
 
 
 #include <CGAL/config.h>
+#include <array>
 #include <iostream>
 #include <list>
 #include <map>
@@ -136,6 +137,22 @@ public:
   Vertex_range& vertices()         {return _vertices;}
   Vertex_range& vertices() const
     {return  const_cast<Tds*>(this)->_vertices;}
+
+  std::array<Vertex_handle, 3> vertices(Face_handle f) const {
+    return {f->vertex(0), f->vertex(1), f->vertex(2)};
+  }
+
+  std::array<Vertex_handle, 2> vertices(Face_handle f, int i) const {
+    return {f->vertex(ccw(i)), f->vertex(cw(i))};
+  }
+
+  std::array<Vertex_handle, 2> vertices(Edge e) const {
+    return {e.first->vertex(ccw(e.second)), e.first->vertex(cw(e.second))};
+  }
+
+  std::array<Vertex_handle, 1> vertices(Vertex_handle v) const {
+    return {v};
+  }
 
   int  dimension() const { return _dimension;  }
   size_type number_of_vertices() const {return vertices().size();}

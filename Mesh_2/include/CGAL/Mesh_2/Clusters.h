@@ -351,8 +351,9 @@ update_cluster(Cluster& c, iterator it, Vertex_handle va,
         squared_distance(c.smallest_angle.first->point(), c.smallest_angle.second->point()) / FT(4);
   cluster_map.insert(Cluster_map_value_type(va,c));
 #ifdef CGAL_MESH_2_DEBUG_CLUSTERS
-  std::cerr << "Cluster at " << IO::oformat(va, With_point_tag{}) << " is updated.  "
-            << "\n  vm: " << IO::oformat(vm, With_point_tag{})
+  With_point_tag wpt{{-1}, tr };
+  std::cerr << "Cluster at " << IO::oformat(va, wpt) << " is updated.  "
+            << "\n  vm: " << IO::oformat(vm, wpt)
             << "\n  reduction: " << reduction
             << "\n  min_sq_len: " << c.minimum_squared_length
             << "\n";
