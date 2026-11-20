@@ -1,7 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_3.h>
 
-#include <iostream>
+#include <sstream>
+#include <set>
+#include <CGAL/intersections.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Tr = CGAL::Triangulation_3<K>;
@@ -104,62 +106,74 @@ R"_tr(2
 7 24 32
 )_tr";
 
-void dump_triangulation(const Tr& tr) {
-  std::ofstream off("triangulation.polylines.txt");
-  off.precision(17);
-  for(auto f : tr.finite_facets()) {
-    off << "4 " << f.first->vertex((f.second+1)%4)->point() << " "
-                << f.first->vertex((f.second+2)%4)->point() << " "
-                << f.first->vertex((f.second+3)%4)->point() << " "
-                << f.first->vertex((f.second+1)%4)->point()
-                << '\n';
+void check(const Tr& tr)
+{
+  assert(tr.is_valid());
+  for(auto a = tr.finite_vertices_begin(); a != tr.finite_vertices_end(); ++a)
+    for(auto b = tr.finite_vertices_begin(); b != tr.finite_vertices_end(); ++b)
+    {
+      if(a == b) continue;
+      Tr::Cell_handle last;
+      std::set<Tr::Cell_handle> seen;
+      for(auto it = tr.segment_traverser_cells_begin(a, b);
+          it != tr.segment_traverser_cells_end(); ++it)
+      {
+        last = it;
+        assert(seen.insert(last).second);
+        assert(seen.size() <= tr.number_of_facets());
+        assert(!tr.is_infinite(last->vertex(0)) && !tr.is_infinite(last->vertex(1)) && !tr.is_infinite(last->vertex(2)));
+        assert(CGAL::do_intersect(K::Segment_3(a->point(), b->point()),
+          K::Triangle_3(it->vertex(0)->point(), it->vertex(1)->point(), it->vertex(2)->point())));
+      }
+      assert(last != Tr::Cell_handle() && last->has_vertex(b));
+    }
+  std::vector<P> points;
+  for(const auto& v : tr.finite_vertex_handles())
+    points.push_back(v->point());
+  for(const auto& facet : tr.finite_facets())
+  {
+    const auto cell = facet.first;
+    points.push_back(CGAL::centroid(cell->vertex(0)->point(), cell->vertex(1)->point(), cell->vertex(2)->point()));
+    for(int i = 0; i < 3; ++i)
+      points.push_back(CGAL::midpoint(cell->vertex(i)->point(), cell->vertex((i + 1) % 3)->point()));
   }
-}
+  assert(points.size() > tr.number_of_vertices());
+  for(const P& a : points)
+    for(const P& b : points)
+    {
+      if(a == b) continue;
+      Tr::Cell_handle last;
+      std::set<Tr::Cell_handle> seen;
+      for(auto it = tr.segment_traverser_cells_begin(a, b);
+          it != tr.segment_traverser_cells_end(); ++it)
+      {
+        last = it;
+        assert(seen.insert(last).second);
+        assert(seen.size() <= tr.number_of_facets());
+        assert(CGAL::do_intersect(K::Segment_3(a, b),
+          K::Triangle_3(it->vertex(0)->point(), it->vertex(1)->point(), it->vertex(2)->point())));
+      }
+      assert(last != Tr::Cell_handle());
+      assert(K::Triangle_3(last->vertex(0)->point(), last->vertex(1)->point(), last->vertex(2)->point()).has_on(b));
+    }
 
-template <typename Point>
-void dump_segment(Point pa, Point pb)
-{
-  std::ofstream seg("segment.polylines.txt");
-  seg.precision(17);
-  seg << "2  " << pa << "  " << pb << '\n';
-}
-
-template <typename Point>
-void dump_triangle(Point a, Point b, Point c, int i)
-{
-  std::stringstream ss;
-  ss << "triangle_" << i << ".polylines.txt";
-  std::ofstream tri(ss.str());
-  tri.precision(17);
-  tri << "4  " << a << "  " << b << "  " << c << "  " << a << '\n';
 }
 
 int main()
 {
-  std::cerr.precision(17);
-  std::cout.precision(17);
-
   Tr tr;
-  std::istringstream iss(triangulation_content);
-  iss >> tr;
-  assert(tr.is_valid());
-  std::cerr << "dimension: " << tr.dimension() << std::endl;
-  std::cerr << "number of vertices: " << tr.number_of_vertices() << std::endl;
-  std::cerr << "number of facets: " << tr.number_of_facets() << std::endl;
-  std::cerr << "number of cells: " << tr.number_of_cells() << std::endl;
-  dump_triangulation(tr);
-  dump_segment(segment[0], segment[1]);
-  Tr::Vertex_handle va, vb;
-  const bool va_ok = tr.is_vertex(segment[0], va);
-  const bool vb_ok = tr.is_vertex(segment[1], vb);
-  assert(va_ok && vb_ok);
-  auto it = tr.segment_traverser_cells_begin(va, vb);
-  const auto end = tr.segment_traverser_cells_end();
-  for (int i = 0; it != end; ++it, ++i) {
-    std::cerr << "current cell: " << it->vertex(0)->point() << " "
-              << it->vertex(1)->point() << " " << it->vertex(2)->point()
-              << '\n';
-    dump_triangle(it->vertex(0)->point(), it->vertex(1)->point(),
-                  it->vertex(2)->point(), i);
+  std::istringstream input(triangulation_content);
+  input >> tr;
+  check(tr);
+  for(int plane = 0; plane < 3; ++plane)
+  {
+    Tr other;
+    for(const auto& v : tr.finite_vertex_handles())
+    {
+      const auto& p = v->point();
+      other.insert(plane == 0 ? P(0, p.x(), p.y()) :
+                   plane == 1 ? P(p.x(), 0, p.y()) : P(-p.x(), p.y(), 0));
+    }
+    check(other);
   }
 }
