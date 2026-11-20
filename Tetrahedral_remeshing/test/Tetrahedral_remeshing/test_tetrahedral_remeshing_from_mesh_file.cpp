@@ -11,6 +11,7 @@
 #include <fstream>
 
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
+#include <CGAL/IO/File_medit.h>
 
 #include <CGAL/Real_timer.h>
 
@@ -35,13 +36,12 @@ int main(int argc, char* argv[])
   CGAL::Real_timer timer;
   timer.start();
 
-  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
-    CGAL::parameters::number_of_iterations(5));
+  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length);
 
   timer.stop();
   std::cout << "Remeshing done in " << timer.time() << " seconds." << std::endl;
 
-  std::ofstream out("data/sphere_remeshed.mesh");
+  std::ofstream out("sphere_remeshed.mesh");
   CGAL::IO::write_MEDIT(out, tr);
   out.close();
 
