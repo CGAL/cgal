@@ -379,66 +379,9 @@ Collapse_type get_collapse_type(const typename C3t3::Edge& edge,
   else                        return IMPOSSIBLE;
 }
 
-//template<typename C3t3>
-//Edge_type get_edge_type(const typename C3t3::Edge& edge,
-//                        const C3t3& c3t3)
-//{
-//  typedef typename C3t3::Vertex_handle Vertex_handle;
-//  typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
-//  typedef typename C3t3::Subdomain_index Subdomain_index;
-
-//  const Vertex_handle & v0 = edge.first->vertex(edge.second);
-//  const Vertex_handle & v1 = edge.first->vertex(edge.third);
-
-//  const int dim0 = c3t3.in_dimension(v0);
-//  const int dim1 = c3t3.in_dimension(v1);
-
-//  const bool is_v0_on_hull = is_on_convex_hull(v0, c3t3);
-//  const bool is_v1_on_hull = is_on_convex_hull(v1, c3t3);
-
-//  if (c3t3.is_in_complex(edge))
-//    return FEATURE;
-
-//  else if (dim0 == 3 && dim1 == 3)
-//    return INSIDE;
-
-//  else if (dim0 == 2 && dim1 == 2)
-//  {
-//    Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
-//    Cell_circulator done = circ;
-
-//    std::vector<Subdomain_index> indices;
-//    do
-//    {
-//      Subdomain_index current_si = circ->subdomain_index();
-
-//      if (std::find(indices.begin(), indices.end(), current_si) == indices.end()) {
-//        indices.push_back(current_si);
-//      }
-
-//      Subdomain_index si_n0 = circ->neighbor(circ->index(v0))->subdomain_index();
-//      Subdomain_index si_n1 = circ->neighbor(circ->index(v1))->subdomain_index();
-//      if (si_n0 == si_n1 && si_n0 != current_si)
-//        return NO_COLLAPSE;
-
-//    } while (++circ != done);
-
-//    const std::size_t nb_si_v0 = nb_incident_subdomains(v0, c3t3);
-//    const std::size_t nb_si_v1 = nb_incident_subdomains(v1, c3t3);
-
-//    if (indices.size() >= (std::min)(nb_si_v0, nb_si_v1)) {
-//      return BOUNDARY;
-//    }
-//  }
-
-//  //std::cerr << "ERROR : get_edge_type did not return anything valid!" << std::endl;
-//  return NO_COLLAPSE;
-//}
-
-
 template <typename Triangulation>
 bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
-                             const Triangulation& tr)
+                                 const Triangulation& tr)
 {
   using Vertex_handle = typename Triangulation::Vertex_handle;
   using Facet = typename Triangulation::Facet;
@@ -486,19 +429,32 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
 
   const std::size_t ring_size = ring_vertices.size();
 
+  // collect the star of v0
+  boost::container::small_vector<Cell_handle, 64> cells0;
+  tr.incident_cells(v0, std::back_inserter(cells0));
+
   // collect the intersection of neighbors of v0 and neighbors of v1
   // the ring is included in this intersection
-  boost::container::small_vector<Vertex_handle, 64> neighbors_v0, neighbors_v1;
-  tr.adjacent_vertices(v0, std::back_inserter(neighbors_v0));
+  boost::container::small_vector<Vertex_handle, 64> neighbors_v0;
+  for(const Cell_handle c0 : cells0)
+  {
+    const int index_v0 = c0->index(v0);
+    for(int k = 1; k < 4; ++k)
+      neighbors_v0.push_back(c0->vertex((index_v0+k) % 4));
+  }
+  std::sort(neighbors_v0.begin(), neighbors_v0.end());
+  neighbors_v0.erase(std::unique(neighbors_v0.begin(), neighbors_v0.end()),
+                     neighbors_v0.end());
 
   if(neighbors_v0.size() != ring_size + 1)//o.w. N(v0)\v1 is the ring
   {
     // so there must be a shared neighbor outside the link
+    boost::container::small_vector<Vertex_handle, 64> neighbors_v1;
     tr.adjacent_vertices(v1, std::back_inserter(neighbors_v1));
     if(neighbors_v1.size() != ring_size + 1)//o.w. N(v1)\v0 is the ring
     {
       // there must be a shared neighbor outside the link
-      std::sort(neighbors_v0.begin(), neighbors_v0.end());
+      // (neighbors_v0 is already sorted)
 
       std::size_t count_common = 0;
       for(const Vertex_handle nv1 : neighbors_v1)
@@ -515,12 +471,9 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
   // check the case where :
   // facets [v0, x, y] and [v1, x, y] exist with x and y in the link of edge
   // but the edge [x, y] is not in the link of edge, so it is a chord
-  boost::container::small_vector<Cell_handle, 64> cells0;
-  tr.incident_cells(v0, std::back_inserter(cells0));
-
   for(const Cell_handle c0 : cells0)
   {
-    if(c0->has_vertex(v1) || tr.is_infinite(c0))
+    if(c0->has_vertex(v1))
       continue;
 
     // c0 is incident to v0 but not to v1
@@ -1225,20 +1178,15 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   typedef typename Tr::Vertex_handle     Vertex_handle;
   typedef typename Tr::Cell_handle       Cell_handle;
 
-  // The ring test depends on neither the collapse type nor the new position,
-  // so it settles all three attempts below at once - and it is the cheap one:
-  // one cell circulation, against a star walk plus an orientation predicate
-  // per cell of the star.
-  const bool link_condition = does_satisfy_link_condition(edge, c3t3.triangulation());
-  if(!link_condition)
-    return Vertex_handle();
-
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
 
   Collapse_type collapse_type = get_collapse_type(edge, c3t3, cell_selector);
-
   if (collapse_type == IMPOSSIBLE)
+    return Vertex_handle();
+
+  const bool link_condition = does_satisfy_link_condition(edge, c3t3.triangulation());
+  if(!link_condition)
     return Vertex_handle();
 
   Point new_pos;
