@@ -17,6 +17,8 @@
 #include <CGAL/Straight_skeleton_builder_traits_2.h>
 #include <CGAL/Trisegment_2.h>
 
+#include <type_traits>
+
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
 
