@@ -672,6 +672,8 @@ std::istream & operator>> (std::istream & is, Triangulation & t);
 
 /*!
 Writes the triangulation `t` into `os`.
+Only finite vertices are written. The infinite vertex remains numbered 0 in
+the combinatorial information, but its point and associated data are not written.
 */
 std::ostream& operator<< (std::ostream& os, const Triangulation & t);
 
