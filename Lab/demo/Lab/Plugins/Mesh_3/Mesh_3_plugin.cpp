@@ -569,11 +569,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   connect(ui.protect, SIGNAL(toggled(bool)), ui.noEdgeApprox, SLOT(setEnabled(bool)));
 
   //triangle parameters
-  Setup_ui_row s5(ui.approxLabel,    ui.approx,         diag * 10e-7, diag, approx,            {ui.noApprox});
-  Setup_ui_row s6(ui.sizingLabel,    ui.facetSizing,    diag * 10e-6, diag, facets_sizing,     {ui.noFacetSizing});
-  Setup_ui_row s7(ui.sizingMinLabel, ui.facetMinSizing, diag * 10e-6, diag, facets_min_sizing, {ui.noFacetMinSizing});
-  Setup_ui_row s8(ui.angleLabel,     ui.facetAngle,     0.0,          30.0, angle,             {ui.noAngle});
-//  Setup_ui_row s8b(ui.facetNormalAngleLabel, ui.facetNormalAngle, 0.0, 180.0, facet_normal_angle,  {ui.nofacetNormalAngle});
+  Setup_ui_row s5( ui.approxLabel,           ui.approx,           diag * 10e-7, diag, approx,            {ui.noApprox});
+  Setup_ui_row s6( ui.sizingLabel,           ui.facetSizing,      diag * 10e-6, diag, facets_sizing,     {ui.noFacetSizing});
+  Setup_ui_row s7( ui.sizingMinLabel,        ui.facetMinSizing,   diag * 10e-6, diag, facets_min_sizing, {ui.noFacetMinSizing});
+  Setup_ui_row s8( ui.angleLabel,            ui.facetAngle,       0.0,          30.0, angle,             {ui.noAngle});
+  Setup_ui_row s8b(ui.facetNormalAngleLabel, ui.facetNormalAngle, 0.0,          180., facet_normal_angle,{ui.noFacetNormalAngle});
 
   //tetrahedra parameters
   Setup_ui_row s9(ui.tetSizingLabel,    ui.tetSizing,    diag * 10e-6, diag,        tets_sizing,     {ui.noTetSizing});

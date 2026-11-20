@@ -430,27 +430,9 @@
        </widget>
       </item>
       <item row="5" column="1">
-       <widget class="QDoubleSpinBox" name="facetNormalAngle">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="cursor">
-         <cursorShape>IBeamCursor</cursorShape>
-        </property>
-        <property name="locale">
-         <locale language="French" country="France"/>
-        </property>
-        <property name="inputMethodHints">
-         <set>Qt::InputMethodHint::ImhNone</set>
-        </property>
-        <property name="maximum">
-         <double>180.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>90.000000000000000</double>
+       <widget class="DoubleEdit" name="facetNormalAngle">
+        <property name="text">
+         <string>90.00</string>
         </property>
        </widget>
       </item>
