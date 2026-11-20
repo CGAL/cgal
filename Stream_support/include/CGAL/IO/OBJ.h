@@ -63,7 +63,7 @@ bool read_OBJ(std::istream& is,
 
   set_ascii_mode(is); // obj is ASCII only
 
-  int mini(1), maxi(-1);
+  int maxi(-1);
   std::string s;
   Point p;
 
@@ -145,10 +145,14 @@ bool read_OBJ(std::istream& is,
         }
         else if(i < 1)
         {
-          // negative indices are relative references
+          // negative indices are relative to the vertices read so far
+          if(i < -static_cast<int>(points.size()))
+          {
+            if(verbose)
+              std::cerr << "error: invalid face index" << std::endl;
+            return false;
+          }
           face_indices.push_back(static_cast<int>(points.size()) + i);
-          if(i < mini)
-            mini = i;
         }
         else
         {
@@ -200,11 +204,15 @@ bool read_OBJ(std::istream& is,
         }
         else if(i < 1)
         {
+          if(i < -static_cast<int>(points.size()))
+          {
+            if(verbose)
+              std::cerr << "error: invalid polyline index" << std::endl;
+            return false;
+          }
           const std::size_t n = polylines.back().size();
           ::CGAL::internal::resize(polylines.back(), n + 1);
           polylines.back()[n] = static_cast<int>(points.size()) + i; // negative indices are relative references
-          if(i < mini)
-            mini = i;
         }
         else
         {
@@ -276,7 +284,7 @@ bool read_OBJ(std::istream& is,
     return false;
   }
 
-  if(maxi > static_cast<int>(points.size()) || mini < -static_cast<int>(points.size()))
+  if(maxi >= static_cast<int>(points.size()))
   {
     if(verbose)
       std::cerr << "error: invalid face index" << std::endl;

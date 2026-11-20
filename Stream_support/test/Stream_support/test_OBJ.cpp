@@ -63,8 +63,65 @@ void test_types()
   read<Point_type_3, Polygon_type_3>(CGAL::data_file_path("meshes/pig.obj"), 468, 891);
 }
 
+void test_out_of_range_indices()
+{
+  std::vector<Point> points;
+  std::vector<Face> polygons;
+
+  // valid: the last vertex, referenced by positive and by negative index
+  std::istringstream valid("v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\nf -1 -2 -3\n");
+  bool ok = CGAL::IO::read_OBJ(valid, points, polygons);
+  assert(ok);
+  assert(points.size() == 3 && polygons.size() == 2);
+
+  // one past the last vertex, in a face
+  points.clear();
+  polygons.clear();
+  std::istringstream face_past_end("v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 4\n");
+  ok = CGAL::IO::read_OBJ(face_past_end, points, polygons);
+  assert(!ok);
+
+  // one past the last vertex, in a polyline
+  points.clear();
+  polygons.clear();
+  std::vector<std::vector<std::size_t> > polylines;
+  std::istringstream polyline_past_end("v 0 0 0\nv 1 0 0\nv 0 1 0\nl 1 4\n");
+  ok = CGAL::IO::internal::read_OBJ(polyline_past_end, points, polygons, polylines);
+  assert(!ok);
+
+  // one before the first vertex, by negative index
+  points.clear();
+  polygons.clear();
+  std::istringstream face_before_begin("v 0 0 0\nv 1 0 0\nv 0 1 0\nf -1 -2 -4\n");
+  ok = CGAL::IO::read_OBJ(face_before_begin, points, polygons);
+  assert(!ok);
+
+  // negative indices count back from the vertices read so far, not from the end of the file
+  points.clear();
+  polygons.clear();
+  std::istringstream relative_valid("v 0 0 0\nv 1 0 0\nv 0 1 0\nf -1 -2 -3\nv 1 1 1\n");
+  ok = CGAL::IO::read_OBJ(relative_valid, points, polygons);
+  assert(ok);
+  assert(polygons.size() == 1 && polygons[0] == Face({2, 1, 0}));
+
+  points.clear();
+  polygons.clear();
+  std::istringstream face_before_vertices("v 0 0 0\nf -1 -2 -3\nv 1 0 0\nv 0 1 0\n");
+  ok = CGAL::IO::read_OBJ(face_before_vertices, points, polygons);
+  assert(!ok);
+
+  points.clear();
+  polygons.clear();
+  polylines.clear();
+  std::istringstream polyline_before_vertices("v 0 0 0\nl -1 -2\nv 1 0 0\n");
+  ok = CGAL::IO::internal::read_OBJ(polyline_before_vertices, points, polygons, polylines);
+  assert(!ok);
+}
+
 int main(int argc, char** argv)
 {
+  test_out_of_range_indices();
+
   const char* obj_file = (argc > 1) ? argv[1] : "data/cube_quad.obj";
 
   std::vector<Point> points;
