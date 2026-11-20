@@ -66,6 +66,15 @@ bbox_line_do_intersect_aux(const LFT px, const LFT py, const LFT pz,
   if(is_zero(dmin) && (is_positive(tmin) || is_negative(tmax)))
     return false;
 
+  // The line is parallel to the x-slab and inside it, so x puts no bound on t.
+  // The comparisons below read a zero denominator as an infinite bound only if
+  // its numerator is nonzero, which fails when px is on a face of the box.
+  if(is_zero(dmin))
+  {
+    tmin = FT(-1);
+    tmax = FT(1);
+  }
+
   FT dmax = dmin;
 
   // -----------------------------------
