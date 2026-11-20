@@ -471,7 +471,8 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
   return true;
 }
 
-// The cells of `star` keep a positive orientation once `v_moved` is at
+// The cells of `star` that are positively oriented
+// keep a positive orientation once `v_moved` is at
 // `new_pos`. Cells that also have `v_other` disappear with the collapse.
 template<typename C3t3, typename CellRange>
 bool collapse_keeps_orientations(const CellRange& star,
@@ -494,7 +495,7 @@ bool collapse_keeps_orientations(const CellRange& star,
 
     if(c3t3.triangulation().may_have_badly_oriented_cells() &&
        CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
-      return true; //in this case we don't care about orientation change, locally
+      continue; //in this case we don't care about orientation change, locally
 
     pts[ch->index(v_moved)] = new_pos;
     if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
