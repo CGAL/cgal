@@ -469,6 +469,19 @@ void discrete_mean_curvatures(const TriangleMesh& tmesh,
     put(vcm, v, discrete_mean_curvature(v, tmesh, np));
 }
 
+#ifndef DOXYGEN_RUNNING
+template <typename TriangleMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool is_saddle_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
+                      const TriangleMesh& tmesh,
+                      const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  const FT ang_sum = angle_sum(v, tmesh, np);
+  const FT bound = (FT(1) - FT(100) * std::numeric_limits<FT>::epsilon()) * 2 * CGAL_PI;
+  return (ang_sum >= bound);
+}
+#endf
+
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
