@@ -33,7 +33,7 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/tbb.h>
+#include <tbb/task_group.h>
 #endif
 
 /// \file AABB_tree.h
@@ -1006,6 +1006,7 @@ public:
 
     if(range < cutoff)
     {
+      // TODO: if beyond is .end of the primitive end, dereference is not allowed
       node.set_children(*first, *beyond);
     }
     else

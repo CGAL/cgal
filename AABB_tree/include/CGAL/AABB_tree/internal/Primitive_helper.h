@@ -22,6 +22,8 @@
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <boost/mpl/has_xxx.hpp>
 
+#include <cmath>
+
 namespace CGAL{
 namespace internal{
 
@@ -65,11 +67,6 @@ struct Primitive_helper<AABBTraits,false>{
   static Reference_point_type get_reference_point(const typename AABBTraits::Primitive& p,const AABBTraits&) {return p.reference_point();}
 };
 
-#include <CGAL/Aff_transformation_3.h>
-#include <CGAL/Bbox_3.h>
-
-#include <cmath>
-
 // Test intersection of two bbox according to two transformation without rotation
 template <typename Kernel>
 bool do_intersect_transformed_BB(const CGAL::Bbox_3& b1,
@@ -80,6 +77,8 @@ bool do_intersect_transformed_BB(const CGAL::Bbox_3& b1,
   typedef Simple_cartesian<Interval_nt_advanced> AK;
   typedef Cartesian_converter<Kernel, AK>    C2F;
   C2F c2f;
+  Interval_nt_advanced::Protector p;
+  CGAL_USE(p);
 
   AK::Aff_transformation_3 a_t1 = c2f(t1);
   AK::FT xtrm1[6] = {c2f((b1.min)(0)), c2f((b1.max)(0)),
@@ -113,6 +112,8 @@ bool do_intersect_OBB(const Bbox_3& b1,
   using AK = Simple_cartesian<Interval_nt_advanced>;
   using C2F = Cartesian_converter<Kernel, AK>;
   C2F c2f;
+  Interval_nt_advanced::Protector p;
+  CGAL_USE(p);
 
   using FT     = AK::FT;
   using Point  = AK::Point_3;
@@ -176,6 +177,8 @@ bool do_intersect_transformed_BB(const CGAL::Bbox_2& b1,
   typedef Simple_cartesian<Interval_nt_advanced> AK;
   typedef Cartesian_converter<Kernel, AK>    C2F;
   C2F c2f;
+  Interval_nt_advanced::Protector p;
+  CGAL_USE(p);
 
   AK::Aff_transformation_2 a_t1 = c2f(t1);
   AK::FT xtrm1[4] = {c2f((b1.min)(0)), c2f((b1.max)(0)),
@@ -205,6 +208,8 @@ bool do_intersect_OBB(const Bbox_2& b1,
   using AK = Simple_cartesian<Interval_nt_advanced>;
   using C2F = Cartesian_converter<Kernel, AK>;
   C2F c2f;
+  Interval_nt_advanced::Protector p;
+  CGAL_USE(p);
 
   using FT     = AK::FT;
   using Point  = AK::Point_2;
@@ -263,6 +268,8 @@ Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at, co
   typedef Simple_cartesian<Interval_nt_advanced> AK;
   typedef Cartesian_converter<Kernel, AK>    C2F;
   C2F c2f;
+  Interval_nt_advanced::Protector p;
+  CGAL_USE(p);
 
   AK::Aff_transformation_3 a_at = c2f(at);
   AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
