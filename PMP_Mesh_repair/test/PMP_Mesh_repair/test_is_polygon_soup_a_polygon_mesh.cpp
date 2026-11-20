@@ -1,4 +1,5 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/exceptions.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 
@@ -17,6 +18,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 typedef CGAL::Simple_cartesian<double> SC;
 typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
@@ -127,8 +129,46 @@ void test_polygon_soup(std::filesystem::path fname, bool expected)
   std::cout << fname << " OK\n\n\n";
 }
 
+
+#ifndef CGAL_NO_PRECONDITIONS
+
+void test_polygon_soup_invalid_point_index_precondition()
+{
+  typedef CGAL::Simple_cartesian<double> Kernel;
+  typedef Kernel::Point_3 Point;
+  typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+
+  std::vector<Point> points;
+  std::vector<std::vector<std::size_t> > polygons = {{0, 1, 2}};
+  Polyhedron output;
+
+  std::ostringstream cerr_buffer;
+  std::streambuf* old_cerr = std::cerr.rdbuf(cerr_buffer.rdbuf());
+
+  bool caught = false;
+  try
+  {
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, output);
+  }
+  catch(const CGAL::Precondition_exception&)
+  {
+    caught = true;
+  }
+
+  std::cerr.rdbuf(old_cerr);
+
+  assert(caught);
+}
+
+#endif // CGAL_NO_PRECONDITIONS
+
+
 int main()
 {
+#ifndef CGAL_NO_PRECONDITIONS
+  test_polygon_soup_invalid_point_index_precondition();
+#endif
+
   test_polygon_soup<SC>("data-polygon_soup/bad_cube.off", false);
   test_polygon_soup<Epec>("data-polygon_soup/bad_cube.off", false);
   test_polygon_soup<SC>("data-polygon_soup/isolated_singular_vertex_one_cc.off", false);
