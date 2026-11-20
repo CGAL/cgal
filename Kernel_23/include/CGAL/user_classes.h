@@ -43,6 +43,7 @@
 #include <CGAL/Tetrahedron_3.h>
 #include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/Sphere_3.h>
+#include <CGAL/Ball_3.h>
 #include <CGAL/Circle_3.h>
 #include <CGAL/Aff_transformation_3.h>
 

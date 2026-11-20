@@ -999,6 +999,18 @@ operator!=(const Sphere_3<K>& p, const Sphere_3<K>& q)
 template < class K >
 inline
 typename K::Boolean
+operator==(const Ball_3<K>& p, const Ball_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Ball_3<K>& p, const Ball_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+typename K::Boolean
 operator==(const Vector_3<K>& p, const Vector_3<K>& q)
 { return K().equal_3_object()(p, q); }
 

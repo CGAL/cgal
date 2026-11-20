@@ -51,6 +51,7 @@
 #include <CGAL/Cartesian/Tetrahedron_3.h>
 #include <CGAL/Cartesian/Iso_cuboid_3.h>
 #include <CGAL/Cartesian/Sphere_3.h>
+#include <CGAL/Cartesian/Ball_3.h>
 #include <CGAL/Cartesian/Circle_3.h>
 #include <CGAL/Cartesian/Aff_transformation_3.h>
 
@@ -130,6 +131,7 @@ struct Cartesian_base
     typedef TetrahedronC3<Kernel>                       Tetrahedron_3;
     typedef Iso_cuboidC3<Kernel>                        Iso_cuboid_3;
     typedef SphereC3<Kernel>                            Sphere_3;
+    typedef BallC3<Kernel>                              Ball_3;
     typedef CircleC3<Kernel>                            Circle_3;
     typedef Aff_transformationC3<Kernel>                Aff_transformation_3;
     typedef Weighted_pointC3<Kernel>                    Weighted_point_3;

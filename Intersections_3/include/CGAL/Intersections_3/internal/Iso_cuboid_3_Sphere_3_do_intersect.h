@@ -23,28 +23,26 @@ namespace internal {
 
 template <class K, class BFT> // Iso_cuboid_3 or Bbox_3
 typename K::Boolean
-do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
+do_intersect_sphere_box_3(const typename K::Point_3& center,
+                          const typename K::FT& r2,
                           const BFT bxmin, const BFT bymin, const BFT bzmin,
                           const BFT bxmax, const BFT bymax, const BFT bzmax,
-                          const K&)
+                          const K&,
+                          bool is_sphere)
 {
   typedef typename K::FT SFT;
   typedef typename Coercion_traits<SFT, BFT>::Type FT;
-  typedef typename K::Point_3 Point;
 
   typename Coercion_traits<SFT, BFT>::Cast to_FT;
 
   FT d = FT(0);
   FT distance = FT(0);
-  FT sr = sphere.squared_radius();
-
-  const Point& center = sphere.center();
 
   if(compare(center.x(), bxmin) == SMALLER)
   {
     d = to_FT(bxmin) - to_FT(center.x());
     d = square(d);
-    if(certainly(d > sr))
+    if(certainly(d > r2))
       return false;
 
     distance = d;
@@ -53,7 +51,7 @@ do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
   {
     d = to_FT(center.x()) - to_FT(bxmax);
     d = square(d);
-    if(certainly(d > sr))
+    if(certainly(d > r2))
       return false;
 
     distance = d;
@@ -63,7 +61,7 @@ do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
   {
     d = to_FT(bymin) - to_FT(center.y());
     d = square(d);
-    if(certainly(d > sr))
+    if(certainly(d > r2))
       return false;
 
     distance += d;
@@ -72,7 +70,7 @@ do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
   {
     d = to_FT(center.y()) - to_FT(bymax);
     d = square(d);
-    if(certainly(d > sr))
+    if(certainly(d > r2))
       return false;
 
     distance += d;
@@ -82,7 +80,7 @@ do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
   {
     d = to_FT(bzmin) - to_FT(center.z());
     d = square(d);
-    if (certainly(d > sr))
+    if (certainly(d > r2))
       return false;
 
     distance += d;
@@ -91,14 +89,19 @@ do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
   {
     d = to_FT(center.z()) - to_FT(bzmax);
     d = square(d);
-    if (certainly(d > sr))
+    if (certainly(d > r2))
       return false;
 
     distance += d;
   }
+
+  if (!is_sphere)
+    // `distance` is '0' if the box contains the center of the ball
+    return !(distance > r2);
+
   // Note that with the way the distance above is computed, the distance is '0'
   // if the box contains the center of the sphere. But since we use '>', we don't exit
-  if (distance > sr)
+  if (distance > r2)
     return false;
 
   distance = FT(0);
@@ -135,7 +138,7 @@ do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
     distance += d * d;
   }
 
-  return (distance >= sr);
+  return (distance >= r2);
 }
 
 template <class K>
@@ -144,10 +147,11 @@ do_intersect(const typename K::Sphere_3& sphere,
              const typename K::Iso_cuboid_3& ic,
              const K& k)
 {
-  return do_intersect_sphere_box_3(sphere,
+  return do_intersect_sphere_box_3(sphere.center(), sphere.squared_radius(),
                                    (ic.min)().x(), (ic.min)().y(), (ic.min)().z(),
                                    (ic.max)().x(), (ic.max)().y(), (ic.max)().z(),
-                                   k);
+                                   k,
+                                   true);
 }
 
 template <class K>

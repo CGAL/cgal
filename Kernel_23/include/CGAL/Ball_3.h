@@ -1,0 +1,356 @@
+// Copyright (c) 1999
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Stefan Schirra
+
+#ifndef CGAL_BALL_3_H
+#define CGAL_BALL_3_H
+
+#include <CGAL/assertions.h>
+#include <CGAL/Coercion_traits.h>
+#include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/representation_tags.h>
+#include <CGAL/Dimension.h>
+
+#include <type_traits>
+
+namespace CGAL {
+
+template <class R_>
+class Ball_3 : public R_::Kernel_base::Ball_3
+{
+  typedef typename R_::FT                    FT;
+// https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
+  typedef typename R_::Point_3               Point_3_;
+  typedef typename R_::Circle_3              Circle_3;
+  typedef typename R_::Aff_transformation_3  Aff_transformation_3;
+  typedef typename R_::Iso_cuboid_3         Iso_cuboid_3;
+
+  typedef Ball_3                           Self;
+  static_assert(std::is_same<Self, typename R_::Ball_3>::value);
+
+public:
+
+  typedef Dimension_tag<3>  Ambient_dimension;
+  // A ball is a solid (3-dimensional feature), unlike Sphere_3 (2-dimensional).
+  typedef Dimension_tag<3>  Feature_dimension;
+
+  typedef typename R_::Kernel_base::Ball_3  Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
+  typedef          R_                       R;
+
+  Ball_3() {}
+
+  Ball_3(const Rep& s)
+   : Rep(s) {}
+
+  Ball_3(Rep&& s)
+   : Rep(std::move(s)) {}
+
+  Ball_3(const Point_3_& p, const FT& sq_rad,
+         const Orientation& o = COUNTERCLOCKWISE)
+   : Rep(typename R::Construct_ball_3()(Return_base_tag(), p, sq_rad, o)) {}
+
+  Ball_3(const Point_3_& p, const Point_3_& q,
+         const Point_3_& r, const Point_3_& u)
+   : Rep(typename R::Construct_ball_3()(Return_base_tag(), p, q, r, u)) {}
+
+  Ball_3(const Point_3_& p, const Point_3_& q, const Point_3_& r,
+         const Orientation& o = COUNTERCLOCKWISE)
+   : Rep(typename R::Construct_ball_3()(Return_base_tag(), p, q, r, o)) {}
+
+  Ball_3(const Point_3_& p, const Point_3_&  q,
+         const Orientation& o = COUNTERCLOCKWISE)
+   : Rep(typename R::Construct_ball_3()(Return_base_tag(), p, q, o)) {}
+
+  explicit Ball_3(const Point_3_& p, const Orientation& o = COUNTERCLOCKWISE)
+   : Rep(typename R::Construct_ball_3()(Return_base_tag(), p, o)) {}
+
+  explicit Ball_3(const Circle_3& c)
+   : Rep(typename R::Construct_ball_3()(c)) {}
+
+  Ball_3 orthogonal_transform(const Aff_transformation_3 &t) const;
+
+  decltype(auto)
+  center() const
+  {
+    return R().construct_center_3_object()(*this);
+  }
+
+  decltype(auto)
+  squared_radius() const
+  {
+    return R().compute_squared_radius_3_object()(*this);
+  }
+
+  // Returns a circle with opposite orientation
+  Ball_3 opposite() const
+  {
+    return R().construct_opposite_ball_3_object()(*this);
+  }
+
+  typename R::Orientation orientation() const
+  {
+    return R().orientation_3_object()(*this);
+  }
+
+  typename R::Bounded_side
+  bounded_side(const Point_3_ &p) const
+  {
+    return R().bounded_side_3_object()(*this, p);
+  }
+
+  typename R::Oriented_side
+  oriented_side(const Point_3_ &p) const
+  {
+    return R().oriented_side_3_object()(*this, p);
+  }
+
+  typename R::Boolean
+  has_on(const Point_3_ &p) const
+  {
+    return R().has_on_3_object()(*this, p);
+  }
+
+  typename R::Boolean
+  has_on(const Circle_3 &c) const
+  {
+    return R().has_on_3_object()(*this, c);
+  }
+
+  typename R::Boolean
+  has_on_boundary(const Point_3_ &p) const
+  {
+    return R().has_on_boundary_3_object()(*this, p);
+    //return bounded_side(p) == ON_BOUNDARY;
+  }
+
+  typename R::Boolean
+  has_on_bounded_side(const Point_3_ &p) const
+  {
+    return bounded_side(p) == ON_BOUNDED_SIDE;
+  }
+
+  typename R::Boolean
+  has_on_unbounded_side(const Point_3_ &p) const
+  {
+    return bounded_side(p) == ON_UNBOUNDED_SIDE;
+  }
+
+  typename R::Boolean
+  has_on_unbounded_side(const Iso_cuboid_3& c) const
+  {
+    return R().has_on_unbounded_side_3_object()(*this, c);
+  }
+
+  typename R::Boolean
+  has_on_negative_side(const Point_3_ &p) const
+  {
+    if (orientation() == COUNTERCLOCKWISE)
+      return has_on_unbounded_side(p);
+    return has_on_bounded_side(p);
+  }
+
+  typename R::Boolean
+  has_on_positive_side(const Point_3_ &p) const
+  {
+    if (orientation() == COUNTERCLOCKWISE)
+      return has_on_bounded_side(p);
+    return has_on_unbounded_side(p);
+  }
+
+  typename R::Boolean
+  is_degenerate() const
+  {
+    return R().is_degenerate_3_object()(*this);
+    //return CGAL_NTS is_zero(squared_radius());
+  }
+
+  Bbox_3
+  bbox() const
+  {
+    return R().construct_bbox_3_object()(*this);
+  }
+
+};
+
+template <class R_>
+Ball_3<R_>
+Ball_3<R_>::
+orthogonal_transform(const typename R_::Aff_transformation_3& t) const
+{
+    typedef typename  R_::RT  RT;
+    typedef typename  R_::FT  FT;
+    typedef typename  R_::Vector_3  Vector_3;
+
+    // FIXME: precond: t.is_orthogonal() (*UNDEFINED*)
+    Vector_3 vec(RT(1), RT(0), RT(0));        // unit vector
+    vec = vec.transform(t);                   // transformed
+    FT sq_scale = vec.squared_length();       // squared scaling factor
+
+    return Ball_3(t.transform(this->center()),
+                  sq_scale * this->squared_radius(),
+                  t.is_even() ? this->orientation()
+                                : CGAL::opposite(this->orientation()));
+}
+
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Ball_3<R>& c,const Cartesian_tag&)
+{
+    switch(IO::get_mode(os)) {
+    case IO::ASCII :
+        os << c.center() << ' ' << c.squared_radius() << ' '
+           << static_cast<int>(c.orientation());
+        break;
+    case IO::BINARY :
+        os << c.center();
+        write(os, c.squared_radius());
+        write(os, static_cast<int>(c.orientation()));
+        break;
+    default:
+        os << "BallC3(" << c.center() <<  ", " << c.squared_radius();
+        switch (c.orientation()) {
+        case CLOCKWISE:
+            os << ", clockwise)";
+            break;
+        case COUNTERCLOCKWISE:
+            os << ", counterclockwise)";
+            break;
+        default:
+            os << ", collinear)";
+            break;
+        }
+        break;
+    }
+    return os;
+}
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Ball_3<R>& c, const Homogeneous_tag&)
+{
+    switch(IO::get_mode(os)) {
+    case IO::ASCII :
+        os << c.center() << ' ' << c.squared_radius() << ' '
+           << static_cast<int>(c.orientation());
+        break;
+    case IO::BINARY :
+        os << c.center();
+        write(os, c.squared_radius());
+        write(os, static_cast<int>(c.orientation()));
+        break;
+    default:
+        os << "BallH3(" << c.center() <<  ", " << c.squared_radius();
+        switch (c.orientation()) {
+        case CLOCKWISE:
+            os << ", clockwise)";
+            break;
+        case COUNTERCLOCKWISE:
+            os << ", counterclockwise)";
+            break;
+        default:
+            os << ", collinear)";
+            break;
+        }
+        break;
+    }
+    return os;
+}
+
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Ball_3<R>& c)
+{
+  return insert(os, c, typename R::Kernel_tag() );
+}
+
+
+template <class R >
+std::istream&
+extract(std::istream& is, Ball_3<R>& c, const Cartesian_tag&)
+{
+    typename R::Point_3 center;
+    typename R::FT squared_radius(0);
+    int o=0;
+    switch(IO::get_mode(is)) {
+    case IO::ASCII :
+        is >> center >> squared_radius >> o;
+        break;
+    case IO::BINARY :
+        is >> center;
+        read(is, squared_radius);
+        is >> o;
+        break;
+    default:
+        is.setstate(std::ios::failbit);
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
+        break;
+    }
+    if (is)
+        c = Ball_3<R>(center, squared_radius, static_cast<Orientation>(o));
+    return is;
+}
+
+
+template <class R >
+std::istream&
+extract(std::istream& is, Ball_3<R>& c, const Homogeneous_tag&)
+{
+    typename R::Point_3 center;
+    typename R::FT squared_radius;
+    int o=0;
+    switch(IO::get_mode(is)) {
+    case IO::ASCII :
+        is >> center >> squared_radius >> o;
+        break;
+    case IO::BINARY :
+        is >> center;
+        read(is, squared_radius);
+        is >> o;
+        break;
+    default:
+        is.setstate(std::ios::failbit);
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
+        break;
+    }
+    if (is)
+        c = Ball_3<R>(center, squared_radius, static_cast<Orientation>(o));
+    return is;
+}
+
+template < class R >
+std::istream&
+operator>>(std::istream& is, Ball_3<R>& c)
+{
+  return extract(is, c, typename R::Kernel_tag() );
+}
+
+} //namespace CGAL
+
+#endif // CGAL_BALL_3_H

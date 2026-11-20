@@ -149,6 +149,14 @@ public:
                                              a.orientation());
     }
 
+    typename K2::Ball_3
+    operator()(const typename K1::Ball_3 &a) const
+    {
+        return k.construct_ball_3_object()(operator()(a.center()),
+                                           fc(a.squared_radius()),
+                                           a.orientation());
+    }
+
     typename K2::Triangle_2
     operator()(const typename K1::Triangle_2 &a) const
     {

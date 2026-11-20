@@ -18,6 +18,17 @@
 #ifndef CGAL_INTERSECTION_3_H
 #define CGAL_INTERSECTION_3_H
 
+#include <CGAL/Intersections_3/Ball_3_Ball_3.h>
+#include <CGAL/Intersections_3/Ball_3_Bbox_3.h>
+#include <CGAL/Intersections_3/Ball_3_Iso_cuboid_3.h>
+#include <CGAL/Intersections_3/Ball_3_Line_3.h>
+#include <CGAL/Intersections_3/Ball_3_Plane_3.h>
+#include <CGAL/Intersections_3/Ball_3_Point_3.h>
+#include <CGAL/Intersections_3/Ball_3_Ray_3.h>
+#include <CGAL/Intersections_3/Ball_3_Segment_3.h>
+#include <CGAL/Intersections_3/Ball_3_Tetrahedron_3.h>
+#include <CGAL/Intersections_3/Ball_3_Triangle_3.h>
+
 #include <CGAL/Intersections_3/Bbox_3_Bbox_3.h>
 #include <CGAL/Intersections_3/Bbox_3_Iso_cuboid_3.h>
 #include <CGAL/Intersections_3/Bbox_3_Line_3.h>

@@ -43,6 +43,7 @@ class Epic_converter {
   typedef typename Exact_predicates_inexact_constructions_kernel::Segment_3 Segment_3;
   typedef typename Exact_predicates_inexact_constructions_kernel::Weighted_point_3 Weighted_point_3;
   typedef typename Exact_predicates_inexact_constructions_kernel::Sphere_3 Sphere_3;
+  typedef typename Exact_predicates_inexact_constructions_kernel::Ball_3 Ball_3;
   typedef typename Exact_predicates_inexact_constructions_kernel::Circle_3 Circle_3;
   typedef typename Exact_predicates_inexact_constructions_kernel::Iso_cuboid_3 Iso_cuboid_3;
 
@@ -327,6 +328,16 @@ public:
     std::pair<double, bool> sr = operator()(s.squared_radius());
     if(c.second && sr.second){
       return std::make_pair(Sphere_3(c.first, sr.first, s.orientation()),true);
+    }
+    return {};
+  }
+
+  std::pair<Ball_3,bool> operator()(const typename IK::Ball_3& b) const
+  {
+    std::pair<Point_3,bool> c = operator()(b.center());
+    std::pair<double, bool> sr = operator()(b.squared_radius());
+    if(c.second && sr.second){
+      return std::make_pair(Ball_3(c.first, sr.first, b.orientation()),true);
     }
     return {};
   }

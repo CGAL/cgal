@@ -63,6 +63,8 @@ int main()
 
   test (SC::Sphere_3 (CGAL::ORIGIN, 1));
   test (Epick::Sphere_3 (CGAL::ORIGIN, 1));
+  test (SC::Ball_3 (CGAL::ORIGIN, 1));
+  test (Epick::Ball_3 (CGAL::ORIGIN, 1));
 
   test (SC::Vector_3 (1, 2, 3));
   test (Epick::Vector_3 (1, 2, 3));

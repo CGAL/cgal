@@ -22,17 +22,18 @@ namespace internal {
 template <class K>
 inline
 typename K::Boolean
-do_intersect(const typename K::Plane_3& p,
-             const typename K::Sphere_3& s,
-             const K&)
+do_intersect_impl(const typename K::Plane_3& p,
+                  const typename K::Point_3& c,
+                  const typename K::FT& r2,
+                  const K&)
 {
   typedef typename K::FT FT;
 
-  const FT d2 = CGAL::square(p.a()*s.center().x() +
-                             p.b()*s.center().y() +
-                             p.c()*s.center().z() + p.d());
+  const FT d2 = CGAL::square(p.a()*c.x() +
+                             p.b()*c.y() +
+                             p.c()*c.z() + p.d());
 
-  return (d2 <= s.squared_radius() * (square(p.a()) + square(p.b()) + square(p.c())));
+  return (d2 <= r2 * (square(p.a()) + square(p.b()) + square(p.c())));
 }
 
 template <class K>
@@ -40,9 +41,19 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3& s,
              const typename K::Plane_3& p,
-             const K&)
+             const K& k)
 {
-  return do_intersect(p,s);
+  return do_intersect_impl(p,s.center(), s.squared_radius(), k);
+}
+
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Plane_3& p,
+             const typename K::Sphere_3& s,
+             const K& k)
+{
+  return do_intersect(s, p, k);
 }
 
 } // namespace internal
