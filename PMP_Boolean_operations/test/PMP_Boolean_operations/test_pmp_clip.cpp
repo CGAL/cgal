@@ -1291,7 +1291,70 @@ void test_clip_and_split_with_plane_visitor()
 
   test(CGAL::data_file_path("meshes/torus_quad.off"), K::Plane_3(0,0,1,0));
   test(CGAL::data_file_path("meshes/elephant.off"), K::Plane_3(0.137304, -0.293668, 0.945995, 0));
+}
 
+void saddle_case()
+{
+  // A closed roof over the rectangle [0,2]x[0,1] with two peaks A = (0.5, 0.5, 1) and B = (1.5, 0.5, 1),
+  // and a saddle vertex S = (1, 0.5, 0.5) between them: the cross-section at z = 0.5 is made of
+  // two pentagons that touch at S.
+  const std::vector<K::Point_3> points = {
+    {0, 0, 0}, {2, 0, 0}, {2, 1, 0}, {0, 1, 0}, // 0-3: base corners
+    {1, 0, 0}, {1, 1, 0},                       // 4-5: base midpoints
+    {0.5, 0.5, 1}, {1.5, 0.5, 1},               // 6-7: peaks A and B
+    {1, 0.5, 0.5}};                             // 8: saddle S
+
+  const std::vector<std::array<std::size_t, 3> > triangles = {
+    {0, 4, 6}, {4, 8, 6}, {8, 5, 6}, {5, 3, 6}, {3, 0, 6}, // around A
+    {4, 1, 7}, {1, 2, 7}, {2, 5, 7}, {5, 8, 7}, {8, 4, 7}, // around B
+    {0, 3, 5}, {0, 5, 4}, {4, 5, 2}, {4, 2, 1}};           // bottom
+
+  Surface_mesh input;
+  PMP::polygon_soup_to_polygon_mesh(points, triangles, input);
+
+  CGAL::IO::write_polygon_mesh("input.off", input, CGAL::parameters::stream_precision(17));
+
+  std::cout << " input: closed=" << CGAL::is_closed(input)
+            << " outward=" << PMP::is_outward_oriented(input)
+            << " self-intersects=" << PMP::does_self_intersect(input)
+            << " volume=" << CGAL::to_double(PMP::volume(input)) << std::endl;
+
+  bool all_closed = true;
+  auto report = [&](const std::string& what, const Surface_mesh& m, const bool returned)
+  {
+    std::cout << "  " << what << ": returned " << returned << ", closed=" << CGAL::is_closed(m);
+    if(CGAL::is_closed(m))
+      std::cout << ", volume=" << CGAL::to_double(PMP::volume(m));
+    std::cout << std::endl;
+    all_closed = all_closed && CGAL::is_closed(m);
+  };
+
+  for(const double z : {0.5, 0.5 - 1e-9})
+  {
+    for(const int side : {1, -1})
+    {
+      // clip() keeps the negative side of the plane: side = 1 keeps z < z0, side = -1 keeps z > z0
+      Surface_mesh m = input;
+      const bool returned = PMP::clip(m, typename K::Plane_3(0, 0, side, -side * z),
+                                      CGAL::parameters::clip_volume(true));
+      report(std::string("plane, keep ") + (side == 1 ? "below" : "above") + (z == 0.5 ? " z = 0.5" : " z = 0.5 - 1e-9"), m, returned);
+
+      std::stringstream oss;
+      oss.precision(17);
+      oss << "returned_" << z << "_" << side << "_.off" << std::ends;
+
+      CGAL::IO::write_polygon_mesh(oss.str().c_str(), m, CGAL::parameters::stream_precision(17));
+    }
+  }
+
+  Surface_mesh m = input;
+  const bool returned = PMP::clip(m, typename K::Iso_cuboid_3(-1, -1, -1, 3, 2, 0.5),
+                                  CGAL::parameters::clip_volume(true));
+  report("iso-cuboid, keep below z = 0.5", m, returned);
+
+  CGAL::IO::write_polygon_mesh("isocuboid_z0.5", m, CGAL::parameters::stream_precision(17));
+
+  assert(all_closed);
 }
 
 int main()
@@ -1325,5 +1388,9 @@ int main()
   std::cout << "running test_clip_and_split_with_plane_visitor\n";
   test_clip_and_split_with_plane_visitor();
   std::cout << "Done!" << std::endl;
+  std::cout << "running saddle_case\n";
+  saddle_case();
+  std::cout << "Done!" << std::endl;
+
   return EXIT_SUCCESS;
 }
