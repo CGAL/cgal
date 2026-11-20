@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Surface_mesh_shortest_path_Tests)
 
 find_package(CGAL REQUIRED)

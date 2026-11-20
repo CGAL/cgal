@@ -4,7 +4,7 @@
 # ${CGAL_SOURCE_DIR} and to the root binary directory of the project as
 # ${CGAL_BINARY_DIR} or ${CGAL_BINARY_DIR}.
 if(NOT PROJECT_NAME)
-  cmake_minimum_required(VERSION 3.15...3.31) # CMake>=3.15 message(VERBOSE...)
+  cmake_minimum_required(VERSION 3.15...4.4) # CMake>=3.15 message(VERBOSE...)
   project(CGAL CXX C)
 endif()
 
@@ -708,7 +708,7 @@ if(NOT TARGET ALL_CGAL_TARGETS)
 endif()
 
 function(CGAL_add_subdirectories subdir name ON_OFF)
-  cmake_minimum_required(VERSION 3.14)
+  cmake_minimum_required(VERSION 3.14...4.4)
   # CMake>=3.14 for `if(DEFINED CACHE{...})`
   #   see https://cmake.org/cmake/help/v3.31/command/if.html#defined
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19...3.31)
+cmake_minimum_required(VERSION 3.19...4.4)
 project(Kernel_23_Tests)
 
 find_package(CGAL REQUIRED)

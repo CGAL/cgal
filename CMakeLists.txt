@@ -1,7 +1,7 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 3.15...3.31) # CMake>=3.15 for message(VERBOSE...)
+cmake_minimum_required(VERSION 3.15...4.4) # CMake>=3.15 for message(VERBOSE...)
 
 project(CGAL CXX C)
 export(PACKAGE CGAL)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(CGAL_ipelets_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
