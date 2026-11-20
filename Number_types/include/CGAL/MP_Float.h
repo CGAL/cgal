@@ -27,6 +27,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <type_traits>
 #include <boost/operators.hpp>
 
 // MP_Float : multiprecision scaled integers.
@@ -150,6 +151,9 @@ private:
   template < typename T >
   void construct_from_builtin_fp_type(T d);
 
+  template < typename T >
+  void construct_from_builtin_integral_type(T i);
+
 public:
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
     int tam() const { return v.size(); }
@@ -204,10 +208,17 @@ public:
 #endif
 
   MP_Float(limb2 i)
-  : v(2), exp(0)
+  : exp(0)
   {
-    split(i, v[1], v[0]);
-    canonicalize();
+    construct_from_builtin_integral_type(i);
+  }
+
+  template <typename Integer,
+            std::enable_if_t<std::is_integral<Integer>::value, int> = 0>
+  MP_Float(Integer i)
+  : exp(0)
+  {
+    construct_from_builtin_integral_type(i);
   }
 
   MP_Float(float d);
