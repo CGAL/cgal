@@ -16,6 +16,7 @@
 #include <boost/call_traits.hpp>
 
 #include <CGAL/property_map.h>
+#include <CGAL/Bbox_3.h>
 
 namespace CGAL{
 
@@ -102,6 +103,17 @@ public:
     }
   };
 
+  struct Construct_bbox_3
+    : public Base_traits::Construct_bbox_3
+  {
+    Construct_bbox_3(const PointPropertyMap& ppmap, const typename Base_traits::Construct_bbox_3& base):
+      Base_traits::Construct_bbox_3(base), ppmap_(ppmap){}
+    const PointPropertyMap& ppmap_;
+    Bbox_3 operator()(Arg_type p) const {
+      return static_cast<const typename Base_traits::Construct_bbox_3*>(this)->operator()(get(ppmap_,p));
+    }
+  };
+
   Compute_x_3 compute_x_3_object () const {return Compute_x_3(ppmap_, static_cast<const Gt*>(this)->compute_x_3_object() );}
   Compute_y_3 compute_y_3_object () const {return Compute_y_3(ppmap_, static_cast<const Gt*>(this)->compute_y_3_object() );}
   Compute_z_3 compute_z_3_object () const {return Compute_z_3(ppmap_, static_cast<const Gt*>(this)->compute_z_3_object() );}
@@ -109,6 +121,10 @@ public:
   Less_x_3 less_x_3_object () const {return Less_x_3(ppmap_, static_cast<const Gt*>(this)->less_x_3_object() );}
   Less_y_3 less_y_3_object () const {return Less_y_3(ppmap_, static_cast<const Gt*>(this)->less_y_3_object() );}
   Less_z_3 less_z_3_object () const {return Less_z_3(ppmap_, static_cast<const Gt*>(this)->less_z_3_object() );}
+
+  Construct_bbox_3 construct_bbox_3_object () const {
+    return Construct_bbox_3(ppmap_, static_cast<const Gt*>(this)->construct_bbox_3_object());
+  }
 
   const PointPropertyMap& point_property_map() const {return ppmap_;}
 };

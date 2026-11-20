@@ -37,7 +37,67 @@ int main ()
   CGAL::Real_timer timer;
 
   std::cout << "Testing Hilbert sort." << std::endl;
+  {
+    std::cout << "Testing 2D (middle policy): Testing Fix cases " << std::flush;
 
+    std::vector<Point_2> v({Point_2(1.,1.),
+                            Point_2(0.,0.),
+                            Point_2(std::nextafter(0., 1.), std::nextafter(0., 1.))});
+    std::vector<Point_2> v2 (v);
+
+    CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
+    assert(v[0] == v2[1] && v[1] == v2[2] && v[2] == v2[0]);
+  }
+  {
+    std::vector<Point_2> v({Point_2(1.,0.),
+                            Point_2(0.,0.),
+                            Point_2(std::nextafter(0., 1.), 0.),
+                            Point_2(64., 0.)});
+    std::vector<Point_2> v2 (v);
+
+    CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
+    assert(v[0] == v2[1] && v[1] == v2[2] && v[2] == v2[0]);
+  }
+  {
+    std::vector<Point_2> v({Point_2(0.,8.),
+                            Point_2(8.,0.),
+                            Point_2(2.,2.),
+                            Point_2(3.,2.)});
+    std::vector<Point_2> v2 (v);
+    CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
+  }
+  {
+    std::cout << "Testing 3D (middle policy): Testing Fix cases " << std::flush;
+
+    std::vector<Point_3> v({Point_3(1.,1.,1.),
+                            Point_3(0.,0.,0.),
+                            Point_3(std::nextafter(0., 1.), std::nextafter(0., 1.), std::nextafter(0., 1.))});
+    std::vector<Point_3> v2 (v);
+
+    CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
+    assert(v[0] == v2[1] && v[1] == v2[2] && v[2] == v2[0]);
+  }
+  {
+    std::vector<Point_3> v({Point_3(0.,0.,8.),
+                            Point_3(0.,8.,0.),
+                            Point_3(8.,0.,0.),
+                            Point_3(2.,2.,2.),
+                            Point_3(3.,2.,2.),
+                            Point_3(2.,3.,2.)});
+    std::vector<Point_3> v2 (v);
+
+    CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
+  }
+  {
+    std::vector<Point_3> v({Point_3(1.,0.,0.),
+                            Point_3(0.,0.,0.),
+                            Point_3(std::nextafter(0., 1.), 0., 0.),
+                            Point_3(64., 0., 0.)});
+    std::vector<Point_3> v2 (v);
+
+    CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
+    assert(v[0] == v2[1] && v[1] == v2[2] && v[2] == v2[0]);
+  }
   {
     std::cout << "Testing 2D (median policy): Generating "<<nb_points_2<<" random points... " << std::flush;
 
@@ -162,6 +222,32 @@ int main ()
       assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
     }
     std::cout << "OK." << std::endl;
+  }
+
+  {
+    int dim = 3;
+    std::cout << "Testing "<<dim<<"D (middle policy): Genere points at one ulp distance " << std::flush;
+
+    std::vector<Point_3> v({Point_3(0.,0.,0.),
+                            Point_3(std::nextafter(0., 1.), std::nextafter(0., 1.), std::nextafter(0., 1.)),
+                            Point_3(64.,64.,64.)});
+    std::vector<Point_3> v2 (v);
+
+    std::cout << "            Sorting points...    " << std::flush;
+
+    timer.reset();timer.start();
+    CGAL::hilbert_sort (v.begin(), v.end(), CGAL::Hilbert_sort_middle_policy());
+    timer.stop();
+
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
+
+    std::sort (v.begin(),  v.end());
+    std::sort (v2.begin(), v2.end());
+    assert(v == v2);
+
+    std::cout << "no points lost." << std::endl;
   }
 
   {
