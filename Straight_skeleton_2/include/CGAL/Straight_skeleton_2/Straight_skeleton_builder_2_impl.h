@@ -2332,8 +2332,6 @@ extreme_h /     \                          extreme_h /     \
       Vertex_handle new_v = mSSkel->SSkel::Base::vertices_push_back( Vertex (mVertexID++, split_p, split_t, false, false) ) ;
       InitVertexData(new_v);
 
-      // This is not a valid triedge because split_h is not a contour halfedge, but we need
-      // to know which skeleton bisector the line orthogonal to contour_h intersects.
       // The pair of identical contour halfedges at e0 and e1 is the marker for artificial vertices
       SetVertexTriedge(new_v, CreateArtificialTriedge(artificial_event->triedge().e0(), split_h));
       SetTrisegment(new_v, artificial_event->trisegment());
