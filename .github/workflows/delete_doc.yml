@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: delete directory ${{ github.event.inputs.PR_NUMBER || github.event.pull_request.number }}/ in cgal.github.io
       env:
         PR_NUMBER: ${{ github.event.inputs.PR_NUMBER || github.event.pull_request.number }}
