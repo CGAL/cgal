@@ -50,7 +50,7 @@ namespace CGAL {
 * \cgalModels{HotPixelSnapRoundingTraits_2}
 *
 \sa `CGAL::snap_rounding_2()`
-\sa{CGAL::hot_pixel_snap_rounding_2()}
+\sa `CGAL::hot_pixel_snap_rounding_2()`
 */
 template<class K>
 class Hot_pixel_snap_rounding_traits_2 :

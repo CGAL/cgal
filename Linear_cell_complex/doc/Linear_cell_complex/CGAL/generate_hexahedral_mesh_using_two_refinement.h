@@ -3,9 +3,11 @@ namespace CGAL {
 /*!
 \ingroup PkgLinearCellComplexConstructions
 
-@brief generates a pure hexahedral mesh from a surface triangle mesh using the two-refinement algorithm described in \cgalCite{cgal:owen2017template-based}.
+@brief generates a pure hexahedral mesh from a surface triangle mesh, using the two-refinement algorithm
+described in \cgalCite{cgal:owen2017template-based}.
 
-Starts to create a regular grid of `cube_cells_per_dim`\f$ ^3\f$ voxels. Then refines voxels intersected by the surface `nb_levels` times, while creating transitions between refined and non-refined voxels.
+The algorithm first creates a regular grid of `cube_cells_per_dim`\f$ ^3\f$ voxels, then refines voxels
+intersected by the surface `nb_levels` times, while creating transitions between refined and non-refined voxels.
 
 @tparam LCC the target Linear Cell Complex type, or `CGAL::Default`.
 @tparam TriangleMesh a model of `FaceListGraph`.
@@ -18,7 +20,7 @@ Starts to create a regular grid of `cube_cells_per_dim`\f$ ^3\f$ voxels. Then re
 
 \cgalNamedParamsBegin
 \cgalParamNBegin{use_trimming}
-  \cgalParamDescription{trims exterior mesh elements, i.e., remove volumes that are entirely outside of `tmesh`}
+  \cgalParamDescription{trims exterior mesh elements, i.e., removes volumes that are entirely outside of `tmesh`}
   \cgalParamType{`bool`}
   \cgalParamDefault{`true`}
 \cgalParamNEnd

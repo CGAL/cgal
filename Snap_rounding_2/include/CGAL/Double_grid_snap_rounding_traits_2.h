@@ -43,10 +43,10 @@ to compute intersections and subdivision points before to round them. It must mo
 
 \cgalModels{VerticalSlabSnapRoundingTraits_2}
 
-\sa{CGAL::snap_rounding_2()}
-\sa{CGAL::vertical_slab_snap_rounding_2()}
-\sa{CGAL::Float_grid_snap_rounding_traits_2}
-\sa{CGAL::Integer_grid_snap_rounding_traits_2}
+\sa `CGAL::snap_rounding_2()`
+\sa `CGAL::vertical_slab_snap_rounding_2()`
+\sa `CGAL::Float_grid_snap_rounding_traits_2`
+\sa `CGAL::Integer_grid_snap_rounding_traits_2`
 */
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel>
 struct Double_grid_snap_rounding_traits_2
