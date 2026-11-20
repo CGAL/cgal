@@ -1142,16 +1142,15 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   typedef typename Tr::Vertex_handle     Vertex_handle;
   typedef typename Tr::Cell_handle       Cell_handle;
 
-  const bool link_condition = does_satisfy_link_condition(edge, c3t3.triangulation());
-  if(!link_condition)
-    return Vertex_handle();
-
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
 
   Collapse_type collapse_type = get_collapse_type(edge, c3t3, cell_selector);
-
   if (collapse_type == IMPOSSIBLE)
+    return Vertex_handle();
+
+  const bool link_condition = does_satisfy_link_condition(edge, c3t3.triangulation());
+  if(!link_condition)
     return Vertex_handle();
 
   Point new_pos;
