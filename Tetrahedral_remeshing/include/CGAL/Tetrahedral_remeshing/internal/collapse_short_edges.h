@@ -335,66 +335,9 @@ Collapse_type get_collapse_type(const typename C3t3::Edge& edge,
   else                        return IMPOSSIBLE;
 }
 
-//template<typename C3t3>
-//Edge_type get_edge_type(const typename C3t3::Edge& edge,
-//                        const C3t3& c3t3)
-//{
-//  typedef typename C3t3::Vertex_handle Vertex_handle;
-//  typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
-//  typedef typename C3t3::Subdomain_index Subdomain_index;
-
-//  const Vertex_handle & v0 = edge.first->vertex(edge.second);
-//  const Vertex_handle & v1 = edge.first->vertex(edge.third);
-
-//  const int dim0 = c3t3.in_dimension(v0);
-//  const int dim1 = c3t3.in_dimension(v1);
-
-//  const bool is_v0_on_hull = is_on_convex_hull(v0, c3t3);
-//  const bool is_v1_on_hull = is_on_convex_hull(v1, c3t3);
-
-//  if (c3t3.is_in_complex(edge))
-//    return FEATURE;
-
-//  else if (dim0 == 3 && dim1 == 3)
-//    return INSIDE;
-
-//  else if (dim0 == 2 && dim1 == 2)
-//  {
-//    Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
-//    Cell_circulator done = circ;
-
-//    std::vector<Subdomain_index> indices;
-//    do
-//    {
-//      Subdomain_index current_si = circ->subdomain_index();
-
-//      if (std::find(indices.begin(), indices.end(), current_si) == indices.end()) {
-//        indices.push_back(current_si);
-//      }
-
-//      Subdomain_index si_n0 = circ->neighbor(circ->index(v0))->subdomain_index();
-//      Subdomain_index si_n1 = circ->neighbor(circ->index(v1))->subdomain_index();
-//      if (si_n0 == si_n1 && si_n0 != current_si)
-//        return NO_COLLAPSE;
-
-//    } while (++circ != done);
-
-//    const std::size_t nb_si_v0 = nb_incident_subdomains(v0, c3t3);
-//    const std::size_t nb_si_v1 = nb_incident_subdomains(v1, c3t3);
-
-//    if (indices.size() >= (std::min)(nb_si_v0, nb_si_v1)) {
-//      return BOUNDARY;
-//    }
-//  }
-
-//  //std::cerr << "ERROR : get_edge_type did not return anything valid!" << std::endl;
-//  return NO_COLLAPSE;
-//}
-
-
 template <typename Triangulation>
 bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
-                             const Triangulation& tr)
+                                 const Triangulation& tr)
 {
   using Vertex_handle = typename Triangulation::Vertex_handle;
   using Facet = typename Triangulation::Facet;
