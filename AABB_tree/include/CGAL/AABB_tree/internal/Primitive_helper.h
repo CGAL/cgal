@@ -22,6 +22,8 @@
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <boost/mpl/has_xxx.hpp>
 
+#include <cmath>
+
 namespace CGAL{
 namespace internal{
 
@@ -64,11 +66,6 @@ struct Primitive_helper<AABBTraits,false>{
   typedef typename Point_result_type<typename AABBTraits::Primitive>::type Reference_point_type;
   static Reference_point_type get_reference_point(const typename AABBTraits::Primitive& p,const AABBTraits&) {return p.reference_point();}
 };
-
-#include <CGAL/Aff_transformation_3.h>
-#include <CGAL/Bbox_3.h>
-
-#include <cmath>
 
 // Test intersection of two bbox according to two transformation without rotation
 template <typename Kernel>
