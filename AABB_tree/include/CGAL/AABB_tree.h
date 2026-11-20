@@ -1006,6 +1006,7 @@ public:
 
     if(range < cutoff)
     {
+      // TODO: if beyond is .end of the primitive end, dereference is not allowed
       node.set_children(*first, *beyond);
     }
     else

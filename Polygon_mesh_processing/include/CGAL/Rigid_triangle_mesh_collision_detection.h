@@ -99,7 +99,7 @@ template <class TriangleMesh,
           class VertexPointMap = Default,
           class Kernel = Default,
           class AABBTree = Default,
-          class Has_rotation = CGAL::Tag_true,
+          class Has_rotation = CGAL::Tag_true, // TODO: this parameter is no longer used
           bool Use_inverse_transformation = false>
 struct Rigid_triangle_mesh_collision_detection
 {
