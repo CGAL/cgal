@@ -309,7 +309,7 @@ void alpha_wrap_2(const TriangleRange& triangles,
 * to not be simple, with its a subcycle with opposite orientation, then the wrap would
 * still be constructed as to contain this subcycle.
 * In some use cases, it may be desirable to first repair invalid inputs. We refer
-* to the \cgal component \link Chapter_2D_Polygon_repair Polygon Repair\endlink for various
+* to the \cgal component \ref Chapter_2D_Polygon_repair "Polygon Repair" for various
 * polygon repair functions using different strategies.
 *
 * The parameters `alpha` and `offset` respectively control which features will appear in the output,
@@ -388,7 +388,7 @@ void alpha_wrap_2(const CGAL::Polygon_2<Traits_, Container_>& p,
 * for example, if the polygon with holes were to be invalid with an edge that lays outside of the region
 * enclosed by its outer boundary, then the wrap would still be constructed as to contain this edge.
 * In some use cases, it may be desirable to first repair invalid inputs. We refer
-* to the \cgal component \link Chapter_2D_Polygon_repair Polygon Repair\endlink for various
+* to the \cgal component \ref Chapter_2D_Polygon_repair "Polygon Repair" for various
 * polygon repair functions using different strategies.
 
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
@@ -464,7 +464,7 @@ void alpha_wrap_2(const CGAL::Polygon_with_holes_2<Traits_, Container_>& pwh,
 * if a polygon were to be invalid with an edge that lays outside of the region enclosed by its outer
 * boundary, then the wrap would still be constructed as to contain this edge.
 * In some use cases, it may be desirable to first repair invalid polygons. We refer
-* to the \cgal component \link Chapter_2D_Polygon_repair Polygon Repair\endlink for various
+* to the \cgal component \ref Chapter_2D_Polygon_repair "Polygon Repair" for various
 * polygon repair functions using different strategies.
 *
 * \tparam InputMultipolygonWithHoles a model of `MultipolygonWithHoles_2`
