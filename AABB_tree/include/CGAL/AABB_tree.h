@@ -33,7 +33,7 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/tbb.h>
+#include <tbb/task_group.h>
 #endif
 
 /// \file AABB_tree.h
