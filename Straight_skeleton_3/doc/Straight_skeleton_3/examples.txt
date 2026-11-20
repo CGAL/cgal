@@ -1,0 +1,6 @@
+/*!
+\example Straight_skeleton_3/create_straight_skeleton_3.cpp
+\example Straight_skeleton_3/create_offset_polyhedra.cpp
+\example Straight_skeleton_3/create_offset_of_non_triangle_polyhedron.cpp
+\example Straight_skeleton_3/create_offset_and_remesh.cpp
+*/
