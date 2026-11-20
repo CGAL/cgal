@@ -263,102 +263,92 @@ public:
    */
   class Construct_x_monotone_curve_2 {};
 
-  /*! Functor to augment a polyline by either adding a vertex or a segment
-   * at the back.
+  /*! Functor to augment a polyline by either adding a vertex or a segment at the back.
    */
   class Push_back_2 {
   public:
     /// \name Operations
     /// @{
 
-    /*! appends a point `p` to an existing polyline `cv` at the back.
-     * \param cv a polyline. Note, `cv` is not (necessarily)
-     *        \f$x\f$-monotone.
-     * \param p a point to be appended to `cv` at the back.
+    /*! appends a point `p` to an existing polyline `cv`.
+     * \param cv a polyline. Note, `cv` is not (necessarily) \f$x\f$-monotone.
+     * \param p a point to be appended to `cv`.
      * \pre `cv` contains at least one segment.
      */
     void operator()(Curve_2& cv, const Point_2& p) const;
 
-    /*! appends a segment `seg` to an existing polyline `cv` at the back.
+    /*! appends a segment `seg` to an existing polyline `cv`.
      * If `cv` is empty, `seg` will be its first segment.
      * \param cv a polyline. Note, `cv` is (not necessarily) \f$x\f$-monotone.
-     * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended
-     *        to `cv`
+     * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended to `cv`.
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
-     * the back.
-     * \param xcv the existing \f$x\f$-monotone polyline
-     * \param p the point to be pushed back.
+    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv`.
+     * \param xcv the existing \f$x\f$-monotone polyline.
+     * \param p the point to be appended to `xcv`.
      * \pre `xcv` contains at least one segment
-     * \pre `p` is either to the right of `xcv` if it is oriented
-     *      left-to-right or it is to its left if `xcv` is oriented
-     *      right-to-left.
+     * \pre `p` is either to the right of `xcv` if it is oriented left-to-right
+     *      or it is to its left if `xcv` is oriented right-to-left.
      */
-    void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
+    void operator()(X_monotone_curve_2& xcv, const Point_2& p) const;
 
-    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
-     * at the back. If `xcv` is empty, `seg` will be its first segment.
-     * \param xcv existing \f$x\f$-monotone polyline
-     * \param seg the segment to be added
-     * \pre If `xcv` is not empty then `seg` extends `xcv` to the right if
-     *      `xcv` is oriented right-to-left. Otherwise, `seg` extends `xcv` to
-     *      the left.
+    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`.
+     * If `xcv` is empty, `seg` will be its first segment.
+     * \param xcv existing \f$x\f$-monotone polyline.
+     * \param seg the segment to be appended to `xcv`.
+     * \pre If `xcv` is not empty then `seg` extends `xcv` to the right if `xcv`
+     *      is oriented right-to-left. Otherwise, `seg` extends `xcv` to the left.
      * \pre `seg` is not degenerated.
-     * \pre `xcv` and `seg` should have the same orientation
+     * \pre `xcv` and `seg` should have the same orientation.
      */
-    void operator()(const X_monotone_curve_2& xcv, Segment_2& seg) const;
+    void operator()(X_monotone_curve_2& xcv, Segment_2& seg) const;
 
     /// @} /* end of operations */
   }; /* end of Arr_polyline_traits_2::Push_back_2 */
 
-  /*! Functor to augment a polyline by either adding a vertex or a segment
-   * at the front.
+  /*! Functor to augment a polyline by either adding a vertex or a segment at the front.
    */
   class Push_front_2 {
   public:
     /// \name Operations
     /// @{
 
-    /*! appends a point `p` to an existing polyline `cv` at the front.
-     * \param cv a polyline. Note, `cv` is not (necessarily)
-     *        \f$x\f$-monotone.
-     * \param p a point to be appended to `cv` at the back.
+    /*! prepends a point `p` to an existing polyline `cv.
+     * \param cv a polyline. Note, `cv` is not (necessarily) \f$x\f$-monotone.
+     * \param p a point to be prepended to `cv`.
      * \pre `cv` contains at least one segment.
      */
     void operator()(Curve_2& cv, const Point_2& p) const;
 
-    /*! appends a segment `seg` to an existing polyline `cv` at the front.
+    /*! prepends a segment `seg` to an existing polyline `cv`.
      * If `cv` is empty, `seg` will be its first segment.
      * \param cv a polyline. Note, `cv` is (not necessarily) \f$x\f$-monotone.
-     * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended
-     * to `cv`
+     * \param seg a segment (not necessarily \f$x\f$-monotone) to be prepended to `cv`.
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
-     * the front.
-     * \param xcv the existing \f$x\f$-monotone polyline
-     * \param p the point to be pushed back.
-     * \pre `xcv` contains at least one segment
-     * \pre `p` is either to the left of `xcv` if it is oriented
-     *      left-to-right or it is to its right if `xcv` is oriented
-     *      right-to-left.
-     */
-    void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
+    /*! Curve_2& cv, const Segment_2& seg) const;
 
-    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
-     * at the front. If `xcv` is empty, `seg` will be its first segment.
-     * \param xcv existing \f$x\f$-monotone polyline
-     * \param seg the segment to be added
-     * \pre If `xcv` is not empty then `seg` extends `xcv` to the left if
-     *      `xcv` is oriented right-to-left. Otherwise, `seg` extends `xcv` to
-     *      the right.
-     * \pre `seg` is not degenerated.
-     * \pre `xcv` and `seg` should have the same orientation
+    /*! prepends a point `p` to an existing \f$x\f$-monotone polyline `xcv`.
+     * \param xcv the existing \f$x\f$-monotone polyline.
+     * \param p the point to be prepended to `xcv`.
+     * \pre `xcv` contains at least one segment.
+     * \pre `p` is either to the left of `xcv` if it is oriented left-to-right
+     *      or it is to its right if `xcv` is oriented right-to-left.
      */
-    void operator()(const X_monotone_curve_2& xcv, Segment_2& seg) const;
+    void operator()(X_monotone_curve_2& xcv, const Point_2& p) const;
+
+    /*! prepends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`.
+     * If `xcv` is empty, `seg` will be its first segment.
+     * \param xcv existing \f$x\f$-monotone polyline.
+     * \param seg the segment to be prepended to `xcv`.
+     * \pre If `xcv` is not empty then `seg` extends `xcv` to the left if `xcv`
+     *      is oriented right-to-left. Otherwise, `seg` extends `xcv` to the right.
+     * \pre `seg` is not degenerated.
+     * \pre `xcv` and `seg` should have the same orientation.
+     */
+    void operator()(X_monotone_curve_2& xcv, Segment_2& seg) const;
 
     /// @} /* end of operations */
   }; /* end of Arr_polyline_traits_2::Push_front_2 */

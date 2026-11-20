@@ -2,8 +2,10 @@
  * \cgalConcept
  *
  * The concept `AosApproximateUnboundedTraits_2` refines the concept
- * `AosApproximateTraits_2`. A model of this concept is able to approximate a
- * curve constrained to a given bounding box (in addition to the ability to
+ * `AosApproximateTraits_2`. A model of this concept is able to approximate an
+ * \f$x\f$-monotone curve clipped to a given bounding box, where the portions
+ * of the curve that lie below or above the box are represented by points that
+ * lie below or above the box, respectively (in addition to the ability to
  * approximate a point and a curve without constraints).
  *
  * \cgalRefines{AosApproximateTraits_2}

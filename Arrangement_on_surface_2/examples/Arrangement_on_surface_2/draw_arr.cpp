@@ -1,4 +1,6 @@
 #include <string>
+#include <vector>
+#include <list>
 
 #include <CGAL/Random.h>
 #include <CGAL/Arr_linear_traits_2.h>
@@ -6,6 +8,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_non_caching_segment_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/draw_arrangement_2.h>
 
 /*! Convert HSV to RGB color space
@@ -239,10 +242,57 @@ void draw_random_segments(int n) {
   CGAL::draw(arr, (std::to_string(n) + " random segments").c_str());
 }
 
+void draw_polylines() {
+  using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+  using Segment_traits = CGAL::Arr_segment_traits_2<Kernel>;
+  using Traits = CGAL::Arr_polyline_traits_2<Segment_traits>;
+  using Point = Traits::Point_2;
+  using Segment = Traits::Segment_2;
+  using Arrangement = CGAL::Arrangement_2<Traits>;
+
+  Traits traits;
+  Arrangement arr(&traits);
+  auto ctr_curve = traits.construct_curve_2_object();
+
+  // A polyline constructed from a range of points
+  std::vector<Point> points1 = {Point(0, 0), Point(2, 4), Point(3, 0), Point(4, 4), Point(6, 0)};
+  auto pi1 = ctr_curve(points1.begin(), points1.end());
+
+  // A (non-x-monotone) polyline constructed from a range of points
+  std::list<Point> points2 = {Point(1, 3), Point(0, 2), Point(1, 0), Point(2, 1), Point(3, 0),
+                              Point(4, 1), Point(5, 0), Point(6, 2), Point(5, 3), Point(4, 2)};
+  auto pi2 = ctr_curve(points2.begin(), points2.end());
+
+  // A polyline constructed from a range of segments
+  std::vector<Segment> segs = {Segment(Point(0, 2), Point(1, 2)), Segment(Point(1, 2), Point(3, 6)),
+                               Segment(Point(3, 6), Point(5, 2))};
+  auto pi3 = ctr_curve(segs.begin(), segs.end());
+
+  // A face bounded by two x-monotone polylines, where the top one is directed
+  // right to left and bends into the face. The points of an x-monotone polyline
+  // are stored in the direction of the polyline; thus, its approximation must
+  // not assume left-to-right order. Otherwise, the region between the top
+  // polyline and the chord connecting its endpoints is erroneously filled.
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  std::vector<Point> points4 = {Point(11, 0), Point(10, -1), Point(8, -1), Point(7, 0)};
+  auto xpi4 = ctr_xcv(points4.begin(), points4.end());
+  std::vector<Point> points5 = {Point(7, 0), Point(8, -3), Point(10, -3), Point(11, 0)};
+  auto xpi5 = ctr_xcv(points5.begin(), points5.end());
+
+  CGAL::insert(arr, pi1);
+  CGAL::insert(arr, pi2);
+  CGAL::insert(arr, pi3);
+  CGAL::insert(arr, xpi4);
+  CGAL::insert(arr, xpi5);
+  std::cout << arr.number_of_vertices() << ", " << arr.number_of_edges() << ", " << arr.number_of_faces() << std::endl;
+  CGAL::draw(arr, "polylines");
+}
+
 int main() {
   draw_rect();
   draw_nested();
   draw_unbounded_linear_grid();
   draw_random_segments(100);
+  draw_polylines();
   return EXIT_SUCCESS;
 }

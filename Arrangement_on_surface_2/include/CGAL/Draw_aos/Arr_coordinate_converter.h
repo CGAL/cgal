@@ -19,6 +19,7 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 #include <cmath>
+#include <type_traits>
 
 #include <CGAL/number_type_config.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
@@ -31,7 +32,7 @@ namespace draw_aos {
  *
  * \tparam GeomTraits
  */
-template <typename GeomTraits>
+template <typename GeomTraits, typename = void>
 class Arr_coordinate_converter {
   using Geom_traits = GeomTraits;
   using Approx_traits = Arr_approximate_traits<Geom_traits>;
@@ -65,13 +66,17 @@ private:
  * represented as azimuth ( [0, 2 Pi) ) and polar ( [0, Pi] ) angle in radians. Points on the identification curve have
  * azimuth == 0. The south pole has polar == 0.
  *
- * \tparam Kernel
- * \tparam atanX
- * \tparam atanY
+ * The specialization is selected if the innermost traits of the geometry traits
+ * (see `innermost_traits`) is or derives from an instance of
+ * `Arr_geodesic_arc_on_sphere_traits_2`.
+ *
+ * \tparam GeomTraits
  */
-template <typename Kernel, int atanX, int atanY>
-class Arr_coordinate_converter<Arr_geodesic_arc_on_sphere_traits_2<Kernel, atanX, atanY>> {
-  using Geom_traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atanX, atanY>;
+template <typename GeomTraits>
+class Arr_coordinate_converter<GeomTraits, std::enable_if_t<is_or_derived_from_agas_v<GeomTraits>>> {
+  using Geom_traits = GeomTraits;
+  static constexpr int atanX = tmpl_args<Geom_traits>::atan_x;
+  static constexpr int atanY = tmpl_args<Geom_traits>::atan_y;
   using Approx_traits = Arr_approximate_traits<Geom_traits>;
   using Approx_point = typename Approx_traits::Approx_point;
   using Approx_nt = typename Approx_traits::Approx_nt;
