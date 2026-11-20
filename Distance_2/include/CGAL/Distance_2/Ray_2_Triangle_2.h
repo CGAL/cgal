@@ -21,6 +21,7 @@
 
 #include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
 #include <CGAL/Distance_2/Point_2_Triangle_2.h>
+#include <CGAL/Distance_2/Segment_2_Ray_2.h>
 
 #include <CGAL/Ray_2.h>
 #include <CGAL/Triangle_2.h>
@@ -37,6 +38,24 @@ squared_distance(const typename K::Ray_2& ray,
   typedef typename K::FT       FT;
   typedef typename K::Point_2  Point_2;
   typedef typename K::Line_2   Line_2;
+  typedef typename K::Segment_2 Segment_2;
+
+  if(triangle.is_degenerate()) {
+    //degenerate triangle -> union of its three edges
+    //the separating line check below assumes an oriented triangle
+    //so take the minimum of the distances to the edges as segments.
+    FT dist = internal::squared_distance(
+        ray, Segment_2(triangle.vertex(0), triangle.vertex(1)), k);
+    FT d = internal::squared_distance(
+        ray, Segment_2(triangle.vertex(1), triangle.vertex(2)), k);
+    if(d < dist)
+      dist = d;
+    d = internal::squared_distance(
+        ray, Segment_2(triangle.vertex(2), triangle.vertex(0)), k);
+    if(d < dist)
+      dist = d;
+    return dist;
+  }
 
   int ind_tr1, ind_tr2, ind_ray = 0, ind1;
 
