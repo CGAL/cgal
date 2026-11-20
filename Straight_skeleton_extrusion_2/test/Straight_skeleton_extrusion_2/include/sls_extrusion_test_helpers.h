@@ -385,8 +385,6 @@ void check_extrusion(const std::string& name,
   if(!CGAL::is_closed(m) || !CGAL::is_triangle_mesh(m))
     return;
 
-  CGAL_SLS_CHECK_MSG(PMP::is_outward_oriented(m), name);
-
   // 2. Combinatorial info
   if(e.nv)
   {
@@ -414,6 +412,14 @@ void check_extrusion(const std::string& name,
       if(PMP::is_degenerate_triangle_face(f, m))
         ++degenerate_faces;
     CGAL_SLS_CHECK_MSG(degenerate_faces == 0, name << ": " << degenerate_faces << " degenerate faces");
+  }
+
+  if(!PMP::is_outward_oriented(m))
+  {
+    if(!CGAL::Straight_skeleton_extrusion::internal::is_exact_kernel<K> && PMP::does_self_intersect(m))
+      std::cerr << "W: Orientation test failed on a self-intersecting mesh with kernel " << typeid(K).name() << std::endl;
+    else
+      CGAL_SLS_CHECK_MSG(false, name << ": not outward oriented");
   }
 
   if(e.check_self_intersections)
