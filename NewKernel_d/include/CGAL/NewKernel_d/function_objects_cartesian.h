@@ -553,7 +553,7 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
         */
 
         template<class Iter>
-        result_type operator()(Iter f, Iter const& e, Point const& p0) const {
+        result_type operator()(Iter f, Iter const& CGAL_assertion_code(e), Point const& p0) const {
           typedef typename Get_functor<R, Squared_distance_to_origin_tag>::type Sqdo;
           typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
           typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
