@@ -59,7 +59,7 @@
 
 namespace CGAL {
 
-  namespace internal {
+namespace internal {
 template <class RT>
 bool
 invert(
@@ -311,8 +311,10 @@ private:
     NormalPMap normal_pmap,
     Visitor visitor)
   {
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     CGAL::Timer task_timer; task_timer.start();
     CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
+#endif
 
     // Inserts points in triangulation
     m_tr->insert(
@@ -320,10 +322,11 @@ private:
       point_pmap,
       normal_pmap,
       visitor);
-
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     // Prints status
     CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
                                                            << std::endl;
+#endif
   }
 
 
@@ -431,8 +434,10 @@ public:
                                  double approximation_ratio = 0,
                                  double average_spacing_ratio = 5)
   {
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     CGAL::Timer task_timer; task_timer.start();
     CGAL_TRACE_STREAM << "Delaunay refinement...\n";
+#endif
 
     // Delaunay refinement
     const FT radius_edge_ratio_bound = 2.5;
@@ -485,12 +490,14 @@ public:
              it = m_tr->input_points_begin(); it != m_tr->input_points_end(); ++ it)
         if (random.get_double() >= ratio)
           some_points.push_back (it);
-
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
       CGAL_TRACE_STREAM << "SPECIAL PASS that uses an approximation of the result (approximation ratio: "
                 << approximation_ratio << ")" << std::endl;
       CGAL::Timer approximation_timer; approximation_timer.start();
 
       CGAL::Timer sizing_field_timer; sizing_field_timer.start();
+#endif
+
       Poisson_reconstruction_function<Geom_traits>
         coarse_poisson_function(boost::make_indirect_iterator (some_points.begin()),
                                 boost::make_indirect_iterator (some_points.end()),
@@ -507,20 +514,24 @@ public:
         Poisson_reconstruction_function<Geom_traits> > sizing_field2(&min_sizing_field,
                                                                      &coarse_poisson_function);
 
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
       sizing_field_timer.stop();
       std::cerr << "Construction time of the sizing field: " << sizing_field_timer.time()
                 << " seconds" << std::endl;
+#endif
 
       NB.push_back( delaunay_refinement(radius_edge_ratio_bound,
                                         sizing_field2,
                                         max_vertices,
                                         enlarge_ratio,
                                         sizing_field_ok) );
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
       approximation_timer.stop();
       CGAL_TRACE_STREAM << "SPECIAL PASS END (" << approximation_timer.time() <<  " seconds)" << std::endl;
+#endif
     }
 
-
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     // Prints status
     CGAL_TRACE_STREAM << "Delaunay refinement: " << "added ";
     for(std::size_t i = 0; i < NB.size()-1; i++){
@@ -546,6 +557,7 @@ public:
 #else
     CGAL_TRACE_STREAM << "Solve Poisson equation with normalized divergence...\n";
 #endif
+#endif
 
     // Computes the Poisson indicator function operator()
     // at each vertex of the triangulation.
@@ -561,10 +573,12 @@ public:
     // - operator() < 0 inside the surface.
     set_contouring_value(median_value_at_input_vertices());
 
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     // Prints status
     CGAL_TRACE_STREAM << "Solve Poisson equation: " << task_timer.time() << " seconds, "
                                                     << std::endl;
     task_timer.reset();
+#endif
 
     return true;
   }
@@ -785,13 +799,14 @@ private:
     SparseLinearAlgebraTraits_d solver, ///< sparse linear solver
     double lambda)
   {
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     CGAL_TRACE_STREAM << "Calls solve_poisson()\n";
 
     double time_init = clock();
 
     double duration_assembly = 0.0;
     double duration_solve = 0.0;
-
+#endif
 
     initialize_cell_indices();
     initialize_barycenters();
@@ -801,7 +816,9 @@ private:
     m_tr->index_unconstrained_vertices();
     unsigned int nb_variables = static_cast<unsigned int>(m_tr->number_of_vertices()-1);
 
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     CGAL_TRACE_STREAM  << "  Number of variables: " <<  nb_variables << std::endl;
+#endif
 
     // Assemble linear system A*X=B
     typename SparseLinearAlgebraTraits_d::Matrix A(nb_variables); // matrix is symmetric definite positive
@@ -826,28 +843,33 @@ private:
 
     clear_duals();
     clear_normals();
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
     CGAL_TRACE_STREAM << "  Creates matrix: done (" << duration_assembly << "sec.)\n";
 
     CGAL_TRACE_STREAM << "  Solve sparse linear system...\n";
 
-    // Solve "A*X = B". On success, solution is (1/D) * X.
     time_init = clock();
+#endif
+    // Solve "A*X = B". On success, solution is (1/D) * X.
     double D;
     if(!solver.linear_solver(A, B, X, D))
       return false;
     CGAL_assertion(D == 1.0);
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
 
     CGAL_TRACE_STREAM << "  Solve sparse linear system: done (" << duration_solve << "sec.)\n";
-
+#endif
     // copy function's values to vertices
     unsigned int index = 0;
     for (Vertex_handle v : m_tr->finite_vertex_handles())
       if(!m_tr->is_constrained(v))
         v->f() = X[index++];
 
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     CGAL_TRACE_STREAM << "End of solve_poisson()\n";
+#endif
 
     return true;
   }
