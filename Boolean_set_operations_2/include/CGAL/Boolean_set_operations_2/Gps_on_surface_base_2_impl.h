@@ -331,10 +331,11 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
   Curve_const_iterator curr = itr_pair.first;
   Curve_const_iterator end  = itr_pair.second;
 
+  const auto* traits = arr.traits_adaptor();
   const Arr_parameter_space  ps_x =
-    m_traits_adaptor.parameter_space_in_x_2_object()(*curr, ARR_MIN_END);
+    traits->parameter_space_in_x_2_object()(*curr, ARR_MIN_END);
   const Arr_parameter_space  ps_y =
-    m_traits_adaptor.parameter_space_in_y_2_object()(*curr, ARR_MIN_END);
+    traits->parameter_space_in_y_2_object()(*curr, ARR_MIN_END);
 
   Object obj_f;
   if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR))
@@ -617,7 +618,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   polygons_with_holes(OutputIterator out) const
 {
   typedef Arr_bfs_scanner<Arrangement_on_surface_2, OutputIterator>     Arr_bfs_scanner;
-  Arr_bfs_scanner scanner(this->m_traits, out);
+  Arr_bfs_scanner scanner(this->m_traits.get(), out);
   scanner.scan(*(this->m_arr));
   return (scanner.output_iterator());
 }
@@ -633,7 +634,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
     Arr_bfs_scanner;
   //counting_output_operator CTOR requires a parameter
   std::size_t cc = 0;
-  Arr_bfs_scanner scanner(this->m_traits, Counting_output_iterator(&cc));
+  Arr_bfs_scanner scanner(this->m_traits.get(), Counting_output_iterator(&cc));
   scanner.scan(*(this->m_arr));
   return (scanner.output_iterator().current_counter());
 }
@@ -686,7 +687,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   typedef Arr_bfs_scanner<Arrangement_on_surface_2, OutputItr>     Arr_bfs_scanner;
 
   OutputItr oi (pgn);
-  Arr_bfs_scanner scanner(this->m_traits, oi);
+  Arr_bfs_scanner scanner(this->m_traits.get(), oi);
 
 
   Ccb_halfedge_const_circulator ccb_of_pgn = get_boundary_of_polygon(f);
