@@ -29,7 +29,7 @@ _test_cls_vector_3(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
- typename R::Vector_3       iv;
+ typename R::Vector_3       iv(CGAL::NULL_VECTOR);
  typedef typename R::Vector_3::Cartesian_const_iterator CCI;
 
  CGAL::Vector_3<R>  v1;
