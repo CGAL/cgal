@@ -65,7 +65,7 @@ namespace internal {
   template <class T, class Alloc>
   class In_place_list_iterator {
   protected:
-    T* node;
+    T* node = nullptr;
   public:
     friend  class In_place_list<T,false, Alloc>;
     friend  class In_place_list<T,true, Alloc>;
@@ -123,7 +123,7 @@ namespace internal {
   template <class T, class Alloc>
   class In_place_list_const_iterator {
   protected:
-    const T* node;  // It's not Ptr. Otherwise traversal won't work.
+    const T* node = nullptr;  // It's not Ptr. Otherwise traversal won't work.
   public:
     friend  class In_place_list<T,false, Alloc>;
     friend  class In_place_list<T,true, Alloc>;
@@ -267,8 +267,8 @@ public:
 protected:
   Allocator allocator;
 
-  pointer      node;
-  size_type    length;
+  pointer      node = nullptr;
+  size_type    length = 0;
 
   // These are the only places where the allocator gets called.
   pointer get_node() {

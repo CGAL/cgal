@@ -28,6 +28,8 @@
 #include <variant>
 #endif
 
+#include <CGAL/monostate.h>
+
 namespace CGAL {
 
 template <typename... Args>
@@ -57,11 +59,11 @@ struct Object_handle;
 
 template <typename... Args>
 struct Object_handle<Type_pack<Args...>>
-  : std::variant<std::monostate, Args...> {
-  using std::variant<std::monostate, Args...>::variant;
+  : std::variant<CGAL::monostate, Args...> {
+  using std::variant<CGAL::monostate, Args...>::variant;
   // needed for compatibility with CGAL::Object API
   bool empty() const
-  { return std::holds_alternative<std::monostate>(*this); }
+  { return std::holds_alternative<CGAL::monostate>(*this); }
 };
 
 template <typename T, typename U>
