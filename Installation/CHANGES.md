@@ -7,12 +7,11 @@ Release date: December 2026
 ### General Changes
 
 - The new list of supported compilers is:
-  - Visual C++ XX.YY, XX.YY, XX.YY, XX.YY (from Visual Studio XXXX, XXXX, XXXX, and XXXX) or later
-  - Gnu g++ XX.YY.ZZ or later (on Linux)
-  - LLVM Clang version XX.YY.ZZ or later (on Linux)
-  - Apple Clang compiler versions XX.YY.ZZ or later (on macOS)
-- The minimal supported version of Boost is XX.YY.ZZ.
-- [...]
+  - Visual C++ 15.9, 16.10, 17.14, 18.0 (from Visual Studio 2017, 2019, 2022, and 2026) or later
+  - Gnu g++ 14.2.0 or later (on Linux)
+  - LLVM Clang version 22.1.8 or later (on Linux)
+  - Apple Clang compiler versions 14.0.0 or later (on macOS)
+- The minimal supported version of Boost is version 1.79.0 or later.
 
 ### [3D Mesh Volume Smoothing](https://doc.cgal.org/6.3/Manual/packages.html#PkgMeshSmoothing3) (new package)
 
