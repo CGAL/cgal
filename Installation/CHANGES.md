@@ -115,6 +115,15 @@ Release date: December 2026
  and "protected" edges that may not be modified at all by remeshing.
  - Fix an API bug in `CGAL::Polygon_mesh_processing::remesh_planar_patches()`: when coplanarity/collinearity criteria are too relaxed, it might happen that some patches cannot be triangulated. To handle such cases, a Boolean is now returned to indicate if all patches could be triangulated (same behavior as `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`). Also those two functions can now produce a (self-intersecting) mesh in case the simplified mesh turned out to be non-manifold (internally calling the function `CGAL::Polygon_mesh_processing::orient_polygon_soup()` on the corners and patches detected). In order to check if a non-manifoldness was worked around, the new named parameter `number_of_corners()` can be used and the filled value shall be compared to the number of vertices of the output mesh.
 
+### Number Types
+
+- **Breaking change**: The precisions of `CORE` (the default relative and absolute precisions of `CORE::Expr`, and the
+  precisions of `CORE::BigFloat` division and square root), which `CGAL::set_precision()` sets for `CORE::BigFloat`
+  intervals, are now thread-local: setting them affects only the calling thread, and every thread starts with the default
+  precisions. Previously they were shared by all threads, so concurrent computations with algebraic numbers (e.g.,
+  arrangements of algebraic curves or of rational functions constructed in different threads) used the precisions of each
+  other, which could produce wrong results or failed assertions.
+
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
 Release date: June 2026
