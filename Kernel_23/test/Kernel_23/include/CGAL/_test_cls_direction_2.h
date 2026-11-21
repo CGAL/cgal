@@ -28,7 +28,7 @@ _test_cls_direction_2(const R& )
 
  typedef typename  R::RT    RT;
 
- typename R::Direction_2  id;
+ typename R::Direction_2  id(RT(1), RT(0));
  CGAL::Direction_2<R> d0;
  CGAL::Direction_2<R> d1(id); CGAL_USE(d1);
 

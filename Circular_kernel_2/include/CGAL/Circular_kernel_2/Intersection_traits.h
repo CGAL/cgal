@@ -43,9 +43,10 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>
 {
   typedef typename
-  std::variant< typename CK::Circle_2,
+  std::variant<
                   typename std::pair< typename CK::Circular_arc_point_2,
-                                      unsigned int >
+                                      unsigned int >,
+                  typename CK::Circle_2
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
                   >
   type;
@@ -55,9 +56,9 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Circular_arc_2, typename CK::Circular_arc_2>
 {
   typedef typename
-  std::variant< typename CK::Circular_arc_2,
-                  typename std::pair< typename CK::Circular_arc_point_2,
-                                      unsigned int >
+  std::variant<   typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int >,
+                  typename CK::Circular_arc_2
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
                   >
   type;
@@ -67,9 +68,9 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>
 {
   typedef typename
-  std::variant< typename CK::Line_arc_2,
-                  typename std::pair< typename CK::Circular_arc_point_2,
-                                      unsigned int >
+  std::variant<   typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int >,
+                  typename CK::Line_arc_2
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
                   >
   type;
@@ -111,9 +112,9 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Line_2>
 {
   typedef typename
-  std::variant< typename CK::Line_arc_2,
-                  typename std::pair< typename CK::Circular_arc_point_2,
-                                      unsigned int >
+  std::variant<   typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int >,
+                  typename CK::Line_arc_2
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
                   >
   type;

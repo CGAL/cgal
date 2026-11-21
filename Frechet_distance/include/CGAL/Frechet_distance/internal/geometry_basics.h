@@ -97,17 +97,19 @@ struct Lambda<Curve<FilteredTraits,true>>
           exact(exact),
           is_zero(CGAL::is_zero(exact)),
           is_one(CGAL::is_one(exact)),
-          is_exact(true)
+          is_exact(true),
+          is_start(false)
     {}
 
     Lambda(const Exact& exact, const Curve&, const PointID&,
                                const Curve&, const PointID&,
-                               const distance_t&, bool)
+                               const distance_t&, bool is_start)
         : approx(CGAL::to_interval(exact)),
           exact(exact),
           is_zero(CGAL::is_zero(exact)),
           is_one(CGAL::is_one(exact)),
-          is_exact(true)
+          is_exact(true),
+          is_start(is_start)
     {}
 
     //     fill_lambda returns a pair and we are only interested in a bound

@@ -641,7 +641,7 @@ int zoomToId(const Mesh& mesh,
         {
           normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(face(opposite(hf, mesh), mesh),
                                                                        mesh);
-          selected_fh = face(hf, mesh);
+          selected_fh = face(opposite(hf, mesh), mesh);
         }
 
         normal = 0.5*normal1 + 0.5*normal2;

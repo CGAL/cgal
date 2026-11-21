@@ -51,7 +51,7 @@ _test_cls_line_new_2(const R& )
  Point_2 p3 = construct_point(-n6, n6, n3 );   // (-2, 2 )
  Point_2 p4 = construct_point( n8, n4, n2 );   // ( 4, 2 )
 
- typename R::Line_2 il;
+ typename R::Line_2 il(p1, p2);
  Line_2  l0(il);
  Line_2  l12( p1, p2 );
  Line_2  l21( p2, p1 );
