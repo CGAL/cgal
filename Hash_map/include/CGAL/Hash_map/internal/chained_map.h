@@ -85,7 +85,8 @@ public:
    std::size_t index(Item it) const { return it->k; }
    T&            inf(Item it) const { return it->i; }
 
-   chained_map(std::size_t n = default_size, const T& d = T());
+   explicit chained_map(std::size_t n = default_size);
+   chained_map(std::size_t n, const T& d);
    chained_map(const chained_map<T, Allocator>& D);
    chained_map& operator=(const chained_map<T, Allocator>& D);
    chained_map(chained_map<T, Allocator>&& D)
@@ -233,6 +234,12 @@ T& chained_map<T, Allocator>::access(Item p, std::size_t x)
   return q->i;
 }
 
+
+template <typename T, typename Allocator>
+chained_map<T, Allocator>::chained_map(std::size_t n)
+  : table(nullptr), reserved_size(n), def()
+{
+}
 
 template <typename T, typename Allocator>
 chained_map<T, Allocator>::chained_map(std::size_t n, const T& d)

@@ -372,31 +372,13 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
     curr_he = first_he->twin();
   }
 
-  Curve_const_iterator temp = curr;
-  ++temp;
-  if (temp == end) // a polygon with circular arcs may have only
-                  // two edges (full circle for example)
-  {
-    /*Halfedge_handle he =
-      arr.insert_at_vertices(*temp, curr_he, first_he);*/
-    bool new_face_created = false;
-    bool dummy_swapped_predecessors = false;
-    Halfedge_handle he = accessor.insert_at_vertices_ex (curr_he,
-                                                         *temp, (cmp_ends(*temp) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
-                                                         first_he->next(),
-                                                         new_face_created,
-                                                         dummy_swapped_predecessors);
-    // TODO EBEB 2012-08-06 do we have to care if order has been swapped,
-    // or do we have to disallow swapping?
+  // A closed polygon has at least two x-monotone edges (a polygon with
+  // circular arcs may have only two, e.g. a full circle). The case of two
+  // edges is handled by the general code below: the loop is skipped and the
+  // second edge closes the face.
+  CGAL_assertion(std::next(curr) != end);
 
-    CGAL_assertion(new_face_created);
-    CGAL_assertion((he->face() != he->twin()->face()));
-
-    he->face()->set_contained(true);
-    return;
-  }
-
-  //The polygon has 3 or more edges
+  // loop for polygon with at least 3 edges
   Curve_const_iterator last = end;
   --last;
   for(++curr ; curr != last; ++curr)

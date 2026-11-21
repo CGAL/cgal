@@ -68,6 +68,7 @@ public:
     int index(const int i) const /* Concept */
     {
         CGAL_precondition( (0 <= i) && (i <= face_dimension()) );
+        CGAL_assume( (0 <= i) && ((size_t)i+1 < indices_.size()) );
         return indices_[i];
     }
 
