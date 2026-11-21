@@ -28,6 +28,7 @@
 #include <list>
 #include <utility>
 #include <limits>
+#include <type_traits>
 
 /*
 #define CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE // define it to activate optimal scale calculation,
@@ -231,6 +232,13 @@ public:
 
 // sparse linear solver
 #ifndef DOXYGEN_RUNNING
+  #if !defined(CGAL_EIGEN3_ENABLED)
+  static_assert(!(std::is_same<ST, Default>::value),
+                "Error: You must either provide the template parameter 'ST' or link with the target CGAL::Eigen3_support");
+  static_assert(!(std::is_same<CR, Default>::value),
+                "Error: You must either provide the template parameter 'CR' or link with the target CGAL::Eigen3_support");
+  #endif
+
   typedef typename Default::Get<
     ST,
   #if defined(CGAL_EIGEN3_ENABLED)

@@ -17,6 +17,7 @@
 #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_2_H
 #define CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_2_H
 
+#include <CGAL/Origin.h>
 #include <cstddef>
 #include <iterator>
 
@@ -42,7 +43,10 @@ class Point_2_coordinate_iterator {
                                         iterator_category;
 
     // forward operations
-    Point_2_coordinate_iterator( const Point&  point = Point(),
+    Point_2_coordinate_iterator( )
+        : p( ORIGIN), i( 0) { }
+
+    Point_2_coordinate_iterator( const Point&  point,
                                  int           index = 0)
         : p( point), i( index) { }
 

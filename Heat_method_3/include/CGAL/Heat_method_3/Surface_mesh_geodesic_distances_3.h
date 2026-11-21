@@ -34,6 +34,7 @@
 #include <CGAL/Weights/utils.h>
 #include <boost/range/has_range_iterator.hpp>
 
+#include <type_traits>
 #include <vector>
 #include <set>
 
@@ -766,6 +767,9 @@ class Surface_mesh_geodesic_distances_3
 #else
   typedef LA LA_type;
 #endif
+
+  static_assert(!std::is_same_v<LA_type, Default>,
+                "Error: You must either provide the template parameter 'LA' or link with the target CGAL::Eigen3_support");
 
   typedef typename Default::Get<
     VertexPointMap,
