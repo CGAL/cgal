@@ -5302,7 +5302,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
       typename Tr::Facet f(ch, index);
       return constraint_index_map.find(f) != constraint_index_map.end();
     };
-    auto f_constraint_index = [&](typename Tr::Cell_handle ch, int index) -> std::size_t
+    auto f_constraint_index = [&](typename Tr::Cell_handle ch, int index) -> CDT_3_signed_index
     {
       typename Tr::Facet f(ch, index);
       auto it = constraint_index_map.find(f);
