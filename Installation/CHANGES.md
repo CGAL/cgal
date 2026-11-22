@@ -96,7 +96,7 @@ Release date: December 2026
   by default). When [`CGAL::Parallel_tag`](https://doc.cgal.org/6.3/STL_Extension/structCGAL_1_1Parallel__tag.html)
   is specified, the tree construction is performed in parallel.
 - Added the functions [`CGAL::AABB_trees::do_intersect()`](https://doc.cgal.org/6.3/AABB_tree/group__PkgAABBTreeRef.html#ga7434a520645c7a8cc2be71cf33d14a85)
-  and [`CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`](https://doc.cgal.org/6.3/AABB_tree/group__PkgAABBTreeRef.html#gac1f3e1538c56bcb0fe80dc20d2ced376).
+  and [`CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`](https://doc.cgal.org/6.3/AABB_tree/group__PkgAABBTreeRef.html#ga00e13d3ea9a2adc9726e5df5902952c5).
   These functions respectively determine whether two AABB trees intersect and compute all pairs
   of intersecting primitives between two AABB trees.
 - Added a new primitive type, [`CGAL::AABB_indexed_triangle_primitive_3`](https://doc.cgal.org/6.3/AABB_tree/classCGAL_1_1AABB__indexed__triangle__primitive__3.html),
@@ -162,7 +162,7 @@ Release date: December 2026
 ### [Polygon Mesh Processing - Meshing and Remeshing of Polygon Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
 
 - Added a new named parameter `edge_is_protected_map` to
-  [`CGAL::Polygon_mesh_processing::isotropic_remeshing()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__local__remeshing__grp.html),
+  [`CGAL::Polygon_mesh_processing::isotropic_remeshing()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__local__remeshing__grp.html#ga412f696ec3009074bf957f1bba638248),
   to distinguish between "constrained" edges that can be resampled while the constrained edges
   polyline graph remains topologically unchanged, and "protected" edges that may not be modified
   at all by remeshing.
