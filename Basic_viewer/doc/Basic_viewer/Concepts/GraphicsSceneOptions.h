@@ -134,6 +134,17 @@ public:
   /// `nullptr` by default.
   std::function<CGAL::IO::Color(const DS &, volume_descriptor)> volume_color;
 
+  /// `std::function` that returns `true` when call for volumes having an associated scalar value, and `false` otherwise. `false` by default.
+  std::function<bool(const DS &, volume_descriptor)> is_volume_valued;
+
+  /// `std::function` that returns the associated scalar value of a volume (for example a
+  /// quality measure). Called only if `is_volume_valued()` returns `true`. The viewer
+  /// normalizes the values over their range and maps them to a color palette.
+  std::function<float(const DS &, volume_descriptor)> volume_value;
+
+  /// name of the volume value, shown in the viewer's color legend.
+  std::string volume_value_name;
+
   /// ignores all volumes when `b` is `true`; otherwise ignore only volumes for which `ignore_volume()` returns `true`.
   void ignore_all_volumes(bool b);
 };

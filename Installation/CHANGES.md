@@ -214,6 +214,10 @@ Release date: December 2026
   for the legend) of the concept [`GraphicsSceneOptions`](https://doc.cgal.org/6.3/Basic_viewer/classGraphicsSceneOptions.html),
   which are provided by the class [`CGAL::Graphics_scene_options`](https://doc.cgal.org/6.3/Basic_viewer/structCGAL_1_1Graphics__scene__options.html).
   As an example, the surface mesh drawer exposes the aspect ratio of each face.
+- In the same way, a drawer can attach a value to each volume through the new members
+  `is_volume_valued` and `volume_value` (with `volume_value_name` for the legend) of the concept
+  [`GraphicsSceneOptionsWithVolumes`](https://doc.cgal.org/6.3/Basic_viewer/classGraphicsSceneOptionsWithVolumes.html).
+  The linear cell complex drawer supports both face and volume values.
 
 ### [Stream Support](https://doc.cgal.org/6.3/Manual/packages.html#PkgStreamSupport)
 

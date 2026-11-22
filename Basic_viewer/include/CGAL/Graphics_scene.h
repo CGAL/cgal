@@ -259,6 +259,24 @@ public:
   /// sets the name of the value, shown in the viewer's color legend.
   void set_value_name(const std::string &n) { m_value_name=n; }
 
+  /// sets the scalar value of the volume currently being built, after `volume_begin()`.
+  /// The viewer can color each volume by its value, like the face values.
+  void set_volume_value(float v)
+  {
+    if (!m_building_volume) { return; }
+    if (!m_has_volume_values)
+    { m_volume_value_min=m_volume_value_max=v; }
+    else
+    { if (v<m_volume_value_min) { m_volume_value_min=v; }
+      if (v>m_volume_value_max) { m_volume_value_max=v; } }
+    m_volume_values.back()=v;
+    m_volume_valued.back()=true;
+    m_has_volume_values=true;
+  }
+
+  /// sets the name of the volume value, shown in the viewer's color legend.
+  void set_volume_value_name(const std::string &n) { m_volume_value_name=n; }
+
   void face_begin()
   {
     if (a_face_started())
@@ -357,6 +375,8 @@ public:
     m_volume_faces.emplace_back();
     m_volume_colors.push_back(acolor);
     m_volume_bboxes.emplace_back();
+    m_volume_values.push_back(0.f);
+    m_volume_valued.push_back(false);
     m_current_volume_color=acolor;
     m_current_volume_has_color=true;
     m_building_volume=true;
@@ -367,6 +387,8 @@ public:
     m_volume_faces.emplace_back();
     m_volume_colors.push_back(m_default_color_face);
     m_volume_bboxes.emplace_back();
+    m_volume_values.push_back(0.f);
+    m_volume_valued.push_back(false);
     m_current_volume_has_color=false;
     m_building_volume=true;
   }
@@ -397,6 +419,16 @@ public:
   const std::string &value_name() const { return m_value_name; }
   float face_value_min() const { return m_face_value_min; }
   float face_value_max() const { return m_face_value_max; }
+
+  // Color by value: the per-volume values, parallel to get_volume_faces(). A volume
+  // with no value set keeps its usual color.
+  const std::vector<float> &get_volume_values() const { return m_volume_values; }
+  bool is_volume_valued(std::size_t v) const
+  { return v<m_volume_valued.size() && m_volume_valued[v]; }
+  bool has_volume_values() const { return m_has_volume_values; }
+  const std::string &volume_value_name() const { return m_volume_value_name; }
+  float volume_value_min() const { return m_volume_value_min; }
+  float volume_value_max() const { return m_volume_value_max; }
 
   template <typename KPoint>
   void add_text(const KPoint &kp, const std::string &txt)
@@ -463,6 +495,11 @@ public:
     m_volume_faces.clear();
     m_volume_colors.clear();
     m_volume_bboxes.clear();
+    m_face_values.clear();
+    m_has_face_values=false;
+    m_volume_values.clear();
+    m_volume_valued.clear();
+    m_has_volume_values=false;
     m_current_face_start=0;
     m_face_dedup.clear();
     m_building_volume=false;
@@ -550,6 +587,14 @@ protected:
   std::string m_value_name;
   float m_face_value_min = 0.f;
   float m_face_value_max = 1.f;
+
+  // Color by value: an optional scalar per volume, parallel to m_volume_faces.
+  std::vector<float> m_volume_values;
+  std::vector<bool> m_volume_valued;
+  bool m_has_volume_values = false;
+  std::string m_volume_value_name;
+  float m_volume_value_min = 0.f;
+  float m_volume_value_max = 1.f;
 
   // Clip-plane cap: geometric face de-duplication during volume building. The key
   // is the sorted face vertex positions, so both sides of a shared wall match.

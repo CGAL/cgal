@@ -62,3 +62,5 @@ create_single_source_cgal_program(test_plane_graph_alias.cpp ${hfiles})
 target_compile_definitions(test_plane_graph_alias PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
 
 create_single_source_cgal_program(lcc_test_hook_operator.cpp)
+
+create_single_source_cgal_program(lcc_graphics_scene_values.cpp)
