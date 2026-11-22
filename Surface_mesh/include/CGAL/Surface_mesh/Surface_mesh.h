@@ -936,26 +936,29 @@ public:
     /// move assignment
     Surface_mesh& operator=(Surface_mesh&& sm)
     {
-      vprops_ = std::move(sm.vprops_);
-      hprops_ = std::move(sm.hprops_);
-      eprops_ = std::move(sm.eprops_);
-      fprops_ = std::move(sm.fprops_);
-      vconn_ = std::move(sm.vconn_);
-      hconn_ = std::move(sm.hconn_);
-      fconn_ = std::move(sm.fconn_);
-      vremoved_ = std::move(sm.vremoved_);
-      eremoved_ = std::move(sm.eremoved_);
-      fremoved_ = std::move(sm.fremoved_);
-      vpoint_ = std::move(sm.vpoint_);
-      removed_vertices_ = std::exchange(sm.removed_vertices_, 0);
-      removed_edges_ = std::exchange(sm.removed_edges_, 0);
-      removed_faces_ = std::exchange(sm.removed_faces_, 0);
-      vertices_freelist_ = std::exchange(sm.vertices_freelist_, (std::numeric_limits<size_type>::max)());
-      edges_freelist_ = std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)());
-      faces_freelist_ = std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)());
-      garbage_ = std::exchange(sm.garbage_, false);
-      recycle_ = std::exchange(sm.recycle_, true);
-      anonymous_property_ = std::exchange(sm.anonymous_property_, 0);
+      if (this != &sm)
+      {
+        vprops_ = std::move(sm.vprops_);
+        hprops_ = std::move(sm.hprops_);
+        eprops_ = std::move(sm.eprops_);
+        fprops_ = std::move(sm.fprops_);
+        vconn_ = std::move(sm.vconn_);
+        hconn_ = std::move(sm.hconn_);
+        fconn_ = std::move(sm.fconn_);
+        vremoved_ = std::move(sm.vremoved_);
+        eremoved_ = std::move(sm.eremoved_);
+        fremoved_ = std::move(sm.fremoved_);
+        vpoint_ = std::move(sm.vpoint_);
+        removed_vertices_ = std::exchange(sm.removed_vertices_, 0);
+        removed_edges_ = std::exchange(sm.removed_edges_, 0);
+        removed_faces_ = std::exchange(sm.removed_faces_, 0);
+        vertices_freelist_ = std::exchange(sm.vertices_freelist_, (std::numeric_limits<size_type>::max)());
+        edges_freelist_ = std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)());
+        faces_freelist_ = std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)());
+        garbage_ = std::exchange(sm.garbage_, false);
+        recycle_ = std::exchange(sm.recycle_, true);
+        anonymous_property_ = std::exchange(sm.anonymous_property_, 0);
+      }
       return *this;
     }
 
