@@ -355,8 +355,8 @@ class Intersection_of_triangle_meshes
 
         // Callback are not thread safe since Edge_to_faces is not.
         // Edge_to_faces is an unordered_map<Edge_index, unordered_set<Face_index>>
-        // pass them would be a lot of concurrent write and unefficient, use local vectors then merged and check doublon is probably better
-        // Currently, in explored examples, this step is negligeable in runtime and thus not parallellized
+        // pass them would be a lot of concurrent write and inefficient, use local vectors then merged and check doublon is probably better
+        // Currently, in explored examples, this step is negligible in runtime and thus not parallelized
         if(non_manifold_feature_map_1.non_manifold_edges.empty() && non_manifold_feature_map_2.non_manifold_edges.empty())
           for(const auto& [f_1, f_2]: inter)
             process_candidates_without_non_manifold_map(f_1, f_2, callback12, callback21);
