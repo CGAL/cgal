@@ -8,7 +8,7 @@ Replacement for `std::expected` that is added in C++23.
 
 This class is a copy of [`tl::expected`](https://github.com/TartanLlama/expected),
 with the namespace renamed to `CGAL::cpp23`. Its interface is that of
-[`std::expected`](https://en.cppreference.com/w/cpp/utility/expected).
+[`std::expected`](https://en.cppreference.com/cpp/utility/expected).
 */
 template <typename T, typename E>
 class expected {};

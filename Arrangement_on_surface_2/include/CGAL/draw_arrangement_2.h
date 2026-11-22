@@ -105,7 +105,7 @@ public:
      * `Approximate_2` has an appropriate operator.
      *
      * C++20 supports concepts and `requires` expression; see, e.g.,
-     * https://en.cppreference.com/w/cpp/language/constraints; thus, the first
+     * https://en.cppreference.com/cpp/language/constraints; thus, the first
      * condition above can be elegantly verified as follows:
      * constexpr bool has_approximate_2_object =
      *   requires(const Gt& traits) { traits.approximate_2_object(); };
@@ -454,7 +454,7 @@ public:
      * `Approximate_2` has an appropriate operator.
      *
      * C++20 supports concepts and `requires` expression; see, e.g.,
-     * https://en.cppreference.com/w/cpp/language/constraints; thus, the first
+     * https://en.cppreference.com/cpp/language/constraints; thus, the first
      * condition above can be elegantly verified as follows:
      * constexpr bool has_approximate_2_object =
      *   requires(const Gt& traits) { traits.approximate_2_object(); };

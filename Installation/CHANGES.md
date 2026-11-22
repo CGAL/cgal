@@ -1817,8 +1817,8 @@ Release date: November 2019
      and free function ([`approximate_angle`](https://doc.cgal.org/5.0/Kernel_23/group__approximate__angle__grp.html))
      have also been added.
 - The following objects are now hashable and thus trivially usable
-     with [`std::unordered_set`](https://en.cppreference.com/w/cpp/container/unordered_set)
-     and [`std::unordered_map`](https://en.cppreference.com/w/cpp/header/unordered_map):
+     with [`std::unordered_set`](https://en.cppreference.com/cpp/container/unordered_set)
+     and [`std::unordered_map`](https://en.cppreference.com/cpp/header/unordered_map):
      `CGAL::Aff_transformation_2`, `CGAL::Aff_transformation_3`,
      `CGAL::Bbox_2`, `CGAL::Bbox_3`, `CGAL::Circle_2`,
      `CGAL::Iso_cuboid_3`, `CGAL::Iso_rectangle_2`, `CGAL::Point_2`,

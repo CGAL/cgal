@@ -43,7 +43,7 @@ As the default precision of output streams of the \stl is `6`, this can be a rea
 and wrong outputs.
 
 The stream precision of \stl streams can be modified using
-<a href="https://en.cppreference.com/w/cpp/io/manip/setprecision">std::setprecision</a>.
+<a href="https://en.cppreference.com/cpp/io/manip/setprecision">std::setprecision</a>.
 File I/O functions also offer an optional named parameter to set the output stream precision.
 
 \section IOstreamIO Reading and Writing Data With Streams
