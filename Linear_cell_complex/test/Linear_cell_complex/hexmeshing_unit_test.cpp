@@ -3,7 +3,7 @@
 #include <CGAL/Hexmeshing/move_points_onto_mesh.h>
 #include <CGAL/Hexmeshing/resolve_non_manifold_case.h>
 
-#include "lcc_jacobian.h"
+#include <CGAL/Linear_cell_complex/lcc_scaled_jacobian.h>
 #include "hexmeshing_unit_test.h"
 
 #include <vector>
@@ -353,9 +353,9 @@ bool test2_laplacian_smoothing_for_unmarked_cells<1>() {
   int inv_counter = 0;
   auto volumes = lcc.one_dart_per_cell<3>();
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
-    std::array<typename LCC::Vertex_attribute_descriptor, 8> nodes = {lcc.attribute<0>(volume), lcc.attribute<0>(lcc.beta(volume, 1)), lcc.attribute<0>(lcc.beta(volume, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 0)),
+    std::array<typename LCC::Vertex_attribute_const_descriptor, 8> nodes = {lcc.attribute<0>(volume), lcc.attribute<0>(lcc.beta(volume, 1)), lcc.attribute<0>(lcc.beta(volume, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 0)),
                                                                       lcc.attribute<0>(lcc.beta(volume, 0, 2, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 2, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 2, 0)), lcc.attribute<0>(lcc.beta(volume, 1, 2, 0))};
-    double j = scale_jacobian_of_hexa(lcc, nodes);
+    double j = CGAL::internal::scaled_jacobian_of_hexahedron_vertices(lcc, nodes);
     if(j < 0.) inv_counter++;
   }
   if(inv_counter != 26) return false;
@@ -365,9 +365,9 @@ bool test2_laplacian_smoothing_for_unmarked_cells<1>() {
 
   inv_counter = 0;
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
-    std::array<typename LCC::Vertex_attribute_descriptor, 8> nodes = {lcc.attribute<0>(volume), lcc.attribute<0>(lcc.beta(volume, 1)), lcc.attribute<0>(lcc.beta(volume, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 0)),
+    std::array<typename LCC::Vertex_attribute_const_descriptor, 8> nodes = {lcc.attribute<0>(volume), lcc.attribute<0>(lcc.beta(volume, 1)), lcc.attribute<0>(lcc.beta(volume, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 0)),
                                                                       lcc.attribute<0>(lcc.beta(volume, 0, 2, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 2, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 2, 0)), lcc.attribute<0>(lcc.beta(volume, 1, 2, 0))};
-    double j = scale_jacobian_of_hexa(lcc, nodes);
+    double j = CGAL::internal::scaled_jacobian_of_hexahedron_vertices(lcc, nodes);
     if(j < 0.) inv_counter++;
   }
 

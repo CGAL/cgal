@@ -80,6 +80,7 @@
 - `CGAL::compute_normal_of_cell_0<LCC>()`
 - `CGAL::compute_normal_of_cell_2<LCC>()`
 - `CGAL::generate_hexahedral_mesh_using_two_refinement()`
+- `CGAL::scaled_jacobian_of_hexahedron<LCC>()`
 
 \cgalCRPSubsection{Draw a Linear Cell Complex}
 - \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink

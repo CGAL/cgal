@@ -64,3 +64,5 @@ target_compile_definitions(test_plane_graph_alias PRIVATE CGAL_NO_DEPRECATION_WA
 create_single_source_cgal_program(lcc_test_hook_operator.cpp)
 
 create_single_source_cgal_program(lcc_graphics_scene_values.cpp)
+
+create_single_source_cgal_program(lcc_scaled_jacobian_test.cpp)
