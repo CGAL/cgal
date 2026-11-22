@@ -82,7 +82,7 @@ bool test_sphere_connected_component() {
     success++;
   }
 
-  if (success >= NB_ROUNDS * 0.8) {
+  if (10 * success >= 8 * std::size_t(NB_ROUNDS)) {
     std::cout << " succeeded" << std::endl;
     return true;
   }
