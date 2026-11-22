@@ -158,7 +158,7 @@ the output will contain as many copies of the triangulation of those refined tri
 The Boolean operation functions based on corefine operate on triangle meshes. This data structure is not meant to
 handle non-manifold edges. As it is sometime desirable to handle such cases, we also provide operations that are
 taking as input triangle soups, representing possibly non-manifold volumes, and providing the result of a Boolean
-operation as a triangle soup. In the following example, we use the function `CGAL::Polygon_mesh_processing::compute_difference()`
+operation as a triangle soup. In the following example, we use the function `CGAL::Polygon_mesh_processing::compute_difference_of_triangle_soups()`
 to iteratively subtract pieces of a puzzle.
 
 \cgalFigureAnchor{nm_no_fig}
