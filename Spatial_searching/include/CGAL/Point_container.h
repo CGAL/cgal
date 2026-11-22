@@ -1,4 +1,5 @@
 // Copyright (c) 2002,2011 Utrecht University (The Netherlands).
+// Copyright (c) 2026 Ziyang Men.
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +9,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
+// Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>),
+//                 Ziyang Men (ziyang.meme@gmail.com)
 
 
 // custom point container
@@ -27,14 +29,223 @@
 
 #include <optional>
 
+// Kd_tree.h explains the macro.
+#if defined(CGAL_LINKED_WITH_TBB) && !defined(CGAL_DISABLE_TBB_STRUCTURE_IN_KD_TREE)
+#  include <tbb/parallel_for.h>
+#  include <tbb/parallel_reduce.h>
+#  include <tbb/blocked_range.h>
+#  include <array>
+#  include <random>
+#  define CGAL_TBB_STRUCTURE_IN_KD_TREE
+#endif
+
 namespace CGAL {
+
+namespace internal {
+
+// Set by Kd_tree::build<Parallel_tag>() on the root container and handed
+// down by split(); null on the sequential build.
+template <class Point_d, class FT>
+struct Kd_tree_build_context {
+  // a container is split in parallel only if it holds more than this many points
+  std::size_t cutoff;
+  // the points of the tree and a buffer of as many; the parallel partition
+  // moves the points of a container from one to the other, at the same
+  // offset, and a leaf moves them back to the points
+  typename std::vector<Point_d>::iterator points, buffer;
+  // one scratch slot per point for the parallel kernels; a container uses
+  // the slots at the offset of its points
+  unsigned char* flags;
+  FT* keys;
+};
+
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+// The loops of the parallel kernels below run in chunks of about this many elements.
+const std::size_t kd_tree_grain_size = 2048;
+
+// Computes the bounds Kd_tree_rectangle::update_from_points() computes, with
+// that function on each subrange; the bounds of the subranges are joined right
+// into left with strict comparisons, so ties keep the leftmost value.
+template <class Construct_cartesian_const_iterator_d, class FT, class D>
+struct Tight_box_reduce {
+  Construct_cartesian_const_iterator_d construct_it;
+  Kd_tree_rectangle<FT,D> box;
+  bool seeded;
+
+  Tight_box_reduce(int d, const Construct_cartesian_const_iterator_d& c)
+    : construct_it(c), box(d), seeded(false) {}
+
+  Tight_box_reduce(const Tight_box_reduce& o, tbb::split)
+    : construct_it(o.construct_it), box(o.box.dimension()), seeded(false) {}
+
+  template <class Iter>
+  void operator()(const tbb::blocked_range<Iter>& r)
+  {
+    Kd_tree_rectangle<FT,D> b(box.dimension());
+    b.update_from_points(r.begin(), r.end(), construct_it);
+    join_box(b);
+  }
+
+  void join(const Tight_box_reduce& rhs)
+  {
+    if (rhs.seeded)
+      join_box(rhs.box);
+  }
+
+  void join_box(const Kd_tree_rectangle<FT,D>& b)
+  {
+    if (!seeded) {
+      box = b;
+      seeded = true;
+      return;
+    }
+    for (int i = 0; i < box.dimension(); ++i) {
+      if (b.min_coord(i) < box.min_coord(i)) box.lower()[i] = b.min_coord(i);
+      if (b.max_coord(i) > box.max_coord(i)) box.upper()[i] = b.max_coord(i);
+    }
+  }
+};
+
+// Stable partition of [begin, end) by pred, moved to the range starting at
+// out: the elements passing pred first, in their order, then the others in
+// theirs. Computed as parlay::filter does, with a count per block, a scan and
+// a scatter.
+template <class Iter, class Pred>
+Iter parallel_stable_partition(Iter begin, Iter end, Iter out, const Pred& pred, unsigned char* flags)
+{
+  const std::size_t n = static_cast<std::size_t>(end - begin);
+  const std::size_t block = kd_tree_grain_size;
+  const std::size_t nblocks = (n + block - 1) / block;
+
+  std::vector<std::size_t> count(nblocks);
+  tbb::parallel_for(std::size_t(0), nblocks, [&](std::size_t b) {
+    const std::size_t lo = b * block, hi = (std::min)(lo + block, n);
+    std::size_t c = 0;
+    for (std::size_t i = lo; i != hi; ++i) {
+      flags[i] = pred(begin[i]);
+      c += flags[i];
+    }
+    count[b] = c;
+  });
+  std::size_t k = 0;
+  for (std::size_t b = 0; b != nblocks; ++b) {
+    const std::size_t c = count[b];
+    count[b] = k;
+    k += c;
+  }
+
+  tbb::parallel_for(std::size_t(0), nblocks, [&](std::size_t b) {
+    const std::size_t lo = b * block, hi = (std::min)(lo + block, n);
+    std::size_t t = count[b], f = k + lo - count[b];
+    for (std::size_t i = lo; i != hi; ++i) {
+      if (flags[i]) out[t++] = std::move(begin[i]);
+      else out[f++] = std::move(begin[i]);
+    }
+  });
+  return out + k;
+}
+
+// The elements in[i] for which pred(i) holds, in their order.
+template <class T, class Pred>
+std::vector<T> parallel_filter(const T* in, std::size_t n, const Pred& pred)
+{
+  const std::size_t block = kd_tree_grain_size;
+  const std::size_t nblocks = (n + block - 1) / block;
+
+  std::vector<std::size_t> count(nblocks);
+  tbb::parallel_for(std::size_t(0), nblocks, [&](std::size_t b) {
+    const std::size_t lo = b * block, hi = (std::min)(lo + block, n);
+    std::size_t c = 0;
+    for (std::size_t i = lo; i != hi; ++i)
+      c += pred(i);
+    count[b] = c;
+  });
+  std::size_t k = 0;
+  for (std::size_t b = 0; b != nblocks; ++b) {
+    const std::size_t c = count[b];
+    count[b] = k;
+    k += c;
+  }
+  std::vector<T> out(k);
+  tbb::parallel_for(std::size_t(0), nblocks, [&](std::size_t b) {
+    const std::size_t lo = b * block, hi = (std::min)(lo + block, n);
+    std::size_t t = count[b];
+    for (std::size_t i = lo; i != hi; ++i)
+      if (pred(i)) out[t++] = in[i];
+  });
+  return out;
+}
+
+// The k-th smallest of keys by less; the algorithm of parlay::kth_smallest:
+// bucket the keys by 31 sampled pivots, keep the bucket holding k, repeat.
+// The bucket of each key is stored in ids, one slot per key.
+template <class T, class Less>
+T kth_smallest(const T* keys, std::size_t n, std::size_t k, const Less& less, unsigned char* ids)
+{
+  const std::size_t serial = 1000;
+  std::vector<T> cur;
+  const T* a = keys;
+  std::mt19937 gen(0);
+  while (n > serial) {
+
+    std::vector<T> sample(31 * 8);
+    std::uniform_int_distribution<std::size_t> dis(0, n - 1);
+    for (std::size_t i = 0; i != sample.size(); ++i)
+      sample[i] = a[dis(gen)];
+    std::sort(sample.begin(), sample.end(), less);
+    std::vector<T> pivots(31);
+    for (std::size_t i = 0; i != 31; ++i)
+      pivots[i] = sample[i * 8];
+
+    // the bucket of a key is the number of pivots less than it, found by a
+    // binary search without branches
+    typedef std::array<std::size_t, 32> Hist;
+    Hist hist = tbb::parallel_reduce(
+      tbb::blocked_range<std::size_t>(0, n, kd_tree_grain_size), Hist(),
+      [&](const tbb::blocked_range<std::size_t>& r, Hist h) {
+        for (std::size_t i = r.begin(); i != r.end(); ++i) {
+          std::size_t b = 0;
+          for (std::size_t s = 16; s != 0; s /= 2)
+            b += s * std::size_t(less(pivots[b + s - 1], a[i]));
+          ids[i] = static_cast<unsigned char>(b);
+          ++h[b];
+        }
+        return h;
+      },
+      [](Hist x, const Hist& y) {
+        for (std::size_t j = 0; j != 32; ++j) x[j] += y[j];
+        return x;
+      });
+    std::size_t id = 0, off = 0;
+    while (off + hist[id] <= k) {
+      off += hist[id];
+      ++id;
+    }
+    // the keys of that bucket, without those equal to its pivot
+    std::vector<T> next = parallel_filter(a, n, [&](std::size_t i) {
+      return ids[i] == id && (id == 31 || less(a[i], pivots[id]));
+    });
+    if (k - off >= next.size())
+      return pivots[id];
+    k -= off;
+    cur = std::move(next);
+    a = cur.data();
+    n = cur.size();
+  }
+  std::vector<T> tmp(a, a + n);
+  std::nth_element(tmp.begin(), tmp.begin() + k, tmp.end(), less);
+  return tmp[k];
+}
+#endif
+
+} // namespace internal
 
 template <class Traits>
 class Point_container {
 
 private:
   typedef typename Traits::Point_d Point_d;
-  typedef std::vector<const Point_d*> Point_vector;
+  typedef std::vector<Point_d> Point_vector;
 
 public:
   typedef typename Traits::FT FT;
@@ -53,6 +264,9 @@ private:
   Kd_tree_rectangle<FT,D> tbox;       // tight bounding box,
   // i.e. minimal enclosing bounding
   // box of points
+  const internal::Kd_tree_build_context<Point_d, FT>* build_context = nullptr;
+  // whether the points are in the buffer of the build context
+  bool in_buffer = false;
 
 public:
 
@@ -230,10 +444,13 @@ public:
     return !m_b || !m_e || (*m_b == *m_e ) ;
   }
 
-  // building the container from a sequence of Point_d*
-  Point_container(const int d, iterator begin, iterator end,const Traits& traits_) :
-    traits(traits_),m_b(begin), m_e(end), bbox(d, begin, end,traits.construct_cartesian_const_iterator_d_object()), tbox(d)
+  // building the container from a sequence of points
+  Point_container(const int d, iterator begin, iterator end,const Traits& traits_,
+                  const internal::Kd_tree_build_context<Point_d, FT>* context = nullptr) :
+    traits(traits_),m_b(begin), m_e(end), bbox(d), tbox(d),
+    build_context(context)
   {
+    update_tight_box(bbox, begin, end, traits.construct_cartesian_const_iterator_d_object());
     tbox = bbox;
     built_coord = max_span_coord();
   }
@@ -255,7 +472,6 @@ public:
   struct Cmp {
     typedef typename Traits2::FT FT;
     typedef typename Traits2::Point_d Point_d;
-    typedef std::vector<const Point_d*> Point_vector;
 
     int split_coord;
     FT value;
@@ -266,10 +482,10 @@ public:
     {}
 
     bool
-    operator()(const Point_d* pt) const
+    operator()(const Point_d& pt) const
     {
       typename Traits2::Cartesian_const_iterator_d ptit;
-      ptit = construct_it(*pt);
+      ptit = construct_it(pt);
       return  *(ptit+split_coord) < value;
     }
   };
@@ -279,7 +495,6 @@ public:
   struct Between {
     typedef typename Traits2::FT FT;
     typedef typename Traits2::Point_d Point_d;
-    typedef std::vector<const Point_d*> Point_vector;
 
     int split_coord;
     FT low, high;
@@ -290,10 +505,10 @@ public:
     {}
 
     bool
-    operator()(const Point_d* pt) const
+    operator()(const Point_d& pt) const
     {
       typename Traits2::Cartesian_const_iterator_d ptit;
-      ptit = construct_it(*pt);
+      ptit = construct_it(pt);
       if(! ( *(ptit+split_coord) <= high ) ){
         //        std::cerr << "Point " << *pt << " exceeds " << high << " in dimension " << split_coord << std::endl;
         return false;
@@ -307,9 +522,104 @@ public:
   };
 
 
+  // Bounds of [begin, end), in parallel above the context's cutoff.
+  void update_tight_box(Kd_tree_rectangle<FT,D>& box, iterator begin, iterator end,
+                        const typename Traits::Construct_cartesian_const_iterator_d& construct_it) const
+  {
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+    if (build_context != nullptr
+        && static_cast<std::size_t>(end - begin) > build_context->cutoff) {
+      internal::Tight_box_reduce<typename Traits::Construct_cartesian_const_iterator_d, FT, D>
+        body(dimension(), construct_it);
+      tbb::parallel_reduce(tbb::blocked_range<iterator>(begin, end, internal::kd_tree_grain_size), body);
+      box = body.box;
+      return;
+    }
+#endif
+    box.template update_from_points<typename Traits::Construct_cartesian_const_iterator_d>(begin, end, construct_it);
+  }
+
+  // Offset of this container's range in the root's, where its scratch slots are.
+  std::size_t scratch_offset() const
+  {
+    return static_cast<std::size_t>(begin() - (in_buffer ? build_context->buffer : build_context->points));
+  }
+
+  // Partition by cmp. Above the context's cutoff, a parallel partition moves
+  // the points to the other array of the context. The parallel partition is
+  // stable, so the order of the points can differ between the two builds, and
+  // so can the point a sliding split moves among points of equal coordinates.
+  iterator partition_points(const Cmp<Traits>& cmp)
+  {
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+    if (build_context != nullptr && size() > build_context->cutoff) {
+      const std::size_t offset = scratch_offset();
+      const iterator out = (in_buffer ? build_context->points : build_context->buffer) + offset;
+      const iterator it = internal::parallel_stable_partition(begin(), end(), out, cmp, build_context->flags + offset);
+      set_range(out, out + size());
+      in_buffer = !in_buffer;
+      return it;
+    }
+#endif
+    return std::partition(begin(), end(), cmp);
+  }
+
+  // Moves the points from the buffer of the build context back to its points.
+  void leave_buffer()
+  {
+    if (!in_buffer)
+      return;
+    const iterator out = build_context->points + scratch_offset();
+    set_range(out, std::move(begin(), end(), out));
+    in_buffer = false;
+  }
+
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+  // median() with the two middle coordinates selected in parallel; the points
+  // are not reordered.
+  FT parallel_median(const int split_coord,
+                     const typename Traits::Construct_cartesian_const_iterator_d& construct_it) const
+  {
+    const std::size_t n = size(), k = n / 2;
+    FT* keys = build_context->keys + scratch_offset();
+    const_iterator b = begin();
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, n, internal::kd_tree_grain_size),
+                      [&](const tbb::blocked_range<std::size_t>& r) {
+      for (std::size_t i = r.begin(); i != r.end(); ++i)
+        keys[i] = *(construct_it(b[i]) + split_coord);
+    });
+    const FT val1 = internal::kth_smallest(keys, n, k, std::less<FT>(), build_context->flags + scratch_offset());
+
+    // how many keys are at most val1, and the smallest key above it
+    struct Above { std::size_t le; bool has; FT gt; };
+    Above none = { 0, false, FT() };
+    Above above = tbb::parallel_reduce(
+      tbb::blocked_range<std::size_t>(0, n, internal::kd_tree_grain_size), none,
+      [&](const tbb::blocked_range<std::size_t>& r, Above a) {
+        for (std::size_t i = r.begin(); i != r.end(); ++i) {
+          if (!(val1 < keys[i])) ++a.le;
+          else if (!a.has || keys[i] < a.gt) { a.gt = keys[i]; a.has = true; }
+        }
+        return a;
+      },
+      [](Above a, const Above& c) {
+        a.le += c.le;
+        if (c.has && (!a.has || c.gt < a.gt)) { a.gt = c.gt; a.has = true; }
+        return a;
+      });
+
+    if (val1 == tbox.min_coord(split_coord))
+      return above.has ? above.gt : val1;
+    if (k + 1 >= n)
+      return val1;
+    const FT val2 = (above.le >= k + 2) ? val1 : above.gt;
+    return (val1 + val2) / FT(2);
+  }
+#endif
+
   void recompute_tight_bounding_box()
   {
-    tbox.template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(),traits.construct_cartesian_const_iterator_d_object());
+    update_tight_box(tbox, begin(), end(), traits.construct_cartesian_const_iterator_d_object());
   }
 
 
@@ -340,6 +650,7 @@ public:
     CGAL_assertion(dimension()==c.dimension());
     CGAL_assertion(is_valid());
     c.bbox=bbox;
+    c.build_context=build_context;
 
     const int split_coord = sep.cutting_dimension();
     FT cutting_value = sep.cutting_value();
@@ -351,7 +662,7 @@ public:
     typename Traits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
 
     Cmp<Traits> cmp(split_coord, cutting_value,construct_it);
-    iterator it = std::partition(begin(), end(), cmp);
+    iterator it = partition_points(cmp);
     // now [begin,it) are lower and [it,end) are upper
     if (sliding) { // avoid empty lists
 
@@ -360,7 +671,7 @@ public:
         if(minelt != it){
           std::iter_swap(minelt,it);
         }
-        cutting_value = *(construct_it(**it)+split_coord);
+        cutting_value = *(construct_it(*it)+split_coord);
         sep.set_cutting_value(cutting_value);
         it++;
       }
@@ -370,18 +681,19 @@ public:
         if(maxelt != it){
           std::iter_swap(maxelt,it);
         }
-        cutting_value = *(construct_it(**it)+split_coord);
+        cutting_value = *(construct_it(*it)+split_coord);
         sep.set_cutting_value(cutting_value);
       }
     }
 
     c.set_range(begin(), it);
+    c.in_buffer = in_buffer;
     set_range(it, end());
     // adjusting boxes
     bbox.set_lower_bound(split_coord, cutting_value);
-    tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(),end(),construct_it);
+    update_tight_box(tbox, begin(), end(), construct_it);
     c.bbox.set_upper_bound(split_coord, cutting_value);
-    c.tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(c.begin(),c.end(),construct_it);
+    c.update_tight_box(c.tbox, c.begin(), c.end(), construct_it);
     CGAL_assertion(is_valid());
     CGAL_assertion(c.is_valid());
   }
@@ -402,10 +714,10 @@ public:
     {}
 
     bool
-    operator()(const Point_d *a, const Point_d *b) const
+    operator()(const Point_d& a, const Point_d& b) const
     {
-      typename Traits2::Cartesian_const_iterator_d ait = construct_it(*a),
-        bit = construct_it(*b);
+      typename Traits2::Cartesian_const_iterator_d ait = construct_it(a),
+        bit = construct_it(b);
       return *(ait+coord) < *(bit+coord);
     }
   };
@@ -415,17 +727,21 @@ public:
   median(const int split_coord)
   {
     typename Traits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+    if (build_context != nullptr && size() > build_context->cutoff)
+      return parallel_median(split_coord, construct_it);
+#endif
     iterator mid = begin() + (end() - begin())/2;
     std::nth_element(begin(), mid, end(),comp_coord_val<Traits,int>(split_coord,construct_it));
 
-    typename Traits::Cartesian_const_iterator_d mpit = construct_it((*(*mid)));
+    typename Traits::Cartesian_const_iterator_d mpit = construct_it(*mid);
     FT val1 = *(mpit+split_coord);
 
     // Avoid using the low coord value as it results in an empty split
     if (val1 == tbox.min_coord(split_coord)) {
-      iterator it = std::min_element(mid, end(), [=](const Point_d* a, const Point_d* b) -> bool {
-        FT a_c = *(construct_it(*a) + split_coord);
-        FT b_c = *(construct_it(*b) + split_coord);
+      iterator it = std::min_element(mid, end(), [=](const Point_d& a, const Point_d& b) -> bool {
+        FT a_c = *(construct_it(a) + split_coord);
+        FT b_c = *(construct_it(b) + split_coord);
 
         if (a_c == val1)
           return false;
@@ -435,14 +751,16 @@ public:
 
         return a_c < b_c;
         });
-      return *(construct_it(**it) + split_coord);
+      return *(construct_it(*it) + split_coord);
     }
 
     mid++;
     if (mid == end())
       return val1;
 
-    mpit = construct_it((*(*mid)));
+    // nth_element leaves an unspecified element at mid
+    iterator next = std::min_element(mid, end(), comp_coord_val<Traits,int>(split_coord,construct_it));
+    mpit = construct_it(*next);
     FT val2 = *(mpit+split_coord);
     return (val1+val2)/FT(2);
   }
