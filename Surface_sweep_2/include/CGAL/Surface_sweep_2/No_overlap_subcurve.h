@@ -17,6 +17,8 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
+#include <utility>
+
 /*! \file
  *
  * Definition of the No_overlap_subcurve class, which is an
@@ -55,24 +57,22 @@ namespace Surface_sweep_2 {
  *   curve.
  * - an iterator that points to the location of the subcurve in the status line.
  */
-template <typename GeometryTraits_2, typename Event_, typename Allocator_,
-          typename Subcurve_>
+template <typename GeometryTraits_2, typename Event_, typename Allocator_, typename Subcurve_>
 class No_overlap_subcurve_base {
 public:
-  typedef GeometryTraits_2                              Geometry_traits_2;
-  typedef Subcurve_                                     Subcurve;
-  typedef Event_                                        Event;
-  typedef Allocator_                                    Allocator;
-  typedef Tag_false                                     Handle_overlaps;
+  using Geometry_traits_2 = GeometryTraits_2;
+  using Subcurve = Subcurve_;
+  using Event = Event_;
+  using Allocator = Allocator_;
+  using Handle_overlaps = Tag_false;
 
 private:
-  typedef Geometry_traits_2                             Gt2;
+  using Gt2 = Geometry_traits_2;
 
 public:
-  typedef Curve_comparer<Gt2, Event, Subcurve>          Compare_curves;
-  typedef Multiset<Subcurve*, Compare_curves, Allocator>
-                                                        Status_line;
-  typedef typename Status_line::iterator                Status_line_iterator;
+  using Compare_curves = Curve_comparer<Gt2, Event, Subcurve>;
+  using Status_line = Multiset<Subcurve*, Compare_curves, Allocator>;
+  using Status_line_iterator = typename Status_line::iterator;
 
 protected:
   Status_line_iterator m_hint;      // The location of the subcurve in the
@@ -81,36 +81,36 @@ protected:
   Event* m_right_event;             // The event associated with the right end
 
 public:
-  /*! Check whether the given event is the matches the left-end event.
+  /*! checks whether the given event is the matches the left-end event.
    */
   template <typename SweepEvent>
   bool is_start_point(const SweepEvent* event) const
   { return (m_left_event == event); }
 
-  /*! Check whether the given event is the matches the right-end event.
+  /*! checks whether the given event is the matches the right-end event.
    */
   template <typename SweepEvent>
   bool is_end_point(const SweepEvent* event) const
   { return (m_right_event == event); }
 
-  /*! Obtain the event that corresponds to the left end of the subcurve.
+  /*! obtains the event that corresponds to the left end of the subcurve.
    */
   Event* left_event() const { return m_left_event; }
 
-  /*! Obtain the event that corresponds to the right end of the subcurve.
+  /*! obtains the event that corresponds to the right end of the subcurve.
    */
   Event* right_event() const { return m_right_event; }
 
-  /*! Set the event that corresponds to the left end of the subcurve. */
+  /*! sets the event that corresponds to the left end of the subcurve. */
   void set_left_event(Event* event) { m_left_event = event; }
 
-  /*! Set the event that corresponds to the right end of the subcurve. */
+  /*! sets the event that corresponds to the right end of the subcurve. */
   void set_right_event(Event* event) { m_right_event = event; }
 
-  /*! Obtain the location of the subcurve in the status line .*/
+  /*! obtains the location of the subcurve in the status line .*/
   Status_line_iterator hint() const { return m_hint; }
 
-  /*! Set the location of the subcurve in the status line .*/
+  /*! sets the location of the subcurve in the status line .*/
   void set_hint(Status_line_iterator hint) { m_hint = hint; }
 };
 
@@ -138,29 +138,24 @@ template <typename GeometryTraits_2, typename Event_,
           typename Allocator_ = CGAL_ALLOCATOR(int),
           typename Subcurve_ = Default>
 class No_overlap_subcurve :
-  public No_overlap_subcurve_base<
-    GeometryTraits_2, Event_, Allocator_,
-    typename Default::Get<Subcurve_,
-                          No_overlap_subcurve<GeometryTraits_2, Event_,
-                                              Allocator_, Subcurve_> >::type>
-{
+  public No_overlap_subcurve_base<GeometryTraits_2, Event_, Allocator_,
+                                  typename Default::Get<Subcurve_, No_overlap_subcurve<GeometryTraits_2, Event_,
+                                                                                       Allocator_, Subcurve_> >::type> {
 public:
-  typedef GeometryTraits_2                              Geometry_traits_2;
-  typedef Event_                                        Event;
-  typedef Allocator_                                    Allocator;
+  using Geometry_traits_2 = GeometryTraits_2;
+  using Event = Event_;
+  using Allocator = Allocator_;
 
 private:
-  typedef Geometry_traits_2                             Gt2;
-  typedef No_overlap_subcurve<Gt2, Event, Allocator, Subcurve_>
-                                                        Self;
-  typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
-  typedef No_overlap_subcurve_base<Gt2, Event, Allocator, Subcurve>
-                                                        Base;
+  using Gt2 = Geometry_traits_2;
+  using Self = No_overlap_subcurve<Gt2, Event, Allocator, Subcurve_>;
+  using Subcurve = typename Default::Get<Subcurve_, Self>::type;
+  using Base = No_overlap_subcurve_base<Gt2, Event, Allocator, Subcurve>;
 
 public:
-  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
 
-  typedef typename Base::Status_line_iterator           Status_line_iterator;
+  using Status_line_iterator = typename Base::Status_line_iterator;
 
 protected:
   // Data members:
@@ -185,15 +180,23 @@ public:
   /*! Destruct. */
   ~No_overlap_subcurve() {}
 
-  /*! Get the last intersecing curve so far (const version). */
+  /*! Get the last intersecting curve so far (const version). */
   const X_monotone_curve_2& last_curve() const { return m_last_curve; }
 
-  /*! Get the last intersecing curve so far (non-const version). */
+  /*! Get the last intersecting curve so far (non-const version). */
   X_monotone_curve_2& last_curve() { return m_last_curve; }
 
   /*! Set the last intersecting curve so far.
    */
   void set_last_curve(const X_monotone_curve_2& cv) { m_last_curve = cv; }
+
+  /*! Swap the last intersecting curve so far with the given curve. This
+   * avoids copying the curve when the given curve is no longer needed, and
+   * it hands over the storage of the replaced curve (e.g., the subcurve
+   * container of a polycurve) for reuse.
+   * \param cv Input: the new last curve; Output: the replaced last curve.
+   */
+  void swap_last_curve(X_monotone_curve_2& cv) { std::swap(m_last_curve, cv); }
 
 #ifdef CGAL_SS_VERBOSE
   void Print() const;

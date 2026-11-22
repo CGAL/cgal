@@ -299,16 +299,20 @@ int main(int argc, char* argv[]) {
   std::size_t verbose = 0;
   std::random_device rd;
   std::size_t seed = rd();
+  bool caching = false;
   bool closed = false;
   bool random = true;
   bool verify = false;
+  bool verify_single = false;
   std::size_t repetitions = 100000;
 
   try {
     // Define options
     po::options_description desc("Allowed options");
     desc.add_options()
-      ("closed,c", po::value<bool>(&verify)->default_value(false), "closed")
+      ("caching", po::value<bool>(&caching)->default_value(false)->implicit_value(true),
+       "bench the caching (rather than the non-caching) segment traits")
+      ("closed,c", po::value<bool>(&closed)->default_value(false), "closed")
       ("help,h", "produce help message")
       ("draw,d", po::value<bool>(&do_draw)->implicit_value(true), "draw the meshes")
       ("number,n", po::value<std::size_t>(&n)->default_value(10), "number of polylines")
@@ -317,6 +321,8 @@ int main(int argc, char* argv[]) {
       ("repetitions,r", po::value<std::size_t>(&repetitions)->default_value(100000), "repetitions")
       ("verbose,v", po::value<std::size_t>(&verbose)->default_value(0), "set verbosity level (0 = quiet")
       ("verify", po::value<bool>(&verify)->default_value(false), "verify")
+      ("verify-single", po::value<bool>(&verify_single)->default_value(false)->implicit_value(true),
+       "verify a single, hard-coded configuration of polylines")
       ;
 
     // Parse options
@@ -336,32 +342,29 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-#if 1
-  {
-  // Verify Single
-  Polyline_traits traits;
-  X_monotone_polyline xcv0, xcv1, xcv2, xcv3, xcv4, xcv5;
-  traits.push_back_2_object()(xcv0, X_monotone_segment(Point(0, 0), Point(0, 2)));
-  traits.push_back_2_object()(xcv1, X_monotone_segment(Point(1, 0), Point(1, 1)));
-  // traits.push_back_2_object()(xcv2, X_monotone_segment(Point(1, 1), Point(3, 0)));
-  // traits.push_back_2_object()(xcv3, X_monotone_segment(Point(3, 0), Point(1, 1)));
-  // traits.push_back_2_object()(xcv4, X_monotone_segment(Point(2, 1), Point(3, 1)));
-  std::vector<X_monotone_polyline> xcurves = {xcv0, xcv1};
-  if (do_draw) draw(xcurves);
-  auto [match, res1] = verify_intersections(xcurves, traits, closed);
-  if (! match) {
-    std::cerr << "Error: do_intersect() and intersect() do not match; seed (" << seed << ")\n";
-    return -1;
+  if (verify_single) {
+    Polyline_traits traits;
+    X_monotone_polyline xcv0, xcv1, xcv2, xcv3, xcv4, xcv5;
+    traits.push_back_2_object()(xcv0, X_monotone_segment(Point(0, 0), Point(0, 2)));
+    traits.push_back_2_object()(xcv1, X_monotone_segment(Point(1, 0), Point(1, 1)));
+    // traits.push_back_2_object()(xcv2, X_monotone_segment(Point(1, 1), Point(3, 0)));
+    // traits.push_back_2_object()(xcv3, X_monotone_segment(Point(3, 0), Point(1, 1)));
+    // traits.push_back_2_object()(xcv4, X_monotone_segment(Point(2, 1), Point(3, 1)));
+    std::vector<X_monotone_polyline> xcurves = {xcv0, xcv1};
+    if (do_draw) draw(xcurves);
+    auto [match, res1] = verify_intersections(xcurves, traits, closed);
+    if (! match) {
+      std::cerr << "Error: do_intersect() and intersect() do not match; seed (" << seed << ")\n";
+      return -1;
+    }
+    auto res2 = CGAL::Surface_sweep_2::do_intersect(xcurves.begin(), xcurves.end(), closed, traits);
+    std::cout << "res: " << res2 << std::endl;
+    if (res1 != res2) {
+      std::cerr << "Error: Surface_sweep_2::do_intersect() and do_intersect() do not match; seed (" << seed << ")\n";
+      return -1;
+    }
+    return 0;
   }
-  auto res2 = CGAL::Surface_sweep_2::do_intersect(xcurves.begin(), xcurves.end(), closed, traits);
-  std::cout << "res: " << res2 << std::endl;
-  if (res1 != res2) {
-    std::cerr << "Error: Surface_sweep_2::do_intersect() and do_intersect() do not match; seed (" << seed << ")\n";
-    return -1;
-  }
-  return 0;
-  }
-#endif
 
   if (verify) {
     Polyline_traits traits;
@@ -398,20 +401,30 @@ int main(int argc, char* argv[]) {
   std::cout << "Test intersections in " << xsize << " x-monotone curves" << std::endl;
 
   std::size_t intersection_count = 0;
-  Non_caching_segment_traits traits;
-  auto start = std::chrono::high_resolution_clock::now();
-  for (std::size_t i = 0; i < repetitions; ++i) intersection_count = count_intersections(segments, traits);
-  auto diff = std::chrono::high_resolution_clock::now() - start;
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(diff);
+  std::chrono::microseconds duration;
+  if (caching) {
+    Segment_traits traits;
+    auto start = std::chrono::high_resolution_clock::now();
+    for (std::size_t i = 0; i < repetitions; ++i) intersection_count = count_intersections(segments, traits);
+    auto diff = std::chrono::high_resolution_clock::now() - start;
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(diff);
+  }
+  else {
+    Non_caching_segment_traits traits;
+    auto start = std::chrono::high_resolution_clock::now();
+    for (std::size_t i = 0; i < repetitions; ++i) intersection_count = count_intersections(segments, traits);
+    auto diff = std::chrono::high_resolution_clock::now() - start;
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(diff);
+  }
   std::cout << "Traits Do intersection time:   " << duration.count() << " microseconds\n";
   std::cout << "Intersections found: " << intersection_count << "\n";
   std::cout << "Not intersected: " << (xsize*xsize - intersection_count) << "\n";
 
   Kernel kernel;
   intersection_count = 0;
-  start = std::chrono::high_resolution_clock::now();
+  auto start = std::chrono::high_resolution_clock::now();
   for (std::size_t i = 0; i < repetitions; ++i) intersection_count = count_intersections(segments, kernel);
-  diff = std::chrono::high_resolution_clock::now() - start;
+  auto diff = std::chrono::high_resolution_clock::now() - start;
   duration = std::chrono::duration_cast<std::chrono::microseconds>(diff);
   std::cout << "Kernel Do intersection time:   " << duration.count() << " microseconds\n";
   std::cout << "Intersections found: " << intersection_count << "\n";

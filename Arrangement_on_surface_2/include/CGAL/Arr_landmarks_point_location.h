@@ -208,11 +208,13 @@ protected:
    * \param vh The vertex.
    * \param p The query point.
    * \param new_vertex Output: Whether a closer vertex to p was found.
+   * \param crossed_edges In/Out: The set of edges that were already crossed.
    * \return The desired object (a halfedge handle or a vertex handle).
    */
   result_type _find_face_around_vertex(Vertex_const_handle vh,
                                        const Point_2& p,
-                                       bool& new_vertex) const;
+                                       bool& new_vertex,
+                                       Halfedge_set& crossed_edges) const;
 
   /*! walks from a point on a given halfedge to the query point.
    * \param eh The given halfedge handle.
