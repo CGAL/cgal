@@ -8,12 +8,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Ahmed Essam <theartful.ae@gmail.com>
+//            Efi Fogel <efifogel@gmail.com>
 
 #include "EnvelopeFunctions.h"
 #include "ArrangementTypes.h"
 
-#include <CGAL/envelope_2.h>
-#include <CGAL/Envelope_diagram_1.h>
+#include <CGAL/Envelope_2/envelope_2.h>
+#include <CGAL/Envelope_2/Envelope_diagram_1.h>
 #include <vector>
 
 template <typename Arr_>
@@ -31,8 +32,8 @@ void EnvelopeFunctions<Arr_>::lowerEnvelope(
   Arrangement* arr, Diagram_1& diagram)
 {
   auto curves = getXMonotoneCurves(arr);
-  CGAL::lower_envelope_x_monotone_2(
-    curves.begin(), curves.end(), diagram, *(arr->traits()));
+  CGAL::Envelope_2::lower_envelope_x_monotone_2(
+    curves.begin(), curves.end(), diagram);
 }
 
 template <typename Arr_>
@@ -40,8 +41,8 @@ void EnvelopeFunctions<Arr_>::upperEnvelope(
   Arrangement* arr, Diagram_1& diagram)
 {
   auto curves = getXMonotoneCurves(arr);
-  CGAL::upper_envelope_x_monotone_2(
-    curves.begin(), curves.end(), diagram, *(arr->traits()));
+  CGAL::Envelope_2::upper_envelope_x_monotone_2(
+    curves.begin(), curves.end(), diagram);
 }
 
 ARRANGEMENT_DEMO_SPECIALIZE_ARR(EnvelopeFunctions)
