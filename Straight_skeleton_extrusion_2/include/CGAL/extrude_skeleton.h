@@ -635,7 +635,7 @@ public:
                            // whether the domain is on the left of the borders when seen from above
                            const bool domain_on_left)
   {
-    // Projection_traits_xy_3 has benefits: it's an exact projection so we don't worse potentially
+    // Projection_traits_xy_3 has benefits: it's an exact projection so we don't worsen potentially
     // already inexact constructions and we avoid issues of consistency between faces for artificial
     // vertices. There are also downsides: the triangles in the output are not necessarily nicely
     // shaped, yielding higher chances of embedding issues at the very end (XK -> IK).
@@ -959,7 +959,7 @@ public:
     if(border_edges.size() < 3)
     {
       if(m_verbose)
-        std::cerr << "Warning: sm_vs has size 1 or 2: offset crossing face at a single point?" << std::endl;
+        std::cerr << "Warning: fewer than 3 border edges: offset crossing the face at a single point?" << std::endl;
       return true;
     }
 

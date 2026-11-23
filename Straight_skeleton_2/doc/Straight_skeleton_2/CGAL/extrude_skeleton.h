@@ -18,12 +18,14 @@ namespace CGAL {
 * extrusion.
 *
 * The result is a closed, combinatorially 2-manifold surface triangle mesh. Nonetheless,
-* if a maximal height, the result can exhibit geometric self-intersections by creating
-* non-manifold occurences (for example, extruding to the height of a saddle point and creating two
-* cones sharing their apex).
+* if a maximal height is provided, the result can exhibit geometric self-intersections by creating
+* non-manifold occurrences (for example, extruding to the height of a saddle point and creating two
+* cones sharing their apex). With a kernel that does not have exact constructions, the result
+* can also self-intersect because of the rounding of the constructed points.
 *
 * @tparam Polygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
-                  or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
+*                  or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`),
+*                  where `InK` is a \cgal Kernel.
 * @tparam PolygonMesh a model of `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -38,6 +40,7 @@ namespace CGAL {
 *     \cgalParamDefault{Uniform weights (`1`) are used.}
 *     \cgalParamExtra{Weights should be finite and all of the same sign.
 *                     Negative weights are used to signify exterior extrusion.
+*                     Consecutive collinear edges must have the same weight.
 *                     Contrary to weighted skeleton functions, a weight `0` can here be used to signify a vertical extrusion of this edge.}
 *     \cgalParamExtra{If neither `weights` nor `angles` are provided, uniform weights are used.}
 *   \cgalParamNEnd
@@ -56,11 +59,11 @@ namespace CGAL {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{maximum_height}
-*     \cgalParamDescription{the maximum height of the extrusion. A positive value correspond to an upward extrusion,
+*     \cgalParamDescription{the maximum height of the extrusion. A positive value corresponds to an upward extrusion,
 *                           and a negative value to a downward extrusion.}
 *     \cgalParamType{`FT`, a model of `FieldNumberType` convertible to the kernel type of the polygon.}
 *     \cgalParamDefault{no maximum height}
-*     \cgalParamExtra{This parameter should not be null and must be passed in case of outward extrusion.}
+*     \cgalParamExtra{This parameter should not be zero, and must be passed in case of outward extrusion.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{verbose}
@@ -70,7 +73,7 @@ namespace CGAL {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamDescription{an instance of a geometric traits class, used to construct the weighted straight skeleton}
 *     \cgalParamType{a class model of `Kernel`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the polygon's point type, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
@@ -87,6 +90,7 @@ namespace CGAL {
 *
 * @pre `polygon` is a weakly simple polygon with holes.
 * @pre Holes are weakly simple polygons that do not intersect each other or the outer boundary.
+* @pre The outer boundary of `polygon` is counterclockwise oriented, and its holes are clockwise oriented.
 *
 * @sa `CGAL::create_interior_weighted_skeleton_and_offset_polygons_with_holes_2()`
 * @sa `CGAL::Straight_skeleton_2`
