@@ -20,12 +20,76 @@
 #include <CGAL/extrude_skeleton.h>
 
 #include <iostream>
+#include <type_traits>
+#include <vector>
 
 namespace SS = CGAL::CGAL_SS_i;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel            EPECK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqrt;
+
+// Artificial vertices (see `Straight_skeleton_builder_2::EnforceSimpleConnectedness()`) are on the bisectors
+// that they split: their times must be (strictly) between the times of their neighbors along the bisector,
+// or equal if the bisector is horizontal, and they must be exactly collinear with these neighbors
+// if the kernel has exact constructions.
+template <typename K, typename StraightSkeleton>
+void check_artificial_vertices(const StraightSkeleton& ss)
+{
+  using Vertex_const_handle = typename StraightSkeleton::Vertex_const_handle;
+  using Halfedge_const_handle = typename StraightSkeleton::Halfedge_const_handle;
+
+  CGAL::Straight_skeleton_builder_traits_2<K> traits;
+
+  // contour vertices have time 0, and other vertices have trisegments
+  auto compare_times = [&](Vertex_const_handle u, Vertex_const_handle v) -> CGAL::Comparison_result
+  {
+    if(u->is_contour() || v->is_contour())
+      return (u->is_contour() == v->is_contour()) ? CGAL::EQUAL : (u->is_contour() ? CGAL::SMALLER : CGAL::LARGER);
+    return static_cast<CGAL::Comparison_result>(traits.compare_ss_event_times_2_object()(u->trisegment(), v->trisegment()));
+  };
+
+  int artificial_vertices = 0;
+  for(Vertex_const_handle v = ss.vertices_begin(); v != ss.vertices_end(); ++v)
+  {
+    if(v->is_contour() || v->has_infinite_time() || !v->trisegment())
+      continue;
+    if(v->trisegment()->e0().id() != v->trisegment()->e1().id()) // marker of artificial vertices
+      continue;
+
+    ++artificial_vertices;
+
+    // the two pieces of the split bisector are the incident halfedges that are not artificial bisectors
+    std::vector<Vertex_const_handle> neighbors;
+    Halfedge_const_handle h = v->halfedge(), done = h;
+    do
+    {
+      assert(h->vertex() == v);
+      if(h->face() != h->opposite()->face())
+        neighbors.push_back(h->opposite()->vertex());
+      h = h->next()->opposite();
+    }
+    while(h != done);
+
+    assert(neighbors.size() == 2);
+    if(neighbors.size() != 2)
+      continue;
+
+    const CGAL::Comparison_result c0 = compare_times(neighbors[0], v);
+    const CGAL::Comparison_result c1 = compare_times(v, neighbors[1]);
+    if(c0 != c1)
+      std::cerr << "Error: artificial vertex V" << v->id() << " is not between V" << neighbors[0]->id()
+                << " and V" << neighbors[1]->id() << " (" << c0 << " " << c1 << ")" << std::endl;
+    assert(c0 == c1);
+
+    if constexpr(!std::is_same<K, EPICK>::value)
+    {
+      assert(CGAL::are_strictly_ordered_along_line(neighbors[0]->point(), v->point(), neighbors[1]->point()));
+    }
+  }
+
+  std::cout << artificial_vertices << " artificial vertices" << std::endl;
+}
 
 template <typename K>
 void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
@@ -122,6 +186,8 @@ void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
 
 //  CGAL::draw(*ss_ptr);
 
+  check_artificial_vertices<K>(*ss_ptr);
+
   Mesh sm;
   bool success = extrude_skeleton(pwh, sm, CGAL::parameters::weights(weights));
   assert(success);
@@ -131,9 +197,26 @@ void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
     return;
   }
 
-  std::cout << num_vertices(sm) << " vertices and " << num_faces(sm) << " faces" << std::endl;
+//  CGAL::draw(sm);
+
+  assert(CGAL::is_valid_polygon_mesh(sm));
+  assert(CGAL::is_closed(sm));
+  assert(CGAL::is_triangle_mesh(sm));
+
+  clear(sm);
+  success = extrude_skeleton(pwh, sm, CGAL::parameters::weights(weights).maximum_height((1.+ hole_n)/2.));
+  assert(success);
+  if(!success)
+  {
+    std::cerr << "Error: failed to extrude skeleton" << std::endl;
+    return;
+  }
 
 //  CGAL::draw(sm);
+
+  assert(CGAL::is_valid_polygon_mesh(sm));
+  assert(CGAL::is_closed(sm));
+  assert(CGAL::is_triangle_mesh(sm));
 }
 
 int main(int argc, char** argv)

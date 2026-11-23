@@ -414,21 +414,19 @@ void check_extrusion(const std::string& name,
     CGAL_SLS_CHECK_MSG(degenerate_faces == 0, name << ": " << degenerate_faces << " degenerate faces");
   }
 
-  if(!PMP::is_outward_oriented(m))
-  {
-    if(!CGAL::Straight_skeleton_extrusion::internal::is_exact_kernel<K> && PMP::does_self_intersect(m))
-      std::cerr << "W: Orientation test failed on a self-intersecting mesh with kernel " << typeid(K).name() << std::endl;
-    else
-      CGAL_SLS_CHECK_MSG(false, name << ": not outward oriented");
-  }
+  // With an inexact kernel, the output can self-intersect because of the rounding of constructions:
+  // this is not a construction failure (the mesh is valid and closed, see above), and only a warning.
+  // The orientation test is then skipped: it is not meaningful, and `PMP::is_outward_oriented()`
+  // requires a mesh without self-intersections.
+  const bool is_exact = CGAL::Straight_skeleton_extrusion::internal::is_exact_kernel<K>;
+  const bool self_intersects = (!is_exact || e.check_self_intersections) && PMP::does_self_intersect(m);
+  if(self_intersects && !is_exact)
+    std::cerr << "W: Self-intersections with kernel " << typeid(K).name() << std::endl;
+  else
+    CGAL_SLS_CHECK_MSG(!self_intersects, name << ": self-intersections");
 
-  if(e.check_self_intersections)
-  {
-    if (CGAL::Straight_skeleton_extrusion::internal::is_exact_kernel<K>)
-      CGAL_SLS_CHECK_MSG(!PMP::does_self_intersect(m), name);
-    else if (PMP::does_self_intersect(m))
-      std::cerr << "W: Self-intersections with kernel " << typeid(K).name() << std::endl;
-  }
+  if(!self_intersects)
+    CGAL_SLS_CHECK_MSG(PMP::is_outward_oriented(m), name << ": not outward oriented");
 
   // 4. Height
   const CGAL::Bbox_3 bb = PMP::bbox(m);
