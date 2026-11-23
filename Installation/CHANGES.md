@@ -77,7 +77,7 @@ Release date: December 2026
   Similarly, the concept `SnapRoundingTraits_2` has been renamed
   [`HotPixelSnapRoundingTraits_2`](https://doc.cgal.org/6.3/Snap_rounding_2/classHotPixelSnapRoundingTraits__2.html).
   
-### [Kinetic Space Partition](https://doc.cgal.org/6.3/Manual/packages.html#PkgKineticSpacePartition)
+### [Kinetic Space Partition](https://doc.cgal.org/6.3/Manual/packages.html#PkgKineticSpacePartition) (major changes)
 
 - **Breaking change**: The concept `KineticLCCFaceAttribute` requires a new member `input_plane_index`.
 - **Breaking change**: `CGAL::Kinetic_space_partition_3::input_planes()` now contains each plane only once;
@@ -92,7 +92,7 @@ Release date: December 2026
 - `initialize()`, `partition()` and `init_and_partition()` have a template parameter `ConcurrencyTag`,
   which defaults to `CGAL::Parallel_if_available_tag`, to compute the partitions of the octree nodes in parallel.
 
-### [Kinetic Surface Reconstruction](https://doc.cgal.org/6.3/Manual/packages.html#PkgKineticSurfaceReconstruction)
+### [Kinetic Surface Reconstruction](https://doc.cgal.org/6.3/Manual/packages.html#PkgKineticSurfaceReconstruction) (major changes)
 
 - **Breaking change**: `detect_planar_shapes()` no longer regularizes. Use the new function `regularize_planar_shapes()` for that.
 - **Breaking change**: `detected_planar_shapes()` and `detected_planar_shape_indices()` have been replaced by `planar_shapes()`,
