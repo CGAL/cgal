@@ -58,14 +58,6 @@ public:
       ++begin;
     }
     m_tree.insert(points.begin(), points.end());
-    // TODO: double check that (why only in parallel? before it was always built)
-    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
-      build<ConcurrencyTag>();
-  }
-
-  template <class ConcurrencyTag=Sequential_tag>
-  void build()
-  {
     m_tree.template build<ConcurrencyTag>();
   }
 
