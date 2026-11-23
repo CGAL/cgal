@@ -357,7 +357,9 @@ std::istream& from_chars_input(std::istream& is, T& t)
   }
 
   if (it == end) {
-    is.setstate(std::ios_base::failbit);
+    // like the standard extractors: reaching the end while skipping
+    // whitespace sets both eofbit and failbit
+    is.setstate(std::ios_base::eofbit | std::ios_base::failbit);
     return is;
   }
 
@@ -373,6 +375,11 @@ std::istream& from_chars_input(std::istream& is, T& t)
 
     *p++ = *it;
     ++it;
+  }
+
+  // the number ended at the end of the stream: set eofbit (but not failbit)
+  if (it == end) {
+    is.setstate(std::ios_base::eofbit);
   }
 
   auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(buffer, p, t);
