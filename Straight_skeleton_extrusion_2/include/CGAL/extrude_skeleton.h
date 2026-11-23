@@ -39,7 +39,6 @@
 #endif
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/mark_domain_in_triangulation.h>
@@ -52,18 +51,27 @@
 #include <CGAL/IO/helpers.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/unordered_flat_map.h>
 #include <CGAL/utility.h>
 
+#include <boost/algorithm/clamp.hpp>
+#include <boost/container_hash/hash.hpp>
 #include <boost/range/value_type.hpp>
 
 #include <algorithm>
+#include <array>
+#include <cmath>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <optional>
 #include <random>
+#include <string>
 #include <type_traits>
 #include <unordered_map>
+#include <unordered_set>
+#include <utility>
 #include <variant>
 #include <vector>
 
@@ -567,59 +575,119 @@ public:
   }
 
 public:
-  template <typename K, typename CDT>
-  bool triangulate_borders_with_CDT(std::vector<std::vector<std::size_t> >& points_ids,
-                                    std::vector<std::vector<typename K::Point_3> >& borders,
-                                    CDT& cdt,
-                                    const bool invert_faces)
+  // A border is a set of directed edges, given as pairs of (point, point id).
+  // The edges must form closed cycles, but the cycles do not need to be given in any particular order:
+  // this allows to describe a domain with holes, or with parts that touch at a vertex.
+  template <typename K>
+  using Border_point = std::pair<typename K::Point_3, std::size_t>;
+
+  template <typename K>
+  using Border_edge = std::pair<Border_point<K>, Border_point<K> >;
+
+  template <typename K>
+  using Border_edges = std::vector<Border_edge<K> >;
+
+  template <typename K>
+  static void add_border_loop(const std::vector<Border_point<K> >& loop,
+                              Border_edges<K>& edges)
   {
+    for(std::size_t i=0; i<loop.size(); ++i)
+      edges.emplace_back(loop[i], loop[(i+1) % loop.size()]);
+  }
+
+private:
+  // Check that every border edge is an edge of a triangle, in the expected direction (this also rejects
+  // a border edge that the CDT would have split at a vertex of another border).
+  // The faces of the CDT are counterclockwise when seen from above: they go along border edges
+  // in the same direction as the borders if the domain is on the left of the borders.
+  template <typename K>
+  static bool are_border_edges_oriented_triangle_edges(const std::vector<std::array<std::size_t, 3> >& triangles,
+                                                        const Border_edges<K>& border_edges,
+                                                        const bool same_direction)
+  {
+    // edges as (oriented) pairs of point ids
+    using Id_edge = std::pair<std::size_t, std::size_t>;
+
+    CGAL::unordered_flat_set<Id_edge, boost::hash<Id_edge> > triangle_halfedges;
+    for(const auto& t : triangles)
+      for(int i=0; i<3; ++i)
+        triangle_halfedges.emplace(t[i], t[(i+1)%3]);
+
+    for(const Border_edge<K>& e : border_edges)
+    {
+      const std::size_t source_id = e.first.second;
+      const std::size_t target_id = e.second.second;
+      const Id_edge h = same_direction ? Id_edge(source_id, target_id) : Id_edge(target_id, source_id);
+      if(triangle_halfedges.count(h) == 0)
+        return false;
+    }
+
+    return true;
+  }
+
+public:
+  // Triangulates the domain bounded by the borders, and adds the triangles to the output faces.
+  // Returns `false` if the triangulation fails, which  only happen with an inexact kernel.
+  template <typename K> // XK or EK
+  bool triangulate_borders(// m_points contain the XK embedding, but if XK != EK, we want the EK embedding
+                           const Border_edges<K>& border_edges,
+                           const bool invert_faces,
+                           // whether the domain is on the left of the borders when seen from above
+                           const bool domain_on_left)
+  {
+    // Projection_traits_xy_3 has benefits: it's an exact projection so we don't worse potentially
+    // already inexact constructions and we avoid issues of consistency between faces for artificial
+    // vertices. There are also downsides: the triangles in the output are not necessarily nicely
+    // shaped, yielding higher chances of embedding issues at the very end (XK -> IK).
+    using Itag = CGAL::No_constraint_intersection_tag;
+    using PK = CGAL::Projection_traits_xy_3<K>;
+    using Vbb = CGAL::Triangulation_vertex_base_with_info_2<std::size_t, PK>;
+    using Vb = CGAL::Triangulation_vertex_base_2<PK, Vbb>;
+    using Fb = CGAL::Constrained_triangulation_face_base_2<PK>;
+    using TDS = CGAL::Triangulation_data_structure_2<Vb, Fb>;
+    using CDT = CGAL::Constrained_Delaunay_triangulation_2<PK, TDS, Itag>;
     using Vertex_handle = typename CDT::Vertex_handle;
     using Face_handle = typename CDT::Face_handle;
 
-    CGAL_precondition(points_ids.size() == borders.size());
+    CDT cdt;
 
-    std::vector<std::vector<Vertex_handle> > cdt_borders;
-    cdt_borders.resize(borders.size());
-
-    for(std::size_t bi=0; bi<borders.size(); ++bi)
+    CGAL::unordered_flat_map<std::size_t, Vertex_handle> id_vertices;
+    auto insert = [&](const Border_point<K>& bp) -> Vertex_handle
     {
-      CGAL_precondition(points_ids[bi].size() == borders[bi].size());
-      std::vector<Vertex_handle> cdt_border(borders[bi].size());
-      for(std::size_t pi=0; pi<borders[bi].size(); ++pi)
+      auto res = id_vertices.emplace(bp.second, Vertex_handle());
+      if(res.second) // first time that this point is seen
       {
-        const auto& p = borders[bi][pi];
-        Vertex_handle vh = cdt.insert(p);
-        vh->info() = points_ids[bi][pi];
-        cdt_border[pi] = vh;
+        res.first->second = cdt.insert(bp.first);
+        res.first->second->info() = bp.second;
       }
-      cdt_borders[bi] = std::move(cdt_border);
-    }
+      return res.first->second;
+    };
 
     try
     {
-      for(std::size_t bi=0; bi<cdt_borders.size(); ++bi)
+      for(const Border_edge<K>& e : border_edges)
       {
-        const auto& cdt_border = cdt_borders[bi];
-        for(std::size_t vi=0; vi<cdt_border.size(); ++vi)
-        {
-          const Vertex_handle vhi = cdt_border[vi];
-          const Vertex_handle vhj = cdt_border[(vi + 1) % cdt_border.size()];
-          // we don't have degenerate points in the loop, but either normal-projection or z-projection
-          // can still create degeneracies with inexact kernels
-          if (vhi == vhj)
-            throw typename CDT::Intersection_of_constraints_exception();
-          cdt.insert_constraint(vhi, vhj);
-        }
+        // two statements, so that the insertion order does not depend on the compiler
+        const Vertex_handle va = insert(e.first);
+        const Vertex_handle vb = insert(e.second);
+        cdt.insert_constraint(va, vb);
       }
     }
     catch(const typename CDT::Intersection_of_constraints_exception&)
     {
       if(m_verbose)
-      {
-        std::cerr << "Warning: Failed to triangulate lateral face" << std::endl;
-        std::cerr << "    CDT = " << typeid(CDT).name() << std::endl;
-        std::cerr << "    K = " << typeid(K).name() << std::endl;
-      }
+        std::cerr << "Warning: the borders intersect in the triangulation (K = " << typeid(K).name() << ")"
+                  << std::endl;
+      return false;
+    }
+
+    // With an inexact kernel, distinct points can have the same projection, and the CDT then merges them
+    // into a single vertex (pinching the domain, or collapsing an edge, whose constraint is then ignored):
+    // every point must have its own vertex
+    if(cdt.number_of_vertices() != id_vertices.size())
+    {
+      if(m_verbose)
+        std::cerr << "Warning: distinct points of the borders are merged in the triangulation" << std::endl;
       return false;
     }
 
@@ -628,20 +696,39 @@ public:
     // CGAL::draw(cdt);
 #endif
 
-    CGAL::unordered_flat_map<Face_handle, bool> fallback_in_domain_map;
-    boost::associative_property_map<CGAL::unordered_flat_map<Face_handle, bool> > fallback_in_domain(fallback_in_domain_map);
-    CGAL::mark_domain_in_triangulation(cdt, fallback_in_domain);
+    CGAL::unordered_flat_map<Face_handle, bool> in_domain_map;
+    boost::associative_property_map<CGAL::unordered_flat_map<Face_handle, bool> > in_domain(in_domain_map);
+    CGAL::mark_domain_in_triangulation(cdt, in_domain);
 
+    std::vector<std::array<std::size_t, 3> > triangles;
     for(Face_handle f : cdt.finite_face_handles())
     {
-      if(!get(fallback_in_domain, f))
+      if(!get(in_domain, f))
         continue;
 
       if(invert_faces)
-        m_faces.push_back({f->vertex(0)->info(), f->vertex(2)->info(), f->vertex(1)->info()});
+        triangles.push_back({f->vertex(0)->info(), f->vertex(2)->info(), f->vertex(1)->info()});
       else
-        m_faces.push_back({f->vertex(0)->info(), f->vertex(1)->info(), f->vertex(2)->info()});
+        triangles.push_back({f->vertex(0)->info(), f->vertex(1)->info(), f->vertex(2)->info()});
+    }
 
+    // With an inexact kernel, a sliver of the domain can be inverted (e.g., a top face of almost zero width,
+    // when the offset is almost at the time of a horizontal ridge): the CDT then gives a valid triangulation
+    // of the borders, but whose orientation is not consistent with the faces that share the borders.
+    // Check that every border edge is an edge of a triangle, in the expected direction (this also rejects
+    // a border edge that the CDT would have split at a vertex of another border).
+    // The faces of the CDT are counterclockwise when seen from above: they go along border edges
+    // in the same direction as the borders if the domain is on the left of the borders.
+    if(!are_border_edges_oriented_triangle_edges<K>(triangles, border_edges, domain_on_left != invert_faces))
+    {
+      if(m_verbose)
+        std::cerr << "Warning: the triangulation is not consistent with the orientation of the borders" << std::endl;
+      return false;
+    }
+
+    for(const auto& t : triangles)
+    {
+      m_faces.push_back({t[0], t[1], t[2]});
 #ifdef CGAL_SLS_OUTPUT_FILES
       m_colors.push_back(m_current_cid);
 #endif
@@ -652,95 +739,6 @@ public:
 #endif
 
     return true;
-  }
-
-  template <typename K> // XK or EK
-  bool triangulate_borders(std::vector<std::vector<std::size_t> >& points_ids,
-                           // m_points contain the XK embedding, but if XK != EK, we want the EK embedding
-                           std::vector<std::vector<typename K::Point_3> >& borders,
-                           bool invert_faces,
-                           const bool skip_pcdt = false)
-  {
-    using Border = std::vector<typename K::Point_3>;
-
-#if 0
-    // Below is both redundant and not complete: we are checking for degeneracies
-    // created during offset contouring by SLS2. However, the CDT can itself create
-    // degenerate constraints with an inexact kernel, either because of numerical issues
-    // during projection with a PCDT, or numerical issues creating a vertical segment
-    // that degenerates when using a zCDT.
-
-    // reject degenerate edges as an inexact failure: we could keep a single point and possibly
-    // triangulate the face, but we might create a combinatorial inconsistency with another face
-    // that would have switched to exact and kept the edge.
-    if constexpr(!is_exact_kernel<K>)
-    {
-      CGAL_assertion(points_ids.size() == borders.size());
-
-      for (std::size_t bi=0; bi<borders.size(); ++bi)
-        for (std::size_t pi=0; pi<borders[bi].size(); ++pi)
-          if (borders[bi][pi] == borders[bi][(pi + 1) % borders[bi].size()])
-            return false;
-    }
-    else
-    {
-      // @todo assert that there are no duplicates
-    }
-#endif
-
-    bool success = false;
-
-    // PCDT (normal-projected CDT)
-    if (!skip_pcdt)
-    {
-      using Itag = CGAL::No_constraint_intersection_tag;
-      using PK = CGAL::Projection_traits_3<K>;
-      using PVbb = CGAL::Triangulation_vertex_base_with_info_2<std::size_t, PK>;
-      using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
-      using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
-      using PTDS = CGAL::Triangulation_data_structure_2<PVb, PFb>;
-      using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
-
-      CGAL_precondition(!borders.empty());
-      CGAL_precondition(borders[0].size() >= 3);
-
-      // Compute a normal
-      // shift once to ensure that the contour is used to get the correct normal
-      const Border& outer = borders[0];
-      std::size_t outer_last_pos = outer.size() - 1;
-      CGAL_assertion(outer[outer_last_pos][2] == 0 && outer[0][2] == 0); // z == 0
-
-      const typename K::Vector_3 n = CGAL::cross_product(outer[0] - outer[outer_last_pos],
-                                                         outer[1] - outer[outer_last_pos]);
-      // Regardless of the (positive or negative) z lift of the points, we should get a normal
-      // that points up because the 2D faces of the skeleton (interior or exterior) were pointing up.
-      // This is more important than it seems: if the normal were pointing down, we would have
-      // to invert the faces of the zCDT in case of PCDT failure.
-      CGAL_assertion(is_positive(n[2]));
-
-      PCDT pcdt{PK{n}};
-
-      success = triangulate_borders_with_CDT<K>(points_ids, borders, pcdt, invert_faces);
-      // failure is not an option for the exact kernel
-      CGAL_assertion(!is_exact_kernel<K> || success);
-    }
-
-    // zCDT: project onto the z=0 plane; faces point up
-    if(!success)
-    {
-      using Itag = CGAL::No_constraint_intersection_tag;
-      using PK = CGAL::Projection_traits_xy_3<K>;
-      using PVbb = CGAL::Triangulation_vertex_base_with_info_2<std::size_t, PK>;
-      using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
-      using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
-      using PTDS = CGAL::Triangulation_data_structure_2<PVb, PFb>;
-      using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
-
-      PCDT pcdt;
-      success = triangulate_borders_with_CDT<K>(points_ids, borders, pcdt, invert_faces);
-    }
-
-    return success;
   }
 
   void collect_contour_halfedges(const Straight_skeleton_2& ss,
@@ -773,25 +771,22 @@ public:
   bool construct_bot_horizontal_faces(const std::vector<std::vector<HDS_Halfedge_const_handle> >& chs)
   {
     // convert from the contours to a vector of points and a vector of point ids
-    std::vector<std::vector<Point_3> > face_points(chs.size());
-    std::vector<std::vector<std::size_t> > point_ids(chs.size());
-
-    for(std::size_t ci=0; ci<chs.size(); ++ci)
+    Border_edges<XK> border_edges;
+    for(const std::vector<HDS_Halfedge_const_handle>& ch : chs)
     {
-      const std::vector<HDS_Halfedge_const_handle>& ch = chs[ci];
+      std::vector<Border_point<XK> > loop;
       for(HDS_Halfedge_const_handle hds_h : ch)
-      {
-        auto [point, pid] = skeleton_vertex_point_and_id<XK>(hds_h->vertex());
-        face_points[ci].push_back(point);
-        point_ids[ci].push_back(pid);
-      }
+        loop.push_back(skeleton_vertex_point_and_id<XK>(hds_h->vertex()));
+      add_border_loop<XK>(loop, border_edges);
     }
 
     // The faces are built in the plane z=0 with upwards normal.
-    // Inward/outward give different ordering but this doesn't matter since it's put in a CDT2,
-    // where edge orientation does not matter.
+    // The borders are the border halfedges of the skeleton(s), on the other side of the skeleton faces:
+    // the bottom face is on their right for an interior skeleton (inward), and on their left for
+    // exterior skeletons (outward).
     const bool invert_faces = !m_height.has_value() || is_positive(*m_height);
-    return triangulate_borders<XK>(point_ids, face_points, invert_faces, true /*skip PCDT*/);
+    const bool domain_on_left = (m_slope == Slope::OUTWARD);
+    return triangulate_borders<XK>(border_edges, invert_faces, domain_on_left);
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -801,23 +796,21 @@ public:
   template <typename K> // XK or EK
   bool triangulate_top_contours_in_kernel(const std::vector<std::vector<HDS_Halfedge_const_handle> >& chs)
   {
-    // convert from the contours to a vector of points and a vector of point ids
-    std::vector<std::vector<typename K::Point_3> > face_points(chs.size());
-    std::vector<std::vector<std::size_t> > point_ids(chs.size());
-
-    for(std::size_t ci=0; ci<chs.size(); ++ci)
+    // convert from the contours to border edges
+    Border_edges<K> border_edges;
+    for(const std::vector<HDS_Halfedge_const_handle>& ch : chs)
     {
-      const std::vector<HDS_Halfedge_const_handle>& ch = chs[ci];
+      std::vector<Border_point<K> > loop;
       for(HDS_Halfedge_const_handle hds_h : ch)
-      {
-        auto [point, pid] = skeleton_halfedge_point_and_id<K>(hds_h);
-        face_points[ci].push_back(point);
-        point_ids[ci].push_back(pid);
-      }
+        loop.push_back(skeleton_halfedge_point_and_id<K>(hds_h));
+      add_border_loop<K>(loop, border_edges);
     }
 
+    // The top faces are on the left of the offset contours of an interior skeleton (inward),
+    // and on their right for exterior skeletons (outward).
     const bool invert_faces = m_height.has_value() && is_negative(*m_height);
-    return triangulate_borders<K>(point_ids, face_points, invert_faces, true /*skip PCDT*/);
+    const bool domain_on_left = (m_slope != Slope::OUTWARD);
+    return triangulate_borders<K>(border_edges, invert_faces, domain_on_left);
   }
 
   // this dispatches to the appropriate kernel
@@ -861,13 +854,20 @@ public:
   //////////////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
+  static bool is_artificial_bisector(HDS_Halfedge_const_handle h)
+  {
+    return h->face() == h->opposite()->face();
+  }
+
+  // @todo The crossings of the offset with artificial bisectors are in the interior of offset segments,
+  // and could be ignored, both here and in top faces (see `Skeleton_offset_correspondence_builder_visitor`).
+  // With an inexact kernel, this makes the output a bit less likely to self-intersect when the offset is
+  // (almost) at the time of an endpoint of an artificial bisector.
   template <typename K> // XK or EK
   bool triangulate_skeleton_face_in_kernel(HDS_Face_handle hds_f,
                                            const Offset_builder_no_visitor& ob,
                                            const bool invert_faces)
   {
-    using K_point_3 = typename K::Point_3;
-
     HDS_Halfedge_const_handle hds_h = hds_f->halfedge(), done = hds_h;
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
@@ -876,72 +876,95 @@ public:
     const bool is_vertical = (contour_h->weight() == m_vertical_weight);
 #endif
 
-    std::vector<std::vector<K_point_3> > face_points(1);
-    std::vector<std::vector<std::size_t> > point_ids(1);
+    // Note that this comparison uses XK (and not K), but XK is supposed to have exact predicates.
+    //
+    // @todo we probably don't even need to do this check here again:
+    // if we have contoured at z=height, we already know the relevant halfedges
+    auto compare_time_to_offset = [&](HDS_Vertex_const_handle node) -> CGAL::Comparison_result
+    {
+      if(!m_height.has_value())
+        return CGAL::EQUAL; // meaningless, but just to avoid getting a point on the halfedge
+      else if(node->is_contour())
+        return CGAL::LARGER; // abs_height is > 0 and contour is 0
+      else
+        return ob.Compare_offset_against_event_time(CGAL::abs(*m_height), node);
+    };
+
+    // The points of the boundary cycle, each with whether the edge from the previous point
+    // to this point is an edge of the border (that is, not a part of an artificial bisector)
+    std::vector<std::pair<Border_point<K>, bool> > points;
+
     do
     {
       HDS_Vertex_const_handle hds_sv = hds_h->opposite()->vertex();
       HDS_Vertex_const_handle hds_tv = hds_h->vertex();
 
-      // This comparison uses XK, but XK is supposed to have exact predicates.
-      //
-      // @todo we probably don't even need to do this check here again:
-      // if we have contouring at z=height, we already know the relevant halfedges
-      auto compare_time_to_offset = [&](HDS_Vertex_const_handle node) -> CGAL::Comparison_result
-      {
-        if(!m_height.has_value())
-          return CGAL::EQUAL; // meaningless, but just to avoid getting a point on the halfedge
-        else if(node->is_contour())
-          return CGAL::LARGER; // abs_height is > 0 and contour is 0
-        else
-          return ob.Compare_offset_against_event_time(CGAL::abs(*m_height), node);
-      };
-
+      // abs(height) compared to node->time
+      // smaller means the node is farther than the offset
       const CGAL::Comparison_result sc = compare_time_to_offset(hds_sv);
       const CGAL::Comparison_result tc = compare_time_to_offset(hds_tv);
 
-      if(sc != tc && sc != CGAL::EQUAL && tc != CGAL::EQUAL)
-      {
-        HDS_Halfedge_const_handle hds_off_h = hds_h;
-        if(hds_h->slope() == CGAL::NEGATIVE)
-          hds_off_h = hds_off_h->opposite();
+      // we skip artificial bisectors because CDT2 doesn't like duplicate constraints
+      const bool is_artificial = is_artificial_bisector(hds_h);
 
-        auto [point, pid] = skeleton_halfedge_point_and_id<K>(hds_off_h);
-        face_points[0].push_back(point);
-        point_ids[0].push_back(pid);
+      if(sc != tc && sc != CGAL::EQUAL && tc != CGAL::EQUAL) // intersect the offset in the interior
+      {
+        // hds_h gets canonicalized in the point/id getter
+        const Border_point<K> bp = skeleton_halfedge_point_and_id<K>(hds_h);
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
         if(is_vertical)
-          add_vertical_slab(pid, contour_h);
+          add_vertical_slab(bp.second, contour_h);
 #endif
+
+        // Going down (the source is above the offset): the edge from the previous point, where the cycle
+        // went above the offset, is an offset segment. Going up: it is the part of `hds_h` from its source.
+        const bool is_offset_segment = (sc == CGAL::SMALLER);
+        points.emplace_back(bp, is_offset_segment || !is_artificial);
       }
 
       if(tc != CGAL::SMALLER)
       {
-        auto [point, pid] = skeleton_vertex_point_and_id<K>(hds_tv);
-        face_points[0].push_back(point);
-        point_ids[0].push_back(pid);
+        const Border_point<K> bp = skeleton_vertex_point_and_id<K>(hds_tv);
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
         // contour vertices are already on the vertical planes
         if(is_vertical && !hds_tv->is_contour())
-          add_vertical_slab(pid, contour_h);
+          add_vertical_slab(bp.second, contour_h);
 #endif
+
+        // The edge from the previous point is an offset segment if `hds_h` comes down from above the offset
+        // directly to a target that is on the offset (no crossing was emitted before it). Otherwise, it is
+        // the part of `hds_h` from its source or from the crossing.
+        const bool is_offset_segment = (sc == CGAL::SMALLER && tc == CGAL::EQUAL);
+        points.emplace_back(bp, is_offset_segment || !is_artificial);
       }
 
       hds_h = hds_h->next();
     }
     while(hds_h != done);
 
-    for (const auto& fp : face_points)
-    if(fp.size() < 3)
+    Border_edges<K> border_edges;
+    for(std::size_t i=0; i<points.size(); ++i)
+    {
+      const Border_point<K>& prev_point = points[i].first;
+      const auto& [point, is_border_edge] = points[(i + 1) % points.size()];
+
+      // e.g., an offset segment from a vertex that is on the offset to itself, when the boundary cycle
+      // goes up from the vertex to a hole that is above the offset except at that vertex, and back
+      if(is_border_edge && prev_point.second != point.second)
+        border_edges.emplace_back(prev_point, point);
+    }
+
+    if(border_edges.size() < 3)
     {
       if(m_verbose)
         std::cerr << "Warning: sm_vs has size 1 or 2: offset crossing face at a single point?" << std::endl;
       return true;
     }
 
-    return triangulate_borders<K>(point_ids, face_points, invert_faces);
+    // the borders follow the boundary cycle of the skeleton face, which is on their left
+    return triangulate_borders<K>(border_edges, invert_faces, true /*domain on the left*/);
   }
 
   // this dispatches to the appropriate kernel
@@ -1199,6 +1222,10 @@ public:
     timer.reset();
     timer.start();
 #endif
+
+    // We construct face by face independently because that enables us to switch to an exact kernel
+    // only on-demand as opposed to recomputing the whole skeleton with an exact construction kernel
+    // as soon as we get a single, local issue.
 
     // bottom faces (z=0)
     {
@@ -1528,7 +1555,6 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
                                                           NamedParameters,
                                                           IK>::type;
   using SFT = typename SK::FT;
-  using S_Point_3 = typename SK::Point_3;
 
   using XK = typename internal_np::Lookup_named_param_def<internal_np::extrusion_traits_t,
                                                           NamedParameters,
