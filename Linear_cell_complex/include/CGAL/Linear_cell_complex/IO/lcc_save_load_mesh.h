@@ -23,6 +23,8 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL::IO
 {
@@ -430,17 +432,24 @@ void save_object_3D(std::ostream& fo, const LCC& lcc,
   { save_one_volume_internal(lcc, itvol, index, fo, dartsids); }
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool save_object_3D(const std::string& filename, const LCC& lcc,
                     std::unordered_map<typename LCC::Dart_const_descriptor,
-                                       std::size_t>* dartsids=nullptr)
+                                       std::size_t>* dartsids,
+                    const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) return false; // File open error
+  set_stream_precision_from_NP(fo, np);
   save_object_3D(fo, lcc, dartsids);
   fo.close();
   return true;
 }
+///////////////////////////////////////////////////////////////////////////////
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool save_object_3D(const std::string& filename, const LCC& lcc,
+                    const CGAL_NP_CLASS& np = parameters::default_values())
+{ return save_object_3D(filename, lcc, nullptr, np); }
 ///////////////////////////////////////////////////////////////////////////////
 template<class LCC>
 void save_one_volume(std::ostream& fo, const LCC& lcc,
@@ -471,26 +480,36 @@ void save_one_volume(std::ostream& fo, const LCC& lcc,
   save_one_volume_internal(lcc, dh, index, fo, dartsids);
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool save_one_volume(const std::string& filename, const LCC& lcc,
                      typename LCC::Dart_const_descriptor dh,
                      std::unordered_map<typename LCC::Dart_const_descriptor,
-                                        std::size_t>* dartsids=nullptr)
+                                        std::size_t>* dartsids,
+                    const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) return false; // File open error
+  set_stream_precision_from_NP(fo, np);
   save_one_volume(fo, lcc, dh, dartsids);
   fo.close();
   return true;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
-bool save_object_3D_gmsh(const std::string& filename, const LCC& lcc)
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool save_one_volume(const std::string& filename, const LCC& lcc,
+                     typename LCC::Dart_const_descriptor dh,
+                    const CGAL_NP_CLASS& np = parameters::default_values())
+{ return save_one_volume(filename, lcc, dh, nullptr, np); }
+///////////////////////////////////////////////////////////////////////////////
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool save_object_3D_gmsh(const std::string& filename, const LCC& lcc,
+                    const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using namespace CGAL::CMap::Element_topo;
   std::ofstream fo(filename.c_str());
   if(!fo.good()) return false; // File open error
 
+  set_stream_precision_from_NP(fo, np);
   fo<<"$MeshFormat"<<std::endl;
   fo<<"2.2 0 8"<<std::endl;
   fo<<"$EndMeshFormat"<<std::endl;

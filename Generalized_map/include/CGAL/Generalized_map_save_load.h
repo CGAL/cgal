@@ -19,6 +19,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Combinatorial_map_save_load.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <algorithm>
 #include <unordered_map>
@@ -135,11 +137,13 @@ namespace CGAL {
     return true;
   }
 
-  template < class GMap >
-  bool save_generalized_map(const GMap& amap, const char* filename)
+  template < class GMap, typename CGAL_NP_TEMPLATE_PARAMETERS >
+  bool save_generalized_map(const GMap& amap, const char* filename,
+                            const CGAL_NP_CLASS& np = parameters::default_values())
   {
     std::ofstream output(filename);
     if (!output) return false;
+    set_stream_precision_from_NP(output, np);
     return save_generalized_map(amap, output);
   }
 

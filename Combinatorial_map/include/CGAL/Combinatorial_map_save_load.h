@@ -21,6 +21,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Combinatorial_map_functors.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <algorithm>
 #include <unordered_map>
@@ -391,12 +393,15 @@ namespace CGAL {
     return true;
   }
 
-  template < class CMap, class Functor >
+  template < class CMap, class Functor, typename CGAL_NP_TEMPLATE_PARAMETERS >
   bool save_combinatorial_map(const CMap& amap, const char* filename,
-                              const Functor& f)
+                              const Functor& f,
+                              const CGAL_NP_CLASS& np = parameters::default_values())
   {
     std::ofstream output(filename);
     if (!output) return false;
+
+    set_stream_precision_from_NP(output, np);
     return save_combinatorial_map(amap, output, f);
   }
 
@@ -407,8 +412,9 @@ namespace CGAL {
     return save_combinatorial_map(amap, output, f);
   }
 
-  template < class CMap >
-  bool save_combinatorial_map(const CMap& amap, const char* filename)
+  template < class CMap, typename CGAL_NP_TEMPLATE_PARAMETERS >
+  bool save_combinatorial_map(const CMap& amap, const char* filename,
+                              const CGAL_NP_CLASS& np = parameters::default_values())
   {
     EmptyFunctor f;
     return save_combinatorial_map(amap, filename, f);

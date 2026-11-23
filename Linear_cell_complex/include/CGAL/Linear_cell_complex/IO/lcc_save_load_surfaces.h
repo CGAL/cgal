@@ -22,17 +22,21 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include "lcc_save_load_mesh.h"
 
 namespace CGAL::IO
 {
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
-bool save_lcc_surface_into_off(const std::string& filename, const LCC& lcc)
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool save_lcc_surface_into_off(const std::string& filename, const LCC& lcc,
+                               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) return false; // File open error
 
+  set_stream_precision_from_NP(fo, np);
   auto vertex_3free=lcc.get_new_mark(), face_3free=lcc.get_new_mark();
 
   // count and mark all 3 free vertices and faces.
@@ -171,13 +175,15 @@ void build_manifold_surface_from_lcc(const LCC& lcc,
   }
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool save_lcc_surface_into_manifold_gocad(const std::string& filename,
-                                          const LCC& lcc)
+                                          const LCC& lcc,
+                                          const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) { return false; } // File open error
 
+  set_stream_precision_from_NP(fo, np);
   CGAL::Surface_mesh<typename LCC::Point> mesh;
   build_manifold_surface_from_lcc(lcc, mesh);
 
@@ -186,13 +192,15 @@ bool save_lcc_surface_into_manifold_gocad(const std::string& filename,
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool save_lcc_surface_into_manifold_obj(const std::string& filename,
-                                        const LCC& lcc)
+                                        const LCC& lcc,
+                                        const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) { return false; } // File open error
 
+  set_stream_precision_from_NP(fo, np);
   CGAL::Surface_mesh<typename LCC::Point> mesh;
   build_manifold_surface_from_lcc(lcc, mesh);
 
@@ -201,13 +209,15 @@ bool save_lcc_surface_into_manifold_obj(const std::string& filename,
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool save_lcc_surface_into_manifold_off(const std::string& filename,
-                                        const LCC& lcc)
+                                        const LCC& lcc,
+                                        const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) { return false; } // File open error
 
+  set_stream_precision_from_NP(fo, np);
   CGAL::Surface_mesh<typename LCC::Point> mesh;
   build_manifold_surface_from_lcc(lcc, mesh);
 
@@ -216,13 +226,15 @@ bool save_lcc_surface_into_manifold_off(const std::string& filename,
   return true;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool save_lcc_surface_into_manifold_ply(const std::string& filename,
-                                        const LCC& lcc)
+                                        const LCC& lcc,
+                                        const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) { return false; } // File open error
 
+  set_stream_precision_from_NP(fo, np);
   CGAL::Surface_mesh<typename LCC::Point> mesh;
   build_manifold_surface_from_lcc(lcc, mesh);
 
@@ -231,13 +243,15 @@ bool save_lcc_surface_into_manifold_ply(const std::string& filename,
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool save_lcc_surface_into_manifold_stl(const std::string& filename,
-                                        const LCC& lcc)
+                                        const LCC& lcc,
+                                        const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) { return false; } // File open error
 
+  set_stream_precision_from_NP(fo, np);
   CGAL::Surface_mesh<typename LCC::Point> mesh;
   build_manifold_surface_from_lcc(lcc, mesh);
 
@@ -246,9 +260,10 @@ bool save_lcc_surface_into_manifold_stl(const std::string& filename,
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool save_lcc_surface_into_manifold_vtk(const std::string& filename,
-                                        const LCC& lcc)
+                                        const LCC& lcc,
+                                        const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if (!fo.good())
@@ -257,6 +272,7 @@ bool save_lcc_surface_into_manifold_vtk(const std::string& filename,
     return false;
   }
 
+  set_stream_precision_from_NP(fo, np);
   fo << "# vtk DataFile Version 3.0\n";
   fo << "LCC Surface Mesh\n";
   fo << "ASCII\n";

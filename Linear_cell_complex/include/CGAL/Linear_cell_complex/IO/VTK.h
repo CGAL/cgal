@@ -15,6 +15,8 @@
 #include <CGAL/Linear_cell_complex_incremental_builder_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Element_topo.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <fstream>
 #include <iostream>
@@ -65,8 +67,7 @@ namespace IO {
  *                      If provided, will be resized to match number of volumes.
  * \return `true` if loading was successful, `false` otherwise
  */
-template <typename LCC, typename VertexScalarType,
-          typename VolumeScalarType>
+template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
 bool read_VTK(const char* filename,
               LCC& alcc,
               std::vector<VertexScalarType>* vertex_scalars,
@@ -87,16 +88,19 @@ bool read_VTK(const char* filename,
  * \return `true` if writing was successful, `false` otherwise
  */
 template <typename LCC, typename VertexScalarType,
-          typename VolumeScalarType>
+          typename VolumeScalarType, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VTK(const char* filename,
                const LCC& alcc,
                const std::vector<VertexScalarType>* vertex_scalars,
-               const std::vector<VolumeScalarType>* volume_scalars);
+               const std::vector<VolumeScalarType>* volume_scalars,
+               const CGAL_NP_CLASS& np = parameters::default_values());
 
 // "Advanced" versions with functors
-template <typename LCC, typename PointFunctor, typename CellFunctor>
+template <typename LCC, typename PointFunctor, typename CellFunctor,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VTK_with_fct(const char* filename, const LCC& alcc,
-                        PointFunctor ptval, CellFunctor cellval);
+                        PointFunctor ptval, CellFunctor cellval,
+                        const CGAL_NP_CLASS& np = parameters::default_values());
 
 // ============================================================================
 //                          Implementation details
@@ -635,9 +639,11 @@ bool read_VTK(const char* filename, LCC& alcc,
 { return read_VTK<LCC, float, VolumeScalarType>
       (filename, alcc, nullptr, volume_scalars); }
 ////////////////////////////////////////////////////////////////////////////////////
-template <typename LCC, typename PointFunctor, typename CellFunctor>
-inline bool write_VTK_with_fct(const char* filename, const LCC& alcc,
-                               PointFunctor pointfct, CellFunctor cellfct)
+template <typename LCC, typename PointFunctor, typename CellFunctor,
+          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
+bool write_VTK_with_fct(const char* filename, const LCC& alcc,
+                        PointFunctor pointfct, CellFunctor cellfct,
+                        const CGAL_NP_CLASS& np)
 {
   CGAL_assertion(filename!=nullptr);
   std::ofstream file(filename);
@@ -646,6 +652,7 @@ inline bool write_VTK_with_fct(const char* filename, const LCC& alcc,
     std::cerr<<"[ERROR] write_VTK: cannot open file "<<filename<<std::endl;
     return false;
   }
+  set_stream_precision_from_NP(file, np);
   std::size_t nbpts=0, nbcells=0;
   bool res=internal::write_lcc_topo_to_vtk_ascii(file, alcc, nbpts, nbcells);
   if(res)
@@ -661,10 +668,12 @@ inline bool write_VTK_with_fct(const char* filename, const LCC& alcc,
   return true;
 }
 ////////////////////////////////////////////////////////////////////////////////////
-template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
+template <typename LCC, typename VertexScalarType, typename VolumeScalarType,
+          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
 bool write_VTK(const char* filename, const LCC& alcc,
                const std::vector<VertexScalarType>* vertex_scalars,
-               const std::vector<VolumeScalarType>* volume_scalars)
+               const std::vector<VolumeScalarType>* volume_scalars,
+               const CGAL_NP_CLASS& np)
 {
   std::function<VertexScalarType(const LCC&,
                                  typename LCC::Dart_const_descriptor,
@@ -686,30 +695,34 @@ bool write_VTK(const char* filename, const LCC& alcc,
     { return (*volume_scalars)[i]; };
   }
 
-  return write_VTK_with_fct(filename, alcc, vertexfct, cellfct);
+  return write_VTK_with_fct(filename, alcc, vertexfct, cellfct, np);
 }
 
-template <typename LCC>
-bool write_VTK(const char* filename, const LCC& alcc)
-{
-  return write_VTK<LCC, float, float>(filename, alcc, nullptr, nullptr);
-}
-
-template <typename LCC, typename VertexScalarType>
+template <typename LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VTK(const char* filename, const LCC& alcc,
-               const std::vector<VertexScalarType>* vertex_scalars)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return write_VTK<LCC, VertexScalarType, float>(filename, alcc, vertex_scalars,
-                                                 nullptr);
+  return write_VTK(filename, alcc, static_cast<std::vector<int>*>(nullptr),
+                   static_cast<std::vector<int>*>(nullptr), np);
 }
 
-template <typename LCC, typename VolumeScalarType>
+template <typename LCC, typename VertexScalarType, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_VTK(const char* filename, const LCC& alcc,
+               const std::vector<VertexScalarType>* vertex_scalars,
+               const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  return write_VTK(filename, alcc, vertex_scalars,
+                   static_cast<std::vector<int>*>(nullptr), np);
+}
+
+template <typename LCC, typename VolumeScalarType, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VTK(const char* filename, const LCC& alcc,
                std::nullptr_t,
-               const std::vector<VolumeScalarType>* volume_scalars)
+               const std::vector<VolumeScalarType>* volume_scalars,
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return write_VTK<LCC, float, VolumeScalarType>(filename, alcc, nullptr,
-                                                 volume_scalars);
+  return write_VTK(filename, alcc, static_cast<std::vector<int>*>(nullptr),
+                   volume_scalars, np);
 }
 ////////////////////////////////////////////////////////////////////////////////////
 
