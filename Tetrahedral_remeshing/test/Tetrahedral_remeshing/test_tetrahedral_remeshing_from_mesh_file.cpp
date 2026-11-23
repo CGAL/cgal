@@ -73,7 +73,7 @@ int test(const std::filesystem::path& filename,
                            });
       };
 
-  unsigned int neg = count_negative_cells(tr);
+  int neg = count_negative_cells(tr);
   if(neg > 0)
     tr.may_have_badly_oriented_cells(true);
   std::cout << neg << " finite cells are badly oriented before remeshing" << std::endl;
@@ -82,9 +82,12 @@ int test(const std::filesystem::path& filename,
     CGAL::parameters::number_of_iterations(5)
     .remesh_boundaries(false));
 
-  unsigned int neg2 = count_negative_cells(tr);
+  int neg2 = count_negative_cells(tr);
   if(neg2 > 0)
     std::cout << neg2 << " finite cells are badly oriented after remeshing" << std::endl;
+  if(!perturb_vertices_positions)
+    assert(neg2 == 0);
+  assert(neg2 <= neg);
 
   in.close();
   return EXIT_SUCCESS;

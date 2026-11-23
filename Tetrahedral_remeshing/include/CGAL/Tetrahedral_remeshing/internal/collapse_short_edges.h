@@ -52,7 +52,7 @@ enum Collapse_type { TO_MIDPOINT, TO_V0, TO_V1, IMPOSSIBLE };
 enum Result_type   { VALID,
                      V_PROBLEM, C_PROBLEM, E_PROBLEM,
                      ANGLE_PROBLEM,
-                     TOPOLOGICAL_PROBLEM, ORIENTATION_PROBLEM, SHARED_NEIGHBOR_PROBLEM };
+                     TOPOLOGICAL_PROBLEM, SHARED_NEIGHBOR_PROBLEM };
 
 // A cell `c` incident to the edge being collapsed, with the two cells `n0`/`n1`
 // that will take its place once it is removed, and the index of `c` in each of
@@ -318,13 +318,6 @@ public:
         triangulation.tds().delete_cell(ch);
       }
 
-      // check validity of cells
-      for (Cell_handle cit : triangulation.finite_cell_handles())
-      {
-        if (!is_well_oriented(triangulation, cit))
-          return ORIENTATION_PROBLEM;
-      }
-
       // check angles
       for (Cell_handle cit : triangulation.finite_cell_handles())
       {
@@ -548,7 +541,8 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
   return true;
 }
 
-// The cells of `star` keep a positive orientation once `v_moved` is at
+// The cells of `star` that are positively oriented
+// keep a positive orientation once `v_moved` is at
 // `new_pos`. Cells that also have `v_other` disappear with the collapse.
 template<typename C3t3, typename CellRange>
 bool collapse_keeps_orientations(const CellRange& star,
@@ -571,7 +565,7 @@ bool collapse_keeps_orientations(const CellRange& star,
 
     if(c3t3.triangulation().may_have_badly_oriented_cells() &&
        CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
-      return true; //in this case we don't care about orientation change, locally
+      continue; //in this case we don't care about orientation change, locally
 
     pts[ch->index(v_moved)] = new_pos;
     if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
