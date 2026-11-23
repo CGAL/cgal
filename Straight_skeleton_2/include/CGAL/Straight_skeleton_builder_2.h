@@ -805,7 +805,10 @@ private :
   {
     CGAL_precondition( aSeed->is_skeleton() && !aSeed->has_infinite_time() ) ;
     Trisegment_2_ptr lRes = CreateTrisegment( CreateArtificialTriedge( aContourH, aBisector ), aSeed ) ;
-    CGAL_postcondition( lRes->collinearity() == TRISEGMENT_COLLINEARITY_01 );
+    // All the edges are collinear if the bisector is between two collinear contour edges (e.g., at a collinear
+    // vertex of the polygon): the bisector is then parallel to the ray, and the event does not exist.
+    CGAL_postcondition( lRes->collinearity() == TRISEGMENT_COLLINEARITY_01 ||
+                        lRes->collinearity() == TRISEGMENT_COLLINEARITY_ALL );
     return lRes;
   }
 

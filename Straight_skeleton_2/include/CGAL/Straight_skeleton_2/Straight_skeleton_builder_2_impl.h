@@ -2147,6 +2147,11 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
         Trisegment_2_ptr artificial_trisegment = CreateArtificialTrisegment(contour_h, h, extreme_h->vertex());
         CGAL_assertion(bool(artificial_trisegment->child_l()));
 
+        // If h is a bisector between `contour_h` and a contour edge collinear to `contour_h` (e.g., at a collinear
+        // vertex of the polygon), h is orthogonal to `contour_h`, thus parallel to the ray: it cannot be hit
+        if(artificial_trisegment->collinearity() == TRISEGMENT_COLLINEARITY_ALL)
+          return;
+
         if(!ExistEvent(artificial_trisegment))
           return;
 
