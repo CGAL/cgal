@@ -1763,7 +1763,6 @@ public:
   Straight_skeleton_builder_2& enter_contour_weights ( WeightIterator         aWeightsBegin
                                                      , WeightIterator         aWeightsEnd
                                                      , WeightConverter const& wcvt
-                                                     , bool                   aCheckValidity = true
                                                      )
   {
     const auto lWeightsN = std::distance(aWeightsBegin, aWeightsEnd);
@@ -1777,8 +1776,8 @@ public:
 
       Halfedge_handle lBorder = fit->halfedge();
       CGAL_assertion(lBorder->opposite()->is_border());
-      FT lWeight = cvt(*aWeightsBegin);
-      CGAL_STSKEL_BUILDER_TRACE(4, "Assign " << *aWeightsBegin << " (converted to " << cvt(lWeight) << ") to E" << lBorder->id());
+      FT lWeight = wcvt(*aWeightsBegin);
+      CGAL_STSKEL_BUILDER_TRACE(4, "Assign " << *aWeightsBegin << " (converted to " << lWeight << ") to E" << lBorder->id());
       lBorder->set_weight(lWeight);
     }
 
@@ -1789,10 +1788,9 @@ public:
   CGAL_DEPRECATED_MSG("use enter_weighted_contour() instead")
   Straight_skeleton_builder_2& enter_contour_weights ( WeightIterator aWeightsBegin
                                                      , WeightIterator aWeightsEnd
-                                                     , bool           aCheckValidity = true
                                                      )
   {
-    return enter_contour_weights(aWeightsBegin, aWeightsEnd, NT_converter<FT,FT>(), aCheckValidity);
+    return enter_contour_weights(aWeightsBegin, aWeightsEnd, NT_converter<FT,FT>());
   }
 #endif // CGAL_NO_DEPRECATED_CODE
 } ;
