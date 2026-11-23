@@ -817,7 +817,7 @@ public:
   bool triangulate_top_contours(const std::vector<std::vector<HDS_Halfedge_const_handle> >& chs,
                                 const bool exact)
   {
-    if constexpr(std::is_floating_point<FT>::value)
+    if constexpr(!is_exact_kernel<XK>)
     {
       if(exact)
       {
@@ -837,7 +837,7 @@ public:
 
     bool success;
     success = triangulate_top_contours(chs, false /*exact*/);
-    if constexpr(std::is_floating_point<FT>::value)
+    if constexpr(!is_exact_kernel<XK>)
     {
       if(!success)
         success = triangulate_top_contours(chs, true /*exact*/);
@@ -1004,7 +1004,7 @@ public:
 
       bool success;
       success = triangulate_skeleton_face(hds_f, ob, invert_faces, false /*exact*/);
-      if constexpr(std::is_floating_point<FT>::value)
+      if constexpr(!is_exact_kernel<XK>)
       {
         if(!success)
           success = triangulate_skeleton_face(hds_f, ob, invert_faces, true /*exact*/);
