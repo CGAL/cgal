@@ -237,6 +237,9 @@ int main(int argc, char** argv)
         const auto epeck_meshes = run_random_input<EPECK>(name + " EPECK", ri);
         for(std::size_t k=0; k<epick_meshes.size(); ++k)
         {
+          if(CGAL::is_empty(epick_meshes[k]) || CGAL::is_empty(epeck_meshes[k])) // failure already reported
+            continue;
+
           const double tol = 1e-9 * SST::diag_xy(PMP::bbox(epeck_meshes[k]));
           CGAL_SLS_CHECK_MSG(SST::approx_equal(PMP::volume(epick_meshes[k]), PMP::volume(epeck_meshes[k]), tol),
                              name + " EPICK vs EPECK, config " + std::to_string(k));
