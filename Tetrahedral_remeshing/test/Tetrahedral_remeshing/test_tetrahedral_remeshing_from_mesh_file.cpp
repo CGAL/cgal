@@ -83,6 +83,7 @@ int test(const std::string& filename, const bool perturb_vertices_positions = fa
     std::cout << neg2 << " finite cells are badly oriented after remeshing" << std::endl;
   if(!perturb_vertices_positions)
     assert(neg2 == 0);
+  assert(neg2 <= neg);
 
   in.close();
   return EXIT_SUCCESS;
