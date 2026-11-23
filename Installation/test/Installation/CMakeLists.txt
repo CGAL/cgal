@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 
 project( Installation_Tests )
 
@@ -13,7 +13,7 @@ macro(create_link_to_program COMPONENT)
   CGAL_add_test(link_to_${COMPONENT})
 endmacro()
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
 include(CGAL_CreateSingleSourceCGALProgram)
 include(CGAL_SetupGMP)
@@ -221,7 +221,7 @@ list(APPEND test_config_lst "test_config_file_non_standard")
 foreach(tgt ${test_config_lst})
   #add_custom_target(${tgt}_target)
   add_test(NAME "${tgt}_SetupFixture"  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/build-${tgt}")
-  add_test(NAME "${tgt}_CleanupFixture"  COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_BINARY_DIR}/build-${tgt}")
+  add_test(NAME "${tgt}_CleanupFixture"  COMMAND ${CMAKE_COMMAND} -E rm -R "${CMAKE_BINARY_DIR}/build-${tgt}")
   add_test(NAME compile__${tgt}
     COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/build-${tgt}" --config "$<CONFIG>")
     add_test(NAME exec__${tgt}

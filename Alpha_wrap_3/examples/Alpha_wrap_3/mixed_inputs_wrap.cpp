@@ -26,9 +26,9 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 int main(int argc, char** argv)
 {
   // Read the inputs
-  const std::string ts_filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off"); // triangle soup
-  const std::string ss_filename = (argc > 2) ? argv[2] : CGAL::data_file_path("images/420.polylines.txt"); // segment soup
-  const std::string ps_filename = (argc > 3) ? argv[3] : CGAL::data_file_path("points_3/ball.ply"); // point set
+  const std::filesystem::path ts_filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off"); // triangle soup
+  const std::filesystem::path ss_filename = (argc > 2) ? argv[2] : CGAL::data_file_path("images/420.polylines.txt"); // segment soup
+  const std::filesystem::path ps_filename = (argc > 3) ? argv[3] : CGAL::data_file_path("points_3/ball.ply"); // point set
 
   std::cout << "Triangle soup input: " << ts_filename << std::endl;
   std::cout << "Segment soup input: " << ss_filename << std::endl;
@@ -111,13 +111,13 @@ int main(int argc, char** argv)
   t.stop();
   std::cout << "Took " << t.time() << std::endl;
 
-  std::string ts_name = std::string(ts_filename);
+  std::string ts_name = std::string(ts_filename.string());
   ts_name = ts_name.substr(ts_name.find_last_of("/") + 1, ts_name.length() - 1);
   ts_name = ts_name.substr(0, ts_name.find_last_of("."));
-  std::string ss_name = std::string(ss_filename);
+  std::string ss_name = std::string(ss_filename.string());
   ss_name = ss_name.substr(ss_name.find_last_of("/") + 1, ss_name.length() - 1);
   ss_name = ss_name.substr(0, ss_name.find_last_of("."));
-  std::string ps_name = std::string(ps_filename);
+  std::string ps_name = std::string(ps_filename.string());
   ps_name = ps_name.substr(ps_name.find_last_of("/") + 1, ps_name.length() - 1);
   ps_name = ps_name.substr(0, ps_name.find_last_of("."));
   std::string output_name = ts_name + "_" + ss_name + "_"  + ps_name + "_"

@@ -86,7 +86,7 @@ namespace IO {
   \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_points(const std::string& fname,
+bool write_points(const std::filesystem::path& fname,
                   const PointRange& points,
                   const CGAL_NP_CLASS& np = parameters::default_values(),
 #ifndef DOXYGEN_RUNNING
@@ -94,16 +94,16 @@ bool write_points(const std::string& fname,
 #endif
                   )
 {
-  const std::string ext = internal::get_file_extension(fname);
+  const std::string ext = fname.extension().string();
 
-  if(ext == "xyz" || ext == "pwn")
+  if(ext == ".xyz" || ext == ".pwn")
     return write_XYZ(fname, points, np);
-  else if(ext == "off")
+  else if(ext == ".off")
     return write_OFF(fname, points, np);
-  else if(ext == "ply")
+  else if(ext == ".ply")
     return write_PLY(fname, points, np);
 #ifdef CGAL_LINKED_WITH_LASLIB
-  else if(ext == "las")
+  else if(ext == ".las")
     return write_LAS(fname, points, np);
 
 #endif

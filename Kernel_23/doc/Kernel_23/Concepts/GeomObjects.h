@@ -265,51 +265,6 @@ class Line_3 {
 public:
 }; /* end Kernel::Line_3 */
 
-/*!
-  \ingroup PkgKernel23ConceptsGeomObject
-  \cgalConcept
-
-  A type representing different types of objects in two dimensions.
-
-  \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
-
-  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
-
-  \cgalHasModelsBegin
-  \cgalHasModels{CGAL::Object}
-  \cgalHasModelsEnd
-
-  \sa `Kernel::Assign_2`
-  \sa `Kernel::ConstructObject_2`
-  \sa `Kernel::Intersect_2`
-
-*/
-class Object_2 {
-public:
-}; /* end Kernel::Object_2 */
-
-/*!
-  \ingroup PkgKernel23ConceptsGeomObject
-  \cgalConcept
-
-  A type representing different types of objects in three dimensions.
-
-  \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
-
-  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
-
-  \cgalHasModelsBegin
-  \cgalHasModels{CGAL::Object}
-  \cgalHasModelsEnd
-
-  \sa `Kernel::Assign_3`
-  \sa `Kernel::ConstructObject_3`
-  \sa `Kernel::Intersect_3`
-
-*/
-class Object_3 {
-public:
-}; /* end Kernel::Object_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject

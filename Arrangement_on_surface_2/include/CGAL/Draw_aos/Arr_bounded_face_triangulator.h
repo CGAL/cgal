@@ -158,8 +158,8 @@ private:
     auto index_to_point_with_info = [this](int idx) -> KPoint_with_index {
       return std::make_pair(to_kpoint(m_points[idx]), idx);
     };
-    auto indexes_begin = boost::make_counting_iterator<int>(0);
-    auto indexes_end = boost::make_counting_iterator<int>(m_points.size());
+    auto indexes_begin = boost::make_counting_iterator<std::size_t>(0);
+    auto indexes_end = boost::make_counting_iterator<std::size_t>(m_points.size());
     auto filtered_begin = boost::make_filter_iterator(vertex_filter, indexes_begin, indexes_end);
     auto filtered_end = boost::make_filter_iterator(vertex_filter, indexes_end, indexes_end);
     auto transformed_begin = boost::make_transform_iterator(filtered_begin, index_to_point_with_info);
@@ -200,7 +200,7 @@ public:
     m_point_types.push_back(Vertex_and_constraint);
   }
 
-  void start_constraint() { m_curr_cst_begin = m_points.size(); }
+  void start_constraint() { m_curr_cst_begin = static_cast<int>(m_points.size()); }
 
   void end_constraint() {
     CGAL_assertion_msg(m_curr_cst_begin.has_value(), "Call start_constraint() before end_constraint().");
@@ -213,7 +213,7 @@ public:
       return;
     }
     add_boundary_helper_point(m_points.back(), m_points[cst_begin]);
-    m_cst_ranges.emplace_back(cst_begin, m_points.size());
+    m_cst_ranges.emplace_back(cst_begin, static_cast<int>(m_points.size()));
   }
 
   /*! \brief Converts the triangulator to a triangulated face, moving internal data to the result.

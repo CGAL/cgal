@@ -115,8 +115,8 @@ namespace Contours {
       const DirectionRange& direction_range,
       const NamedParameters& np = parameters::default_values()) :
     m_input_range(input_range),
-    m_point_map(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::point_map), PointMap())),
+    m_point_map(parameters::choose_parameter<PointMap>(parameters::get_parameter(
+      np, internal_np::point_map))),
     m_max_angle_2(FT(5)) {
 
       CGAL_precondition(input_range.size() >= 2);

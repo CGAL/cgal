@@ -333,6 +333,7 @@ public:
     : _dimension(std::exchange(tds._dimension, -2))
     , _cells(std::move(tds._cells))
     , _vertices(std::move(tds._vertices))
+    , _initial_Euler_characteristic(std::exchange(tds._initial_Euler_characteristic, 0))
   {
   }
 
@@ -351,6 +352,7 @@ public:
     _cells = std::move(tds._cells);
     _vertices = std::move(tds._vertices);
     _dimension = std::exchange(tds._dimension, -2);
+    _initial_Euler_characteristic = std::exchange(tds._initial_Euler_characteristic, 0);
     return *this;
   }
 
@@ -1735,6 +1737,17 @@ private:
   bool count_cells(size_type &i, bool verbose = false, int level = 0) const;
   // counts AND checks the validity
 
+  // store the initial Euler characteristic of the TDS
+  // used by is_valid()
+  // if the Euler characteristic at creation of the TDS is not 0,
+  // (possibly by read_MEDIT() or from any non-CGAL-built triangulation)
+  // then the CGAL triangulation is not fully valid, but it is still usable,
+  // apart from the functions using locate()
+private:
+  int _initial_Euler_characteristic{0};
+public:
+  int initial_Euler_characteristic() const { return _initial_Euler_characteristic; }
+  void set_initial_Euler_characteristic(const int e) { _initial_Euler_characteristic = e; }
 };
 
 #ifdef CGAL_TDS_USE_RECURSIVE_CREATE_STAR_3
@@ -3672,16 +3685,21 @@ is_valid(bool verbose, int level ) const
       // Euler relation
       const auto euler_characteristic =
           static_cast<difference_type>(cell_count - facet_count + edge_count - vertex_count);
-      if ( euler_characteristic != 0 ) {
+      if (euler_characteristic != 0 )
+      {
         if(verbose) {
           std::cerr << "Euler relation unsatisfied\n"
                     << "    cell_count - facet_count + edge_count - vertex_count = "
                     << euler_characteristic<< std::endl;
+          std::cerr << "Initial Euler characteristic = "
+                    << initial_Euler_characteristic() << std::endl;
         }
-        CGAL_assertion(false);
-        return false;
+        if (initial_Euler_characteristic() == 0)
+        {
+          CGAL_assertion(false);
+          return false;
+        }
       }
-
       break;
     }
   case 2:
@@ -4201,7 +4219,9 @@ copy_tds(const TDS_src& tds,
       F[cit2]->set_neighbor(j, F[cit2->neighbor(j)] );
   }
 
-  CGAL_postcondition( is_valid() );
+  set_initial_Euler_characteristic(tds.initial_Euler_characteristic());
+
+  CGAL_postcondition(is_valid());
 
   return (vert != typename TDS_src::Vertex_handle()) ? V[vert] : Vertex_handle();
 }

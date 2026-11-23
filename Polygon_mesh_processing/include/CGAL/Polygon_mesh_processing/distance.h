@@ -1124,7 +1124,8 @@ double max_distance_to_triangle_mesh(const PointRange& points,
   Tree tree(tgt);
   tree.insert(faces(tm).first, faces(tm).second, tm, vpm);
 
-  const Point_3& hint = get(vpm, *vertices(tm).first);
+  auto vd = *vertices(tm).first;
+  const Point_3& hint = get(vpm, vd);
 
   return internal::max_distance_to_mesh_impl<Concurrency_tag>(points_cpy, tree, hint, gt);
 }
@@ -2538,8 +2539,7 @@ double bounded_error_Hausdorff_distance(const TriangleMesh1& tm1,
   const bool match_faces2 = choose_parameter(get_parameter(np2, internal_np::match_faces), true);
   const bool match_faces = match_faces1 && match_faces2;
 
-  auto out = choose_parameter(get_parameter(np1, internal_np::output_iterator),
-                              CGAL::Emptyset_iterator());
+  auto out = choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np1, internal_np::output_iterator));
 
   CGAL_precondition(error_bound >= 0.);
 
@@ -2592,10 +2592,8 @@ double bounded_error_symmetric_Hausdorff_distance(const TriangleMesh1& tm1,
   const bool match_faces = match_faces1 && match_faces2;
 
   // TODO: should we return a union of these realizing triangles?
-  auto out1 = choose_parameter(get_parameter(np1, internal_np::output_iterator),
-                               CGAL::Emptyset_iterator());
-  auto out2 = choose_parameter(get_parameter(np2, internal_np::output_iterator),
-                               CGAL::Emptyset_iterator());
+  auto out1 = choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np1, internal_np::output_iterator));
+  auto out2 = choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np2, internal_np::output_iterator));
 
   CGAL_precondition(error_bound >= 0.);
 

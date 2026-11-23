@@ -158,7 +158,7 @@ public:
    expressed.
 
    Different implementations of this class are illustrated in the
-   <a href="../examples/constrainedCamera.html">contrainedCamera</a> and
+   <a href="../examples/constrainedCamera.html">constrainedCamera</a> and
    <a href="../examples/constrainedFrame.html">constrainedFrame</a> examples.
 
    \attention When applied, the rotational Constraint may not intuitively follow

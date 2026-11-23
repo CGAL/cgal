@@ -10,7 +10,7 @@
 #include <CGAL/Timer.h>
 
 template<class Polyhedron>
-void read_to_polyhedron(const std::string file_name, Polyhedron& mesh)
+void read_to_polyhedron(const std::filesystem::path& file_name, Polyhedron& mesh)
 {
   std::ifstream input(file_name);
 
@@ -41,8 +41,8 @@ void init_indices(Polyhedron& poly) {
 template<class DeformMesh>
 std::vector<typename DeformMesh::vertex_descriptor>
 read_rois(DeformMesh& deform_mesh,
-  const std::string& roi_file,
-  const std::string& handle_file)
+  const std::filesystem::path& roi_file,
+  const std::filesystem::path& handle_file)
 {
   std::ifstream roi_stream(roi_file.c_str());
   std::ifstream handle_stream(handle_file.c_str());
@@ -81,8 +81,8 @@ read_rois(DeformMesh& deform_mesh,
 
 template<class DeformMesh>
 void preprocess_and_deform(DeformMesh& deform_mesh,
-  const std::string& roi_file,
-  const std::string& handle_file,
+  const std::filesystem::path& roi_file,
+  const std::filesystem::path& handle_file,
   CGAL::Simple_cartesian<double>::Vector_3 translate,
   int deformation_iteration)
 {

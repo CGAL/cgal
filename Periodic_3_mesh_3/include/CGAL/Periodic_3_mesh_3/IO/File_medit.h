@@ -305,7 +305,7 @@ void output_to_medit(std::ostream& os,
   Cell_pmap cell_pmap(c3t3);
   Facet_pmap facet_pmap(c3t3, cell_pmap);
   Facet_pmap_twice facet_pmap_twice(c3t3, cell_pmap);
-  Vertex_pmap vertex_pmap(c3t3, cell_pmap, facet_pmap);
+  Vertex_pmap vertex_pmap(c3t3);
 
   Periodic_3_mesh_3::output_to_medit(os, c3t3, occurrence_count, distinguish_copies,
                                      vertex_pmap, facet_pmap, cell_pmap, facet_pmap_twice);

@@ -56,7 +56,7 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<
 
 // Criteria
 using Features_sizing_field = CGAL::Sizing_field_with_aabb_tree<K, Mesh_domain>;
-using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+using Mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
 
 std::atomic<bool> stop_meshing{false};
 void signal_handler(int signal)
@@ -71,7 +71,7 @@ int main(int argc, char*argv[])
   std::cout.precision(17);
   std::cerr.precision(17);
   std::clog.precision(17);
-  const std::string input_file_name = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
+  const std::filesystem::path input_file_name = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
   const std::string output_file_name = (argc > 2) ? argv[2] : "out-tetmesh.vtu";
   Surface_mesh surface_mesh;
   if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(input_file_name, surface_mesh)) {

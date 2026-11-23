@@ -48,6 +48,7 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <type_traits>
 #include <unordered_set>
 
 #define CGAL_SMP_IA_DEBUG_L0 0
@@ -116,6 +117,9 @@ public:
   /// Solver traits type
   typedef SolverTraits_                                                          Solver_traits;
 #endif
+
+  static_assert(!std::is_same_v<Solver_traits, Default>,
+                "Error: You must either provide the template parameter 'SolverTraits_' or link with the target CGAL::Eigen3_support");
 
   /// Triangle mesh type
   typedef TriangleMesh_                                                          Triangle_mesh;
@@ -822,7 +826,8 @@ public:
 
       // get the halfedge uv
       // Write constant in Bu and Bv
-      const Point_2& uv = get(uvmap, target(hd, tmesh));
+      vertex_descriptor vt = target(hd, tmesh);
+      const Point_2& uv = get(uvmap, vt);
       Bu[index] = uv.x();
       Bv[index] = uv.y();
     }
@@ -1021,7 +1026,8 @@ public:
       }
 
       ++i;
-      std::cout << std::endl;
+      if(CGAL_SMP_IA_DEBUG_L0)
+        std::cout << std::endl;
     }
 
     // Check postconditions

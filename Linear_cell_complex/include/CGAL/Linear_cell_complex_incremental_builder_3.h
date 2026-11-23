@@ -345,9 +345,9 @@ public:
     { return first_dart; }
 
   protected:
-  /** test if the two given facets have the same vertex handle but with
+  /** test if the two given facets have the same vertex descriptor but with
    *  opposite orientations. For closed facets.
-   * @return true iff the two facets have the same vertex handle with opposite
+   * @return true iff the two facets have the same vertex descriptor with opposite
    *         orientation.
    */
   bool are_facets_opposite_and_same_vertex_descriptors(DH d1, DH d2) const
@@ -391,10 +391,10 @@ public:
 
 private:
   LCC& lcc;
-  std::vector<VAH> vertex_map; // Map each index to the corresponding vertex handle
+  std::vector<VAH> vertex_map; // Map each index to the corresponding vertex descriptor
 
   // A map to associate to each edge of a surface its dart. The edge is given
-  // by its two vertex handles (source-target).
+  // by its two vertex descriptors (source-target).
   std::unordered_map<VAH, std::unordered_map<VAH, DH>> vertex_to_dart_map_in_surface;
   std::unordered_map<std::size_t, std::unordered_map<std::size_t, std::vector<DH>>> faces;
 

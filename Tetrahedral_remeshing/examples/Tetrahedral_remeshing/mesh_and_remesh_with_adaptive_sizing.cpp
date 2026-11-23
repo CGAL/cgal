@@ -29,18 +29,18 @@ using Tr = CGAL::Mesh_triangulation_3<Mesh_domain>::type;
 using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 
 // Criteria
-using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+using Mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
 
 // Triangulation for Remeshing
 using T3 = CGAL::Triangulation_3<Tr::Geom_traits,
                                  Tr::Triangulation_data_structure>;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elk.off");
+  const std::filesystem::path fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elk.off");
   std::ifstream input(fname);
   Polyhedron polyhedron;
   input >> polyhedron;
@@ -61,13 +61,13 @@ int main(int argc, char* argv[])
   std::cout.flush();
 
   // Mesh criteria
-  Mesh_criteria criteria(facet_angle = 25,
-                         facet_distance = 0.2,
-                         cell_size = 10.,
-                         cell_radius_edge_ratio = 3.);
+  Mesh_criteria criteria(params::facet_angle(25).
+                         facet_distance(0.2).
+                         cell_size(10.).
+                         cell_radius_edge_ratio(3.));
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb().no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_perturb().no_exude());
 
   std::cout << "\rMeshing done." << std::endl;
 
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
 
   CGAL::tetrahedral_isotropic_remeshing(tr,
     CGAL::create_adaptive_remeshing_sizing_field(tr),
-    CGAL::parameters::number_of_iterations(5));
+    params::number_of_iterations(5));
 
   std::cout << "\rRemeshing done." << std::endl;
 

@@ -337,7 +337,7 @@ void upsample_subdivision_property(TriangleMesh& tmesh,
 
   using VPM = typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::type;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                         get_property_map(CGAL::vertex_point, tmesh));
+                             get_property_map(CGAL::vertex_point, tmesh));
 
   // unordered_set of old vertices
   std::unordered_set<vertex_descriptor> old_vertices;
@@ -1209,6 +1209,43 @@ acvd_impl(TriangleMesh& tmesh,
       }
     }
 
+    // detect clusters that are not topological disks (for example a cluster forming an annulus around a handle).
+    // Such clusters do not create non-manifold features in the output but change its topology (genus).
+    // Clusters are connected at this point, so a cluster is a topological disk iff the Euler characteristic
+    // of the sub-complex induced by its vertices is 1.
+    std::vector<std::size_t> cluster_euler_char(nb_clusters, 0);
+    for (vertex_descriptor vd : vertices(tmesh))
+    {
+      int c = get(vertex_cluster_pmap, vd);
+      if (c != -1)
+        ++cluster_euler_char[c];
+    }
+    for (edge_descriptor ed : edges(tmesh))
+    {
+      int c = get(vertex_cluster_pmap, source(ed, tmesh));
+      if (c != -1 && c == get(vertex_cluster_pmap, target(ed, tmesh)))
+        --cluster_euler_char[c];
+    }
+    for (face_descriptor fd : faces(tmesh))
+    {
+      halfedge_descriptor hd = halfedge(fd, tmesh);
+      int c = get(vertex_cluster_pmap, source(hd, tmesh));
+      if (c != -1 &&
+          c == get(vertex_cluster_pmap, target(hd, tmesh)) &&
+          c == get(vertex_cluster_pmap, target(next(hd, tmesh), tmesh)))
+        ++cluster_euler_char[c];
+    }
+    for (int c = 0; c < nb_clusters; ++c)
+    {
+      if (cluster_euler_char[c] != 1)
+      {
+#ifdef CGAL_DEBUG_ACVD
+        std::cout << "non-disk cluster " << c << " (Euler characteristic " << cluster_euler_char[c] << ")\n";
+#endif
+        nm_clusters.push_back(c);
+      }
+    }
+
     std::sort(nm_clusters.begin(), nm_clusters.end());
     nm_clusters.erase(std::unique(nm_clusters.begin(), nm_clusters.end()), nm_clusters.end());
 
@@ -1279,6 +1316,9 @@ acvd_impl(TriangleMesh& tmesh,
         put(vertex_cluster_pmap, v, static_cast<int>(clusters.size()));
         CGAL_assertion(get(vertex_cluster_pmap, v) == static_cast<int>(clusters.size()));
         clusters.emplace_back();
+        // make sure the new cluster will grow from its seed
+        for (halfedge_descriptor hd : halfedges_around_source(v, tmesh))
+          clusters_edges_active.push(hd);
       }
 
       if (nm_clusters_picked.size() == nm_clusters.size())
@@ -1405,9 +1445,8 @@ bool approximated_centroidal_Voronoi_diagram_remeshing(TriangleMesh& tmesh,
   auto ps = internal::acvd_impl(tmesh, static_cast<int>(nb_vertices), np);
   CGAL_assertion(is_polygon_soup_a_polygon_mesh(ps.second));
 
-  auto vpm = parameters::choose_parameter(
-                parameters::get_parameter(np, CGAL::vertex_point),
-                get_property_map(CGAL::vertex_point, tmesh));
+  auto vpm = parameters::choose_parameter(parameters::get_parameter(np, CGAL::vertex_point),
+                                          get_property_map(CGAL::vertex_point, tmesh));
 
   remove_all_elements(tmesh);
   polygon_soup_to_polygon_mesh(ps.first, ps.second, tmesh, parameters::vertex_point_map(vpm));

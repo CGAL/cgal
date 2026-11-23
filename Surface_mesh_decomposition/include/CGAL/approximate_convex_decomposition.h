@@ -724,7 +724,6 @@ template<typename GeomTraits>
 struct Candidate {
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
-  std::size_t index;
   std::vector<Vec3_uint> surface;
   std::vector<Vec3_uint> new_surface;
   std::vector<Vec3_uint> inside;

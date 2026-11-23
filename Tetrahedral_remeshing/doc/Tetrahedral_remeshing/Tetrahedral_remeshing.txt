@@ -133,7 +133,7 @@ are ignored by the remeshing algorithm.
 Optional BGL named parameters offer more precise
 control on the remeshing process.
 
-The default behaviour is to remesh only the cells with a non-zero `Subdomain_index`.
+The default behavior is to remesh only the cells with a non-zero `Subdomain_index`.
 The use of the named parameter `cell_is_selected_map` enables to change this behavior,
 and select the cells to remesh with a custom selection criterion.
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Documentation NONE)
 
 # Check whether this cmake script is the top level one
@@ -24,7 +24,7 @@ else()
   set(CGAL_ROOT "${CMAKE_SOURCE_DIR}")
 endif()
 
-cmake_minimum_required(VERSION 3.18...3.31) # for list(SORT ... COMPARE NATURAL)
+cmake_minimum_required(VERSION 3.18...4.4) # for list(SORT ... COMPARE NATURAL)
 
 find_package(Doxygen REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
@@ -121,7 +121,9 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
     "ALIASES += \"cgalPkgManuals{2}=<div class=\\\"PkgManuals\\\"></div>\"\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "INPUT = ${CGAL_PACKAGE_DOC_DIR}\n")
-  if(NOT EXISTS "${CGAL_PACKAGE_DOC_DIR}/CGAL")
+
+  #special cases for Stream_support and Documentation package: stream support also needs include/CGAL while Documentation
+  if((NOT EXISTS "${CGAL_PACKAGE_DOC_DIR}/CGAL" AND (NOT ${CGAL_PACKAGE_NAME} STREQUAL "Documentation")) OR ${CGAL_PACKAGE_NAME} STREQUAL "Stream_support")
     # This package has in-source documentation.
     if(CGAL_BRANCH_BUILD) # use the entire include subdir
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
@@ -285,7 +287,7 @@ list(GET DOXYGEN_VERSION 0 DOXYGEN_VERSION)
 message(VERBOSE "Doxygen version ${DOXYGEN_VERSION}: ${DOXYGEN_EXECUTABLE}")
 
 # The Doxygen version is search in that sorted list (to find the index for which the version is less or equal)
-set(CGAL_DOXYGEN_RESOURCES_VERSIONS 1.8.13 1.9.6 1.14.0)
+set(CGAL_DOXYGEN_RESOURCES_VERSIONS 1.9.6 1.14.0)
 list(SORT CGAL_DOXYGEN_RESOURCES_VERSIONS COMPARE NATURAL)
 
 # The GLOB is here to check that the list in CGAL_DOXYGEN_RESOURCES_VERSIONS is correct.
@@ -350,7 +352,12 @@ if(NOT CGAL_CREATED_VERSION_NUM)
   if(CGAL_BRANCH_BUILD)
     include(${CGAL_ROOT}/CGALConfigVersion.cmake)
 
-    if(CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
+    # Prefer the public release version (e.g. "6.0-beta1") which includes
+    # pre-release suffixes; fall back to computing from components when it
+    # is not available (issue #8322).
+    if(CGAL_VERSION_PUBLIC_RELEASE_VERSION)
+      set(CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_PUBLIC_RELEASE_VERSION}")
+    elseif(CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
       set(CGAL_CREATED_VERSION_NUM
           "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}")
     else()
@@ -366,8 +373,9 @@ if(NOT CGAL_CREATED_VERSION_NUM)
       #read version.h and get the line with CGAL_VERSION
       file(STRINGS "${CGAL_ROOT}/include/CGAL/version.h" CGAL_VERSION_LINE
            REGEX "CGAL_VERSION ")
-      #extract release id
-      string(REGEX MATCH "[0-9]+\\.[0-9]+\\.?[0-9]*" CGAL_CREATED_VERSION_NUM
+      #extract release id, including any pre-release suffix like -beta1, -dev,
+      #or multi-segment ids such as -Ic-33
+      string(REGEX MATCH "[0-9]+\\.[0-9]+(\\.[0-9]+)?(-[a-zA-Z0-9]+)*" CGAL_CREATED_VERSION_NUM
                    "${CGAL_VERSION_LINE}")
     endif()
   endif()

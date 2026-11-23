@@ -89,8 +89,8 @@ public:
   inline bool was_modified() const { return modified; }
 
 private:
-  std::size_t m_id;
-  bool modified;
+  std::size_t m_id = 0;
+  bool modified = false;
 };
 
 // Repair_polygon_soup without remove_pinched_polygons since our polygon are triangles

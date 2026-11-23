@@ -13,7 +13,6 @@
 #include <CGAL/property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_map/vector_property_map.hpp>
 
 #include <QElapsedTimer>
 #include <QAction>
@@ -199,7 +198,9 @@ public Q_SLOTS:
         Patch_id_pmap in_fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
         std::vector<std::size_t> corner_id_map(num_vertices(pmesh), -1);
         std::vector<bool> ecm(num_edges(pmesh), false);
-        boost::vector_property_map<CGAL::Epick::Vector_3> normal_map;
+        // there are at most num_faces(pmesh) regions
+        std::vector<CGAL::Epick::Vector_3> region_normals(num_faces(pmesh), CGAL::NULL_VECTOR);
+        auto normal_map = CGAL::make_random_access_property_map(region_normals);
         std::size_t nb_regions =
           PMP::region_growing_of_planes_on_faces(pmesh,
                                                  in_fpmap,

@@ -877,6 +877,10 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   /// Done collecting; start matching
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef CGAL_PMP_SNAP_DEBUG
+    std::cout << snapping_pairs.size() << " pairs to snap" << std::endl;
+#endif
+
   if(snapping_pairs.empty() || visitor.stop())
     return 0;
 

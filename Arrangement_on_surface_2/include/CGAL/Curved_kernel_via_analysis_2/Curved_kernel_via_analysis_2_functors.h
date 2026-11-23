@@ -2242,7 +2242,7 @@ public:
    * \param arc the arc
    * \return The order of endpoints
    */
-  CGAL::Comparison_result operator()(const Arc_2& xcv) {
+  CGAL::Comparison_result operator()(const Arc_2& xcv) const {
     if (xcv.is_left_to_right()) return (CGAL::SMALLER);
     else return (CGAL::LARGER);
     return CGAL::EQUAL;
@@ -2279,7 +2279,7 @@ public:
    * \param arc the arc to be reversed
    * \return The reversed arc
    */
-  Arc_2 operator()(const Arc_2& xcv) { return xcv.flip(); }
+  Arc_2 operator()(const Arc_2& xcv) const { return xcv.flip(); }
 };
 
 /*! \brief

@@ -585,7 +585,7 @@ triangulation but in the affine hull,
 the returned face is an infinite face which is a proof of the point's
 location:
 
-- for a two dimensional triangulation, it is a face \f$ (\infty, p, q)\f$
+- for a two dimensional triangulation, it is a face \f$ (\infty, p, q)\f$ (or \f$ (q, \infty, p)\f$, or \f$ (p,q,\infty)\f$)
 such that
 `query` lies to the left of the oriented line \f$ pq\f$
 (the rest of the triangulation lying to the right of this line).

@@ -3,17 +3,16 @@
 
 #include <fstream>
 #include <string>
+#include <filesystem>
 
-std::string generate_output_name(std::string input_name,
-                                 const double alpha,
-                                 const double offset)
+std::filesystem::path generate_output_name(const std::filesystem::path& input_name,
+                                           const double alpha,
+                                           const double offset)
 {
-  input_name = input_name.substr(input_name.find_last_of("/") + 1, input_name.length() - 1);
-  input_name = input_name.substr(0, input_name.find_last_of("."));
-
-  std::string output_name = input_name
-                            + "_" + std::to_string(static_cast<int>(alpha))
-                            + "_" + std::to_string(static_cast<int>(offset)) + "-wrap.wkt";
+  std::filesystem::path output_name = input_name.stem();
+  std::string suffix("_" + std::to_string(static_cast<int>(alpha))
+                         + "_" + std::to_string(static_cast<int>(offset)) + "-wrap.wkt");
+  output_name += suffix;
 
   return output_name;
 }

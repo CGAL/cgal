@@ -23,6 +23,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <limits>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -468,6 +469,62 @@ void discrete_mean_curvatures(const TriangleMesh& tmesh,
   for(vertex_descriptor v : vertices(tmesh))
     put(vcm, v, discrete_mean_curvature(v, tmesh, np));
 }
+
+#ifndef DOXYGEN_RUNNING
+/**
+  * \ingroup PMP_measure_grp
+  *
+  * returns whether a vertex is a saddle vertex, that is whether the sum of the angles
+  * of the faces incident to `v` at `v` is greater than or equal to \f$ 2\pi \f$.
+  * Equivalently, `v` is a saddle vertex if its angle defect, and thus its discrete Gaussian
+  * curvature, is non-positive.
+  *
+  * The angle sum is computed using `CGAL::Polygon_mesh_processing::angle_sum()` and compared to \f$ 2\pi \f$
+  * with a small relative tolerance, so that a vertex in a flat region of the mesh is reported
+  * as a saddle vertex.
+  *
+  * @tparam PolygonMesh a model of `FaceGraph`
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param v the vertex being tested
+  * @param pmesh the polygon mesh to which `v` belongs
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{The traits class must provide the nested functor `Compute_approximate_angle_3`,
+  *                    model of `Kernel::ComputeApproximateAngle_3`.}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
+  *
+  * \warning This function involves trigonometry.
+  * \warning The result is not meaningful for border vertices, as only the angles of the faces incident to `v` are summed.
+  *
+  * \sa `CGAL::Polygon_mesh_processing::angle_sum()`
+  * \sa `CGAL::Polygon_mesh_processing::discrete_Gaussian_curvature()`
+  */
+template <typename PolygonMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool is_saddle_vertex(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
+                      const PolygonMesh& pmesh,
+                      const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  // angle_sum() returns a value in degrees
+  const double ang_sum = CGAL::to_double(angle_sum(v, pmesh, np));
+  const double bound = (1. - 100. * std::numeric_limits<double>::epsilon()) * 360.;
+  return (ang_sum >= bound);
+}
+#endif
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

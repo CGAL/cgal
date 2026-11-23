@@ -103,7 +103,7 @@ bool write_WRL(std::ostream& os,
   \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_WRL(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
+bool write_WRL(const std::filesystem::path& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream os(fname);
   return write_WRL(os, g, np);

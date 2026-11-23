@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Barycentric_coordinates_3_Examples)
 
 set(CMAKE_CXX_FLAGS "${CMAXE_CXX_FLAGS} -Wall -Wextra -Werror")
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(CGAL QUIET COMPONENTS Core)
+find_package(CGAL REQUIRED)
 if(CGAL_FOUND)
 
   include(${CGAL_USE_FILE})

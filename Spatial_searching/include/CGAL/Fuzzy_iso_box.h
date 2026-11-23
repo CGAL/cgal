@@ -18,6 +18,7 @@
 
 
 #include <algorithm>
+#include <iterator>
 
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Search_traits_adapter.h>
@@ -72,7 +73,7 @@ namespace CGAL {
       Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
       Cartesian_const_iterator_d begin = construct_it(p),
         end = construct_it(p,1);
-      dim = static_cast<unsigned int>(end - begin);
+      dim = static_cast<unsigned int>(std::distance(begin, end));
 
       Iso_box_d box = Construct_iso_box_d()(p,q);
       Construct_min_vertex_d construct_min_vertex_d;

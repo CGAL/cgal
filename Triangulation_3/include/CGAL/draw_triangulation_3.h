@@ -25,26 +25,15 @@ namespace CGAL {
 namespace draw_function_for_t3
 {
 
-template <class T3, class GSOptions>
-void compute_face(typename T3::Finite_facets_iterator fh,
-                  CGAL::Graphics_scene& graphics_scene,
-                  const GSOptions& gs_options, const T3 *t3)
+// Facet i of cell ch (opposite vertex i); its color comes from the cell.
+template <class T3>
+void compute_cell_facet(typename T3::Cell_handle ch, int i,
+                        CGAL::Graphics_scene& graphics_scene)
 {
-  if(!gs_options.draw_face(*t3, fh))
-  { return; }
-
-  if(gs_options.colored_face(*t3, fh))
-  { graphics_scene.face_begin(gs_options.face_color(*t3, fh)); }
-  else
-  { graphics_scene.face_begin(); }
-
-  graphics_scene.add_point_in_face(fh->first->vertex((fh->second + 1) % 4)->
-                                   point());
-  graphics_scene.add_point_in_face(fh->first->vertex((fh->second + 2) % 4)->
-                                   point());
-  graphics_scene.add_point_in_face(fh->first->vertex((fh->second + 3) % 4)->
-                                   point());
-
+  graphics_scene.face_begin();
+  graphics_scene.add_point_in_face(ch->vertex((i + 1) % 4)->point());
+  graphics_scene.add_point_in_face(ch->vertex((i + 2) % 4)->point());
+  graphics_scene.add_point_in_face(ch->vertex((i + 3) % 4)->point());
   graphics_scene.face_end();
 }
 
@@ -92,9 +81,17 @@ void compute_elements(const T3* t3,
 {
   if (gs_options.are_faces_enabled())
   {
-    for (typename T3::Finite_facets_iterator it=t3->finite_facets_begin();
-         it!=t3->finite_facets_end(); ++it)
-    { compute_face(it, graphics_scene, gs_options, t3); }
+    // One volume per finite cell (so each caps in its own color). Each cell adds
+    // its four facets; the scene de-duplicates the ones shared by two cells.
+    for (typename T3::Finite_cells_iterator it=t3->finite_cells_begin();
+         it!=t3->finite_cells_end(); ++it)
+    {
+      CGAL::Random random((unsigned int)(std::size_t)(&*it));
+      graphics_scene.volume_begin(get_random_color(random));
+      for (int i=0; i<4; ++i)
+      { compute_cell_facet<T3>(it, i, graphics_scene); }
+      graphics_scene.volume_end();
+    }
   }
 
   if (gs_options.are_edges_enabled())
@@ -129,27 +126,12 @@ template <class Gt, class Tds, class Lock_data_structure>
 void add_to_graphics_scene(const CGAL_T3_TYPE& at3,
                            CGAL::Graphics_scene& graphics_scene)
 {
+  // Faces are colored per cell in compute_elements; no per-face color needed.
   CGAL::Graphics_scene_options<CGAL_T3_TYPE,
                        typename CGAL_T3_TYPE::Vertex_handle,
                        typename CGAL_T3_TYPE::Finite_edges_iterator,
                        typename CGAL_T3_TYPE::Finite_facets_iterator>
     gs_options;
-
-  gs_options.colored_face =
-    [](const CGAL_T3_TYPE &, const typename CGAL_T3_TYPE::Finite_facets_iterator) -> bool
-    { return true; };
-
-  gs_options.face_color =
-    [](const CGAL_T3_TYPE &at3, const typename CGAL_T3_TYPE::Finite_facets_iterator fh) -> CGAL::IO::Color
-    {
-      if (fh==at3.finite_facets_end())         // use to get the mono color
-        return CGAL::IO::Color(100, 125, 200); // R G B between 0-255
-
-      CGAL::Random random((unsigned int)((std::size_t)(&*(fh->first)) +
-                                         (std::size_t)(fh->second)));
-
-      return get_random_color(random);
-    };
 
   add_to_graphics_scene(at3, graphics_scene, gs_options);
 }

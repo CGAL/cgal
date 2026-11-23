@@ -193,7 +193,7 @@ int main() {
   image.set_data(nullptr); // trick to avoid ~Image_3 segfault.
 
 
-  const std::string filename = CGAL::data_file_path("images/skull_2.9.inr");
+  const std::filesystem::path filename = CGAL::data_file_path("images/skull_2.9.inr");
 
   std::cerr << "Opening file " << filename << "...\n";
 

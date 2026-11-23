@@ -219,7 +219,7 @@ void test_CC_with_area_size_map(Mesh sm,
 
 int main(int /*argc*/, char** /*argv*/)
 {
-  const std::string filename = CGAL::data_file_path("meshes/blobby_3cc.off");
+  const std::filesystem::path filename = CGAL::data_file_path("meshes/blobby_3cc.off");
   Mesh sm;
   std::ifstream in(filename);
   assert(in.good());

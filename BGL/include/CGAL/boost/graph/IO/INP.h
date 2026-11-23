@@ -29,7 +29,7 @@ namespace IO {
 
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_INP(std::ostream& os,
-               const std::string& name,
+               const std::filesystem::path& name,
                const std::string& type,
                const Graph& g,
                const CGAL_NP_CLASS& np = parameters::default_values())
@@ -77,7 +77,7 @@ bool write_INP(std::ostream& os,
 }
 
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_INP(const std::string& fname,
+bool write_INP(const std::filesystem::path& fname,
                const std::string& type,
                const Graph& g,
                const CGAL_NP_CLASS& np = parameters::default_values() )

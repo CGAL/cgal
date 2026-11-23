@@ -264,7 +264,7 @@ public:
    */
   Bounded_side operator()(const Point& point) const
   {
-    CGAL_assertion(tm_ptr == nullptr || CGAL::is_closed(*tm_ptr));
+    CGAL_expensive_assertion(tm_ptr == nullptr || CGAL::is_closed(*tm_ptr));
 
     if(point.x() < box.xmin()
        || point.x() > box.xmax()

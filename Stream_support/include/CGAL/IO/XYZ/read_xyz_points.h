@@ -13,8 +13,8 @@
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
-#ifndef CGAL_IO_PLY_READ_XYZ_POINTS_H
-#define CGAL_IO_PLY_READ_XYZ_POINTS_H
+#ifndef CGAL_IO_XYZ_READ_XYZ_POINTS_H
+#define CGAL_IO_XYZ_READ_XYZ_POINTS_H
 
 #include <CGAL/IO/XYZ.h>
 #include <CGAL/property_map.h>
@@ -147,7 +147,7 @@ bool read_XYZ(std::istream& is,
 template <typename OutputIteratorValueType,
           typename OutputIterator,
            typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-bool read_XYZ(const std::string& fname,
+bool read_XYZ(const std::filesystem::path& fname,
               OutputIterator output,
               const CGAL_NP_CLASS& np)
 {
@@ -166,7 +166,7 @@ bool read_XYZ(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np =
 }
 
 template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_XYZ(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
+bool read_XYZ(const std::filesystem::path& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream is(fname);
   return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
@@ -180,4 +180,4 @@ bool read_XYZ(const std::string& fname, OutputIterator output, const CGAL_NP_CLA
 
 } // namespace CGAL
 
-#endif // CGAL_IO_PLY_READ_XYZ_POINTS_H
+#endif // CGAL_IO_ZYZ_READ_XYZ_POINTS_H

@@ -1,8 +1,8 @@
 diff --git a/src/config.xml b/src/config.xml
-index 13910958a6..31f1354e44 100644
+index 7ce082fa76..c7863aa66e 100644
 --- a/src/config.xml
 +++ b/src/config.xml
-@@ -893,6 +893,18 @@ Go to the <a href="commands.html">next</a> section or return to the
+@@ -924,6 +924,18 @@ Go to the <a href="commands.html">next</a> section or return to the
   \note This will also disable the warnings about undocumented members
   that are normally produced when \ref cfg_warnings "WARNINGS" is
   set to \c YES.
@@ -22,23 +22,23 @@ index 13910958a6..31f1354e44 100644
        </docs>
      </option>
 diff --git a/src/memberdef.cpp b/src/memberdef.cpp
-index 08d9bf24c5..ab04e994c5 100644
+index 32fc2f5433..8f8791b2d7 100644
 --- a/src/memberdef.cpp
 +++ b/src/memberdef.cpp
-@@ -2501,6 +2501,7 @@ bool MemberDefImpl::hasDetailedDescription() const
+@@ -2667,6 +2667,7 @@ bool MemberDefImpl::hasDetailedDescription() const
    if (!m_hasDetailedDescriptionCached)
    {
      bool extractAll            = Config_getBool(EXTRACT_ALL);
-+    bool xAllNoDetailedSec = Config_getBool(NO_ADDITIONAL_DETAILS);
++    bool xAllNoDetailedSec     = Config_getBool(NO_ADDITIONAL_DETAILS);
      bool alwaysDetailedSec     = Config_getBool(ALWAYS_DETAILED_SEC);
      bool repeatBrief           = Config_getBool(REPEAT_BRIEF);
      bool briefMemberDesc       = Config_getBool(BRIEF_MEMBER_DESC);
-@@ -2512,7 +2513,7 @@ bool MemberDefImpl::hasDetailedDescription() const
+@@ -2678,7 +2679,7 @@ bool MemberDefImpl::hasDetailedDescription() const
      // the member has detailed documentation because the user added some comments
      bool docFilter =
             // extract all is enabled
 -           extractAll ||
-+           (extractAll && !xAllNoDetailedSec) ||
++           (extractAll && !xAllNoDetailedSec)||
             // has detailed docs
             !documentation().isEmpty() ||
             // has inbody docs

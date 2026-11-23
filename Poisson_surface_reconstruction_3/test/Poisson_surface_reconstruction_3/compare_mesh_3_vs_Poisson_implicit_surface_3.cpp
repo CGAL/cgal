@@ -65,12 +65,12 @@ typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Labeled_mesh_domain_3<Kernel> LMesh_domain;
 typedef typename CGAL::Mesh_triangulation_3<LMesh_domain>::type LTr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<LTr> LC3t3;
-typedef CGAL::Mesh_criteria_3<LTr> LMesh_criteria;
+typedef CGAL::Mesh_criteria_3<LC3t3> LMesh_criteria;
 
 typedef CGAL::Poisson_mesh_domain_3<Kernel> Mesh_domain;
 typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 
 struct Counter {
@@ -143,7 +143,7 @@ int main(int argc, char * argv[])
     double frac = 1.;
 
     // decode parameters
-    std::string input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz");
+    std::string input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz").string();
     std::string output_filename = (argc > 2) ? argv[2] : "kitten_poisson-20-100-0.5.off";
     for (int i=3; i+1<argc ; ++i)
     {

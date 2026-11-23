@@ -434,11 +434,14 @@ struct Filter_wrapper_for_cap_needle_removal
   bool flip(halfedge_descriptor h)
   {
     CGAL_assertion(!is_border(h, m_tm));
-
-    const Point_3& o1 = get(m_vpm, target(next(h, m_tm), m_tm));
-    const Point_3& o2 = get(m_vpm, target(next(opposite(h, m_tm), m_tm), m_tm));
-    const Point_3& src =  get(m_vpm, source(h,m_tm));
-    const Point_3& tgt =  get(m_vpm, target(h,m_tm));
+    vertex_descriptor vtn = target(next(h, m_tm), m_tm);
+    vertex_descriptor vtno = target(next(opposite(h, m_tm), m_tm), m_tm);
+    vertex_descriptor vs = source(h, m_tm);
+    vertex_descriptor vt = target(h, m_tm);
+    const Point_3& o1 = get(m_vpm, vtn);
+    const Point_3& o2 = get(m_vpm, vtno);
+    const Point_3& src =  get(m_vpm, vs);
+    const Point_3& tgt =  get(m_vpm, vt);
 
     if (!m_functor(o1, o2, src))
       return false;
@@ -709,20 +712,20 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                        NamedParameters,
                                                        Default_VCM>::type       VCM;
-  VCM vcm_np = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained), Default_VCM());
+  VCM vcm_np = choose_parameter<Default_VCM>(get_parameter(np, internal_np::vertex_is_constrained));
 
   typedef Static_boolean_property_map<edge_descriptor, false>                   Default_ECM;
   typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t,
                                                        NamedParameters,
                                                        Default_ECM>::type       ECM;
-  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), Default_ECM());
+  ECM ecm = choose_parameter<Default_ECM>(get_parameter(np, internal_np::edge_is_constrained));
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, tmesh));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type           Traits;
-  Traits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits gt = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename internal_np::Lookup_named_param_def<
             internal_np::filter_t,
@@ -2036,7 +2039,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                           get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type                         Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename boost::property_traits<VertexPointMap>::value_type               Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference                Point_ref;

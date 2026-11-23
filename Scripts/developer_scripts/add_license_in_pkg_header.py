@@ -9,7 +9,7 @@ from sys import argv
 import os
 from os.path import join
 import re
-
+# REUSE-IgnoreStart
 def add_license_include_in_file(package_name, fname):
   # first, see if the include directive is already there
   with open(fname, encoding='utf-8') as f:
@@ -55,3 +55,4 @@ else:
       if f.endswith('.h'):
         add_license_include_in_file(package_name,os.path.join(root,f))
 
+# REUSE-IgnoreEnd

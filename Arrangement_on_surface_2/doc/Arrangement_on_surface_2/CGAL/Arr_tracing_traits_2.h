@@ -15,13 +15,13 @@ namespace CGAL {
  *
  * A metadata traits-class decorator for the arrangement package. It traces the
  * invocations of traits-class functors. It is parameterized with another traits
- * class and inherits from it. For each traits method it prints out its input
- * parameters and its output result
+ * class. For each traits method it prints out its input parameters and its
+ * output result
  *
  * It models all the concepts that the original traits models.
  */
-template <typename BaseTraits>
-class Arr_tracing_traits_2 : public BaseTraits {
+template <typename DecoratedTraits_2>
+class Arr_tracing_traits_2 {
 public:
   enum Operation_id {
     COMPARE_X_2_OP = 0,
@@ -41,6 +41,10 @@ public:
     ARE_MERGEABLE_2_OP,
     MERGE_2_OP,
     CONSTRUCT_2_OPPOSITE_2_OP,
+    CONSTRUCT_POINT_2_OP,
+    CONSTRUCT_POINT_2_XY_OP,
+    CONSTRUCT_X_MONOTONE_CURVE_2_OP,
+    CONSTRUCT_CURVE_2_OP,
     COMPARE_ENDPOINTS_XY_2_OP,
     APPROXIMATE_2_OP,
     PARAMETER_SPACE_IN_X_2_OP,
@@ -55,14 +59,32 @@ public:
   };
 
 public:
+  /// \name Types
+  /// @{
+
+  //! The traits being traced.
+  using Decorated_traits_2 = DecoratedTraits_2;
+
+  //! A convenient type.
+  using Shared_decorated_traits_2 = std::shared_ptr<Decorated_traits_2>;
+
+  /// @}
+
   /// \name Creation
   /// @{
 
-  /*! constructs default */
+  /*! constructs default.
+   */
   template<typename ... Args>
-  Arr_tracing_traits_2(Args ... args) : Base(std::forward<Args>(args)...) {}
+  Arr_tracing_traits_2(Args ... args);
 
-  /*! disables copy constructor. */
+  /*! constructs from a shared pointer.
+   * \param[in] traits the taits being traced.
+   */
+  Arr_tracing_traits_2(Shared_decorated_traits_2 traits);
+
+  /*! disables copy constructor.
+   */
   Arr_tracing_traits_2(const Arr_tracing_traits_2&) = delete;
 
   /// @}
@@ -85,21 +107,37 @@ public:
    */
   void disable_all_traces();
 
-  /// \name Types and functors inherited from `BaseTraits`
+  /*! obtains a const reference to the traits being traced.
+   */
+  const Decorated_traits_2& traits() const { return *m_decorated_traits; }
+
+  /*! obtains a reference to the traits being traced.
+   */
+  Decorated_traits_2& traits() { return *m_decorated_traits; }
+
+  /*! obtains the smart pointer to the traits being traced.
+   */
+  Shared_decorated_traits_2 shared_traits() const { return m_decorated_traits; }
+
+  /// \name Types coming from DecoratedTraits_2
   /// @{
 
-  using Has_left_category = typename Base::Has_left_category;
-  using Has_merge_category = typename Base::Has_merge_category;
+  using Has_left_category = typename Decorated_traits_2::Has_left_category;
+  using Has_merge_category = typename Decorated_traits_2::Has_merge_category;
 
-  using Left_side_category = typename internal::Arr_complete_left_side_category< Base >::Category;
-  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category< Base >::Category;
-  using Top_side_category = typename internal::Arr_complete_top_side_category< Base >::Category;
-  using Right_side_category = typename internal::Arr_complete_right_side_category< Base >::Category;
+  using Left_side_category = typename internal::Arr_complete_left_side_category<Decorated_traits_2>::Category;
+  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category<Decorated_traits_2>::Category;
+  using Top_side_category = typename internal::Arr_complete_top_side_category<Decorated_traits_2>::Category;
+  using Right_side_category = typename internal::Arr_complete_right_side_category<Decorated_traits_2>::Category;
 
-  using Point_2 = typename Base::Point_2;
-  using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-  using Curve_2 = typename Base::Curve_2;
-  using Multiplicity = typename Base::Multiplicity;
+  using Point_2 = typename Decorated_traits_2::Point_2;
+  using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
+
+  //! Defined only if the traits being traced models the concept `AosTraits_2`.
+  using Curve_2 = typename Decorated_traits_2::Curve_2;
+
+  //! Defined only if the traits being traced models the concept `AosXMonotoneTraits_2`.
+  using Multiplicity = typename Decorated_traits_2::Multiplicity;
 
   /// @}
 
@@ -115,15 +153,36 @@ public:
   Equal_2 equal_2_object() const;
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const;
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const;
-  Make_x_monotone_2 make_x_monotone_2_object() const;
-  Split_2 split_2_object() const;
   Do_intersect_2 do_intersect_2_object() const;
+
+  //! Supported only if the traits being traced models the concept `AosXMonotoneTraits_2`.
+  Split_2 split_2_object() const;
   Intersect_2 intersect_2_object() const;
   Are_mergeable_2 are_mergeable_2_object() const;
   Merge_2 merge_2_object() const;
+
+  //! Supported only if the traits being traced models the concept `AosTraits_2`.
+  Make_x_monotone_2 make_x_monotone_2_object() const;
+
+  //! Supported only if the traits being traced models the concept `AosDirectionalXMonotoneTraits_2`.
   Construct_opposite_2 construct_opposite_2_object() const;
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const;
+
+  //! Supported only if the traits being traced models the concept `AosApproximateTraits_2`.
   Approximate_2 approximate_2_object() const;
+
+  //! Supported only if the traits being traced models the concept `AosConstructPointTraits_2`
+  Construct_point_2 construct_point_2_object() const;
+
+  //! Supported only if the traits being traced models the concept `AosConstructXMonotoneCurveTraits_2`
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;
+
+  //! Supported only if the traits being traced models the concept `AosConstructCurveTraits_2`
+  Construct_curve_2 construct_curve_2_object() const;
+
+  /*! Supported only if the traits being traced models the concepts
+   * `AosOpenBoundaryTraits_2` or `AosSphericalBoundaryTraits_2`.
+   */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const;
   Is_on_x_identification_2 is_on_x_identification_2_object() const;
   Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const;

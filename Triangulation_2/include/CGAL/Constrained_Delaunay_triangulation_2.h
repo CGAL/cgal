@@ -99,8 +99,8 @@ public:
 
   // using-declarations, to import types from the base class
   //   (do not mix-up with type aliases)
-  // see:  https://en.cppreference.com/w/cpp/language/type_alias
-  //       https://en.cppreference.com/w/cpp/language/using_declaration
+  // see:  https://en.cppreference.com/cpp/language/type_alias
+  //       https://en.cppreference.com/cpp/language/using_declaration
   using typename Ctr::Tds;
   using typename Ctr::Itag;
 

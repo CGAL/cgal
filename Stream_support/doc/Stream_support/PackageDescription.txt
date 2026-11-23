@@ -44,6 +44,10 @@
 /// I/O Functions for the \ref IOStreamXYZ
 /// \ingroup IOstreamFunctions
 
+/// \defgroup PkgStreamSupportIoFuncsMEDIT MEDIT I/O Functions
+/// I/O Functions for the \ref IOStreamMedit
+/// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportEnumRef I/O Enums
 /// \ingroup PkgStreamSupportRef
 
@@ -111,6 +115,7 @@ the printing mode.
 - \link IOstreamOperators `CGAL::operator<<()` \endlink
 - `CGAL::IO::iformat()`
 - `CGAL::IO::oformat()`
+- `CGAL::data_file_path()`
 
 \cgalCRPSection{I/O Functions}
 - `CGAL::IO::read_polygon_soup()`
@@ -125,5 +130,6 @@ the printing mode.
 - \link PkgStreamSupportIoFuncsWKT I/O for WKT files \endlink
 - \link PkgStreamSupportIoFuncsLAS I/O for LAS files \endlink
 - \link PkgStreamSupportIoFuncsXYZ I/O for XYZ files \endlink
+- \link PkgStreamSupportIoFuncsMEDIT I/O for MEDIT files \endlink
 
 */

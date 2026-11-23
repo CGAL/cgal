@@ -176,8 +176,7 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
                                                        NamedParameters,
                                                        Static_boolean_property_map<vertex_descriptor, false> // default (no constraint pmap)
                                                        >::type                  VerticesMap;
-  VerticesMap cmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                      Static_boolean_property_map<vertex_descriptor, false>());
+  VerticesMap cmap = choose_parameter<Static_boolean_property_map<vertex_descriptor, false>>(get_parameter(np, internal_np::vertex_is_constrained));
 
   std::size_t nb_new_vertices = 0;
 
@@ -438,8 +437,7 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
                                                        NamedParameters,
                                                        Emptyset_iterator>::type Output_iterator;
 
-  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator),
-                                         Emptyset_iterator());
+  Output_iterator out = choose_parameter<Emptyset_iterator>(get_parameter(np, internal_np::output_iterator));
 
   std::vector<halfedge_descriptor> non_manifold_cones;
   non_manifold_vertices(pm, std::back_inserter(non_manifold_cones));

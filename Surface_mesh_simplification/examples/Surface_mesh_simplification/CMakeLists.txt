@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Surface_mesh_simplification_Examples)
 
 # CGAL and its components
@@ -50,6 +50,11 @@ if(TARGET CGAL::TBB_support AND TARGET CGAL::METIS_support)
 
   create_single_source_cgal_program("collapse_small_edges_in_parallel.cpp")
   target_link_libraries(collapse_small_edges_in_parallel PRIVATE CGAL::TBB_support CGAL::METIS_support)
+  if(TARGET CGAL::Eigen3_support)
+    create_single_source_cgal_program("edge_collapse_gh_edge_count_parallel.cpp")
+    target_link_libraries(edge_collapse_gh_edge_count_parallel PRIVATE CGAL::Eigen3_support CGAL::TBB_support CGAL::METIS_support)
+  endif()
+
 else()
-  message(STATUS "NOTICE: The example 'collapse_small_edges_in_parallel' uses the METIS and TBB libraries, and will not be compiled.")
+  message(STATUS "NOTICE: The examples doing parallel simplification require the METIS and TBB libraries, and will not be compiled.")
 endif()

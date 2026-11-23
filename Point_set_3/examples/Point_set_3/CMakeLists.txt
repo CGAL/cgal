@@ -1,13 +1,14 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Point_set_3_Examples)
 
 # CGAL and its components
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 create_single_source_cgal_program("point_set.cpp")
+create_single_source_cgal_program("point_set_normals.cpp")
 create_single_source_cgal_program("point_set_property.cpp")
 create_single_source_cgal_program("point_set_read_xyz.cpp")
 create_single_source_cgal_program("point_set_advanced.cpp")

@@ -19,10 +19,15 @@
 
 #include <CGAL/license/SMDS_3.h>
 
+#include <CGAL/functional.h>
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/tags.h>
+
 #include <iterator>
 #include <string>
 #include <sstream>
+#include <type_traits>
+#include <utility>
 
 namespace CGAL {
 namespace SMDS_3 {
@@ -116,6 +121,40 @@ public:
 
 } // end namespace internal
 } // end namespace SMDS_3
+
+namespace SMDS_3_internal {
+template <typename T, typename = void>
+struct Has_in_dimension : std::false_type
+{};
+
+template <typename T>
+struct Has_in_dimension<T, std::void_t<decltype(std::declval<T>().in_dimension())>>
+  : std::true_type
+{};
+
+template <typename T, typename = void>
+struct Has_is_corner : std::false_type
+{};
+
+template <typename T>
+struct Has_is_corner<T, std::void_t<decltype(std::declval<T>().is_corner())>>
+  : std::true_type
+{};
+
+template <typename Tr>
+bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
+{
+  using V = typename Tr::Triangulation_data_structure::Vertex;
+
+  if constexpr(Has_in_dimension<V>::value)
+    return v->in_dimension() == 0;
+  else if constexpr(Has_is_corner<V>::value)
+    return v->ccdt_3_data().is_corner();
+  else
+    return false;
+}
+
+} // namespace SMDS_3_internal
 } //namespace CGAL
 
 #endif // CGAL_SMDS_3_UTILITIES_H

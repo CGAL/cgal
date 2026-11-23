@@ -14,7 +14,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_EXTRUDE_H
 #define CGAL_POLYGON_MESH_PROCESSING_EXTRUDE_H
 
-#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
 
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>

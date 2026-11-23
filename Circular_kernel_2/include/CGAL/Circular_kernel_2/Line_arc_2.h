@@ -125,18 +125,13 @@ public:
   {
     CGAL_kernel_precondition(do_intersect(support, l1));
     CGAL_kernel_precondition(do_intersect(support, l2));
-    //typedef typename Root_of_2::RT RT_2;
-    typename Intersection_traits<CK, Line_2, Line_2>::result_type
-      v = CGAL::Intersections::internal::intersection(support, l1, CK());
-    CGAL_assertion(bool(v));
-
-    const Point_2 *pt = CGAL::Intersections::internal::intersect_get<Point_2>(v);
-    CGAL_assertion(pt != nullptr);
-    _begin = Circular_arc_point_2(*pt);
-    v = CGAL::Intersections::internal::intersection(support, l2, CK());
-    const Point_2 *pt2 = CGAL::Intersections::internal::intersect_get<Point_2>(v);
-    CGAL_assertion(pt2 != nullptr);
-    _end = Circular_arc_point_2(*pt2);
+    typedef CGAL::Intersections::internal::Line_2_Line_2_pair<CK> Line_pair;
+    Line_pair lp1(&support, &l1);
+    CGAL_kernel_precondition(lp1.intersection_type() == Line_pair::POINT);
+    _begin = Circular_arc_point_2(lp1.intersection_point());
+    Line_pair lp2(&support, &l2);
+    CGAL_kernel_precondition(lp2.intersection_type() == Line_pair::POINT);
+    _end = Circular_arc_point_2(lp2.intersection_point());
     reset_flags();
   }
 

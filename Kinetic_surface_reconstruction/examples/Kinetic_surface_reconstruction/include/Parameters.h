@@ -29,6 +29,7 @@ namespace KSR {
     bool with_normals; // do we use normals
     bool verbose;// verbose basic info
     bool debug; // verbose more info
+    bool sequential;
 
     // Shape detection / Shape regularization.
     // See the corresponding CGAL packages.
@@ -62,6 +63,7 @@ namespace KSR {
       with_normals(true),
       verbose(false),
       debug(false),
+      sequential(false),
       // shape detection / shape regularization
       k_neighbors(12),
       maximum_distance(0),

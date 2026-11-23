@@ -69,6 +69,7 @@ namespace PD_detail {
   public:
     typedef NT result_type;
     A_column()
+      : j_ (0), d_ (0), in_p_ (false), it_ (), nt_0_ (0), nt_1_ (1)
     {}
 
     A_column (int j, int d, bool in_p, Iterator it)

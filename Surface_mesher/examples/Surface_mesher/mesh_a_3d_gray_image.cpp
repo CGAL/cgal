@@ -5,6 +5,7 @@
 #include <CGAL/Complex_2_in_triangulation_3.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <fstream>
+#include <string>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Gray_level_image_3.h>
 #include <CGAL/Implicit_surface_3.h>
@@ -24,7 +25,8 @@ int main() {
   C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
   // the 'function' is a 3D gray level image
-  Gray_level_image image(CGAL::data_file_path("images/skull_2.9.inr"), 2.9f);
+  std::string fname = CGAL::data_file_path("images/skull_2.9.inr").string();
+  Gray_level_image image(fname, 2.9f);
 
   // Carefully chosen bounding sphere: the center must be inside the
   // surface defined by 'image' and the radius must be high enough so that

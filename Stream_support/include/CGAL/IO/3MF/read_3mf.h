@@ -9,8 +9,8 @@
 //
 // Author(s) : Maxime Gimeno
 
-#ifndef CGAL_IO_READ_3MF_H
-#define CGAL_IO_READ_3MF_H
+#ifndef CGAL_IO_3MF_READ_3MF_H
+#define CGAL_IO_3MF_READ_3MF_H
 
 
 #include <CGAL/IO/Color.h>
@@ -139,4 +139,4 @@ bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
 
 #endif // CGAL_LINKED_WITH_3MF
 
-#endif // CGAL_IO_READ_3MF_H
+#endif // CGAL_IO_3MF_READ_3MF_H

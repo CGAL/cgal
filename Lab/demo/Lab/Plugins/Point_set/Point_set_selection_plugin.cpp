@@ -108,10 +108,10 @@ public:
     {
       Polyline_2 poly = (*polyline)[i];
       if(!poly.empty())
+      {
         for(std::size_t j=0; j<poly.size()-1; ++j)
-        {
           painter->drawLine(poly[j].x(), poly[j].y(), poly[j+1].x(), poly[j+1].y());
-        }
+      }
     }
     painter->end();
     delete painter;
@@ -121,7 +121,9 @@ public:
   }
 
   Polyline_2& poly() const
-  { return polyline->front(); }
+  {
+    return polyline->front();
+  }
 
   bool update_polyline () const
   {
@@ -130,34 +132,28 @@ public:
       return false;
 
     if (rectangle)
-      {
-        poly().clear();
+    {
+      poly().clear();
 
-        poly().push_back ( Point_2 (domain_rectangle.xmin(),
-                                domain_rectangle.ymin()));
-        poly().push_back ( Point_2 (domain_rectangle.xmax(),
-                                domain_rectangle.ymin()));
-        poly().push_back ( Point_2 (domain_rectangle.xmax(),
-                                domain_rectangle.ymax()));
-        poly().push_back ( Point_2 (domain_rectangle.xmin(),
-                                domain_rectangle.ymax()));
-        poly().push_back ( Point_2 (domain_rectangle.xmin(),
-                                                domain_rectangle.ymin()));
+      poly().push_back(Point_2 (domain_rectangle.xmin(), domain_rectangle.ymin()));
+      poly().push_back(Point_2 (domain_rectangle.xmax(), domain_rectangle.ymin()));
+      poly().push_back(Point_2 (domain_rectangle.xmax(), domain_rectangle.ymax()));
+      poly().push_back(Point_2 (domain_rectangle.xmin(), domain_rectangle.ymax()));
+      poly().push_back(Point_2 (domain_rectangle.xmin(), domain_rectangle.ymin()));
 
-      }
+    }
     else
-      {
-        if (!(poly().empty()) && contour_2d.back () == poly().back())
-          return false;
+    {
+      if (!(poly().empty()) && contour_2d.back () == poly().back())
+        return false;
 
-        poly().clear();
+      poly().clear();
 
-        for (unsigned int i = 0; i < contour_2d.size (); ++ i)
-          poly().push_back (contour_2d[i]);
-      }
+      for (unsigned int i = 0; i < contour_2d.size (); ++ i)
+        poly().push_back (contour_2d[i]);
+    }
     return true;
   }
-
 
   void sample_mouse_path(QImage& image)
   {
@@ -165,18 +161,19 @@ public:
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
 
     if (rectangle && contour_2d.size () == 2)
-      {
-        contour_2d[1] = Point_2 (p.x (), p.y ());
-        domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
-      }
+    {
+      contour_2d[1] = Point_2 (p.x (), p.y ());
+      domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
+    }
     else
+    {
       contour_2d.push_back (Point_2 (p.x (), p.y ()));
+    }
 
     if (update_polyline ())
-      {
-
-        render(image);
-      }
+    {
+      render(image);
+    }
   }
 
   void apply_path()
@@ -189,33 +186,31 @@ public:
 
   bool is_selected (CGAL::qglviewer::Vec& p)
   {
-    if (domain_rectangle.xmin () < p.x &&
-        p.x < domain_rectangle.xmax () &&
-        domain_rectangle.ymin () < p.y &&
-        p.y < domain_rectangle.ymax ())
-      {
-        if (rectangle)
-          return true;
-/*
- * domain_freeform.has_on_bounded_side() requires the polygon to be simple, which is never the case.
- * However, it works very well even if the polygon is not simple, so we use this instead to avoid
- * the cgal_assertion on is_simple().*/
+    if (domain_rectangle.xmin () < p.x && p.x < domain_rectangle.xmax () &&
+        domain_rectangle.ymin () < p.y && p.y < domain_rectangle.ymax ())
+    {
+      if (rectangle)
+        return true;
 
+        /*
+      * domain_freeform.has_on_bounded_side() requires the polygon to be simple, which is never the case.
+      * However, it works very well even if the polygon is not simple, so we use this instead to avoid
+      * the cgal_assertion on is_simple().*/
 
-        if (CGAL::bounded_side_2(domain_freeform.container().begin(),
-                                 domain_freeform.container().end(),
-                                 Point_2(p.x, p.y),
-                                 domain_freeform.traits_member())  == CGAL::ON_BOUNDED_SIDE)
-          return true;
-      }
+      if (CGAL::bounded_side_2(domain_freeform.container().begin(),
+                                domain_freeform.container().end(),
+                                Point_2(p.x, p.y),
+                                domain_freeform.traits_member())  == CGAL::ON_BOUNDED_SIDE)
+        return true;
+    }
     return false;
   }
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-class Selection_test {
-
+class Selection_test
+{
   Point_set* point_set;
   bool* selected;
   CGAL::qglviewer::Camera* camera;
@@ -225,9 +220,7 @@ class Selection_test {
   QVector4D* clipbox;
   const Ui::PointSetSelection& ui_widget;
 
-
 public:
-
   Selection_test(Point_set* point_set,
                  bool* selected,
                  CGAL::qglviewer::Camera* camera,
@@ -236,14 +229,14 @@ public:
                  Selection_visualizer* visualizer,
                  QVector4D* clipbox,
                  const Ui::PointSetSelection& ui_widget)
-    : point_set (point_set)
-    , selected (selected)
-    , camera (camera)
-    , offset (offset)
-    , edit_box (edit_box)
-    , visualizer (visualizer)
-    , clipbox (clipbox)
-    , ui_widget (ui_widget)
+    : point_set (point_set),
+      selected (selected),
+      camera (camera),
+      offset (offset),
+      edit_box (edit_box),
+      visualizer (visualizer),
+      clipbox (clipbox),
+      ui_widget (ui_widget)
   {
   }
 
@@ -281,15 +274,16 @@ public:
          p.z() <= edit_box->point(0,2) - offset.z &&
          p.x() <= edit_box->point(6,0) - offset.x &&
          p.y() <= edit_box->point(6,1) - offset.y &&
-         p.z() >= edit_box->point(6,2) - offset.z
-        )
+         p.z() >= edit_box->point(6,2) - offset.z)
       {
         now_selected = true;
       }
     }
 
     if (ui_widget.new_selection->isChecked())
+    {
       selected[idx] = now_selected;
+    }
     else
     {
       bool already_selected = point_set->is_selected (point_set->begin() + i);
@@ -309,16 +303,14 @@ public:
 
     double x = p.x()+offset.x, y = p.y()+offset.y, z = p.z()+offset.z;
 
-    return !(clipbox[0][0]*x+clipbox[0][1]*y+clipbox[0][2]*z+clipbox[0][3] >0 ||
+    return !(clipbox[0][0]*x+clipbox[0][1]*y+clipbox[0][2]*z+clipbox[0][3]>0 ||
              clipbox[1][0]*x+clipbox[1][1]*y+clipbox[1][2]*z+clipbox[1][3]>0 ||
              clipbox[2][0]*x+clipbox[2][1]*y+clipbox[2][2]*z+clipbox[2][3]>0 ||
              clipbox[3][0]*x+clipbox[3][1]*y+clipbox[3][2]*z+clipbox[3][3]>0 ||
              clipbox[4][0]*x+clipbox[4][1]*y+clipbox[4][2]*z+clipbox[4][3]>0 ||
              clipbox[5][0]*x+clipbox[5][1]*y+clipbox[5][2]*z+clipbox[5][3]>0);
   }
-
 };
-
 
 class Neighborhood
 {
@@ -342,7 +334,6 @@ public:
 
   ~Neighborhood ()
   {
-
   }
 
   Neighborhood& point_set (Scene_points_with_normal_item* points_item)
@@ -525,20 +516,17 @@ public:
       *(points_item->point_set()->begin() + (unselected.size() + i)) = selected[i];
 
     if (selected.empty ())
-      {
-        points_item->point_set()->unselect_all();
-      }
+    {
+      points_item->point_set()->unselect_all();
+    }
     else
-      {
-        points_item->point_set()->set_first_selected
-          (points_item->point_set()->begin() + unselected.size());
-      }
+    {
+      points_item->point_set()->set_first_selected(points_item->point_set()->begin() + unselected.size());
+    }
     points_item->invalidateOpenGLBuffers();
     points_item->itemChanged();
   }
-
 };
-
 
 class CGAL_Lab_point_set_selection_plugin :
   public QObject,
@@ -596,8 +584,8 @@ public:
     connect(ui_widget.helpButton, &QAbstractButton::clicked,
     [this](){
       QMessageBox::information(dock_widget, QString("Help"),
-                               QString("SHIFT + Left Click : selection\n"
-                                       "CONTROL + Left Click : print coordinates of point under cursor."));
+                               QString("SHIFT + Left Click: selection\n"
+                                       "CONTROL + Left Click: print coordinates of point under cursor."));
     }
   );
 
@@ -623,7 +611,8 @@ public:
 
 protected:
 
-  bool eventFilter(QObject *, QEvent *event) {
+  bool eventFilter(QObject *, QEvent *event)
+  {
     static QImage background;
     if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()) || ui_widget.box->isChecked())
       return false;
@@ -647,90 +636,90 @@ protected:
 
     // mouse events
     if(shift_pressing && event->type() == QEvent::MouseButtonPress)
+    {
+    background = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
+      QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+      Viewer_interface* viewer = getActiveViewer();
+      background = viewer->grabFramebuffer();
+      // Start selection
+      if (mouseEvent->button() == Qt::LeftButton)
       {
-      background = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-        Viewer_interface* viewer = getActiveViewer();
-        background = viewer->grabFramebuffer();
-        // Start selection
-        if (mouseEvent->button() == Qt::LeftButton)
+        // Region growing
+        if (ui_widget.region->isChecked())
         {
-          // Region growing
-          if (ui_widget.region->isChecked())
+          QApplication::setOverrideCursor(Qt::WaitCursor);
+          bool found = false;
+          QPoint pixel(mouseEvent->pos().x(),
+                        viewer->camera()->screenHeight() - 1 - mouseEvent->pos().y());
+
+          CGAL::qglviewer::Vec point = viewer->camera()->pointUnderPixel(mouseEvent->pos(),
+                                                                    found);
+          if(!found)
           {
-            QApplication::setOverrideCursor(Qt::WaitCursor);
-            bool found = false;
-            QPoint pixel(mouseEvent->pos().x(),
-                         viewer->camera()->screenHeight() - 1 - mouseEvent->pos().y());
-
-            CGAL::qglviewer::Vec point = viewer->camera()->pointUnderPixel(mouseEvent->pos(),
-                                                                     found);
-            if(!found)
-            {
-              QApplication::restoreOverrideCursor();
-              return false;
-            }
-            const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
-            point = point - offset;
-
-            neighborhood.point_set (point_set_item).grow_region
-              (Kernel::Point_3 (point.x, point.y, point.z),
-               rg_epsilon, rg_cluster_epsilon, rg_normal_threshold);
-
             QApplication::restoreOverrideCursor();
-            return true;
+            return false;
           }
-          // Start standard selection
-          else if (!visualizer)
-          {
-            QApplication::setOverrideCursor(Qt::CrossCursor);
-            CGAL::QGLViewer* viewer = getActiveViewer();
-            if (viewer->camera()->frame()->isSpinning())
-              viewer->camera()->frame()->stopSpinning();
+          const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
+          point = point - offset;
 
-            visualizer = new Selection_visualizer(ui_widget.rectangle->isChecked(),
-                                                                  point_set_item->bbox());
+          neighborhood.point_set (point_set_item).grow_region
+            (Kernel::Point_3 (point.x, point.y, point.z),
+              rg_epsilon, rg_cluster_epsilon, rg_normal_threshold);
 
-            visualizer->sample_mouse_path(background);
-            return true;
-          }
+          QApplication::restoreOverrideCursor();
+          return true;
         }
-        // Cancel selection
-        else if (mouseEvent->button() == Qt::RightButton && visualizer)
-          {
-            visualizer = nullptr;
-            QApplication::restoreOverrideCursor();
-            return true;
-          }
+        // Start standard selection
+        else if (!visualizer)
+        {
+          QApplication::setOverrideCursor(Qt::CrossCursor);
+          CGAL::QGLViewer* viewer = getActiveViewer();
+          if (viewer->camera()->frame()->isSpinning())
+            viewer->camera()->frame()->stopSpinning();
+
+          visualizer = new Selection_visualizer(ui_widget.rectangle->isChecked(),
+                                                point_set_item->bbox());
+
+          visualizer->sample_mouse_path(background);
+          return true;
+        }
       }
-      // Expand/reduce selection
-    else if (shift_pressing && event->type() == QEvent::Wheel)
+      // Cancel selection
+      else if (mouseEvent->button() == Qt::RightButton && visualizer)
       {
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-        QWheelEvent *mouseEvent = static_cast<QWheelEvent*>(event);
-        int steps = mouseEvent->angleDelta().y() / 120;
-        if (steps > 0)
-          neighborhood.point_set (point_set_item).expand();
-        else
-          neighborhood.point_set (point_set_item).reduce();
-        QApplication::restoreOverrideCursor();
-      }
-    // End selection
-    else if (event->type() == QEvent::MouseButtonRelease && visualizer)
-      {
-        visualizer->apply_path();
-        select_points();
         visualizer = nullptr;
         QApplication::restoreOverrideCursor();
-        getActiveViewer()->set2DSelectionMode(false);
         return true;
       }
+    }
+      // Expand/reduce selection
+    else if (shift_pressing && event->type() == QEvent::Wheel)
+    {
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      QWheelEvent *mouseEvent = static_cast<QWheelEvent*>(event);
+      int steps = mouseEvent->angleDelta().y() / 120;
+      if (steps > 0)
+        neighborhood.point_set (point_set_item).expand();
+      else
+        neighborhood.point_set (point_set_item).reduce();
+      QApplication::restoreOverrideCursor();
+    }
+    // End selection
+    else if (event->type() == QEvent::MouseButtonRelease && visualizer)
+    {
+      visualizer->apply_path();
+      select_points();
+      visualizer = nullptr;
+      QApplication::restoreOverrideCursor();
+      getActiveViewer()->set2DSelectionMode(false);
+      return true;
+    }
     // Update selection
     else if (event->type() == QEvent::MouseMove && visualizer)
-      {
-        visualizer->sample_mouse_path(background);
-        return true;
-      }
+    {
+      visualizer->sample_mouse_path(background);
+      return true;
+    }
     //Position request
     else if(ctrl_pressing && event->type() == QEvent::MouseButtonPress)
     {
@@ -764,24 +753,21 @@ protected:
   }
 
 protected Q_SLOTS:
-
-
   void connectNewViewer(QObject* o)
   {
     if(edit_box)
       o->installEventFilter(edit_box);
     o->installEventFilter(this);
-
   }
 
   void select_points()
   {
     Scene_points_with_normal_item* point_set_item = getSelectedItem<Scene_points_with_normal_item>();
     if(!point_set_item)
-      {
-        print_message("Error: no point set selected!");
-        return;
-      }
+    {
+      print_message("Error: no point set selected!");
+      return;
+    }
 
     Point_set* points = point_set_item->point_set();
 
@@ -795,10 +781,10 @@ protected Q_SLOTS:
 
     bool* selected_bitmap = new bool[points->size()]; // std::vector<bool> is not thread safe
 
-    Selection_test selection_test (points, selected_bitmap,
-                                   camera, offset, edit_box, visualizer,
-                                   static_cast<CGAL::Three::Viewer_interface*>(viewer)->clipBox(),
-                                   ui_widget);
+    Selection_test selection_test(points, selected_bitmap,
+                                  camera, offset, edit_box, visualizer,
+                                  static_cast<CGAL::Three::Viewer_interface*>(viewer)->clipBox(),
+                                  ui_widget);
 #ifdef CGAL_LINKED_WITH_TBB
     tbb::parallel_for(tbb::blocked_range<size_t>(0, points->size()),
                       selection_test);
@@ -807,10 +793,9 @@ protected Q_SLOTS:
       selection_test.apply(i);
 #endif
 
-    points->set_first_selected
-      (std::partition (points->begin(), points->end(),
-                       [&] (const Point_set::Index& idx) -> bool
-                       { return !selected_bitmap[idx]; }));
+    points->set_first_selected(std::partition(points->begin(), points->end(),
+                                              [&] (const Point_set::Index& idx) -> bool
+                                              { return !selected_bitmap[idx]; }));
 
     point_set_item->invalidateOpenGLBuffers();
     point_set_item->itemChanged();
@@ -845,8 +830,6 @@ protected Q_SLOTS:
     }
   }
 
-
-
 public Q_SLOTS:
   void selection_action() {
     dock_widget->show();
@@ -854,7 +837,8 @@ public Q_SLOTS:
   }
 
   // Select all
-  void on_Select_all_button_clicked() {
+  void on_Select_all_button_clicked()
+  {
     Scene_points_with_normal_item* point_set_item = getSelectedItem<Scene_points_with_normal_item>();
     if(!point_set_item)
       {
@@ -867,7 +851,8 @@ public Q_SLOTS:
   }
 
   // Clear selection
-  void on_Clear_button_clicked() {
+  void on_Clear_button_clicked()
+  {
     Scene_points_with_normal_item* point_set_item
       = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
     if(!point_set_item) {
@@ -879,7 +864,8 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
   }
 
-  void on_Erase_selected_points_button_clicked() {
+  void on_Erase_selected_points_button_clicked()
+  {
     Scene_points_with_normal_item* point_set_item
       = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
     if(!point_set_item) {
@@ -891,7 +877,8 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
   }
 
-  void on_Invert_selection_button_clicked() {
+  void on_Invert_selection_button_clicked()
+  {
     Scene_points_with_normal_item* point_set_item
       = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
     if(!point_set_item) {
@@ -903,7 +890,8 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
   }
 
-  void on_Create_point_set_item_button_clicked() {
+  void on_Create_point_set_item_button_clicked()
+  {
     Scene_points_with_normal_item* point_set_item
       = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
     if(!point_set_item) {
@@ -966,10 +954,7 @@ public Q_SLOTS:
       edit_box = nullptr;
       add_box->setEnabled(false);
     }
-
-
   }
-
 
   void reset_editbox()
   {

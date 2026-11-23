@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-DOXYGEN_VERSIONS := 1.12.0 1.11.0 1.10.0 1.9.8 1.9.7 1.9.6
+DOXYGEN_VERSIONS := 1.17.0 1.12.0 1.11.0 1.10.0 1.9.8 1.9.7 1.9.6
 
 .PHONY: all build-% push-% build push
 

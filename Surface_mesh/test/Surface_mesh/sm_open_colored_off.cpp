@@ -14,7 +14,7 @@ typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
 
 void OpenOFF(int i)
 {
-  std::string path;
+  std::filesystem::path path;
   switch(i)
   {
    case 1:

@@ -124,6 +124,9 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
@@ -132,27 +135,28 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
   EdgeConstraintMap ecmap
     = choose_parameter<EdgeConstraintMap>(get_parameter(np, internal_np::edge_is_constrained));
 
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  std::set<face_descriptor> already_processed;
+  using Face_bool_tag = typename CGAL::dynamic_face_property_t<bool>;
+  using Bool_map = typename boost::property_map<PolygonMesh, Face_bool_tag>::const_type;
+
+  Bool_map already_processed = get(Face_bool_tag(), pmesh, false);
   std::vector< face_descriptor > stack;
   stack.push_back(seed_face);
   while (!stack.empty())
+  {
+    seed_face=stack.back();
+    stack.pop_back();
+    if (get(already_processed, seed_face)) continue;
+    put(already_processed, seed_face, true);
+    *out++=seed_face;
+    for(halfedge_descriptor hd: halfedges_around_face(halfedge(seed_face, pmesh), pmesh) )
     {
-      seed_face=stack.back();
-      stack.pop_back();
-      if (!already_processed.insert(seed_face).second) continue;
-      *out++=seed_face;
-      for(halfedge_descriptor hd :
-                    halfedges_around_face(halfedge(seed_face, pmesh), pmesh) )
-      {
-        if(! get(ecmap, edge(hd, pmesh))){
-          face_descriptor neighbor = face( opposite(hd, pmesh), pmesh );
-          if ( neighbor != boost::graph_traits<PolygonMesh>::null_face() )
-            stack.push_back(neighbor);
-        }
+      if(! get(ecmap, edge(hd, pmesh))){
+        face_descriptor neighbor = face( opposite(hd, pmesh), pmesh );
+        if ( neighbor != boost::graph_traits<PolygonMesh>::null_face() )
+          stack.push_back(neighbor);
       }
     }
+  }
   return out;
 }
 
@@ -736,8 +740,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
                                                         CGAL_NP_CLASS,
                                                         Static_boolean_property_map<vertex_descriptor, false> // default (not used)
                                                          >::type Vertex_map;
-    Vertex_map is_cst = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                         Static_boolean_property_map<vertex_descriptor, false>());
+    Vertex_map is_cst = choose_parameter<Static_boolean_property_map<vertex_descriptor, false>>(get_parameter(np, internal_np::vertex_is_constrained));
     for (vertex_descriptor v : vertices_to_remove)
       if (!get(is_cst, v))
         remove_vertex(v, pmesh);
@@ -1007,7 +1010,7 @@ void split_connected_components_impl(FIMap fim,
   using parameters::is_default_parameter;
 
   Fpm pidmap = choose_parameter(get_parameter(np, internal_np::face_patch),
-                                get(CGAL::dynamic_face_property_t<faces_size_type>(), tm));
+                                CGAL::dynamic_face_property_t<faces_size_type>(), tm);
 
   faces_size_type nb_patches = 0;
   if(is_default_parameter<NamedParameters, internal_np::face_patch_t>::value)
@@ -1114,8 +1117,7 @@ void split_connected_components(const PolygonMesh& pmesh,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             Default_ecm());
+  Ecm ecm = choose_parameter<Default_ecm>(get_parameter(np, internal_np::edge_is_constrained));
 
   internal::split_connected_components_impl(CGAL::get_initialized_face_index_map(pmesh, np),
                                             CGAL::get_initialized_halfedge_index_map(pmesh, np),
