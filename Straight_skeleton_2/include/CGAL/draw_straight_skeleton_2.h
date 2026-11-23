@@ -404,6 +404,10 @@ void add_to_graphics_scene(const CGAL_SS_TYPE& ass2,
   {
     if(eh->is_bisector())
     {
+      // artificial bisectors
+      if(eh->face() == eh->opposite()->face())
+      { return CGAL::IO::yellow(); }
+
       // bisectors going to infinity (partial skeletons)
       if(eh->vertex()->has_infinite_time() ||
           eh->opposite()->vertex()->has_infinite_time())
