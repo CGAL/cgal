@@ -76,6 +76,34 @@ Release date: December 2026
   [`CGAL::Hot_pixel_snap_rounding_traits_2`](https://doc.cgal.org/6.3/Snap_rounding_2/classCGAL_1_1Hot__pixel__snap__rounding__traits__2.html).
   Similarly, the concept `SnapRoundingTraits_2` has been renamed
   [`HotPixelSnapRoundingTraits_2`](https://doc.cgal.org/6.3/Snap_rounding_2/classHotPixelSnapRoundingTraits__2.html).
+  
+### [Kinetic Space Partition](https://doc.cgal.org/6.3/Manual/packages.html#PkgKineticSpacePartition)
+
+- **Breaking change**: The concept `KineticLCCFaceAttribute` requires a new member `input_plane_index`.
+- **Breaking change**: `CGAL::Kinetic_space_partition_3::input_planes()` now contains each plane only once;
+  use the new function `input_plane_indices()` to map each input polygon to its plane.
+- Reimplemented the kinetic propagation as a vertex-based propagation, which improves robustness, handles singular
+  configurations and creates lower complexity partitions in concave areas. The parameter `k` now limits
+  the number of intersections per polygon vertex.
+- Added support for coplanar input polygons: polygons that are coplanar up to a small tolerance share a common
+  support plane and expand separately. Degenerate input polygons are dropped.
+- Added the function `insert_exact()` to provide exact support planes.
+- Added the function `init_and_partition()`, which needs much less memory than `initialize()` followed by `partition()`.
+- `initialize()`, `partition()` and `init_and_partition()` have a template parameter `ConcurrencyTag`,
+  which defaults to `CGAL::Parallel_if_available_tag`, to compute the partitions of the octree nodes in parallel.
+
+### [Kinetic Surface Reconstruction](https://doc.cgal.org/6.3/Manual/packages.html#PkgKineticSurfaceReconstruction)
+
+- **Breaking change**: `detect_planar_shapes()` no longer regularizes. Use the new function `regularize_planar_shapes()` for that.
+- **Breaking change**: `detected_planar_shapes()` and `detected_planar_shape_indices()` have been replaced by `planar_shapes()`,
+  which provides the support plane and the inlier indices of each shape.
+- **Breaking change**: `initialize_partition()` has been removed. `partition()` now takes the partition named parameters.
+- Added the functions `insert_planar_shapes()` and `insert_planar_shapes_and_linear_cell_complex()` to skip
+  shape detection or partitioning.
+- Added the function `get_linear_cell_complex()` to access the kinetic partition as a linear cell complex.
+- `CGAL::Kinetic_surface_reconstruction_3::partition()` has a template parameter `ConcurrencyTag`,
+  which defaults to `CGAL::Parallel_if_available_tag`. It also applies to the mapping of the inlier points
+  onto the partition faces during the reconstruction.
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
 
