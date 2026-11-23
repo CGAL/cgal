@@ -94,7 +94,7 @@ bool write_points(const std::filesystem::path& fname,
 #endif
                   )
 {
-  const std::string ext = fname.extension().string();
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == ".xyz" || ext == ".pwn")
     return write_XYZ(fname, points, np);

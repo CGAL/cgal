@@ -518,7 +518,7 @@ Exit_code run(const std::string& input,
         full_path = input;
 
       const std::string extension = CGAL::IO::internal::get_file_extension(input);
-      if(extension == "inr")
+      if(extension == ".inr")
       {
         res = make_mesh_3D_images(full_path,
                                   facet_sizing, facet_approx, facet_angle,
