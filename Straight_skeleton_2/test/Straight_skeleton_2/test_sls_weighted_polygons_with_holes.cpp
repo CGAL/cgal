@@ -2,13 +2,10 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Straight_skeleton_2/IO/print.h>
 #include <CGAL/draw_straight_skeleton_2.h>
 #include <CGAL/draw_polygon_2.h>
 #include <CGAL/draw_polygon_with_holes_2.h>
-#include <CGAL/draw_surface_mesh.h>
 
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Polygon_2.h>
@@ -19,6 +16,7 @@
 #include <CGAL/create_weighted_offset_polygons_from_polygon_with_holes_2.h>
 
 #include <iostream>
+#include <string>
 #include <type_traits>
 #include <vector>
 
@@ -95,15 +93,12 @@ void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
 {
   using FT = typename K::FT;
   using Point_2 = typename K::Point_2;
-  using Point_3 = typename K::Point_3;
 
   using Polygon_2 = CGAL::Polygon_2<K>;
   using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
 
   using Straight_skeleton_2 = CGAL::Straight_skeleton_2<K>;
   using Straight_skeleton_2_ptr = std::shared_ptr<Straight_skeleton_2>;
-
-  using Mesh = CGAL::Surface_mesh<Point_3>;
 
   auto generate_random_polygon = [&](CGAL::Random& rnd) -> Polygon_2
   {
