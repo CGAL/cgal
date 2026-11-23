@@ -69,7 +69,6 @@ void append_patch(
 
     put(tm_to_output_vertices, v, new_v);
     put(vpm_out, new_v, get(vpm_tm, v));
-    output.set_halfedge(new_v, SM::null_halfedge());
   };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -91,6 +90,9 @@ void append_patch(
 
     vertex_descriptor src = get(tm_to_output_vertices, tm.source(h));
     vertex_descriptor tgt = get(tm_to_output_vertices, tm.target(h));
+    CGAL_assertion(src != SM_Vertex_index(Properties::uninitialized_tag) && src != output.null_vertex());
+    CGAL_assertion(tgt != SM_Vertex_index(Properties::uninitialized_tag) && tgt != output.null_vertex());
+
     user_visitor.before_edge_copy(h, tm, output);
     put(tm_to_output_edges, tm.edge(h), new_edge);
     output.set_target(output.opposite(new_h), src);
@@ -101,22 +103,22 @@ void append_patch(
     copy_constraint_status<SM>(tm.edge(h), new_edge, edge_cst_map_in, edge_cst_map_out);
     copy_constraint_status<SM>(tm.edge(h), new_edge, edge_mark_map_in, edge_mark_map_out);
 
-    CGAL_assertion(is_border(new_h, output));
-    CGAL_assertion(is_border(opposite(new_h, output), output));
+    CGAL_assertion(face(new_h, output) == SM_Face_index(Properties::uninitialized_tag));
+    CGAL_assertion(face(opposite(new_h, output), output) == SM_Face_index(Properties::uninitialized_tag));
 
     // Fill the halfedge of the vertices if it is not set yet
-    if (tm.halfedge(tm.target(h)) == h &&
-        output.halfedge(output.target(new_h)) == SM::null_halfedge()){
+    if (tm.halfedge(tm.target(h)) == h){
+      CGAL_assertion( output.halfedge(tgt) == SM_Halfedge_index(Properties::uninitialized_tag));
       user_visitor.before_vertex_copy(tm.target(h), tm, output); // Call visitor when the vertex would be complete
-      output.set_halfedge(output.target(new_h), new_h);
-      user_visitor.after_vertex_copy(tm.target(h), tm, output.target(new_h), output);
+      output.set_halfedge(tgt, new_h);
+      user_visitor.after_vertex_copy(tm.target(h), tm, tgt, output);
     }
 
-    if (tm.halfedge(tm.source(h)) == tm.opposite(h) &&
-        output.halfedge(output.source(new_h)) == SM::null_halfedge()){
+    if (tm.halfedge(tm.source(h)) == tm.opposite(h)){
+      CGAL_assertion( output.halfedge(src) == SM_Halfedge_index(Properties::uninitialized_tag));
       user_visitor.before_vertex_copy(tm.source(h), tm, output); // Call visitor when the vertex would be complete
-      output.set_halfedge(output.source(new_h), output.opposite(new_h));
-      user_visitor.after_vertex_copy(tm.source(h), tm, output.source(new_h), output);
+      output.set_halfedge(src, output.opposite(new_h));
+      user_visitor.after_vertex_copy(tm.source(h), tm, src, output);
     }
   };
 #ifdef CGAL_LINKED_WITH_TBB
@@ -128,6 +130,9 @@ void append_patch(
   {
     for(std::size_t i=0; i<patch.interior_edges.size(); ++i) fill_edge(i);
   }
+
+  for(halfedge_descriptor h: patch.border_edges)
+    output.set_halfedge(get(tm_to_output_edges, tm.edge(h)), tm.null_halfedge());
 
   auto get_halfedge = [&](halfedge_descriptor h){
     edge_descriptor e = get(tm_to_output_edges, tm.edge(h));
@@ -222,7 +227,7 @@ auto append_patches_to_triangle_mesh(
     tne += patches[i].interior_edges.size();
     tnf += patches[i].faces.size();
   }
-  output.resize(static_cast<size_type>(tnv), static_cast<size_type>(tne), static_cast<size_type>(tnf));
+  output.uninitialized_resize(static_cast<size_type>(tnv), static_cast<size_type>(tne), static_cast<size_type>(tnf));
 
   std::vector<std::size_t> ids_of_patches_to_append;
   ids_of_patches_to_append.reserve(patches_to_append.count());
@@ -416,7 +421,8 @@ auto fill_new_triangle_mesh(
     tne += patches_of_tm2[i].interior_edges.size();
     tnf += patches_of_tm2[i].faces.size();
   }
-  output.resize(static_cast<size_type>(tnv), static_cast<size_type>(tne), static_cast<size_type>(tnf));
+  output.reserve(static_cast<size_type>(tnv), static_cast<size_type>(tne), static_cast<size_type>(tnf));
+  output.uninitialized_resize(static_cast<size_type>(tnv), static_cast<size_type>(tne), static_cast<size_type>(tnf));
 
   // Append patches
   for (std::size_t i : ids_of_patches_to_append_from_tm1){
