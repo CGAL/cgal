@@ -349,6 +349,12 @@ std::istream& from_chars_input(std::istream& is, T& t)
 {
   using Iterator = std::istreambuf_iterator<char>;
 
+  // do nothing on a stream that is already in a failed or eof state
+  if (!is.good()) {
+    is.setstate(std::ios_base::failbit);
+    return is;
+  }
+
   Iterator it(is);
   Iterator end;
 
@@ -382,7 +388,13 @@ std::istream& from_chars_input(std::istream& is, T& t)
     is.setstate(std::ios_base::eofbit);
   }
 
-  auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(buffer, p, t);
+  // from_chars does not accept a leading '+', contrary to operator>>
+  const char* first = buffer;
+  if (p - first > 1 && first[0] == '+' && first[1] != '+' && first[1] != '-') {
+    ++first;
+  }
+
+  auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(first, p, t);
 
   if (ec != std::errc{} || ptr != p) {
     is.setstate(std::ios_base::failbit);
@@ -731,10 +743,12 @@ inline std::istream &operator>>(std::istream &is, Color& col)
     default:
       std::cerr << "" << std::endl;
       std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
+      is.setstate(std::ios_base::failbit);
       break;
   }
 
-  col = Color(r,g,b,a);
+  if(is)
+    col = Color(r,g,b,a);
   return is;
 }
 
@@ -817,9 +831,9 @@ OutputIterator parse_doubles(const std::string& line, OutputIterator it)
 // From polynomial.h TODO: Where to put this?
 inline void swallow(std::istream &is, char d)
 {
-  char c;
-  do { is.get(c); } while(isspace(c));
-  if(c != d)
+  char c = 0;
+  while(is.get(c) && std::isspace(static_cast<unsigned char>(c))) {}
+  if(!is || c != d)
   {
     std::stringstream msg;
     msg << "input error: expected '" << d << "' but got '" << c << "'";
@@ -951,7 +965,9 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
     if(internal::is_eof(is, c) || internal::is_space(is, c))
     {
       is.flags(old_flags);
-      if(digits && !is.fail())
+      if(!digits) // nothing (or only a sign) was read
+        is.setstate(std::ios_base::failbit);
+      else if(!is.fail())
         z = negative? compose(-n,1): compose(n,1);
       return;
     }
