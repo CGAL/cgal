@@ -294,6 +294,7 @@ double polygon_area(const CGAL::Polygon_with_holes_2<K>& pwh)
   return a;
 }
 
+// Volume of the part of the closed mesh `m` that is below the plane z = H (above if H < 0).
 template <typename K, typename Mesh>
 double clipped_volume(Mesh m /*copy*/, const double H)
 {

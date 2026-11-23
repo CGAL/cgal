@@ -17,7 +17,6 @@
 
 #include <CGAL/create_weighted_straight_skeleton_from_polygon_with_holes_2.h>
 #include <CGAL/create_weighted_offset_polygons_from_polygon_with_holes_2.h>
-#include <CGAL/extrude_skeleton.h>
 
 #include <iostream>
 #include <type_traits>
@@ -187,36 +186,6 @@ void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
 //  CGAL::draw(*ss_ptr);
 
   check_artificial_vertices<K>(*ss_ptr);
-
-  Mesh sm;
-  bool success = extrude_skeleton(pwh, sm, CGAL::parameters::weights(weights));
-  assert(success);
-  if(!success)
-  {
-    std::cerr << "Error: failed to extrude skeleton" << std::endl;
-    return;
-  }
-
-//  CGAL::draw(sm);
-
-  assert(CGAL::is_valid_polygon_mesh(sm));
-  assert(CGAL::is_closed(sm));
-  assert(CGAL::is_triangle_mesh(sm));
-
-  clear(sm);
-  success = extrude_skeleton(pwh, sm, CGAL::parameters::weights(weights).maximum_height((1.+ hole_n)/2.));
-  assert(success);
-  if(!success)
-  {
-    std::cerr << "Error: failed to extrude skeleton" << std::endl;
-    return;
-  }
-
-//  CGAL::draw(sm);
-
-  assert(CGAL::is_valid_polygon_mesh(sm));
-  assert(CGAL::is_closed(sm));
-  assert(CGAL::is_triangle_mesh(sm));
 }
 
 int main(int argc, char** argv)
