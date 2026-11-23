@@ -18,6 +18,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Coercion_traits.h>
+#include <CGAL/Intersections_3/internal/Bbox_3_Segment_3_do_intersect.h>
 #include <CGAL/enum.h>
 #include <CGAL/number_utils.h>
 
@@ -141,6 +142,185 @@ bbox_line_do_intersect_aux(const LFT px, const LFT py, const LFT pz,
   // The following is equivalent to the in z-slab test if d_=0.
 
   return ((dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax));
+}
+
+// The same as `do_intersect_bbox_segment_aux()` with both ends unbounded, but
+// the line is given by a point p and a direction vector v, rather than by two
+// points p and q. The direction is used as is: it is not computed as q - p.
+// This way, a static filter on a `Line_3`, which stores a point and a vector,
+// decides on the line itself.
+//
+// The parameter interval of the line inside the x-slab is [tmin/dmin,
+// tmax/dmax], where dmin = dmax = |vx|; and similarly for the y- and z-slabs.
+// With `use_static_filters`, the comparisons of the cross products of these
+// values use the error bound of `Do_intersect_bbox_segment_aux_is_greater`,
+// which assumes that both t and d carry one rounding error; here d is exact.
+template <typename FT,
+          typename BFT,
+          bool use_static_filters>
+inline
+typename Do_intersect_bbox_segment_aux_is_greater<FT, false, use_static_filters>::result_type
+do_intersect_bbox_line_aux(const FT& px, const FT& py, const FT& pz,
+                           const FT& vx, const FT& vy, const FT& vz,
+                           const BFT& bxmin, const BFT& bymin, const BFT& bzmin,
+                           const BFT& bxmax, const BFT& bymax, const BFT& bzmax)
+{
+  if((px >= bxmin) && (px <= bxmax) &&
+     (py >= bymin) && (py <= bymax) &&
+     (pz >= bzmin) && (pz <= bzmax))
+  {
+    return true;
+  }
+
+  typedef typename Coercion_traits<FT,BFT>::Type CFT;
+  typename Coercion_traits<FT,BFT>::Cast to_CFT;
+
+  // -----------------------------------
+  // treat x coord
+  // -----------------------------------
+  CFT dmin, tmin, tmax, dmax;
+  if(vx >= 0)
+  {
+    tmin = to_CFT(bxmin) - px;
+    tmax = to_CFT(bxmax) - px;
+    dmin = vx;
+  }
+  else
+  {
+    tmin = px - to_CFT(bxmax);
+    tmax = px - to_CFT(bxmin);
+    dmin = -vx;
+  }
+  dmax = dmin;
+
+  // If the line is vertical for x, then check its x-coordinate is in the x-slab.
+  if((vx == 0) && (compare(px, bxmax) == LARGER || compare(px, bxmin) == SMALLER))
+    return false;
+
+  // -----------------------------------
+  // treat y coord
+  // -----------------------------------
+  CFT dymin, tymin, tymax, dymax;
+  if(vy >= 0)
+  {
+    tymin = to_CFT(bymin) - py;
+    tymax = to_CFT(bymax) - py;
+    dymin = vy;
+  }
+  else
+  {
+    tymin = py - to_CFT(bymax);
+    tymax = py - to_CFT(bymin);
+    dymin = -vy;
+  }
+  dymax = dymin;
+
+  if((vy == 0) && (compare(py, bymax) == LARGER || compare(py, bymin) == SMALLER))
+    return false;
+
+  // -----------------------------------
+  // treat z coord
+  // -----------------------------------
+  CFT dzmin, tzmin, tzmax, dzmax;
+  if(vz >= 0)
+  {
+    tzmin = to_CFT(bzmin) - pz;
+    tzmax = to_CFT(bzmax) - pz;
+    dzmin = vz;
+  }
+  else
+  {
+    tzmin = pz - to_CFT(bzmax);
+    tzmax = pz - to_CFT(bzmin);
+    dzmin = -vz;
+  }
+  dzmax = dzmin;
+
+  if((vz == 0) && (compare(pz, bzmax) == LARGER || compare(pz, bzmin) == SMALLER))
+    return false;
+
+  typedef Do_intersect_bbox_segment_aux_is_greater<CFT, false, use_static_filters> Is_greater;
+  typedef typename Is_greater::result_type Is_greater_value;
+  Is_greater is_greater;
+
+  is_greater.register_new_input_values(tmin, dmin);
+  is_greater.register_new_input_values(tymin, dymin);
+  is_greater.register_new_input_values(tmax, dmax);
+  is_greater.register_new_input_values(tymax, dymax);
+
+  is_greater.compute_new_error_bound();
+  if(is_greater.bound_overflow() || is_greater.value_might_underflow())
+    return Is_greater::uncertain();
+
+  // If t1 > tymax/dymax || tymin/dymin > t2, return false.
+  if((vy != 0) && (vx != 0))
+  {
+    const Is_greater_value b1 = is_greater(dymax*tmin, dmin*tymax);
+    if(possibly(b1))
+      return !b1; // if(is_greater) return false; // or uncertain
+
+    const Is_greater_value b2 = is_greater(dmax*tymin, dymin*tmax);
+    if(possibly(b2))
+      return !b2;
+  }
+
+  Is_greater_value b = Is_greater_value();
+
+  // If tymin/dymin > t1, set t1 = tymin/dymin.
+  if((vx == 0) ||
+     ((vy != 0) && certainly(b = is_greater(dmin*tymin, dymin*tmin))))
+  {
+    tmin = tymin;
+    dmin = dymin;
+  }
+
+  if(is_indeterminate(b))
+    return b; // Note that the default-constructed Is_greater_value cannot be indeterminate.
+
+  // If tymax/dymax < t2, set t2 = tymax/dymax.
+  if((vx == 0) ||
+     ((vy != 0) && certainly(b = is_greater(dymax*tmax, dmax*tymax))))
+  {
+    tmax = tymax;
+    dmax = dymax;
+  }
+
+  if(is_indeterminate(b))
+    return b;
+
+  // If t1 > tzmax || tzmin > t2, return false.
+  if(((vx != 0) || (vy != 0)) && (vz != 0))
+  {
+    is_greater.register_new_input_values(tzmin, dzmin);
+    is_greater.register_new_input_values(tzmax, dzmax);
+
+    is_greater.compute_new_error_bound();
+    if(is_greater.bound_overflow() || is_greater.value_might_underflow())
+      return Is_greater::uncertain();
+
+    const Is_greater_value b1 = is_greater(dzmax*tmin, dmin*tzmax);
+    if(possibly(b1))
+      return !b1; // if(is_greater) return false; // or uncertain
+
+    const Is_greater_value b2 = is_greater(dmax*tzmin, dzmin*tmax);
+    if(possibly(b2))
+      return !b2; // if(is_greater) return false; // or uncertain
+  }
+
+  return true;
+}
+
+template <typename FT,
+          bool use_static_filters>
+inline
+typename Do_intersect_bbox_segment_aux_is_greater<FT, false, use_static_filters>::result_type
+do_intersect_bbox_line_aux(const FT& px, const FT& py, const FT& pz,
+                           const FT& vx, const FT& vy, const FT& vz,
+                           const Bbox_3& bb)
+{
+  return do_intersect_bbox_line_aux<FT, double, use_static_filters>(px, py, pz, vx, vy, vz,
+                                                                     bb.xmin(), bb.ymin(), bb.zmin(),
+                                                                     bb.xmax(), bb.ymax(), bb.zmax());
 }
 
 template <class K>

@@ -23,6 +23,8 @@
 
 #include <CGAL/Intersections_3/Bbox_3_Segment_3.h>
 // for CGAL::internal::do_intersect_bbox_segment_aux
+#include <CGAL/Intersections_3/Bbox_3_Line_3.h>
+// for CGAL::internal::do_intersect_bbox_line_aux
 
 #include <iostream>
 
@@ -41,6 +43,8 @@ class Do_intersect_3
 {
   typedef typename K_base::Boolean   Boolean;
   typedef typename K_base::Point_3   Point_3;
+  typedef typename K_base::Vector_3  Vector_3;
+  typedef typename K_base::Line_3    Line_3;
   typedef typename K_base::Ray_3     Ray_3;
   typedef typename K_base::Segment_3 Segment_3;
   typedef typename K_base::Triangle_3 Triangle_3;
@@ -205,6 +209,47 @@ public:
       CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
     }
     return Base::operator()(r,b);
+  }
+
+  Boolean
+  operator()(const Bbox_3& b, const Line_3 &l) const
+  {
+    return this->operator()(l, b);
+  }
+
+  Boolean
+  operator()(const Line_3 &l, const Bbox_3& b) const
+  {
+    CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+                           std::string(CGAL_PRETTY_FUNCTION), tmp);
+
+    Get_approx<Point_3> get_approx_p; // Identity functor for all points
+    // but lazy points.
+    Get_approx<Vector_3> get_approx_v; // Identity functor for all vectors
+    // but lazy vectors.
+    const Point_3& p = l.point();
+    const Vector_3& v = l.to_vector();
+
+    double px, py, pz, vx, vy, vz;
+    if (fit_in_double(get_approx_p(p).x(), px) && fit_in_double(get_approx_p(p).y(), py) &&
+        fit_in_double(get_approx_p(p).z(), pz) &&
+        fit_in_double(get_approx_v(v).x(), vx) && fit_in_double(get_approx_v(v).y(), vy) &&
+        fit_in_double(get_approx_v(v).z(), vz) )
+    {
+      CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+      const Uncertain<Boolean> ub =
+        Intersections::internal::do_intersect_bbox_line_aux
+        <double,
+         true> // do use static filters
+        (px, py, pz,
+         vx, vy, vz,
+         b);
+
+      if( !is_indeterminate(ub) ) return ub.sup();
+      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+    }
+    return Base::operator()(l,b);
   }
 
   Boolean

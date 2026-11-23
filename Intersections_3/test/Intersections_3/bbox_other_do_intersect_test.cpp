@@ -26,6 +26,7 @@ typedef CGAL::Exact_rational         Rational;
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Random.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/intersection_3.h>
 
@@ -681,6 +682,53 @@ bool test(bool exact_kernel = false)
   return b;
 }
 
+// Compares do_intersect(Line_3, Bbox_3) of the kernel K with exact segments,
+// on lines given by a point and a vector. Most lines are degenerate with
+// respect to the box: with small integer coordinates, they touch faces, edges,
+// or corners of the box, or are parallel to coordinate axes or planes.
+template <typename K>
+bool test_line_bbox_exhaustively()
+{
+  typedef CGAL::Simple_cartesian<Rational> EK;
+  CGAL::Random rng(0);
+  std::size_t num_failures = 0;
+  const int n = 200000;
+  for(int i = 0; i < n; ++i)
+  {
+    const bool integer = (i % 4 != 0);
+    auto coord = [&](int lo, int hi) {
+      return integer ? double(rng.get_int(lo, hi + 1)) : rng.get_double(lo, hi);
+    };
+    double c[6];
+    for(int j = 0; j < 3; ++j)
+    {
+      c[j] = coord(-3, 3);
+      c[j + 3] = c[j] + std::abs(coord(0, 3));
+    }
+    const CGAL::Bbox_3 bbox(c[0], c[1], c[2], c[3], c[4], c[5]);
+    const double px = coord(-5, 5), py = coord(-5, 5), pz = coord(-5, 5);
+    const double vx = coord(-2, 2), vy = coord(-2, 2), vz = coord(-2, 2);
+    // The reference is an exact segment that contains the part of the line in
+    // the box: the parameter of a point of the line in the box is bounded by
+    // 11 / max(|vx|, |vy|, |vz|) < 1e6.
+    if((std::max)({ std::abs(vx), std::abs(vy), std::abs(vz) }) < 1e-3) continue;
+    const typename K::Line_3 line(typename K::Point_3(px, py, pz), typename K::Vector_3(vx, vy, vz));
+    const EK::Point_3 ep(px, py, pz);
+    const EK::Vector_3 ev(vx, vy, vz);
+    const bool expected = CGAL::do_intersect(EK::Segment_3(ep - 1e6 * ev, ep + 1e6 * ev), bbox);
+    if(CGAL::do_intersect(line, bbox) != expected || CGAL::do_intersect(bbox, line) != expected)
+    {
+      if(++num_failures <= 10)
+        std::cerr << "ERROR: do_intersect(line, bbox) with the line (" << px << " " << py << " " << pz << ") + t ("
+                  << vx << " " << vy << " " << vz << ") and the bbox " << bbox << " did not answer " << expected
+                  << std::endl;
+    }
+  }
+  std::cout << "\tDo_intersect(bbox, line) compared with exact segments: " << num_failures << " failure(s)"
+            << std::endl;
+  return num_failures == 0;
+}
+
 template <typename K>
 bool test_kernel(bool exact_predicates = true, K /*k*/ = K())
 {
@@ -717,6 +765,9 @@ int main()
 
   std::cout << std::endl << "Testing with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
   b &= test_kernel<CGAL::Exact_predicates_inexact_constructions_kernel>();
+  b &= test_line_bbox_exhaustively<CGAL::Exact_predicates_inexact_constructions_kernel>();
+  b &= test_line_bbox_exhaustively<Fk_no_static>();
+  b &= test_line_bbox_exhaustively<CGAL::Simple_cartesian<Rational> >();
 
   std::cout << std::endl << "Testing with Exact_predicates_exact_constructions_kernel..." << std::endl ;
   b &= test_kernel<CGAL::Exact_predicates_exact_constructions_kernel>();
