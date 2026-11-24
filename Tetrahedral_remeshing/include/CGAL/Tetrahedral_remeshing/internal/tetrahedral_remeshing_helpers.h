@@ -108,7 +108,7 @@ typename Tr::Edge opposite_edge(const typename Tr::Cell_handle c,
                                 const Tr&)
 {
   CGAL_assertion(c->has_vertex(v0));
-  CGAL_assertion(c->has_vertex(v0));
+  CGAL_assertion(c->has_vertex(v1));
 
   std::array<int, 2> ij;
   int n = 0;
