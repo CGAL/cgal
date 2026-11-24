@@ -26,6 +26,7 @@ int nb_failures = 0;
 
 void failure(const std::string& what)
 {
+  ++nb_failures;
   std::cerr << "FAILURE: " << what << std::endl;
 }
 
