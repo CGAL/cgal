@@ -65,9 +65,6 @@ create_interior_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
 
 \brief creates a straight skeleton in the interior of the 2D polygon `polygon`, possibly with holes.
 
-\warning Holes of the polygon are ignored. If you also need the exterior skeleton for the holes,
-         you should call `CGAL::create_interior_straight_skeleton_2()` for each hole.
-
 \tparam Polygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
                 or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
 \tparam SsK must be a model of `Kernel`.
