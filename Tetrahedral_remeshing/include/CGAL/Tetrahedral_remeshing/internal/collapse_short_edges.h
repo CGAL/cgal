@@ -424,27 +424,32 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
 
   // collect the intersection of neighbors of v0 and neighbors of v1
   // the ring is included in this intersection
-  boost::container::small_vector<Vertex_handle, 64> neighbors_v0;
-  for(const Cell_handle c0 : star_v0)
+  const auto sorted_neighbors = [&](const CellRange& star, const Vertex_handle v)
   {
-    const int index_v0 = c0->index(v0);
-    for(int k = 1; k < 4; ++k)
-      neighbors_v0.push_back(c0->vertex((index_v0+k) % 4));
-  }
-  std::sort(neighbors_v0.begin(), neighbors_v0.end());
-  neighbors_v0.erase(std::unique(neighbors_v0.begin(), neighbors_v0.end()),
-                     neighbors_v0.end());
+    boost::container::small_vector<Vertex_handle, 64> neighbors;
+    for(const Cell_handle c : star)
+    {
+      const int index_v = c->index(v);
+      for(int k = 1; k < 4; ++k)
+        neighbors.push_back(c->vertex((index_v+k) % 4));
+    }
+    std::sort(neighbors.begin(), neighbors.end());
+    neighbors.erase(std::unique(neighbors.begin(), neighbors.end()),
+                    neighbors.end());
+    return neighbors;
+  };
+  boost::container::small_vector<Vertex_handle, 64> neighbors_v0
+    = sorted_neighbors(star_v0, v0);
 
   if(neighbors_v0.size() != ring_size + 1)//o.w. N(v0)\v1 is the ring
   {
     // so there must be a shared neighbor outside the link
-    boost::container::small_vector<Vertex_handle, 64> neighbors_v1;
-    tr.adjacent_vertices(v1, std::back_inserter(neighbors_v1));
+    boost::container::small_vector<Vertex_handle, 64> neighbors_v1
+      = sorted_neighbors(star_v1, v1);
     if(neighbors_v1.size() != ring_size + 1)//o.w. N(v1)\v0 is the ring
     {
       // there must be a shared neighbor outside the link
       // (neighbors_v0 is already sorted)
-
       std::size_t count_common = 0;
       for(const Vertex_handle nv1 : neighbors_v1)
       {
