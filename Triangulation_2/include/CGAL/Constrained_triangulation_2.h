@@ -1729,8 +1729,9 @@ operator>>(std::istream& is,
   typedef Constrained_triangulation_2<Gt,Tds,Itag> CDT;
   ct.clear();
   is >> static_cast<typename CDT::Triangulation&>(ct);
-  for (typename CDT::All_faces_iterator fit=ct.all_faces_begin(),
-                                        fit_end=ct.all_faces_end();fit_end!=fit;++fit){
+  // iterate over the faces as in `file_output()`, which also works in dimension lower than 2
+  for (auto fit = ct.tds().face_iterator_base_begin(),
+            fit_end = ct.tds().face_iterator_base_end(); fit_end != fit; ++fit){
     char c[3];
     is >> c[0] >>  c[1] >> c[2];
     for (int k=0;k<3;++k){
