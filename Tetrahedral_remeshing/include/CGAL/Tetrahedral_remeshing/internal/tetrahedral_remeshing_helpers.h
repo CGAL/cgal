@@ -101,27 +101,6 @@ third_vertex(const typename Tr::Facet& f,
     typename Tr::Vertex_handle();
 }
 
-template<typename Tr>
-std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle>
-opposite_edge(const typename Tr::Cell_handle c,
-              const typename Tr::Vertex_handle v0,
-              const typename Tr::Vertex_handle v1,
-              const Tr&)
-{
-  CGAL_assertion(c->has_vertex(v0));
-  CGAL_assertion(c->has_vertex(v1));
-
-  std::array<typename Tr::Vertex_handle, 2> ij;
-  int n = 0;
-  for(int k = 0; k < 4; ++k)
-  {
-    const auto vk = c->vertex(k);
-    if(vk != v0 && vk != v1)
-      ij[n++] = vk;
-  }
-  return make_vertex_pair(ij[0], ij[1]);
-}
-
 template<typename Gt, typename Point>
 typename Gt::FT dihedral_angle(const Point& p,
                                const Point& q,
@@ -627,6 +606,26 @@ auto make_inv_vertex_pair(const Edge& e)
   return std::make_pair(v2, v1);
 }
 
+template<typename Tr>
+std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle>
+opposite_edge(const typename Tr::Cell_handle c,
+              const typename Tr::Vertex_handle v0,
+              const typename Tr::Vertex_handle v1,
+              const Tr&)
+{
+  CGAL_assertion(c->has_vertex(v0));
+  CGAL_assertion(c->has_vertex(v1));
+
+  std::array<typename Tr::Vertex_handle, 2> ij;
+  int n = 0;
+  for(int k = 0; k < 4; ++k)
+  {
+    const auto vk = c->vertex(k);
+    if(vk != v0 && vk != v1)
+      ij[n++] = vk;
+  }
+  return make_vertex_pair(ij[0], ij[1]);
+}
 
 template<typename Edge>
 struct Compare_edges
