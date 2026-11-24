@@ -379,6 +379,18 @@ Collapse_type get_collapse_type(const typename C3t3::Edge& edge,
   else                        return IMPOSSIBLE;
 }
 
+template <typename Tr>
+bool is_cell(const typename Tr::Vertex_handle v0,
+             const typename Tr::Vertex_handle v1,
+             const typename Tr::Vertex_handle v2,
+             const typename Tr::Vertex_handle v3,
+             const Tr& tr)
+{
+  int i, j, k, l;
+  typename Tr::Cell_handle cell;
+  return tr.tds().is_cell(v0, v1, v2, v3, cell, i, j, k, l);
+}
+
 // check the link condition before collapsing `edge`
 template <typename Triangulation, typename CellRange>
 bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
@@ -403,10 +415,11 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
   {
     if(!c0->has_vertex(v1))
       continue;
-    const auto vp = other_two_vertices(c0, v0, v1, tr);
-    ring_edges.push_back(make_vertex_pair(vp[0], vp[1]));
-    ring_vertices.push_back(vp[0]);
-    ring_vertices.push_back(vp[1]);
+
+    const auto vp = make_vertex_pair(opposite_edge(c0, v0, v1, tr));
+    ring_edges.push_back(vp);
+    ring_vertices.push_back(vp.first);
+    ring_vertices.push_back(vp.second);
   }
   std::sort(ring_vertices.begin(), ring_vertices.end());
   ring_vertices.erase(std::unique(ring_vertices.begin(), ring_vertices.end()),
@@ -417,13 +430,14 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
   {
     return std::binary_search(ring_vertices.begin(), ring_vertices.end(), v);
   };
-  const auto vp_is_in_ring = [&](const VPair& vp)
+  const auto is_in_link = [&](const VPair& vp)
   {
     return std::binary_search(ring_edges.begin(), ring_edges.end(), vp);
   };
 
-  // collect the intersection of neighbors of v0 and neighbors of v1
-  // the ring is included in this intersection
+  // vertices : N(v0) \cap N(v1) must be exactly the ring
+  // the ring is always included in this intersection
+  // so it is enough to count
   const auto sorted_neighbors = [&](const CellRange& star, const Vertex_handle v)
   {
     boost::container::small_vector<Vertex_handle, 64> neighbors;
@@ -441,11 +455,12 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
   boost::container::small_vector<Vertex_handle, 64> neighbors_v0
     = sorted_neighbors(star_v0, v0);
 
-  if(neighbors_v0.size() != ring_size + 1)//o.w. N(v0)\v1 is the ring
+  // if N(v0) or N(v1) is reduced to ring + {other endpoint}, there is nothing to count
+  if(neighbors_v0.size() != ring_size + 1) // o.w. N(v0)\v1 is the ring
   {
     // so there must be a shared neighbor outside the link
     boost::container::small_vector<Vertex_handle, 64> neighbors_v1
-      = sorted_neighbors(star_v1, v1);
+      = sorted_neighbors(star_v1, v1); // contains v0
     if(neighbors_v1.size() != ring_size + 1)//o.w. N(v1)\v0 is the ring
     {
       // there must be a shared neighbor outside the link
@@ -471,18 +486,24 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
       continue;
 
     // c0 is incident to v0 but not to v1
-    std::array<Vertex_handle, 3> vc0 = tr.vertices(Facet(c0, c0->index(v0)));
+    const std::array<Vertex_handle, 3> vc0 = tr.vertices(Facet(c0, c0->index(v0)));
+    const std::array<bool, 3> in_ring = {is_in_ring(vc0[0]), is_in_ring(vc0[1]), is_in_ring(vc0[2])};
+
+    // ring of 3 vertices: [v0, x, y, z] and [v1, x, y, z] must not both be cells
+    if(  ring_size == 3
+      && in_ring[0] && in_ring[1] && in_ring[2]
+      && is_cell(v1, vc0[0], vc0[1], vc0[2], tr))
+        return false;
 
     for(int a = 0; a < 3; ++a)
     {
+      if(!in_ring[a])
+        continue;
       for(int b = a + 1; b < 3; ++b)
       {
-        // check if both vertices are in the ring
-        if( !is_in_ring(vc0[a]) || !is_in_ring(vc0[b]))
+        if(!in_ring[b])
           continue;
-
-        const VPair vp = make_vertex_pair(vc0[a], vc0[b]);
-        if(vp_is_in_ring(vp))
+        if(is_in_link(make_vertex_pair(vc0[a], vc0[b])))
           continue;
         if(tr.is_facet(v1, vc0[a], vc0[b])) // check is_facet as the last condition
           return false;

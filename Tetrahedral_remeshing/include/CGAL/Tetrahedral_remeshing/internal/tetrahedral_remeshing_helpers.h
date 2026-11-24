@@ -101,6 +101,25 @@ third_vertex(const typename Tr::Facet& f,
     typename Tr::Vertex_handle();
 }
 
+template<typename Tr>
+typename Tr::Edge opposite_edge(const typename Tr::Cell_handle c,
+                                const typename Tr::Vertex_handle v0,
+                                const typename Tr::Vertex_handle v1,
+                                const Tr&)
+{
+  CGAL_assertion(c->has_vertex(v0));
+  CGAL_assertion(c->has_vertex(v0));
+
+  std::array<int, 2> ij;
+  int n = 0;
+  for(int k = 0; k < 4; ++k)
+  {
+    const auto vk = c->vertex(k);
+    if(vk != v0 && vk != v1)
+      ij[n++] = k;
+  }
+  return typename Tr::Edge(c, ij[0], ij[1]);
+}
 
 template<typename Gt, typename Point>
 typename Gt::FT dihedral_angle(const Point& p,
