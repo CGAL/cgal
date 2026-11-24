@@ -410,10 +410,17 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
   }
   std::sort(ring_vertices.begin(), ring_vertices.end());
   ring_vertices.erase(std::unique(ring_vertices.begin(), ring_vertices.end()),
-                       ring_vertices.end());
+                      ring_vertices.end());
   std::sort(ring_edges.begin(), ring_edges.end());
-
   const std::size_t ring_size = ring_vertices.size();
+  const auto is_in_ring = [&](const Vertex_handle v)
+  {
+    return std::binary_search(ring_vertices.begin(), ring_vertices.end(), v);
+  };
+  const auto vp_is_in_ring = [&](const VPair& vp)
+  {
+    return std::binary_search(ring_edges.begin(), ring_edges.end(), vp);
+  };
 
   // collect the intersection of neighbors of v0 and neighbors of v1
   // the ring is included in this intersection
@@ -466,12 +473,11 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
       for(int b = a + 1; b < 3; ++b)
       {
         // check if both vertices are in the ring
-        if(  !std::binary_search(ring_vertices.begin(), ring_vertices.end(), vc0[a])
-          || !std::binary_search(ring_vertices.begin(), ring_vertices.end(), vc0[b]))
+        if( !is_in_ring(vc0[a]) || !is_in_ring(vc0[b]))
           continue;
 
         const VPair vp = make_vertex_pair(vc0[a], vc0[b]);
-        if(std::binary_search(ring_edges.begin(), ring_edges.end(), vp))
+        if(vp_is_in_ring(vp))
           continue;
         if(tr.is_facet(v1, vc0[a], vc0[b])) // check is_facet as the last condition
           return false;
