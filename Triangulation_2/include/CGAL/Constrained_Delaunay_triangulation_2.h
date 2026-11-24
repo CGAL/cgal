@@ -267,6 +267,8 @@ public:
     (static_cast<Ctr*>(this))->insert_constraint(a,b);
   }
 
+  // The points of the polyline are inserted first, and then its segments,
+  // as in `Constrained_triangulation_plus_2` and `insert_constraints()`.
   template <class PointIterator>
   void insert_constraint(PointIterator first, PointIterator last, bool close=false)
   {
@@ -292,7 +294,6 @@ public:
       insert(w,v0);
     }
   }
-
 
   void remove_constraint(Face_handle f, int i){remove_constrained_edge(f,i);}
 

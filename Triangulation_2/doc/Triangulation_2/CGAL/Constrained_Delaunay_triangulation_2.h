@@ -16,17 +16,16 @@ triangulation is constrained Delaunay if the circumscribing circle of
 any of its triangular faces includes in its interior no vertex that is
 visible from the interior of the triangle.
 
-As in the case of constrained triangulations, three different versions
-of Delaunay constrained triangulations are offered
-depending on whether the user wishes to handle
-intersecting input constraints or not.
+As in the case of constrained triangulations, the intersection tag
+determines which configurations of constraints are allowed
+(see Section \ref PkgTriangulation2IntersectionTags).
 
 \tparam Traits is the geometric traits of a constrained Delaunay triangulation.
 It must be a model of `DelaunayTriangulationTraits_2`, providing the `side_of_oriented_circle` test
 of a Delaunay triangulation.
-When intersection of input constraints are supported,
-the geometric traits class
-is required to provide additional function object types
+When intersection of input constraints are supported (i.e.,
+the intersection tag is `Exact_predicates_tag` or `Exact_intersections_tag`)
+the geometric traits class is required to provide additional function object types
 to compute the intersection of two segments.
 and has then to be also a model of the concept
 `ConstrainedTriangulationTraits_2`.
@@ -34,17 +33,18 @@ and has then to be also a model of the concept
 \tparam Tds must be a model of `TriangulationDataStructure_2` or `Default`.
 
 \tparam Itag allows to select if intersecting constraints are supported and how they are handled.
-- `No_constraint_intersection_tag` if intersections of
-input constraints are disallowed, except for the configuration of a single common extremity;
+It must be one of the tags described in Section \ref PkgTriangulation2IntersectionTags:
+- `No_constraint_intersection_tag` if intersections of constraints are disallowed,
+except at a single common extremity, as well as vertices in the interior of constraints;
 - `No_constraint_intersection_requiring_constructions_tag` if intersections of
-input constraints are disallowed, except if no actual construction is needed to represent the intersection.
+constraints are disallowed, except if no new point needs to be constructed to represent the intersection.
 For example, if two constraints intersect in a 'T'-like junction, the intersection point is one of
 the constraints' extremity and as such, no construction is in fact needed. Other similar configurations include
-overlapping segments, common extremities, or equal constraints.
-- `Exact_predicates_tag` allows intersections between input
+overlapping segments, common extremities, or equal constraints;
+- `Exact_predicates_tag` allows intersections between
 constraints and is to be used when the traits class provides exact
 predicates but approximate constructions of the intersection points;
-- `Exact_intersections_tag` allows intersections between input
+- `Exact_intersections_tag` allows intersections between
 constraints and is to be used in conjunction with an exact arithmetic
 type.
 
@@ -197,6 +197,7 @@ void insert_constraint(Vertex_handle va, Vertex_handle vb);
 /*!
 Inserts a polyline defined by the points in the range `[first,last)`.
 The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This enables for example passing the vertex range of a `Polygon_2`.
+All the points of the polyline are first inserted, and then each segment of the polyline is inserted as a constraint.
 \tparam PointIterator is an `InputIterator` with value type `Point`.
 */
 template < class PointIterator>
@@ -211,6 +212,8 @@ is used to improve efficiency.
 More precisely, all endpoints are inserted prior to the segments and according to the order provided by the spatial sort.
 Once endpoints have been inserted, the segments are inserted in the order of the input iterator,
 using the vertex handles of its endpoints.
+With the intersection tag `No_constraint_intersection_tag`, whether an exception is thrown
+does not depend on this order.
 
 \return the number of inserted points.
 \tparam ConstraintIterator is an `InputIterator` with value type `std::pair<Point,Point>` or `Segment`.
@@ -219,7 +222,8 @@ template <class ConstraintIterator>
 std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
 
 /*!
-Same as `insert_constraints(begin,end)` except that duplicated pairs of points are only considered once.
+Same as `insert_constraints(begin,end)` except that duplicated pairs of points are only considered once,
+regardless of their order.
 
 Inserting the same constraint several times may cause problems in
 case of intersecting segments and non-exact constructions. Indeed, when an inserted segment is subdivided, the resulting subsegments are slightly
@@ -245,7 +249,8 @@ std::size_t insert_constraints(PointIterator points_first, PointIterator points_
                                IndicesIterator indices_first, IndicesIterator indices_last);
 
 /*!
-Same as `insert_constraint(points_first, points_last, indices_first, indices_last)` except that duplicated pairs of points are only considered once.
+Same as `insert_constraints(points_first, points_last, indices_first, indices_last)` except that duplicated pairs of points are only considered once,
+regardless of their order (see `insert_unique_constraints(first, last)`).
 
 Inserting the same constraint several times may cause problems in
 case of intersecting segments and non-exact constructions. Indeed, when an inserted segment is subdivided, the resulting subsegments are slightly

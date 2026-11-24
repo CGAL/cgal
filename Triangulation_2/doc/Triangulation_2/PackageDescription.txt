@@ -5,6 +5,35 @@
 /// \defgroup PkgTriangulation2TriangulationClasses Triangulation Classes
 /// \ingroup PkgTriangulation2Ref
 
+/*!
+\defgroup PkgTriangulation2IntersectionTags Intersection Tags
+\ingroup PkgTriangulation2Ref
+
+The intersection tag of a constrained triangulation determines which configurations of constraints
+are allowed, and how intersections between constraints are handled.
+
+The conditions associated with the intersection tags are purely geometric:
+- a constraint is a segment; inserting a polyline is equivalent to inserting the set of its segments;
+- the extremities of a constraint are the endpoints of its segment, and its interior is the segment
+  without its extremities;
+- a constraint whose two extremities are equal is equivalent to the insertion of a point.
+
+These conditions are enforced by all insertion functions, of points as well as of constraints.
+When an insertion is forbidden by the intersection tag, an exception of type
+`CGAL::Constrained_triangulation_2::Intersection_of_constraints_exception` is thrown.
+
+The figure below summarizes how each tag handles elementary configurations of constraints.
+Extremities of constraints are drawn as black disks, and other vertices as white disks.
+*ok* means that the configuration is accepted, *split* that it is accepted and that constraints
+are split at the vertices lying in their interior, *new vertex* that the intersection point is
+constructed and inserted as a new vertex at which both constraints are split, and *exception*
+that an exception is thrown. *split*\f$^*\f$ means that the configuration is accepted if the
+crossing point is already a vertex of the triangulation when the second constraint is inserted,
+and an exception is thrown otherwise.
+
+\image html intersection_tags.svg
+*/
+
 /// \defgroup PkgTriangulation2TraitsClasses Traits Classes
 /// \ingroup PkgTriangulation2Ref
 
@@ -108,6 +137,13 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 - `CGAL::Triangulation_hierarchy_vertex_base_2<Vb>`
 
 - `CGAL::Triangulation_cw_ccw_2`
+
+\cgalCRPSubsection{Intersection Tags}
+
+- `CGAL::No_constraint_intersection_tag`
+- `CGAL::No_constraint_intersection_requiring_constructions_tag`
+- `CGAL::Exact_predicates_tag`
+- `CGAL::Exact_intersections_tag`
 
 \cgalCRPSubsection{Traits Classes}
 

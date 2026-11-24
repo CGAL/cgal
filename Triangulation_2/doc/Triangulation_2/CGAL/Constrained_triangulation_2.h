@@ -1,54 +1,98 @@
 
 namespace CGAL {
 
-
 /*!
-\ingroup PkgTriangulation2TriangulationClasses
+\ingroup PkgTriangulation2IntersectionTags
 
-Intersection tag for constrained triangulations, when input constraints do not intersect.
-
-\deprecated This class is deprecated since \cgal 5.1 as it was ambiguous. Users should instead
-use the tags `No_constraint_intersection_tag` and `No_constraint_intersection_requiring_constructions_tag`,
+\deprecated This class is deprecated since \cgal 5.1, as it was ambiguous. It is equivalent to
+`No_constraint_intersection_requiring_constructions_tag`. Users should instead use the tags
+`No_constraint_intersection_tag` or `No_constraint_intersection_requiring_constructions_tag`,
 depending on their needs.
 */
 struct No_intersection_tag{};
 
 /*!
-\ingroup PkgTriangulation2TriangulationClasses
+\ingroup PkgTriangulation2IntersectionTags
 
-Intersection tag for constrained triangulations, when input constraints are not allowed to intersect
-except at a single common extremity.
+Intersection tag for constrained triangulations, when constraints are not allowed to intersect,
+except at a single common extremity, and vertices are not allowed to lie in the interior of a constraint.
+
+More precisely, the following conditions must hold at all times:
+- two constraints are either disjoint, or intersect at a single point that is an extremity of both.
+  In particular, 'T'-junctions, crossings, and overlapping or identical constraints are forbidden;
+- no vertex of the triangulation lies in the interior of a constraint. In particular, inserting
+  a point in the interior of a constraint, or a constraint whose interior contains a vertex, is forbidden.
+
+As a consequence, constraints are never split: each constraint corresponds to exactly one
+constrained edge of the triangulation. Whether a sequence of insertions satisfies these conditions
+depends only on the inserted points and constraints, and not on the order in which they are inserted.
+
+An exception of type `Constrained_triangulation_2::Intersection_of_constraints_exception`
+is thrown upon any insertion that would break these conditions.
 */
 struct No_constraint_intersection_tag{};
 
 /*!
-\ingroup PkgTriangulation2TriangulationClasses
+\ingroup PkgTriangulation2IntersectionTags
 
-Intersection tag for constrained triangulations, when input constraints are not allowed to intersect
-except if the intersection does not require any new point construction.
+Intersection tag for constrained triangulations, when constraints are allowed to intersect,
+except if representing the intersection requires the construction of a new point.
 
-This for example allows configurations such as two segments intersecting in a 'T', or overlapping (and
-even identical) segments.
+More precisely, consider the arrangement of the constraints and of the vertices already in the triangulation.
+A new constraint can be inserted if and only if adding it to this arrangement creates no vertex other
+than the existing vertices and the extremities of the new constraint. In other words, it may not cross
+an existing constraint at a point that lies in the interior of both and that is not already a vertex
+of the triangulation. All other configurations are allowed, for example 'T'-junctions,
+overlapping or identical constraints, constraints passing through existing vertices,
+and points inserted in the interior of constraints. Constraints are split at the vertices lying
+in their interior, so that a constraint may correspond to several constrained edges of the triangulation.
+
+An exception of type `Constrained_triangulation_2::Intersection_of_constraints_exception`
+is thrown upon insertion of a constraint that would break this condition.
 
 This is the default tag.
 */
 struct No_constraint_intersection_requiring_constructions_tag{};
 
 /*!
-\ingroup PkgTriangulation2TriangulationClasses
+\ingroup PkgTriangulation2IntersectionTags
 
-Intersection tag for constrained triangulations, if exact predicates and exact constructions are provided.
+Intersection tag for constrained triangulations, when constraints may intersect in any way,
+and the geometric traits class provides exact predicates but approximate constructions.
+
+No configuration is forbidden. When two constraints cross (see `No_constraint_intersection_requiring_constructions_tag`),
+their intersection point is constructed and inserted as a new vertex, and both constraints are split at this vertex.
+
+All other configurations are handled as with `No_constraint_intersection_requiring_constructions_tag`.
+As constructions are approximate, a constructed vertex may not lie exactly on the constraints,
+and constrained edges may thus slightly deviate from the input constraints;
+the algorithm is designed to remain robust in this setting.
+
+When using this tag, be wary of inserting the same constraint multiple times, as this may
+cause problems in . Indeed, when an inserted segment is subdivided, the resulting subsegments
+are slightly displaced by numerical error and may therefore intersect the next insertion
+of the same segment, creating additional vertices at each new insertion.
+Functions are provided to insert unique constraints.
+
+The geometric traits class must be a model of `ConstrainedTriangulationTraits_2`.
+No exception of type `Constrained_triangulation_2::Intersection_of_constraints_exception` is thrown.
 */
-struct Exact_intersections_tag{};
-
+struct Exact_predicates_tag{};
 
 /*!
-\ingroup PkgTriangulation2TriangulationClasses
+\ingroup PkgTriangulation2IntersectionTags
 
-Intersection tag for constrained triangulations, if the geometric traits provides exact predicates but approximate constructions.
+Intersection tag for constrained triangulations, when constraints may intersect in any way,
+and the geometric traits class provides exact predicates and exact constructions.
+
+Same as `Exact_predicates_tag`, except that intersection points are computed exactly
+and thus lie exactly on the constraints. Using `Constrained_triangulation_plus_2` is recommended
+with this tag, as it avoids cascading intersection computations.
+
+The geometric traits class must be a model of `ConstrainedTriangulationTraits_2`.
+No exception of type `Constrained_triangulation_2::Intersection_of_constraints_exception` is thrown.
 */
-
-struct Exact_predicates_tag{};
+struct Exact_intersections_tag{};
 
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
@@ -64,36 +108,11 @@ edges in the triangulation are called *constrained edges*.
 
 The endpoints of constrained edges are of course vertices of the
 triangulation. However the triangulation may include
-other vertices as well.
-There are three versions of constrained triangulations
-<UL>
-<LI>In the basic version, the constrained triangulation
-does not handle intersecting constraints, and the set of input
-constraints is required to be a set of polylines that do not intersect
-except possibly at their endpoints.
-An exception of type `Intersection_of_constraints_exception`
-is thrown upon insertion of a constraint intersecting in
-its interior an already inserted constraint.
-Any number of constrained edges may share the same endpoint.
-Constrained edges may be vertical or have zero length.
-<LI>The two other versions support intersecting input constraints.
-In those versions, input constraints may consist of
-intersecting, overlapping or partially
-overlapping segments.
-The triangulation introduces additional vertices at each point which
-is a proper intersection point of two
-constraints. A single constraint intersecting other
-constraints will then appear as the union of several
-constrained edges of the triangulation.
-There are two ways to deal with intersecting constraints.
-<UL>
-<LI>The first one is robust when predicates are evaluated exactly but
-constructions (i. e. intersection computations) are
-approximate.
-<LI>The second one should be used with exact arithmetic (meaning exact
-evaluation of predicates and exact computation of intersections.)
-</UL>
-</UL>
+other vertices as well. Any number of constrained edges may share the same endpoint.
+
+The intersection tag `Itag` determines which configurations of constraints are allowed,
+(see Section \ref PkgTriangulation2IntersectionTags).
+
 In order to retrieve the constrained edges of a constraint, or
 the constraints overlapping with a constrained edge, we provide
 the class `Constrained_triangulation_plus_2`. This class maintains
@@ -107,9 +126,9 @@ as it avoids the cascading of intersection computations.
 
 \tparam Traits is a geometric traits class and must be a model
 of the concept `TriangulationTraits_2`.
-When intersection of input constraints are supported,
-the geometric traits class
-is required to provide additional function object types
+When intersection of input constraints are supported (i.e., when
+the intersection tag is `Exact_predicates_tag` or `Exact_intersections_tag`)
+the geometric traits class is required to provide additional function object types
 to compute the intersection of two segments.
 It has then to be a model of the concept
 `ConstrainedTriangulationTraits_2`.
@@ -122,20 +141,9 @@ plugged into the triangulation data structure of a constrained Delaunay triangul
 The face base of a constrained Delaunay triangulation has to be a model of the concept
 `ConstrainedTriangulationFaceBase_2`.
 
-\tparam Itag is the intersection tag
-which serves to choose between the different
+\tparam Itag is the intersection tag which serves to choose between the different
 strategies to deal with constraints intersections.
-\cgal provides three valid types for this parameter:
-- `No_constraint_intersection_tag` disallows intersections of input constraints
-except for the case of a single common extremity;
-- `No_constraint_intersection_requiring_constructions_tag` (default value) disallows intersections
-of input constraints except for configurations where the intersection can be represented
-without requiring the construction of a new point such as overlapping constraints;
-- `Exact_predicates_tag` is to be used when the traits class
-provides exact predicates but approximate constructions of the
-intersection points;
-- `Exact_intersections_tag` is to be used in conjunction
-with an exact arithmetic type.
+It must be one of the tags described in Section \ref PkgTriangulation2IntersectionTags.
 
 \cgal provides default instantiations for the template parameters `Tds` and `Itag`.
 If `Gt` is the geometric traits class parameter, the default triangulation data structure
@@ -185,6 +193,14 @@ The intersection tag which decides how
 intersections between input constraints are dealt with.
 */
 typedef Itag Intersection_tag;
+
+/*!
+Exception, derived from `std::exception`, thrown when the intersection tag is
+`No_constraint_intersection_tag` or `No_constraint_intersection_requiring_constructions_tag`,
+and the insertion of a point or of a constraint would break the conditions associated with the tag
+(see Section \ref PkgTriangulation2IntersectionTags).
+*/
+class Intersection_of_constraints_exception;
 
 /// @}
 
@@ -254,13 +270,18 @@ Constrained_edges constrained_edges() const;
 
 /*!
 inserts point `p` and restores the status (constrained or not) of all
-the touched edges. If present, `f` is used as a hint
+the touched edges: if `p` lies in the interior of a constrained edge,
+this edge is split into two constrained edges. If present, `f` is used as a hint
 for the location of `p`.
+
+If the intersection tag is `No_constraint_intersection_tag` and `p` lies in the interior
+of a constrained edge, an exception of type `Intersection_of_constraints_exception` is thrown.
 */
 Vertex_handle insert(Point p, Face_handle f = Face_handle() );
 
 /*!
 inserts point `p` in the triangulation at the location given by `(lt,loc,i)`.
+Same as above for constrained edges.
 \sa `Triangulation_2::locate()`
 */
 Vertex_handle
@@ -276,7 +297,7 @@ Vertex_handle push_back(const Point& p);
 /*!
 inserts points `a` and `b` in this order, and inserts the line segment `ab` as a
 constraint. Removes the faces crossed by segment `ab` and creates new
-faces instead. If a vertex `c` lies on segment `ab`, constraint `ab` is
+faces instead. If a vertex `c` lies in the interior of segment `ab`, constraint `ab` is
 replaced by the two constraints `ac` and `cb`. Apart from the insertion of
 `a` and `b`, the algorithm runs in time proportional to the number of
 removed triangles.
@@ -284,7 +305,7 @@ removed triangles.
 void insert_constraint(Point a, Point b);
 
 /*!
-Equivalent to `insert(c.first, c.second)`.
+Equivalent to `insert_constraint(c.first, c.second)`.
 */
 void push_back(const std::pair<Point,Point>& c);
 
@@ -297,6 +318,7 @@ void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb);
 /*!
 inserts a polyline defined by the points in the range `[first,last)`.
 The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This enables for example passing the vertex range of a `Polygon_2`.
+All the points of the polyline are first inserted, and then each segment of the polyline is inserted as a constraint.
 \tparam PointIterator must be an `InputIterator` with the value type `Point`.
 */
 template < class PointIterator>
@@ -346,9 +368,4 @@ Note that `ct` is first cleared.
 template <typename  Traits, typename Tds, typename Itag>
 std::istream& operator>>(std::istream& is,Constrained_triangulation_2<Traits,Tds,Itag> Ct& ct);
 
-/*! Exception used by constrained triangulations configured with
-the tags `No_constraint_intersection_tag` or `No_constraint_intersection_requiring_constructions_tag`
-when the insertion of a new constraint would break the respective conditions associated to each tag.
-*/
-class Intersection_of_constraints_exception;
 } /* end namespace CGAL */
