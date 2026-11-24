@@ -417,7 +417,7 @@ namespace CGAL {
                               const CGAL_NP_CLASS& np = parameters::default_values())
   {
     EmptyFunctor f;
-    return save_combinatorial_map(amap, filename, f);
+    return save_combinatorial_map(amap, filename, f, np);
   }
 
   // Here T is a Dart_descriptor so no need of &
