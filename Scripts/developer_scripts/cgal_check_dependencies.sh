@@ -162,10 +162,10 @@ if [ -n "$TOTAL_RES" ]; then
   end_group
   exit 1
 else
+  end_group
   echo "The dependencies are up to date."
   if [ -n "$GITHUB_STEP_SUMMARY" ]; then
     echo "✅ The dependencies are up to date." >> "$GITHUB_STEP_SUMMARY"
   fi
-  end_group
   exit 0
 fi
