@@ -99,7 +99,7 @@ template <class TriangleMesh,
           class VertexPointMap = Default,
           class Kernel = Default,
           class AABBTree = Default,
-          class Has_rotation = CGAL::Tag_true, // TODO: this parameter is no longer used
+          class Has_rotation = CGAL::Tag_true,
           bool Use_inverse_transformation = false>
 struct Rigid_triangle_mesh_collision_detection
 {
@@ -203,12 +203,12 @@ struct Rigid_triangle_mesh_collision_detection
 #endif
     if constexpr(Use_inverse_transformation){
       if(AABB_trees::do_intersect(*m_aabb_trees[id_A], *m_aabb_trees[id_B],
-                                   parameters::transformation(m_transformations[id_A]).use_inverse_transformation(CGAL::Tag_true()),
-                                   parameters::transformation(m_transformations[id_B]))) return true;
+                                   parameters::transformation(m_transformations[id_A]).transformation_has_rotation(Has_rotation()).use_inverse_transformation(CGAL::Tag_true()),
+                                   parameters::transformation(m_transformations[id_B]).transformation_has_rotation(Has_rotation()))) return true;
     } else {
       if(AABB_trees::do_intersect(*m_aabb_trees[id_A], *m_aabb_trees[id_B],
-                                   parameters::transformation(m_transformations[id_A]).use_inverse_transformation(CGAL::Tag_false()),
-                                   parameters::transformation(m_transformations[id_B]))) return true;
+                                   parameters::transformation(m_transformations[id_A]).transformation_has_rotation(Has_rotation()).use_inverse_transformation(CGAL::Tag_false()),
+                                   parameters::transformation(m_transformations[id_B]).transformation_has_rotation(Has_rotation()))) return true;
     }
     return false;
   }

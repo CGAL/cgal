@@ -115,10 +115,16 @@ public:
   Two_trees_listing_intersecting_primitives_traits_with_transformation(const AABBTraits1& traits1, const AABBTraits2& traits2,
                                                                        OutputIterator& out_,
                                                                        const AffTransformation &tr1, const AffTransformation &tr2)
+          : Two_trees_listing_intersecting_primitives_traits_with_transformation(traits1, traits2, out_, tr1, tr2, tr1.has_rotation(), tr2.has_rotation())
+  {}
+  Two_trees_listing_intersecting_primitives_traits_with_transformation(const AABBTraits1& traits1, const AABBTraits2& traits2,
+                                                                       OutputIterator& out_,
+                                                                       const AffTransformation &tr1, const AffTransformation &tr2,
+                                                                       bool tr1_has_rotation, bool tr2_has_rotation)
     : m_traits1(traits1), m_traits2(traits2),
       out(out_),
       m_tr1(tr1), m_tr2(tr2),
-      m_tr1_has_rotation(tr1.has_rotation()), m_tr2_has_rotation(tr2.has_rotation())
+      m_tr1_has_rotation(tr1_has_rotation), m_tr2_has_rotation(tr2_has_rotation)
   {
     if constexpr(Use_inverse_transformation::value)
     {
@@ -334,10 +340,16 @@ class Two_trees_do_intersect_traits_with_transformation
   typedef ::CGAL::AABB_node<AABBTraits2> Node2;
 
 public:
-  Two_trees_do_intersect_traits_with_transformation(const AABBTraits1& traits1, const AABBTraits2& traits2, const AffTransformation &tr1, const AffTransformation &tr2)
+  Two_trees_do_intersect_traits_with_transformation(const AABBTraits1& traits1, const AABBTraits2& traits2,
+                                                    const AffTransformation &tr1, const AffTransformation &tr2)
+    : Two_trees_do_intersect_traits_with_transformation(traits1, traits2, tr1, tr2, tr1.has_rotation(), tr2.has_rotation())
+  {}
+  Two_trees_do_intersect_traits_with_transformation(const AABBTraits1& traits1, const AABBTraits2& traits2,
+                                                    const AffTransformation &tr1, const AffTransformation &tr2,
+                                                    bool tr1_has_rotation, bool tr2_has_rotation)
     : m_traits1(traits1), m_traits2(traits2),
       m_tr1(tr1), m_tr2(tr2),
-      m_tr1_has_rotation(tr1.has_rotation()), m_tr2_has_rotation(tr2.has_rotation()),
+      m_tr1_has_rotation(tr1_has_rotation), m_tr2_has_rotation(tr2_has_rotation),
       m_is_found(false)
   {
     if constexpr(Use_inverse_transformation::value)
