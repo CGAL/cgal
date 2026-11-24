@@ -415,7 +415,7 @@ bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
     if(!c0->has_vertex(v1))
       continue;
 
-    const auto vp = make_vertex_pair(opposite_edge(c0, v0, v1, tr));
+    const auto vp = opposite_edge(c0, v0, v1, tr); //already ordered
     ring_edges.push_back(vp);
     ring_vertices.push_back(vp.first);
     ring_vertices.push_back(vp.second);
