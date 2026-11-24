@@ -130,7 +130,8 @@ public:
 
   class Intersection_of_constraints_exception : public std::exception
   {
-    const char* what() const throw ()
+  public:
+    const char* what() const noexcept override
     {
       return "Unauthorized intersections of constraints";
     }
