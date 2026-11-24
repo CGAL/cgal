@@ -15,7 +15,6 @@
 
 #include <CGAL/Real_timer.h>
 
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
@@ -41,9 +40,12 @@ int main(int argc, char* argv[])
   timer.stop();
   std::cout << "Remeshing done in " << timer.time() << " seconds." << std::endl;
 
-  std::ofstream out("sphere_remeshed.mesh");
-  CGAL::IO::write_MEDIT(out, tr);
-  out.close();
+  // optional output, not written by the testsuite
+  if(argc > 3)
+  {
+    std::ofstream out(argv[3]);
+    CGAL::IO::write_MEDIT(out, tr);
+  }
 
   return EXIT_SUCCESS;
 }
