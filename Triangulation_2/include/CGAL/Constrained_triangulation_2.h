@@ -420,31 +420,37 @@ insert_constraint(Vertex_handle vaa, Vertex_handle vbb, OutputIterator out)
   void push_back(const Constraint& c);
 
 
+protected:
+  template <class PointIterator>
+  void internal_insert_polyline(PointIterator first, PointIterator last, bool close)
+  {
+    std::vector<Vertex_handle> vertices;
+    Face_handle hint;
+    for(; first != last; ++first){
+      Vertex_handle v = virtual_insert(*first, hint);
+      hint = v->face();
+      if (vertices.empty() || vertices.back() != v) {
+        vertices.push_back(v);
+      }
+    }
+    if (close && vertices.size() > 1 && vertices.front() != vertices.back()) {
+      vertices.push_back(vertices.front());
+    }
+    for (std::size_t i = 1; i < vertices.size(); ++i) {
+      insert_constraint(vertices[i-1], vertices[i]);
+    }
+  }
+
+public:
+  // The points of the polyline are inserted first, and then its segments,
+  // as in `Constrained_triangulation_plus_2` and `insert_constraints()`.
   template <class PointIterator>
   void insert_constraint(PointIterator first, PointIterator last, bool close=false)
   {
-    if(first == last){
-      return;
-    }
-    const Point& p0 = *first;
-    Point p = p0;
-    Vertex_handle v0 = insert(p0), v(v0), w(v0);
-    Face_handle hint = v0->face();
-    ++first;
-    for(; first!=last; ++first){
-      const Point& q = *first;
-      if(p != q){
-        w = insert(q,hint);
-        insert_constraint(v,w);
-        hint = w->face();
-        v = w;
-        p = q;
-      }
-    }
-    if(close && (p != p0)){
-      insert(w,v0);
-    }
+    internal_insert_polyline(first, last, close);
   }
+
+public:
 
   void remove(Vertex_handle  v);
   void remove_constrained_edge(Face_handle f, int i);
