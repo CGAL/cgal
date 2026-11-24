@@ -289,9 +289,9 @@ public:
     {
       m_current_face_start = number_of_elements(POS_FACES);
       // A face with no color inherits the color of its volume, if it has one.
+      m_current_face_volume_color=(m_building_volume && m_current_volume_has_color);
       m_buffer_for_faces.face_begin(
-        (m_building_volume && m_current_volume_has_color)
-        ? m_current_volume_color : m_default_color_face);
+        m_current_face_volume_color ? m_current_volume_color : m_default_color_face);
     }
   }
 
@@ -306,6 +306,7 @@ public:
     else
     {
       m_current_face_start = number_of_elements(POS_FACES);
+      m_current_face_volume_color=false;
       m_buffer_for_faces.face_begin(acolor);
     }
   }
@@ -339,6 +340,8 @@ public:
         const unsigned int idx=static_cast<unsigned int>(m_faces.size());
         m_faces.emplace_back(m_current_face_start,
                              number_of_elements(POS_FACES)-m_current_face_start);
+        m_face_volume.push_back(static_cast<int>(m_volume_faces.size())-1);
+        m_face_volume_color.push_back(m_current_face_volume_color);
         record_current_face_value();
         m_face_dedup.emplace(std::move(key), idx);
         m_volume_faces.back().push_back(idx);
@@ -350,6 +353,8 @@ public:
     // Record this face's vertex range in POS_FACES, for the clip-plane cap.
     m_faces.emplace_back(m_current_face_start,
                          number_of_elements(POS_FACES) - m_current_face_start);
+    m_face_volume.push_back(-1);
+    m_face_volume_color.push_back(false);
     record_current_face_value();
   }
 
@@ -402,6 +407,15 @@ public:
   // The (first vertex, vertex count) range of face i in POS_FACES.
   const std::pair<unsigned int, unsigned int> &face_range(unsigned int i) const
   { return m_faces[i]; }
+
+  // The volume whose copy of face i is stored (a wall shared by two volumes keeps
+  // the orientation of the first one), or -1 for a face outside any volume.
+  int face_volume(unsigned int i) const
+  { return m_face_volume[i]; }
+
+  // Whether face i has the color of its volume (it was not given its own color).
+  bool face_has_volume_color(unsigned int i) const
+  { return m_face_volume_color[i]; }
 
   const std::vector<std::vector<unsigned int>> &get_volume_faces() const
   { return m_volume_faces; }
@@ -492,6 +506,8 @@ public:
     m_buffer_for_faces.clear();
     m_texts.clear();
     m_faces.clear();
+    m_face_volume.clear();
+    m_face_volume_color.clear();
     m_volume_faces.clear();
     m_volume_colors.clear();
     m_volume_bboxes.clear();
@@ -573,6 +589,10 @@ protected:
   // Clip-plane cap: per-face vertex range in POS_FACES, and per-volume face-index
   // lists with their colors. A shared wall is one face referenced by two volumes.
   std::vector<std::pair<unsigned int, unsigned int>> m_faces;
+  // Per face: its volume (-1 if none) and whether it has the volume color.
+  std::vector<int> m_face_volume;
+  std::vector<bool> m_face_volume_color;
+  bool m_current_face_volume_color = false;
   std::vector<std::vector<unsigned int>> m_volume_faces;
   std::vector<CGAL::IO::Color> m_volume_colors;
   std::vector<CGAL::Bbox_3> m_volume_bboxes;

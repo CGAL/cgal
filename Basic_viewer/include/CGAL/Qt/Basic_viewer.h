@@ -1082,6 +1082,7 @@ public:
         else
         {
           const std::vector<CGAL::Bbox_3> &bb = m_scene.get_volume_bboxes();
+          bool flipped=false, recolored=false; // u_FlipNormal and u_UseDefaultColor set
           for (std::size_t v = 0; v < num_volumes; ++v)
           {
             if (!m_volumes_kept[v]) { continue; }
@@ -1107,12 +1108,38 @@ public:
             }
             for (unsigned int fi : volumes[v])
             {
+              // A wall shared by two volumes is stored once, as the copy of its first
+              // volume. Drawn for the other volume (when the first one is removed), it
+              // takes the normal, and the color if it had the volume one, of this volume.
+              const bool other=(m_scene.face_volume(fi)!=static_cast<int>(v));
+              if (other!=flipped)
+              {
+                rendering_program_face.setUniformValue("u_FlipNormal", static_cast<GLint>(other?1:0));
+                flipped=other;
+              }
+              const bool recolor=(other && !m_use_default_color &&
+                                  m_scene.face_has_volume_color(fi));
+              if (recolor)
+              {
+                const CGAL::IO::Color &c=m_scene.get_volume_colors()[v];
+                rendering_program_face.setUniformValue("u_DefaultColor",
+                  QVector3D(c.red()/255.f, c.green()/255.f, c.blue()/255.f));
+              }
+              if (recolor!=recolored)
+              {
+                rendering_program_face.setUniformValue("u_UseDefaultColor", static_cast<GLint>(recolor?1:0));
+                recolored=recolor;
+              }
               const std::pair<unsigned int, unsigned int> &r = m_scene.face_range(fi);
               glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
                            static_cast<GLsizei>(r.second));
             }
           }
           rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
+          if (flipped)
+          { rendering_program_face.setUniformValue("u_FlipNormal", static_cast<GLint>(0)); }
+          if (recolored)
+          { rendering_program_face.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); }
         }
         vao[VAO_FACES].release();
         glDisable(GL_POLYGON_OFFSET_FILL);

@@ -34,6 +34,7 @@ uniform highp   mat4  u_Mv;
 uniform mediump float u_PointSize;
 uniform mediump vec3  u_DefaultColor;
 uniform         bool  u_UseDefaultColor;
+uniform         int   u_FlipNormal; // 1: the face is drawn for its other volume
 
 void main(void)
 {
@@ -49,6 +50,7 @@ void main(void)
   vs_fP = u_Mv * pos;
 
   fN = mat3(u_Mv)* a_Normal;
+  if (u_FlipNormal!=0) { fN=-fN; }
 
   gl_Position = u_Mvp * pos;
   gl_PointSize = u_PointSize;
