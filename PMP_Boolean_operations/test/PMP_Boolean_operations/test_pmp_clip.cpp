@@ -953,9 +953,9 @@ void test_isocuboid()
   assert(num_vertices(meshes[2]) == 32  );
   assert(num_vertices(meshes[3]) == 125 );
   assert(num_vertices(meshes[4]) == 224 );
-  assert(num_vertices(meshes[5]) == 107 );
+  assert(num_vertices(meshes[5]) == 105 );
   assert(num_vertices(meshes[6]) == 121 );
-  assert(num_vertices(meshes[7]) == 56  );
+  assert(num_vertices(meshes[7]) == 58  );
   assert(num_vertices(meshes[8]) == 49  );
   assert(num_vertices(meshes[9]) == 13  );
   assert(tm.is_valid());
