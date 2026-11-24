@@ -347,8 +347,25 @@ private:
     std::size_t nbe = 0;
     std::size_t nbv = 0;
 #endif
+    // keep the corner indices of an input C3t3
+    std::vector<std::pair<Vertex_handle, Corner_index>> input_corners;
+    if (input_is_c3t3())
+    {
+      for (Vertex_handle v : m_c3t3.vertices_in_complex())
+        input_corners.emplace_back(v, m_c3t3.corner_index(v));
+    }
+
     //update number_of_cells and number_of_facets in c3t3
     m_c3t3.rescan_after_load_of_triangulation();
+
+    // rescan_after_load() resets all corner indices to 1
+    // so tag them back
+    for(const auto& [v, corner] : input_corners)
+    {
+      if (m_c3t3.is_in_complex(v))
+        m_c3t3.remove_from_complex(v);
+      m_c3t3.add_to_complex(v, corner);
+    }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
