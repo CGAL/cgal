@@ -26,7 +26,9 @@ do
 done
 
 CGAL_ROOT=$PWD
-mkdir -p dep_check_build && cd dep_check_build
+mkdir -p dep_check_build
+trap 'rm -rf dep_check_build' EXIT
+cd dep_check_build
 for pkg_path in "$CGAL_ROOT"/*
 do
   pkg=$(basename "$pkg_path")
