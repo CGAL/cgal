@@ -215,7 +215,7 @@ public:
     std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const {
         std::array<Vertex_descriptor, 4> sub_decomposition;
         auto input_element = optimization_tet_2_input_element[cell].first;
-        std::size_t tet_number = optimization_tet_2_input_element[cell].second;
+        unsigned tet_number = optimization_tet_2_input_element[cell].second;
         for (unsigned i = 0; i < 4; ++i) {
             sub_decomposition[i] = _mesh.get_cell_vertex(input_element, get_element_local_vert(input_element, tet_number, i));
         }
