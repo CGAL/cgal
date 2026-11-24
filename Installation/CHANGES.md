@@ -1,5 +1,12 @@
 # Release History
 
+### [2D Straight Skeleton and Polygon Offsetting](https://doc.cgal.org/6.4/Manual/packages.html#PkgStraightSkeleton2)
+
+- Added the member function `enter_weighted_contour()` to the class [`CGAL::Straight_skeleton_builder_2`](https://doc.cgal.org/6.4/Straight_skeleton_2/classCGAL_1_1Straight__skeleton__builder__2.html),
+  which enters a contour along with the weights of its edges, and checks that these weights are valid.
+- The member function `enter_contour_weights()` of the class [`CGAL::Straight_skeleton_builder_2`](https://doc.cgal.org/6.4/Straight_skeleton_2/classCGAL_1_1Straight__skeleton__builder__2.html)
+  has been deprecated. The function `enter_weighted_contour()` should be used instead.
+
 ## [Release 6.3](https://github.com/CGAL/cgal/releases/tag/v6.3)
 
 Release date: December 2026
