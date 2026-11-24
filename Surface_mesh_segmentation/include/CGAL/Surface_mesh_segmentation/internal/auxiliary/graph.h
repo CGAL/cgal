@@ -702,6 +702,7 @@ inline Graph::Graph(void (*err_function)(const char *))
   orphan_last = nullptr;
   flow = 0;
 }
+
 inline void Graph::clear()
 {
   while (node_block_first) {
