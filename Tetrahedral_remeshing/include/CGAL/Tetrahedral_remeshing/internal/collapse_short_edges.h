@@ -1293,7 +1293,7 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
       CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
       Result_type res = local_tri.collapse();
       if(res != VALID)
-      	return Vertex_handle();
+        return Vertex_handle();
     }
     return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
   }
