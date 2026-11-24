@@ -341,11 +341,11 @@ insert_constraint(Vertex_handle vaa, Vertex_handle vbb, OutputIterator out)
   int i;
   if(includes_edge(vaa,vbb,vi,fr,i))
   {
-    // if the segment (or a subpart of the segment) that we are trying to constraint is already
-    // present in the triangulation and is already marked as constrained,
-    // then this is an intersection
     if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
-      if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
+      // No intersection: the constraint must not
+      // - contain a vertex in its interior (`vi != vbb`);
+      // - overlap a constrained edge.
+      if(vi != vbb || fr->is_constrained(dimension() == 1 ? 2 : i)) {
         throw Intersection_of_constraints_exception();
       }
     }
@@ -365,6 +365,12 @@ insert_constraint(Vertex_handle vaa, Vertex_handle vbb, OutputIterator out)
                                                conflict_boundary_ab,
                                                conflict_boundary_ba,
                                                vi);
+  if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
+    // includes_edge has checked a vi along the edge direction, but we need a check for T
+    if(!intersection && vi != vbb) {
+      throw Intersection_of_constraints_exception();
+    }
+  }
   if ( intersection) {
     if (vi != vaa && vi != vbb) {
       insert_constraint(vaa,vi,out);
@@ -832,11 +838,11 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
     int i;
     if(includes_edge(vaa,vbb,vi,fr,i))
     {
-      // if the segment (or a subpart of the segment) that we are trying to constraint is already
-      // present in the triangulation and is already marked as constrained,
-      // then this is an intersection
       if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
-        if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
+        // No intersection: the constraint must not
+        // - contain a vertex in its interior (`vi != vbb`);
+        // - overlap a constrained edge.
+        if(vi != vbb || fr->is_constrained(dimension() == 1 ? 2 : i)) {
           throw Intersection_of_constraints_exception();
         }
       }
@@ -855,6 +861,12 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
                                                  conflict_boundary_ab,
                                                  conflict_boundary_ba,
                                                  vi);
+    if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
+      // includes_edge has checked a vi along the edge direction, but we need a check for T
+      if(!intersection && vi != vbb) {
+        throw Intersection_of_constraints_exception();
+      }
+    }
     if ( intersection) {
       if (vi != vaa && vi != vbb) {
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS

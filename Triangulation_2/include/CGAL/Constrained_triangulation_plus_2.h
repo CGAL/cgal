@@ -918,6 +918,14 @@ insert_subconstraint(Vertex_handle vaa,
               << vi->time_stamp() << "= " << vi->point()
               << '\n';
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+      if constexpr (std::is_same_v<Intersection_tag, No_constraint_intersection_tag>) {
+        // The constraint must not contain a vertex in its interior.
+        // (The edge [vaa, vbb] may already be constrained, e.g. when reading from a stream:
+        // overlapping constraints are detected using the hierarchy, above.)
+        if(vi != vbb) {
+          throw typename Tr::Intersection_of_constraints_exception();
+        }
+      }
       this->mark_constraint(fr,i);
       if (vi != vbb)  {
         hierarchy().split_constraint(vaa,vbb,vi);
@@ -941,6 +949,13 @@ insert_subconstraint(Vertex_handle vaa,
                                                       conflict_boundary_ab,
                                                       conflict_boundary_ba,
                                                       vi);
+
+    if constexpr (std::is_same_v<Intersection_tag, No_constraint_intersection_tag>) {
+    // includes_edge has checked a vi along the edge direction, but we need a check for T
+      if(!intersection && vi != vbb) {
+        throw typename Tr::Intersection_of_constraints_exception();
+      }
+    }
 
     if ( intersection) {
       if (vi != vaa && vi != vbb) {
