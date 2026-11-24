@@ -952,7 +952,8 @@ insert_subconstraint(Vertex_handle vaa,
                                                       vi);
 
     if constexpr (std::is_same_v<Intersection_tag, No_constraint_intersection_tag>) {
-    // includes_edge has checked a vi along the edge direction, but we need a check for T
+      // includes_edge has checked a vi along the edge direction,
+      // but we need a check for cases such as T-junctions
       if(!intersection && vi != vbb) {
         throw typename Tr::Intersection_of_constraints_exception();
       }

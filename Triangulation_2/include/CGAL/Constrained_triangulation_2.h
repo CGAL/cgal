@@ -366,7 +366,8 @@ insert_constraint(Vertex_handle vaa, Vertex_handle vbb, OutputIterator out)
                                                conflict_boundary_ba,
                                                vi);
   if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
-    // includes_edge has checked a vi along the edge direction, but we need a check for T
+    // includes_edge has checked a vi along the edge direction,
+    // but we need a check for cases such as T-junctions
     if(!intersection && vi != vbb) {
       throw Intersection_of_constraints_exception();
     }
@@ -866,7 +867,8 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
                                                  conflict_boundary_ba,
                                                  vi);
     if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
-      // includes_edge has checked a vi along the edge direction, but we need a check for T
+      // includes_edge has checked a vi along the edge direction,
+      // but we need a check for cases such as T-junctions
       if(!intersection && vi != vbb) {
         throw Intersection_of_constraints_exception();
       }
