@@ -316,14 +316,14 @@ check_documented_named_parameters()
     echo "  CGAL::parameters::${i}(a).${i}(a);" >> main.cpp
   done
   echo '}' >> main.cpp
-  printf 'Generated main.cpp:\n```c++\n'
+  printf '\n<details>\n<summary>Generated main.cpp</summary>\n\n```c++\n'
   cat main.cpp
-  printf '```\n'
+  printf '```\n</details>\n'
   if ! g++ -DCGAL_NO_STATIC_ASSERTION_TESTS -I"$git_dir"/STL_Extension/include -I"$git_dir"/Stream_support/include -I"$git_dir"/Installation/include main.cpp; then
-    echo 'ERROR: At least one documented named parameter does not exist'
-    cd - > /dev/null || exit 1
-    rm -r "$tmp_dir"
+    echo 'ERROR: At least one documented named parameter does not exist!'
     exit_code=1
+  else
+    echo 'All documented named parameters exist.'
   fi
   cd - > /dev/null || exit 1
   rm -r "$tmp_dir"

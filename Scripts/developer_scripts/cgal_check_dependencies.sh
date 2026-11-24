@@ -39,11 +39,21 @@ do
   fi
 done
 
+display_result()
+{
+  if [ "$1" -eq 0 ]; then
+    printf '\n%s\n' "✅"
+  else
+    printf '\n%s\n' "❌"
+  fi
+}
+
 start_group()
 {
     local title=$1
     if [ "$GITHUB_ACTIONS" = "true" ]; then
         echo "::group::$title"
+        printf '\n## %s\n\n' "$title" >> "$GITHUB_STEP_SUMMARY"
     else
         printf '\n## %s\n\n' "$title"
     fi
@@ -91,6 +101,12 @@ group()
         "$@" || status=$?
     fi
     end_group
+
+    display_result "$status"
+    if [ "$GITHUB_ACTIONS" = "true" ] && [ -n "$GITHUB_STEP_SUMMARY" ]; then
+        display_result "$status" >> "$GITHUB_STEP_SUMMARY"
+    fi
+
     return "$status"
 }
 
