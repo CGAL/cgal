@@ -233,6 +233,9 @@ public:
   Constrained_triangulation_2 &
   operator=(Constrained_triangulation_2 &&) = default;
 
+  // virtual, so that the derived classes also clear their own data
+  // (e.g., the constraint hierarchy of `Constrained_triangulation_plus_2`) in `operator>>()`
+  virtual void clear() { Triangulation::clear(); }
 
   Constrained_edges_iterator constrained_edges_begin() const
   {

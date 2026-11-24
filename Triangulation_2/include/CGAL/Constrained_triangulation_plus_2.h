@@ -250,7 +250,7 @@ public:
     CGAL_postcondition( this->is_valid() );
   }
   //Helping
-  void clear() { Base::clear(); hierarchy().clear(); }
+  void clear() override { Base::clear(); hierarchy().clear(); }
   void copy_triangulation(const Constrained_triangulation_plus_2 &ctp);
   void swap(Constrained_triangulation_plus_2 &ctp);
 
