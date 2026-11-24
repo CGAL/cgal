@@ -133,6 +133,10 @@ The outer boundary `F` is constructed by enlarging the bounding box of `P` by a 
 `d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained
 from this exterior skeleton, as computed by the function `compute_outer_frame_margin()`.
 
+\warning Holes of the polygon `P` are ignored. If you also need the exterior skeleton for the holes,
+         you should call `CGAL::create_interior_straight_skeleton_2()` for each hole, after having reversed
+         its orientation.
+
 \tparam SsK must be a model of `Kernel`.
 \tparam FT must be a model of `FieldNumberType` convertible to `SsK::FT`.
 \tparam Polygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
@@ -142,7 +146,6 @@ from this exterior skeleton, as computed by the function `compute_outer_frame_ma
 
 \pre `P` is a weakly simple, counterclockwise polygon with clockwise oriented holes.
 \pre Holes neither intersect each other nor the outer boundary.
-\pre All the weights must be (strictly) positive.
 \pre `max_offset` is positive.
 
 \sa `CGAL::create_interior_straight_skeleton_2()`
