@@ -315,7 +315,8 @@ but larger approximation error.
 This package provides two functions for extruding triangle meshes with boundaries. The first extrudes
 by offsetting each vertex by a user-provided vector. The second is more general, accepting two
 user-provided functors to extrude "up" and "down". In both cases, boundaries are connected
-by a triangle strip. Note that extrusion may produce self-intersecting surfaces.
+by a triangle strip, or by a strip of quadrilaterals if the named parameter `do_not_triangulate_faces`
+is set to `true`. Note that extrusion may produce self-intersecting surfaces.
 
 The following example demonstrates extrusion in both directions by projecting points
 along the vertex normal. If the `Bottom` function were the identity, this would result

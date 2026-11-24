@@ -32,7 +32,8 @@ namespace extrude_impl{
 template<typename BorderHalfedgesRange, class PolygonMesh>
 void create_strip(const BorderHalfedgesRange& input_halfedges,
                  const BorderHalfedgesRange& output_halfedges,
-                  PolygonMesh& mesh)
+                  PolygonMesh& mesh,
+                  const bool triangulate = true)
 {
   CGAL_assertion(input_halfedges.size() == output_halfedges.size());
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -69,7 +70,8 @@ void create_strip(const BorderHalfedgesRange& input_halfedges,
     set_face(hedges[2], nf, mesh);
     set_face(hedges[3], nf, mesh);
     set_halfedge(nf, hedges[0], mesh);
-    Euler::split_face(hedges[0], hedges[2], mesh);
+    if(triangulate)
+      Euler::split_face(hedges[0], hedges[2], mesh);
   }
 }
 
@@ -104,10 +106,11 @@ struct Identity_functor
  * This function extrudes the open surface mesh `input` and puts the result in `output`. The mesh generated is a closed
  * surface mesh with a bottom and top part, both having the same graph combinatorics as `input` (except
  * that the orientation of the faces of the bottom part is reversed). The bottom and the top parts are
- * connected by a triangle strip between boundary cycles. The coordinates of the points associated to the
- * vertices of the bottom and top part are first initialized to the same value as the corresponding
- * vertices of `input`. Then for each vertex, a call to `bot` and `top` is done for the vertices of the
- * bottom part and the top part, respectively.
+ * connected by a strip of faces between boundary cycles: by default a triangle strip, or a strip of
+ * quadrilaterals if the named parameter `do_not_triangulate_faces` of `np_out` is set to `true`.
+ * The coordinates of the points associated to the vertices of the bottom and top part are first
+ * initialized to the same value as the corresponding vertices of `input`. Then for each vertex, a call
+ * to `bot` and `top` is done for the vertices of the bottom part and the top part, respectively.
  *
  * \attention `output` may be self intersecting.
  *
@@ -151,6 +154,14 @@ struct Identity_functor
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     should be available for the vertices of `output`.}
  *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{do_not_triangulate_faces}
+ *     \cgalParamDescription{if `true`, each face connecting the bottom and the top parts is a quadrilateral.
+ *                           Otherwise, each of these quadrilaterals is split into two triangles.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{The faces of the bottom and the top parts are not affected by this parameter.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template <class InputMesh,
@@ -184,6 +195,7 @@ void extrude_mesh(const InputMesh& input,
                                       get_property_map(vertex_point, output));
   IVPMap input_vpm = choose_parameter(get_parameter(np_in, internal_np::vertex_point),
                                       get_const_property_map(vertex_point, input));
+  const bool triangulate = !choose_parameter(get_parameter(np_out, internal_np::do_not_triangulate_faces), false);
 
   std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > bottom_v2v;
   std::vector<std::pair<input_halfedge_descriptor, output_halfedge_descriptor> > bottom_h2h;
@@ -199,7 +211,7 @@ void extrude_mesh(const InputMesh& input,
   }
   CGAL::Polygon_mesh_processing::reverse_face_orientations(output);
 
-  // collect border halfedges for the creation of the triangle strip
+  // collect border halfedges for the creation of the strip
   std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > top_v2v;
   std::vector<std::pair<input_halfedge_descriptor, output_halfedge_descriptor> > top_h2h;
   copy_face_graph(input, output, parameters::vertex_point_map(input_vpm)
@@ -224,8 +236,8 @@ void extrude_mesh(const InputMesh& input,
       CGAL_assertion(is_border(offset_border_hedges.back(), output));
     }
   }
-  // now create a triangle strip
-  extrude_impl::create_strip(border_hedges, offset_border_hedges, output);
+  // now create the strip (of triangles or quadrilaterals)
+  extrude_impl::create_strip(border_hedges, offset_border_hedges, output, triangulate);
 }
 
 
@@ -270,6 +282,14 @@ void extrude_mesh(const InputMesh& input,
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, output)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     should be available for the vertices of `output`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{do_not_triangulate_faces}
+ *     \cgalParamDescription{if `true`, each face connecting the bottom and the top parts is a quadrilateral.
+ *                           Otherwise, each of these quadrilaterals is split into two triangles.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{The faces of the bottom and the top parts are not affected by this parameter.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
