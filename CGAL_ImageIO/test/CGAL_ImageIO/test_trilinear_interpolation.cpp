@@ -5,6 +5,7 @@
 #include <CGAL/use.h>
 
 #include <cassert>
+#include <cmath>
 #include <iostream>
 #include <fstream>
 
@@ -107,10 +108,14 @@ int main() {
                                                 0.f);
               std::cerr << "tri(" << d_x << ", " << d_y << " , " << d_z << ") = "
                         << value3 << std::endl;
-              if(value2 != value3)
+              // The two implementations may differ by a few ulps when
+              // intermediate results are kept in extended precision
+              // (x87 FPU, 32-bit builds without SSE math).
+              const float diff = std::abs(value2 - value3);
+              if(diff > 1e-4f)
                 std::cerr << std::setprecision(30)
                           << "   " << value2 << "\n!= " << value3 << std::endl;
-              assert(value2 == value3);
+              assert(diff <= 1e-4f);
             }
 
         data[z * 4 + y * 2 + x] = 0;
