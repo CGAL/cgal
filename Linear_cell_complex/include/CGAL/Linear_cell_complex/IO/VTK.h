@@ -85,6 +85,9 @@ bool read_VTK(const char* filename,
  *                      same size as number of vertex attributes in the LCC.
  * \param volume_scalars Optional per-volume scalar data. If provided, must have
  *                      same size as number of 3-cells in the LCC.
+ * \param np optional sequence of Named Parameters:
+ *    for now only stream_precision is supported, to fix the precision of
+ *    the stream.
  * \return `true` if writing was successful, `false` otherwise
  */
 template <typename LCC, typename VertexScalarType,
