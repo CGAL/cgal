@@ -26,7 +26,9 @@ do
 done
 
 CGAL_ROOT=$PWD
-mkdir -p dep_check_build && cd dep_check_build
+mkdir -p dep_check_build
+trap 'rm -rf dep_check_build' EXIT
+cd dep_check_build
 for pkg_path in "$CGAL_ROOT"/*
 do
   pkg=$(basename "$pkg_path")
@@ -39,11 +41,21 @@ do
   fi
 done
 
+display_result()
+{
+  if [ "$1" -eq 0 ]; then
+    printf '\n%s\n' "✅"
+  else
+    printf '\n%s\n' "❌"
+  fi
+}
+
 start_group()
 {
     local title=$1
     if [ "$GITHUB_ACTIONS" = "true" ]; then
         echo "::group::$title"
+        printf '\n## %s\n\n' "$title" >> "$GITHUB_STEP_SUMMARY"
     else
         printf '\n## %s\n\n' "$title"
     fi
@@ -91,6 +103,12 @@ group()
         "$@" || status=$?
     fi
     end_group
+
+    display_result "$status"
+    if [ "$GITHUB_ACTIONS" = "true" ] && [ -n "$GITHUB_STEP_SUMMARY" ]; then
+        display_result "$status" >> "$GITHUB_STEP_SUMMARY"
+    fi
+
     return "$status"
 }
 
@@ -101,8 +119,7 @@ if [ -n "$DO_CHECK_HEADERS" ]; then
 fi
 group "Collect package dependencies" cmake --build . -j"$(nproc --all)" --target packages_dependencies ${CMAKE_DEBUG_OPT:+"$CMAKE_DEBUG_OPT"} -- -k
 echo " Checks finished"
-start_group "Compare dependencies"
-[ -n "$GITHUB_STEP_SUMMARY" ] && printf '## Dependency check\n' >> "$GITHUB_STEP_SUMMARY"
+start_group "Dependency check"
 for pkg_path in "$CGAL_ROOT"/*
 do
   pkg=$(basename "$pkg_path")
@@ -144,10 +161,10 @@ if [ -n "$TOTAL_RES" ]; then
   end_group
   exit 1
 else
+  end_group
   echo "The dependencies are up to date."
   if [ -n "$GITHUB_STEP_SUMMARY" ]; then
     echo "✅ The dependencies are up to date." >> "$GITHUB_STEP_SUMMARY"
   fi
-  end_group
   exit 0
 fi
