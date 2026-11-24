@@ -702,16 +702,16 @@ public:
     auto [first, last] = this->finite_vertex_handles();
     std::copy(first, last, vertices.data());
 
+    // the constrained edges have been read during base reading
+    // only the hierarchy is to be rebuilt
     size_type n, id, id_next;
     while(is >> n) {
       is >> id >> id_next;
-      Constraint_id cid = insert_constraint(vertices[id], vertices[id_next]);
-
+      Constraint_id cid = hierarchy().insert_constraint(vertices[id], vertices[id_next]);
       for(size_type i = 2; i < n; ++i) {
         id = id_next;
         is >> id_next;
-        Constraint_id cid2 = insert_constraint(vertices[id], vertices[id_next]);
-        cid = concatenate(cid, std::move(cid2));
+        hierarchy().append_constraint(cid, vertices[id], vertices[id_next]);
       }
     }
     return is;
