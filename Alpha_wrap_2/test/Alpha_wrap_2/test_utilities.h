@@ -35,7 +35,7 @@ bool read_polylines(const std::filesystem::path& filename,
   if(!in)
     return false;
 
-  const std::filesystem::path ext = filename.extension();
+  const std::string ext = IO::internal::get_file_extension(filename);
   if(ext == ".wkt")
   {
     // read_WKT() reads ALL multi-linestrings whereas read_multilinestring() reads only the first one

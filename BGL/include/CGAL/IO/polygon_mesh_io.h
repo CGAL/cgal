@@ -134,7 +134,7 @@ bool read_polygon_mesh(const std::filesystem::path& fname,
       std::cerr << "Error: cannot read from file without extension" << std::endl;
     return false;
   }
-  const std::string ext = fname.extension().string();
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == ".obj")
     return read_OBJ(fname, g, np);
@@ -239,7 +239,7 @@ bool write_polygon_mesh(const std::filesystem::path& fname,
       std::cerr << "Error: trying to output to file without extension" << std::endl;
     return false;
   }
-  const std::string ext = fname.extension().string();
+  const std::string ext = internal::get_file_extension(fname);
   if(ext == ".obj")
     return write_OBJ(fname, g, np);
   else if(ext == ".off")

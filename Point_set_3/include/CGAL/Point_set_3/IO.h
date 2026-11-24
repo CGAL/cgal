@@ -123,7 +123,7 @@ bool read_point_set(const std::filesystem::path& fname,
                     CGAL::Point_set_3<Point, Vector>& ps,
                     const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  const std::string ext = fname.extension().string();
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == ".xyz" || ext == ".pwn")
     return read_XYZ(fname, ps);
@@ -218,7 +218,7 @@ bool write_point_set(const std::filesystem::path& fname,
                      CGAL::Point_set_3<Point, Vector>& ps,
                      const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  const std::string ext = fname.extension().string();
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == ".xyz")
     return write_XYZ(fname, ps, np);

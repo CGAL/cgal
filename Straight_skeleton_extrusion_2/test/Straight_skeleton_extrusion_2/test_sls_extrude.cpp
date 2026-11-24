@@ -42,7 +42,7 @@ bool are_equal(const FT t1, const FT t2,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename K>
-bool read_dat_polygon(const char* filename,
+bool read_dat_polygon(const std::string& filename,
                       CGAL::Polygon_with_holes_2<K>& p)
 {
   using Point_2 = typename K::Point_2;
@@ -127,11 +127,11 @@ bool read_dat_polygon(const char* filename,
 }
 
 template <typename K>
-bool read_input_polygon(const char* filename,
+bool read_input_polygon(const std::string& filename,
                         CGAL::Polygon_with_holes_2<K>& p)
 {
   std::string ext = CGAL::IO::internal::get_file_extension(filename);
-  if(ext == "dat")
+  if(ext == ".dat")
   {
     return read_dat_polygon(filename, p);
   }

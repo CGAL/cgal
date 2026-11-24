@@ -25,6 +25,7 @@
 #include <CGAL/Linear_cell_complex/IO/lcc_save_load_mesh.h>
 #include <CGAL/Linear_cell_complex/IO/lcc_save_load_surfaces.h>
 #include <CGAL/Linear_cell_complex/IO/VTK.h>
+#include <CGAL/IO/helpers.h>
 
 namespace CGAL::IO
 {
@@ -33,7 +34,7 @@ inline
 bool is_an_lcc_known_extension(const std::string& filename)
 {
   std::filesystem::path p(filename);
-  std::string ext=p.extension().string();
+  std::string ext=internal::get_file_extension(p);
   return
     ext==".3map" ||    // My own format *
     ext==".gmsh" ||    // Gmsh format *
@@ -69,7 +70,7 @@ typename LCC::Dart_descriptor read_depending_extension(const std::string& filena
     lcc.negate_mark(amark); // All old darts are marked
   }
   std::filesystem::path p(filename);
-  std::string ext=p.extension().string();
+  std::string ext=internal::get_file_extension(p);
   if(ext==".3map")
   { res=CGAL::load_combinatorial_map(filename.c_str(), lcc); }
   else if(ext==".gmsh" || ext==".msh")
@@ -126,7 +127,7 @@ bool write_depending_extension(const std::string& filename,
 
   bool res=false;
   std::filesystem::path p(filename);
-  std::string ext=p.extension().string();
+  std::string ext=internal::get_file_extension(p);
   if(ext==".3map")
   { res=CGAL::save_combinatorial_map(lcc, filename.c_str()); }
   else if(ext==".gmsh" || ext==".msh")

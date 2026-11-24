@@ -615,8 +615,11 @@ inline std::filesystem::path data_file_path(const std::filesystem::path& filenam
   // Test if the file exists, write a warning otherwise
   if (! std::filesystem::exists(res) )
   {
-    std::cerr<<"[WARNING] file " << path_to_utf8(res) << " does not exist or cannot be read\n "
-             <<"(CGAL_DATA_DIR='" << cgal_dir.value() <<"')."<<std::endl;
+    std::cerr<<"[WARNING] file " << path_to_utf8(res) << " does not exist or cannot be read\n ";
+    if (cgal_dir.has_value())
+      std::cerr << "(CGAL_DATA_DIR='" << cgal_dir.value() <<"')."<<std::endl;
+    else
+      std::cerr << "(CGAL_DATA_DIR has not been set)."<<std::endl;
   }
  res.make_preferred();
  return res.lexically_normal();

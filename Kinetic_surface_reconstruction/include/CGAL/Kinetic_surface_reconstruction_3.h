@@ -1831,11 +1831,8 @@ private:
       return;
 
     std::filesystem::path path(filename);
-    std::string extension = path.extension().generic_string();
-    std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char c) { return std::tolower(c); });
+    std::string extension = IO::internal::get_file_extension(path);
     std::ofstream out;
-
-    std::cout << filename << std::endl;
 
     if (extension == ".vg")
       out = std::ofstream(filename);
