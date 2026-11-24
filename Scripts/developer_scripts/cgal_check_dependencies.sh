@@ -119,8 +119,7 @@ if [ -n "$DO_CHECK_HEADERS" ]; then
 fi
 group "Collect package dependencies" cmake --build . -j"$(nproc --all)" --target packages_dependencies ${CMAKE_DEBUG_OPT:+"$CMAKE_DEBUG_OPT"} -- -k
 echo " Checks finished"
-start_group "Compare dependencies"
-[ -n "$GITHUB_STEP_SUMMARY" ] && printf '## Dependency check\n' >> "$GITHUB_STEP_SUMMARY"
+start_group "Dependency check"
 for pkg_path in "$CGAL_ROOT"/*
 do
   pkg=$(basename "$pkg_path")
