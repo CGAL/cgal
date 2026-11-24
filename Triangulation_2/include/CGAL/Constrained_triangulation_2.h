@@ -335,7 +335,7 @@ void
 insert_constraint(Vertex_handle vaa, Vertex_handle vbb, OutputIterator out)
 // [vaa;vbb] will potentially be split into several edges
 // if a vertex vc of the triangulation lies on the segment [a;b],
-// of if [a;b] intersect some constrained edges
+// or if [a;b] intersects some constrained edges
 {
   CGAL_precondition( vaa != vbb);
   Vertex_handle vi;

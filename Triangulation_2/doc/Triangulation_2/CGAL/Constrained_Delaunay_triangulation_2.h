@@ -23,10 +23,10 @@ determines which configurations of constraints are allowed
 \tparam Traits is the geometric traits of a constrained Delaunay triangulation.
 It must be a model of `DelaunayTriangulationTraits_2`, providing the `side_of_oriented_circle` test
 of a Delaunay triangulation.
-When intersection of input constraints are supported (i.e.,
+When intersections of input constraints are supported (i.e.,
 the intersection tag is `Exact_predicates_tag` or `Exact_intersections_tag`)
 the geometric traits class is required to provide additional function object types
-to compute the intersection of two segments.
+to compute the intersection of two segments,
 and has then to be also a model of the concept
 `ConstrainedTriangulationTraits_2`.
 

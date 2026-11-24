@@ -69,7 +69,7 @@ and constrained edges may thus slightly deviate from the input constraints;
 the algorithm is designed to remain robust in this setting.
 
 When using this tag, be wary of inserting the same constraint multiple times, as this may
-cause problems in . Indeed, when an inserted segment is subdivided, the resulting subsegments
+cause problems in case of intersecting constraints. Indeed, when an inserted segment is subdivided, the resulting subsegments
 are slightly displaced by numerical error and may therefore intersect the next insertion
 of the same segment, creating additional vertices at each new insertion.
 Functions are provided to insert unique constraints.
@@ -110,7 +110,7 @@ The endpoints of constrained edges are of course vertices of the
 triangulation. However the triangulation may include
 other vertices as well. Any number of constrained edges may share the same endpoint.
 
-The intersection tag `Itag` determines which configurations of constraints are allowed,
+The intersection tag `Itag` determines which configurations of constraints are allowed
 (see Section \ref PkgTriangulation2IntersectionTags).
 
 In order to retrieve the constrained edges of a constraint, or
@@ -126,7 +126,7 @@ as it avoids the cascading of intersection computations.
 
 \tparam Traits is a geometric traits class and must be a model
 of the concept `TriangulationTraits_2`.
-When intersection of input constraints are supported (i.e., when
+When intersections of input constraints are supported (i.e., when
 the intersection tag is `Exact_predicates_tag` or `Exact_intersections_tag`)
 the geometric traits class is required to provide additional function object types
 to compute the intersection of two segments.
