@@ -919,10 +919,10 @@ insert_subconstraint(Vertex_handle vaa,
               << '\n';
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
       if constexpr (std::is_same_v<Intersection_tag, No_constraint_intersection_tag>) {
-        // The constraint must not contain a vertex in its interior.
-        // (The edge [vaa, vbb] may already be constrained, e.g. when reading from a stream:
-        // overlapping constraints are detected using the hierarchy, above.)
-        if(vi != vbb) {
+        // No intersection: the constraint must not
+        // - contain a vertex in its interior (`vi != vbb`);
+        // - overlap a constrained edge.
+        if(vi != vbb || fr->is_constrained(this->dimension() == 1 ? 2 : i)) {
           throw typename Tr::Intersection_of_constraints_exception();
         }
       }
