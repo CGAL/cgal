@@ -2,7 +2,6 @@
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
-#include <cassert>
 #include <cstdlib>
 #include <iostream>
 
@@ -12,6 +11,15 @@ using LCC=CGAL::Linear_cell_complex_for_combinatorial_map<3>;
 using Point=LCC::Point;
 using Dart=LCC::Dart_const_descriptor;
 using GSO=CGAL::Graphics_scene_options<LCC, Dart, Dart, Dart, Dart>;
+
+void check(bool b, const char* what)
+{
+  if(!b)
+  {
+    std::cerr<<"lcc_graphics_scene_values FAILED: "<<what<<std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+}
 
 void make_hexa(LCC& lcc, double x)
 {
@@ -28,9 +36,9 @@ int main()
   // Default options: no value at all, so the scene is as before.
   CGAL::Graphics_scene gs;
   CGAL::add_to_graphics_scene(lcc, gs, GSO());
-  assert(gs.get_volume_faces().size()==2);
-  assert(!gs.has_volume_values() && !gs.has_face_values());
-  assert(!gs.is_volume_valued(0) && !gs.is_volume_valued(1));
+  check(gs.get_volume_faces().size()==2, "gs.get_volume_faces().size()==2");
+  check(!gs.has_volume_values() && !gs.has_face_values(), "!gs.has_volume_values() && !gs.has_face_values()");
+  check(!gs.is_volume_valued(0) && !gs.is_volume_valued(1), "!gs.is_volume_valued(0) && !gs.is_volume_valued(1)");
 
   // A value on the first hexahedron only.
   GSO gso;
@@ -42,26 +50,26 @@ int main()
 
   CGAL::Graphics_scene gs2;
   CGAL::add_to_graphics_scene(lcc, gs2, gso);
-  assert(gs2.has_volume_values());
-  assert(gs2.get_volume_values().size()==gs2.get_volume_faces().size());
-  assert(gs2.is_volume_valued(0)!=gs2.is_volume_valued(1));
+  check(gs2.has_volume_values(), "gs2.has_volume_values()");
+  check(gs2.get_volume_values().size()==gs2.get_volume_faces().size(), "gs2.get_volume_values().size()==gs2.get_volume_faces().size()");
+  check(gs2.is_volume_valued(0)!=gs2.is_volume_valued(1), "gs2.is_volume_valued(0)!=gs2.is_volume_valued(1)");
   const std::size_t v=gs2.is_volume_valued(0) ? 0 : 1;
-  assert(gs2.get_volume_values()[v]==0.25f);
-  assert(gs2.volume_value_min()==0.25f && gs2.volume_value_max()==0.25f);
-  assert(gs2.volume_value_name()=="quality");
-  assert(gs2.has_face_values());
-  assert(gs2.get_face_values().size()==gs2.number_of_faces());
-  assert(gs2.face_value_min()<gs2.face_value_max());
+  check(gs2.get_volume_values()[v]==0.25f, "gs2.get_volume_values()[v]==0.25f");
+  check(gs2.volume_value_min()==0.25f && gs2.volume_value_max()==0.25f, "gs2.volume_value_min()==0.25f && gs2.volume_value_max()==0.25f");
+  check(gs2.volume_value_name()=="quality", "gs2.volume_value_name()==\"quality\"");
+  check(gs2.has_face_values(), "gs2.has_face_values()");
+  check(gs2.get_face_values().size()==gs2.number_of_faces(), "gs2.get_face_values().size()==gs2.number_of_faces()");
+  check(gs2.face_value_min()<gs2.face_value_max(), "gs2.face_value_min()<gs2.face_value_max()");
 
   // Outside a volume, a volume value is ignored.
   CGAL::Graphics_scene gs3;
   gs3.set_volume_value(1.f);
-  assert(!gs3.has_volume_values());
+  check(!gs3.has_volume_values(), "!gs3.has_volume_values()");
 
   // clear() drops the values with the faces and volumes.
   gs2.clear();
-  assert(!gs2.has_volume_values() && !gs2.has_face_values());
-  assert(gs2.get_volume_values().empty() && gs2.get_face_values().empty());
+  check(!gs2.has_volume_values() && !gs2.has_face_values(), "!gs2.has_volume_values() && !gs2.has_face_values()");
+  check(gs2.get_volume_values().empty() && gs2.get_face_values().empty(), "gs2.get_volume_values().empty() && gs2.get_face_values().empty()");
 
   std::cout<<"lcc_graphics_scene_values: OK"<<std::endl;
   return EXIT_SUCCESS;
