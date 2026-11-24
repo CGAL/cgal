@@ -722,6 +722,8 @@ inline void Graph::clear()
     delete[] arc_rev_block_first -> start;
     arc_rev_block_first = next;
   }
+
+  flow = 0;
 }
 
 inline Graph::~Graph()
