@@ -250,7 +250,7 @@ public:
     CGAL_postcondition( this->is_valid() );
   }
   //Helping
-  void clear() override { Base::clear(); hierarchy().clear(); }
+  void clear() { Base::clear(); hierarchy().clear(); }
   void copy_triangulation(const Constrained_triangulation_plus_2 &ctp);
   void swap(Constrained_triangulation_plus_2 &ctp);
 
@@ -696,6 +696,7 @@ public:
   }
 
   auto& file_input(std::istream& is) {
+    clear();
     is >> static_cast<Tr&>(*this);
 
     std::vector<Vertex_handle> vertices(number_of_vertices());

@@ -233,9 +233,6 @@ public:
   Constrained_triangulation_2 &
   operator=(Constrained_triangulation_2 &&) = default;
 
-  // virtual, so that the derived classes also clear their own data
-  // (e.g., the constraint hierarchy of `Constrained_triangulation_plus_2`) in `operator>>()`
-  virtual void clear() { Triangulation::clear(); }
 
   Constrained_edges_iterator constrained_edges_begin() const
   {
@@ -452,8 +449,6 @@ public:
   {
     internal_insert_polyline(first, last, close);
   }
-
-public:
 
   void remove(Vertex_handle  v);
   void remove_constrained_edge(Face_handle f, int i);
