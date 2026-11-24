@@ -251,8 +251,7 @@ void initialize_groups(
   Point_2 p; double stub;
   std::size_t group_index;
   std::map<std::size_t, std::vector<Point_2> > data_map;
-  while (!file.eof()) {
-    file >> p >> stub >> group_index;
+  while (file >> p >> stub >> group_index) {
     data_map[group_index].push_back(p);
   }
   file.close();

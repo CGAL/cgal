@@ -216,32 +216,36 @@ public:
     set_qlu_data(q_x.get(), l_x.get(), u_x.get());
 
     // Problem settings.
-    OSQPSettings *settings = OSQPSettings_new();
-    CGAL_assertion(settings);
+    // Note: OSQPSettings_new() and OSQPCscMatrix_new() are not exported from the
+    // OSQP 1.0 shared library on Windows, so we use stack objects instead.
+    // osqp_setup() copies both the settings and the matrices.
+    OSQPSettings settings;
+    osqp_set_default_settings(&settings);
+    settings.eps_abs = eps_abs;
+    settings.eps_rel = eps_rel;
+    settings.verbose = verbose;
 
-    // Structures.
-    OSQPCscMatrix* A = OSQPCscMatrix_new(m, n, A_nnz, A_x.get(), A_i.get(), A_p.get());
-    OSQPCscMatrix* P = OSQPCscMatrix_new(n, n, P_nnz, P_x.get(), P_i.get(), P_p.get());
-
-    // Set solver settings.
-    osqp_set_default_settings(settings);
-    settings->eps_abs = eps_abs;
-    settings->eps_rel = eps_rel;
-    settings->verbose = verbose;
+    // Structures (the data arrays remain owned by the unique_ptrs above).
+    OSQPCscMatrix A, P;
+    OSQPCscMatrix_set_data(&A, m, n, A_nnz, A_x.get(), A_i.get(), A_p.get());
+    OSQPCscMatrix_set_data(&P, n, n, P_nnz, P_x.get(), P_i.get(), P_p.get());
 
     OSQPSolver* solver = NULL;
-    OSQPInt exitflag = osqp_setup(&solver, P, q_x.get(), A, l_x.get(), u_x.get(), m, n, settings);
+    OSQPInt exitflag = osqp_setup(&solver, &P, q_x.get(), &A, l_x.get(), u_x.get(), m, n, &settings);
 
     try
     {
       if (!exitflag)
         exitflag = osqp_solve(solver);
 
-      const OSQPFloat* x = solver->solution->x;
-      for (std::size_t i = 0; i < n; ++i)
+      if (!exitflag)
       {
-        const FT value{ x[i] };
-        *(++solution) = value;
+        const OSQPFloat* x = solver->solution->x;
+        for (std::size_t i = 0; i < n; ++i)
+        {
+          const FT value{ x[i] };
+          *(++solution) = value;
+        }
       }
     }
     catch (std::exception& e)
@@ -250,10 +254,7 @@ public:
       std::cerr << e.what() << std::endl;
     }
 
-    osqp_cleanup(solver);
-    if (A) OSQPCscMatrix_free(A);
-    if (P) OSQPCscMatrix_free(P);
-    if (settings) OSQPSettings_free(settings);
+    if (solver) osqp_cleanup(solver);
 
     return (exitflag == 0);
   }
