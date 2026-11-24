@@ -53,7 +53,7 @@ offset of the outer frame is ignored.
 This is equivalent to a call to `CGAL::arrange_offset_polygons_2()` on the
 output of \link CGAL::create_exterior_weighted_skeleton_and_offset_polygons_2() `create_exterior_weighted_skeleton_and_offset_polygons_2(offset, poly, weights, ofk, ssk)` \endlink
 after having filtered out the polygon corresponding to the offset of the outer frame and
-having reversed the orientation of all other polygons.
+having reversed the orientation (and weights) of all other polygons.
 
 \tparam OfKPolygon is a polygon without holes type determined by `OfK` and `InKPolygon`,
                    see Section \ref SLSOffsetPolygonReturnType.

@@ -118,12 +118,18 @@ create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
   std::size_t weight_pos = 1;
   for(typename PolygonWithHoles::Hole_const_iterator hit=aPoly.holes_begin(); hit!=aPoly.holes_end(); ++hit, ++weight_pos)
   {
-    typename PolygonWithHoles::Polygon_2 hole = *hit;
-    hole.reverse_orientation();
+    // reverse the hole and its weights
+    typename PolygonWithHoles::Polygon_2 hole(std::make_reverse_iterator(hit->vertices_end()),
+                                              std::make_reverse_iterator(hit->vertices_begin()));
+
+    auto hole_weights = aWeights[weight_pos];
+    std::reverse(std::begin(hole_weights), std::end(hole_weights));
+    std::rotate(std::begin(hole_weights), std::prev(std::end(hole_weights)), std::end(hole_weights)); // one to the right
+
     std::vector<std::shared_ptr<OutPolygon> > hole_polygons =
         create_interior_weighted_skeleton_and_offset_polygons_2<OutPolygon>(aOffset,
                                                                             hole,
-                                                                            Weights{aWeights[weight_pos]},
+                                                                            Weights{hole_weights},
                                                                             ofk, ssk);
     polygons.insert(polygons.end(), hole_polygons.begin(), hole_polygons.end());
   }
