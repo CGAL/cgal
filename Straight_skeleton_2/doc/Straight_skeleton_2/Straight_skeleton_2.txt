@@ -366,7 +366,7 @@ on this max offset parameter).
 \subsection Straight_skeleton_2CreateaStraightSkeleton_1 Create a Straight Skeleton from a Polygon With Holes
 
 If `CGAL::Polygon_with_holes_2` is used, you can pass an instance of it directly to the function creating
-the interior skeleton, as shown below. Notice that a different header must be included in this case.
+the interior skeleton, as shown below.
 
 \cgalExample{Straight_skeleton_2/create_straight_skeleton_from_polygon_with_holes_2.cpp}
 

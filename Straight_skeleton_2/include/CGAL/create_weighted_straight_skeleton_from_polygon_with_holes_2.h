@@ -16,10 +16,13 @@
 
 #include <CGAL/create_weighted_straight_skeleton_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_2/Polygon_iterators.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
+#include <iterator>
+#include <memory>
 #include <type_traits>
 
 namespace CGAL {
@@ -44,8 +47,8 @@ create_interior_weighted_straight_skeleton_2(const Polygon& poly_with_holes,
                                                       k);
 }
 
-// create_exterior_weightd_straight_skeleton_2() for polygon with holes is simply in create_straight_skeleton_2.h
-// as the holes do not matter: call create_exterior_straight_skeleton_2 for each boundary (outer & holes).
+// create_exterior_weighted_straight_skeleton_2() for polygon with holes is simply in create_weighted_straight_skeleton_2.h
+// as the holes do not matter.
 
 } // namespace CGAL
 

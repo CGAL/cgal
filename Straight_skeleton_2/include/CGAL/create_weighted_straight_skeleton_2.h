@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/create_weighted_straight_skeleton_from_polygon_with_holes_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Straight_skeleton_2/Polygon_iterators.h>
