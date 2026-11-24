@@ -386,9 +386,8 @@ bool is_cell(const typename Tr::Vertex_handle v0,
              const typename Tr::Vertex_handle v3,
              const Tr& tr)
 {
-  int i, j, k, l;
   typename Tr::Cell_handle cell;
-  return tr.tds().is_cell(v0, v1, v2, v3, cell, i, j, k, l);
+  return tr.is_cell(v0, v1, v2, v3, cell);
 }
 
 // check the link condition before collapsing `edge`
