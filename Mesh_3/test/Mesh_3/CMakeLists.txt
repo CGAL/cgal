@@ -58,6 +58,7 @@ create_single_source_cgal_program( "test_mesh_cell_base_3.cpp")
 create_single_source_cgal_program( "test_min_edge_length.cpp")
 create_single_source_cgal_program( "test_max_edge_distance.cpp")
 create_single_source_cgal_program( "test_remeshing_polyhedron.cpp" )
+create_single_source_cgal_program( "test_is_in_domain_consistency.cpp" )
 
 foreach(target
     test_boost_has_xxx
@@ -92,6 +93,7 @@ foreach(target
     test_min_size_criteria
     test_meshing_polyhedral_complex_with_manifold_and_min_size
     test_remeshing_polyhedron
+    test_is_in_domain_consistency
     )
   if(TARGET ${target})
     target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
@@ -139,6 +141,7 @@ if(TARGET CGAL::TBB_support)
       "execution   of  test_mesh_polyhedral_domain_with_features_deprecated"
       "execution   of  test_mesh_cell_base_3"
       "execution   of  test_remeshing_polyhedron"
+      "execution   of  test_is_in_domain_consistency"
       PROPERTY RUN_SERIAL 1)
     if(TARGET test_meshing_3D_image)
       set_property(TEST
