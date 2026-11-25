@@ -89,12 +89,18 @@ void MP_Float::construct_from_builtin_fp_type(T d)
       int r = my_nearbyint(d);
       if (d-double(r) >= T( INTERN_MP_FLOAT::base/2-1)/( INTERN_MP_FLOAT::base-1))
         ++r;
-      v.push_back(limb(r));
+      limb carry, digit;
+      split(r, carry, digit);
+      for(auto it = v.rbegin(); carry != 0 && it != v.rend(); ++it)
+        split(limb2(*it) + carry, carry, *it);
+      if(carry != 0)
+        v.insert(v.begin(), carry);
+      v.push_back(digit);
       // We used to do simply "d -= v.back();", but when the most significant
       // limb is 1 and the second is -32768, then it can happen that
       // |d - v.back()| > |d|, hence a bit of precision can be lost.
       //  Hence the need for sum/orig.
-      sum += v.back();
+      sum += r;
       d = orig-sum;
       if (d == 0)
         break;
