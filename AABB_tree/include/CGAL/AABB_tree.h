@@ -153,6 +153,18 @@ namespace CGAL {
     /// primitives of the tree.
     template<typename ConcurrencyTag=Sequential_tag, typename ... T>
     void build(T&& ...);
+
+    /// Similar to build except it uses approximate median to split the primitives and compute the bounding boxes after splitting.
+    /// The rest of the behavior is identical to `build()`.
+    /// The quality of the resulting tree may be lower compared to the standard `build()` method, but the construction is generally faster.
+    template<typename ConcurrencyTag=Sequential_tag, typename ... T>
+    void fast_build(T&& ...);
+
+    /// Similar to build except it uses Surface Area Heuristic (SAH) to split the primitives.
+    /// The rest of the behavior is identical to `build()`.
+    /// The quality of the resulting tree is usually higher compared to the standard `build()` method, but the construction is generally slower.
+    template<typename ConcurrencyTag=Sequential_tag, typename ... T>
+    void efficient_build(T&& ...);
 #ifndef DOXYGEN_RUNNING
     template<typename ConcurrencyTag=Sequential_tag>
     void build();
@@ -785,7 +797,25 @@ public:
   void AABB_tree<Tr>::build(T&& ... t)
   {
     set_shared_data(std::forward<T>(t)...);
-    build();
+    build<ConcurrencyTag>();
+  }
+
+  template<typename Tr>
+  template <class ConcurrencyTag, typename ... T>
+  void AABB_tree<Tr>::fast_build(T&& ... t)
+  {
+    set_shared_data(std::forward<T>(t)...);
+    custom_build<ConcurrencyTag, true, false>(m_traits.compute_bbox_object(),
+                                              m_traits.fast_split_primitives_object());
+  }
+
+  template<typename Tr>
+  template <class ConcurrencyTag, typename ... T>
+  void AABB_tree<Tr>::efficient_build(T&& ... t)
+  {
+    set_shared_data(std::forward<T>(t)...);
+    custom_build<ConcurrencyTag, false, false>(m_traits.compute_bbox_object(),
+                                               m_traits.efficient_split_primitives_object());
   }
 
   template<typename Tr>
@@ -883,7 +913,10 @@ namespace AABB_tree {
           left_range = range / 2;
         }
         else
-          left_range = split_primitives(first, first + range, node->bbox());
+        {
+          ConstPrimitiveIterator middle = split_primitives(first, first + range, node->bbox());
+          left_range = middle - first;
+        }
 
         // Write information of children
         (node+left_range)->set_data(*(first+left_range), range - left_range);
@@ -962,7 +995,10 @@ namespace AABB_tree {
         left_range = other.m_range / 2;
       }
       else
-        left_range = split_primitives(other.m_first, other.m_first+other.m_range, other.m_node->bbox());
+      {
+        ConstPrimitiveIterator middle = split_primitives(other.m_first, other.m_first + other.m_range, other.m_node->bbox());
+        left_range = middle - other.m_first;
+      }
 
       // Split the subtree represented by other.
       // Expand its root and generate two independent subtrees.
@@ -1025,7 +1061,8 @@ namespace AABB_tree {
                                         ConstPrimitiveIterator,
                                         ComputeBbox,
                                         SplitPrimitives,
-                                        postprocess_bbox_computation>;
+                                        postprocess_bbox_computation,
+                                        perfectly_balanced_split>;
 
     if constexpr(ConcurrencyTag::is_parallel){
       Range range(m_nodes.begin(),
