@@ -402,6 +402,16 @@ public:
   }
 
   template <typename U1 = K1, typename U2 = K2,
+            std::enable_if_t<has_Ball_3<U1>::value && has_Ball_3<U2>::value, int> = 0>
+  typename U2::Ball_3
+  operator()(const typename U1::Ball_3& b) const
+  {
+    return k2.construct_ball_3_object()(operator()(k1.construct_center_3_object()(b)),
+                                        conv(k1.compute_squared_radius_3_object()(b)),
+                                        k1.orientation_3_object()(b));
+  }
+
+  template <typename U1 = K1, typename U2 = K2,
             std::enable_if_t<has_Circle_3<U1>::value && has_Circle_3<U2>::value, int> = 0>
   typename U2::Circle_3
   operator()(const typename U1::Circle_3& c) const

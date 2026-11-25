@@ -862,6 +862,11 @@ public:
   typedef unspecified_type Sphere_3;
 
   /*!
+    a model of `Kernel::Ball_3`
+  */
+  typedef unspecified_type Ball_3;
+
+  /*!
     a model of `Kernel::Segment_3`
   */
   typedef unspecified_type Segment_3;
@@ -935,6 +940,11 @@ public:
     a model of `Kernel::ConstructSphere_3`
   */
   typedef unspecified_type Construct_sphere_3;
+
+  /*!
+    a model of `Kernel::ConstructBall_3`
+  */
+  typedef unspecified_type Construct_ball_3;
 
   /*!
     a model of `Kernel::ConstructSegment_3`
@@ -1146,6 +1156,11 @@ public:
     a model of `Kernel::ConstructOppositeSphere_3`
   */
   typedef unspecified_type Construct_opposite_sphere_3;
+
+  /*!
+    a model of `Kernel::ConstructOppositeBall_3`
+  */
+  typedef unspecified_type Construct_opposite_ball_3;
 
   /*!
     a model of `Kernel::ConstructOppositeVector_3`

@@ -23,17 +23,18 @@ namespace internal {
 template <class K>
 inline
 typename K::Boolean
-do_intersect(const typename K::Sphere_3& sp,
-             const typename K::Ray_3& ray,
-             const K& k)
+do_intersect_impl(const typename K::Point_3& c,
+                  const typename K::FT& r2,
+                  const typename K::Ray_3& ray,
+                  const K& k)
 {
   typedef typename K::RT RT;
   RT num, den;
 
-  CGAL::internal::squared_distance_RT(sp.center(), ray, num, den, k);
+  CGAL::internal::squared_distance_RT(c, ray, num, den, k);
   return !(compare_quotients<RT>(num, den,
-                                 Rational_traits<typename K::FT>().numerator(sp.squared_radius()),
-                                 Rational_traits<typename K::FT>().denominator(sp.squared_radius())) == LARGER);
+                                 Rational_traits<typename K::FT>().numerator(r2),
+                                 Rational_traits<typename K::FT>().denominator(r2)) == LARGER);
 }
 
 template <class K>
@@ -43,7 +44,17 @@ do_intersect(const typename K::Ray_3& ray,
              const typename K::Sphere_3& sp,
              const K& k)
 {
-  return do_intersect(sp, ray, k);
+  return do_intersect_impl(sp.center(), sp.squared_radius(), ray, k);
+}
+
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Sphere_3& sp,
+             const typename K::Ray_3& ray,
+             const K& k)
+{
+  return do_intersect(ray, sp, k);
 }
 
 } // namespace internal

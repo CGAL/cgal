@@ -1,5 +1,11 @@
 # Release History
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.4/Manual/packages.html#PkgKernel23)
+
+- Added the class `CGAL::Ball_3`, representing a solid ball (the volume bounded by a sphere), together with the kernel functors `Construct_ball_3` and `Construct_opposite_ball_3`, and `do_intersect()` between `Ball_3` and `Ball_3`, `Bbox_3`, `Iso_cuboid_3`, `Line_3`, `Plane_3`, `Point_3`, `Ray_3`, `Segment_3`, `Tetrahedron_3`, and `Triangle_3`.
+
+
+
 ## [Release 6.3](https://github.com/CGAL/cgal/releases/tag/v6.3)
 
 Release date: December 2026

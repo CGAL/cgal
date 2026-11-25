@@ -48,6 +48,7 @@
 #include <CGAL/Homogeneous/RayH3.h>
 #include <CGAL/Cartesian/Segment_3.h>
 #include <CGAL/Homogeneous/SphereH3.h>
+#include <CGAL/Homogeneous/BallH3.h>
 #include <CGAL/Cartesian/Tetrahedron_3.h>
 #include <CGAL/Cartesian/Triangle_3.h>
 #include <CGAL/Cartesian/Circle_3.h>
@@ -134,6 +135,7 @@ struct Homogeneous_base
     typedef TetrahedronC3<Kernel>                   Tetrahedron_3;
     typedef Iso_cuboidH3<Kernel>                    Iso_cuboid_3;
     typedef SphereH3<Kernel>                        Sphere_3;
+    typedef BallH3<Kernel>                          Ball_3;
     typedef CircleC3<Kernel>                        Circle_3;
     typedef Aff_transformationH3<Kernel>            Aff_transformation_3;
     typedef Weighted_pointH3<Kernel>                Weighted_point_3;

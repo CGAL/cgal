@@ -1505,11 +1505,16 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_3   Point_3;
     typedef typename K::Sphere_3  Sphere_3;
+    typedef typename K::Ball_3    Ball_3;
     typedef typename K::Circle_3  Circle_3;
 
   public:
     decltype(auto)
     operator()(const Sphere_3& s) const
+    { return s.rep().center(); }
+
+    decltype(auto)
+    operator()(const Ball_3& s) const
     { return s.rep().center(); }
 
     decltype(auto)
@@ -2028,6 +2033,17 @@ namespace CommonKernelFunctors {
   public:
     Sphere_3
     operator()( const Sphere_3& s) const
+    { return s.rep().opposite(); }
+  };
+
+  template <typename K>
+  class Construct_opposite_ball_3
+  {
+    typedef typename K::Ball_3     Ball_3;
+
+  public:
+    Ball_3
+    operator()( const Ball_3& s) const
     { return s.rep().opposite(); }
   };
 
@@ -2630,6 +2646,79 @@ namespace CommonKernelFunctors {
     { return this->operator()(Return_base_tag(), center, orientation); }
 
     decltype(auto)
+    operator() (const Circle_3 & c) const
+    { return this->operator()(Return_base_tag(), c); }
+  };
+
+  template <typename K>
+  class Construct_ball_3
+  {
+    typedef typename K::FT         FT;
+    typedef typename K::Point_3    Point_3;
+    typedef typename K::Ball_3     Ball_3;
+    typedef typename K::Circle_3   Circle_3;
+    typedef typename Ball_3::Rep   Rep;
+
+  public:
+    Rep // Ball_3
+    operator()(Return_base_tag, const Point_3& center, const FT& squared_radius,
+                Orientation orientation = COUNTERCLOCKWISE) const
+    {  return Rep(center, squared_radius, orientation); }
+
+    Rep // Ball_3
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q,
+                const Point_3& r, const Point_3& s) const
+    {  return Rep(p, q, r, s); }
+
+    Rep // Ball_3
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q, const Point_3& r,
+                Orientation orientation = COUNTERCLOCKWISE) const
+    {  return Rep(p, q, r, orientation); }
+
+    Rep // Ball_3
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q,
+                Orientation orientation = COUNTERCLOCKWISE) const
+    {  return Rep(p, q, orientation); }
+
+    Rep // Ball_3
+    operator()(Return_base_tag, const Point_3& center,
+                Orientation orientation = COUNTERCLOCKWISE) const
+    {  return Rep(center, orientation); }
+
+    Rep // Ball_3
+    operator() (Return_base_tag, const Circle_3 & c) const
+    {
+      // the ball bounded by the diametral sphere of `c`
+      decltype(auto) s = c.rep().diametral_sphere();
+      return Rep(s.center(), s.squared_radius(), s.orientation());
+    }
+
+    Ball_3
+    operator()( const Point_3& center, const FT& squared_radius,
+                Orientation orientation = COUNTERCLOCKWISE) const
+    { return this->operator()(Return_base_tag(), center, squared_radius, orientation); }
+
+    Ball_3
+    operator()( const Point_3& p, const Point_3& q,
+                const Point_3& r, const Point_3& s) const
+    { return this->operator()(Return_base_tag(), p, q, r, s); }
+
+    Ball_3
+    operator()( const Point_3& p, const Point_3& q, const Point_3& r,
+                Orientation orientation = COUNTERCLOCKWISE) const
+    { return this->operator()(Return_base_tag(), p, q, r, orientation); }
+
+    Ball_3
+    operator()( const Point_3& p, const Point_3& q,
+                Orientation orientation = COUNTERCLOCKWISE) const
+    { return this->operator()(Return_base_tag(), p, q, orientation); }
+
+    Ball_3
+    operator()( const Point_3& center,
+                Orientation orientation = COUNTERCLOCKWISE) const
+    { return this->operator()(Return_base_tag(), center, orientation); }
+
+    Ball_3
     operator() (const Circle_3 & c) const
     { return this->operator()(Return_base_tag(), c); }
   };
@@ -3478,6 +3567,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Triangle_3    Triangle_3;
     typedef typename K::Tetrahedron_3 Tetrahedron_3;
     typedef typename K::Sphere_3      Sphere_3;
+    typedef typename K::Ball_3        Ball_3;
     typedef typename K::Iso_cuboid_3  Iso_cuboid_3;
     typedef typename K::Plane_3       Plane_3;
     typedef typename K::Circle_3      Circle_3;
@@ -3503,6 +3593,12 @@ namespace CommonKernelFunctors {
 
     Boolean
     operator()(const Sphere_3 &v1, const Sphere_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }
+
+    Boolean
+    operator()(const Ball_3 &v1, const Ball_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
@@ -3592,12 +3688,17 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
     typedef typename K::Sphere_3         Sphere_3;
+    typedef typename K::Ball_3           Ball_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
     typedef typename K::Plane_3          Plane_3;
 
   public:
     Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
+    { return s.rep().has_on_boundary(p); }
+
+    Boolean
+    operator()( const Ball_3& s, const Point_3& p) const
     { return s.rep().has_on_boundary(p); }
 
     Boolean
@@ -3641,12 +3742,17 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
     typedef typename K::Sphere_3         Sphere_3;
+    typedef typename K::Ball_3           Ball_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
     typedef typename K::Circle_3         Circle_3;
 
   public:
     Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
+    { return s.has_on_bounded_side(p); }
+
+    Boolean
+    operator()( const Ball_3& s, const Point_3& p) const
     { return s.has_on_bounded_side(p); }
 
     Boolean
@@ -3733,11 +3839,16 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Plane_3          Plane_3;
     typedef typename K::Sphere_3         Sphere_3;
+    typedef typename K::Ball_3           Ball_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
 
   public:
     Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
+    { return s.has_on_negative_side(p); }
+
+    Boolean
+    operator()( const Ball_3& s, const Point_3& p) const
     { return s.has_on_negative_side(p); }
 
     Boolean
@@ -3779,11 +3890,16 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Plane_3          Plane_3;
     typedef typename K::Sphere_3         Sphere_3;
+    typedef typename K::Ball_3           Ball_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
 
   public:
     Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
+    { return s.has_on_positive_side(p); }
+
+    Boolean
+    operator()( const Ball_3& s, const Point_3& p) const
     { return s.has_on_positive_side(p); }
 
     Boolean
@@ -3868,6 +3984,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
     typedef typename K::Sphere_3         Sphere_3;
+    typedef typename K::Ball_3           Ball_3;
     typedef typename K::Circle_3         Circle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
 
@@ -3877,7 +3994,54 @@ namespace CommonKernelFunctors {
     { return s.has_on_unbounded_side(p); }
 
     Boolean
+    operator()( const Ball_3& s, const Point_3& p) const
+    { return s.has_on_unbounded_side(p); }
+
+    Boolean
     operator()(const Sphere_3& s, const Iso_cuboid_3& c) const
+    {
+      typedef typename K::FT FT;
+      FT distance = FT(0);
+
+      const Point_3& center = s.center();
+
+      if ((center.x() >= c.xmin()) && (center.x() <= c.xmax()) &&
+        (center.y() >= c.ymin()) && (center.y() <= c.ymax()) &&
+        (center.z() >= c.zmin()) && (center.z() <= c.zmax()))
+        return false;
+
+      // x
+      if (center.x() < c.xmin())
+        distance = square(c.xmin() - center.x());
+      else if (center.x() > c.xmax())
+        distance = square(center.x() - c.xmax());
+
+      if (certainly(distance > s.squared_radius()))
+        return true;
+
+      // y
+      if (center.y() < c.ymin())
+        distance += square(c.ymin() - center.y());
+      else if (center.y() > c.ymax())
+        distance += square(center.y() - c.ymax());
+
+      if (certainly(distance > s.squared_radius()))
+        return true;
+
+      // z
+      if (center.z() < c.zmin())
+        distance += square(c.zmin() - center.z());
+      else if (center.z() > c.zmax())
+        distance += square(center.z() - c.zmax());
+
+      if (certainly(distance > s.squared_radius()))
+        return true;
+
+      return (distance > s.squared_radius());
+    }
+
+    Boolean
+    operator()(const Ball_3& s, const Iso_cuboid_3& c) const
     {
       typedef typename K::FT FT;
       FT distance = FT(0);
@@ -4067,6 +4231,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Ray_3             Ray_3;
     typedef typename K::Segment_3         Segment_3;
     typedef typename K::Sphere_3          Sphere_3;
+    typedef typename K::Ball_3            Ball_3;
     typedef typename K::Triangle_3        Triangle_3;
     typedef typename K::Tetrahedron_3     Tetrahedron_3;
 
@@ -4093,6 +4258,10 @@ namespace CommonKernelFunctors {
 
     Boolean
     operator()( const Sphere_3& s) const
+    { return s.rep().is_degenerate(); }
+
+    Boolean
+    operator()( const Ball_3& s) const
     { return s.rep().is_degenerate(); }
 
     Boolean
@@ -4216,11 +4385,16 @@ namespace CommonKernelFunctors {
     typedef typename K::Tetrahedron_3  Tetrahedron_3;
     typedef typename K::Plane_3        Plane_3;
     typedef typename K::Sphere_3       Sphere_3;
+    typedef typename K::Ball_3         Ball_3;
   public:
     typedef typename K::Oriented_side  Oriented_side;
 
     Oriented_side
     operator()( const Sphere_3& s, const Point_3& p) const
+    { return s.rep().oriented_side(p); }
+
+    Oriented_side
+    operator()( const Ball_3& s, const Point_3& p) const
     { return s.rep().oriented_side(p); }
 
     Oriented_side

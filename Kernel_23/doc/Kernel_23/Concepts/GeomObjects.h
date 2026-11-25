@@ -608,6 +608,38 @@ public:
   \ingroup PkgKernel23ConceptsGeomObject
   \cgalConcept
 
+  A type representing balls (solid spheres) in three dimensions.
+
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
+
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Ball_3<Kernel>}
+  \cgalHasModelsEnd
+
+  \sa `Kernel::BoundedSide_3`
+  \sa `Kernel::ComputeSquaredRadius_3`
+  \sa `Kernel::ConstructCenter_3`
+  \sa `Kernel::ConstructOppositeBall_3`
+  \sa `Kernel::ConstructBall_3`
+  \sa `Kernel::Equal_3`
+  \sa `Kernel::HasOnBoundary_3`
+  \sa `Kernel::HasOnBoundedSide_3`
+  \sa `Kernel::HasOnNegativeSide_3`
+  \sa `Kernel::HasOnPositiveSide_3`
+  \sa `Kernel::HasOnUnboundedSide_3`
+  \sa `Kernel::IsDegenerate_3`
+  \sa `Kernel::OrientedSide_3`
+
+  \warning Ball_3 is the solid (3-dimensional) region bounded by a sphere, unlike `Kernel::Sphere_3` which is only its boundary surface. Be careful when implementing functors.
+*/
+class Ball_3 {
+public:
+}; /* end Kernel::Ball_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsGeomObject
+  \cgalConcept
+
   A type representing tetrahedra in three dimensions.
 
   \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
