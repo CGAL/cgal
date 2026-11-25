@@ -1676,8 +1676,11 @@ public:
             typedef typename Curve_analysis_2::size_type size_type;
             Polynomial_2 gcd = gcd_cache(std::make_pair(f,g));
             size_type n = CGAL::degree(gcd);
-            size_type nc = CGAL::degree(
-                    CGAL::univariate_content_up_to_constant_factor(gcd));
+            // the content of a gcd of degree 0 in y is its only
+            // coefficient; it is computed only in that case
+            size_type nc = (n != 0) ? 0 : CGAL::degree(gcd[0]);
+            CGAL_assertion(n != 0 || nc == CGAL::degree(
+                    CGAL::univariate_content_up_to_constant_factor(gcd)));
             if( n!=0 || nc!=0 ) {
                 Curve_analysis_2 common_curve = cc_2(gcd);
                 *oib++ = common_curve;

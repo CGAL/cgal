@@ -1184,6 +1184,15 @@ public:
 
         Bound b = bound_value_in_interval(i);
 
+        // look up the cached status line by the rational value first, which
+        // avoids constructing an algebraic real
+        typename Rep::Vert_line_at_rational_map::const_iterator it =
+            this->ptr()->vert_line_at_rational_map.find(b);
+        if (it != this->ptr()->vert_line_at_rational_map.end()) {
+            CGAL_postcondition(! it->second.is_event());
+            return it->second;
+        }
+
         Status_line_1 intermediate_line
             = status_line_at_exact_non_event_x(Algebraic_real_1(b));
 
