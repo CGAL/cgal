@@ -241,6 +241,7 @@ void move () {
   assert(m2.is_valid());
   assert(num_faces(m2) == nf);
   assert(num_faces(f.m) == 0);
+  assert(!bool(f.m.points()));
 
   // test move-assignment
   f.m = std::move(m2);
@@ -248,6 +249,7 @@ void move () {
   assert(m2.is_valid());
   assert(num_faces(f.m) == nf);
   assert(num_faces(m2) == 0);
+  assert(!bool(m2.points()));
 
   // test copy-assignment
   m2 = f.m;
@@ -255,6 +257,7 @@ void move () {
   assert(m2.is_valid());
   assert(num_faces(f.m) == nf);
   assert(num_faces(m2) == nf);
+  assert(bool(m2.points()));
 
   // test copy-constructor
   Sm m3 {f.m};
@@ -262,6 +265,16 @@ void move () {
   assert(m2.is_valid());
   assert(num_faces(f.m) == nf);
   assert(num_faces(m2) == nf);
+
+  // test property map move-assignment
+  auto pmap1 = f.m.add_property_map<Sm::Vertex_index, int>("v:test_prop", 42).first;
+  decltype(pmap1) pmap2;
+  pmap2 = std::move(pmap1);
+  assert(bool(pmap2));
+  assert(!bool(pmap1));
+  pmap1 = std::move(pmap2);
+  assert(bool(pmap1));
+  assert(!bool(pmap2));
 }
 
 

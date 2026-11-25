@@ -578,6 +578,15 @@ public:
       return *this;
     }
 
+    Property_map_base& operator=(Property_map_base&& pm) noexcept
+    {
+      if (this != &pm)
+      {
+        parray_ = std::exchange(pm.parray_, nullptr);
+      }
+      return *this;
+    }
+
     void reset()
     {
         parray_ = nullptr;
