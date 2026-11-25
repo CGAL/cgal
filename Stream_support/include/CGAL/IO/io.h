@@ -323,6 +323,17 @@ public:
 
   //! perform the input, calls \c operator\>\> by default.
   std::istream& operator()( std::istream& is) const {
+    // an empty optional is written as "--" (see `Output_rep<std::optional<T>>`)
+    is >> std::ws;
+    if(is.peek() == '-') {
+      is.get();
+      if(is.peek() == '-') {
+        is.get();
+        t = std::nullopt;
+        return is;
+      }
+      is.putback('-');
+    }
     T v;
     if(is >> v) t = v;
     return is;
