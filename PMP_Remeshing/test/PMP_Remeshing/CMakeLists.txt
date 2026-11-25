@@ -8,6 +8,7 @@ project(PMP_Remeshing_Tests)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("extrude_test.cpp")
+create_single_source_cgal_program("test_planar_patch_topology.cpp")
 create_single_source_cgal_program("remeshing_test.cpp")
 create_single_source_cgal_program("remeshing_test_epeck.cpp")
 create_single_source_cgal_program("remeshing_with_isolated_constraints_test.cpp" )
