@@ -46,6 +46,9 @@ namespace CGAL {
  * `d1` and `d2`. The \f$x\f$-monotone curve that represents the overlap is
  * associated with the output of this functor.
  *
+ * Both `XData` and `CData` must be models of `DefaultConstructible`,
+ * `CopyConstructible`, and `Assignable`.
+ *
  * \cgalModels{AosTraits_2}
  */
 template <typename Tr, typename XData, typename Mrg, typename CData, typename Cnv>
@@ -81,7 +84,7 @@ public:
   /// @}
 
   /*! The `Curve_2` class nested within the curve-data traits extends the
-   * `Base_traits_2::Curve_2` type with an extra data field of type `Data`.
+   * `Base_traits_2::Curve_2` type with an extra data field of type `Curve_data`.
    */
   class Curve_2 : public Base_curve_2 {
   public:
@@ -91,7 +94,7 @@ public:
     /*! constructs default */
     Curve_2();
 
-    /*! constructs curve from the given `base` curve with uninitialized
+    /*! constructs curve from the given `base` curve with a value-initialized
      * data field.
      */
     Curve_2(const Base_curve_2& base);
@@ -99,7 +102,7 @@ public:
     /*! constructs curve from the given `base` curve with an attached
      * `data` field.
      */
-    Curve_2(const Base_curve_2& base, const Data& data);
+    Curve_2(const Base_curve_2& base, const Curve_data& data);
 
     /// @}
 
@@ -130,7 +133,7 @@ public:
     X_monotone_curve_2();
 
     /*! constructs an \f$x\f$-monotone curve from the given `base` curve with
-     * uninitialized data field.
+     * a value-initialized data field.
      */
     X_monotone_curve_2(const Base_x_monotone_curve_2& base);
 
