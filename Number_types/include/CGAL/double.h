@@ -190,7 +190,57 @@ is_integer(double d)
   return CGAL::is_finite(d) && (std::ceil(d) == d);
 }
 
+// Returns a pair (m, e) such that d == m * 2^e, where m is a (possibly
+// negative) odd integer stored as a double (|m| < 2^53), and e is an
+// integer.  Returns (0.0, 0) for d == 0.
+// Works for all finite doubles including subnormal/denormal values.
+// Use this in preference to split_numerator_denominator() when the input
+// may be subnormal, because that function cannot represent the large
+// denominators required for subnormal doubles.
+inline
+std::pair<double, int>
+split_mantissa_exponent(double d)
+{
+  CGAL_precondition(CGAL::is_finite(d));
+  if (d == 0.0) return std::make_pair(0.0, 0);
+  const bool neg = (d < 0.0);
+  int exp;
+  double frac = std::frexp(std::fabs(d), &exp);
+  // frac is in [0.5, 1.0) and frac * 2^53 is exactly a 53-bit integer.
+  long long m = static_cast<long long>(std::ldexp(frac, 53));
+  int e = exp - 53;
+  // Remove trailing zeros so that m becomes odd.
+  // m is nonzero here: d is finite and nonzero, so frac >= 0.5
+  // and ldexp(frac, 53) is in [2^52, 2^53), which is always nonzero.
+  while ((m & 1) == 0) { m >>= 1; ++e; }
+  return std::make_pair(neg ? -static_cast<double>(m)
+                            :  static_cast<double>(m), e);
+}
+
+namespace internal {
+// Decomposes a finite double d into big-integer num and den such that
+// d == num/den.  Works for all finite doubles including subnormals.
+// Requires Integer to support: construction from double (|mantissa| < 2^53
+// so it is exact), assignment from the integer literals 0 and 1, and
+// left-shift assignment (<<=) by a non-negative int.
+template <class Integer>
+void split_double_as_integer_ratio(double d, Integer& num, Integer& den)
+{
+  den = 1;
+  if (d == 0.0) { num = 0; return; }
+  const auto [mantissa, exponent] = split_mantissa_exponent(d);
+  num = Integer(mantissa);
+  if (exponent >= 0)
+    num <<= exponent;
+  else
+    den <<= -exponent;
+}
+} // namespace internal
+
 // Returns a pair of integers <num,den> such that d == num/den.
+// Requires d to be a normal (non-subnormal) finite floating-point number
+// or zero; for subnormal values use split_mantissa_exponent() instead,
+// since those require a denominator larger than any finite double.
 inline
 std::pair<double, double>
 split_numerator_denominator(double d)
