@@ -81,6 +81,7 @@ the printing mode.
 
 \cgalCRPSection{Classes}
 - `CGAL::IO::Color`
+- `CGAL::IO::Color_ramp`
 - `CGAL::IO::Basic_color_streambuf<CharT,Traits>`
 - `CGAL::IO::Color_streambuf`
 - `CGAL::IO::Color_wstreambuf`
