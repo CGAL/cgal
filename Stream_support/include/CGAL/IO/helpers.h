@@ -36,7 +36,10 @@ void fill_point(const double x, const double y, const double /*z*/, const double
                 CGAL::Point_2<Kernel>& pt)
 {
   typedef typename Kernel::FT FT;
-  pt = CGAL::Point_2<Kernel>(FT(x)/FT(w), FT(y)/FT(w));
+  if(w == 1.)
+    pt = CGAL::Point_2<Kernel>(FT(x), FT(y));
+  else
+    pt = CGAL::Point_2<Kernel>(FT(x)/FT(w), FT(y)/FT(w));
 }
 
 template <typename Kernel>
@@ -44,7 +47,10 @@ void fill_point(const double x, const double y, const double z, const double w,
                 CGAL::Point_3<Kernel>& pt)
 {
   typedef typename Kernel::FT FT;
-  pt = CGAL::Point_3<Kernel>(FT(x)/FT(w), FT(y)/FT(w), FT(z)/FT(w));
+  if(w == 1.)
+    pt = CGAL::Point_3<Kernel>(FT(x), FT(y), FT(z));
+  else
+    pt = CGAL::Point_3<Kernel>(FT(x)/FT(w), FT(y)/FT(w), FT(z)/FT(w));
 }
 
 // something else (arrays...)
