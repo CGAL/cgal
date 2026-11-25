@@ -82,9 +82,12 @@ void random_points(const PolygonMesh& mesh,
   double grid_dz = bb.zmax() - bb.zmin();
 
   for (int i = 0; i < n; i++){
-    *out++ = Point(bb.xmin() + rg.get_double()* grid_dx,
-      bb.ymin() + rg.get_double()* grid_dy,
-      bb.zmin() + rg.get_double()* grid_dz);
+    const double rx = rg.get_double();
+    const double ry = rg.get_double();
+    const double rz = rg.get_double();
+    *out++ = Point(bb.xmin() + rx* grid_dx,
+      bb.ymin() + ry* grid_dy,
+      bb.zmin() + rz* grid_dz);
   }
 }
 

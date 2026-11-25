@@ -1198,12 +1198,14 @@ void _test_compare_Root_for_spheres(AK ak)
     ak.compare_xyz_object();
 
   for (int i = 0; i < 100; i++){
-    Root_for_spheres_2_3 r1(theRandom.get_int(random_min,random_max),
-                            theRandom.get_int(random_min,random_max),
-                            theRandom.get_int(random_min,random_max));
-    Root_for_spheres_2_3 r2(theRandom.get_int(random_min,random_max),
-                            theRandom.get_int(random_min,random_max),
-                            theRandom.get_int(random_min,random_max));
+    const int x1 = theRandom.get_int(random_min,random_max);
+    const int y1 = theRandom.get_int(random_min,random_max);
+    const int z1 = theRandom.get_int(random_min,random_max);
+    const int x2 = theRandom.get_int(random_min,random_max);
+    const int y2 = theRandom.get_int(random_min,random_max);
+    const int z2 = theRandom.get_int(random_min,random_max);
+    Root_for_spheres_2_3 r1(x1, y1, z1);
+    Root_for_spheres_2_3 r2(x2, y2, z2);
     if(r1.x() > r2.x()){
       assert(theCompare_x(r1, r2) == CGAL::LARGER);
       assert(theCompare_xy(r1, r2) == CGAL::LARGER);

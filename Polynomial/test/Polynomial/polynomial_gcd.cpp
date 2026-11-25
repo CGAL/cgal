@@ -156,32 +156,30 @@ void univariate_polynomial_test() {
         int l;
 
         // random polynomials with rational coefficients
+        auto rand_rational = [&]() {
+            const int num = my_random.get_int(10,1000);
+            const int den = my_random.get_int(10,1000);
+            return Rational(num, den);
+        };
         for(l=0;l<2;l++){
             do{
-                f = rat_POLY(Rational(my_random.get_int(10,1000),
-                                my_random.get_int(10,1000)),
-                        Rational(my_random.get_int(10,1000),
-                                my_random.get_int(10,1000)),
-                        Rational(my_random.get_int(10,1000),
-                                my_random.get_int(10,1000)),
-                        Rational(my_random.get_int(10,1000),
-                                my_random.get_int(10,1000)));
-                g = rat_POLY(Rational(my_random.get_int(10,1000),
-                                my_random.get_int(10,1000)),
-                        Rational(my_random.get_int(10,1000),
-                                my_random.get_int(10,1000)),
-                        Rational(my_random.get_int(10,1000),
-                                my_random.get_int(10,1000)));
+                const Rational f0 = rand_rational();
+                const Rational f1 = rand_rational();
+                const Rational f2 = rand_rational();
+                const Rational f3 = rand_rational();
+                f = rat_POLY(f0, f1, f2, f3);
+                const Rational g0 = rand_rational();
+                const Rational g1 = rand_rational();
+                const Rational g2 = rand_rational();
+                g = rat_POLY(g0, g1, g2);
                 result = CGAL::gcd(f, g);
             }
             while(result != rat_POLY(1));
 
-            d = rat_POLY(Rational(my_random.get_int(10,1000),
-                            my_random.get_int(10,1000)),
-                    Rational(my_random.get_int(10,1000),
-                            my_random.get_int(10,1000)),
-                    Rational(my_random.get_int(10,1000),
-                            my_random.get_int(10,1000)));
+            const Rational d0 = rand_rational();
+            const Rational d1 = rand_rational();
+            const Rational d2 = rand_rational();
+            d = rat_POLY(d0, d1, d2);
             rat_POLY p1 = f*d;
             rat_POLY p2 = g*d;
             gcd_utcf_test(p1, p2, d);
@@ -292,42 +290,26 @@ void univariate_polynomial_test() {
         for(l=0;l<2;l++){
             root = CGAL::abs(CGAL::internal::rand_int<Integer>
                     (my_random.get_int(10,1000)));
+            auto rand_int_EXT_2 = [&](int lo, int hi) {
+                const int_EXT_1 a = CGAL::internal::rand_sqrt<int_EXT_1, Integer>(my_random.get_int(lo,hi),root);
+                const int_EXT_1 b = CGAL::internal::rand_sqrt<int_EXT_1, Integer>(my_random.get_int(lo,hi),root);
+                return int_EXT_2(a, b, root);
+            };
             do{
-                f = int_EXT_2_POLY(
-                        int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root),
-                                CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root), root),
-                        int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root),
-                                CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root), root),
-                        int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root),
-                                CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root), root));
-                g = int_EXT_2_POLY(
-                        int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root),
-                                CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root), root),
-                        int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root),
-                                CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root), root));
+                const int_EXT_2 f0 = rand_int_EXT_2(10,1000);
+                const int_EXT_2 f1 = rand_int_EXT_2(10,1000);
+                const int_EXT_2 f2 = rand_int_EXT_2(10,1000);
+                f = int_EXT_2_POLY(f0, f1, f2);
+                const int_EXT_2 g0 = rand_int_EXT_2(10,1000);
+                const int_EXT_2 g1 = rand_int_EXT_2(10,1000);
+                g = int_EXT_2_POLY(g0, g1);
                 result = CGAL::internal::gcd_utcf(f, g);
             }
             while(result.degree() != 0);
 
-            d = int_EXT_2_POLY(
-                    int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                            (my_random.get_int(1,10),root),
-                            CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                            (my_random.get_int(1,10),root), root),
-                    int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                            (my_random.get_int(1,10),root),
-                            CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                            (my_random.get_int(1,10),root), root));
+            const int_EXT_2 d0 = rand_int_EXT_2(1,10);
+            const int_EXT_2 d1 = rand_int_EXT_2(1,10);
+            d = int_EXT_2_POLY(d0, d1);
             int_EXT_2_POLY p1 = f*d;
             int_EXT_2_POLY p2 = g*d;
             gcd_utcf_test(p1, p2, d);
@@ -410,37 +392,29 @@ void bivariate_polynomial_test() {
         int l;
 
         // random bivariate polynomials with integers as coefficients
+        auto rand_int_POLY_1 = [&]() {
+            return CGAL::internal::rand_Poly_int<Integer>(my_random.get_int(10,100));
+        };
         for(l=0;l<2;l++){
             do{
-                f = int_POLY_2(
-                        CGAL::internal::rand_Poly_int<Integer>
-                        (my_random.get_int(10,100)),
-                        CGAL::internal::rand_Poly_int<Integer>
-                        (my_random.get_int(10,100)),
-                        CGAL::internal::rand_Poly_int<Integer>
-                        (my_random.get_int(10,100)));
-                g = int_POLY_2(
-                        CGAL::internal::rand_Poly_int<Integer>
-                        (my_random.get_int(10,100)),
-                        CGAL::internal::rand_Poly_int<Integer>
-                        (my_random.get_int(10,100)),
-                        CGAL::internal::rand_Poly_int<Integer>
-                        (my_random.get_int(10,100)),
-                        CGAL::internal::rand_Poly_int<Integer>
-                        (my_random.get_int(10,100)));
+                const int_POLY_1 f0 = rand_int_POLY_1();
+                const int_POLY_1 f1 = rand_int_POLY_1();
+                const int_POLY_1 f2 = rand_int_POLY_1();
+                f = int_POLY_2(f0, f1, f2);
+                const int_POLY_1 g0 = rand_int_POLY_1();
+                const int_POLY_1 g1 = rand_int_POLY_1();
+                const int_POLY_1 g2 = rand_int_POLY_1();
+                const int_POLY_1 g3 = rand_int_POLY_1();
+                g = int_POLY_2(g0, g1, g2, g3);
                 result = CGAL::gcd(f, g);
             }
             while(result != int_POLY_2(1));
 
-            d = int_POLY_2(
-                    CGAL::internal::rand_Poly_int<Integer>
-                    (my_random.get_int(10,100)),
-                    CGAL::internal::rand_Poly_int<Integer>
-                    (my_random.get_int(10,100)),
-                    CGAL::internal::rand_Poly_int<Integer>
-                    (my_random.get_int(10,100)),
-                    CGAL::internal::rand_Poly_int<Integer>
-                    (my_random.get_int(10,100)));
+            const int_POLY_1 d0 = rand_int_POLY_1();
+            const int_POLY_1 d1 = rand_int_POLY_1();
+            const int_POLY_1 d2 = rand_int_POLY_1();
+            const int_POLY_1 d3 = rand_int_POLY_1();
+            d = int_POLY_2(d0, d1, d2, d3);
             int_POLY_2 p1 = f*d;
             int_POLY_2 p2 = g*d;
             gcd_utcf_test(p1, p2, d);

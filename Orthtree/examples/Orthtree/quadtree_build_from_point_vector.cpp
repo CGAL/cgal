@@ -14,9 +14,11 @@ int main()
 {
   CGAL::Random r;
   Point_vector points_2d;
-  for (std::size_t i = 0; i < 5; ++ i)
-    points_2d.emplace_back(r.get_double(-1., 1.),
-                           r.get_double(-1., 1.));
+  for (std::size_t i = 0; i < 5; ++ i) {
+    const double x = r.get_double(-1., 1.);
+    const double y = r.get_double(-1., 1.);
+    points_2d.emplace_back(x, y);
+  }
 
   Quadtree quadtree(points_2d);
   quadtree.refine(10, 5);

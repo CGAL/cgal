@@ -88,7 +88,10 @@ private:
 
   P random_point() const
   {
-    return P(FT(r.get_double(m, M)), FT(r.get_double(m, M)), FT(r.get_double(m, M)));
+    const double x = r.get_double(m, M);
+    const double y = r.get_double(m, M);
+    const double z = r.get_double(m, M);
+    return P(FT(x), FT(y), FT(z));
   }
 
   Pl pl(int a, int b, int c, int d)

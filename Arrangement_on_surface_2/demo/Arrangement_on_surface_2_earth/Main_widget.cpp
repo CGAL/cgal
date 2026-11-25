@@ -139,7 +139,10 @@ void Main_widget::initializeGL() {
   auto rndm = [] {return rand() / double(RAND_MAX); };
   for (auto& [country_name, triangle_points] : country_triangles_map) {
     auto country_triangles = std::make_unique<Triangles>(triangle_points);
-    auto color = QVector4D(rndm(), rndm(), rndm(), 1);
+    const auto r = rndm();
+    const auto g = rndm();
+    const auto b = rndm();
+    auto color = QVector4D(r, g, b, 1);
     auto m = (std::max)(color.x(), (std::max)(color.y(), color.z()));
     color /= m;
     color *= m_dimming_factor;

@@ -89,9 +89,12 @@ void delaunay()
 {
   Delaunay D;
   for (int i=0; i<100; i++)
-    D.insert(Delaunay::Point(my_NT(my_rand()),
-                             my_NT(my_rand()),
-                             my_NT(my_rand())));
+  {
+    const int x = my_rand();
+    const int y = my_rand();
+    const int z = my_rand();
+    D.insert(Delaunay::Point(my_NT(x), my_NT(y), my_NT(z)));
+  }
 }
 
 // Tests the precision of to_double()

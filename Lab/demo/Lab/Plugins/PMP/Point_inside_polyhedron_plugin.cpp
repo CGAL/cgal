@@ -237,10 +237,13 @@ public Q_SLOTS:
     double grid_dz = bbox->zmax() - bbox->zmin();
 
     for(int i=0; i < nb_points; i++){
+      const double rx = rg.get_double();
+      const double ry = rg.get_double();
+      const double rz = rg.get_double();
       point_item->point_set()->insert(
-      Epic_kernel::Point_3(bbox->xmin ()+ rg.get_double()* grid_dx,
-        bbox->ymin() + rg.get_double()* grid_dy,
-        bbox->zmin() + rg.get_double()* grid_dz)
+      Epic_kernel::Point_3(bbox->xmin ()+ rx* grid_dx,
+        bbox->ymin() + ry* grid_dy,
+        bbox->zmin() + rz* grid_dz)
       );
     }
 

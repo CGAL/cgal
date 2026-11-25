@@ -24,7 +24,11 @@ int main()
   // Generate N random points
   std::vector<Weighted_point> points;
   for (int i = 0; i < N; ++i)
-    points.push_back(Weighted_point(*rand_it++, rng.get_double(0., 10.)));
+  {
+    const Bare_point p = *rand_it++;
+    const double w = rng.get_double(0., 10.);
+    points.push_back(Weighted_point(p, w));
+  }
 
   T t(D);
   assert(t.empty());

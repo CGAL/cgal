@@ -56,9 +56,10 @@ void bench_segment_traverser(const int nb_queries,
   int i = 0;
   while (i < nbv)
   {
-    points[i++] = Point_3(rng.get_double(-rad, rad),
-                          rng.get_double(-rad, rad),
-                          rng.get_double(-rad, rad));
+    const double x = rng.get_double(-rad, rad);
+    const double y = rng.get_double(-rad, rad);
+    const double z = rng.get_double(-rad, rad);
+    points[i++] = Point_3(x, y, z);
   }
 
   // Construct the Delaunay triangulation.
@@ -70,9 +71,10 @@ void bench_segment_traverser(const int nb_queries,
   i = 0;
   while (i < 2 * nb_queries)
   {
-    segments[i++] = Point_3(rng.get_double(-2 * rad, 2 * rad),
-                            rng.get_double(-2 * rad, 2 * rad),
-                            rng.get_double(-2 * rad, 2 * rad));
+    const double x = rng.get_double(-2 * rad, 2 * rad);
+    const double y = rng.get_double(-2 * rad, 2 * rad);
+    const double z = rng.get_double(-2 * rad, 2 * rad);
+    segments[i++] = Point_3(x, y, z);
   }
 
   CGAL::Timer timer_st, timer_ct;

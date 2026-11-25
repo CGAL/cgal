@@ -491,7 +491,10 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
         if (cid != -1)
         {
           srand(cid);
-          m_points->point_set()->set_color(*it, 64 + rand() % 192, 64 + rand() % 192, 64 + rand() % 192);
+          const int r = 64 + rand() % 192;
+          const int g = 64 + rand() % 192;
+          const int b = 64 + rand() % 192;
+          m_points->point_set()->set_color(*it, r, g, b);
         }
         else
         {

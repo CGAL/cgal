@@ -75,9 +75,12 @@ int main(void)
 
   // Test random
   for (std::size_t i = 0; i < 10000; ++ i)
-    input.push_back (Point (rand() / (FT)RAND_MAX,
-                              rand() / (FT)RAND_MAX,
-                              rand() / (FT)RAND_MAX));
+  {
+    const FT x = rand() / (FT)RAND_MAX;
+    const FT y = rand() / (FT)RAND_MAX;
+    const FT z = rand() / (FT)RAND_MAX;
+    input.push_back (Point (x, y, z));
+  }
   test (input, input.size (), -1, -1, -1, -1);
 
   return EXIT_SUCCESS;

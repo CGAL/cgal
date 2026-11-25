@@ -22,7 +22,10 @@ int main ()
 
     for (int i=0; i<n; ++i) {
         for (int j = 0; j < d; ++j) {
-            P.at(i) = Point(r.get_double(), r.get_double(), r.get_double()); // random point
+            const double x = r.get_double();
+            const double y = r.get_double();
+            const double z = r.get_double();
+            P.at(i) = Point(x, y, z); // random point
         }
     }
 

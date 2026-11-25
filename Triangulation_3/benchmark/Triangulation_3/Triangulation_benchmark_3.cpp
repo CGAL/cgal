@@ -154,12 +154,19 @@ public:
 
 Point_3 rnd_point(const Point_3&) // dummy argument to overload rnd_point
 {
-  return Point_3(drand48(), drand48(), drand48());
+  const double x = drand48();
+  const double y = drand48();
+  const double z = drand48();
+  return Point_3(x, y, z);
 }
 
 Weighted_point_3 rnd_point(const Weighted_point_3&) // dummy argument to overload rnd_point
 {
-  return Weighted_point_3(Point_3(drand48(), drand48(), drand48()), drand48());
+  const double x = drand48();
+  const double y = drand48();
+  const double z = drand48();
+  const double w = drand48();
+  return Weighted_point_3(Point_3(x, y, z), w);
 }
 
 template< typename Tr >

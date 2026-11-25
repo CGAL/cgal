@@ -45,12 +45,14 @@ int main(int argc, char* argv[])
   ////////////////////////////////////////////////////////////
   // Construct a traverser and use begin/end iterators
   ////////////////////////////////////////////////////////////
-  Point_3 p1(rng.get_double(-0.48, 0.31),
-             rng.get_double(-0.22, 0.22),
-             rng.get_double(-0.19, 0.19));
-  Point_3 p2(rng.get_double(-0.48, 0.31),
-             rng.get_double(-0.22, 0.22),
-             rng.get_double(-0.19, 0.19));
+  const double x1 = rng.get_double(-0.48, 0.31);
+  const double y1 = rng.get_double(-0.22, 0.22);
+  const double z1 = rng.get_double(-0.19, 0.19);
+  const double x2 = rng.get_double(-0.48, 0.31);
+  const double y2 = rng.get_double(-0.22, 0.22);
+  const double z2 = rng.get_double(-0.19, 0.19);
+  Point_3 p1(x1, y1, z1);
+  Point_3 p2(x2, y2, z2);
 
   Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(p1, p2);
   Segment_simplex_iterator stend = dt.segment_traverser_simplices_end();

@@ -265,7 +265,9 @@ void Stream_lines_2<VectorField_2, Integrator_2>::place_stream_lines(const Vecto
   while(!vector_field_2.is_in_domain(seed_point))
     {
       // std::cout << "searching valid seed point..\n";
-      seed_point = Point_2(die_x(), die_y());
+      const double x = die_x();
+      const double y = die_y();
+      seed_point = Point_2(x, y);
     }
   // std::cout << seed_point << " first seed point\n";
   // std::cout << "creating the placement..\n";

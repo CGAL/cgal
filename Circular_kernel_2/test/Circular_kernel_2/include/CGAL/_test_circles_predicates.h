@@ -367,8 +367,9 @@ void _test_circle_predicat(CK ck)
 
   //////////////////////Bbox of an endpoint////////////////////////////
   for(int i = 0; i < 100; i++){
-  Point_2 center_random(theRandom.get_int(random_min, random_max),
-                        theRandom.get_int(random_min, random_max));
+  const int center_x = theRandom.get_int(random_min, random_max);
+  const int center_y = theRandom.get_int(random_min, random_max);
+  Point_2 center_random(center_x, center_y);
   Circle_2 circle_random(center_random,
                          theRandom.get_int(1, random_max));
   int x_random1, y_random1;
@@ -393,9 +394,11 @@ void _test_circle_predicat(CK ck)
                                x_random2,
                                center_random.y() +
                                y_random2));
+  const bool b1 = theRandom.get_bool();
+  const bool b2 = theRandom.get_bool();
   Circular_arc_2 arc_random(circle_random,
-                            line_random_1, theRandom.get_bool(),
-                            line_random_2, theRandom.get_bool());
+                            line_random_1, b1,
+                            line_random_2, b2);
   CGAL::Bbox_2 bb = arc_random.source().bbox();
   assert(typename CK::FT(bb.xmin()) <= arc_random.source().x());
   assert(typename CK::FT(bb.xmax()) >= arc_random.source().x());

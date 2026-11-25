@@ -83,10 +83,12 @@ void test_modular_gcd_utils() {
 
     // random polynomials with integer coefficients
     for(l=0;l<100;l++){
-      f = CGAL::internal::rand_Poly_int<Integer>(my_random.get_int(10,1000),
-          my_random.get_int(1,15));
-      g = CGAL::internal::rand_Poly_int<Integer>(my_random.get_int(10,1000),
-          my_random.get_int(1,10));
+      const int f_bits = my_random.get_int(10,1000);
+      const int f_degree = my_random.get_int(1,15);
+      f = CGAL::internal::rand_Poly_int<Integer>(f_bits, f_degree);
+      const int g_bits = my_random.get_int(10,1000);
+      const int g_degree = my_random.get_int(1,10);
+      g = CGAL::internal::rand_Poly_int<Integer>(g_bits, g_degree);
       CGAL::Residue::set_current_prime(4483);
       MPoly mf= CGAL::modular_image(f);
       MPoly mg= CGAL::modular_image(g);
@@ -120,10 +122,12 @@ void test_modular_gcd_utils() {
 
     CGAL::Residue::set_current_prime(4253);
     for(l=0;l<2;l++){
-      f = CGAL::internal::rand_Poly_sqrt<EXT,Integer>
-        (my_random.get_int(10,1000),my_random.get_int(1,15),NT(8293));
-      g = CGAL::internal::rand_Poly_sqrt<EXT,Integer>
-        (my_random.get_int(10,1000),my_random.get_int(1,10),NT(8293));
+      const int f_bits = my_random.get_int(10,1000);
+      const int f_degree = my_random.get_int(1,15);
+      f = CGAL::internal::rand_Poly_sqrt<EXT,Integer>(f_bits, f_degree, NT(8293));
+      const int g_bits = my_random.get_int(10,1000);
+      const int g_degree = my_random.get_int(1,10);
+      g = CGAL::internal::rand_Poly_sqrt<EXT,Integer>(g_bits, g_degree, NT(8293));
       MPoly_Ext mf= CGAL::modular_image(f);
       MPoly_Ext mg= CGAL::modular_image(g);
       CGAL::internal::euclidean_division_obstinate(mf, mg, mQ, mR);

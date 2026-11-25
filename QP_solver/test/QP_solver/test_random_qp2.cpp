@@ -89,12 +89,20 @@ int main() {
     // now fill the program
     Program p;
     // A
-    for (int j=0; j<n+m; ++j)
-      p.set_a (rd.get_int(0,n), rd.get_int(0,m), rd.get_double());
+    for (int j=0; j<n+m; ++j) {
+      const int col = rd.get_int(0,n);
+      const int row = rd.get_int(0,m);
+      const double val = rd.get_double();
+      p.set_a (col, row, val);
+    }
     // b, r
     for (int i=0; i<m/2; ++i) {
-      p.set_b (rd.get_int(0,m), rd.get_double());
-      p.set_r (rd.get_int(0,m), random_rel());
+      const int b_row = rd.get_int(0,m);
+      const double b_val = rd.get_double();
+      p.set_b (b_row, b_val);
+      const int r_row = rd.get_int(0,m);
+      const CGAL::Comparison_result r_val = random_rel();
+      p.set_r (r_row, r_val);
     }
     // fl, l, fu, u
     for (int j=0; j<n; ++j) {
@@ -113,8 +121,11 @@ int main() {
         p.set_d(i, j, entry);
       }
     // c
-    for (int j=0; j<n/2; ++j)
-      p.set_c (rd.get_int(0, n), rd.get_double());
+    for (int j=0; j<n/2; ++j) {
+      const int col = rd.get_int(0, n);
+      const double val = rd.get_double();
+      p.set_c (col, val);
+    }
     // c0
     p.set_c0(rd.get_double());
 

@@ -181,36 +181,27 @@ void test_modular_gcd(Integral_domain_tag) {
 // random polynomials with nested sqrt-extensions of integers as coefficients
         for(l=0;l<2;l++){
             root = CGAL::abs(rand_int<Integer>(my_random.get_int(10,1000)));
+            auto rand_int_EXT_2 = [&](int lo, int hi) {
+                const int_EXT_1 a = rand_sqrt<int_EXT_1, Integer>(my_random.get_int(lo,hi),root);
+                const int_EXT_1 b = rand_sqrt<int_EXT_1, Integer>(my_random.get_int(lo,hi),root);
+                return int_EXT_2(a, b, root);
+            };
             do{
-                f = int_EXT_2_POLY(
-                        int_EXT_2(rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root),
-                                rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root),
-                                root),
-                        int_EXT_2(rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root),
-                                rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root),
-                                root),
-                        int_EXT_2(rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root),
-                                rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root),
-                                root));
-                g = int_EXT_2_POLY(
-                        int_EXT_2(rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root),
-                                rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root),
-                                root),
-                        int_EXT_2(rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root),
-                                rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root),
-                                root));
+                const int_EXT_2 f0 = rand_int_EXT_2(10,1000);
+                const int_EXT_2 f1 = rand_int_EXT_2(10,1000);
+                const int_EXT_2 f2 = rand_int_EXT_2(10,1000);
+                f = int_EXT_2_POLY(f0, f1, f2);
+                const int_EXT_2 g0 = rand_int_EXT_2(10,1000);
+                const int_EXT_2 g1 = rand_int_EXT_2(10,1000);
+                g = int_EXT_2_POLY(g0, g1);
                 result = CGAL::internal::gcd_utcf(f, g);
                 result = CGAL::canonicalize(result);
             }
             while(result != int_EXT_2_POLY(1));
 
-            d = int_EXT_2_POLY(
-                    int_EXT_2(rand_sqrt<int_EXT_1, Integer>(my_random.get_int(1,10),root),
-                            rand_sqrt<int_EXT_1, Integer>(my_random.get_int(1,10),root),
-                            root),
-                    int_EXT_2(rand_sqrt<int_EXT_1, Integer>(my_random.get_int(1,10),root),
-                            rand_sqrt<int_EXT_1, Integer>(my_random.get_int(1,10),root),
-                            root));
+            const int_EXT_2 d0 = rand_int_EXT_2(1,10);
+            const int_EXT_2 d1 = rand_int_EXT_2(1,10);
+            d = int_EXT_2_POLY(d0, d1);
             int_EXT_2_POLY p1 = f*d;
             int_EXT_2_POLY p2 = g*d;
             gcd_utcf_test(p1, p2, d);

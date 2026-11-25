@@ -207,9 +207,12 @@ void test_random_inner_untangling_integration()
 
   for (std::size_t i = 0; i < 100; ++i) {
     auto p = interior[i]->point();
-    interior[i]->set_point(Point_3(CGAL::to_double(p.x()) + du(rng),
-                                   CGAL::to_double(p.y()) + du(rng),
-                                   CGAL::to_double(p.z()) + du(rng)));
+    const double dx = du(rng);
+    const double dy = du(rng);
+    const double dz = du(rng);
+    interior[i]->set_point(Point_3(CGAL::to_double(p.x()) + dx,
+                                   CGAL::to_double(p.y()) + dy,
+                                   CGAL::to_double(p.z()) + dz));
   }
 
 

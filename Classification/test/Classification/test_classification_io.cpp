@@ -42,9 +42,12 @@ int main (int, char**)
   Point_set points;
 
   for (std::size_t i = 0; i < 1000; ++ i)
-    points.insert (Point (CGAL::get_default_random().get_double(),
-                          CGAL::get_default_random().get_double(),
-                          CGAL::get_default_random().get_double()));
+  {
+    const double x = CGAL::get_default_random().get_double();
+    const double y = CGAL::get_default_random().get_double();
+    const double z = CGAL::get_default_random().get_double();
+    points.insert (Point (x, y, z));
+  }
 
   Iso_cuboid_3 bbox = CGAL::bounding_box (points.points().begin(), points.points().end());
 

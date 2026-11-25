@@ -22,7 +22,9 @@ _test_cls_regular_hierarchy_2( const Rh & )
   CGAL::Random rand;
   // std::ofstream output("data"); CGAL::IO::set_binary_mode(output);
   for(int i = 0; i < nn ; i++){
-    Bare_point p( rand.get_double(), rand.get_double());
+    const double x = rand.get_double();
+    const double y = rand.get_double();
+    Bare_point p(x, y);
     Weighted_point wp(p, (rand.get_double())*100);
     //output <<  wp ;
     //std::cerr << i << " " << std::endl ;

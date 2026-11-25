@@ -60,17 +60,18 @@ int main (int, char**)
 
   for (std::size_t i = 0; i < 1000; ++ i)
   {
-    Point_set::iterator it
-      = pts.insert (Point (CGAL::get_default_random().get_double(),
-                           CGAL::get_default_random().get_double(),
-                           CGAL::get_default_random().get_double()),
-                    Vector (CGAL::get_default_random().get_double(),
-                            CGAL::get_default_random().get_double(),
-                            CGAL::get_default_random().get_double()));
+    const double px = CGAL::get_default_random().get_double();
+    const double py = CGAL::get_default_random().get_double();
+    const double pz = CGAL::get_default_random().get_double();
+    const double nx = CGAL::get_default_random().get_double();
+    const double ny = CGAL::get_default_random().get_double();
+    const double nz = CGAL::get_default_random().get_double();
+    Point_set::iterator it = pts.insert (Point (px, py, pz), Vector (nx, ny, nz));
     echo_map[*it] = std::size_t(CGAL::get_default_random().get_int(0, 4));
-    color_map[*it] = CGAL::IO::Color ((unsigned char)(CGAL::get_default_random().get_int(0, 255)),
-                                  (unsigned char)(CGAL::get_default_random().get_int(0, 255)),
-                                  (unsigned char)(CGAL::get_default_random().get_int(0, 255)));
+    const unsigned char r = (unsigned char)(CGAL::get_default_random().get_int(0, 255));
+    const unsigned char g = (unsigned char)(CGAL::get_default_random().get_int(0, 255));
+    const unsigned char b = (unsigned char)(CGAL::get_default_random().get_int(0, 255));
+    color_map[*it] = CGAL::IO::Color (r, g, b);
   }
 
   Feature_set features;

@@ -31,9 +31,10 @@ CGAL::Vector_3<K> random_normal() {
   typedef typename K::FT FT;
   CGAL::Vector_3<K> n;
   do {
-    n = CGAL::Vector_3<K>(random_float((FT) -1.0, (FT) 1.0),
-               random_float((FT) -1.0, (FT) 1.0),
-               random_float((FT) -1.0, (FT) 1.0));
+    const FT x = random_float((FT) -1.0, (FT) 1.0);
+    const FT y = random_float((FT) -1.0, (FT) 1.0);
+    const FT z = random_float((FT) -1.0, (FT) 1.0);
+    n = CGAL::Vector_3<K>(x, y, z);
   } while (n.squared_length() < (FT) 0.001);
 
   n = n * (FT) 1.0 / (CGAL::sqrt(n.squared_length()));
@@ -54,8 +55,9 @@ CGAL::Point_3<K> random_point_in(const CGAL::Bbox_3& bbox) {
 
 template <class K>
 CGAL::Point_with_normal_3<K> random_pwn_in(const CGAL::Bbox_3 &bbox) {
-  return CGAL::Point_with_normal_3<K>(random_point_in<K>(bbox),
-    random_normal<K>());
+  const CGAL::Point_3<K> p = random_point_in<K>(bbox);
+  const CGAL::Vector_3<K> n = random_normal<K>();
+  return CGAL::Point_with_normal_3<K>(p, n);
 }
 
 template <class K>
@@ -73,9 +75,10 @@ void sample_sphere(const std::size_t num_points,
   OutputIterator points) {
   typedef typename K::FT FT;
   for (std::size_t i = 0;i < num_points;++i) {
-    CGAL::Vector_3<K> direction(random_float((FT) -1, (FT) 1),
-      random_float((FT) -1, (FT) 1),
-      random_float((FT) -1,(FT)  1));
+    const FT x = random_float((FT) -1, (FT) 1);
+    const FT y = random_float((FT) -1, (FT) 1);
+    const FT z = random_float((FT) -1, (FT) 1);
+    CGAL::Vector_3<K> direction(x, y, z);
     direction = direction * ((FT) 1.0 / CGAL::sqrt(direction.squared_length()));
 
     CGAL::Point_3<K> p = center + direction * radius;
@@ -107,10 +110,10 @@ void sample_cylinder(const std::size_t num_points,
     typedef typename K::FT FT;
     // Sample shape.
     for (size_t i = 0 ; i < num_points ; ++i) {
-      CGAL::Vector_3<K> normal(
-        random_float((FT) -1, (FT) 1),
-        random_float((FT) -1, (FT) 1),
-        random_float((FT) -1, (FT) 1));
+      const FT x = random_float((FT) -1, (FT) 1);
+      const FT y = random_float((FT) -1, (FT) 1);
+      const FT z = random_float((FT) -1, (FT) 1);
+      CGAL::Vector_3<K> normal(x, y, z);
       normal = normal - ((normal * axis) * axis);
       if (normal.squared_length() < (FT)0.0001) {
         i--;
@@ -144,7 +147,9 @@ void sample_random_cylinder(const std::size_t num_points,
     v = v * 1.0 / CGAL::sqrt(v.squared_length());
     u = CGAL::cross_product(v, axis);
 
-    center = CGAL::ORIGIN + random_float((FT) -5, (FT) 5) * u + random_float((FT) -5, (FT) 5) * v;
+    const FT s = random_float((FT) -5, (FT) 5);
+    const FT t = random_float((FT) -5, (FT) 5);
+    center = CGAL::ORIGIN + s * u + t * v;
 
     sample_cylinder(num_points, center, axis, radius, length, points);
 }
@@ -163,9 +168,10 @@ void sample_cone(const std::size_t num_points,
 
   for (size_t i = 0 ; i < num_points ; ++i)
   {
-    Vector normal(random_float((FT) -1, (FT) 1),
-      random_float((FT)-1, (FT) 1),
-      random_float((FT)-1, (FT) 1));
+    const FT x = random_float((FT) -1, (FT) 1);
+    const FT y = random_float((FT) -1, (FT) 1);
+    const FT z = random_float((FT) -1, (FT) 1);
+    Vector normal(x, y, z);
     normal = normal - ((normal * axis) * axis);
     if (normal.squared_length() < (FT) 0.0001) {
       i--;

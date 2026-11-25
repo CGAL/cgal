@@ -88,14 +88,18 @@ std::vector<Polyline> generate_polylines(std::size_t n, std::size_t seed) {
       }
       else {
         // Generate a new random point in [0, 1]
-        p = Point(coord_dist(gen), coord_dist(gen));
+        const double x = coord_dist(gen);
+        const double y = coord_dist(gen);
+        p = Point(x, y);
       }
 
       // Validation: CGAL Polylines cannot have zero-length segments.
       // If the new point is identical to the previous one, regenerate it.
       if (!points.empty() && p == points.back()) {
         // Simple retry strategy: perturb slightly or force new random
-        p = Point(coord_dist(gen), coord_dist(gen));
+        const double x = coord_dist(gen);
+        const double y = coord_dist(gen);
+        p = Point(x, y);
       }
 
       points.push_back(p);

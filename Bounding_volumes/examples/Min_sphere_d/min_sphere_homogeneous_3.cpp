@@ -21,7 +21,10 @@ main ()
   CGAL::Random  r;                     // random number generator
 
   for (int i=0; i<n; ++i) {
-    P.at(i) = Point(r.get_int(0, 1000),r.get_int(0, 1000), r.get_int(0, 1000), 1 );
+    const int x = r.get_int(0, 1000);
+    const int y = r.get_int(0, 1000);
+    const int z = r.get_int(0, 1000);
+    P.at(i) = Point(x, y, z, 1);
   }
 
   Min_sphere  ms (P.begin(), P.end());             // smallest enclosing sphere

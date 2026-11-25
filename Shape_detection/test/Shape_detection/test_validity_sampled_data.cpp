@@ -89,9 +89,10 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
       Vector_3 shift ((bbox.xmax() - bbox.xmin()) * x, (bbox.ymax() - bbox.ymin()) * y, 0);
       for (std::size_t i = 0; i < original_points.size(); ++ i)
       {
-        Vector_3 noise (CGAL::get_default_random().get_double(-0.0001, 0.0001),
-                        CGAL::get_default_random().get_double(-0.0001, 0.0001),
-                        CGAL::get_default_random().get_double(-0.0001, 0.0001));
+        const double nx = CGAL::get_default_random().get_double(-0.0001, 0.0001);
+        const double ny = CGAL::get_default_random().get_double(-0.0001, 0.0001);
+        const double nz = CGAL::get_default_random().get_double(-0.0001, 0.0001);
+        Vector_3 noise (nx, ny, nz);
         points.emplace_back (original_points[i].first + shift + noise,
                              original_points[i].second);
       }

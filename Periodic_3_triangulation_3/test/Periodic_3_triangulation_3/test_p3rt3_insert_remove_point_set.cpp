@@ -61,7 +61,9 @@ public:
     std::cout << "-- insert" << std::endl;
     for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
     {
-      Weighted_point_3 p(*in_cube++, CGAL::get_default_random().get_double(0., 0.015625));
+      const Point_3 bp = *in_cube++;
+      const double w = CGAL::get_default_random().get_double(0., 0.015625);
+      Weighted_point_3 p(bp, w);
 
       std::size_t hidden_point_count = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)

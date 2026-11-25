@@ -330,7 +330,9 @@ _test_cls_delaunay_triangulation_2( const Del & )
   // non-degenerate cases
   std::list<Point> points;
   for(int count=0; count<50; count++) {
-    points.push_back(Point(rand()%30000, rand()%30000));
+    const int x = rand()%30000;
+    const int y = rand()%30000;
+    points.push_back(Point(x, y));
   }
   TM_1.insert(points.begin(), points.end());
   Vertex_handle vTM_1;
@@ -338,7 +340,9 @@ _test_cls_delaunay_triangulation_2( const Del & )
     for(typename Del::Finite_vertices_iterator
          fvi = TM_1.finite_vertices_begin();
          fvi != TM_1.finite_vertices_end(); fvi++) {
-      Point p = Point(rand()%30000, rand()%30000);
+      const int x = rand()%30000;
+      const int y = rand()%30000;
+      Point p = Point(x, y);
       vTM_1 = TM_1.move_if_no_collision(fvi, p);
       assert(TM_1.is_valid());
     }

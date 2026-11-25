@@ -140,7 +140,9 @@ Complex_number<float>
 Hyperbolic_fundamental_domain_factory_2<Traits>::
 random_complex_float()
 {
-  Complex_number<float> result (random_float(), random_positive_float());
+  const float re = random_float();
+  const float im = random_positive_float();
+  Complex_number<float> result (re, im);
   while (norm(result) >= 1) {
     result.real(random_float());
     result.imag(random_positive_float());
