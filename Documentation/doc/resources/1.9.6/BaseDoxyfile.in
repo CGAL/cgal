@@ -107,6 +107,7 @@ ALIASES                = "cgal=%CGAL" \
                          "glpk=GLPK" \
                          "scip=SCIP" \
                          "osqp=OSQP" \
+                         "protosphere=ProtoSphere" \
                          "rs=RS" \
                          "rs3=RS3" \
                          "unix=Unix" \
