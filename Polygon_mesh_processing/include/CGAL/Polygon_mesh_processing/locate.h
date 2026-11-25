@@ -122,6 +122,9 @@ struct Location_traits
 } // end namespace internal
 
 // forward declarations
+template <typename FT>
+bool is_in_face(const Barycentric_coordinates<FT>& bar);
+
 template <typename FT, typename TriangleMesh>
 bool is_in_face(const Face_location<TriangleMesh, FT>& loc,
                 const TriangleMesh& tm);
@@ -175,7 +178,7 @@ snap_coordinates_to_border(Barycentric_coordinates<FT>& coords,
                            const FT tolerance = std::numeric_limits<FT>::epsilon())
 {
 #ifdef CGAL_PMP_LOCATE_DEBUG
-  std::cout << "Pre-snapping: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
+  std::cout << "--\nPre-snapping: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
   std::cout << "Sum: " << coords[0] + coords[1] + coords[2] << std::endl;
   std::cout << "tolerance: " << tolerance << std::endl;
 #endif
@@ -220,6 +223,42 @@ snap_coordinates_to_border(Barycentric_coordinates<FT>& coords,
   return snapped;
 }
 
+template <typename FT, typename P, typename ConstructVector, typename ScalarProduct>
+Barycentric_coordinates<FT>
+barycentric_coordinates_on_longest_edge(const P& p, const P& q, const P& r,
+                                        const P& query,
+                                        const ConstructVector& construct_vector,
+                                        const ScalarProduct& scalar_product)
+{
+  const auto pq = construct_vector(p, q);
+  const auto pr = construct_vector(p, r);
+  const auto qr = construct_vector(q, r);
+
+  const FT sq_pq = scalar_product(pq, pq);
+  const FT sq_pr = scalar_product(pr, pr);
+  const FT sq_qr = scalar_product(qr, qr);
+
+  if(sq_pq == FT(0) && sq_pr == FT(0) && sq_qr == FT(0))
+    return CGAL::make_array(FT(1), FT(0), FT(0));
+
+  if(sq_pq >= sq_pr && sq_pq >= sq_qr)
+  {
+    const FT t = scalar_product(construct_vector(p, query), pq) / sq_pq;
+    return CGAL::make_array(FT(1) - t, t, FT(0));
+  }
+
+  // pq isn't the longest, so check the others
+  if(sq_pr >= sq_qr)
+  {
+    const FT t = scalar_product(construct_vector(p, query), pr) / sq_pr;
+    return CGAL::make_array(FT(1) - t, FT(0), t);
+  }
+
+  const FT t = scalar_product(construct_vector(q, query), qr) / sq_qr;
+
+  return CGAL::make_array(FT(0), FT(1) - t, t);
+}
+
 template <typename FT, typename TriangleMesh>
 bool
 snap_location_to_border(Face_location<TriangleMesh, FT>& loc,
@@ -241,12 +280,18 @@ struct Barycentric_coordinate_calculator // 2D version
     typename K::Construct_point_2 cp2 = k.construct_point_2_object();
     typename K::Construct_vector_2 cv2 = k.construct_vector_2_object();
     typename K::Compute_scalar_product_2 csp2 = k.compute_scalar_product_2_object();
+    typename K::Collinear_2 collinear2 = k.collinear_2_object();
 
     const typename K::Point_2& p = cp2(ip);
     const typename K::Point_2& q = cp2(iq);
     const typename K::Point_2& r = cp2(ir);
     const typename K::Point_2& query = cp2(iquery);
 
+    if(collinear2(p, q, r))
+      return barycentric_coordinates_on_longest_edge<FT>(p, q, r, query, cv2, csp2);
+
+    // above checks with predicate, but a null denominator can still happen for almost degenerate
+    // triangles with an inexact number type
     Vector_2 v0 = cv2(p, q);
     Vector_2 v1 = cv2(p, r);
     Vector_2 v2 = cv2(p, query);
@@ -258,7 +303,8 @@ struct Barycentric_coordinate_calculator // 2D version
     FT d21 = csp2(v2, v1);
 
     FT denom = d00 * d11 - d01 * d01;
-    CGAL_assertion((d00 * d11 - d01 * d01) != FT(0)); // denom != 0
+    if(denom == FT(0))
+      return barycentric_coordinates_on_longest_edge<FT>(p, q, r, query, cv2, csp2);
 
     FT v = (d11 * d20 - d01 * d21) / denom;
     FT w = (d00 * d21 - d01 * d20) / denom;
@@ -279,12 +325,18 @@ struct Barycentric_coordinate_calculator<K, P, 3 /*3D specialization*/>
     typename K::Construct_point_3 cp3 = k.construct_point_3_object();
     typename K::Construct_vector_3 cv3 = k.construct_vector_3_object();
     typename K::Compute_scalar_product_3 csp3 = k.compute_scalar_product_3_object();
+    typename K::Collinear_3 collinear3 = k.collinear_3_object();
 
     const typename K::Point_3& p = cp3(ip);
     const typename K::Point_3& q = cp3(iq);
     const typename K::Point_3& r = cp3(ir);
     const typename K::Point_3& query = cp3(iquery);
 
+    if(collinear3(p, q, r))
+      return barycentric_coordinates_on_longest_edge<FT>(p, q, r, query, cv3, csp3);
+
+    // above checks with predicate, but a null denominator can still happen for almost degenerate
+    // triangles with an inexact number type
     Vector_3 v0 = cv3(p, q);
     Vector_3 v1 = cv3(p, r);
     Vector_3 v2 = cv3(p, query);
@@ -295,11 +347,12 @@ struct Barycentric_coordinate_calculator<K, P, 3 /*3D specialization*/>
     FT d20 = csp3(v2, v0);
     FT d21 = csp3(v2, v1);
 
-    CGAL_assertion((d00 * d11 - d01 * d01) != FT(0)); // denom != 0
-    FT denom_inv = FT(1) / (d00 * d11 - d01 * d01);
+    FT denom = d00 * d11 - d01 * d01;
+    if(denom == FT(0))
+      return barycentric_coordinates_on_longest_edge<FT>(p, q, r, query, cv3, csp3);
 
-    FT v = (d11 * d20 - d01 * d21) * denom_inv;
-    FT w = (d00 * d21 - d01 * d20) * denom_inv;
+    FT v = (d11 * d20 - d01 * d21) / denom;
+    FT w = (d00 * d21 - d01 * d20) / denom;
 
     return CGAL::make_array(FT(FT(1) - v - w), v, w);
   }
@@ -349,6 +402,17 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 /// \brief Given a set of three points and a query point, computes the barycentric
 ///        coordinates of the query point with respect to the first three points.
 ///
+/// The correspondence between the returned coordinates `(w0, w1, w2)` and the three points
+/// is the following: `w0` corresponds to `p`, `w1` corresponds to `q`, and `w2` corresponds to `r`.
+///
+/// If `p`, `q`, and `r` are collinear, the barycentric coordinates are computed with respect
+/// to the two points realizing the longest segment, and the coordinate of the third point is `0`.
+/// Ties in segment lengths are broken in favor of the segment `pq`, and then of the segment `pr`.
+/// If all three points coincide, the coordinates returned are `(1, 0, 0)`.
+///
+/// If `query` does not lie in the affine hull of `p`, `q`, and `r`, the coordinates
+/// of the orthogonal projection of `query` onto this affine hull are returned.
+///
 /// \tparam GeomTraits the type of a geometric traits. Must be a model of `Kernel` and be compatible
 ///                    with the template parameter `Point`.
 /// \tparam Point the type of a geometric 2D or 3D point
@@ -356,9 +420,6 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 /// \param p,q,r three points with respect to whom the barycentric coordinates of `query` will be computed
 /// \param query the query point whose barycentric coordinates will be computed
 /// \param gt an instance of the geometric traits
-///
-/// \pre `p`, `q`, and `r` are not collinear.
-/// \pre `query` lies on the plane defined by `p`, `q`, and `r`.
 ///
 template <typename GeomTraits, typename Point>
 Barycentric_coordinates<typename GeomTraits::FT>
@@ -701,9 +762,35 @@ is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Given a set of barycentric coordinates, returns whether those barycentric
-///        coordinates correspond to a point within the face (boundary included),
-///        that is, if all the barycentric coordinates are positive.
+/// \brief Given a set of barycentric coordinates, returns whether they correspond
+///        to a vertex of a face.
+///
+/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+///          the point is on a vertex when all coefficients are non-negative and one of them is equal to `1`.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+///
+/// \param bar an array of barycentric coordinates
+///
+template <typename FT>
+bool
+is_on_vertex(const Barycentric_coordinates<FT>& bar)
+{
+  // a coefficient equal to `1` alone only means that the point is on the line
+  // going through the vertex and parallel to the opposite edge
+  if(!is_in_face(bar))
+    return false;
+
+  for(int i=0; i<3; ++i)
+    if(bar[i] == FT(1))
+      return true;
+
+  return false;
+}
+
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a location, returns whether the location is on a vertex of the face or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
 ///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
@@ -715,20 +802,96 @@ is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
 /// \tparam FT must be a model of `FieldNumberType`
 /// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
-/// \param bar an array of barycentric coordinates
+/// \param loc a location with `loc.first` a face of `tm`
 /// \param tm a triangulated surface mesh
+///
+/// \pre `loc.first` is a face descriptor corresponding to a face of `tm`.
 ///
 template <typename FT, typename TriangleMesh>
 bool
-is_in_face(const Barycentric_coordinates<FT>& bar,
-           const TriangleMesh& tm)
+is_on_vertex(const Face_location<TriangleMesh, FT>& loc,
+             const TriangleMesh& tm)
 {
   CGAL_USE(tm);
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
+  return is_on_vertex(loc.second);
+}
+
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a set of barycentric coordinates, returns whether they correspond
+///        to a point on an edge of a face.
+///
+/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+///          the point is on a halfedge when all coefficients are non-negative and one of them is equal to `0`.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+///
+/// \param bar an array of barycentric coordinates
+///
+template <typename FT>
+bool
+is_on_halfedge(const Barycentric_coordinates<FT>& bar)
+{
+  // a coefficient equal to `0` alone only means that the point is on the supporting line of an edge
+  if(!is_in_face(bar))
+    return false;
 
   for(int i=0; i<3; ++i)
+    if(bar[i] == FT(0))
+      return true;
+
+  return false;
+}
+
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a location, returns whether the location is on a halfedge of the face or not.
+///
+/// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
+///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
+///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
+///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
+///
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
+///
+/// \param loc a location with `loc.first` a face of `tm`
+/// \param tm a triangulated surface mesh
+///
+/// \pre `loc.first` is a face descriptor corresponding to a face of `tm`.
+///
+template <typename FT, typename TriangleMesh>
+bool
+is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
+               const TriangleMesh& tm)
+{
+  CGAL_USE(tm);
+  return is_on_halfedge(loc.second);
+}
+
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a set of barycentric coordinates, returns whether those barycentric
+///        coordinates correspond to a point within the face (boundary included),
+///        that is, if all the barycentric coordinates are non-negative.
+///
+/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+///          the correspondence between the coordinates in `bar` and the vertices of the
+///          face is the same as for `Face_location`.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+///
+/// \param bar an array of barycentric coordinates
+///
+template <typename FT>
+bool
+is_in_face(const Barycentric_coordinates<FT>& bar)
+{
+  for(int i=0; i<3; ++i)
   {
-    // "|| bar[i] > 1." is not needed because if everything is positive and the sum is '1',
+    // "|| bar[i] > 1." is not needed because if everything is non-negative and the sum is '1',
     // then each coefficient is below '1'.
     if(bar[i] < FT(0))
       return false;
@@ -736,6 +899,35 @@ is_in_face(const Barycentric_coordinates<FT>& bar,
 
   return true;
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a set of barycentric coordinates, returns whether those barycentric
+///        coordinates correspond to a point within the face (boundary included),
+///        that is, if all the barycentric coordinates are non-negative.
+///
+/// \deprecated This function is deprecated since \cgal 6.3.
+///             Use `is_in_face(const Barycentric_coordinates<FT>&)` instead.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
+///
+/// \param bar an array of barycentric coordinates
+/// \param tm a triangulated surface mesh
+///
+template <typename FT, typename TriangleMesh>
+CGAL_DEPRECATED_MSG("This function is deprecated. Use is_in_face(const Barycentric_coordinates<FT>&) instead.")
+bool
+is_in_face(const Barycentric_coordinates<FT>& bar,
+           const TriangleMesh& tm)
+{
+  CGAL_USE(tm);
+  return is_in_face(bar);
+}
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 /// \ingroup PMP_locate_grp
 ///
@@ -761,7 +953,8 @@ bool
 is_in_face(const Face_location<TriangleMesh, FT>& loc,
            const TriangleMesh& tm)
 {
-  return is_in_face(loc.second, tm);
+  CGAL_USE(tm);
+  return is_in_face(loc.second);
 }
 
 /// \ingroup PMP_locate_grp
@@ -830,7 +1023,7 @@ is_on_mesh_border(const Face_location<TriangleMesh, FT>& loc,
   const face_descriptor fd = loc.first;
   const Barycentric_coordinates<FT>& bar = loc.second;
 
-  if(!is_in_face(bar, tm))
+  if(!is_in_face(bar))
     return false;
 
   // the first barycentric coordinate corresponds to source(halfedge(fd, tm), tm)
@@ -1047,7 +1240,7 @@ locate_on_halfedge(const typename boost::graph_traits<TriangleMesh>::halfedge_de
 ///     \cgalParamDefault{`0`}
 ///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
 ///                     might be an inexact construction, thus leading to sometimes surprising values
-///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
 ///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
 ///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
 ///   \cgalParamNEnd
@@ -1101,10 +1294,13 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
 
   Barycentric_coordinates<FT> coords = barycentric_coordinates<Geom_traits, Point>(p0, p1, p2, query, gt);
 
-  if(snap_tolerance != FT(0) && !is_in_face(coords, tm))
+  if(snap_tolerance != FT(0))
   {
-    std::cerr << "Warning: point " << query << " is not in the input face" << std::endl;
+#ifdef CGAL_PMP_LOCATE_DEBUG
+    if(!is_in_face(coords))
+      std::cerr << "Warning: point " << query << " is not in the input face" << std::endl;
     std::cerr << "Coordinates: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
+#endif
 
     // Try to snap the coordinates, hoping the problem is just a -1e-17ish epsilon
     // pushing the coordinates over the edge
@@ -1346,46 +1542,36 @@ locate_in_common_face(Face_location<TriangleMesh, FT>& first_location,
 
 namespace internal {
 
-template <typename TriangleMesh,
-          typename Point,
-          int dim = CGAL::Ambient_dimension<Point>::value>
-struct Point_to_Point_3 // 2D case
+template <typename Kernel>
+struct Point_to_Point_3
 {
-  typedef typename GetGeomTraits<TriangleMesh>::type::Point_3    Point_3;
-
-  Point_3 operator()(const Point& p) const { return Point_3(p.x(), p.y(), 0); }
-};
-
-template <typename TriangleMesh>
-struct Point_to_Point_3<TriangleMesh,
-                        typename GetGeomTraits<TriangleMesh>::type::Point_3,
-                        3> // 3D case with nothing to do
-{
-  typedef typename GetGeomTraits<TriangleMesh>::type::Point_3    Point_3;
+  typedef typename Kernel::Point_3                                         Point_3;
 
   const Point_3& operator()(const Point_3& p) const { return p; }
+
+  // 2D points, and 3D points that are not `Point_3` (e.g. weighted points)
+  template <typename Point>
+  Point_3 operator()(const Point& p) const
+  {
+    if constexpr(CGAL::Ambient_dimension<Point>::value == 2)
+      return Point_3(p.x(), p.y(), 0);
+    else
+      return Point_3(p.x(), p.y(), p.z());
+  }
 };
 
-template <typename TriangleMesh, typename Point>
-struct Point_to_Point_3<TriangleMesh, Point, 3> // Generic 3D case
+template <typename Kernel>
+struct Ray_to_Ray_3
 {
-  typedef typename GetGeomTraits<TriangleMesh>::type::Point_3    Point_3;
-
-  Point_3 operator()(const Point& p) const { return Point_3(p.x(), p.y(), p.z()); }
-};
-
-template <typename TriangleMesh>
-struct Ray_to_Ray_3 // 2D case
-{
-  typedef typename GetGeomTraits<TriangleMesh>::type                       Geom_traits;
-  typedef typename Geom_traits::Ray_2                                      Ray_2;
-  typedef typename Geom_traits::Ray_3                                      Ray_3;
-  typedef Point_to_Point_3<TriangleMesh, typename Geom_traits::Point_2>    P2_to_P3;
+  typedef typename Kernel::Ray_2                                           Ray_2;
+  typedef typename Kernel::Ray_3                                           Ray_3;
+  typedef typename Kernel::Point_3                                         Point_3;
 
   Ray_3 operator()(const Ray_2& r) const
   {
-    P2_to_P3 to_p3;
-    return Ray_3(to_p3(r.source()), to_p3(r.second_point()));
+    const auto& s = r.source();
+    const auto& t = r.second_point();
+    return Ray_3(Point_3(s.x(), s.y(), 0), Point_3(t.x(), t.y(), 0));
   }
 
   const Ray_3& operator()(const Ray_3& r) const { return r; }
@@ -1404,7 +1590,7 @@ private:
 public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::property_traits<VPM>::value_type                Point;
-  typedef Point_to_Point_3<TriangleMesh, Point>                           P_to_P3;
+  typedef Point_to_Point_3<typename CGAL::Kernel_traits<Point>::Kernel>   P_to_P3;
 
   typedef typename CGAL::Kernel_traits<Point>::Kernel                     K;
   typedef typename K::Point_3                                             Point_3;
@@ -1450,8 +1636,7 @@ void build_AABB_tree(const TriangleMesh& tm,
 {
   typename boost::graph_traits<TriangleMesh>::face_iterator ffirst, fbeyond;
   std::tie(ffirst, fbeyond) = faces(tm);
-  outTree.rebuild(ffirst, fbeyond, tm, wrapped_vpm);
-  outTree.build();
+  outTree.rebuild(ffirst, fbeyond, tm, wrapped_vpm); // also builds the tree
 }
 
 template <typename TriangleMesh, typename AABBTraits, typename VPM>
@@ -1535,8 +1720,8 @@ build_AABB_tree(const TriangleMesh& tm,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                                          get_const_property_map(boost::vertex_point, tm));
+  const VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                              get_const_property_map(boost::vertex_point, tm));
 
   return internal::build_AABB_tree(tm, outTree, vpm);
 }
@@ -1581,7 +1766,7 @@ build_AABB_tree(const TriangleMesh& tm,
 ///     \cgalParamDefault{`0`}
 ///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
 ///                     might be an inexact construction, thus leading to sometimes surprising values
-///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
 ///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
 ///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
 ///   \cgalParamNEnd
@@ -1608,12 +1793,13 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
                       const NamedParameters& np = parameters::default_values())
 {
   typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point         Point;
-  typedef internal::Point_to_Point_3<TriangleMesh, Point>                                  P_to_P3;
+  typedef internal::Point_to_Point_3<typename CGAL::Kernel_traits<Point>::Kernel>          P_to_P3;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                      Geom_traits;
   typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>       Primitive;
   typedef typename CGAL::AABB_traits_3<Geom_traits, Primitive>                             AABB_traits;
 
+  typedef typename Geom_traits::FT                                                         FT;
   typedef typename Primitive::Point                                                        Point_3;
   static_assert(std::is_same<Point_3, typename P_to_P3::Point_3>::value);
 
@@ -1623,19 +1809,21 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   const Point_3 p3 = P_to_P3()(p);
   typename AABB_tree<AABB_traits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p3);
 
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                     Geom_traits;
-
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  // The VPM might return a point of any dimension, but the AABB tree necl1671essarily returns
-  // a Point_3. So, wrap the VPM (again) to give a Point_3. Even if it's already wrapped, we're just
-  // forwarding a const& anyway.
+  // The VPM might return a point of any dimension, but the AABB tree necessarily returns a Point_3.
+  // So, wrap the VPM (again) to give a Point_3. If it's already wrapped, we're just forwarding a const& anyway.
   const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                           get_const_property_map(boost::vertex_point, tm));
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+  const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+
   const WrappedVPM wrapped_vpm(vpm);
 
-  return locate_in_face(result.first, result.second, tm, CGAL::parameters::vertex_point_map(wrapped_vpm));
+  return locate_in_face(result.first, result.second, tm, parameters::vertex_point_map(wrapped_vpm)
+                                                                    .geom_traits(gt)
+                                                                    .snapping_tolerance(snap_tolerance));
 }
 
 /// \ingroup PMP_locate_grp
@@ -1674,7 +1862,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 ///     \cgalParamDefault{`0`}
 ///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
 ///                     might be an inexact construction, thus leading to sometimes surprising values
-///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
 ///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
 ///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
 ///   \cgalParamNEnd
@@ -1691,34 +1879,42 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
        const TriangleMesh& tm,
        const NamedParameters& np = parameters::default_values())
 {
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
   // Wrap the input VPM with a one converting to 3D (costs nothing if the input VPM
   // already has value type Kernel::Point_3)
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type          VertexPointMap;
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>                   WrappedVPM;
-  typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point       Intrinsic_point;
+  typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point       Point;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                    Geom_traits;
+  typedef typename Geom_traits::FT                                                       FT;
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, WrappedVPM>                   AABB_face_graph_primitive;
   typedef CGAL::AABB_traits_3<Geom_traits, AABB_face_graph_primitive>                    AABB_face_graph_traits;
 
-  typedef internal::Point_to_Point_3<TriangleMesh, Intrinsic_point>                      P_to_P3;
+  typedef internal::Point_to_Point_3<typename CGAL::Kernel_traits<Point>::Kernel>        P_to_P3;
   typedef typename AABB_face_graph_traits::Point_3                                       Point_3;
-
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
 
   static_assert(std::is_same<Point_3, typename P_to_P3::Point_3>::value);
 
   const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                           get_const_property_map(boost::vertex_point, tm));
-  const WrappedVPM wrapped_vpm(vpm);
+
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
 
   AABB_tree<AABB_face_graph_traits> tree;
-  build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm));
+  const WrappedVPM wrapped_vpm(vpm);
+  build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm)
+                                       .geom_traits(gt));
 
   const Point_3 p3 = P_to_P3()(p);
-  return locate_with_AABB_tree(p3, tree, tm, parameters::vertex_point_map(wrapped_vpm));
+  return locate_with_AABB_tree(p3, tree, tm, parameters::vertex_point_map(wrapped_vpm)
+                                                        .geom_traits(gt)
+                                                        .snapping_tolerance(snap_tolerance));
 }
 
 /// \ingroup PMP_locate_grp
@@ -1759,7 +1955,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
 ///     \cgalParamDefault{`0`}
 ///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
 ///                     might be an inexact construction, thus leading to sometimes surprising values
-///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
 ///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
 ///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
 ///   \cgalParamNEnd
@@ -1788,13 +1984,15 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 
   typedef typename Geom_traits::FT                                                           FT;
   typedef typename Geom_traits::Point_3                                                      Point_3;
+  typedef typename Geom_traits::Segment_3                                                    Segment_3;
   typedef typename Geom_traits::Ray_3                                                        Ray_3;
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor                        face_descriptor;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type              VertexPointMap;
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>                       WrappedVPM;
-  typedef internal::Ray_to_Ray_3<TriangleMesh>                                               R_to_R3;
+  typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point           Point;
+  typedef internal::Ray_to_Ray_3<typename CGAL::Kernel_traits<Point>::Kernel>                R_to_R3;
 
   typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>         Primitive;
   typedef typename CGAL::AABB_traits_3<Geom_traits, Primitive>                               AABB_traits;
@@ -1812,28 +2010,36 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   tree.all_intersections(ray_3, std::back_inserter(intersections));
 
   bool found = false;
-  FT nearest_distance = 0;
   Point_3 nearest_point = CGAL::ORIGIN;
+  FT nearest_distance = 0;
   face_descriptor nearest_face;
+
+  auto record_intersection = [&](const Point_3& intersection_point, const face_descriptor f)
+  {
+    FT distance = CGAL::squared_distance(intersection_point, ray_3.source());
+
+    if(!found || distance < nearest_distance)
+    {
+      found = true;
+      nearest_point = intersection_point;
+      nearest_distance = distance;
+      nearest_face = f;
+    }
+  };
 
   for(std::size_t i = 0; i < intersections.size(); ++i)
   {
-    if(intersections[i])
+    if(!intersections[i])
+      continue;
+
+    if(const Point_3* intersection_point = std::get_if<Point_3>(&(intersections[i]->first)))
     {
-      Point_3* intersection_point = std::get_if<Point_3>(&(intersections[i]->first));
-
-      if(intersection_point)
-      {
-        FT distance = CGAL::squared_distance(*intersection_point, ray_3.source());
-
-        if(!found || distance < nearest_distance)
-        {
-          found = true;
-          nearest_point = *intersection_point;
-          nearest_distance = distance;
-          nearest_face = intersections[i]->second;
-        }
-      }
+      record_intersection(*intersection_point, intersections[i]->second);
+    }
+    else if(const Segment_3* intersection_segment = std::get_if<Segment_3>(&(intersections[i]->first)))
+    {
+      record_intersection(intersection_segment->source(), intersections[i]->second);
+      record_intersection(intersection_segment->target(), intersections[i]->second);
     }
   }
 
@@ -1842,9 +2048,14 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
     // wrap the VPM to make sure it is producing 3D points
     const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                             get_const_property_map(boost::vertex_point, tm));
+    const Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+    const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+
     WrappedVPM wrapped_vpm(vpm);
 
-    return locate_in_face(nearest_point, nearest_face, tm, CGAL::parameters::vertex_point_map(wrapped_vpm));
+    return locate_in_face(nearest_point, nearest_face, tm, parameters::vertex_point_map(wrapped_vpm)
+                                                                      .geom_traits(gt)
+                                                                      .snapping_tolerance(snap_tolerance));
   }
   else
     return std::make_pair(boost::graph_traits<TriangleMesh>::null_face(),
@@ -1890,7 +2101,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 ///     \cgalParamDefault{`0`}
 ///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
 ///                     might be an inexact construction, thus leading to sometimes surprising values
-///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     (e.g. a triplet `[0.5, 0.5, -1e-17]` for a point at the middle of an edge).
 ///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
 ///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
 ///   \cgalParamNEnd
@@ -1903,12 +2114,15 @@ template <typename TriangleMesh, typename NamedParameters = parameters::Default_
 Face_location<TriangleMesh, FT>
 locate(const Ray& ray,
 #else
-typename internal::Location_traits<TriangleMesh>::Face_location
+typename internal::Location_traits<TriangleMesh, NamedParameters>::Face_location
 locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::Ray& ray,
 #endif
        const TriangleMesh& tm,
        const NamedParameters& np = parameters::default_values())
 {
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type     VertexPointMap;
 
   // Wrap the input VPM with a one converting to 3D (costs nothing if the input VPM
@@ -1916,18 +2130,18 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>              VPM;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type               Geom_traits;
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM>                     AABB_face_graph_primitive;
   typedef CGAL::AABB_traits_3<Geom_traits, AABB_face_graph_primitive>               AABB_face_graph_traits;
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
 
-  const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                                          get_const_property_map(boost::vertex_point, tm));
-  const VPM wrapped_vpm(vpm);
+  const VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                              get_const_property_map(boost::vertex_point, tm));
 
   AABB_tree<AABB_face_graph_traits> tree;
-  build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm));
+  const VPM wrapped_vpm(vpm);
+  build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm)
+                                       .geom_traits(gt));
 
   return locate_with_AABB_tree(ray, tree, tm, np);
 }

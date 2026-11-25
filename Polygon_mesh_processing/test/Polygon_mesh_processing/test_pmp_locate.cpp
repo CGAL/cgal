@@ -1,4 +1,8 @@
-﻿#include <CGAL/Polygon_mesh_processing/locate.h>
+﻿// #define CGAL_PMP_LOCATE_DEBUG
+
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
+#include <CGAL/Polygon_mesh_processing/locate.h>
 
 // Graphs
 #include <CGAL/Polyhedron_3.h>
@@ -40,9 +44,15 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    EPICK;
-typedef CGAL::Exact_predicates_exact_constructions_kernel      EPECK;
 
 typedef CGAL::Simple_cartesian<typename CGAL::internal::Exact_field_selector<double>::Type> Exact_kernel;
+
+// whether the computations below are exact, in which case results can be checked exactly
+template <typename K>
+constexpr bool has_exact_constructions()
+{
+  return CGAL::Algebraic_structure_traits<typename K::FT>::Is_exact::value;
+}
 
 template<typename AABB_tree>
 typename CGAL::Kernel_traits<typename AABB_tree::AABB_traits::Point_3>::type::Ray_2
@@ -97,6 +107,83 @@ bool is_equal(const FT& a, const FT& b)
   }
   else
     return (a == b);
+}
+
+template <typename K, typename Point>
+void check_degenerate_barycentric_coordinates(const Point& p, const Point& q, const Point& r,
+                                             const Point& query,
+                                             const typename PMP::Barycentric_coordinates<typename K::FT>& expected)
+{
+  typedef typename K::FT                                                     FT;
+  typedef typename PMP::Barycentric_coordinates<FT>                          Barycentric_coordinates;
+
+  const Barycentric_coordinates coordinates = PMP::barycentric_coordinates(p, q, r, query, K());
+  assert(is_equal(coordinates[0], expected[0]));
+  assert(is_equal(coordinates[1], expected[1]));
+  assert(is_equal(coordinates[2], expected[2]));
+}
+
+template <typename K, typename Point>
+void test_degenerate_barycentric_coordinates_P()
+{
+  typedef typename K::FT FT;
+
+  // abusing '1' being a z coordinate for 3D points, and the homogeneous coordinate in 2D
+  const Point points[3] = { Point(0, 0, 1), Point(2, 0, 1), Point(1, 0, 1) };
+  const Point query(0.5, 0, 1);
+  const FT expected[3] = { FT(0.75), FT(0.25), FT(0) };
+
+  for(int i=0; i<3; ++i) {
+    for(int j=0; j<3; ++j) {
+      for(int k=0; k<3; ++k) {
+        if(i == j || i == k || j == k)
+          continue;
+        check_degenerate_barycentric_coordinates<K>(points[i], points[j], points[k], query,
+                                                    CGAL::make_array(expected[i], expected[j], expected[k]));
+      }
+    }
+  }
+
+  // collinear, outside of longest segment
+  check_degenerate_barycentric_coordinates<K>(points[0], points[1], points[2], Point(3, 0, 1),
+                                              CGAL::make_array(FT(-0.5), FT(1.5), FT(0)));
+
+  // collinear with twice the same points
+  check_degenerate_barycentric_coordinates<K>(Point(0, 0, 1), Point(0, 0, 1), Point(2, 0, 1), query,
+                                              CGAL::make_array(FT(0.75), FT(0), FT(0.25)));
+  check_degenerate_barycentric_coordinates<K>(Point(0, 0, 1), Point(2, 0, 1), Point(0, 0, 1), query,
+                                              CGAL::make_array(FT(0.75), FT(0.25), FT(0)));
+  check_degenerate_barycentric_coordinates<K>(Point(0, 0, 1), Point(2, 0, 1), Point(2, 0, 1), query,
+                                              CGAL::make_array(FT(0.75), FT(0.25), FT(0)));
+
+  // all equal
+  check_degenerate_barycentric_coordinates<K>(Point(3, 0, 1), Point(3, 0, 1), Point(3, 0, 1), Point(3, 0, 1),
+                                              CGAL::make_array(FT(1), FT(0), FT(0)));
+
+  // collinear on the line y=x
+  CGAL::Random rnd(0);
+  for(int i=0; i<1000; ++i)
+  {
+    const double a = rnd.get_double(-10, 10), b = rnd.get_double(-10, 10),
+                 c = rnd.get_double(-10, 10), d = rnd.get_double(-10, 10);
+    const Point p(a, a, 1), q(b, b, 1), r(c, c, 1), query(d, d, 1);
+    assert(CGAL::collinear(p, q, r));
+
+    const PMP::Barycentric_coordinates<FT> coords = PMP::barycentric_coordinates(p, q, r, query, K());
+
+    // the coordinate of the point that is not an extremity of the longest segment is exactly 0
+    assert(coords[0] == FT(0) || coords[1] == FT(0) || coords[2] == FT(0));
+    assert(is_equal<FT>(coords[0] + coords[1] + coords[2], FT(1)));
+    assert(is_equal<FT>(coords[0] * FT(a) + coords[1] * FT(b) + coords[2] * FT(c), FT(d)));
+  }
+}
+
+template <typename K>
+void test_degenerate_barycentric_coordinates()
+{
+  std::cout << "  test degenerate barycentric coordinates..." << std::endl;
+  test_degenerate_barycentric_coordinates_P<K, typename K::Point_2>();
+  test_degenerate_barycentric_coordinates_P<K, typename K::Point_3>();
 }
 
 template<typename K, typename G>
@@ -212,14 +299,20 @@ void test_constructions(const G& g,
   descriptor_variant dv = PMP::get_descriptor_from_location(loc, g);
   const face_descriptor* fd = std::get_if<face_descriptor>(&dv);
   assert(fd);
+  assert(PMP::is_in_face(loc.second));
+  assert(PMP::is_in_face(loc, g));
 
   loc = std::make_pair(f, CGAL::make_array(FT(0.5), FT(0.5), FT(0)));
   dv = PMP::get_descriptor_from_location(loc, g);
   const halfedge_descriptor* hd = std::get_if<halfedge_descriptor>(&dv);
   assert(hd);
+  assert(PMP::is_on_halfedge(loc.second));
+  assert(PMP::is_on_halfedge(loc, g));
 
   loc = std::make_pair(f, CGAL::make_array(FT(1), FT(0), FT(0)));
   assert(PMP::is_on_vertex(loc, source(halfedge(f, g), g), g));
+  assert(PMP::is_on_vertex(loc.second));
+  assert(PMP::is_on_vertex(loc, g));
 
   dv = PMP::get_descriptor_from_location(loc, g);
   if(const vertex_descriptor* v = std::get_if<vertex_descriptor>(&dv)) { } else { assert(false); }
@@ -378,6 +471,48 @@ void test_predicates(const G& g, CGAL::Random& rnd)
   assert(!PMP::is_on_face_border(loc, g));
 
   // ---------------------------------------------------------------------------
+  // overloads taking only barycentric coordinates, or a location without a specific simplex
+  assert(PMP::is_on_vertex(CGAL::make_array(FT(1), FT(0), FT(0))));
+  assert(!PMP::is_on_vertex(CGAL::make_array(FT(0.5), FT(0.5), FT(0))));
+  assert(!PMP::is_on_vertex(CGAL::make_array(FT(1), FT(0.5), FT(-0.5))));
+
+  assert(PMP::is_on_halfedge(CGAL::make_array(FT(0.5), FT(0.5), FT(0))));
+  assert(PMP::is_on_halfedge(CGAL::make_array(FT(0), FT(0), FT(1))));
+  assert(!PMP::is_on_halfedge(CGAL::make_array(FT(0.3), FT(0.3), FT(0.4))));
+  assert(!PMP::is_on_halfedge(CGAL::make_array(FT(0), FT(2), FT(-1))));
+
+  assert(PMP::is_in_face(CGAL::make_array(FT(0.3), FT(0.3), FT(0.4))));
+  assert(!PMP::is_in_face(CGAL::make_array(FT(0), FT(2), FT(-1))));
+
+  const FT bars[][3] = { { FT(1), FT(0), FT(0) },
+                         { FT(0.5), FT(0.5), FT(0) },
+                         { FT(0.3), FT(0.3), FT(0.4) },
+                         { FT(1), FT(0.5), FT(-0.5) },
+                         { FT(0), FT(2), FT(-1) },
+                         { FT(-0.2), FT(0), FT(1.2) } };
+
+  for(const auto& bar : bars)
+  {
+    loc = Face_location(f, CGAL::make_array(bar[0], bar[1], bar[2]));
+
+    assert(PMP::is_in_face(loc, g) == PMP::is_in_face(loc.second));
+    assert(PMP::is_on_vertex(loc, g) == PMP::is_on_vertex(loc.second));
+    assert(PMP::is_on_halfedge(loc, g) == PMP::is_on_halfedge(loc.second));
+    assert(PMP::is_on_halfedge(loc, g) == PMP::is_on_face_border(loc, g));
+
+    // consistency with the overloads taking a specific simplex
+    bool on_some_vertex = false;
+    for(vertex_descriptor vd : vertices_around_face(halfedge(f, g), g))
+      on_some_vertex = (on_some_vertex || PMP::is_on_vertex(loc, vd, g));
+    assert(PMP::is_on_vertex(loc, g) == on_some_vertex);
+
+    bool on_some_halfedge = false;
+    for(halfedge_descriptor hd : halfedges_around_face(halfedge(f, g), g))
+      on_some_halfedge = (on_some_halfedge || PMP::is_on_halfedge(loc, hd, g));
+    assert(PMP::is_on_halfedge(loc, g) == on_some_halfedge);
+  }
+
+  // ---------------------------------------------------------------------------
   int max = 1000, counter = 0;
   typename boost::graph_traits<G>::halfedge_iterator hit, hend;
   std::tie(hit, hend) = halfedges(g);
@@ -483,7 +618,7 @@ void test_locate_in_face(const G& g,
     PMP::locate_in_adjacent_face(loc, neigh_f, g);
     assert(PMP::locate_in_common_face<FT>(loc, neigh_loc, g));
 
-    if (std::is_same<K, EPECK>()) {
+    if (has_exact_constructions<K>()) {
       assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K())));
     }
     assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K()), 1e-7));
@@ -500,6 +635,8 @@ struct Locate_with_AABB_tree_Tester // 2D case
     std::cout << "  test locate_with_AABB_tree (2D)..." << std::endl;
 
     typedef typename K::FT                                                     FT;
+    typedef typename K::Point_2                                                Point_2;
+    typedef typename K::Vector_2                                               Vector_2;
     typedef typename K::Ray_2                                                  Ray_2;
     typedef typename K::Ray_3                                                  Ray_3;
     typedef typename K::Point_3                                                Point_3;
@@ -515,15 +652,16 @@ struct Locate_with_AABB_tree_Tester // 2D case
     vertex_descriptor v = target(h, g);
 
     // ---------------------------------------------------------------------------
-    typedef typename boost::property_traits<VPM>::value_type                   Intrinsic_point;
-    typedef PMP::internal::Point_to_Point_3<G, Intrinsic_point>                Intrinsic_point_to_Point_3;
+    typedef typename boost::property_traits<VPM>::value_type                   Point;
+    typedef typename CGAL::Kernel_traits<Point>::Kernel                        PK;
+    typedef PMP::internal::Point_to_Point_3<PK>                                Point_to_Point_3;
     typedef PMP::internal::Point_to_Point_3_VPM<G, VPM>                        WrappedVPM;
     typedef CGAL::AABB_face_graph_triangle_primitive<G, WrappedVPM>            AABB_face_graph_primitive;
     typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive>                  AABB_face_graph_traits;
 
     static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
 
-    Intrinsic_point_to_Point_3 to_p3;
+    Point_to_Point_3 to_p3;
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_a;
     auto p_a = get(vpm, v);
@@ -557,29 +695,57 @@ struct Locate_with_AABB_tree_Tester // 2D case
     assert(is_equal(CGAL::squared_distance(to_p3(
       PMP::construct_point(loc, g, CGAL::parameters::vertex_point_map(vpm))), p3_a), FT(0)));
 
-    if (std::is_same<K, EPECK>()) {
+    if (has_exact_constructions<K>()) {
       assert(PMP::is_in_face(loc, g));
     }
 
     loc = PMP::locate_with_AABB_tree(CGAL::ORIGIN, tree_b, g, CGAL::parameters::vertex_point_map(vpm_b));
-    if (std::is_same<K, EPECK>()) {
+    if (has_exact_constructions<K>()) {
       assert(PMP::is_in_face(loc, g));
     }
 
     loc = PMP::locate(CGAL::ORIGIN, g, CGAL::parameters::vertex_point_map(vpm_b));
-    if (std::is_same<K, EPECK>()) {
+    if (has_exact_constructions<K>()) {
       assert(PMP::is_in_face(loc, g));
     }
 
     // ---------------------------------------------------------------------------
     Ray_2 r2 = random_2D_ray<CGAL::AABB_tree<AABB_face_graph_traits> >(tree_a, rnd);
     loc = PMP::locate_with_AABB_tree(r2, tree_a, g, CGAL::parameters::vertex_point_map(vpm));
-    if(loc.first != boost::graph_traits<G>::null_face() && std::is_same<K, EPECK>())
+    if(loc.first != boost::graph_traits<G>::null_face() && has_exact_constructions<K>())
       assert(PMP::is_in_face(loc, g));
+
+    Face_location loc_no_tree = PMP::locate(r2, g, CGAL::parameters::vertex_point_map(vpm));
+    assert(loc_no_tree.first == loc.first);
+    loc_no_tree = PMP::locate(r2, g, CGAL::parameters::vertex_point_map(vpm).snapping_tolerance(1e-7));
+    assert(loc_no_tree.first == loc.first);
 
     Ray_3 r3 = random_3D_ray<CGAL::AABB_tree<AABB_face_graph_traits> >(tree_b, rnd);
     loc = PMP::locate_with_AABB_tree(r3, tree_b, g, CGAL::parameters::vertex_point_map(vpm_b)
                                                                      .geom_traits(K()));
+
+    // ---------------------------------------------------------------------------
+    // A ray starting inside a face
+    const Point_3 c3 = CGAL::centroid(to_p3(get(vpm, source(h, g))),
+                                      to_p3(get(vpm, target(h, g))),
+                                      to_p3(get(vpm, target(next(h, g), g))));
+    const Point_2 c(c3.x(), c3.y());
+    loc = PMP::locate_with_AABB_tree(Ray_2(c, Vector_2(1, 0.123)), tree_a, g, CGAL::parameters::vertex_point_map(vpm));
+    assert(loc.first == f);
+    assert(is_equal(CGAL::squared_distance(to_p3(PMP::construct_point(loc, g, CGAL::parameters::vertex_point_map(vpm))), c3), FT(0)));
+
+    // A ray starting outside of the mesh
+    const CGAL::Bbox_3& bbox = tree_a.bbox();
+    const Point_2 outside(bbox.xmin() - 1, bbox.ymin() - 1);
+    const Point_3 outside_3(outside.x(), outside.y(), 0);
+    loc = PMP::locate(Ray_2(outside, c), g, CGAL::parameters::vertex_point_map(vpm));
+    assert(loc.first != boost::graph_traits<G>::null_face());
+    const Point_3 entry = to_p3(PMP::construct_point(loc, g, CGAL::parameters::vertex_point_map(vpm)));
+    assert(CGAL::squared_distance(outside_3, entry) <= CGAL::squared_distance(outside_3, c3));
+    if (has_exact_constructions<K>()) {
+      assert(CGAL::collinear(outside_3, c3, entry));
+      assert(PMP::is_on_mesh_border(loc, g));
+    }
   }
 };
 
@@ -663,7 +829,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     assert(tree_b.size() == num_faces(g));
 
     Face_location loc = PMP::locate_with_AABB_tree(p3_a, tree_a, g, CGAL::parameters::vertex_point_map(vpm));
-    if (std::is_same<K, EPECK>()) {
+    if (has_exact_constructions<K>()) {
       assert(is_equal(loc.second[CGAL::vertex_index_in_face(v, loc.first, g)], FT(1)));
       assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 1) % 3], FT(0)));
       assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 2) % 3], FT(0)));
@@ -671,25 +837,57 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     }
 
     loc = PMP::locate_with_AABB_tree(p3_a, tree_a, g, CGAL::parameters::vertex_point_map(vpm));
-    if (std::is_same<K, EPECK>()) {
+    if (has_exact_constructions<K>()) {
       assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, g), p3_a), FT(0)));
     }
 
     // ---------------------------------------------------------------------------
     loc = PMP::locate(p3_a, g, CGAL::parameters::snapping_tolerance(1e-7));
-    if (std::is_same<K, EPECK>()) {
+    if (has_exact_constructions<K>()) {
       assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, g), p3_a), FT(0)));
       assert(PMP::is_in_face(loc, g));
+#ifndef CGAL_NO_DEPRECATED_CODE
+      assert(PMP::is_in_face(loc.second, g));
+#endif
+    }
+
+    if (std::is_same<typename boost::property_traits<VPM>::value_type, Point_3>::value) {
+      vertex_descriptor v0 = source(halfedge(f, g), g);
+      const Point_3 p0 = get(vpm, v0);
+      vertex_descriptor v1 = target(halfedge(f, g), g);
+      const Point_3 p1 = get(vpm, v1);
+      vertex_descriptor v2 = target(next(halfedge(f, g), g), g);
+      const Point_3 p2 = get(vpm, v2);
+
+      const FT tiny = FT(1e-9);
+      const Point_3 near_vertex_query = CGAL::barycenter(p0, FT(1) - tiny, p1, tiny, p2, -tiny);
+
+      auto loc_with_tree = PMP::locate_with_AABB_tree(near_vertex_query, tree_a, g,
+                             CGAL::parameters::vertex_point_map(vpm).snapping_tolerance(1e-7));
+      auto loc_without_tree = PMP::locate(near_vertex_query, g,
+                                CGAL::parameters::vertex_point_map(vpm).snapping_tolerance(1e-7));
+
+      assert(PMP::is_on_face_border(loc_with_tree, g));
+      assert(PMP::is_on_face_border(loc_without_tree, g));
+
+      // no snapping by default
+      loc_with_tree = PMP::locate_with_AABB_tree(near_vertex_query, tree_a, g, CGAL::parameters::vertex_point_map(vpm));
+      assert(!PMP::is_on_vertex(loc_with_tree, v0, g));
+
+      loc_with_tree = PMP::locate_with_AABB_tree(near_vertex_query, tree_a, g,
+                                                 CGAL::parameters::vertex_point_map(vpm).snapping_tolerance(1e-7));
+      assert(PMP::is_on_vertex(loc_with_tree, v0, g));
+      assert(PMP::is_on_vertex(loc_with_tree, g));
     }
 
     loc = PMP::locate_with_AABB_tree(CGAL::ORIGIN, tree_b, g, CGAL::parameters::vertex_point_map(custom_vpm_3D));
-    if (std::is_same<K, EPECK>()) {
+    if (has_exact_constructions<K>()) {
       assert(PMP::is_in_face(loc, g));
     }
 
     // Doesn't necessarily have to wrap with a P_to_P3: it can be done automatically internally
     loc = PMP::locate(CGAL::ORIGIN, g, CGAL::parameters::vertex_point_map(custom_vpm));
-    if (std::is_same<K, EPECK>()) {
+    if (has_exact_constructions<K>()) {
       assert(PMP::is_in_face(loc, g));
     }
 
@@ -699,6 +897,160 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
   }
 };
 
+
+// The intersection of a ray and a face is a segment if they are coplanar: always the case for a mesh
+// with 2D points, and for a ray that is in the plane of a face for a mesh with 3D points
+template <typename K, typename Point>
+void test_rays_on_unit_square()
+{
+  typedef typename K::FT                                                          FT;
+  typedef CGAL::Surface_mesh<Point>                                               Mesh;
+  typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::const_type    VPM;
+  typedef typename PMP::internal::Location_traits<Mesh>::Ray                      Ray;
+
+  typedef PMP::internal::Point_to_Point_3_VPM<Mesh, VPM>                          WrappedVPM;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Mesh, WrappedVPM>              AABB_face_graph_primitive;
+  typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive>                       AABB_face_graph_traits;
+
+  constexpr bool is_3D = (CGAL::Ambient_dimension<Point>::value == 3);
+
+  auto make_point = [](const FT x, const FT y) {
+    if constexpr(is_3D)
+      return Point(x, y, 0);
+    else
+      return Point(x, y);
+  };
+
+  Mesh m;
+  const auto a = m.add_vertex(make_point(0, 0)),
+             b = m.add_vertex(make_point(1, 0)),
+             c = m.add_vertex(make_point(1, 1)),
+             d = m.add_vertex(make_point(0, 1));
+  m.add_face(a, b, c);
+  m.add_face(a, c, d);
+
+  CGAL::AABB_tree<AABB_face_graph_traits> tree;
+  PMP::build_AABB_tree(m, tree);
+
+  // enters through the edge [d, a]
+  auto loc = PMP::locate_with_AABB_tree(Ray(make_point(-1, 0.25), make_point(2, 0.25)), tree, m);
+  assert(loc.first != Mesh::null_face());
+  assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m), make_point(0, 0.25)), FT(0)));
+
+  // starts on the boundary of the mesh
+  loc = PMP::locate(Ray(make_point(0.25, 0.), make_point(2, 0.)), m);
+  assert(loc.first != Mesh::null_face());
+  assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m), make_point(0.25, 0.)), FT(0)));
+
+  // starts inside of the mesh
+  loc = PMP::locate(Ray(make_point(0.25, 0.5), make_point(2, 0.5)), m);
+  assert(loc.first != Mesh::null_face());
+  assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m), make_point(0.25, 0.5)), FT(0)));
+
+  // goes through the vertex `c`: the nearest point to the source is `c`
+  loc = PMP::locate(Ray(make_point(2, 2), make_point(-1, -1)), m);
+  assert(loc.first != Mesh::null_face());
+  assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m), make_point(1, 1)), FT(0)));
+
+  // misses the mesh
+  loc = PMP::locate(Ray(make_point(-1, 2), make_point(2, 2)), m);
+  assert(loc.first == Mesh::null_face());
+
+  if constexpr(is_3D)
+  {
+    // not coplanar
+    loc = PMP::locate(Ray(Point(0.5, 0.25, 1), Point(0.5, 0.25, -1)), m);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m), make_point(0.5, 0.25)), FT(0)));
+  }
+}
+
+template <typename K>
+void test_rays_on_unit_square()
+{
+  std::cout << "  test rays on a unit square..." << std::endl;
+  test_rays_on_unit_square<K, typename K::Point_2>();
+  test_rays_on_unit_square<K, typename K::Point_3>();
+}
+
+// The vertex point map provides points of another kernel than the internal points of the mesh
+template <typename Mesh_kernel, typename K>
+void test_vertex_point_map_of_another_kernel()
+{
+  std::cout << "test a vertex point map of another kernel..." << std::endl;
+
+  typedef typename K::FT                                                          FT;
+  typedef typename K::Point_2                                                     Point_2;
+  typedef typename K::Point_3                                                     Point_3;
+  typedef typename K::Vector_2                                                    Vector_2;
+  typedef typename K::Vector_3                                                    Vector_3;
+
+  typedef CGAL::Surface_mesh<typename Mesh_kernel::Point_3>                       Mesh;
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor                   vertex_descriptor;
+  typedef typename Mesh::template Property_map<vertex_descriptor, Point_3>        VPM_3;
+  typedef typename Mesh::template Property_map<vertex_descriptor, Point_2>        VPM_2;
+
+  Mesh m;
+  const vertex_descriptor a = m.add_vertex(typename Mesh_kernel::Point_3(0, 0, 0)),
+                          b = m.add_vertex(typename Mesh_kernel::Point_3(1, 0, 0)),
+                          c = m.add_vertex(typename Mesh_kernel::Point_3(1, 1, 0)),
+                          d = m.add_vertex(typename Mesh_kernel::Point_3(0, 1, 0));
+  m.add_face(a, b, c);
+  m.add_face(a, c, d);
+
+  VPM_3 vpm_3 = m.template add_property_map<vertex_descriptor, Point_3>("v:K_point_3").first;
+  VPM_2 vpm_2 = m.template add_property_map<vertex_descriptor, Point_2>("v:K_point_2").first;
+  for(vertex_descriptor v : vertices(m))
+  {
+    const auto& p = m.point(v);
+    put(vpm_3, v, Point_3(p.x(), p.y(), p.z()));
+    put(vpm_2, v, Point_2(p.x(), p.y()));
+  }
+
+  // 3D points
+  {
+    const auto np = CGAL::parameters::vertex_point_map(vpm_3);
+    const Point_3 query(0.25, 0.5, 0), entry(0, 0.25, 0);
+    const typename K::Ray_3 ray(Point_3(-1, 0.25, 0), Vector_3(1, 0, 0));
+
+    CGAL::AABB_tree<CGAL::AABB_traits_3<K, CGAL::AABB_face_graph_triangle_primitive<Mesh, VPM_3> > > tree;
+    PMP::build_AABB_tree(m, tree, np);
+
+    auto loc = PMP::locate(query, m, np);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m, np), query), FT(0)));
+    loc = PMP::locate_in_face(query, loc.first, m, np);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m, np), query), FT(0)));
+    loc = PMP::locate_with_AABB_tree(query, tree, m, np);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m, np), query), FT(0)));
+
+    loc = PMP::locate(ray, m, np);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m, np), entry), FT(0)));
+    loc = PMP::locate_with_AABB_tree(ray, tree, m, np);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m, np), entry), FT(0)));
+  }
+
+  // 2D points
+  {
+    const auto np = CGAL::parameters::vertex_point_map(vpm_2);
+    const Point_2 query(0.25, 0.5), entry(0, 0.25);
+    const typename K::Ray_2 ray(Point_2(-1, 0.25), Vector_2(1, 0));
+
+    typedef PMP::internal::Point_to_Point_3_VPM<Mesh, VPM_2>                      WrappedVPM;
+    CGAL::AABB_tree<CGAL::AABB_traits_3<K, CGAL::AABB_face_graph_triangle_primitive<Mesh, WrappedVPM> > > tree;
+    PMP::build_AABB_tree(m, tree, np);
+
+    auto loc = PMP::locate(query, m, np);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m, np), query), FT(0)));
+    loc = PMP::locate_in_face(query, loc.first, m, np);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m, np), query), FT(0)));
+    loc = PMP::locate_with_AABB_tree(query, tree, m, np);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m, np), query), FT(0)));
+
+    loc = PMP::locate(ray, m, np);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m, np), entry), FT(0)));
+    loc = PMP::locate_with_AABB_tree(ray, tree, m, np);
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, m, np), entry), FT(0)));
+  }
+}
 
 template<typename K, typename G, typename VPM>
 void test_locate(const G& g,
@@ -865,11 +1217,14 @@ void test_polyhedron(const std::filesystem::path& fname, CGAL::Random& rnd)
 template <typename K>
 void test(CGAL::Random& rnd)
 {
+  test_degenerate_barycentric_coordinates<K>();
+  test_rays_on_unit_square<K>();
   test_2D_triangulation<K>("data/stair.xy", rnd);
 //  test_2D_surface_mesh<K>("data/blobby_2D.off", rnd); // temporarily disabled, until Surface_mesh's IO is "fixed"
   test_surface_mesh_3D<K>(CGAL::data_file_path("meshes/mech-holes-shark.off"), rnd);
   test_surface_mesh_projection<K>("data/unit-grid.off", rnd);
   test_polyhedron<K>(CGAL::data_file_path("meshes/bull.off"), rnd);
+  test_vertex_point_map_of_another_kernel<EPICK, K>();
 }
 
 int main()
@@ -887,5 +1242,6 @@ int main()
   test<EPICK>(rnd);
   test<Exact_kernel>(rnd);
 
+  std::cout << "Done" << std::endl;
   return EXIT_SUCCESS;
 }

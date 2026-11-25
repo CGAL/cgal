@@ -1,5 +1,16 @@
 # Release History
 
+### [Polygon Mesh Processing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPolygonMeshProcessing)
+- The function `CGAL::Polygon_mesh_processing::barycentric_coordinates()`
+  now accepts degenerate (collinear) triangles
+- Added the functions `CGAL::Polygon_mesh_processing::is_on_vertex()`
+  and `CGAL::Polygon_mesh_processing::is_on_halfedge()`
+  taking a location (or only barycentric coordinates), and an overload of `CGAL::Polygon_mesh_processing::is_in_face()`
+  taking only barycentric coordinates.
+- The overload of `CGAL::Polygon_mesh_processing::is_in_face()` taking barycentric coordinates
+  and a mesh has been deprecated.
+
+
 ## [Release 6.3](https://github.com/CGAL/cgal/releases/tag/v6.3)
 
 Release date: December 2026
