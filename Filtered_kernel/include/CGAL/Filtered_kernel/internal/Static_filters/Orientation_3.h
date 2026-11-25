@@ -136,10 +136,14 @@ public:
           if (maxx < 1e-97) /* cbrt(min_double/eps) */ {
             if (maxx == 0)
               first = true;
+            else
+             return Base::operator()(p, q, r, s, t);
           }
           if (maxxt < 1e-97) /* cbrt(min_double/eps) */ {
             if (maxxt == 0)
               second = true;
+            else
+             return Base::operator()(p, q, r, s, t);
           }
           // Protect against overflow in the computation of det.
           if ((!first) && (maxz < 1e102)) /* cbrt(max_double [hadamard]/4) */ {
