@@ -115,25 +115,20 @@ extLong& extLong::operator*= (const extLong& y) {
   if (flag == 2 || y.flag == 2) {
     *this = CORE_NaNLong;
   } else if ((flag != 0) || (y.flag != 0)) {
-    if (sign() * y.sign() > 0)
+    const int s = sign() * y.sign();
+    if (s == 0)
+      *this = EXTLONG_ZERO;
+    else if (s > 0)
       *this = CORE_posInfty;
     else
       *this = CORE_negInfty;
   } else { // flag == 0 and y.flag == 0
-    double d = double(val) * double(y.val);
-    long   p = val * y.val;
-    if (std::fabs(d - p) <= std::fabs(d) * relEps) {
-      val = p;
-      flag = 0;
-    } else if (d > static_cast<double>(EXTLONG_MAX)) {
-      *this = CORE_posInfty;
-    } else if (d < static_cast<double>(EXTLONG_MIN)) {
-      *this = CORE_negInfty;
+    const long a = val < 0 ? -val : val;
+    const long b = y.val < 0 ? -y.val : y.val;
+    if (a != 0 && b > EXTLONG_MAX / a) {
+      *this = (val < 0) == (y.val < 0) ? CORE_posInfty : CORE_negInfty;
     } else {
-#ifdef CORE_DEBUG
-      CGAL_CORE_warning_msg(false, "extLong NaN Error in multiplication.");
-#endif
-      *this = CORE_NaNLong;
+      *this = extLong(val * y.val);
     }
   }
   return *this;
