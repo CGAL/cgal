@@ -57,7 +57,6 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/tuple/tuple.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
 #include <algorithm>
@@ -68,6 +67,7 @@
 #include <map>
 #include <set>
 #include <stack>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -3464,7 +3464,7 @@ periodic_remove(Vertex_handle v,
   }
 
   // A structure for storing the new neighboring relations
-  typedef boost::tuple<Cell_handle, int, Cell_handle> Neighbor_relation;
+  typedef std::tuple<Cell_handle, int, Cell_handle> Neighbor_relation;
   std::vector<Neighbor_relation> nr_vec;
   std::vector<Cell_handle> new_cells;
 
@@ -3509,8 +3509,8 @@ periodic_remove(Vertex_handle v,
     // nr_vec. It cannot be applied directly because then we could not
     // easily cancel the removing process if a cell is encountered
     // that does not obey the edge-length criterion.
-    nr_vec.push_back(boost::make_tuple(o_ch,o_i,new_ch));
-    nr_vec.push_back(boost::make_tuple(new_ch,i_i,o_ch));
+    nr_vec.push_back(std::make_tuple(o_ch,o_i,new_ch));
+    nr_vec.push_back(std::make_tuple(new_ch,i_i,o_ch));
 
     // for the other facets check, if they can also be glued
     for(unsigned int i = 0; i < 4; i++) {
@@ -3528,8 +3528,8 @@ periodic_remove(Vertex_handle v,
           typename Vertex_triple_Facet_map::value_type o_vt_f_pair2 = *oit2;
           Cell_handle o_ch2 = o_vt_f_pair2.second.first;
           int o_i2 = o_vt_f_pair2.second.second;
-          nr_vec.push_back(boost::make_tuple(o_ch2,o_i2,new_ch));
-          nr_vec.push_back(boost::make_tuple(new_ch,i,o_ch2));
+          nr_vec.push_back(std::make_tuple(o_ch2,o_i2,new_ch));
+          nr_vec.push_back(std::make_tuple(new_ch,i,o_ch2));
           outer_map.erase(oit2);
         }
       }
@@ -3538,7 +3538,7 @@ periodic_remove(Vertex_handle v,
 
   // finally set the neighboring relations
   for(unsigned int i=0; i<nr_vec.size(); i++) {
-    nr_vec[i].template get<0>()->set_neighbor(nr_vec[i].template get<1>(),nr_vec[i].template get<2>());
+    std::get<0>(nr_vec[i])->set_neighbor(std::get<1>(nr_vec[i]), std::get<2>(nr_vec[i]));
   }
 
   // Output the hidden points.
