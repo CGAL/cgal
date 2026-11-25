@@ -4,7 +4,7 @@ project(Kernel_23_Tests)
 find_package(CGAL REQUIRED)
 
 include_directories(BEFORE "include")
-
+create_single_source_cgal_program("test_orientation_3_five_points.cpp")
 create_single_source_cgal_program("Cartesian.cpp")
 create_single_source_cgal_program("determinant_77.cpp")
 create_single_source_cgal_program("Dimension.cpp")

@@ -122,6 +122,13 @@ public:
           else if (maxy < maxx)
               std::swap(maxx, maxy);
 
+          if (maxxt > maxzt)
+              std::swap(maxxt, maxzt);
+          if (maxyt > maxzt)
+              std::swap(maxyt, maxzt);
+          else if (maxyt < maxxt)
+              std::swap(maxxt, maxyt);
+
           std::array<Orientation,2> res = {ZERO,ZERO};
           bool first = false;
           bool second = false;
