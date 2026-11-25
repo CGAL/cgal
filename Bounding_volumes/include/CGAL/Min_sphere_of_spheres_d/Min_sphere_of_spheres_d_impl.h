@@ -18,6 +18,8 @@
 
 
 #include <numeric>
+#include <array>
+#include <vector>
 #include <CGAL/Min_sphere_of_spheres_d.h>
 
 #ifdef CGAL_MINIBALL_DEBUG
@@ -308,9 +310,9 @@ namespace  Bounding_volumes {
     }
 
     // set up initial system's coefficient matrix:
-    FT (*m)[D+1] = new FT[e][D+1];
+    std::vector<std::array<FT, D+1> > m(e);
     for (int j=0; j<e; ++j)
-      copy_n<D>(t.center_cartesian_begin(*l[j]),m[j]);
+      copy_n<D>(t.center_cartesian_begin(*l[j]),m[j].data());
     for (int j=0; j<e; ++j)
       m[j][D] = FT(1);
 
@@ -384,9 +386,6 @@ namespace  Bounding_volumes {
              << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
         return false;
       }
-
-    // tidy up:
-    delete[] m;
 
     return true;
   }
