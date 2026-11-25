@@ -1030,7 +1030,7 @@ void compute_intersecting_pairs(const PointRange& points, const PolygonRange& tr
       put(bb_map, i, get(pm, points[triangles[i][0]]).bbox() +
                      get(pm, points[triangles[i][1]]).bbox() +
                      get(pm, points[triangles[i][2]]).bbox());
-      put(rp_map, i, to_input(get(pm, point(triangles[i][0]))) );
+      put(rp_map, i, to_input(get(pm, points[triangles[i][0]])) );
     }
   }
   Compute_bbox compute_bbox(bb_map);
