@@ -17,6 +17,7 @@
 
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <CGAL/AABB_tree/internal/AABB_node.h>
+#include <CGAL/AABB_tree/internal/AABB_conservative_bbox_test.h>
 #include <optional>
 
 namespace CGAL {
@@ -87,7 +88,7 @@ public:
 
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return m_traits.do_intersect_object()(query, node.bbox());
+    return m_pruning(m_traits, query, node.bbox());
   }
 
   Result result() const { return m_result; }
@@ -98,6 +99,7 @@ public:
 private:
   Result m_result;
   const AABBTraits& m_traits;
+  Lazy_bbox_pruning_test<AABBTraits, Query> m_pruning;  //!< the test of the nodes against the query
 };
 
 
@@ -135,12 +137,13 @@ public:
 
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return m_traits.do_intersect_object()(query, node.bbox());
+    return m_pruning(m_traits, query, node.bbox());
   }
 
 private:
   OutputIterator m_out_it;
   const AABBTraits& m_traits;
+  Lazy_bbox_pruning_test<AABBTraits, Query> m_pruning;  //!< the test of the nodes against the query
 };
 
 
@@ -175,12 +178,13 @@ public:
 
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return m_traits.do_intersect_object()(query, node.bbox());
+    return m_pruning(m_traits, query, node.bbox());
   }
 
 private:
   OutputIterator m_out_it;
   const AABBTraits& m_traits;
+  Lazy_bbox_pruning_test<AABBTraits, Query> m_pruning;  //!< the test of the nodes against the query
 };
 
 /**
@@ -313,7 +317,7 @@ public:
 
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return m_traits.do_intersect_object()(query, node.bbox());
+    return m_pruning(m_traits, query, node.bbox());
   }
 
   std::optional<typename Primitive::Id> result() const { return m_result; }
@@ -323,6 +327,7 @@ private:
   bool m_is_found;
   std::optional<typename Primitive::Id> m_result;
   const AABBTraits& m_traits;
+  Lazy_bbox_pruning_test<AABBTraits, Query> m_pruning;  //!< the test of the nodes against the query
 };
 
 /**
@@ -355,7 +360,7 @@ public:
 
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return m_traits.do_intersect_object()(query, node.bbox());
+    return m_pruning(m_traits, query, node.bbox());
   }
 
   bool is_intersection_found() const { return m_is_found; }
@@ -363,6 +368,7 @@ public:
 private:
   bool m_is_found;
   const AABBTraits& m_traits;
+  Lazy_bbox_pruning_test<AABBTraits, Query> m_pruning;  //!< the test of the nodes against the query
 };
 
 /**
