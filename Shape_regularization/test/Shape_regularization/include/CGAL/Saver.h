@@ -16,6 +16,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/IO/io.h>
 
+#include "sr_utils.h"
 namespace CGAL {
 namespace Shape_regularization {
 namespace Tests {

@@ -26,9 +26,9 @@ Traits_x;
 
 typedef Traits_x Gt;
 
-#include "Multi_info.h"
+#include <CGAL/Segment_Delaunay_graph_Linf_2/Multi_info.h>
 
-#include "test_info_hierarchy.h"
+#include <CGAL/Segment_Delaunay_graph_Linf_2/test_info_hierarchy.h>
 
 typedef Multi_info<int>               Info;
 typedef Multi_info_convert_info<int>  Convert_info;
@@ -44,6 +44,6 @@ typedef CGAL::Tag_false STag;
 
 typedef CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag>  SDG2;
 
-#include "sdg_hierarchy_info_main.h"
+#include <CGAL/Segment_Delaunay_graph_Linf_2/sdg_hierarchy_info_main.h>
 
 // Comment for cgal_create_makefile : main()

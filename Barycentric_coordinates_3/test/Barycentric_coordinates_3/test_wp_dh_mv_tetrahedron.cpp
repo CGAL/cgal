@@ -6,7 +6,7 @@
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
 
-#include "include/utils.h"
+#include <CGAL/Barycentric_coordinates_3_utils.h>
 
 //Typedefs
 using Kernel = CGAL::Simple_cartesian<double>;

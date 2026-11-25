@@ -13,7 +13,7 @@
 #define VDA_TEST_DT
 
 #include <CGAL/Voronoi_diagram_2.h>
-#include "vda_test.h"
+#include <CGAL/Voronoi_diagram_2/vda_test.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>

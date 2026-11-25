@@ -1,6 +1,6 @@
 // Author(s)     : Nico Kruithof  <Nico@nghk.nl>
 
-#include "./types.h"
+#include <CGAL/p2t2_types.h>
 #include <map>
 
 const int N = 10;

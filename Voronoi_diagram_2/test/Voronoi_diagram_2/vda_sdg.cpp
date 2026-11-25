@@ -13,7 +13,7 @@
 #define VDA_TEST_SDG
 
 #include <CGAL/Voronoi_diagram_2.h>
-#include "vda_test.h"
+#include <CGAL/Voronoi_diagram_2/vda_test.h>
 
 #include <CGAL/MP_Float.h>
 

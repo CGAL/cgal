@@ -6,7 +6,7 @@
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
-#include "include/utils.h"
+#include <CGAL/Barycentric_coordinates_3_utils.h>
 
 // Typedefs.
 using SCKER = CGAL::Simple_cartesian<double>;

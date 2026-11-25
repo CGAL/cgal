@@ -5,7 +5,7 @@
 #include <CGAL/Convex_hull_3/dual/Convex_hull_traits_dual_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
 
-#include "include/to_dual.h"
+#include <CGAL/to_dual.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Plane_3 Plane;
