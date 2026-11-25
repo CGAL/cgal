@@ -266,9 +266,7 @@ public:
 
       // compute and keep worst angle
       Dihedral_angle_cosine curr_max_cos
-        = (std::max)(max_cos_dihedral_angle_in_range(triangulation, cells_to_remove, false),
-                     max_cos_dihedral_angle_in_range(triangulation, cells_to_update, false));
-
+        = max_cos_dihedral_angle_in_range(triangulation, cells_to_update, false);
 
       vh0->set_point(Point_3(v0_new_pos.x(), v0_new_pos.y(), v0_new_pos.z()));
       vh1->set_point(Point_3(v0_new_pos.x(), v0_new_pos.y(), v0_new_pos.z()));
@@ -381,96 +379,136 @@ Collapse_type get_collapse_type(const typename C3t3::Edge& edge,
   else                        return IMPOSSIBLE;
 }
 
-//template<typename C3t3>
-//Edge_type get_edge_type(const typename C3t3::Edge& edge,
-//                        const C3t3& c3t3)
-//{
-//  typedef typename C3t3::Vertex_handle Vertex_handle;
-//  typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
-//  typedef typename C3t3::Subdomain_index Subdomain_index;
-
-//  const Vertex_handle & v0 = edge.first->vertex(edge.second);
-//  const Vertex_handle & v1 = edge.first->vertex(edge.third);
-
-//  const int dim0 = c3t3.in_dimension(v0);
-//  const int dim1 = c3t3.in_dimension(v1);
-
-//  const bool is_v0_on_hull = is_on_convex_hull(v0, c3t3);
-//  const bool is_v1_on_hull = is_on_convex_hull(v1, c3t3);
-
-//  if (c3t3.is_in_complex(edge))
-//    return FEATURE;
-
-//  else if (dim0 == 3 && dim1 == 3)
-//    return INSIDE;
-
-//  else if (dim0 == 2 && dim1 == 2)
-//  {
-//    Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
-//    Cell_circulator done = circ;
-
-//    std::vector<Subdomain_index> indices;
-//    do
-//    {
-//      Subdomain_index current_si = circ->subdomain_index();
-
-//      if (std::find(indices.begin(), indices.end(), current_si) == indices.end()) {
-//        indices.push_back(current_si);
-//      }
-
-//      Subdomain_index si_n0 = circ->neighbor(circ->index(v0))->subdomain_index();
-//      Subdomain_index si_n1 = circ->neighbor(circ->index(v1))->subdomain_index();
-//      if (si_n0 == si_n1 && si_n0 != current_si)
-//        return NO_COLLAPSE;
-
-//    } while (++circ != done);
-
-//    const std::size_t nb_si_v0 = nb_incident_subdomains(v0, c3t3);
-//    const std::size_t nb_si_v1 = nb_incident_subdomains(v1, c3t3);
-
-//    if (indices.size() >= (std::min)(nb_si_v0, nb_si_v1)) {
-//      return BOUNDARY;
-//    }
-//  }
-
-//  //std::cerr << "ERROR : get_edge_type did not return anything valid!" << std::endl;
-//  return NO_COLLAPSE;
-//}
-
-template<typename C3t3>
-bool is_valid_collapse(const typename C3t3::Edge& edge,
-                       const C3t3& c3t3)
+template <typename Tr>
+bool is_cell(const typename Tr::Vertex_handle v0,
+             const typename Tr::Vertex_handle v1,
+             const typename Tr::Vertex_handle v2,
+             const typename Tr::Vertex_handle v3,
+             const Tr& tr)
 {
-  typedef typename C3t3::Vertex_handle Vertex_handle;
-  typedef typename C3t3::Cell_handle   Cell_handle;
-  typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
+  typename Tr::Cell_handle cell;
+  return tr.is_cell(v0, v1, v2, v3, cell);
+}
+
+// check the link condition before collapsing `edge`
+template <typename Triangulation, typename CellRange>
+bool does_satisfy_link_condition(const typename Triangulation::Edge& edge,
+                                 const Triangulation& tr,
+                                 const CellRange& star_v0, //incident_cells(v0)
+                                 const CellRange& star_v1) //incident_cells(v1)
+{
+  using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Cell_handle = typename Triangulation::Cell_handle;
+  using Facet = typename Triangulation::Facet;
+  using VPair = std::pair<Vertex_handle, Vertex_handle>;
 
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
+  if(tr.is_infinite(v0) || tr.is_infinite(v1))
+    return false;
 
-  Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
-  Cell_circulator done = circ;
-  do
+  // Lk(edge) : the cells of star(v0) that contain v1 are the cells around edge
+  boost::container::small_vector<VPair, 16> ring_edges;
+  boost::container::small_vector<Vertex_handle, 16> ring_vertices;
+  for(const Cell_handle c0 : star_v0)
   {
-    int v0_id = circ->index(v0);
-    int v1_id = circ->index(v1);
+    if(!c0->has_vertex(v1))
+      continue;
 
-    Cell_handle n0_ch = circ->neighbor(v0_id);
-    Cell_handle n1_ch = circ->neighbor(v1_id);
+    const auto vp = opposite_edge(c0, v0, v1, tr); //already ordered
+    ring_edges.push_back(vp);
+    ring_vertices.push_back(vp.first);
+    ring_vertices.push_back(vp.second);
+  }
+  std::sort(ring_vertices.begin(), ring_vertices.end());
+  ring_vertices.erase(std::unique(ring_vertices.begin(), ring_vertices.end()),
+                      ring_vertices.end());
+  std::sort(ring_edges.begin(), ring_edges.end());
+  const std::size_t ring_size = ring_vertices.size();
+  const auto is_in_ring = [&](const Vertex_handle v)
+  {
+    return std::binary_search(ring_vertices.begin(), ring_vertices.end(), v);
+  };
+  const auto is_in_link = [&](const VPair& vp)
+  {
+    return std::binary_search(ring_edges.begin(), ring_edges.end(), vp);
+  };
 
-    if (n0_ch->has_vertex(v0)
-        || n1_ch->has_vertex(v1)
-        || n0_ch->has_neighbor(n1_ch))
+  // vertices : N(v0) \cap N(v1) must be exactly the ring
+  // the ring is always included in this intersection
+  // so it is enough to count
+  const auto sorted_neighbors = [&](const CellRange& star, const Vertex_handle v)
+  {
+    boost::container::small_vector<Vertex_handle, 64> neighbors;
+    for(const Cell_handle c : star)
     {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (c3t3.is_in_complex(edge))
-        ++nb_invalid_collapse_short;
-#endif
-      return false;
+      const int index_v = c->index(v);
+      for(int k = 1; k < 4; ++k)
+        neighbors.push_back(c->vertex((index_v+k) % 4));
+    }
+    std::sort(neighbors.begin(), neighbors.end());
+    neighbors.erase(std::unique(neighbors.begin(), neighbors.end()),
+                    neighbors.end());
+    return neighbors;
+  };
+  boost::container::small_vector<Vertex_handle, 64> neighbors_v0
+    = sorted_neighbors(star_v0, v0);
+
+  // if N(v0) or N(v1) is reduced to ring + {other endpoint}, there is nothing to count
+  if(neighbors_v0.size() != ring_size + 1) // o.w. N(v0)\v1 is the ring
+  {
+    // so there must be a shared neighbor outside the link
+    boost::container::small_vector<Vertex_handle, 64> neighbors_v1
+      = sorted_neighbors(star_v1, v1); // contains v0
+    if(neighbors_v1.size() != ring_size + 1)//o.w. N(v1)\v0 is the ring
+    {
+      // there must be a shared neighbor outside the link
+      // (neighbors_v0 is already sorted)
+      std::size_t count_common = 0;
+      for(const Vertex_handle nv1 : neighbors_v1)
+      {
+        // if nv1 is a neighbor of v0
+        if(std::binary_search(neighbors_v0.begin(), neighbors_v0.end(), nv1)
+          && ++count_common > ring_size)
+          return false;// there is a shared neighbor of v0 and v1 that is not in the link of edge
+      }
     }
   }
-  while (++circ != done);
 
+  // Check the chords for the link condition
+  // check the case where :
+  // facets [v0, x, y] and [v1, x, y] exist with x and y in the link of edge
+  // but the edge [x, y] is not in the link of edge, so it is a chord
+  for(const Cell_handle c0 : star_v0)
+  {
+    if(c0->has_vertex(v1))
+      continue;
+
+    // c0 is incident to v0 but not to v1
+    const std::array<Vertex_handle, 3> vc0 = tr.vertices(Facet(c0, c0->index(v0)));
+    const std::array<bool, 3> in_ring = {is_in_ring(vc0[0]), is_in_ring(vc0[1]), is_in_ring(vc0[2])};
+
+    // ring of 3 vertices: [v0, x, y, z] and [v1, x, y, z] must not both be cells
+    if(  ring_size == 3
+      && in_ring[0] && in_ring[1] && in_ring[2]
+      && is_cell(v1, vc0[0], vc0[1], vc0[2], tr))
+        return false;
+
+    for(int a = 0; a < 3; ++a)
+    {
+      if(!in_ring[a])
+        continue;
+      for(int b = a + 1; b < 3; ++b)
+      {
+        if(!in_ring[b])
+          continue;
+        if(is_in_link(make_vertex_pair(vc0[a], vc0[b])))
+          continue;
+        if(tr.is_facet(v1, vc0[a], vc0[b])) // check is_facet as the last condition
+          return false;
+      }
+    }
+  }
   return true;
 }
 
@@ -498,102 +536,6 @@ bool collapse_keeps_orientations(const CellRange& star,
       return false;
   }
   return true;
-}
-
-template<typename C3t3>
-bool is_valid_collapse(const typename C3t3::Edge& edge,
-                       const Collapse_type& collapse_type,
-                       const typename C3t3::Triangulation::Point& new_pos,
-                       const C3t3& c3t3)
-{
-  typedef typename C3t3::Vertex_handle        Vertex_handle;
-  typedef typename C3t3::Cell_handle          Cell_handle;
-  typedef typename C3t3::Triangulation::Point Point;
-
-  const Vertex_handle v0 = edge.first->vertex(edge.second);
-  const Vertex_handle v1 = edge.first->vertex(edge.third);
-
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  const bool in_cx = c3t3.is_in_complex(edge);
-  if (in_cx)
-  {
-    if (collapse_type == TO_MIDPOINT)
-      nb_test_midpoint++;
-    else if (collapse_type == TO_V1)
-      nb_test_v1++;
-    else
-      nb_test_v0++;
-  }
-#endif
-
-  if (collapse_type == TO_V1 || collapse_type == TO_MIDPOINT)
-  {
-    std::vector<Cell_handle> cells_to_check;
-    c3t3.triangulation().finite_incident_cells(v0,
-        std::back_inserter(cells_to_check));
-
-    for (const Cell_handle& ch : cells_to_check)
-    {
-      if (!ch->has_vertex(v1))
-      {
-        //check orientation
-        std::array<Point, 4> pts = { ch->vertex(0)->point(),
-                                       ch->vertex(1)->point(),
-                                       ch->vertex(2)->point(),
-                                       ch->vertex(3)->point()};
-        pts[ch->index(v0)] = new_pos;
-        if (CGAL::orientation(point(pts[0]), point(pts[1]), point(pts[2]), point(pts[3]))
-            != CGAL::POSITIVE)
-        {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-          if (in_cx)
-          {
-            if (collapse_type == TO_MIDPOINT)
-              nb_orientation_midpoint++;
-            else
-              nb_orientation_v1++;
-          }
-#endif
-          return false;
-        }
-      }
-    }
-  }
-  if (collapse_type == TO_V0 || collapse_type == TO_MIDPOINT)
-  {
-    std::vector<Cell_handle> cells_to_check;
-    c3t3.triangulation().finite_incident_cells(v1,
-        std::back_inserter(cells_to_check));
-
-    for (const Cell_handle& ch : cells_to_check)
-    {
-      if (!ch->has_vertex(v0))
-      {
-        //check orientation
-        std::array<Point, 4> pts = { ch->vertex(0)->point(),
-                                       ch->vertex(1)->point(),
-                                       ch->vertex(2)->point(),
-                                       ch->vertex(3)->point() };
-        pts[ch->index(v1)] = new_pos;
-        if (CGAL::orientation(point(pts[0]), point(pts[1]), point(pts[2]), point(pts[3]))
-            != CGAL::POSITIVE)
-        {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-          if (in_cx)
-          {
-            if (collapse_type == TO_MIDPOINT)
-              nb_orientation_midpoint++;
-            else
-              nb_orientation_v0++;
-          }
-#endif
-          return false;
-        }
-      }
-    }
-  }
-
-  return is_valid_collapse(edge, c3t3);
 }
 
 template<typename Facet, typename Vh>
@@ -1193,8 +1135,7 @@ Angle_verdict collapse_keeps_angles_acceptable(const typename C3t3::Edge& edge,
   tr.incident_cells(v1, std::back_inserter(cells_to_update));
 
   const Dihedral_angle_cosine curr_max_cos
-    = (std::max)(max_cos_dihedral_angle_in_range(tr, cells_to_remove, false),
-                 max_cos_dihedral_angle_in_range(tr, cells_to_update, false));
+    = max_cos_dihedral_angle_in_range(tr, cells_to_update, false);
 
   const double angle_margin = 1e-9;
   const double acceptable_sq = acceptable_max_cos.signed_square_value();
@@ -1252,15 +1193,31 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   const Vertex_handle v1 = edge.first->vertex(edge.third);
 
   Collapse_type collapse_type = get_collapse_type(edge, c3t3, cell_selector);
-
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  const bool in_cx = c3t3.is_in_complex(edge);
-  if (in_cx && collapse_type == IMPOSSIBLE)
-    nb_impossible++;
-#endif
-
   if (collapse_type == IMPOSSIBLE)
     return Vertex_handle();
+
+  // The link condition, the orientation tests and the angle and manifold
+  // tests all need the stars of v0 and v1
+  // Each star is collected once here
+  using Star = boost::container::small_vector<Cell_handle, 64>;
+  const Tr& tr = c3t3.triangulation();
+  Star full_star_v0, full_star_v1;
+  tr.incident_cells(v0, std::back_inserter(full_star_v0));
+  tr.incident_cells(v1, std::back_inserter(full_star_v1));
+
+  if(!does_satisfy_link_condition(edge, tr, full_star_v0, full_star_v1))
+    return Vertex_handle();
+
+  const auto finite_cells = [&tr](const Star& full_star)
+  {
+    Star finite_star;
+    for(const Cell_handle c : full_star)
+      if(!tr.is_infinite(c))
+        finite_star.push_back(c);
+    return finite_star;
+  };
+  const Star star_v0 = finite_cells(full_star_v0);
+  const Star star_v1 = finite_cells(full_star_v1);
 
   Point new_pos;
   switch(collapse_type)
@@ -1274,45 +1231,13 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     new_pos = Point(CGAL::midpoint(point(v0->point()), point(v1->point())));
   }
 
-  // The ring test depends on neither the collapse type nor the new position,
-  // so it settles all three attempts below at once - and it is the cheap one:
-  // one cell circulation, against a star walk plus an orientation predicate
-  // per cell of the star.
-  if (!is_valid_collapse(edge, c3t3))
-    return Vertex_handle();
-
-  // Each attempt below walks the star of v0 and/or of v1, and so do the angle
-  // and manifold tests further down. The mesh is not touched in between, so
-  // each star is walked once here and handed to all of them.
-  boost::container::small_vector<Cell_handle, 64> star_v0, star_v1;
-  bool has_star_v0 = false;
-  bool has_star_v1 = false;
-  const auto star_of_v0 = [&]() -> const boost::container::small_vector<Cell_handle, 64>&
-  {
-    if (!has_star_v0)
-    {
-      c3t3.triangulation().finite_incident_cells(v0, std::back_inserter(star_v0));
-      has_star_v0 = true;
-    }
-    return star_v0;
-  };
-  const auto star_of_v1 = [&]() -> const boost::container::small_vector<Cell_handle, 64>&
-  {
-    if (!has_star_v1)
-    {
-      c3t3.triangulation().finite_incident_cells(v1, std::back_inserter(star_v1));
-      has_star_v1 = true;
-    }
-    return star_v1;
-  };
-
   const auto orientations_ok = [&](const Collapse_type ct, const Point& pos)
   {
     if ((ct == TO_V1 || ct == TO_MIDPOINT)
-        && !collapse_keeps_orientations<C3t3>(star_of_v0(), v0, v1, point(pos)))
+        && !collapse_keeps_orientations<C3t3>(star_v0, v0, v1, point(pos)))
       return false;
     if ((ct == TO_V0 || ct == TO_MIDPOINT)
-        && !collapse_keeps_orientations<C3t3>(star_of_v1(), v1, v0, point(pos)))
+        && !collapse_keeps_orientations<C3t3>(star_v1, v1, v0, point(pos)))
       return false;
     return true;
   };
@@ -1333,22 +1258,10 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
         new_pos = v1->point();
       }
       else
-      {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-        if (in_cx)
-          nb_invalid_collapse++;
-#endif
         return Vertex_handle();
-      }
     }
     else
-    {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (in_cx)
-        nb_invalid_collapse++;
-#endif
       return Vertex_handle();
-    }
   }
 
   if (are_edge_lengths_valid(edge, c3t3, collapse_type, new_pos, sizing, cell_selector)
@@ -1359,9 +1272,9 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
                        edge.first->vertex(edge.third)));
 
     std::unordered_set<Cell_handle> cells_to_insert;
-    for (const Cell_handle ch : star_of_v0())
+    for (const Cell_handle ch : star_v0)
       cells_to_insert.insert(ch);
-    for (const Cell_handle ch : star_of_v1())
+    for (const Cell_handle ch : star_v1)
       cells_to_insert.insert(ch);
 
     // the angle test is the one that discards most candidates, and the cheaper
@@ -1381,17 +1294,8 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
       if(local_tri.collapse() != VALID)
         return Vertex_handle();
     }
-
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-    if (in_cx)
-      nb_valid_collapse++;
-#endif
     return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
   }
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  else if (in_cx)
-    nb_invalid_lengths++;
-#endif
   return Vertex_handle();
 }
 
