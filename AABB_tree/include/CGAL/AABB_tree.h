@@ -160,15 +160,24 @@ namespace CGAL {
     /// triggers the (re)construction of the tree similarly to a call to `build()`
     /// but the traits functors `Compute_bbox` and `Split_primitives` are ignored
     /// and `compute_bbox` and `split_primitives` are used instead.
-    template <class ConcurrencyTag=Sequential_tag, bool postprocess_bbox_computation, class ComputeBbox, class SplitPrimitives>
+    template <class ConcurrencyTag=Sequential_tag,
+              bool postprocess_bbox_computation, bool perfectly_balanced_split,
+              class ComputeBbox, class SplitPrimitives>
     void custom_build(const ComputeBbox& compute_bbox,
                       const SplitPrimitives& split_primitives);
+
+    template <class ConcurrencyTag=Sequential_tag, bool postprocess_bbox_computation, class ComputeBbox, class SplitPrimitives>
+    void custom_build(const ComputeBbox& compute_bbox,
+                      const SplitPrimitives& split_primitives)
+    {
+      custom_build<ConcurrencyTag, postprocess_bbox_computation, true>(compute_bbox, split_primitives);
+    }
 
     template <class ConcurrencyTag=Sequential_tag, class ComputeBbox, class SplitPrimitives>
     void custom_build(const ComputeBbox& compute_bbox,
                       const SplitPrimitives& split_primitives)
     {
-      custom_build<ConcurrencyTag, false>(compute_bbox, split_primitives);
+      custom_build<ConcurrencyTag, false, true>(compute_bbox, split_primitives);
     }
 #endif
     ///@}
@@ -795,6 +804,7 @@ public:
 namespace internal {
 namespace AABB_tree {
   template<bool postprocess_bbox_computation = false,
+           bool perfectly_balanced_split = true,
            typename NodeIterator,
            typename ConstPrimitiveIterator,
            typename ComputeBbox,
@@ -808,8 +818,9 @@ namespace AABB_tree {
     // ______________ Sequential Build Algorithm ______________
     // Traverse the nodes sequentially in preorder.
     // For an internal node i, associated with the primitive range [f, f + r):
-    // - The left child is node i + 1, associated with [f, f + r/2).
-    // - The right child is node i + r/2, associated with [f + r/2, f + r).
+    // Let r_s be the splitting index within the range [f, f + r)
+    // - The left child is node i + 1, associated with [f, f + r_s).
+    // - The right child is node i + r_s, associated with [f + r_s, f + r).
     //
     // When visiting an internal node, write the information of its two children.
     // Then continue with left child (its the next one)
@@ -865,10 +876,16 @@ namespace AABB_tree {
           node->set_bbox(compute_bbox.approx(first, first+range));
         else
           node->set_bbox(compute_bbox(first, first+range));
-        split_primitives(first, first + range, node->bbox());
+        std::size_t left_range;
+        if constexpr(perfectly_balanced_split)
+        {
+          split_primitives(first, first+range, node->bbox());
+          left_range = range / 2;
+        }
+        else
+          left_range = split_primitives(first, first + range, node->bbox());
 
         // Write information of children
-        const std::size_t left_range = range / 2;
         (node+left_range)->set_data(*(first+left_range), range - left_range);
         (node+1)->set_data(*first, left_range);
 
@@ -893,7 +910,8 @@ namespace AABB_tree {
            typename ConstPrimitiveIterator,
            typename ComputeBbox,
            typename SplitPrimitives,
-           bool postprocess_bbox_computation = false>
+           bool postprocess_bbox_computation = false,
+           bool perfectly_balanced_split = true>
   struct Expand_parallel_range
   {
     using size_type = std::size_t;
@@ -936,11 +954,18 @@ namespace AABB_tree {
         other.m_node->set_bbox(compute_bbox.approx(other.m_first, other.m_first+other.m_range));
       else
         other.m_node->set_bbox(compute_bbox(other.m_first, other.m_first+other.m_range));
-      split_primitives(other.m_first, other.m_first+other.m_range, other.m_node->bbox());
+
+      size_type left_range;
+      if constexpr(perfectly_balanced_split)
+      {
+        split_primitives(other.m_first, other.m_first+other.m_range, other.m_node->bbox());
+        left_range = other.m_range / 2;
+      }
+      else
+        left_range = split_primitives(other.m_first, other.m_first+other.m_range, other.m_node->bbox());
 
       // Split the subtree represented by other.
       // Expand its root and generate two independent subtrees.
-      const size_type left_range = other.m_range / 2;
       const size_type right_range = other.m_range - left_range;
       other.m_node->set_data(*other.m_first, other.m_range);
 
@@ -956,7 +981,7 @@ namespace AABB_tree {
 
     void run_in_sequential()
     {
-      sequential_expand<postprocess_bbox_computation>(m_node, m_first, m_range, compute_bbox, split_primitives);
+      sequential_expand<postprocess_bbox_computation, perfectly_balanced_split>(m_node, m_first, m_range, compute_bbox, split_primitives);
     }
   };
 
@@ -981,7 +1006,9 @@ namespace AABB_tree {
 #ifndef DOXYGEN_RUNNING
   // Build the data structure, after calls to insert(..)
   template<typename Tr>
-  template <class ConcurrencyTag, bool postprocess_bbox_computation, class ComputeBbox, class SplitPrimitives>
+  template <class ConcurrencyTag,
+            bool postprocess_bbox_computation, bool perfectly_balanced_split,
+            class ComputeBbox, class SplitPrimitives>
   void AABB_tree<Tr>::custom_build(
     const ComputeBbox& compute_bbox,
     const SplitPrimitives& split_primitives)
@@ -1020,7 +1047,7 @@ namespace AABB_tree {
 #endif
     {
       // constructs the tree
-      internal::AABB_tree::sequential_expand<postprocess_bbox_computation>
+      internal::AABB_tree::sequential_expand<postprocess_bbox_computation, perfectly_balanced_split>
                                             (m_nodes.begin(),
                                              m_primitives.begin(),
                                              m_primitives.size(),

@@ -54,8 +54,8 @@ void sequential_two_trees_traversal(
       {
         // Treat directly the three primitives
         traversal_traits.intersection(current_A->left_data(), *current_B, current_B->range());
-        traversal_traits.intersection(current_A->right_child().left_data() , *current_B, current_B->range());
-        traversal_traits.intersection(current_A->right_child().right_data(), *current_B, current_B->range());
+        traversal_traits.intersection(current_A->first_child().left_data() , *current_B, current_B->range());
+        traversal_traits.intersection(current_A->first_child().right_data(), *current_B, current_B->range());
         return;
       }
       else
@@ -86,8 +86,8 @@ void sequential_two_trees_traversal(
       {
         // Treat directly the three primitives
         traversal_traits.intersection(*current_A, current_A->range(), current_B->left_data());
-        traversal_traits.intersection(*current_A, current_A->range(), current_B->right_child().left_data());
-        traversal_traits.intersection(*current_A, current_A->range(), current_B->right_child().right_data());
+        traversal_traits.intersection(*current_A, current_A->range(), current_B->first_child().left_data());
+        traversal_traits.intersection(*current_A, current_A->range(), current_B->first_child().right_data());
         return;
       }
       else
