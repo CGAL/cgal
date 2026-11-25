@@ -60,6 +60,7 @@ struct Mesh_parameters
   double facet_sizing;
   double facet_min_sizing;
   double facet_approx;
+  double facet_normal_angle;
 
   double tet_shape;
   double tet_sizing;
@@ -175,6 +176,8 @@ log() const
     res << QString("facet min size: %1").arg(facet_min_sizing);
   if(is_valid(facet_approx))
     res << QString("facet approx error: %1").arg(facet_approx);
+  if(is_valid(facet_normal_angle))
+    res << QString("facet normal angle: %1").arg(facet_normal_angle);
   if(is_valid(tet_shape))
     res << QString("tet shape (radius-edge): %1").arg(tet_shape);
   if(is_valid(tet_sizing))
@@ -394,7 +397,8 @@ launch()
                                         p_.facet_sizing,
                                         p_.facet_approx,
                                         CGAL::FACET_VERTICES_ON_SURFACE,
-                                        p_.facet_min_sizing),
+                                        p_.facet_min_sizing,
+                                        p_.facet_normal_angle),
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing,
                                        p_.tet_min_sizing));

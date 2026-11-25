@@ -93,7 +93,8 @@ public:
                     parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_size_param), FT(0)),
                     parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_distance_param), FT(0)),
                     parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_topology_param), CGAL::FACET_VERTICES_ON_SURFACE),
-                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_min_size_param), FT(0))),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_min_size_param), FT(0)),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_normal_angle_param), FT(0))),
     cell_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_ratio_param), FT(0)),
                    parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::cell_size_param), FT(0)),
                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_min_size_param), FT(0)))
@@ -305,6 +306,13 @@ typedef Mesh_cell_criteria_3<C3t3> Cell_criteria;
  *                           which have to be verified by each surface facet. See `CGAL::Mesh_facet_topology` manual page to
  *                           get all possible values.}
  *     \cgalParamDefault{CGAL::FACET_VERTICES_ON_SURFACE}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{facet_normal_angle}
+ *     \cgalParamDescription{an upper bound (in degrees) for the angle between the
+ *                           normals of two neighbor facets of
+ *                           the complex, separated by an edge that is not in the 1D complex.
+ *                           If the angle is larger than this bound, the facet will be
+ *                           refined.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{cell_radius_edge_ratio}
  *     \cgalParamDescription{ an upper bound for the radius-edge ratio of the mesh tetrahedra.}
