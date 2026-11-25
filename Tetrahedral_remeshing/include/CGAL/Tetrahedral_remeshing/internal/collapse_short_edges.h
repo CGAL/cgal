@@ -1537,9 +1537,10 @@ void collapse_short_edges(C3T3& c3t3,
 
     short_edges.right.erase(eit);
 
-    CGAL_expensive_assertion_code(const bool bd = is_boundary_edge(e));
+    CGAL_expensive_assertion_code(const bool bd = is_boundary(c3t3, e, cell_selector));
     CGAL_expensive_assertion(!!is_too_short(e, bd, sizing, c3t3, cell_selector));
-    CGAL_expensive_assertion(can_be_collapsed(e, c3t3, protect_boundaries, cell_selector));
+    CGAL_expensive_assertion(
+      can_be_collapsed(e, c3t3, protect_boundaries, cell_selector).can_be_collapsed);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     const auto p1 = e.first->vertex(e.second)->point();

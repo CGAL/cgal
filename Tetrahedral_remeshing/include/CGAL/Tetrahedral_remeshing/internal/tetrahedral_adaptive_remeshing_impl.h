@@ -106,6 +106,7 @@ class Adaptive_remesher
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Curve_index         Curve_index;
   typedef typename C3t3::Corner_index        Corner_index;
+  typedef typename C3t3::Index               Index;
 
   typedef Tetrahedral_remeshing_smoother<C3t3, SizingFunction, CellSelector> Smoother;
 
@@ -347,8 +348,25 @@ private:
     std::size_t nbe = 0;
     std::size_t nbv = 0;
 #endif
+    // keep the corner indices of an input C3t3
+    std::vector<std::pair<Vertex_handle, Corner_index>> input_corners;
+    if (input_is_c3t3())
+    {
+      for (Vertex_handle v : m_c3t3.vertices_in_complex())
+        input_corners.emplace_back(v, m_c3t3.corner_index(v));
+    }
+
     //update number_of_cells and number_of_facets in c3t3
     m_c3t3.rescan_after_load_of_triangulation();
+
+    // rescan_after_load() resets all corner indices to 1
+    // so tag them back
+    for(const auto& [v, corner] : input_corners)
+    {
+      if (m_c3t3.is_in_complex(v))
+        m_c3t3.remove_from_complex(v);
+      m_c3t3.add_to_complex(v, corner);
+    }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
@@ -380,7 +398,7 @@ private:
       }
 
       for (Vertex_handle vi : tr().vertices(cit))
-        set_dimension(vi, 3);
+        set_dimension_and_index(vi, 3, m_c3t3.subdomain_index(cit));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
@@ -410,7 +428,7 @@ private:
         m_c3t3.add_to_complex(f, patch);
 
         for (Vertex_handle vij : tr().vertices(f))
-          set_dimension(vij, 2);
+          set_dimension_and_index(vij, 2, patch);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbf;
@@ -442,7 +460,7 @@ private:
         m_c3t3.add_to_complex(e, curve_id);
 
         for (Vertex_handle v : tr().vertices(e))
-          set_dimension(v, 1);
+          set_dimension_and_index(v, 1, curve_id);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbe;
@@ -454,7 +472,9 @@ private:
 #endif
 
     //tag vertices
-    Corner_index corner_id = 0;
+    //  new corners are numbered after the corners already in the complex,
+    // so that they do not collide with input corner indices
+    Corner_index corner_id = max_corner_index();
     for (Vertex_handle vit : tr().finite_vertex_handles())
     {
       boost::container::small_vector<Edge, 3> incident_edges;
@@ -469,18 +489,15 @@ private:
         if (!m_c3t3.is_in_complex(vit))
           m_c3t3.add_to_complex(vit, ++corner_id);
 
-        set_dimension(vit, 0);
-        vit->set_index(corner_id);
+        // corner_id is only incremented for new corners:
+        // read the index back from the complex
+        set_dimension_and_index(vit, 0, m_c3t3.corner_index(vit));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbv;
 #endif
       }
     }
-
-    // set all indices depending on underlying dimension
-    for (Vertex_handle v : tr().finite_vertex_handles())
-      set_index(v, m_c3t3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     std::cout << "C3t3 ready :" << std::endl;
@@ -532,6 +549,16 @@ private:
   {
     if (dimension_is_modifiable(v, new_dim))
       v->set_dimension(new_dim);
+  }
+
+  // The index of a vertex must match its dimension
+  // set_dimension() may refuse the change
+  // (features and corners are kept), and in that case the index is kept too.
+  void set_dimension_and_index(Vertex_handle v, const int new_dim, const Index& index)
+  {
+   set_dimension(v, new_dim);
+   if (v->in_dimension() == new_dim)
+     m_c3t3.set_index(v, index);
   }
 
   bool check_vertex_dimensions()
@@ -605,6 +632,16 @@ private:
   Curve_index default_curve_index() const
   {
     return max_curve_index() + 1;
+  }
+
+  Corner_index max_corner_index() const
+  {
+    Corner_index corner_id = 0;
+    for (Vertex_handle vit : m_c3t3.vertices_in_complex())
+    {
+      corner_id = (std::max)(corner_id, m_c3t3.corner_index(vit));
+    }
+    return corner_id;
   }
 
 public:
