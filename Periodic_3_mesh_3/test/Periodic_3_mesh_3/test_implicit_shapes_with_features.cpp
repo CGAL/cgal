@@ -227,21 +227,44 @@ void fill_squary_cylinder_polylines_2(Polylines& polylines)
   // horizontal
   polyline.clear();
   polyline.push_back(Point(min, min, 0.));
+  polyline.push_back(Point(min, 0, 0.));
+  polylines.push_back(polyline);
+
+  polyline.clear();
+  polyline.push_back(Point(min, 0, 0.));
   polyline.push_back(Point(min, -min, 0.));
   polylines.push_back(polyline);
 
+
   polyline.clear();
   polyline.push_back(Point(min, -min, 1.));
+  polyline.push_back(Point(0, -min, 1.));
+  polylines.push_back(polyline);
+
+  polyline.clear();
+  polyline.push_back(Point(0, -min, 1.));
   polyline.push_back(Point(-min, -min, 1.));
   polylines.push_back(polyline);
 
+
   polyline.clear();
   polyline.push_back(Point(-min, -min, 2.));
-  polyline.push_back(Point(-min, min, 2.));
+  polyline.push_back(Point(-min, 0, 2.));
   polylines.push_back(polyline);
 
   polyline.clear();
+  polyline.push_back(Point(-min, 0, 2.));
+  polyline.push_back(Point(-min, min, 2.));
+  polylines.push_back(polyline);
+
+
+  polyline.clear();
   polyline.push_back(Point(-min, min, 3.));
+  polyline.push_back(Point(0, min, 3.));
+  polylines.push_back(polyline);
+
+  polyline.clear();
+  polyline.push_back(Point(0, min, 3.));
   polyline.push_back(Point(min, min, 3.));
   polylines.push_back(polyline);
 }
