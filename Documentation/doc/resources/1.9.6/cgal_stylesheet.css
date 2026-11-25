@@ -537,3 +537,21 @@ th.valid-expression {
   box-sizing: border-box;
   width: 330px;
 }
+
+/* issue #9655: let long return types wrap in function templates */
+tr.template .memItemLeft {
+  white-space: normal;
+  max-width: 40%;
+  text-align: left;
+  padding-right: 1em;
+}
+tr.template .memItemRight {
+  max-width: 90%;
+  white-space: normal;
+}
+.memItemRight a.el {
+  font-weight: 600;
+}
+td.memTemplParams {
+  white-space: normal;
+}
