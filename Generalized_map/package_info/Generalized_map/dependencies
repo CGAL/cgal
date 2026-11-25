@@ -1,5 +1,6 @@
 Algebraic_foundations
 Arithmetic_kernel
+BGL
 CGAL_Core
 Cartesian_kernel
 Circulator
@@ -19,5 +20,6 @@ Kernel_d
 Modular_arithmetic
 Number_types
 Profiling_tools
+Property_map
 STL_Extension
 Stream_support

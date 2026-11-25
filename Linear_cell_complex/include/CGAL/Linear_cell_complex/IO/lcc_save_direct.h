@@ -16,6 +16,8 @@
 #include <fstream>
 #include <unordered_map>
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL::IO
 {
@@ -64,12 +66,14 @@ void build_faces_from_lcc(const LCC& lcc,
   lcc.free_mark(markface);
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
-bool save_lcc_into_gocad(const std::string& filename, const LCC& lcc)
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool save_lcc_into_gocad(const std::string& filename, const LCC& lcc,
+                         const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) { return false; } // File open error
 
+  set_stream_precision_from_NP(fo, np);
   std::vector<typename LCC::Point> points;
   std::vector<std::vector<std::size_t>> polygons;
   build_faces_from_lcc(lcc, points, polygons);
@@ -79,12 +83,14 @@ bool save_lcc_into_gocad(const std::string& filename, const LCC& lcc)
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
-bool save_lcc_into_obj(const std::string& filename, const LCC& lcc)
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool save_lcc_into_obj(const std::string& filename, const LCC& lcc,
+                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) { return false; } // File open error
 
+  set_stream_precision_from_NP(fo, np);
   std::vector<typename LCC::Point> points;
   std::vector<std::vector<std::size_t>> polygons;
   build_faces_from_lcc(lcc, points, polygons);
@@ -94,12 +100,14 @@ bool save_lcc_into_obj(const std::string& filename, const LCC& lcc)
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
-bool save_lcc_into_off(const std::string& filename, const LCC& lcc)
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool save_lcc_into_off(const std::string& filename, const LCC& lcc,
+                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) { return false; } // File open error
 
+  set_stream_precision_from_NP(fo, np);
   std::vector<typename LCC::Point> points;
   std::vector<std::vector<std::size_t>> polygons;
   build_faces_from_lcc(lcc, points, polygons);
@@ -109,12 +117,14 @@ bool save_lcc_into_off(const std::string& filename, const LCC& lcc)
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
-bool save_lcc_into_ply(const std::string& filename, const LCC& lcc)
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool save_lcc_into_ply(const std::string& filename, const LCC& lcc,
+                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) { return false; } // File open error
 
+  set_stream_precision_from_NP(fo, np);
   std::vector<typename LCC::Point> points;
   std::vector<std::vector<std::size_t>> polygons;
   build_faces_from_lcc(lcc, points, polygons);
@@ -124,12 +134,14 @@ bool save_lcc_into_ply(const std::string& filename, const LCC& lcc)
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
-bool save_lcc_into_stl(const std::string& filename, const LCC& lcc)
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool save_lcc_into_stl(const std::string& filename, const LCC& lcc,
+                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) { return false; } // File open error
 
+  set_stream_precision_from_NP(fo, np);
   std::vector<typename LCC::Point> points;
   std::vector<std::vector<std::size_t>> polygons;
   build_faces_from_lcc(lcc, points, polygons);

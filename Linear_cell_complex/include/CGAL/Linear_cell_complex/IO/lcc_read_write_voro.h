@@ -20,6 +20,8 @@
 #include <unordered_map>
 #include <CGAL/Linear_cell_complex_incremental_builder_3.h>
 #include <CGAL/Linear_cell_complex/lcc_sew3_similar_facets.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL::IO
 {
@@ -232,18 +234,20 @@ bool write_voro(std::ofstream& fo, const LCC& lcc)
   return true;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
-bool write_voro(const std::string& filename, const LCC& lcc)
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_voro(const std::string& filename, const LCC& lcc,
+                const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) return false; // File open error
 
+  set_stream_precision_from_NP(fo, np);
   return write_voro(fo, lcc);
 }
 ///////////////////////////////////////////////////////////////////////////////
 template<class LCC>
 void write_vol_one_cell(std::ofstream& fo, const LCC& lcc,
-                         typename LCC::Dart_const_descriptor dh, std::size_t nb)
+                        typename LCC::Dart_const_descriptor dh, std::size_t nb)
 {
   fo<<lcc.template one_dart_per_incident_cell<0,3>(dh).size()<<" ";
 
@@ -290,12 +294,14 @@ bool write_vol(std::ofstream& fo, const LCC& lcc)
   return true;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<class LCC>
-bool write_vol(const std::string& filename, const LCC& lcc)
+template<class LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_vol(const std::string& filename, const LCC& lcc,
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream fo(filename.c_str());
   if(!fo.good()) return false; // File open error
 
+  set_stream_precision_from_NP(fo, np);
   return write_vol(fo, lcc);
 }
 ///////////////////////////////////////////////////////////////////////////////

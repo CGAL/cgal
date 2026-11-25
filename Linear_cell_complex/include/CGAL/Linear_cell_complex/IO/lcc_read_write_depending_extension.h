@@ -18,6 +18,8 @@
 
 #include <CGAL/Combinatorial_map_save_load.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Linear_cell_complex/IO/MOKA.h>
 #include <CGAL/Linear_cell_complex/IO/lcc_read_write_voro.h>
@@ -118,10 +120,11 @@ typename LCC::Dart_descriptor read_depending_extension(const std::string& filena
   return resdh;
 }
 ///////////////////////////////////////////////////////////////////////////////
-template<typename LCC>
+template<typename LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_depending_extension(const std::string& filename,
                                const LCC& lcc,
-                               bool transform_lcc_into_manifold=false)
+                               bool transform_lcc_into_manifold,
+                               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   if(!is_an_lcc_known_extension(filename)) { return false; }
 
@@ -129,57 +132,63 @@ bool write_depending_extension(const std::string& filename,
   std::filesystem::path p(filename);
   std::string ext=internal::get_file_extension(p);
   if(ext==".3map")
-  { res=CGAL::save_combinatorial_map(lcc, filename.c_str()); }
+  { res=CGAL::save_combinatorial_map(lcc, filename.c_str(), np); }
   else if(ext==".gmsh" || ext==".msh")
-  { res=save_object_3D_gmsh(filename, lcc); }
+  { res=save_object_3D_gmsh(filename, lcc, np); }
   else if(ext==".gocad")
-  { res=save_lcc_surface_into_manifold_gocad(filename, lcc); }
+  { res=save_lcc_surface_into_manifold_gocad(filename, lcc, np); }
 #ifdef USE_IFC
   else if(ext==".ifc")
   { std::cerr<<"[write_depending_extension] this is not (yet) possible to "
              <<"write an lcc into an ifc file."<<std::endl; }
 #endif // USE_IFC
   else if(ext==".mesh" || ext==".toposim")
-  { res=save_object_3D(filename, lcc); }
+  { res=save_object_3D(filename, lcc, np); }
   else if(ext==".moka")
-  { res=write_MOKA(lcc, filename.c_str()); }
+  { res=write_MOKA(lcc, filename.c_str(), np); }
   else if(ext==".obj")
   {
     if(transform_lcc_into_manifold)
-    { res=save_lcc_surface_into_manifold_obj(filename, lcc); }
+    { res=save_lcc_surface_into_manifold_obj(filename, lcc, np); }
     else
-    { res=save_lcc_into_obj(filename, lcc); }
+    { res=save_lcc_into_obj(filename, lcc, np); }
   }
   else if(ext==".off")
   {
     if(transform_lcc_into_manifold)
-    { res=save_lcc_surface_into_manifold_off(filename, lcc); }
+    { res=save_lcc_surface_into_manifold_off(filename, lcc, np); }
     else
-    { res=save_lcc_into_off(filename, lcc); }
+    { res=save_lcc_into_off(filename, lcc, np); }
   }
   else if(ext==".ply")
   {
     if(transform_lcc_into_manifold)
-    { res=save_lcc_surface_into_manifold_ply(filename, lcc); }
+    { res=save_lcc_surface_into_manifold_ply(filename, lcc, np); }
     else
-    { res=save_lcc_into_ply(filename, lcc); }
+    { res=save_lcc_into_ply(filename, lcc, np); }
   }
   else if(ext==".stl")
   {
     if(transform_lcc_into_manifold)
-    { res=save_lcc_surface_into_manifold_stl(filename, lcc); }
+    { res=save_lcc_surface_into_manifold_stl(filename, lcc, np); }
     else
-    { res=save_lcc_into_stl(filename, lcc); }
+    { res=save_lcc_into_stl(filename, lcc, np); }
   }
   else if(ext==".vol")
-  { res=write_vol(filename, lcc); }
+  { res=write_vol(filename, lcc, np); }
   else if(ext==".voro")
-  { res=write_voro(filename, lcc); }
+  { res=write_voro(filename, lcc, np); }
   else if(ext==".vtk")
-  { res=CGAL::IO::write_VTK(filename.c_str(), lcc); }
+  { res=CGAL::IO::write_VTK(filename.c_str(), lcc, np); }
 
   return res;
 }
+///////////////////////////////////////////////////////////////////////////////
+template<typename LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_depending_extension(const std::string& filename,
+                               const LCC& lcc,
+                               const CGAL_NP_CLASS& np = parameters::default_values())
+{ return write_depending_extension(filename, lcc, false, np); }
 ///////////////////////////////////////////////////////////////////////////////
 }
 #endif // LCC_READ_WRITE_DEPENDING_EXTENSION_H

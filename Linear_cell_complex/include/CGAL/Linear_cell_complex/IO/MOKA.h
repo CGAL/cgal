@@ -20,6 +20,8 @@
 #include <iostream>
 #include <cassert>
 #include <unordered_map>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL::IO
 {
@@ -243,8 +245,9 @@ bool write_MOKA(LCC& lcc, std::ostream& os)
   return true;
 }
 
-template<typename LCC>
-bool write_MOKA(LCC& lcc, const char* filename)
+template<typename LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_MOKA(LCC& lcc, const char* filename,
+                const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream os(filename);
   if (!os)
@@ -253,12 +256,14 @@ bool write_MOKA(LCC& lcc, const char* filename)
     return false;
   }
 
+  set_stream_precision_from_NP(os, np);
   return write_MOKA(lcc, os);
 }
 
-template<typename LCC>
-bool write_MOKA(LCC& lcc, const std::string& filename)
-{ return write_MOKA(lcc, filename.c_str()); }
+template<typename LCC, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_MOKA(LCC& lcc, const std::string& filename,
+                const CGAL_NP_CLASS& np = parameters::default_values())
+{ return write_MOKA(lcc, filename.c_str(), np); }
 
 }
 

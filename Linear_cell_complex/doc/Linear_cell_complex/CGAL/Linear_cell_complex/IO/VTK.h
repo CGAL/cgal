@@ -56,13 +56,24 @@ bool read_VTK(const char* filename,
  *                      same size as number of vertex attributes in the LCC.
  * \param volume_scalars Optional per-volume scalar data. If provided, must have
  *                      same size as number of 3-cells in the LCC.
+ * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{the precision of file stream created to write the LCC}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  * \return `true` if writing was successful, `false` otherwise
  */
-template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
+template <typename LCC, typename VertexScalarType, typename VolumeScalarType,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VTK(const char* filename,
                const LCC& alcc,
                const std::vector<VertexScalarType>* vertex_scalars=nullptr,
-               const std::vector<VolumeScalarType>* volume_scalars=nullptr);
+               const std::vector<VolumeScalarType>* volume_scalars=nullptr,
+               const CGAL_NP_CLASS& np = parameters::default_values());
 
 } // namespace IO
 } // namespace CGAL
