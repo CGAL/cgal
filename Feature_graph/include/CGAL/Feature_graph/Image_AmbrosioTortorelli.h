@@ -13,8 +13,13 @@
 #ifndef CGAL_FEATURE_GRAPH_IMAGE_AMBROSIOTORTORELLI_H
 #define CGAL_FEATURE_GRAPH_IMAGE_AMBROSIOTORTORELLI_H
 
+#include <cstddef>
+#include <unordered_map>
+
 #include <CGAL/license/Feature_graph.h>
 #include <CGAL/Feature_graph/internal/DGtal_interface.h>
+
+#include <boost/property_map/property_map.hpp>
 
 namespace CGAL {
 
@@ -82,7 +87,6 @@ public:
   template <typename Image>
   Image_AmbrosioTortorelli(const Image& image,
     const Sharpness_type& selection_threshold = Sharpness_type(0.25),
-    const float& value_outside = 0,
     const double& alpha = 0.05, const double& lambda = 0.02,
     const double& width_start = 2.0, const double& width_end = 0.5, const double& width_divide = 2.0)
     : selection_threshold(selection_threshold)
@@ -91,8 +95,7 @@ public:
     typedef boost::associative_property_map<std::unordered_map<std::size_t, Normal_type>> NormalPropertyMap;
     compute_AmbrosioTortorelli_on_labelled_image<K, Image, SharpnessPropertyMap, Sharpness_type, NormalPropertyMap, Normal_type>(
         image, SharpnessPropertyMap(sharpness_values), NormalPropertyMap(normals),
-        alpha, lambda, width_start, width_end, width_divide,
-        value_outside);
+        alpha, lambda, width_start, width_end, width_divide);
   }
 
   Sharpness_estimator sharpness_estimator() const

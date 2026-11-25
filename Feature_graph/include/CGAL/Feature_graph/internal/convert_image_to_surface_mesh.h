@@ -13,8 +13,18 @@
 #ifndef CGAL_FEATURE_GRAPH_INTERNAL_CONVERT_IMAGE_TO_SURFACE_MESH_H
 #define CGAL_FEATURE_GRAPH_INTERNAL_CONVERT_IMAGE_TO_SURFACE_MESH_H
 
+#include <array>
+#include <cstddef>
+#include <iterator>
+#include <map>
+#include <vector>
+
 #include <CGAL/license/Feature_graph.h>
 
+#include <boost/graph/graph_traits.hpp>
+
+#include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Surface_mesh.h>
 
 namespace CGAL
@@ -66,6 +76,8 @@ struct Get_surface_mesh_domains_and_orientations
 
 struct Get_volume_mesh_domains_and_orientations
 {
+  // outputs domain around a surfel with their orientation
+  // `domain_out[i]` and `orientation_out[i]` refer to the same size.
   template <typename DomainOutputIterator, typename OrientationOutputIterator>
   void operator()(const int& axis, const int& i, const int& j, const int& k, const float& base_value, const float& neighbor_value,
     DomainOutputIterator domain_out, OrientationOutputIterator orientation_out) const
@@ -85,20 +97,31 @@ struct Get_volume_mesh_domains_and_orientations
 // PointelToMeshVertexMap will hold the mesh vertex_descriptor from a pointel. Note: this is a map, it should define `find(...)`, `end()`, `emplace(...)`.
 // MeshDomain is an identifier representing the domain of the mesh. it is constructed from a surfel (see GetMeshDomainsAndOrientationsFromSurfel)
 // GetMeshDomainsAndOrientationsFromSurfel constructs one or more mesh domains from a surfel. The surfel will be added to all the meshes with the same domain.
+// the output meshes, domain and maps are constructed in `meshes`, `mesh_domains` and `image_point_to_mesh_vertex`.
 template <typename K, typename Image, typename PolygonMesh,
-      typename GetPointsProperty, typename PointelToMeshVertexMap, typename MeshDomain, typename GetMeshDomainsAndOrientationsFromSurfel>
-void convert_labelled_image_to_face_graphs(const Image& image,
+      typename GetPointsProperty, typename PointelToMeshVertexMap,
+      typename MeshDomain, typename GetMeshDomainsAndOrientationsFromSurfel>
+void convert_labelled_image_to_face_graphs(
+  /*Input*/
+  const Image& image,
+  /*Output*/
   std::vector<PolygonMesh>& meshes,
   std::vector<MeshDomain>& mesh_domains,
   std::vector<PointelToMeshVertexMap>& image_point_to_mesh_vertex,
+  /*Operators*/
   GetPointsProperty get_points_property = GetPointsProperty(),
   GetMeshDomainsAndOrientationsFromSurfel get_mesh_domains_and_orientation_from_surfel = GetMeshDomainsAndOrientationsFromSurfel(),
+  /*Optional input*/
   const float& value_outside = 0)
 {
   typedef typename K::Point_3 Point_3;
   typedef PolygonMesh Mesh;
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+
+  meshes.clear();
+  mesh_domains.clear();
+  image_point_to_mesh_vertex.clear();
 
   std::map<MeshDomain, std::size_t> mesh_domain_to_mesh_index;
 
@@ -152,11 +175,12 @@ void convert_labelled_image_to_face_graphs(const Image& image,
     v_axis[(axis+2)%3] = 1;
     current_surfel_vertices.clear();
     current_surfel_vertices.resize(current_surfel_mesh_indices.size());
+    CGAL_assertion(i + base_image_point[0] > 0 && j + base_image_point[1] > 0 && k + base_image_point[2] > 0);
     const std::size_t i_base = i + base_image_point[0];
     const std::size_t j_base = j + base_image_point[1];
     const std::size_t k_base = k + base_image_point[2];
-    for (int v = 0; v < 2; v++)
-      for (int u = 0; u < 2; u++)
+    for (std::size_t v = 0; v < 2; v++)
+      for (std::size_t u = 0; u < 2; u++)
       {
         const std::size_t surfel_vertices_index = v*2+u;
         const std::size_t i_vertex = i_base + u * u_axis[0] + v * v_axis[0];
@@ -192,7 +216,9 @@ void convert_labelled_image_to_face_graphs(const Image& image,
         std::swap(surfel_vertices[0], surfel_vertices[1]); // 0 1 2 3 --> 1 0 2 3
       else
         std::swap(surfel_vertices[2], surfel_vertices[3]); // 0 1 2 3 --> 0 1 3 2
+      CGAL_assertion_code(std::size_t nb_face = num_faces(meshes[mesh_index]));
       face_descriptor face = CGAL::Euler::add_face(surfel_vertices, meshes[mesh_index]);
+      CGAL_assertion(num_faces(meshes[mesh_index]) == nb_face+1);
     }
   };
 

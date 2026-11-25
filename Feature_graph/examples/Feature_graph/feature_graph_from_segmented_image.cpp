@@ -1,5 +1,8 @@
-// TEMPORARY WARNING : non-functioning example, as the API is not yet implemented, this example compiles but the sharp features are not computed yet.
+// TEMPORARY WARNING : experimental example, as the API is not yet implemented, this example compiles but the sharp features are not computed yet.
 // This example is to understand how to create and use the feature graph for tetrahedral mesh creation.
+
+// Debugging
+#define CGAL_FEATURE_GRAPH_DEBUG_OUTPUT_FILES
 
 #include <CGAL/Image_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -10,8 +13,6 @@
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/Image_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 

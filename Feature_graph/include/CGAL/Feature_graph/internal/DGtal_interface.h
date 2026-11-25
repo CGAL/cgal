@@ -13,7 +13,17 @@
 #ifndef CGAL_FEATURE_GRAPH_INTERNAL_DGTAL_INTERFACE_H
 #define CGAL_FEATURE_GRAPH_INTERNAL_DGTAL_INTERFACE_H
 
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <cstddef>
+#include <map>
+#include <set>
+#include <vector>
+
 #include <CGAL/license/Feature_graph.h>
+
+#include <boost/math/constants/constants.hpp>
 
 #include <DGtal/base/Common.h>
 #include <DGtal/helpers/Shortcuts.h>
@@ -24,6 +34,7 @@
 #include <DGtal/dec/DiscreteExteriorCalculusFactory.h>
 
 #include <CGAL/Feature_graph/internal/convert_image_to_surface_mesh.h>
+#include <CGAL/Feature_graph/internal/image_Khalimsky_coordinates.h>
 
 namespace CGAL
 {
@@ -49,6 +60,7 @@ namespace internal
 
 // Option 5 : Recode AT
 
+// this structure does not hown the data, and must be copy-constructible
 template <typename Image>
 struct LabelledImageToBinaryWrapper
 {
@@ -63,12 +75,6 @@ struct LabelledImageToBinaryWrapper
   {
     return image->value(coords[0], coords[1], coords[2]) == (*label);
   }
-  // LabelledImageToBinaryWrapper& operator=(const LabelledImageToBinaryWrapper& other)
-  // {
-  //   image = other.image;
-  //   label = other.label;
-  //   return *this;
-  // }
 };
 
 template <typename KSpace, typename Image>
@@ -128,7 +134,7 @@ struct Similar_normal_predicate
 
 // regularizes the normal estimation.
 //  For each surfel, a patch is created.
-//  it constains surfels that have normal close to the initial surfel, constructed by breadth first search.
+//  it contains surfels that have normal close to the initial surfel, constructed by breadth first search.
 //  If the patch has a few number of surfel, then invert the normal of the initial surfel.
 template <typename KSpace>
 void regularize_inversion_on_normals(
@@ -169,12 +175,6 @@ void regularize_inversion_on_normals(
       }
     }
   }
-}
-
-template <typename Integer, typename Point>
-std::size_t get_Khalimsky_coordinate_from_index_coords(const Integer& max_x, const Integer& max_y, const Point& coords)
-{
-  return coords[2]*max_x*max_y*4 + coords[1]*max_x*2 + coords[0];
 }
 
 // normals are for surfaces
@@ -230,7 +230,7 @@ void compute_AT_normals_and_values_from_surface(
   {
     const typename SH::SCell& surfel_cell = signed_surfels[surfel_id];
     const typename SH::RealVector& normal = out_surfel_normals[surfel_id];
-    const std::size_t surfel_coordinate_index = get_Khalimsky_coordinate_from_index_coords(max_x, max_y, kSpace.sKCoords(surfel_cell));
+    const std::size_t surfel_coordinate_index = get_Khalimsky_index_from_Khalimsky_coordinates(max_x, max_y, kSpace.sKCoords(surfel_cell));
     put(surfel_normal_property_map, surfel_coordinate_index, NormalType(normal[0], normal[1], normal[2]));
   }
 
@@ -242,7 +242,7 @@ void compute_AT_normals_and_values_from_surface(
   {
     const typename SH::Cell& pointel_cell = pointels[pointel_id];
     const double& value = 1.0 - out_pointel_values[pointel_id]; // AT values: 0 is sharp, 1 is smooth. We want: 1 is sharp, 0 is smooth
-    const std::size_t pointel_coordinate_index = get_Khalimsky_coordinate_from_index_coords(max_x, max_y, kSpace.uKCoords(pointel_cell));
+    const std::size_t pointel_coordinate_index = get_Khalimsky_index_from_Khalimsky_coordinates(max_x, max_y, kSpace.uKCoords(pointel_cell));
     put(sharpness_property_map, pointel_coordinate_index, Sharpness_type(value));
   }
 
@@ -254,7 +254,7 @@ void compute_AT_normals_and_values_from_surface(
   {
     const typename SH::Cell& linel_cell = linels[linel_id];
     const double& value = 1.0 - out_linel_values[linel_id]; // AT values: 0 is sharp, 1 is smooth. We want: 1 is sharp, 0 is smooth
-    const std::size_t linel_coordinate_index = get_Khalimsky_coordinate_from_index_coords(max_x, max_y, kSpace.uKCoords(linel_cell));
+    const std::size_t linel_coordinate_index = get_Khalimsky_index_from_Khalimsky_coordinates(max_x, max_y, kSpace.uKCoords(linel_cell));
     put(sharpness_property_map, linel_coordinate_index, Sharpness_type(value));
   }
 
@@ -266,88 +266,10 @@ void compute_AT_normals_and_values_from_surface(
   {
     const typename SH::Cell& surfel_cell = surfels[surfel_id];
     const double& value = 1.0 - out_surfel_values[surfel_id]; // AT values: 0 is sharp, 1 is smooth. We want: 1 is sharp, 0 is smooth
-    const std::size_t surfel_coordinate_index = get_Khalimsky_coordinate_from_index_coords(max_x, max_y, kSpace.uKCoords(surfel_cell));
+    const std::size_t surfel_coordinate_index = get_Khalimsky_index_from_Khalimsky_coordinates(max_x, max_y, kSpace.uKCoords(surfel_cell));
     put(sharpness_property_map, surfel_coordinate_index, Sharpness_type(value));
   }
-
-
-
-  // DGtal_types::SH::Scalars features(pointels.size());
-  // // put sharpness in property map
-  // //    first determine values for linels and surfel (strategy : average of adjacent pointels)
-  // std::unordered_map<std::size_t, double> linel_values; // holds sharpnes * 2
-  // std::unordered_map<std::size_t, double> surfel_values; // holds sharpnes * 4
-  // for (std::size_t pointel_id = 0, number_of_pointels = pointels.size(); pointel_id < number_of_pointels; pointel_id++)
-  // {
-  //   const SH::SCell& pointel_cell = pointels[pointel_id];
-  //   const double& sharpness = out_values[pointel_id];
-  //   const SH::RealPoint& point = embedder(surfel_cell);
-  //   // for each linel adjacent to the pointel (may be outside of the surface)
-  //   for (int axis = 0; axis < 3; axis++)
-  //     for (int change = -1; change < 2; change += 2) // change is -1 then +1
-  //     {
-  //       SH::RealPoint linel_point = point;
-  //       linel_point[axis] += change;
-  //       if (linel_point[axis] < 0 || linel_point[axis] > kSpace.max(axis)) // Khalimsky coordinate indices are not defined outside of the space
-  //         continue;
-  //       const std::size_t linel_coordinate_index = get_Khalimsky_coordinate_index_from_DGtal_point(kSpace, linel_point);
-  //       linel_values[linel_coordinate_index] += sharpness;
-  //     }
-  //   // for each surfel adjacent to the pointel (may be outside of the surface)
-  //   for (int axis = 0; axis < 3; axis++)
-  //   {
-  //     int axis_1 = (axis+1)%3;
-  //     int axis_2 = (axis+2)%3;
-  //     // change on the two other axis
-  //     for (int change_axis_1 = -1; change_axis_1 < 2; change_axis_1 += 2) // change_axis_1 is -1 then +1
-  //       for (int change_axis_2 = -1; change_axis_2 < 2; change_axis_2 += 2) // change_axis_2 is -1 then +1
-  //       {
-  //         SH::RealPoint surfel_point = point;
-  //         surfel_point[axis_1] += change_axis_1;
-  //         if (surfel_point[axis_1] < 0 || surfel_point[axis_1] > kSpace.max(axis_1)) // Khalimsky coordinate indices are not defined outside of the space
-  //           continue;
-  //         surfel_point[axis_2] += change_axis_2;
-  //         if (surfel_point[axis_2] < 0 || surfel_point[axis_2] > kSpace.max(axis_2)) // Khalimsky coordinate indices are not defined outside of the space
-  //           continue;
-  //         const std::size_t surfel_coordinate_index = get_Khalimsky_coordinate_index_from_DGtal_point(kSpace, surfel_point);
-  //         surfel_values[surfel_coordinate_index] += sharpness;
-  //       }
-  //   }
-  //   // add pointel to map
-  //   const std::size_t pointel_coordinate_index = get_Khalimsky_coordinate_index_from_DGtal_point(kSpace, point);
-  //   put(pointel_normal_property_map, pointel_coordinate_index, sharpness);
-  // }
-  // //   add linel and surfels to map
-  // for (const auto& [linel_index, value] : linel_values)
-  //   put(pointel_normal_property_map, linel_index, value * .5); // divide by 2
-  // for (const auto& [surfel_index, value] : surfel_values)
-  //   put(pointel_normal_property_map, surfel_index, value * .25); // divide by 4
-
-  // out_valuePoints.resize(pointels.size());
-  // std::transform(pointels.cbegin(), pointels.cend(), out_valuePoints.begin(),
-  // [surface_info](const DGtal_types::SH::Cell &v)
-  // { return uembedder(v); });
-  // out_values.resize(features.size());
-  // std::transform(features.cbegin(), features.cend(), out_values.begin(),
-  // [](const double &v) { return v; });
 }
-
-// struct DGtal_mesh_face_graph
-// {
-//     struct DGtal_mesh_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
-//                                                  public virtual boost::vertex_list_graph_tag,
-//                                                  public virtual boost::edge_list_graph_tag,
-//                                                  public virtual boost::adjacency_graph_tag
-//     {};
-
-//     typedef std::size_t vertex_descriptor;
-//     typedef std::size_t halfedge_descriptor;
-//     typedef std::size_t edge_descriptor;
-//     typedef std::size_t face_descriptor;
-//     typedef boost::undirected_tag directed_category;
-//     typedef boost::disallow_parallel_edge_tag edge_parallel_category;
-
-// };
 
 } /* namespace internal */
 
@@ -363,8 +285,7 @@ void compute_AmbrosioTortorelli_on_labelled_image(const Image& image,
   const double lambda = 0.02,
   const double width_start = 2.0,
   const double width_end = 0.25,
-  const double width_divide = 2.0,
-  const float& value_outside = 0)
+  const double width_divide = 2.0)
 {
   // make a DGtal surface for each volume of the labeled image
   typedef DGtal::Z3i::KSpace KSpace;
@@ -403,13 +324,8 @@ void compute_AmbrosioTortorelli_on_labelled_image(const Image& image,
       /*In */ kSpace, *surface_pointer,
       /*Out*/ pointels, linels, surfels, signed_surfels, normals, sharpness_property_map, surfel_normal_property_map,
       /*Optional In*/ alpha, lambda, width_start, width_end, width_divide);
+      // [TODO] Filter aberant normal changes
     }
-    // // add values to property map
-    // internal::convert_dgtal_coordinates(pointels);
-    // internal::convert_dgtal_coordinates(surfels);
-    // internal::make_pointel_value_map(pointels, values, point_values);
-    // internal::add_values_of_pointels_to_graph(pointels, values, surface_graph);
-    // internal::add_normals_of_surfel_to_graph(surfels, normals, surface_graph);
   }
 } /* namespace Feature_graph */
 

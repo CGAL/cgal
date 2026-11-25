@@ -152,7 +152,7 @@ struct Detect_sharp_features_on_labeled_image
   *                           expressed as the size of the maximum voxel edge size.}
   *     \cgalParamDefault{`FT(0.125)`}
   *   \cgalParamSectionEnd
-  *   \cgalParamSectionBegin{mininmum_energy_delta}
+  *   \cgalParamSectionBegin{minimum_energy_delta}
   *     \cgalParamDescription{the minimum energy change to stop the gradient descent iterations during the optimization step.}
   *     \cgalParamDefault{`FT(1.e-3)`}
   *   \cgalParamSectionEnd
@@ -341,7 +341,7 @@ struct Detect_sharp_features_on_surface
   *     \cgalParamDescription{the step size at the last iteration of the gradient descent during the optimization step.}
   *     \cgalParamDefault{`FT(0.0)`}
   *   \cgalParamSectionEnd
-  *   \cgalParamSectionBegin{mininmum_energy_delta}
+  *   \cgalParamSectionBegin{minimum_energy_delta}
   *     \cgalParamDescription{the minimum energy change to stop the gradient descent iterations during the optimization step.}
   *     \cgalParamDefault{`FT(1.e-3)`}
   *   \cgalParamSectionEnd
