@@ -135,6 +135,12 @@ public:
     check_no_intersection(L(p(0, 0, 0), p(1, 0, 3)), Cub(p(2, 1, 1), p(3, 5, 8)));
     check_no_intersection(L(p(4, 0, 0), p(4, 1, 3)), Cub(p(2, 1, 1), p(3, 5, 8)));
 
+    // line in the plane of a face, missing the cuboid
+    check_no_intersection(L(p(2, -2, -2), p(2, -1, -2)), Cub(p(-1, -2, 0), p(2, 0, 1)));
+    check_no_intersection(L(p(2, 1, -2), p(2, 2, 0)), Cub(p(0, -1, 1), p(2, 1, 2)));
+    check_no_intersection(L(p(0, -3, -3), p(0, -5, -4)), Cub(p(0, 0, 0), p(2, 2, 2)));
+    check_no_intersection(L(p(0, -3, 3), p(0, -5, 3)), Cub(p(0, 0, 0), p(2, 2, 2)));
+
     // through vertex
     check_intersection   (Cub(p(-7, -8, -9), p(-1, 2, -4)), L(p(-8,1,-9), p(-6, 3, -9)),
                           p(-7,2,-9));
