@@ -150,7 +150,7 @@ struct Lazy_exact_Cst final : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(x), cste(x) {}
 
   void update_exact() const {
-    auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(cste);
+    auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(NT_converter<X, ET>()(cste));
     this->keep_at(pet);
     this->set_ptr(pet);
   }
