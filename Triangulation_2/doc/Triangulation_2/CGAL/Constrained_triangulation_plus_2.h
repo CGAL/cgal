@@ -13,7 +13,8 @@ The class `Constrained_triangulation_plus_2<Tr>`
 inherits from its template parameter Tr, which has to be instantiated
 by a constrained or constrained Delaunay triangulation.
 The intersection tag of the base class determines whether
-intersecting input constraints are supported or not.
+intersecting input constraints are supported or not
+(see Section \ref PkgTriangulation2IntersectionTags).
 When intersections of input constraints are supported,
 the base class constructs a triangulation of the arrangement
 of the constraints,
@@ -277,13 +278,14 @@ and a default constructed `Constraint_id` is returned.
 Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb);
 
 /*!
-inserts a polyline defined by the points in the range `[first,last)`
-and returns the constraint id.
+inserts a polyline defined by the points in the range `[first,last)` and returns the constraint id.
 The polyline is considered as a closed curve if the first and last point are equal or if  `close == true`. This enables for example passing the vertex range of a `Polygon_2`.
 When traversing the vertices of a closed polyline constraint with a  `Vertices_in_constraint_iterator` the first and last vertex are the same.
-In case the range is empty a default constructed `Constraint_id` is returned.
-In case the range contains only one point or all points are equal the point is inserted but no constraint,
-and a default constructed `Constraint_id` is returned.
+All the points of the polyline are first inserted, and then its segments.
+Each segment of the polyline is considered as a constraint.
+If the range is empty, then a default constructed `Constraint_id` is returned.
+If the range contains only one point or all points are equal, then the point is inserted
+but no constraint, and a default constructed `Constraint_id` is returned.
 
 \tparam PointIterator must be an `InputIterator` with the value type `Point`.
 */
@@ -301,24 +303,17 @@ using the vertex handles of its endpoints.
 In case the constraints are degenerate the points are inserted, but no
 constraints.
 
+Inserting the same constraint several times may cause problems in
+case of intersecting segments and non-exact constructions. Indeed, when an inserted segment is subdivided, the resulting subsegments are slightly
+displaced by numerical error and may therefore intersect the next insertion of the same segment, creating additional vertices at each new insertion.
+Consider using the function `insert_unique_constraints()` if this may happen.
+
 \tparam ConstraintIterator is an `InputIterator` with value type `std::pair<Point,Point>` or `Segment`
 
 \return the number of inserted points.
 */
 template <class ConstraintIterator>
 std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
-
-/*!
-Same as `insert_constraints(begin,end)` except that duplicated pairs of points are only considered once.
-
-Inserting the same constraint several times may cause problems in
-case of intersecting segments and non-exact constructions.
-
-\return the number of inserted points.
-\tparam ConstraintIterator is an `InputIterator` with value type `std::pair<Point,Point>` or `Segment`.
-*/
-template <class ConstraintIterator>
-std::size_t insert_unique_constraints(ConstraintIterator first, ConstraintIterator last);
 
 /*!
 Same as above except that each constraint is given as a pair of indices of the points
@@ -336,7 +331,19 @@ std::size_t insert_constraints(PointIterator points_first, PointIterator points_
                                IndicesIterator indices_first, IndicesIterator indices_last);
 
 /*!
-Same as `insert_constraint(points_first, points_last, indices_first, indices_last)` except that duplicated pair of points are only considered once.
+Same as `insert_constraints(begin,end)` except that duplicated pairs of points are only considered once,
+regardless of their order.
+
+\return the number of inserted points.
+\tparam ConstraintIterator is an `InputIterator` with value type `std::pair<Point,Point>` or `Segment`.
+*/
+template <class ConstraintIterator>
+std::size_t insert_unique_constraints(ConstraintIterator first, ConstraintIterator last);
+
+
+/*!
+Same as `insert_constraints(points_first, points_last, indices_first, indices_last)` except that duplicated pairs of points are only considered once,
+regardless of their order (see `insert_unique_constraints(first, last)`).
 
 Inserting the same constraint several times may cause problems in
 case of intersecting segments and non-exact constructions.

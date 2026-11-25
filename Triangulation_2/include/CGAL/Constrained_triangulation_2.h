@@ -130,7 +130,8 @@ public:
 
   class Intersection_of_constraints_exception : public std::exception
   {
-    const char* what() const throw ()
+  public:
+    const char* what() const noexcept override
     {
       return "Unauthorized intersections of constraints";
     }
@@ -328,11 +329,10 @@ public:
   // is still too much overhead
 template <class OutputIterator>
 void
-insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
-// forces the constrained [vaa,vbb]
-// [vaa,vbb] will potentially be split into several edges
-// if a vertex vc of t lies on segment ab
-// of if ab intersect some constrained edges
+insert_constraint(Vertex_handle vaa, Vertex_handle vbb, OutputIterator out)
+// [vaa;vbb] will potentially be split into several edges
+// if a vertex vc of the triangulation lies on the segment [a;b],
+// or if [a;b] intersects some constrained edges
 {
   CGAL_precondition( vaa != vbb);
   Vertex_handle vi;
@@ -341,11 +341,11 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   int i;
   if(includes_edge(vaa,vbb,vi,fr,i))
   {
-    // if the segment (or a subpart of the segment) that we are trying to constraint is already
-    // present in the triangulation and is already marked as constrained,
-    // then this is an intersection
     if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
-      if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
+      // No intersection: the constraint must not
+      // - contain a vertex in its interior (`vi != vbb`);
+      // - overlap a constrained edge.
+      if(vi != vbb || fr->is_constrained(dimension() == 1 ? 2 : i)) {
         throw Intersection_of_constraints_exception();
       }
     }
@@ -365,6 +365,13 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
                                                conflict_boundary_ab,
                                                conflict_boundary_ba,
                                                vi);
+  if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
+    // includes_edge has checked a vi along the edge direction,
+    // but we need a check for cases such as T-junctions
+    if(!intersection && vi != vbb) {
+      throw Intersection_of_constraints_exception();
+    }
+  }
   if ( intersection) {
     if (vi != vaa && vi != vbb) {
       insert_constraint(vaa,vi,out);
@@ -414,30 +421,34 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   void push_back(const Constraint& c);
 
 
+protected:
+  template <class PointIterator>
+  void internal_insert_polyline(PointIterator first, PointIterator last, bool close)
+  {
+    std::vector<Vertex_handle> vertices;
+    Face_handle hint;
+    for(; first != last; ++first){
+      Vertex_handle v = virtual_insert(*first, hint);
+      hint = v->face();
+      if (vertices.empty() || vertices.back() != v) {
+        vertices.push_back(v);
+      }
+    }
+    if (close && vertices.size() > 1 && vertices.front() != vertices.back()) {
+      vertices.push_back(vertices.front());
+    }
+    for (std::size_t i = 1; i < vertices.size(); ++i) {
+      insert_constraint(vertices[i-1], vertices[i]);
+    }
+  }
+
+public:
+  // The points of the polyline are inserted first, and then its segments,
+  // as in `Constrained_triangulation_plus_2` and `insert_constraints()`.
   template <class PointIterator>
   void insert_constraint(PointIterator first, PointIterator last, bool close=false)
   {
-    if(first == last){
-      return;
-    }
-    const Point& p0 = *first;
-    Point p = p0;
-    Vertex_handle v0 = insert(p0), v(v0), w(v0);
-    Face_handle hint = v0->face();
-    ++first;
-    for(; first!=last; ++first){
-      const Point& q = *first;
-      if(p != q){
-        w = insert(q,hint);
-        insert_constraint(v,w);
-        hint = w->face();
-        v = w;
-        p = q;
-      }
-    }
-    if(close && (p != p0)){
-      insert(w,v0);
-    }
+    internal_insert_polyline(first, last, close);
   }
 
   void remove(Vertex_handle  v);
@@ -832,11 +843,11 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
     int i;
     if(includes_edge(vaa,vbb,vi,fr,i))
     {
-      // if the segment (or a subpart of the segment) that we are trying to constraint is already
-      // present in the triangulation and is already marked as constrained,
-      // then this is an intersection
       if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
-        if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
+        // No intersection: the constraint must not
+        // - contain a vertex in its interior (`vi != vbb`);
+        // - overlap a constrained edge.
+        if(vi != vbb || fr->is_constrained(dimension() == 1 ? 2 : i)) {
           throw Intersection_of_constraints_exception();
         }
       }
@@ -855,6 +866,13 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
                                                  conflict_boundary_ab,
                                                  conflict_boundary_ba,
                                                  vi);
+    if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
+      // includes_edge has checked a vi along the edge direction,
+      // but we need a check for cases such as T-junctions
+      if(!intersection && vi != vbb) {
+        throw Intersection_of_constraints_exception();
+      }
+    }
     if ( intersection) {
       if (vi != vaa && vi != vbb) {
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
@@ -1711,8 +1729,9 @@ operator>>(std::istream& is,
   typedef Constrained_triangulation_2<Gt,Tds,Itag> CDT;
   ct.clear();
   is >> static_cast<typename CDT::Triangulation&>(ct);
-  for (typename CDT::All_faces_iterator fit=ct.all_faces_begin(),
-                                        fit_end=ct.all_faces_end();fit_end!=fit;++fit){
+  // iterate over the faces as in `file_output()`, which also works in dimension lower than 2
+  for (auto fit = ct.tds().face_iterator_base_begin(),
+            fit_end = ct.tds().face_iterator_base_end(); fit_end != fit; ++fit){
     char c[3];
     is >> c[0] >>  c[1] >> c[2];
     for (int k=0;k<3;++k){

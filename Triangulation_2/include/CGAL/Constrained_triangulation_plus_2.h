@@ -696,22 +696,23 @@ public:
   }
 
   auto& file_input(std::istream& is) {
+    clear();
     is >> static_cast<Tr&>(*this);
 
     std::vector<Vertex_handle> vertices(number_of_vertices());
     auto [first, last] = this->finite_vertex_handles();
     std::copy(first, last, vertices.data());
 
+    // the constrained edges have been read during base reading
+    // only the hierarchy is to be rebuilt
     size_type n, id, id_next;
     while(is >> n) {
       is >> id >> id_next;
-      Constraint_id cid = insert_constraint(vertices[id], vertices[id_next]);
-
+      Constraint_id cid = hierarchy().insert_constraint(vertices[id], vertices[id_next]);
       for(size_type i = 2; i < n; ++i) {
         id = id_next;
         is >> id_next;
-        Constraint_id cid2 = insert_constraint(vertices[id], vertices[id_next]);
-        cid = concatenate(cid, std::move(cid2));
+        hierarchy().append_constraint(cid, vertices[id], vertices[id_next]);
       }
     }
     return is;
@@ -918,6 +919,14 @@ insert_subconstraint(Vertex_handle vaa,
               << vi->time_stamp() << "= " << vi->point()
               << '\n';
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+      if constexpr (std::is_same_v<Intersection_tag, No_constraint_intersection_tag>) {
+        // No intersection: the constraint must not
+        // - contain a vertex in its interior (`vi != vbb`);
+        // - overlap a constrained edge.
+        if(vi != vbb || fr->is_constrained(this->dimension() == 1 ? 2 : i)) {
+          throw typename Tr::Intersection_of_constraints_exception();
+        }
+      }
       this->mark_constraint(fr,i);
       if (vi != vbb)  {
         hierarchy().split_constraint(vaa,vbb,vi);
@@ -941,6 +950,14 @@ insert_subconstraint(Vertex_handle vaa,
                                                       conflict_boundary_ab,
                                                       conflict_boundary_ba,
                                                       vi);
+
+    if constexpr (std::is_same_v<Intersection_tag, No_constraint_intersection_tag>) {
+      // includes_edge has checked a vi along the edge direction,
+      // but we need a check for cases such as T-junctions
+      if(!intersection && vi != vbb) {
+        throw typename Tr::Intersection_of_constraints_exception();
+      }
+    }
 
     if ( intersection) {
       if (vi != vaa && vi != vbb) {

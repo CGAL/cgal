@@ -267,32 +267,13 @@ public:
     (static_cast<Ctr*>(this))->insert_constraint(a,b);
   }
 
+  // The points of the polyline are inserted first, and then its segments,
+  // as in `Constrained_triangulation_plus_2` and `insert_constraints()`.
   template <class PointIterator>
   void insert_constraint(PointIterator first, PointIterator last, bool close=false)
   {
-    if(first == last){
-      return;
-    }
-    const Point& p0 = *first;
-    Point p = p0;
-    Vertex_handle v0 = insert(p0), v(v0), w(v0);
-    Face_handle hint = v0->face();
-    ++first;
-    for(; first!=last; ++first){
-      const Point& q = *first;
-      if(p != q){
-        w = insert(q,hint);
-        insert_constraint(v,w);
-        hint = w->face();
-        v = w;
-        p = q;
-      }
-    }
-    if(close && (p != p0)){
-      insert(w,v0);
-    }
+    this->internal_insert_polyline(first, last, close);
   }
-
 
   void remove_constraint(Face_handle f, int i){remove_constrained_edge(f,i);}
 
