@@ -64,14 +64,14 @@ public:
 /// @{
 
 /*!
-A type for indexes of curve. The type must match the type
+A type for indices of curve. The type must match the type
 `MeshDomainWithFeatures_3::Curve_index`
 when the concept is used for mesh generation.
 */
 typedef unspecified_type Curve_index;
 
 /*!
-A type for indexes of corners.
+A type for indices of corners.
 The type must match the type
 `MeshDomainWithFeatures_3::Corner_index`
 when the concept is used for mesh generation.
