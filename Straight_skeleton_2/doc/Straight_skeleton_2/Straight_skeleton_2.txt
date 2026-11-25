@@ -149,7 +149,7 @@ along a weighted bisector.
 This \cgal package supports positive multiplicative weights: if the supporting line of a contour edge
 is described through the equation `ax+by+c=0` then the supporting line of the offset edge
 at distance `t` is `ax+by+c-t=0`. With a multiplicative weight `w`, the equation becomes `w(ax+by+c)-t=0`.
-Therefore, a larger weight implies a faster moving front.
+Therefore, a larger weight implies a slower moving front.
 
 \cgalFigureAnchor{SLSWeight}
 <center>
@@ -366,9 +366,17 @@ on this max offset parameter).
 \subsection Straight_skeleton_2CreateaStraightSkeleton_1 Create a Straight Skeleton from a Polygon With Holes
 
 If `CGAL::Polygon_with_holes_2` is used, you can pass an instance of it directly to the function creating
-the interior skeleton, as shown below. Notice that a different header must be included in this case.
+the interior skeleton, as shown below.
 
 \cgalExample{Straight_skeleton_2/create_straight_skeleton_from_polygon_with_holes_2.cpp}
+
+\subsection Straight_skeleton_2CreateaWeightedStraightSkeleton Create a Weighted Straight Skeleton
+
+To create a weighted straight skeleton in the interior of a polygon with holes, the function
+`CGAL::create_interior_weighted_straight_skeleton_2()` takes, in addition to the polygon, a range of weights
+per contour. The following example is the weighted version of the previous example.
+
+\cgalExample{Straight_skeleton_2/create_weighted_straight_skeleton_from_polygon_with_holes_2.cpp}
 
 \subsection Straight_skeleton_2CreateOffsetPolygonsfrom Create Offset Polygons from a Straight Skeleton
 

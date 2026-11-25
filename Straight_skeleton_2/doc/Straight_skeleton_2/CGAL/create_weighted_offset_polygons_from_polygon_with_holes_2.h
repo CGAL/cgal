@@ -8,7 +8,7 @@ namespace CGAL {
 \brief returns a container with all the inner offset polygons <I>with holes</I> at distance `offset`
 of the 2D polygon `poly`.
 
-This is equivalent to `arrange_offset_polygons_2(create_interior_weighted_skeleton_and_offset_polygons_2(offset, poly, ofk, ssk))`.
+This is equivalent to `arrange_offset_polygons_2(create_interior_weighted_skeleton_and_offset_polygons_2(offset, poly, weights, ofk, ssk))`.
 
 \tparam OfKPolygon is a polygon without holes type determined by `OfK` and `InKPolygon`,
                    see Section \ref SLSOffsetPolygonReturnType.
@@ -51,9 +51,9 @@ at distance `offset` of the 2D polygon `poly`. Note that the
 offset of the outer frame is ignored.
 
 This is equivalent to a call to `CGAL::arrange_offset_polygons_2()` on the
-output of \link CGAL::create_exterior_weighted_skeleton_and_offset_polygons_2() `create_exterior_weighted_skeleton_and_offset_polygons_2(offset, poly, ofk, ssk)` \endlink
+output of \link CGAL::create_exterior_weighted_skeleton_and_offset_polygons_2() `create_exterior_weighted_skeleton_and_offset_polygons_2(offset, poly, weights, ofk, ssk)` \endlink
 after having filtered out the polygon corresponding to the offset of the outer frame and
-having reversed the orientation of all other polygons.
+having reversed the orientation (and weights) of all other polygons.
 
 \tparam OfKPolygon is a polygon without holes type determined by `OfK` and `InKPolygon`,
                    see Section \ref SLSOffsetPolygonReturnType.

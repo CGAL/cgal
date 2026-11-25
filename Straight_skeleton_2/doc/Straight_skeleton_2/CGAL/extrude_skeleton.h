@@ -10,16 +10,22 @@ namespace CGAL {
 * by associating a height to the vertices of the skeleton, which corresponds to the time
 * at the vertex. The input polygon is placed at `z = 0`.
 *
-* The result is a closed, 2-manifold surface triangle mesh. Note that this mesh can have non-local
-* self-intersections if a maximal height is provided due to possible (geometric) non-manifold occurrences.
+* A maximum height can be specified to crop the extrusion, using the named parameter `maximum_height()`.
+* In particular, it *must* be specified if the weights (or angles) associated to the edges
+* of the input polygon correspond to an outward extrusion, i.e. if no weight is greater than zero
+* (i.e., no angle is smaller than `90` degrees).
+* By default, the extrusion is upwards, but a negative height can be used to construct a downward
+* extrusion.
 *
-* It is possible to crop the extruded skeleton at a maximum height using the optional
-* `maximum_height()` named parameter. A maximum height must be specified if the weights (or angles)
-* associated to the edges of the input polygon correspond an outward extrusion, i.e. if no weight
-* is greater than zero (or no angle is smaller than `90` degrees).
+* The result is a closed, combinatorially 2-manifold surface triangle mesh. Nonetheless,
+* if a maximal height is provided, the result can exhibit geometric self-intersections by creating
+* non-manifold occurrences (for example, extruding to the height of a saddle point and creating two
+* cones sharing their apex). With a kernel that does not have exact constructions, the result
+* can also self-intersect because of the rounding of the constructed points.
 *
 * @tparam Polygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
-                  or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
+*                  or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`),
+*                  where `InK` is a \cgal Kernel.
 * @tparam PolygonMesh a model of `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -31,9 +37,10 @@ namespace CGAL {
 *   \cgalParamNBegin{weights}
 *     \cgalParamDescription{a range of weights, one for each edge of the input polygon}
 *     \cgalParamType{a model of `Range` whose value type is a model of `Range` whose value type is `FT`}
-*     \cgalParamDefault{an empty range (uniform weights are used)}
+*     \cgalParamDefault{Uniform weights (`1`) are used.}
 *     \cgalParamExtra{Weights should be finite and all of the same sign.
 *                     Negative weights are used to signify exterior extrusion.
+*                     Consecutive collinear edges must have the same weight.
 *                     Contrary to weighted skeleton functions, a weight `0` can here be used to signify a vertical extrusion of this edge.}
 *     \cgalParamExtra{If neither `weights` nor `angles` are provided, uniform weights are used.}
 *   \cgalParamNEnd
@@ -43,7 +50,7 @@ namespace CGAL {
 *                           edge, the angle is the dihedral angle between the `z=0` plane and the desired
 *                           extrusion plane.}
 *     \cgalParamType{a model of `Range` whose value type is a model of `Range` whose value type is `FT`}
-*     \cgalParamDefault{an empty range (uniform weights are used)}
+*     \cgalParamDefault{Uniform weights (`1`) are used.}
 *     \cgalParamExtra{Angles are measured in degrees and should be strictly within `0` and `180` degrees
 *                     and should be either all acute (inward extrusion) or all obtuse (outward extrusion).}
 *     \cgalParamExtra{This parameter is ignored if the `weights` parameter is provided.}
@@ -52,10 +59,11 @@ namespace CGAL {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{maximum_height}
-*     \cgalParamDescription{the maximum height of the extrusion}
+*     \cgalParamDescription{the maximum height of the extrusion. A positive value corresponds to an upward extrusion,
+*                           and a negative value to a downward extrusion.}
 *     \cgalParamType{`FT`, a model of `FieldNumberType` convertible to the kernel type of the polygon.}
-*     \cgalParamDefault{unused}
-*     \cgalParamExtra{This parameter should not be null, but can be negative; in this case, the polygon is extruded downwards.}
+*     \cgalParamDefault{no maximum height}
+*     \cgalParamExtra{This parameter should not be zero, and must be passed in case of outward extrusion.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{verbose}
@@ -65,7 +73,7 @@ namespace CGAL {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamDescription{an instance of a geometric traits class, used to construct the weighted straight skeleton}
 *     \cgalParamType{a class model of `Kernel`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the polygon's point type, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
@@ -73,7 +81,7 @@ namespace CGAL {
 *   \cgalParamNBegin{vertex_point_map}
 *     \cgalParamDescription{a property map associating points to the vertices of `out`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `InK::Point_2` as value type.}
+*                    as key type and `OutK::Point_3` as value type, where `OutK` is a \cgal Kernel.}
 *     \cgalParamDefault{the internal property map for `CGAL::vertex_point_t` of `out`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
@@ -82,12 +90,12 @@ namespace CGAL {
 *
 * @pre `polygon` is a weakly simple polygon with holes.
 * @pre Holes are weakly simple polygons that do not intersect each other or the outer boundary.
+* @pre The outer boundary of `polygon` is counterclockwise oriented, and its holes are clockwise oriented.
 *
 * @sa `CGAL::create_interior_weighted_skeleton_and_offset_polygons_with_holes_2()`
 * @sa `CGAL::Straight_skeleton_2`
 */
 template <typename Polygon,
-          typename FT,
           typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 bool extrude_skeleton(const Polygon& polygon,

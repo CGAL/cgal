@@ -27,12 +27,12 @@ the `i`-th weight in the range is associated to the contour edge between the `i-
 
 \pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end)` describes a weakly simple polygon
      that is oriented counterclockwise.
-\\pre the range `[holes_begin, holes_end)` describes a sequence of weakly simple polygons that are oriented clockwise.
+\pre the range `[holes_begin, holes_end)` describes a sequence of weakly simple polygons that are oriented clockwise.
 \pre Holes neither intersect each other nor the outer boundary.
 \pre All the weights must be (strictly) positive.
 \pre Collinear consecutive contour edges must have equal weights.
 
-\sa `CGAL::create_exterior_straight_skeleton_2()`
+\sa `CGAL::create_exterior_weighted_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
 template <typename PointIterator, typename HoleIterator,
@@ -71,7 +71,7 @@ to the contour edge between the `i-1`-th and `i`-th vertices.
 \pre All the weights must be (strictly) positive.
 \pre Collinear consecutive contour edges must have equal weights.
 
-\sa `CGAL::create_exterior_straight_skeleton_2()`
+\sa `CGAL::create_exterior_weighted_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
 template <typename PointIterator, typename WeightIterator,
@@ -106,7 +106,7 @@ the `i`-th weight in the range is associated to the contour edge between the `i-
 \pre All the weights must be (strictly) positive.
 \pre Collinear consecutive contour edges must have equal weights.
 
-\sa `CGAL::create_exterior_straight_skeleton_2()`
+\sa `CGAL::create_exterior_weighted_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
 template <typename InKPolygon, typename InKWeights,
@@ -145,7 +145,7 @@ is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 \pre All the weights must be (strictly) positive.
 \pre Collinear consecutive contour edges must have equal weights.
 
-\sa `CGAL::create_interior_straight_skeleton_2()`
+\sa `CGAL::create_interior_weighted_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
 template <typename FT,
@@ -167,15 +167,18 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
 The function returns a straight skeleton in the <I>limited exterior</I> of the 2D polygon `P`.
 The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q`
 with `P` as its hole and a rectangular frame `F` as outer boundary.
-The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`.
+The outer boundary `F` is constructed by enlarging the bounding box of `P` by a distance `d`.
 `d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained
 from this exterior skeleton, as computed by the function `compute_outer_frame_margin()`.
 
-Weights must be provided in the same order as the vertices of the polygon: the `i`-th weight in the range
-is associated to the contour edge between the `i-1`-th and `i`-th vertices.
+Weights must be provided in the same order as the contours (i.e., first the weights of the outer boundary,
+and then the weights of the holes, if there are any). Only the weights of the outer boundary are used.
+Within this range of weights, the weights must be given in the same order as the vertices of the outer boundary:
+the `i`-th weight in the range is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 
 \warning Holes of the polygon `P` are ignored. If you also need the exterior skeleton for the holes,
-         you should call `CGAL::create_interior_straight_skeleton_2()` for each hole.
+         you should call `CGAL::create_interior_weighted_straight_skeleton_2()` for each hole, after having
+         reversed its orientation (and the weights').
 
 \tparam SsK must be a model of `Kernel`.
 \tparam FT must be a model of `FieldNumberType` convertible to `SsK::FT`.
@@ -192,11 +195,11 @@ is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 \pre Collinear consecutive contour edges must have equal weights.
 \pre `max_offset` must be positive.
 
-\sa `CGAL::create_interior_straight_skeleton_2()`
+\sa `CGAL::create_interior_weighted_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
 template <typename FT,
-          typename Polygon,
+          typename InKPolygon,
           typename InKWeights,
           typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >

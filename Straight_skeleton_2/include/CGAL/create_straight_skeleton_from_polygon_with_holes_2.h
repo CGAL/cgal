@@ -16,6 +16,7 @@
 
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_2/Polygon_iterators.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

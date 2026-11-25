@@ -90,7 +90,7 @@ create_interior_skeleton_and_offset_polygons_2(const FT& offset,
 \note A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets.
 The construction of this skeleton is the most expensive operation, therefore, to construct offsets
  at more than one single distance, it is advised to use `create_interior_straight_skeleton_2()` to create
-the skeleton only once, and then call `create_offset_polygons_2()` for each distance
+the skeleton only once, and then call `create_offset_polygons_2()` for each distance.
 
 \tparam OfKPolygon is a polygon without holes type determined by `OfK` and `InKPolygon`,
                    see Section \ref SLSOffsetPolygonReturnType.
@@ -120,7 +120,7 @@ std::vector< std::shared_ptr<OfKPolygon> >
 create_interior_skeleton_and_offset_polygons_2(const FT& offset,
                                                const InKPolygon& poly,
                                                const OfK& ofk = OfK(),
-                                               const SsK& ssk = CGAL::SsK());
+                                               const SsK& ssk = SsK());
 
 // ############################################## EXTERIOR #########################################
 

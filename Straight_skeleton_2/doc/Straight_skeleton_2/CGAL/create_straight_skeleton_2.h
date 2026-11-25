@@ -19,7 +19,7 @@ and its holes given by `[holes_begin, holes_end)`.
 
 \pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end)` describes a weakly simple polygon
       that is oriented counterclockwise.
-\\pre the range `[holes_begin, holes_end)` describes a sequence of weakly simple polygons that are oriented clockwise.
+\pre the range `[holes_begin, holes_end)` describes a sequence of weakly simple polygons that are oriented clockwise.
 \pre Holes neither intersect each other nor the outer boundary.
 
 \sa `CGAL::create_exterior_straight_skeleton_2()`
@@ -63,10 +63,7 @@ create_interior_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
 /*!
 \ingroup PkgStraightSkeleton2SkeletonFunctions
 
-\brief creates a straight skeleton in the interior of the 2D polygon `polygon`.
-
-\warning Holes of the polygon are ignored. If you also need the exterior skeleton for the holes,
-         you should call `CGAL::create_interior_straight_skeleton_2()` for each hole.
+\brief creates a straight skeleton in the interior of the 2D polygon `polygon`, possibly with holes.
 
 \tparam Polygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
                 or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
@@ -92,13 +89,12 @@ create_interior_straight_skeleton_2(const Polygon& polygon,
 /*!
 \ingroup PkgStraightSkeleton2SkeletonFunctions
 
-\brief creates a straight skeleton in the exterior of a 2D polygon with holes.
-
-The function returns a straight skeleton in the <I>limited exterior</I> of the 2D polygon `P`
+\brief creates a straight skeleton in the <I>limited exterior</I> of the 2D polygon `P`
 given by the point sequence `[vertices_begin,vertices_end)`.
+
 The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q`
 with `P` as its hole and a rectangular frame `F` as outer boundary.
-The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`.
+The outer boundary `F` is constructed by enlarging the bounding box of `P` by a distance `d`.
 `d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained
 from this exterior skeleton, as computed by the function `compute_outer_frame_margin()`.
 
@@ -130,9 +126,13 @@ create_exterior_straight_skeleton_2(const FT& max_offset,
 The function returns a straight skeleton in the <I>limited exterior</I> of the 2D polygon `P`.
 The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q`
 with `P` as its hole and a rectangular frame `F` as outer boundary.
-The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`.
+The outer boundary `F` is constructed by enlarging the bounding box of `P` by a distance `d`.
 `d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained
 from this exterior skeleton, as computed by the function `compute_outer_frame_margin()`.
+
+\warning Holes of the polygon `P` are ignored. If you also need the exterior skeleton for the holes,
+         you should call `CGAL::create_interior_straight_skeleton_2()` for each hole, after having reversed
+         its orientation.
 
 \tparam SsK must be a model of `Kernel`.
 \tparam FT must be a model of `FieldNumberType` convertible to `SsK::FT`.
@@ -143,7 +143,6 @@ from this exterior skeleton, as computed by the function `compute_outer_frame_ma
 
 \pre `P` is a weakly simple, counterclockwise polygon with clockwise oriented holes.
 \pre Holes neither intersect each other nor the outer boundary.
-\pre All the weights must be (strictly) positive.
 \pre `max_offset` is positive.
 
 \sa `CGAL::create_interior_straight_skeleton_2()`

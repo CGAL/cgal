@@ -20,7 +20,6 @@ Modular_arithmetic
 Number_types
 PMP_Mesh_repair
 Polygon
-Polygon_mesh_processing
 Profiling_tools
 Property_map
 STL_Extension
@@ -29,4 +28,3 @@ Straight_skeleton_2
 Stream_support
 TDS_2
 Triangulation_2
-Union_find

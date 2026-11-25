@@ -17,6 +17,8 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/Polygon_mesh_processing/bbox.h>
+
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -695,16 +697,26 @@ volume(const TriangleMesh& tmesh,
   typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
-  typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::Point_3 origin(0, 0, 0);
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
-  using FT = typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::FT;
-  ::CGAL::internal::Evaluate<FT> evaluate;
+  using GT = typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type;
+  using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
+
+  typename GT::Compute_volume_3 cv3;
+  typename GT::Construct_point_3 cp3;
 
   FT volume = 0;
-  typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
-      CGAL::vertex_point_t>::type>::Kernel::Compute_volume_3 cv3;
+  if(is_empty(tmesh))
+    return volume;
+
+  const CGAL::Bbox_3 bb = bbox(tmesh, np);
+  const Point_3 origin = cp3(bb.xmin() + 0.5 * (bb.xmax() - bb.xmin()),
+                             bb.ymin() + 0.5 * (bb.ymax() - bb.ymin()),
+                             bb.zmin() + 0.5 * (bb.zmax() - bb.zmin()));
+
+  ::CGAL::internal::Evaluate<FT> evaluate;
 
   for(face_descriptor f : faces(tmesh))
   {
