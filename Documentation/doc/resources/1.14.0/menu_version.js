@@ -7,6 +7,7 @@
   var all_versions = [
     'main',
     'latest',
+    '6.3-beta1',
     '6.2.1',
     '6.1.3',
     '6.0.3',
