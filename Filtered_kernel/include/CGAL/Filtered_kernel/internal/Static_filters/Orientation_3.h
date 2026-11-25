@@ -121,9 +121,20 @@ public:
           };
 
           std::array<Orientation,2> res = {ZERO, ZERO};
-          if (filter(det[0], maxxs, maxys, maxzs, res[0]) &&
-              filter(det[1], maxxt, maxyt, maxzt, res[1]))
+          bool pqrs_OK = filter(det[0], maxxs, maxys, maxzs, res[0]);
+          bool pqrt_OK = filter(det[1], maxxt, maxyt, maxzt, res[1]);
+          if (pqrs_OK && pqrt_OK)
             return res;
+          if (pqrt_OK)
+          {
+            res[0] = Base::operator()(p, q, r, s);
+            return res;
+          }
+          if (pqrs_OK)
+          {
+            res[1] = Base::operator()(p, q, r, t);
+            return res;
+          }
 
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
