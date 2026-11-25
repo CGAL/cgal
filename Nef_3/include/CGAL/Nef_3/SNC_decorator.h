@@ -316,12 +316,13 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
   void add_sloop_to_facet(SHalfloop_handle l, Halffacet_handle f) const {
     SM_decorator SD(&*l->incident_sface()->center_vertex());
+    // A spherical boundary circle has the opposite orientation to its facet.
     Sphere_circle facet_plane(f->plane());
-    if( facet_plane == l->circle()) {
+    if( facet_plane.opposite() == l->circle()) {
       l->facet() = f;
       l->twin()->facet() = f->twin();
     } else {
-      CGAL_assertion( facet_plane.opposite() == l->circle());
+      CGAL_assertion( facet_plane == l->circle());
       l->facet() = f->twin();
       l->twin()->facet() = f;
     }
