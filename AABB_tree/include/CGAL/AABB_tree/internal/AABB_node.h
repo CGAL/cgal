@@ -148,28 +148,18 @@ AABB_node<Tr>::traversal(const Query& query,
     }
     else if(current->range() == 3)
     {
-      // Treat directly the three primitives
       traits.intersection(query, current->left_data());
-      if( traits.go_further() )
-        traits.intersection(query, current->right_child().left_data());
-      if( traits.go_further() )
-        traits.intersection(query, current->right_child().right_data());
-      return;
+      if( !traits.go_further() || !traits.do_intersect(query, current->right_child()) )
+        return;
+      current = &current->right_child();
     }
     else
     {
-      bool do_intersect_left  = traits.do_intersect(query, current->left_child());
-      bool do_intersect_right = traits.do_intersect(query, current->right_child());
-      if(do_intersect_left && do_intersect_right)
-      {
+      if(traits.do_intersect(query, current->left_child()))
         current->left_child().traversal(query, traits, current->left_child().range());
-        if( traits.go_further() )
-          current = &current->right_child();
-      }
-      else if(!do_intersect_left && !do_intersect_right)
+      if(!traits.go_further() || !traits.do_intersect(query, current->right_child()))
         return;
-      else
-        current = do_intersect_left ? &current->left_child() : &current->right_child();
+      current = &current->right_child();
     }
   }
 }

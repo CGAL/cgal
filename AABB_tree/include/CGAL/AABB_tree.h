@@ -883,8 +883,8 @@ namespace AABB_tree {
       for (node--; node != begin; --node)
         if(node->is_internal_node())
           node->set_bbox(node->left_child().bbox() + node->right_child().bbox());
-      CGAL_assertion(node->is_internal_node());
-      node->set_bbox(node->left_child().bbox() + node->right_child().bbox());
+      if(node->is_internal_node())
+        node->set_bbox(node->left_child().bbox() + node->right_child().bbox());
     }
   }
 
