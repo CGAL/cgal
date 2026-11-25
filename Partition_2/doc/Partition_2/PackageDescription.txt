@@ -42,10 +42,9 @@ than four times the optimal number of convex pieces.  The optimal partitioning
 function provides an implementation of Greene's dynamic programming algorithm
 \cgalCite{g-dpcp-83}, which requires \cgalBigO{n^4} time and \cgalBigO{n^3} space to produce a
 convex partitioning. One of the approximation algorithms is also due to
-Greene \cgalCite{g-dpcp-83} and requires \cgalBigO{n \log n} time and \cgalBigO{n} space
+\cgalCite{g-dpcp-83} and requires \cgalBigO{n \log n} time and \cgalBigO{n} space
 to produce a convex partitioning given a `y`-monotone partitioning.  The
-other approximation algorithm is a result of Hertel and
-Mehlhorn \cgalCite{hm-ftsp-83}, which requires \cgalBigO{n} time and space to produce
+other approximation algorithm is a result of \cgalCite{hm-ftsp-83}, which requires \cgalBigO{n} time and space to produce
 a convex partitioning from a triangulation of a polygon.
 Each of the partitioning functions uses a traits class to supply the
 primitive types and predicates used by the algorithms.

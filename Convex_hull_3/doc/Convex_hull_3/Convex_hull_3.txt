@@ -123,7 +123,7 @@ tangent planes to a sphere.
 \subsection Convex_hull_3ConvexityChecking Convexity Checking
 
 The function `is_strongly_convex_3()`
-implements the algorithm of Mehlhorn <I>et al.</I> \cgalCite{mnssssu-cgpvg-96}
+implements the algorithm of \cgalCite{mnssssu-cgpvg-96}
 to determine if the vertices of a given polytope constitute a strongly convex
 point set or not. This function is used in postcondition testing for
 `convex_hull_3()`.

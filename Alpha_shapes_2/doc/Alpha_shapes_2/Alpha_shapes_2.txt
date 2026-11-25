@@ -19,7 +19,7 @@ can be used for shape reconstruction from a dense unorganized set of
 data points. Indeed, an \f$ \alpha\f$-shape is demarcated by a frontier,
 which is a linear approximation of the original shape \cgalCite{bb-srmua-97t}.
 
-As mentioned in Edelsbrunner's and M&uuml;cke's paper \cgalCite{em-tdas-94},
+As mentioned in \cgalCite{em-tdas-94},
 one can intuitively think of an \f$ \alpha\f$-shape as the
 following. Imagine a huge mass of ice-cream making up the space \f$ \mathbb{R}^3\f$
 and containing the points as "hard" chocolate pieces. Using one of
