@@ -30,7 +30,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/utility/result_of.hpp>
+#include <type_traits>
 
 #include <iostream>
 #include <map>
@@ -151,7 +151,7 @@ public:
 
       // Spatial sort can only be used with Gt::Point_2: we need an adapter
       typedef typename Geom_traits::Construct_point_2 Construct_point_2;
-      typedef typename boost::result_of<const Construct_point_2(const Point&)>::type Ret;
+      typedef std::invoke_result_t<const Construct_point_2&, const Point&> Ret;
       typedef boost::function_property_map<Construct_point_2, Point, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
 

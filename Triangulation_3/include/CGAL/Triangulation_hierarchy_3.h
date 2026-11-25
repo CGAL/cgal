@@ -37,7 +37,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/utility/result_of.hpp>
+#include <type_traits>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -197,7 +197,7 @@ public:
 
       // Spatial sort can only be used with Geom_traits::Point_3: we need an adapter
       typedef typename Geom_traits::Construct_point_3 Construct_point_3;
-      typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
+      typedef std::invoke_result_t<const Construct_point_3&, const Point&> Ret;
       typedef boost::function_property_map<Construct_point_3, Point, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
@@ -274,7 +274,7 @@ private:
     typedef typename Geom_traits::Construct_point_3 Construct_point_3;
     typedef Index_to_Bare_point<Construct_point_3,
                                 std::vector<Point> > Access_bare_point;
-    typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
+    typedef std::invoke_result_t<const Construct_point_3&, const Point&> Ret;
     typedef boost::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
