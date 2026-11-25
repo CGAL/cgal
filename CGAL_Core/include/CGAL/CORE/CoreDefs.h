@@ -29,6 +29,7 @@
 #define _CORE_COREDEFS_H_
 
 #include <CGAL/CORE/extLong.h>
+#include <CGAL/tss.h>
 #include <CGAL/disable_warnings.h>
 
 #include <atomic>
@@ -42,6 +43,15 @@
       return NAME;                                  \
     }
 
+  // State of which each thread has its own copy (with the given initial value), for the precisions, which
+  // computations set temporarily; were they shared, concurrent computations would use the precisions of each other.
+  #define CGAL_THREAD_LOCAL_STATE_VAR(TYPE, NAME, VALUE)    \
+    inline TYPE & get_static_##NAME()                       \
+    {                                                       \
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE, NAME, VALUE); \
+      return NAME;                                          \
+    }
+
 #else // CGAL_HEADER_ONLY
 
   #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
@@ -50,6 +60,11 @@
     {                                               \
       return NAME;                                  \
     }
+
+  // (Thread-local variables cannot be exported from a DLL; hence, the accessor is exported instead, and it is defined,
+  // with the variable, in CoreDefs_impl.h.)
+  #define CGAL_THREAD_LOCAL_STATE_VAR(TYPE, NAME, VALUE)  \
+    CGAL_CORE_EXPORT TYPE& get_static_##NAME();
 
 #endif // CGAL_HEADER_ONLY
 
@@ -107,12 +122,13 @@ CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, EscapePrecWarning, true)
 #endif
 
 // These following two values determine the precision of computing
-// approximations in Expr.
+// approximations in Expr. They, and the precisions of BigFloat division and
+// sqrt below, are thread-local: setting them affects only the calling thread.
 
 /// default Relative Precision in bits
-CGAL_GLOBAL_STATE_VAR(extLong, defRelPrec, 60)
+CGAL_THREAD_LOCAL_STATE_VAR(extLong, defRelPrec, 60)
 /// default Absolute Precision in bits
-CGAL_GLOBAL_STATE_VAR(extLong, defAbsPrec, CORE_posInfty)
+CGAL_THREAD_LOCAL_STATE_VAR(extLong, defAbsPrec, CORE_posInfty)
 
 /// default # of decimal digits for conversion from a BF to string.
 /** This value cannot be CORE_INFTY.
@@ -158,9 +174,9 @@ getBigFloatInputDigits()
 }
 
 /// default BigFloat Division Relative Precision
-CGAL_GLOBAL_STATE_VAR(extLong, defBFdivRelPrec, 54)
+CGAL_THREAD_LOCAL_STATE_VAR(extLong, defBFdivRelPrec, 54)
 /// default BigFloat Sqrt Absolute Precision
-CGAL_GLOBAL_STATE_VAR(extLong, defBFsqrtAbsPrec, 54)
+CGAL_THREAD_LOCAL_STATE_VAR(extLong, defBFsqrtAbsPrec, 54)
 
 //////////////////////////////////////////////////////////////
 // Mode parameters: incremental, progressive, filters
@@ -208,6 +224,7 @@ CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defInitialProgressivePrec, 64)
 // methods for setting global precision parameters
 //         including: scientific vs. positional format
 //        All the set methods return the previous global value if any
+//        (the precisions are thread-local: they are set for the calling thread)
 //////////////////////////////////////////////////////////////
 
 /// set default composite precision [defAbsPrec, defRelPrec]
@@ -333,5 +350,6 @@ inline void setPositionalFormat(std::ostream& o = std::cout) {
 #include <CGAL/enable_warnings.h>
 
 #undef CGAL_GLOBAL_STATE_VAR
+#undef CGAL_THREAD_LOCAL_STATE_VAR
 
 #endif // _CORE_COREDEFS_H_

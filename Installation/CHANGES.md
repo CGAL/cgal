@@ -270,6 +270,15 @@ Release date: December 2026
 - **Breaking change**: Removed the class templates `Twotuple`, `Threetuple`, `Fourtuple`, and `Sixtuple`,
   which were deprecated since CGAL-3.4.
 
+### Number Types
+
+- **Breaking change**: The precisions of `CORE` (the default relative and absolute precisions of `CORE::Expr`, and the
+  precisions of `CORE::BigFloat` division and square root), which `CGAL::set_precision()` sets for `CORE::BigFloat`
+  intervals, are now thread-local: setting them affects only the calling thread, and every thread starts with the default
+  precisions. Previously they were shared by all threads, so concurrent computations with algebraic numbers (e.g.,
+  arrangements of algebraic curves or of rational functions constructed in different threads) used the precisions of each
+  other, which could produce wrong results or failed assertions.
+
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
 Release date: June 2026

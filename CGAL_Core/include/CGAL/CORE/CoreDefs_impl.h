@@ -75,14 +75,20 @@ std::atomic<int> InvalidFlag(0);
  *  -- this is used by BigFloat division when the arguments are error-free.
  */
 
-extLong defBFdivRelPrec = 54;
+CGAL_CORE_EXPORT extLong& get_static_defBFdivRelPrec() {
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(extLong, defBFdivRelPrec, 54);   // one per thread
+  return defBFdivRelPrec;
+}
 
 /**
  *  Default BigFloat Sqrt Absolute Precision
  *  -- this is used by BigFloat sqrt when the argument is error-free.
  */
 
-extLong defBFsqrtAbsPrec = 54;
+CGAL_CORE_EXPORT extLong& get_static_defBFsqrtAbsPrec() {
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(extLong, defBFsqrtAbsPrec, 54);   // one per thread
+  return defBFsqrtAbsPrec;
+}
 
 /**
  * Escape Precision
@@ -107,13 +113,19 @@ std::atomic<bool> EscapePrecWarning(true);
  *  (exact, implicit) constant value. */
 
 /**  absolute precision  = 2^31 - 1 */
-extLong defAbsPrec = CORE_posInfty;
+CGAL_CORE_EXPORT extLong& get_static_defAbsPrec() {
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(extLong, defAbsPrec, CORE_posInfty);   // one per thread
+  return defAbsPrec;
+}
 /** default relative precision is 60 relative bits.
  *  Why 60?  We would really like this to be 54, so that the default
  *  conversion duplicates the IEEE double precision.  But it turns out
  *  (see README file under BUGS), we need 59 to ensure this.
  *  Chee Yap (7/1/01) */
-extLong defRelPrec = 60;
+CGAL_CORE_EXPORT extLong& get_static_defRelPrec() {
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(extLong, defRelPrec, 60);   // one per thread
+  return defRelPrec;
+}
 
 /**  number of BigFloat digits to print out */
 #ifdef CGAL_NO_ATOMIC
