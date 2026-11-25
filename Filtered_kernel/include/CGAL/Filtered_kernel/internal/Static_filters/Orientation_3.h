@@ -18,6 +18,7 @@
 #include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/Profile_counter.h>
 #include <cmath>
+#include <algorithm>
 #include <array>
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
@@ -76,79 +77,68 @@ public:
           double ptz = tz - pz;
 
           // CGAL::abs uses fabs on platforms where it is faster than (a<0)?-a:a
-          // Then semi-static filter.
+          // Then semi-static filter, applied independently to the two determinants
+          // det(pq, pr, ps) and det(pq, pr, pt), with the same bounds as the 4-point version.
 
-          double maxx = CGAL::abs(pqx);
-          double maxy = CGAL::abs(pqy);
-          double maxz = CGAL::abs(pqz);
+          // Maximum absolute value of each row, over the columns pq and pr (shared)...
+          double maxx = (std::max)(CGAL::abs(pqx), CGAL::abs(prx));
+          double maxy = (std::max)(CGAL::abs(pqy), CGAL::abs(pry));
+          double maxz = (std::max)(CGAL::abs(pqz), CGAL::abs(prz));
 
-          double aprx = CGAL::abs(prx);
-          double apsx = CGAL::abs(psx);
-          double aptx = CGAL::abs(ptx);
+          // ... then with the third column: ps for the first determinant, pt for the second one.
+          const double maxxs = (std::max)(maxx, CGAL::abs(psx));
+          const double maxys = (std::max)(maxy, CGAL::abs(psy));
+          const double maxzs = (std::max)(maxz, CGAL::abs(psz));
 
-          double apry = CGAL::abs(pry);
-          double apsy = CGAL::abs(psy);
-          double apty = CGAL::abs(pty);
+          const double maxxt = (std::max)(maxx, CGAL::abs(ptx));
+          const double maxyt = (std::max)(maxy, CGAL::abs(pty));
+          const double maxzt = (std::max)(maxz, CGAL::abs(ptz));
 
-          double aprz = CGAL::abs(prz);
-          double apsz = CGAL::abs(psz);
-          double aptz = CGAL::abs(ptz);
+          const std::array<double,2> det = CGAL::determinants(pqx, prx, psx, ptx,
+                                                              pqy, pry, psy, pty,
+                                                              pqz, prz, psz, ptz);
 
-          if (maxx < aprx) maxx = aprx;
-          double maxxt = maxx;
-          if (maxx < apsx) maxx = apsx;
-          if (maxxt < aptx) maxxt = aptx;
-          if (maxy < apry) maxy = apry;
-          double maxyt = maxy;
-          if (maxy < apsy) maxy = apsy;
-          if (maxyt < apty) maxyt= apty;
-          if (maxz < aprz) maxz = aprz;
-          double maxzt = maxz;
-          if (maxz < apsz) maxz = apsz;
-          if (maxzt < aptz) maxzt = aptz;
+          // Returns true if the sign of `d` is certified, and sets `o` accordingly.
+          auto filter = [](double d, double mx, double my, double mz, Orientation& o) -> bool
+          {
+            const double eps = 5.1107127829973299e-15 * mx * my * mz;
+            const double lo = (std::min)((std::min)(mx, my), mz);
+            const double hi = (std::max)((std::max)(mx, my), mz);
 
-          std::array<double,2> det = CGAL::determinants(pqx, prx, psx, ptx,
-                                                        pqy, pry, psy, pty,
-                                                        pqz, prz, psz, ptz);
+            // Protect against underflow in the computation of eps.
+            if (lo < 1e-97) /* cbrt(min_double/eps) */ {
+              if (lo == 0) { // a whole row of the matrix is zero
+                o = ZERO;
+                return true;
+              }
+            }
+            // Protect against overflow in the computation of det.
+            else if (hi < 1e102) /* cbrt(max_double [hadamard]/4) */ {
+              if (d > eps)  { o = POSITIVE; return true; }
+              if (d < -eps) { o = NEGATIVE; return true; }
+            }
+            return false;
+          };
 
-          double epss = 5.1107127829973299e-15 * maxx * maxy * maxz;
-          double epst = 5.1107127829973299e-15 * maxxt * maxyt * maxzt;
-
-          // Sort maxx < maxy < maxz.
-          if (maxx > maxz)
-              std::swap(maxx, maxz);
-          if (maxy > maxz)
-              std::swap(maxy, maxz);
-          else if (maxy < maxx)
-              std::swap(maxx, maxy);
-
-          std::array<Orientation,2> res = {ZERO,ZERO};
-          bool first = false;
-          bool second = false;
-          // Protect against underflow in the computation of eps.
-          if (maxx < 1e-97) /* cbrt(min_double/eps) */ {
-            if (maxx == 0)
-              first = true;
-          }
-          if (maxxt < 1e-97) /* cbrt(min_double/eps) */ {
-            if (maxxt == 0)
-              second = true;
-          }
-          // Protect against overflow in the computation of det.
-          if ((!first) && (maxz < 1e102)) /* cbrt(max_double [hadamard]/4) */ {
-             if (det[0] > epss)  { res[0] = POSITIVE; first = true;}
-             else if (det[0] < -epss) { res[0] = NEGATIVE; first = true;}
-          }
-
-          if((! second) && (maxzt < 1e102)){
-            if (det[1] > epst) { res[1] = POSITIVE; second = true;}
-               else if (det[1] < -epst) { res[1] = NEGATIVE; second = true;}
-          }
-          if(first && second){
+          std::array<Orientation,2> res = {ZERO, ZERO};
+          bool pqrs_OK = filter(det[0], maxxs, maxys, maxzs, res[0]);
+          bool pqrt_OK = filter(det[1], maxxt, maxyt, maxzt, res[1]);
+          if (pqrs_OK && pqrt_OK)
+            return res;
+          if (pqrt_OK)
+          {
+            res[0] = Base::operator()(p, q, r, s);
             return res;
           }
+          if (pqrs_OK)
+          {
+            res[1] = Base::operator()(p, q, r, t);
+            return res;
           }
+
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+      }
+
     return Base::operator()(p, q, r, s, t);
   }
 
