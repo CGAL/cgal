@@ -16,12 +16,36 @@
 #include <CGAL/license/Bounding_volumes.h>
 
 
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Conic_2.h>
+#include <CGAL/Cartesian/ConicCPA2.h>
+#include <CGAL/Cartesian/Data_accessor_2.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Kernel/global_functions_2.h>
 
 
 namespace CGAL {
+
+template <class ET> class Lazy_exact_nt;
+
+namespace internal {
+
+template <class K, class FT = typename K::FT, class Rep_tag = typename K::Rep_tag>
+struct Optimisation_ellipse_conic
+{
+  typedef typename K::Conic_2 type;
+};
+
+template <class K, class ET>
+struct Optimisation_ellipse_conic<K, Lazy_exact_nt<ET>, Cartesian_tag>
+{
+  struct type : ConicCPA2<typename K::Point_2, Data_accessorC2<K>>
+  {
+    using ConicCPA2<typename K::Point_2, Data_accessorC2<K>>::analyse;
+  };
+};
+
+} // namespace internal
 
 // Class interface
 // ===============
@@ -39,7 +63,7 @@ class Optimisation_ellipse_2 {
     typedef  typename K_::RT            RT;
     typedef  typename K_::FT            FT;
     typedef  typename K::Point_2        Point;
-    typedef  typename K::Conic_2        Conic;
+    typedef  typename internal::Optimisation_ellipse_conic<K>::type Conic;
 
     /**************************************************************************
     WORKAROUND: Some compilers are unable to match member functions defined
