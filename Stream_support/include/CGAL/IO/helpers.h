@@ -18,7 +18,6 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/type_traits/is_iterator.h>
-#include <CGAL/number_utils.h>
 
 #include <boost/mpl/logical.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -37,7 +36,7 @@ void fill_point(const double x, const double y, const double /*z*/, const double
                 CGAL::Point_2<Kernel>& pt)
 {
   typedef typename Kernel::FT FT;
-  if(is_one(w))
+  if(w == 1.)
     pt = CGAL::Point_2<Kernel>(FT(x), FT(y));
   else
     pt = CGAL::Point_2<Kernel>(FT(x)/FT(w), FT(y)/FT(w));
@@ -48,7 +47,7 @@ void fill_point(const double x, const double y, const double z, const double w,
                 CGAL::Point_3<Kernel>& pt)
 {
   typedef typename Kernel::FT FT;
-  if(is_one(w))
+  if(w == 1.)
     pt = CGAL::Point_3<Kernel>(FT(x), FT(y), FT(z));
   else
     pt = CGAL::Point_3<Kernel>(FT(x)/FT(w), FT(y)/FT(w), FT(z)/FT(w));
