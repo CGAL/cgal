@@ -270,10 +270,18 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   * \cgalNamedParamsEnd
   *
   * @return an array filled as follows: for each operation computed, the position in the array
-  *         will contain `true` iff the output surface mesh is manifold, and it is put in the surface mesh
-  *         at the same position as in `output`. Note that if an output surface mesh also was
-  *         an input mesh but the output operation was generating a non-manifold mesh, the surface mesh
-  *         will only be corefined.
+  *         will contain `true` if the output surface mesh has no non-manifold edge, and it is put
+  *         in the surface mesh at the same position as in `output`. Note that if an output surface
+  *         mesh also was an input mesh but the output operation would generate non-manifold edges,
+  *         the surface mesh will only be corefined.
+  *
+  * @warning A `true` entry does not guarantee that the corresponding output mesh is free of
+  *          non-manifold vertices (for example, when the input meshes touch at a point lying on
+  *          a concave edge). In that case `CGAL::is_valid_polygon_mesh()` may be `false`, and the
+  *          output must not be passed to another corefinement function. Calling
+  *          `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()` produces a valid
+  *          2-manifold mesh, but the duplicated vertices share identical coordinates, so the result
+  *          still self-intersects and remains invalid as input for further corefinement.
   */
 template <class TriangleMesh,
           class NPIn1 = parameters::Default_named_parameters,
@@ -618,9 +626,17 @@ corefine_and_compute_boolean_operations(
   *
   * \cgalNamedParamsEnd
   *
-  * @return `true` if the output surface mesh is manifold and is put into `tm_out`.
+  * @return `true` if the output surface mesh has no non-manifold edge and is put into `tm_out`.
   *         If `false` is returned and if `tm_out` is one of the input surface meshes,
-  *         then `tm_out` is only corefined.  */
+  *         then `tm_out` is only corefined.
+  *
+  * @warning A return value of `true` does not guarantee that `tm_out` is free of non-manifold
+  *          vertices (for example, when the input meshes touch at a point lying on a concave edge).
+  *          In that case `CGAL::is_valid_polygon_mesh(tm_out)` may be `false`, and `tm_out` must
+  *          not be used as input of another corefinement function. Calling
+  *          `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()` produces a valid
+  *          2-manifold mesh, but the duplicated vertices have identical positions, so the result
+  *          still self-intersects and is still not a valid input for corefinement.  */
 template <class TriangleMesh,
           class NamedParameters1 = parameters::Default_named_parameters,
           class NamedParameters2 = parameters::Default_named_parameters,
