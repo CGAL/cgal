@@ -565,8 +565,8 @@ concept Range_of_polygon_3 = std::ranges::common_range<Polygons>
       && Polygon_3<std::ranges::range_value_t<Polygons>, Kernel>;
 #endif // concepts
 
-template <class DSC, bool Const>
-struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_tag>
+template <class DSC, bool Const, typename Tr>
+struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_tag<Tr>>
   : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
 {
   int offset = 0;
@@ -577,7 +577,7 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
 
   using Base::Base;
 
-  Output_rep(const CC_iterator& it, With_point_and_info_tag tag)
+  Output_rep(const CC_iterator& it, With_point_and_info_tag<Tr> tag)
     : Base(it), offset(tag.offset)
   {
   }
@@ -2097,8 +2097,8 @@ public:
   static void print_minimum_distance_info(const Min_distance_result& min_dist) {
     std::cout << "Min distance between vertices: " << min_dist.min_distance << '\n'
               << "  between vertices:          : "
-              << CGAL::IO::oformat(min_dist.vertices_of_min_edge[0], CGAL::With_point_tag{}) << "    "
-              << CGAL::IO::oformat(min_dist.vertices_of_min_edge[1], CGAL::With_point_tag{}) << "\n\n";
+              << CGAL::IO::oformat(min_dist.vertices_of_min_edge[0], with_point) << "    "
+              << CGAL::IO::oformat(min_dist.vertices_of_min_edge[1], with_point) << "\n\n";
   }
 
   struct Constraint_distance_result {
@@ -2190,10 +2190,10 @@ public:
     if(this->debug().display_statistics()) {
       std::cout << "Min distance between constraint segment and vertex: " << min_distance << '\n'
             << "  between segment                                 : "
-            << CGAL::IO::oformat(min_va, CGAL::With_point_tag{}) << "    "
-            << CGAL::IO::oformat(min_vb, CGAL::With_point_tag{}) << '\n'
+            << CGAL::IO::oformat(min_va, with_point) << "    "
+            << CGAL::IO::oformat(min_vb, with_point) << '\n'
             << "  and vertex                                      : "
-            << CGAL::IO::oformat(min_vertex, CGAL::With_point_tag{}) << "\n\n";
+            << CGAL::IO::oformat(min_vertex, with_point) << "\n\n";
     }
     this->check_segment_vertex_distance_or_throw(min_va, min_vb, min_vertex, min_distance);
   }
@@ -2209,8 +2209,8 @@ public:
     if(this->debug().display_statistics()) {
       std::cout << "Min distance between vertices: " << result.min_distance << '\n'
                 << "  between vertices           : "
-                << CGAL::IO::oformat(result.vertices_of_min_edge[0], CGAL::With_point_tag{}) << "    "
-                << CGAL::IO::oformat(result.vertices_of_min_edge[1], CGAL::With_point_tag{}) << "\n\n";
+                << CGAL::IO::oformat(result.vertices_of_min_edge[0], with_point) << "    "
+                << CGAL::IO::oformat(result.vertices_of_min_edge[1], with_point) << "\n\n";
     }
     this->check_vertex_vertex_distance_or_throw(result.vertices_of_min_edge[0],
                                                 result.vertices_of_min_edge[1],
@@ -4676,7 +4676,7 @@ public:
     const auto to_exact = CGAL::Cartesian_converter<Geom_traits, EK>();
     const auto& cdt_2 = this->face_cdt_2(face_index);
 
-    auto of = [](auto&&... args) {
+    auto of = [this](auto&&... args) {
       return IO::oformat(std::forward<decltype(args)>(args)..., with_point_and_info);
     };
 

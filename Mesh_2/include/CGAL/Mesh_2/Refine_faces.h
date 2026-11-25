@@ -13,6 +13,7 @@
 #ifndef CGAL_MESH_2_REFINE_FACES_H
 #define CGAL_MESH_2_REFINE_FACES_H
 
+#include <CGAL/Compact_container.h>
 #include <CGAL/license/Mesh_2.h>
 
 #include <CGAL/assertions.h>
@@ -106,12 +107,13 @@ protected:
   Bad_faces bad_faces;
 
   Mesh_2::Face_badness current_badness;
+  With_point_tag<Tr> with_point_tag;
 
 public:
   /** \name CONSTRUCTORS */
 
   Refine_faces_base(Tr& t, Criteria& criteria_, Previous& prev)
-    : Triangulation_traits(t), criteria(criteria_), previous(prev)
+    : Triangulation_traits(t), criteria(criteria_), previous(prev), with_point_tag{{-1}, &t}
   {
   }
 
@@ -194,9 +196,9 @@ public:
     auto v1 = f->vertex(1);
     auto v2 = f->vertex(2);
     std::cerr << "refinement_point_impl(Face: "
-              << IO::oformat(v0, With_point_tag{}) << ", "
-              << IO::oformat(v1, With_point_tag{}) << ", "
-              << IO::oformat(v2, With_point_tag{}) << ") = "
+              << IO::oformat(v0, with_point_tag) << ", "
+              << IO::oformat(v1, with_point_tag) << ", "
+              << IO::oformat(v2, with_point_tag) << ") = "
               << p << '\n';
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
     return p;
@@ -241,7 +243,7 @@ public:
                 zone.faces.begin(),
                 zone.faces.end());
 #ifdef CGAL_MESH_2_DEBUG_INSERTIONS
-    std::cerr << " inserted new vertex " << IO::oformat(v, With_point_tag{}) << std::endl;
+    std::cerr << " inserted new vertex " << IO::oformat(v, with_point_tag) << std::endl;
 #endif // CGAL_MESH_2_DEBUG_INSERTIONS
     return v;
   }
@@ -322,9 +324,9 @@ push_in_bad_faces(Face_handle fh, const Quality& q)
 {
 #ifdef CGAL_MESH_2_DEBUG_BAD_FACES
   std::cerr << "push_in_bad_faces("
-            << IO::oformat(fh->vertex(0), With_point_tag{}) << ", "
-            << IO::oformat(fh->vertex(1), With_point_tag{}) << ", "
-            << IO::oformat(fh->vertex(2), With_point_tag{}) << ")\n";
+            << IO::oformat(fh->vertex(0), with_point_tag) << ", "
+            << IO::oformat(fh->vertex(1), with_point_tag) << ", "
+            << IO::oformat(fh->vertex(2), with_point_tag) << ")\n";
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
   CGAL_assertion_code
     (typename Geom_traits::Orientation_2 orientation =
@@ -344,9 +346,9 @@ remove_bad_face(Face_handle fh)
 {
 #ifdef CGAL_MESH_2_DEBUG_BAD_FACES
   std::cerr << "bad_faces.erase("
-            << IO::oformat(fh->vertex(0), With_point_tag{}) << ", "
-            << IO::oformat(fh->vertex(1), With_point_tag{}) << ", "
-            << IO::oformat(fh->vertex(2), With_point_tag{}) << ")\n";
+            << IO::oformat(fh->vertex(0), with_point_tag) << ", "
+            << IO::oformat(fh->vertex(1), with_point_tag) << ", "
+            << IO::oformat(fh->vertex(2), with_point_tag) << ")\n";
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
   bad_faces.erase(fh);
 }
@@ -372,9 +374,9 @@ compute_new_bad_faces(Vertex_handle v)
               {
 #ifdef CGAL_MESH_2_DEBUG_BAD_FACES
                 std::cerr << "Skipping bad face with too small bbox: "
-                          << IO::oformat(fc->vertex(0), With_point_tag{}) << ", "
-                          << IO::oformat(fc->vertex(1), With_point_tag{}) << ", "
-                          << IO::oformat(fc->vertex(2), With_point_tag{}) << "\n";
+                          << IO::oformat(fc->vertex(0), with_point_tag) << ", "
+                          << IO::oformat(fc->vertex(1), with_point_tag) << ", "
+                          << IO::oformat(fc->vertex(2), with_point_tag) << "\n";
                 std::cerr << "Quality: " << IO::oformat(q) << "\n";
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
                 continue;
