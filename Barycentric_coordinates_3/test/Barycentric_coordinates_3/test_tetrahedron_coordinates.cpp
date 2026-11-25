@@ -7,10 +7,24 @@
 
 #include "include/utils.h"
 
+#include <type_traits>
+
 // Typedefs.
 using SCKER = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+
+// Exact comparison for exact number types. For floating-point number types,
+// compare up to a tolerance: results are not guaranteed to be bit-identical
+// between two code paths, for example with x87 extended precision (32-bit
+// builds without SSE2).
+template <typename FT>
+bool are_equal(const FT& a, const FT& b) {
+  if constexpr (std::is_floating_point_v<FT>)
+    return CGAL::abs(a - b) < tests::get_tolerance<FT>();
+  else
+    return a == b;
+}
 
 template <typename Kernel>
 void test_overloads(){
@@ -49,15 +63,15 @@ void test_overloads(){
     CGAL::Barycentric_coordinates::tetrahedron_coordinates_3(vertices[0], vertices[1],
       vertices[2], vertices[3], query);
 
-    assert(CGAL::abs(1-x-y-z - tetra_coords[0]) == FT(0) &&
-           CGAL::abs(x - tetra_coords[1]) == FT(0) &&
-           CGAL::abs(y - tetra_coords[2]) == FT(0) &&
-           CGAL::abs(z - tetra_coords[3]) == FT(0));
+    assert(are_equal<FT>(1-x-y-z, tetra_coords[0]) &&
+           are_equal<FT>(x, tetra_coords[1]) &&
+           are_equal<FT>(y, tetra_coords[2]) &&
+           are_equal<FT>(z, tetra_coords[3]));
 
-    assert(tetra_coords_array[0] == tetra_coords[0] &&
-           tetra_coords_array[1] == tetra_coords[1] &&
-           tetra_coords_array[2] == tetra_coords[2] &&
-           tetra_coords_array[3] == tetra_coords[3]);
+    assert(are_equal(tetra_coords_array[0], tetra_coords[0]) &&
+           are_equal(tetra_coords_array[1], tetra_coords[1]) &&
+           are_equal(tetra_coords_array[2], tetra_coords[2]) &&
+           are_equal(tetra_coords_array[3], tetra_coords[3]));
   }
 }
 

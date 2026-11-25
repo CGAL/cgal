@@ -1646,8 +1646,7 @@ void split(TriangleMesh& tm,
 
   make_hexahedron(iso_cuboid[0], iso_cuboid[1], iso_cuboid[2], iso_cuboid[3],
                   iso_cuboid[4], iso_cuboid[5], iso_cuboid[6], iso_cuboid[7],
-                  splitter);
-  triangulate_faces(splitter);
+                  splitter, parameters::do_not_triangulate_faces(false));
   const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
   return split(tm, splitter, np, params::do_not_modify(do_not_modify));
 }
