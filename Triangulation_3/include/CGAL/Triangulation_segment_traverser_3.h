@@ -484,6 +484,7 @@ private:
     //  walk_to_next(), if the triangulation is 2D.
     void            walk_to_next_2();
     void            walk_to_next_2_inf( int inf );
+    Cell_handle     find_cell_containing_ray_from_vertex_2(Vertex_handle v, Cell_handle start_cell, int& iv_out) const;
 
 private:
     inline int      edgeIndex( int i, int j ) const {

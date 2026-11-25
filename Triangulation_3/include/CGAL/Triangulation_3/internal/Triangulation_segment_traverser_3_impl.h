@@ -186,6 +186,22 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr, Inc>::
 jump_to_intersecting_cell()
 {
+  if (_tr->dimension() == 2)
+  {
+    Cell_handle ch = cell();
+    Locate_type lt;
+    int li, clj;
+    entry(lt, li, clj);
+    if (lt == Tr::VERTEX)
+    {
+      int next_iv = -1;
+      Cell_handle good_cell = find_cell_containing_ray_from_vertex_2(ch->vertex(li), ch, next_iv);
+      cell() = good_cell;
+      this->li() = next_iv;
+      return;
+    }
+  }
+
   //copy current simplex
   Cell_handle ch = cell();
   Locate_type lt;
@@ -751,6 +767,43 @@ walk_to_next_3_inf( int inf )
 }
 
 template < class Tr, class Inc >
+typename Triangulation_segment_cell_iterator_3<Tr, Inc>::Cell_handle
+Triangulation_segment_cell_iterator_3<Tr, Inc>::
+find_cell_containing_ray_from_vertex_2(Vertex_handle v, Cell_handle start_cell, int& iv_out) const
+{
+  Cell_handle c = start_cell;
+  typename Gt::Coplanar_orientation_3 coplanar_orientation
+    = _tr->geom_traits().coplanar_orientation_3_object();
+
+  int inf;
+  int max_steps = 2 * static_cast<int>(_tr->number_of_vertices()) + 10;
+  for (int step = 0; step < max_steps; ++step) {
+    if (c->has_vertex(_tr->infinite_vertex(), inf)) {
+      iv_out = c->index(v);
+      return c;
+    }
+    int iv = c->index(v);
+    const Point& pv = c->vertex(iv)->point();
+    const Point& pcw = c->vertex(_tr->cw(iv))->point();
+    const Point& pccw = c->vertex(_tr->ccw(iv))->point();
+
+    Orientation ocw = coplanar_orientation(pv, pcw, pccw, _target);
+    Orientation occw = coplanar_orientation(pv, pccw, pcw, _target);
+
+    if (ocw == NEGATIVE) {
+      c = c->neighbor(_tr->ccw(iv));
+    } else if (occw == NEGATIVE) {
+      c = c->neighbor(_tr->cw(iv));
+    } else {
+      iv_out = iv;
+      return c;
+    }
+  }
+  iv_out = c->index(v);
+  return c;
+}
+
+template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_2()
 {
@@ -785,12 +838,11 @@ walk_to_next_2()
             // Then we try the opposite edge.
             Orientation op = coplanar_orientation( *vert[_tr->ccw(li())], *vert[_tr->cw(li())], *vert[li()], _target );
             if( op == NEGATIVE) {
-                Cell_handle tmp = cell()->neighbor(li());
-                prev_cell() = cell();
-                cell() = tmp;
-
                 switch( ocw+occw ) {
-                    case 2:
+                    case 2: {
+                        Cell_handle tmp = cell()->neighbor(li());
+                        prev_cell() = cell();
+                        cell() = tmp;
                         prev_lt() = Tr::EDGE;
                         prev_li() = _tr->ccw( li() );
                         prev_lj() = _tr->cw( li() );
@@ -798,13 +850,25 @@ walk_to_next_2()
                         li() = cell()->index( prev_cell()->vertex( prev_li() ) );
                         lj() = cell()->index( prev_cell()->vertex( prev_lj() ) );
                         return;
-                    case 1:
+                    }
+                    case 1: {
+                        int v_exit = (ocw == COLLINEAR) ? _tr->cw(li()) : _tr->ccw(li());
+                        if (*vert[v_exit] == _target) {
+                            _prev = Simplex{ cell(), Tr::VERTEX, v_exit, -1 };
+                            cell() = Cell_handle();
+                            return;
+                        }
+                        Vertex_handle vh_exit = cell()->vertex(v_exit);
+                        int next_iv = -1;
+                        Cell_handle next_c = find_cell_containing_ray_from_vertex_2(vh_exit, cell(), next_iv);
+                        prev_cell() = cell();
+                        cell() = next_c;
                         prev_lt() = Tr::VERTEX;
+                        prev_li() = v_exit;
                         lt() = Tr::VERTEX;
-                        if( ocw == COLLINEAR ) prev_li() = _tr->cw( li() );
-                        else li() = _tr->ccw( li() );
-                        li() = cell()->index( prev_cell()->vertex( prev_li() ) );
+                        li() = next_iv;
                         return;
+                    }
                     default:
                         // The current vertex is the target.
                         CGAL_unreachable();
@@ -844,109 +908,91 @@ walk_to_next_2()
             int lk = 3 - li() - lj();
 
             if( cell()->neighbor(lk) != prev_cell() ) {
-                // Check the edge itself
-                switch(coplanar_orientation( *vert[li()], *vert[lj()], *vert[lk], _target ) ) {
-                    //_prev = _cur; //code not reached
-                    case COLLINEAR:
-                        // The target lies in this cell.
-                        cell() = Cell_handle();
-                        return;
-                    case NEGATIVE: {
-                        // The target lies opposite of the edge.
-                        Cell_handle tmp = cell()->neighbor(lk);
-                        cell() = tmp;
-                        li() = cell()->index( prev_cell()->vertex(li()) );
-                        lj() = cell()->index( prev_cell()->vertex(lj()) );
-                        return;
-                    }
-                    default:
-                        break;
+                // Check the edge itself if segment started on the edge
+                Orientation o_edge = coplanar_orientation( *vert[li()], *vert[lj()], _target );
+                Orientation o_cell = coplanar_orientation( *vert[li()], *vert[lj()], *vert[lk] );
+                if (o_edge == COLLINEAR) {
+                    // Target lies on this edge
+                    cell() = Cell_handle();
+                    return;
+                }
+                if (o_edge != o_cell) {
+                    // Target lies on the other side of the edge
+                    Cell_handle tmp = cell()->neighbor(lk);
+                    prev_cell() = cell();
+                    cell() = tmp;
+                    li() = cell()->index( prev_cell()->vertex(li()) );
+                    lj() = cell()->index( prev_cell()->vertex(lj()) );
+                    return;
                 }
             }
 
-            typename Gt::Collinear_3 collinear
-              = _tr->geom_traits().collinear_3_object();
-            Orientation o = coplanar_orientation( _source, *vert[lk], *vert[li()], _target );
-            Orientation op;
-            switch( o ) {
-                case POSITIVE: {
-                    // The ray passes through the edge ik.
-                    op = coplanar_orientation( *vert[lk], *vert[li()], _source, _target );
-                    if( op == NEGATIVE ) {
-                        Cell_handle tmp = cell()->neighbor(lj());
-                        prev_cell() = cell();
-                        cell() = tmp;
+            // The ray enters across edge (li, lj). Determine which of the other
+            // two edges (or vertex lk) the ray exits through.
+            Orientation oi = coplanar_orientation( _source, _target, *vert[li()] );
+            Orientation ok = coplanar_orientation( _source, _target, *vert[lk] );
 
-                        if( collinear( _source, *vert[li()], _target ) ) {
-                            prev_lt() = Tr::VERTEX;
-                            prev_li() = li();
-                            lt() = Tr::VERTEX;
-                            li() = cell()->index( prev_cell()->vertex( prev_li() ) );
-                        }
-                        else {
-                            prev_lt() = Tr::EDGE;
-                            prev_li() = li();
-                            prev_lj() = lk;
-                            lt() = Tr::EDGE;
-                            li() = cell()->index( prev_cell()->vertex( prev_li() ) );
-                            lj() = cell()->index( prev_cell()->vertex( prev_lj() ) );
-                        }
-                        return;
-                    }
-                    break;
+            if (ok == COLLINEAR) {
+                // Ray passes through vertex lk
+                if (*vert[lk] == _target) {
+                    _prev = Simplex{ cell(), Tr::VERTEX, lk, -1 };
+                    cell() = Cell_handle();
+                    return;
                 }
-                default: {
-                    // The ray passes through the edge jk.
-                    op = coplanar_orientation( *vert[lk], *vert[lj()], _source, _target );
-                    if( op == NEGATIVE ) {
-                        Cell_handle tmp = cell()->neighbor(li());
-                        prev_cell() = cell();
-                        cell() = tmp;
-
-                        if( collinear( _source, *vert[lj()], _target ) ) {
-                            prev_lt() = Tr::VERTEX;
-                            prev_li() = lj();
-                            lt() = Tr::VERTEX;
-                            li() = cell()->index( prev_cell()->vertex( prev_li() ) );
-                        }
-                        else if( o == COLLINEAR ) {
-                            prev_lt() = Tr::VERTEX;
-                            prev_li() = lk;
-                            lt() = Tr::VERTEX;
-                            li() = cell()->index( prev_cell()->vertex( prev_li() ) );
-                        }
-                        else {
-                            prev_lt() = Tr::EDGE;
-                            prev_li() = lk;
-                            prev_lj() = lj();
-                            lt() = Tr::EDGE;
-                            li() = cell()->index( prev_cell()->vertex( prev_li() ) );
-                            lj() = cell()->index( prev_cell()->vertex( prev_li() ) );
-                        }
-                        return;
-                    }
-                    break;
-                }
+                // Exits through vertex lk into the cell containing the ray
+                Vertex_handle vh_exit = cell()->vertex(lk);
+                int next_iv = -1;
+                Cell_handle next_c = find_cell_containing_ray_from_vertex_2(vh_exit, cell(), next_iv);
+                prev_cell() = cell();
+                cell() = next_c;
+                prev_lt() = Tr::VERTEX;
+                prev_li() = lk;
+                lt() = Tr::VERTEX;
+                li() = next_iv;
+                return;
             }
 
-            // The target lies in this cell.
-            if( op == POSITIVE )
-              _prev = Simplex{ cell(), Tr::FACET, 3, -1 };
-            else {
-                CGAL_assertion( op == ZERO );
-                switch( o ) {
-                case POSITIVE:
-                  _prev = Simplex{ cell(), Tr::EDGE, li(), lk };
-                  break;
-                case NEGATIVE:
-                  _prev = Simplex{ cell(), Tr::EDGE, lj(), lk };
-                  break;
-                case ZERO:
-                  _prev = Simplex{ cell(), Tr::VERTEX, lk, -1 };
-                  break;
-                }
+            // Determine which edge is crossed
+            int exit_opp; // vertex opposite to exit edge
+            int exit_u, exit_v;
+            if (ok == oi) {
+                // lk is on same side as li -> exits through edge (lj, lk) opposite to li
+                exit_opp = li();
+                exit_u = lj();
+                exit_v = lk;
+            } else {
+                // lk is on same side as lj -> exits through edge (li, lk) opposite to lj
+                exit_opp = lj();
+                exit_u = li();
+                exit_v = lk;
             }
-            cell() = Cell_handle();
+
+            // Check if target is inside cell or beyond the exit edge
+            Orientation o_opp = coplanar_orientation( *vert[exit_u], *vert[exit_v], *vert[exit_opp] );
+            Orientation o_tar = coplanar_orientation( *vert[exit_u], *vert[exit_v], _target );
+
+            if (o_tar == o_opp) {
+                // Target lies inside this cell
+                _prev = Simplex{ cell(), Tr::FACET, 3, -1 };
+                cell() = Cell_handle();
+                return;
+            } else if (o_tar == COLLINEAR) {
+                // Target lies on the exit edge
+                _prev = Simplex{ cell(), Tr::EDGE, exit_u, exit_v };
+                cell() = Cell_handle();
+                return;
+            }
+
+            // The ray exits through the edge opposite to exit_opp
+            Cell_handle tmp = cell()->neighbor(exit_opp);
+            prev_cell() = cell();
+            prev_lt() = Tr::EDGE;
+            prev_li() = exit_u;
+            prev_lj() = exit_v;
+            cell() = tmp;
+            lt() = Tr::EDGE;
+            this->li() = cell()->index( prev_cell()->vertex(prev_li()) );
+            this->lj() = cell()->index( prev_cell()->vertex(prev_lj()) );
             return;
         }
         case Tr::FACET: {
@@ -1029,7 +1075,6 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_2_inf( int inf )
 {
-    CGAL_precondition( _tr->is_infinite( cell()->vertex(3) ) );
     CGAL_precondition( _tr->is_infinite( cell()->vertex(inf) ) );
 
     // If this cell was reached by traversal from a finite one, it must be the final cell.
