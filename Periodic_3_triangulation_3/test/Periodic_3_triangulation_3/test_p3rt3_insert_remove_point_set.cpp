@@ -1,4 +1,4 @@
-//#define REALLY_VERBOSE
+#define CGAL_P3T3_TEST_INSERT_REMOVE_VERBOSE
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -45,10 +45,11 @@ public:
   typedef typename Traits::Point_3                              Point_3;
   typedef typename Traits::Iso_cuboid_3                         Iso_cuboid;
 
-  static void test_insert_rnd_then_remove_all (unsigned pt_count)
+  static void test (unsigned pt_count,
+                    CGAL::Random& rng)
   {
     typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
-    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5);
+    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, rng);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
     P3RT3 p3rt3(iso_cuboid);
@@ -61,7 +62,9 @@ public:
     std::cout << "-- insert" << std::endl;
     for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
     {
-      Weighted_point_3 p(*in_cube++, CGAL::get_default_random().get_double(0., 0.015625));
+      const Point_3 bp = *in_cube++;
+      const double w = rng.get_double(0., 0.015625);
+      Weighted_point_3 p(bp, w);
 
       std::size_t hidden_point_count = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
@@ -74,7 +77,7 @@ public:
         hidden_point_count_2 += iter->hidden_points().size();
       assert(hidden_point_count <= hidden_point_count_2);
       assert(hidden_point_count_2 + p3rt3.number_of_vertices() == cnt);
-#ifdef REALLY_VERBOSE
+#ifdef CGAL_P3T3_TEST_INSERT_REMOVE_VERBOSE
       std::cout << cnt << " - p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
 #endif
       if (vh == Vertex_handle())
@@ -93,14 +96,14 @@ public:
     for (; p3rt3.number_of_vertices() != 0; ++cnt)
     {
       Vertex_iterator iter = p3rt3.vertices_begin();
-      for (int j = CGAL::get_default_random().get_int(0, static_cast<int>(p3rt3.number_of_vertices())); j; --j)
+      for (int j = rng.get_int(0, static_cast<int>(p3rt3.number_of_vertices())); j; --j)
         ++iter;
-#ifdef REALLY_VERBOSE
+#ifdef CGAL_P3T3_TEST_INSERT_REMOVE_VERBOSE
       std::cout << cnt << " : " << iter->point() << std::endl;
 #endif
       remove_set.push_back(iter->point());
       p3rt3.remove(iter);
-#ifdef REALLY_VERBOSE
+#ifdef CGAL_P3T3_TEST_INSERT_REMOVE_VERBOSE
       std::cout << "    p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
 #endif
       std::size_t hidden_point_count = 0;
@@ -117,25 +120,27 @@ public:
     assert(p3rt3.is_valid());
     assert(p3rt3.number_of_stored_vertices() == 0);
   }
-
-  static void test ()
-  {
-    test_insert_rnd_then_remove_all(800);
-  }
 };
 
-int main (int, char**)
+int main (int argc, char** argv)
 {
+  unsigned pn = (argc > 1) ? std::atoi(argv[1]) : 800;
+  int seed = (argc > 2) ? std::atoi(argv[2]) : std::time(nullptr);
+
+  CGAL::Random rnd(seed);
+  std::cout << "Seed is " << rnd.get_seed() << std::endl;
+
   CGAL::Timer t;
   t.start();
+
   std::cout << "TESTING ..." << std::endl;
 
   CGAL::Set_ieee_double_precision pfr;
 
   std::cout << "Epeck ..." << std::endl;
-  Tests<CGAL::Epeck>::test();
+  Tests<CGAL::Epeck>::test(pn, rnd);
   std::cout << "Epick ..." << std::endl;
-  Tests<CGAL::Epick>::test();
+  Tests<CGAL::Epick>::test(pn, rnd);
 
   std::cout << t.time() << " sec." << std::endl;
   std::cout << "EXIT SUCCESS" << std::endl;
