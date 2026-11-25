@@ -58,7 +58,7 @@ public:
   }
 
   bool contains(const typename SearchTraits::Point_d& p) const {
-    // test whether the distance between c and p is less than the radius
+    // test whether the distance between c and p is at most the radius
     FT distance=FT(0);
     typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
         traits.construct_cartesian_const_iterator_d_object();
@@ -73,7 +73,7 @@ public:
 
   template <typename Coord_iterator>
   bool contains_point_given_as_coordinates(Coord_iterator it_coord_begin, Coord_iterator /*unused*/) const {
-    // test whether the distance between c and p is less than the radius
+    // test whether the distance between c and p is at most the radius
     FT distance = FT(0);
     typename SearchTraits::Construct_cartesian_const_iterator_d construct_it =
       traits.construct_cartesian_const_iterator_d_object();
@@ -83,7 +83,7 @@ public:
     for (; cit != end && (distance <= sq_radius); ++cit, ++it_coord_begin)
       distance += ((*cit) - (*it_coord_begin))*((*cit) - (*it_coord_begin));
 
-    return (distance < sq_radius);
+    return (distance <= sq_radius);
   }
 
   bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
