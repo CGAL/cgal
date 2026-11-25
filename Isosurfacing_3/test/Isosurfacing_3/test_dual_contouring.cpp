@@ -99,9 +99,10 @@ void test_implicit_shape(std::function<typename K::FT(const typename K::Point_3&
 
   std::size_t inside_count = 0;
   for (std::size_t i = 0; i < num_samples; ++i) {
-    Point sample(rng.get_double(bbox.xmin(), bbox.xmax()),
-                 rng.get_double(bbox.ymin(), bbox.ymax()),
-                 rng.get_double(bbox.zmin(), bbox.zmax()));
+    const double x = rng.get_double(bbox.xmin(), bbox.xmax());
+    const double y = rng.get_double(bbox.ymin(), bbox.ymax());
+    const double z = rng.get_double(bbox.zmin(), bbox.zmax());
+    Point sample(x, y, z);
     if (implicit_function(sample) <= isovalue) {
       ++inside_count;
     }

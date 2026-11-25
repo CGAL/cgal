@@ -39,17 +39,19 @@ CGAL::Random rng;
 
 template<class Kernel = K>
 typename Kernel::Point_3 random_point(const CGAL::Bbox_3& bb){
-  return typename Kernel::Point_3(rng.get_double(bb.xmin(), bb.xmax()),
-                                  rng.get_double(bb.ymin(), bb.ymax()),
-                                  rng.get_double(bb.zmin(), bb.zmax()));
+  const double x = rng.get_double(bb.xmin(), bb.xmax());
+  const double y = rng.get_double(bb.ymin(), bb.ymax());
+  const double z = rng.get_double(bb.zmin(), bb.zmax());
+  return typename Kernel::Point_3(x, y, z);
 }
 
 Vector random_vector(){
   Vector v;
   do{
-    v = Vector(rng.get_double(-1., 1.),
-               rng.get_double(-1., 1.),
-               rng.get_double(-1., 1.));
+    const double x = rng.get_double(-1., 1.);
+    const double y = rng.get_double(-1., 1.);
+    const double z = rng.get_double(-1., 1.);
+    v = Vector(x, y, z);
   } while(v.squared_length() < 1e-12);
   return v;
 }
@@ -75,8 +77,11 @@ void benchmark_queries(const Mesh& mesh)
   CGAL::Bbox_3 bb = PMP::bbox(mesh);
   constexpr std::size_t N = 100000;
   // Warm-up
-  for(int i=0;i<10000;++i)
-    tree.do_intersect(Segment(random_point(bb), random_point(bb)));
+  for(int i=0;i<10000;++i) {
+    const Point p = random_point(bb);
+    const Point q = random_point(bb);
+    tree.do_intersect(Segment(p, q));
+  }
   std::cout << std::fixed << std::setprecision(0);
 
   auto print = [](const std::string& name, double value)  {
@@ -130,10 +135,10 @@ void benchmark_queries(const Mesh& mesh)
       }, N));                                                                \
   }
 
-  BENCHMARK(Segment, [&](){ return Segment(random_point(bb), random_point(bb)); });
-  BENCHMARK(Ray, [&](){ return Ray(random_point(bb), random_vector()); });
-  BENCHMARK(Line, [&](){ return Line(random_point(bb), random_point(bb)); });
-  BENCHMARK(Plane, [&](){ return Plane(random_point(bb), random_vector()); });
+  BENCHMARK(Segment, [&](){ const Point p = random_point(bb); const Point q = random_point(bb); return Segment(p, q); });
+  BENCHMARK(Ray, [&](){ const Point p = random_point(bb); const Vector v = random_vector(); return Ray(p, v); });
+  BENCHMARK(Line, [&](){ const Point p = random_point(bb); const Point q = random_point(bb); return Line(p, q); });
+  BENCHMARK(Plane, [&](){ const Point p = random_point(bb); const Vector v = random_vector(); return Plane(p, v); });
 #undef BENCHMARK
 }
 
@@ -157,7 +162,9 @@ void benchmark_kernel(const std::string &filename, const std::string &kernel_nam
   CGAL::Real_timer t;
   t.start();
   for(std::size_t i=0;i<N;++i){
-      Segment s(random_point<Kernel>(bb), random_point<Kernel>(bb));
+      const typename Kernel::Point_3 p = random_point<Kernel>(bb);
+      const typename Kernel::Point_3 q = random_point<Kernel>(bb);
+      Segment s(p, q);
       using Intersection = typename Tree::template Intersection_and_primitive_id<Segment>::Type;
       std::vector<Intersection> out;
       tree.all_intersections(s, std::back_inserter(out));

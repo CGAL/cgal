@@ -316,9 +316,10 @@ int main (int argc, char** argv)
                              {
                                // Random color seeded by the component ID
                                CGAL::Random r (ff.first->info());
-                               color_map[ff.second] = CGAL::IO::Color (r.get_int(64, 192),
-                                                                   r.get_int(64, 192),
-                                                                   r.get_int(64, 192));
+                               const int red = r.get_int(64, 192);
+                               const int green = r.get_int(64, 192);
+                               const int blue = r.get_int(64, 192);
+                               color_map[ff.second] = CGAL::IO::Color (red, green, blue);
                              }
                            })));
 

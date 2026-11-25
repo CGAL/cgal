@@ -158,9 +158,10 @@ void random_test(CGAL::Random& r)
   // Use 10 triangles, 100 queries for each triangle
   for ( int i=0 ; i<10 ; ++i )
   {
-    Triangle t(random_point_in<K>(bbox, r),
-               random_point_in<K>(bbox, r),
-               random_point_in<K>(bbox, r));
+    const Point t0 = random_point_in<K>(bbox, r);
+    const Point t1 = random_point_in<K>(bbox, r);
+    const Point t2 = random_point_in<K>(bbox, r);
+    Triangle t(t0, t1, t2);
 
     if ( is_degenerate(t) )
       continue;

@@ -58,8 +58,12 @@ int main()
 
   Delaunay3d D;
   for (int i=0; i<100; i++)
-    D.insert(K::Point_3(NT(my_rand()), NT(my_rand()), NT(my_rand()),
-                          NT(my_rand()) // for homogeneous
-                        ));
+  {
+    const int x = my_rand();
+    const int y = my_rand();
+    const int z = my_rand();
+    const int w = my_rand(); // for homogeneous
+    D.insert(K::Point_3(NT(x), NT(y), NT(z), NT(w)));
+  }
   return 0;
 }

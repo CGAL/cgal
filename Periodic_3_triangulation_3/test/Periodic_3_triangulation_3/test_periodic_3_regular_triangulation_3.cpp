@@ -674,7 +674,9 @@ public:
 
     while (points.size() != pt_count)
     {
-      Weighted_point_3 p(*in_cube++, random.get_double(0., 0.015625));
+      const Point_3 bp = *in_cube++;
+      const double w = random.get_double(0., 0.015625);
+      Weighted_point_3 p(bp, w);
       points.push_back(p);
     }
 
@@ -779,7 +781,9 @@ public:
 
     for(int i=0; i<800; ++i)
     {
-      Weighted_point_3 p(*in_cube++, random.get_double(0., 0.015625));
+      const Point_3 bp = *in_cube++;
+      const double w = random.get_double(0., 0.015625);
+      Weighted_point_3 p(bp, w);
       points.push_back(p);
     }
 

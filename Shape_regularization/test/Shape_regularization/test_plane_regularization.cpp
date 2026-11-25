@@ -33,9 +33,9 @@ void generate_random_points(
 
   // Vector noise = 0.00001 * normal;
   for (std::size_t i = 0; i < nb_pts; ++i) {
-    const Point point = origin
-      + CGAL::get_default_random().get_double() * base1
-      + CGAL::get_default_random().get_double() * base2;
+    const double s = CGAL::get_default_random().get_double();
+    const double t = CGAL::get_default_random().get_double();
+    const Point point = origin + s * base1 + t * base2;
       // + CGAL::get_default_random().get_double() * noise;
       *(output++) = std::make_pair(point, normal);
   }

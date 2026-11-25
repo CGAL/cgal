@@ -995,11 +995,12 @@ public Q_SLOTS:
 
   void add_new_label (Item_classification_base* classif, const std::string& name)
   {
+    const int r = 64 + rand() % 192;
+    const int g = 64 + rand() % 192;
+    const int b = 64 + rand() % 192;
     add_new_label (LabelButton (dock_widget,
                                 name.c_str(),
-                                QColor (64 + rand() % 192,
-                                        64 + rand() % 192,
-                                        64 + rand() % 192),
+                                QColor (r, g, b),
                                 get_shortcut (label_buttons.size(), name.c_str())));
     QColor color = classif->add_new_label (name.c_str());
     label_buttons.back().change_color (color);

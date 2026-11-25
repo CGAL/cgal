@@ -79,11 +79,10 @@ void save_point_regions_3(
   for (const auto& region : regions) {
 
     // Generate a random color.
-    const Color color =
-      CGAL::make_array(
-        static_cast<unsigned char>(rand() % 256),
-        static_cast<unsigned char>(rand() % 256),
-        static_cast<unsigned char>(rand() % 256));
+    const unsigned char r = static_cast<unsigned char>(rand() % 256);
+    const unsigned char g = static_cast<unsigned char>(rand() % 256);
+    const unsigned char b = static_cast<unsigned char>(rand() % 256);
+    const Color color = CGAL::make_array(r, g, b);
 
     // Iterate through all region items.
     for (const auto item : region.second) {

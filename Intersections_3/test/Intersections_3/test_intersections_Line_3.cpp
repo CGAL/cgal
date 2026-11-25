@@ -154,7 +154,9 @@ public:
         P l0 = random_point(), l1 = random_point();
 
         Pl pl(pl0, pl1, pl2);
-        P pl3 = pl0 + FT(this->r.get_double()) * V(pl1 - pl0) + FT(this->r.get_double()) * V(pl1 - pl0);
+        const double t0 = this->r.get_double();
+        const double t1 = this->r.get_double();
+        P pl3 = pl0 + FT(t0) * V(pl1 - pl0) + FT(t1) * V(pl1 - pl0);
         if(pl.has_on(l1))
           Base::check_intersection(L(pl3, l1), pl, L(pl3, l1)); // both points on the plane
         else

@@ -45,7 +45,11 @@ struct PTR_random_pts_generator<Parallel_triangulation, CGAL::Tag_true /*weighte
 
     points.reserve(num);
     for(int i=0; i!=num; ++i)
-      points.push_back(Weighted_point(*gen++, rnd.get_double(-1., 1.)));
+    {
+      const Bare_point p = *gen++;
+      const double w = rnd.get_double(-1., 1.);
+      points.push_back(Weighted_point(p, w));
+    }
   }
 };
 

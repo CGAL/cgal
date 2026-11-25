@@ -775,13 +775,15 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
    int circle_random1_r = theRandom.get_int(1, random_max);
    Point_2 p_random1;
    do{
-     p_random1 = Point_2(theRandom.get_int(random_min, random_max) * circle_random1_r,
-                         theRandom.get_int(random_min, random_max) * circle_random1_r);
+     const int x = theRandom.get_int(random_min, random_max);
+     const int y = theRandom.get_int(random_min, random_max);
+     p_random1 = Point_2(x * circle_random1_r, y * circle_random1_r);
    }while(p_random1 == center_circle_random1);
    Point_2 p_random2;
    do{
-     p_random2 = Point_2(theRandom.get_int(random_min, random_max) * circle_random1_r,
-                         theRandom.get_int(random_min, random_max) * circle_random1_r);
+     const int x = theRandom.get_int(random_min, random_max);
+     const int y = theRandom.get_int(random_min, random_max);
+     p_random2 = Point_2(x * circle_random1_r, y * circle_random1_r);
    }while(p_random2 == center_circle_random1);
    Circle_2 circle_random1(center_circle_random1, circle_random1_r * circle_random1_r);
    Circular_arc_2 arc_random_1(circle_random1,
@@ -831,13 +833,15 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
      Make_x_monotone_2 theMake_x_monotone = ck.make_x_monotone_2_object();
      Point_2 p_random3;
      do{
-       p_random3 = Point_2(theRandom.get_int(random_min, random_max),
-                           theRandom.get_int(random_min, random_max));
+       const int x = theRandom.get_int(random_min, random_max);
+       const int y = theRandom.get_int(random_min, random_max);
+       p_random3 = Point_2(x, y);
      }while(p_random3 == center_circle_random1);
      Point_2 p_random4;
      do{
-       p_random4 = Point_2(theRandom.get_int(random_min, random_max),
-                           theRandom.get_int(random_min, random_max));
+       const int x = theRandom.get_int(random_min, random_max);
+       const int y = theRandom.get_int(random_min, random_max);
+       p_random4 = Point_2(x, y);
      } while (p_random4 == center_circle_random1 || (p_random3 == p_random4));
 
      std::vector< Intersection_result >

@@ -49,7 +49,10 @@ int main() {
         for(int i = 0; i < number_triangles; ++i) {
                 Point_3 pts[3];
                 for(int j = 0; j < 3; ++j) {
-                        pts[j]=Point_3(rand.get_double(),rand.get_double(),rand.get_double());
+                        const double x = rand.get_double();
+                        const double y = rand.get_double();
+                        const double z = rand.get_double();
+                        pts[j]=Point_3(x,y,z);
                 }
                 Triangle_3 tri(pts[0],pts[1],pts[2]);
                 Point_generator g1( pts[0], pts[1], pts[2] );

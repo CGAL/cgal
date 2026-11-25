@@ -54,12 +54,16 @@ Segment_2 scale_segment(const Segment_2 &s){
 
 Point_2 random_point(CGAL::Random& r, double m = -1, double M = 1)
 {
-  return Point_2(FT(r.get_double(m, M)), FT(r.get_double(m, M)));
+  const double x = r.get_double(m, M);
+  const double y = r.get_double(m, M);
+  return Point_2(FT(x), FT(y));
 }
 
 Point_2 random_noise_point(CGAL::Random& r, double m, double M, const Vector_2 &v)
 {
-  return Point_2(FT(r.get_double(m, M) + CGAL::to_double(v.x())), FT(r.get_double(m, M)  + CGAL::to_double(v.y())));
+  const double x = r.get_double(m, M);
+  const double y = r.get_double(m, M);
+  return Point_2(FT(x + CGAL::to_double(v.x())), FT(y + CGAL::to_double(v.y())));
 }
 
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
@@ -162,8 +166,11 @@ void test_fully_random(CGAL::Random &r, size_t nb_segments){
   std::cout << "Test fully random" << std::endl;
 #endif
   std::vector<Segment_2> segs;
-  for(size_t i=0; i!=nb_segments; ++i)
-    segs.emplace_back(random_point(r), random_point(r));
+  for(size_t i=0; i!=nb_segments; ++i){
+    const Point_2 s = random_point(r);
+    const Point_2 t = random_point(r);
+    segs.emplace_back(s, t);
+  }
 
   test(segs);
 }
@@ -199,8 +206,11 @@ void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
   std::vector<Polygon_2> polygons;
   for(size_t i=0; i!=nb_polygons; ++i){
     Polygon_2 poly;
-    for(size_t j=0; j!=nb_pts; ++j)
-      poly.push_back(Point_2(random_point(r), random_point(r)));
+    for(size_t j=0; j!=nb_pts; ++j){
+      const Point_2 s = random_point(r);
+      const Point_2 t = random_point(r);
+      poly.push_back(Point_2(s, t));
+    }
     polygons.emplace_back(poly);
   }
 
@@ -236,7 +246,9 @@ void test_almost_identical_segments(CGAL::Random &r, size_t nb_segments, Vector_
   std::vector<Segment_2> segs;
   double eps=std::pow(2,-40);
   for(size_t i=0; i!=nb_segments; ++i){
-    segs.emplace_back(random_noise_point(r, -eps, eps, source), random_noise_point(r, -eps, eps, target));
+    const Point_2 s = random_noise_point(r, -eps, eps, source);
+    const Point_2 t = random_noise_point(r, -eps, eps, target);
+    segs.emplace_back(s, t);
   }
 
   test(segs);

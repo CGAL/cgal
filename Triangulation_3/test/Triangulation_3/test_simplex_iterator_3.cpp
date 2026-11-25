@@ -358,12 +358,14 @@ int main(int argc, char* argv[])
   for (int i = 0; i < nb_seg; ++i)
   {
     // Construct a traverser.
-    Point_3 p1(rng.get_double(-0.48, 0.31),
-               rng.get_double(-0.22, 0.22),
-               rng.get_double(-0.19, 0.19));
-    Point_3 p2(rng.get_double(-0.48, 0.31),
-               rng.get_double(-0.22, 0.22),
-               rng.get_double(-0.19, 0.19));
+    const double x1 = rng.get_double(-0.48, 0.31);
+    const double y1 = rng.get_double(-0.22, 0.22);
+    const double z1 = rng.get_double(-0.19, 0.19);
+    const double x2 = rng.get_double(-0.48, 0.31);
+    const double y2 = rng.get_double(-0.22, 0.22);
+    const double z2 = rng.get_double(-0.19, 0.19);
+    Point_3 p1(x1, y1, z1);
+    Point_3 p2(x2, y2, z2);
 
     std::cout << "Traverser " << (i + 1)
       << "\n\t(" << p1

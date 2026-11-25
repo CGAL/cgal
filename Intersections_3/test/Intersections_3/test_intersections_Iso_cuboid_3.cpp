@@ -166,16 +166,16 @@ public:
       P mp = p(mx, my, mz), Mp = p(Mx, My, Mz);
       Cub cub(mp, Mp);
 
-      P q1 = p(this->r.get_int(mx - this->M, mx - 1), this->r.get_int(my, My), this->r.get_int(mz, Mz)),
-        q2 = p(this->r.get_int(Mx + 1, Mx + this->M), this->r.get_int(my, My), this->r.get_int(mz, Mz));
+      P q1 = this->random_point(mx - this->M, mx - 1, my, My, mz, Mz),
+        q2 = this->random_point(Mx + 1, Mx + this->M, my, My, mz, Mz);
       assert(!cub.has_on_bounded_side(q1) && !cub.has_on_bounded_side(q2));
 
       L l(q1, q2);
       Base::template check_intersection<S>(cub, l);
       Base::template check_intersection<S>(cub, l, S(q1, q2), cub);
 
-      q1 = p(this->r.get_int(mx, Mx), this->r.get_int(my - this->M, my), this->r.get_int(mz, Mz)),
-      q2 = p(this->r.get_int(mx+1, Mx), this->r.get_int(my+1, My), this->r.get_int(mz+1, Mz));
+      q1 = this->random_point(mx, Mx, my - this->M, my, mz, Mz),
+      q2 = this->random_point(mx+1, Mx, my+1, My, mz+1, Mz);
       assert(cub.has_on_unbounded_side(q1) && cub.has_on_bounded_side(q2));
 
       l = L(q1, q2);
@@ -367,8 +367,8 @@ public:
       P mp = p(mx, my, mz), Mp = p(Mx, My, Mz);
       Cub cub(mp, Mp);
 
-      P s0 = p(this->r.get_int(mx, Mx), this->r.get_int(my - this->M, my), this->r.get_int(mz, Mz)),
-        s1 = p(this->r.get_int(mx, Mx), this->r.get_int(My, My + this->M), this->r.get_int(mz, Mz));
+      P s0 = this->random_point(mx, Mx, my - this->M, my, mz, Mz),
+        s1 = this->random_point(mx, Mx, My, My + this->M, mz, Mz);
       assert(!cub.has_on_bounded_side(s0) && !cub.has_on_bounded_side(s1));
 
       if(CGAL::do_intersect(cub, S(s0, s1)))
@@ -377,7 +377,7 @@ public:
         check_intersection(cub, S(s0, s1), R(s0, s1), cub);
       }
 
-      s1 = p(this->r.get_int(mx, Mx), this->r.get_int(my, My), this->r.get_int(mz, Mz));
+      s1 = this->random_point(mx, Mx, my, My, mz, Mz);
       assert(!cub.has_on_unbounded_side(s1));
 
       check_do_intersect(cub, S(s0, s1));
@@ -421,7 +421,7 @@ public:
       P mp = p(mx, my, mz), Mp = p(Mx, My, Mz);
       Cub cub(mp, Mp);
 
-      P c = p(this->r.get_int(this->m, this->M), this->r.get_int(this->m, this->M), this->r.get_int(this->m, this->M));
+      P c = this->random_point(this->m, this->M, this->m, this->M, this->m, this->M);
 
       // smallest distance to the iso cuboid, manually...
       FT sq_r = CGAL::squared_distance(c, Tr(p(mx, my, mz), p(Mx, my, mz), p(mx, my, Mz)));
@@ -527,10 +527,10 @@ public:
       P mp = p(mx, my, mz), Mp = p(Mx, My, Mz);
       Cub cub(mp, Mp);
 
-      P c = p(this->r.get_int(mx, Mx), this->r.get_int(my, My), this->r.get_int(mz, Mz));
-      P q1 = p(this->r.get_int(this->m, this->M), this->r.get_int(this->m, this->M), this->r.get_int(this->m, this->M)),
-        q2 = p(this->r.get_int(this->m, this->M), this->r.get_int(this->m, this->M), this->r.get_int(this->m, this->M)),
-        q3 = p(this->r.get_int(this->m, this->M), this->r.get_int(this->m, this->M), this->r.get_int(this->m, this->M));
+      P c = this->random_point(mx, Mx, my, My, mz, Mz);
+      P q1 = this->random_point(this->m, this->M, this->m, this->M, this->m, this->M),
+        q2 = this->random_point(this->m, this->M, this->m, this->M, this->m, this->M),
+        q3 = this->random_point(this->m, this->M, this->m, this->M, this->m, this->M);
 
       Tet tet(c, q1, q2, q3);
       if(!tet.is_degenerate())
@@ -616,9 +616,9 @@ public:
       P mp = p(mx, my, mz), Mp = p(Mx, My, Mz);
       Cub rcub(mp, Mp);
 
-      P q1 = p(this->r.get_int(mx, Mx), this->r.get_int(my, My), this->r.get_int(mz, Mz)),
-        q2 = p(this->r.get_int(mx, Mx), this->r.get_int(my, My), this->r.get_int(mz, Mz)),
-        q3 = p(this->r.get_int(mx, Mx), this->r.get_int(my, My), this->r.get_int(mz, Mz));
+      P q1 = this->random_point(mx, Mx, my, My, mz, Mz),
+        q2 = this->random_point(mx, Mx, my, My, mz, Mz),
+        q3 = this->random_point(mx, Mx, my, My, mz, Mz);
       Tr rtr(q1, q2, q3);
 
       check_intersection(rcub, rtr, rtr);

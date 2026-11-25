@@ -64,7 +64,12 @@ namespace Tetrahedral_remeshing
     // points in a sphere
     std::vector<Point> pts;
     while (pts.size() < n)
-      pts.push_back(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+    {
+      const double x = rng.get_double(-1., 1.);
+      const double y = rng.get_double(-1., 1.);
+      const double z = rng.get_double(-1., 1.);
+      pts.push_back(Point(x, y, z));
+    }
     tr.insert(pts.begin(), pts.end());
 
     for (auto v : tr.finite_vertex_handles())

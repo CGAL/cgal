@@ -47,9 +47,10 @@ namespace internal {
     typedef typename GT::FT FT;
     typename GT::Construct_vector_3 vec = gt.construct_vector_3_object();
 
-    return vec(FT(rng.get_double(-max_size, max_size)),
-               FT(rng.get_double(-max_size, max_size)),
-               FT(rng.get_double(-max_size, max_size)));
+    const double x = rng.get_double(-max_size, max_size);
+    const double y = rng.get_double(-max_size, max_size);
+    const double z = rng.get_double(-max_size, max_size);
+    return vec(FT(x), FT(y), FT(z));
   }
 
   template<typename GT, typename VertexRange,

@@ -132,10 +132,10 @@ Random_points_in_cube_3<P,Creator>::
 generate_point() {
     typedef typename Creator::argument_type T;
     Creator creator;
-    this->d_item =
-             creator( T(this->d_range * ( 2 * this->_rnd.get_double() - 1.0)),
-                      T(this->d_range * ( 2 * this->_rnd.get_double() - 1.0)),
-                      T(this->d_range * ( 2 * this->_rnd.get_double() - 1.0)));
+    const double x = this->d_range * (2 * this->_rnd.get_double() - 1.0);
+    const double y = this->d_range * (2 * this->_rnd.get_double() - 1.0);
+    const double z = this->d_range * (2 * this->_rnd.get_double() - 1.0);
+    this->d_item = creator(T(x), T(y), T(z));
 }
 
 

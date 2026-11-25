@@ -76,9 +76,10 @@ void generate_objects_centered_on_points (const std::vector<Point_3>& source,
 void generate_objects_centered_on_points (const std::vector<Point_3>& source,
                                           std::vector<Segment_3>& target)
 {
-  Vector_3 diff (rnd.get_double(0, 0.01),
-                 rnd.get_double(0, 0.01),
-                 rnd.get_double(0, 0.01));
+  const double dx = rnd.get_double(0, 0.01);
+  const double dy = rnd.get_double(0, 0.01);
+  const double dz = rnd.get_double(0, 0.01);
+  Vector_3 diff (dx, dy, dz);
 
   target.reserve (source.size());
   for (std::size_t i = 0; i < source.size(); ++ i)
@@ -88,8 +89,9 @@ void generate_objects_centered_on_points (const std::vector<Point_3>& source,
 void generate_objects_centered_on_points (const std::vector<Point_3>& source,
                                           std::vector<Segment_2>& target)
 {
-  Vector_2 diff (rnd.get_double(0, 0.01),
-                 rnd.get_double(0, 0.01));
+  const double dx = rnd.get_double(0, 0.01);
+  const double dy = rnd.get_double(0, 0.01);
+  Vector_2 diff (dx, dy);
 
   target.reserve (source.size());
   for (std::size_t i = 0; i < source.size(); ++ i)
@@ -174,9 +176,10 @@ void generate_objects_centered_on_points (const std::vector<Point_3>& source,
 void generate_objects_centered_on_points (const std::vector<Point_3>& source,
                                           std::vector<Iso_cuboid_3>& target)
 {
-  Vector_3 diff (rnd.get_double(0, 0.01),
-                 rnd.get_double(0, 0.01),
-                 rnd.get_double(0, 0.01));
+  const double dx = rnd.get_double(0, 0.01);
+  const double dy = rnd.get_double(0, 0.01);
+  const double dz = rnd.get_double(0, 0.01);
+  Vector_3 diff (dx, dy, dz);
 
   target.reserve (source.size());
   for (std::size_t i = 0; i < source.size(); ++ i)
@@ -186,8 +189,9 @@ void generate_objects_centered_on_points (const std::vector<Point_3>& source,
 void generate_objects_centered_on_points (const std::vector<Point_3>& source,
                                           std::vector<Iso_rectangle_2>& target)
 {
-  Vector_2 diff (rnd.get_double(0, 0.01),
-                 rnd.get_double(0, 0.01));
+  const double dx = rnd.get_double(0, 0.01);
+  const double dy = rnd.get_double(0, 0.01);
+  Vector_2 diff (dx, dy);
 
   target.reserve (source.size());
   for (std::size_t i = 0; i < source.size(); ++ i)
@@ -274,9 +278,16 @@ int main()
 {
   std::cerr << "Validity test with seed " << rnd.get_seed() << std::endl;
 
-  Point_3 origin (rnd.get_double(), rnd.get_double(), rnd.get_double());
-  Vector_3 base1 (rnd.get_double(), rnd.get_double(), rnd.get_double());
-  Vector_3 base2 (rnd.get_double(), rnd.get_double(), rnd.get_double());
+  auto random_vector = [&]() {
+    const double x = rnd.get_double();
+    const double y = rnd.get_double();
+    const double z = rnd.get_double();
+    return Vector_3(x, y, z);
+  };
+  const Vector_3 o = random_vector();
+  Point_3 origin (o.x(), o.y(), o.z());
+  Vector_3 base1 = random_vector();
+  Vector_3 base2 = random_vector();
 
   std::cerr << "Origin = " << origin << std::endl
             << "Base1 = " << base1 << std::endl

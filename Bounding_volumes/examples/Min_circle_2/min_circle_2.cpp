@@ -19,7 +19,9 @@ main( int, char**)
     CGAL::Random  r;                     // random number generator
 
     for ( int i = 0; i < n; ++i){
-      P.at(i) = Point(r.get_double(), r.get_double());
+      const double x = r.get_double();
+      const double y = r.get_double();
+      P.at(i) = Point(x, y);
     }
 
     Min_circle  mc( P.begin(), P.end());

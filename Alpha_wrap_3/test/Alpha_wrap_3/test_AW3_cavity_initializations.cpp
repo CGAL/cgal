@@ -33,9 +33,12 @@ void generate_random_seeds(const Oracle& oracle,
 
   while(seeds.size() < 3)
   {
-    const Point_3 seed (bbox.xmin() + r.get_double(0., 1.) * (bbox.xmax() - bbox.xmin()),
-                        bbox.ymin() + r.get_double(0., 1.) * (bbox.ymax() - bbox.ymin()),
-                        bbox.zmin() + r.get_double(0., 1.) * (bbox.zmax() - bbox.zmin()));
+    const double rx = r.get_double(0., 1.);
+    const double ry = r.get_double(0., 1.);
+    const double rz = r.get_double(0., 1.);
+    const Point_3 seed (bbox.xmin() + rx * (bbox.xmax() - bbox.xmin()),
+                        bbox.ymin() + ry * (bbox.ymax() - bbox.ymin()),
+                        bbox.zmin() + rz * (bbox.zmax() - bbox.zmin()));
 
     const FT sqd = oracle.squared_distance(seed);
 #ifdef CGAL_AW3_DEBUG

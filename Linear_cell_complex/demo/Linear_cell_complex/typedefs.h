@@ -39,6 +39,14 @@
 // Global random
 extern CGAL::Random myrandom;
 
+inline CGAL::IO::Color random_color()
+{
+  const int r = myrandom.get_int(0,256);
+  const int g = myrandom.get_int(0,256);
+  const int b = myrandom.get_int(0,256);
+  return CGAL::IO::Color(r, g, b);
+}
+
 // Use to define properties on volumes.
 #define LCC_DEMO_VISIBLE 1 // if not visible => hidden
 #define LCC_DEMO_FILLED  2 // if not filled, wireframe
@@ -51,9 +59,7 @@ class Volume_info
   friend void CGAL::write_cmap_attribute_node<Volume_info>(boost::property_tree::ptree & node,
                                                            const Volume_info& arg);
 public:
-  Volume_info() : m_color(CGAL::IO::Color(myrandom.get_int(0,256),
-                                      myrandom.get_int(0,256),
-                                      myrandom.get_int(0,256))),
+  Volume_info() : m_color(random_color()),
     m_status( LCC_DEMO_VISIBLE | LCC_DEMO_FILLED )
   {}
 

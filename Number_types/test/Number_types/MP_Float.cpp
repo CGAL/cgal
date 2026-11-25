@@ -101,7 +101,9 @@ void test_integral_division()
   assert( ! CGAL::divides(MPF(3), MPF(1)) );
   assert( ! CGAL::divides(MPF(7), MPF(2)) );
   // test if we're lucky :)
-  assert( ! CGAL::divides(MPF(non_zero_double()), MPF(non_zero_double())) );
+  const double d1 = non_zero_double();
+  const double d2 = non_zero_double();
+  assert( ! CGAL::divides(MPF(d1), MPF(d2)) );
 }
 
 void test_equality(int i)

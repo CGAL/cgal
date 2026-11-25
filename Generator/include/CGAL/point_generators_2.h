@@ -131,9 +131,9 @@ Random_points_in_square_2<P,Creator>::
 generate_point() {
     typedef typename Creator::argument_type  T;
     Creator creator;
-    this->d_item =
-            creator( T(this->d_range * (2 * this->_rnd.get_double() - 1.0)),
-                     T(this->d_range * (2 * this->_rnd.get_double() - 1.0)));
+    const double x = this->d_range * (2 * this->_rnd.get_double() - 1.0);
+    const double y = this->d_range * (2 * this->_rnd.get_double() - 1.0);
+    this->d_item = creator(T(x), T(y));
 }
 
 
@@ -225,9 +225,9 @@ Random_points_in_iso_rectangle_2<P,Creator>::
 generate_point() {
     typedef typename Creator::argument_type  T;
     Creator creator;
-    this->d_item =
-            creator( T(this->_rnd.get_double(left,right)),
-                     T(this->_rnd.get_double(top,bottom)));
+    const double x = this->_rnd.get_double(left,right);
+    const double y = this->_rnd.get_double(top,bottom);
+    this->d_item = creator(T(x), T(y));
 }
 
 

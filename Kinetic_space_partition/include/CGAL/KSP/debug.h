@@ -44,15 +44,18 @@ inline const std::tuple<unsigned char, unsigned char, unsigned char>
 get_idx_color(std::size_t idx) {
 
   CGAL::Random rand(static_cast<unsigned int>(idx));
-  return std::make_tuple(
-    static_cast<unsigned char>(rand.get_int(32, 192)),
-    static_cast<unsigned char>(rand.get_int(32, 192)),
-    static_cast<unsigned char>(rand.get_int(32, 192)));
+  const unsigned char r = static_cast<unsigned char>(rand.get_int(32, 192));
+  const unsigned char g = static_cast<unsigned char>(rand.get_int(32, 192));
+  const unsigned char b = static_cast<unsigned char>(rand.get_int(32, 192));
+  return std::make_tuple(r, g, b);
 }
 
 inline CGAL::IO::Color get_color(std::size_t idx) {
   CGAL::Random rand(static_cast<unsigned int>(idx));
-  return CGAL::IO::Color(rand.get_int(32, 192), rand.get_int(32, 192), rand.get_int(32, 192));
+  const int r = rand.get_int(32, 192);
+  const int g = rand.get_int(32, 192);
+  const int b = rand.get_int(32, 192);
+  return CGAL::IO::Color(r, g, b);
 }
 
 template<typename DS>

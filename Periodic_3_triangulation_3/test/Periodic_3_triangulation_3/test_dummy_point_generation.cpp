@@ -123,9 +123,10 @@ int main (int argc, char** argv)
 
   for(int i=0; i<10; ++i)
   {
-    test<P3DT3>(rnd.get_double(0.01, 1.),
-                rnd.get_double(0.01, 1.),
-                rnd.get_double(0.01, 1.));
+    const double x = rnd.get_double(0.01, 1.);
+    const double y = rnd.get_double(0.01, 1.);
+    const double z = rnd.get_double(0.01, 1.);
+    test<P3DT3>(x, y, z);
   }
 
   for(int i=1; i<5; ++i)

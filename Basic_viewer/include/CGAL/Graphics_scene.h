@@ -48,9 +48,10 @@ inline CGAL::IO::Color get_random_color(CGAL::Random& random)
   CGAL::IO::Color res;
   do
   {
-    res=CGAL::IO::Color(random.get_int(0,256),
-                        random.get_int(0,256),
-                        random.get_int(0,256));
+    const int r = random.get_int(0,256);
+    const int g = random.get_int(0,256);
+    const int b = random.get_int(0,256);
+    res=CGAL::IO::Color(r, g, b);
   }
   while(res.red()==255 && res.green()==255 && res.blue()==255);
   return res;

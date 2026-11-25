@@ -1111,7 +1111,9 @@ _test_cls_delaunay_3(const Triangulation &)
   // non-degenerate cases
   points.clear(); TM_2.clear();
   for(int count=0; count<10; count++) {
-    points.push_back(Point(0, rand()%30000, rand()%30000));
+    const int y = rand()%30000;
+    const int z = rand()%30000;
+    points.push_back(Point(0, y, z));
   }
   TM_2.insert(points.begin(), points.end());
         Vertex_handle vTM_2;
@@ -1119,7 +1121,9 @@ _test_cls_delaunay_3(const Triangulation &)
     for(typename Cls::Finite_vertices_iterator
          fvi = TM_2.finite_vertices_begin();
          fvi != TM_2.finite_vertices_end(); fvi++) {
-      Point p = Point(0, rand()%30000, rand()%30000);
+      const int y = rand()%30000;
+      const int z = rand()%30000;
+      Point p = Point(0, y, z);
       vTM_2 = TM_2.move_if_no_collision(fvi, p);
       assert(TM_2.is_valid());
     }
@@ -1131,7 +1135,10 @@ _test_cls_delaunay_3(const Triangulation &)
   // non-degenerate cases
   points.clear(); TM_3.clear();
   for(int count=0; count<50; count++) {
-    points.push_back(Point(rand()%30000, rand()%30000, rand()%30000));
+    const int x = rand()%30000;
+    const int y = rand()%30000;
+    const int z = rand()%30000;
+    points.push_back(Point(x, y, z));
   }
   TM_3.insert(points.begin(), points.end());
 
@@ -1142,7 +1149,10 @@ _test_cls_delaunay_3(const Triangulation &)
     for(typename Cls::Finite_vertices_iterator
           fvi = TM_3.finite_vertices_begin();
         fvi != TM_3.finite_vertices_end(); fvi++) {
-      Point p = Point(rand()%30000, rand()%30000, rand()%30000);
+      const int x = rand()%30000;
+      const int y = rand()%30000;
+      const int z = rand()%30000;
+      Point p = Point(x, y, z);
       vTM_3 = TM_3.move_if_no_collision(fvi, p);
       assert(TM_3.is_valid());
     }

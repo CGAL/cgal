@@ -56,7 +56,11 @@ int main(int argc,char** argv)
 
   std::mt19937 gen(1234);
   std::uniform_real_distribution<> dis(1.0, 2.0);
-  for(int i=0;i<n;++i)points.emplace_back(dis(gen),dis(gen));
+  for(int i=0;i<n;++i){
+    const double x = dis(gen);
+    const double y = dis(gen);
+    points.emplace_back(x,y);
+  }
 
   CGAL::Timer timer;
   timer.start();

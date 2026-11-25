@@ -49,7 +49,10 @@ void test(const char* name, Algorithm algorithm)
   Point_set points(true);
   for (int i = 0; i < 1000; ++i)
   {
-    Vector_3 v(rnd.get_double(-1., 1.), rnd.get_double(-1., 1.), rnd.get_double(-1., 1.));
+    const double x = rnd.get_double(-1., 1.);
+    const double y = rnd.get_double(-1., 1.);
+    const double z = rnd.get_double(-1., 1.);
+    Vector_3 v(x, y, z);
     v = v / std::sqrt(v.squared_length());
     points.insert(CGAL::ORIGIN + v * (1. + rnd.get_double(-0.01, 0.01)), v);
   }

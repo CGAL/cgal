@@ -197,10 +197,12 @@ public:
     std::string sname (name);
     auto found = init_map.find (sname);
     if (found == init_map.end())
-      return add (name,
-                  CGAL::IO::Color ((unsigned char)(m_random.get_int(64, 192)),
-                               (unsigned char)(m_random.get_int(64, 192)),
-                               (unsigned char)(m_random.get_int(64, 192))));
+    {
+      const unsigned char r = (unsigned char)(m_random.get_int(64, 192));
+      const unsigned char g = (unsigned char)(m_random.get_int(64, 192));
+      const unsigned char b = (unsigned char)(m_random.get_int(64, 192));
+      return add (name, CGAL::IO::Color (r, g, b));
+    }
 
     // else
     return add (name, found->second.second, found->second.first);

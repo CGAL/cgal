@@ -100,9 +100,17 @@ public:
     return P(to_nt(x*w), to_nt(y*w), to_nt(z*w), to_nt(w));
   }
 
+  P random_point(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax)
+  {
+    const int x = r.get_int(xmin, xmax);
+    const int y = r.get_int(ymin, ymax);
+    const int z = r.get_int(zmin, zmax);
+    return p(x, y, z);
+  }
+
   P random_point()
   {
-    return p(r.get_int(m, M), r.get_int(m, M), r.get_int(m, M));
+    return random_point(m, M, m, M, m, M);
   }
 
 public:

@@ -800,9 +800,10 @@ Construct_initial_points::operator()(OutputIterator pts,
       // so change the source to a random point in the bounding box
       if(std::get<0>(intersection) == ray_shot.source())
       {
-        center = Point_3(rng.get_double(bbox.xmin(), bbox.xmax()),
-                         rng.get_double(bbox.ymin(), bbox.ymax()),
-                         rng.get_double(bbox.zmin(), bbox.zmax()));
+        const double x = rng.get_double(bbox.xmin(), bbox.xmax());
+        const double y = rng.get_double(bbox.ymin(), bbox.ymax());
+        const double z = rng.get_double(bbox.zmin(), bbox.zmax());
+        center = Point_3(x, y, z);
       }
     }
     ++random_point;

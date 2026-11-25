@@ -1229,9 +1229,10 @@ public:
         CGAL::Random alea(seed) ;
 
         //randomly sample a bright color
-        CGAL::IO::Color res(alea.get_double(0,255),
-                            alea.get_double(0,255),
-                            alea.get_double(0,255));
+        const double r = alea.get_double(0,255);
+        const double g = alea.get_double(0,255);
+        const double b = alea.get_double(0,255);
+        CGAL::IO::Color res(r, g, b);
         /* C'est vraiment très flash !!
            res.set_hsv(alea.get_double(0,360),
                     alea.get_double(50,100),

@@ -59,12 +59,14 @@ int main(int argc, char* argv[])
   ////////////////////////////////////////////////////////////
   // Construct a traverser and use begin/end iterators
   ////////////////////////////////////////////////////////////
-  Point_3 p1(rng.get_double(xmin, xmax),
-             rng.get_double(ymin, ymax),
-             rng.get_double(zmin, zmax));
-  Point_3 p2(rng.get_double(xmin, xmax),
-             rng.get_double(ymin, ymax),
-             rng.get_double(zmin, zmax));
+  const double x1 = rng.get_double(xmin, xmax);
+  const double y1 = rng.get_double(ymin, ymax);
+  const double z1 = rng.get_double(zmin, zmax);
+  const double x2 = rng.get_double(xmin, xmax);
+  const double y2 = rng.get_double(ymin, ymax);
+  const double z2 = rng.get_double(zmin, zmax);
+  Point_3 p1(x1, y1, z1);
+  Point_3 p2(x2, y2, z2);
 
   Segment_cell_iterator ct = dt.segment_traverser_cells_begin(p1, p2);
   Segment_cell_iterator ctend = dt.segment_traverser_cells_end();

@@ -50,7 +50,9 @@ double rand_base()
 double my_rand_dbl()
 {
   // Ensure 53 random bits, not 48.
-  return rand_base() + rand_base()/1024;
+  const double hi = rand_base();
+  const double lo = rand_base();
+  return hi + lo/1024;
 }
 
 // Random point in unit cube.

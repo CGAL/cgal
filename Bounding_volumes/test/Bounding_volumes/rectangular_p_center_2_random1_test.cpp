@@ -69,23 +69,17 @@ class Random_p_clusters_2 : public CGAL::Random_generator_base< P > {
   void generate_point() {
     typedef typename P::R::FT FT;
     double p = this->_rnd.get_double();
+    const P& c = (p <= 1.0 / n) ? p0 : (p <= 2.0 / n) ? p1 : (p <= 3.0 / n) ? p2 : p3;
+    const double dx = c_size * (2 * this->_rnd.get_double() - 1.0);
+    const double dy = c_size * (2 * this->_rnd.get_double() - 1.0);
     Creator creator;
-    if (p <= 1.0 / n)
-      d_item =
-        creator(FT(p0.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
-                FT(p0.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
-    else if (p <= 2.0 / n)
-      d_item =
-        creator(FT(p1.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
-                FT(p1.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
-    else if (p <= 3.0 / n)
-      d_item =
-        creator(FT(p2.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
-                FT(p2.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
-    else
-      d_item =
-        creator(FT(p3.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
-                FT(p3.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
+    d_item = creator(FT(c.x() + dx), FT(c.y() + dy));
+  }
+
+  P random_center() {
+    const double x = d_range * (2 * this->_rnd.get_double() - 1.0);
+    const double y = d_range * (2 * this->_rnd.get_double() - 1.0);
+    return Creator()(x, y);
   }
 
 public:
@@ -103,14 +97,10 @@ public:
   : Base(r - c_size_, rnd),
     n(n_),
     c_size(c_size_),
-    p0(Creator()(d_range * (2 * this->_rnd.get_double() - 1.0),
-                 d_range * (2 * this->_rnd.get_double() - 1.0))),
-    p1(Creator()(d_range * (2 * this->_rnd.get_double() - 1.0),
-                 d_range * (2 * this->_rnd.get_double() - 1.0))),
-    p2(Creator()(d_range * (2 * this->_rnd.get_double() - 1.0),
-                 d_range * (2 * this->_rnd.get_double() - 1.0))),
-    p3(Creator()(d_range * (2 * this->_rnd.get_double() - 1.0),
-                 d_range * (2 * this->_rnd.get_double() - 1.0)))
+    p0(random_center()),
+    p1(random_center()),
+    p2(random_center()),
+    p3(random_center())
   {
     assert(n >= 1 && n <= 4);
     assert(c_size >= 0 && c_size <= r);

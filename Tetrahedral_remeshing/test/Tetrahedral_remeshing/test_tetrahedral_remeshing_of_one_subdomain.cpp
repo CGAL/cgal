@@ -24,7 +24,12 @@ void generate_input_two_subdomains(const std::size_t nbv, Remeshing_triangulatio
   typedef Remeshing_triangulation::Cell_handle Cell_handle;
 
   while (tr.number_of_vertices() < nbv)
-    tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+  {
+    const double x = rng.get_double(-1., 1.);
+    const double y = rng.get_double(-1., 1.);
+    const double z = rng.get_double(-1., 1.);
+    tr.insert(Point(x, y, z));
+  }
 
   const Remeshing_triangulation::Geom_traits::Plane_3
     plane(Point(0, 0, 0), Point(0, 1, 0), Point(0, 0, 1));

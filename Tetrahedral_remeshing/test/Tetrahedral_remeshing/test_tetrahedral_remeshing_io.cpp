@@ -30,7 +30,10 @@ int main(int argc, char* argv[])
   std::vector<Point> points;
   while (points.size() < nbv)
   {
-    Point p(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.));
+    const double x = rng.get_double(-1., 1.);
+    const double y = rng.get_double(-1., 1.);
+    const double z = rng.get_double(-1., 1.);
+    Point p(x, y, z);
     points.push_back(p);
   }
 

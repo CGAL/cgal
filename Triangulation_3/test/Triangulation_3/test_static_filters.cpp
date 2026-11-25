@@ -69,7 +69,9 @@ double rand_base()
 double my_rand()
 {
   // Ensure 53 random bits, not 48.
-  return CGAL_IA_FORCE_TO_DOUBLE(rand_base() + rand_base()/1024);
+  const double hi = rand_base();
+  const double lo = rand_base();
+  return CGAL_IA_FORCE_TO_DOUBLE(hi + lo/1024);
 }
 
 // Random point in unit cube.
