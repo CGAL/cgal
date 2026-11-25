@@ -206,6 +206,9 @@ Release date: December 2026
   which duplicates elements so as to achieve a combinatorially manifold structure. The new named parameter
   `number_of_corners` can be used to check if duplication happened by comparing its value to
   the number of vertices of the output mesh.
+- Added the named parameter `do_not_triangulate_faces` to both overloads of
+  [`CGAL::Polygon_mesh_processing::extrude_mesh()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__meshing__grp.html#ga300c5eedd7d62bbd10ad2655405562f4),
+  to connect the bottom and the top parts with a strip of quadrilaterals instead of a triangle strip.
 
 ### [Polygon Mesh Processing - Mesh Repair](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPMeshRepair)
 
