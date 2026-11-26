@@ -314,7 +314,7 @@ public:
     /// \name Operations
     /// @{
 
-    /*! prepends a point `p` to an existing polyline `cv.
+    /*! prepends a point `p` to an existing polyline `cv`.
      * \param cv a polyline. Note, `cv` is not (necessarily) \f$x\f$-monotone.
      * \param p a point to be prepended to `cv`.
      * \pre `cv` contains at least one segment.
@@ -327,8 +327,6 @@ public:
      * \param seg a segment (not necessarily \f$x\f$-monotone) to be prepended to `cv`.
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const;
-
-    /*! Curve_2& cv, const Segment_2& seg) const;
 
     /*! prepends a point `p` to an existing \f$x\f$-monotone polyline `xcv`.
      * \param xcv the existing \f$x\f$-monotone polyline.
