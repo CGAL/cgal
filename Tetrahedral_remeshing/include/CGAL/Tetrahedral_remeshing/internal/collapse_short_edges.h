@@ -1415,6 +1415,7 @@ void collapse_short_edges(C3T3& c3t3,
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+  const std::size_t nb_neg = debug::nb_negative_cells(tr);
   debug::dump_edges(short_edges, "short_edges.polylines.txt");
 
   std::ofstream short_success("short_collapse_success.polylines.txt");
@@ -1479,7 +1480,9 @@ void collapse_short_edges(C3T3& c3t3,
 #endif
     }
   }//end loop on short_edges
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+  CGAL_assertion(debug::nb_negative_cells(tr) <= nb_neg);
   short_success.close();
   short_fail.close();
 #endif

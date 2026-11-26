@@ -2229,6 +2229,20 @@ void count_far_points(const C3t3& c3t3)
 }
 
 template<typename Tr>
+std::size_t nb_negative_cells(const Tr& tr)
+{
+  return std::count_if(tr.finite_cells_begin(), tr.finite_cells_end(),
+    [](const auto& c)
+    {
+      return CGAL::POSITIVE !=
+           CGAL::orientation(point(c.vertex(0)->point()),
+                             point(c.vertex(1)->point()),
+                             point(c.vertex(2)->point()),
+                             point(c.vertex(3)->point()));
+    });
+}
+
+template<typename Tr>
 bool are_cell_orientations_valid(const Tr& tr)
 {
   // skip the test if we know
