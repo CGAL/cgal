@@ -62,6 +62,10 @@ void append_patch(
   using halfedge_descriptor = typename SM::Halfedge_index;
   using face_descriptor = typename SM::Face_index;
 
+  CGAL_assertion_code( const vertex_descriptor uninitialized_vertex(std::numeric_limits<size_type>::max() - 1); )
+  CGAL_assertion_code( const halfedge_descriptor uninitialized_halfedge(std::numeric_limits<size_type>::max() - 1); )
+  CGAL_assertion_code( const face_descriptor uninitialized_face(std::numeric_limits<size_type>::max() - 1); )
+
   // Fill Vertex to vertex map and vpm for interior vertices
   auto fill_vertex = [&](std::size_t i){
     vertex_descriptor v = patch.interior_vertices[i];
@@ -90,8 +94,8 @@ void append_patch(
 
     vertex_descriptor src = get(tm_to_output_vertices, tm.source(h));
     vertex_descriptor tgt = get(tm_to_output_vertices, tm.target(h));
-    CGAL_assertion(src != SM_Vertex_index(Properties::uninitialized_tag) && src != output.null_vertex());
-    CGAL_assertion(tgt != SM_Vertex_index(Properties::uninitialized_tag) && tgt != output.null_vertex());
+    CGAL_assertion(src != uninitialized_vertex && src != output.null_vertex());
+    CGAL_assertion(tgt != uninitialized_vertex && tgt != output.null_vertex());
 
     user_visitor.before_edge_copy(h, tm, output);
     put(tm_to_output_edges, tm.edge(h), new_edge);
@@ -103,19 +107,19 @@ void append_patch(
     copy_constraint_status<SM>(tm.edge(h), new_edge, edge_cst_map_in, edge_cst_map_out);
     copy_constraint_status<SM>(tm.edge(h), new_edge, edge_mark_map_in, edge_mark_map_out);
 
-    CGAL_assertion(face(new_h, output) == SM_Face_index(Properties::uninitialized_tag));
-    CGAL_assertion(face(opposite(new_h, output), output) == SM_Face_index(Properties::uninitialized_tag));
+    CGAL_assertion(face(new_h, output) == uninitialized_face || face(new_h, output) == tm.null_face());
+    CGAL_assertion(face(opposite(new_h, output), output) == uninitialized_face || face(opposite(new_h, output), output) == tm.null_face());
 
     // Fill the halfedge of the vertices if it is not set yet
     if (tm.halfedge(tm.target(h)) == h){
-      CGAL_assertion( output.halfedge(tgt) == SM_Halfedge_index(Properties::uninitialized_tag));
+      CGAL_assertion( output.halfedge(tgt) == uninitialized_halfedge || output.halfedge(tgt) == tm.null_halfedge());
       user_visitor.before_vertex_copy(tm.target(h), tm, output); // Call visitor when the vertex would be complete
       output.set_halfedge(tgt, new_h);
       user_visitor.after_vertex_copy(tm.target(h), tm, tgt, output);
     }
 
     if (tm.halfedge(tm.source(h)) == tm.opposite(h)){
-      CGAL_assertion( output.halfedge(src) == SM_Halfedge_index(Properties::uninitialized_tag));
+      CGAL_assertion( output.halfedge(src) == uninitialized_halfedge || output.halfedge(src) == tm.null_halfedge());
       user_visitor.before_vertex_copy(tm.source(h), tm, output); // Call visitor when the vertex would be complete
       output.set_halfedge(src, output.opposite(new_h));
       user_visitor.after_vertex_copy(tm.source(h), tm, src, output);
@@ -130,9 +134,6 @@ void append_patch(
   {
     for(std::size_t i=0; i<patch.interior_edges.size(); ++i) fill_edge(i);
   }
-
-  for(halfedge_descriptor h: patch.border_edges)
-    output.set_halfedge(get(tm_to_output_edges, tm.edge(h)), tm.null_halfedge());
 
   auto get_halfedge = [&](halfedge_descriptor h){
     edge_descriptor e = get(tm_to_output_edges, tm.edge(h));
@@ -184,6 +185,12 @@ void append_patch(
 #endif
   {
     for(std::size_t i=0; i<patch.faces.size(); ++i) fill_face(i);
+  }
+
+  for(halfedge_descriptor h: patch.border_edges){
+    halfedge_descriptor h_out = get_halfedge(h);
+    CGAL_assertion(output.face(h_out) == uninitialized_face);
+    output.set_face(h_out, tm.null_face());
   }
 }
 
