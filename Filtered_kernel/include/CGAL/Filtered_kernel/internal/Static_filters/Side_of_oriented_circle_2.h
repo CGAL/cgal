@@ -58,8 +58,8 @@ public:
                                          qpx*rpy - qpy*rpx, rpx*rqx + rpy*rqy);
 
           // We compute the semi-static bound.
-          double maxx = CGAL::abs(qpx);
-          double maxy = CGAL::abs(qpy);
+          double aqpx = CGAL::abs(qpx);
+          double aqpy = CGAL::abs(qpy);
 
           double arpx = CGAL::abs(rpx);
           double arpy = CGAL::abs(rpy);
@@ -73,25 +73,20 @@ public:
           double arqx = CGAL::abs(rqx);
           double arqy = CGAL::abs(rqy);
 
-          if (maxx < arpx) maxx = arpx;
-          if (maxx < atpx) maxx = atpx;
-          if (maxx < atqx) maxx = atqx;
-          if (maxx < arqx) maxx = arqx;
+          double maxx = dmax(aqpx, arpx, atpx, atqx, arqx);
+          double maxy = dmax(aqpy, arpy, atpy, atqy, arqy);
 
-          if (maxy < arpy) maxy = arpy;
-          if (maxy < atpy) maxy = atpy;
-          if (maxy < atqy) maxy = atqy;
-          if (maxy < arqy) maxy = arqy;
+          double lo = dmin(maxx, maxy);
+          double hi = dmax(maxx, maxy);
 
-          if (maxx > maxy)  std::swap(maxx, maxy);
 
           // Protect against underflow in the computation of eps.
-          if (maxx < 1e-73) {
-            if (maxx == 0)
+          if (lo < 1e-73) {
+            if (lo == 0)
               return ON_ORIENTED_BOUNDARY;
           }
-          else if (maxy < 1e76) /* sqrt(sqrt(max_double/16 [hadamard])) */ {
-            double eps = 8.8878565762001373e-15 * maxx * maxy * (maxy*maxy);
+          else if (hi < 1e76) /* sqrt(sqrt(max_double/16 [hadamard])) */ {
+            double eps = 8.8878565762001373e-15 * lo * hi * (hi*hi);
             if (det > eps)  return ON_POSITIVE_SIDE;
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }
