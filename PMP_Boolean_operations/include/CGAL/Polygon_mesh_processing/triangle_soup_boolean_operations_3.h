@@ -676,28 +676,33 @@ select(const std::vector<Exact_point>& points,
         const Exact_point& pt = points[triangles[one_triangle_per_cc[cc]][0]];
         Exact_predicates_exact_constructions_kernel::Ray_3 ray(pt, Exact_predicates_exact_constructions_kernel::Vector_3(0.,0.,1.));
         using T3 = Exact_predicates_exact_constructions_kernel::Triangle_3;
-        std::vector<std::pair<std::size_t,T3>> to_sort;
+        std::vector<std::pair<std::size_t,Exact_point>> to_sort;
         for (std::size_t tid : subtri)
         {
           T3 tr(points[triangles[tid][0]],points[triangles[tid][1]],points[triangles[tid][2]]);
-          if (do_intersect(ray, tr))
-            to_sort.emplace_back(tid, tr);
+          auto intersection_result = intersection(ray, tr);
+          if (intersection_result)
+          {
+            if (const Exact_point* p = std::get_if<Exact_point>(&*intersection_result))
+              to_sort.emplace_back(tid, *p);
+            else
+              to_sort.emplace_back(tid, std::get<Exact_predicates_exact_constructions_kernel::Segment_3>(*intersection_result).source());
+          }
         }
 
         std::sort(to_sort.begin(), to_sort.end(),
-                  [&pt](const std::pair<std::size_t, T3>& p1, const std::pair<std::size_t, T3>& p2)
+                  [&pt](const std::pair<std::size_t, Exact_point>& p1, const std::pair<std::size_t, Exact_point>& p2)
                   {
                     return compare_distance(pt, p1.second, p2.second) == CGAL::SMALLER;
                   }
         );
 
         bool is_outside = true;
-        for (const std::pair<std::size_t, T3>& p : to_sort)
+        for (const std::pair<std::size_t, Exact_point>& p : to_sort)
         {
-          CGAL::Orientation ori = orientation(p.second[0], p.second[1], p.second[2], pt);
+          CGAL::Orientation ori = orientation(points[triangles[p.first][0]], points[triangles[p.first][1]], points[triangles[p.first][2]], pt);
           if (ori == CGAL::COPLANAR) continue;
           is_outside = (ori == POSITIVE);
-
           break;
         }
 
