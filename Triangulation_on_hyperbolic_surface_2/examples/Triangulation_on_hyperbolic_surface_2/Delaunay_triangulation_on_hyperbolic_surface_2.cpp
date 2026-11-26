@@ -70,8 +70,7 @@ int main() {
   dt_g5.combinatorial_map().display_characteristics(std::cout) << std::endl;
 
   std::cout << "/////// Epsilon net of a genus 5 surface higher precision (this works with quad precision)///////\n";
-  dt_g5.~Delaunay_triangulation();
-  new (&dt_g5) Delaunay_triangulation(gt, domain);
+  dt_g5 = Delaunay_triangulation(gt, domain);
   p = 2;
   dt_g5.set_circumcenter_approximation_precision(p);
   dt_g5.set_circumcenter_approximation_precision(p);
