@@ -22,12 +22,44 @@
 #include <algorithm>
 #include <optional>
 #include <string>
+#include <type_traits>
 #include <typeinfo>
 #include <vector>
 
 namespace CGAL {
 
 namespace Properties {
+
+//
+struct Uninitialized_tag {};
+constexpr Uninitialized_tag uninitialized_tag{};
+// Allocator adaptor that interposes construct() calls to
+// convert default initialization into uninitialized allocation
+// if a constructor with Uninitialized_tag exists.
+template <typename T, typename A=std::allocator<T>>
+class default_init_allocator : public A {
+  typedef std::allocator_traits<A> a_t;
+public:
+  template <typename U> struct rebind {
+    using other = default_init_allocator<U, typename a_t::template rebind_alloc<U> >;
+  };
+
+  using A::A;
+
+  template <typename U,
+            typename = typename std::enable_if<
+              std::is_constructible<U, Uninitialized_tag>::value
+            >::type>
+  void construct(U* ptr) noexcept(std::is_nothrow_default_constructible<U>::value) {
+    ::new(static_cast<void*>(ptr)) U(uninitialized_tag);
+  }
+
+  // Default construct with arguments
+  template <typename U, typename...Args>
+  void construct(U* ptr, Args&&... args) {
+    a_t::construct(static_cast<A&>(*this), ptr, std::forward<Args>(args)...);
+  }
+};
 
 /// \addtogroup PkgSurface_mesh
 ///
@@ -49,6 +81,9 @@ public:
 
     /// Resize storage to hold n elements.
     virtual void resize(size_t n) = 0;
+
+    /// Resize storage to hold n elements but do not initialize new elements if possible.
+    virtual void uninitialized_resize(size_t n) = 0;
 
     /// Free unused memory.
     virtual void shrink_to_fit() = 0;
@@ -100,7 +135,9 @@ class Property_array : public Base_property_array
 public:
 
     typedef T                                       value_type;
-    typedef std::vector<value_type>                 vector_type;
+    // If T has uninitialized constructor, use default_init_allocator to avoid unnecessary initialization.
+    typedef std::vector<value_type, default_init_allocator<value_type>>
+                                                    vector_type;
     typedef typename vector_type::reference         reference;
     typedef typename vector_type::const_reference   const_reference;
     typedef typename vector_type::iterator          iterator;
@@ -118,6 +155,11 @@ public: // virtual interface of Base_property_array
     void resize(size_t n) override
     {
         data_.resize(n, value_);
+    }
+
+    void uninitialized_resize(size_t n) override
+    {
+        data_.resize(n);
     }
 
     void push_back() override
@@ -373,6 +415,27 @@ public:
         return std::make_pair(Pmap(p), true);
     }
 
+    /// Like `add` but does not initialize the array elements.
+    template <class T>
+    std::pair<typename Get_pmap_type<T>::type, bool>
+    uninitialized_add(const std::string& name)
+    {
+        typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
+        for (std::size_t i=0; i<parrays_.size(); ++i)
+        {
+            std::optional<Pmap> out = get<T>(name, i);
+            if (out.has_value())
+              return std::make_pair(*out, false);
+        }
+
+        // otherwise add the property
+        Property_array<T>* p = new Property_array<T>(name);
+        p->reserve(capacity_);
+        p->uninitialized_resize(size_);
+        parrays_.push_back(p);
+        return std::make_pair(Pmap(p), true);
+    }
+
 
     // get a property by its name. Returns std::nullopt when it doesn't exist
     template <class T>
@@ -457,6 +520,14 @@ public:
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->resize(n);
+        size_ = n;
+    }
+
+    // like resize, but uses uninitialized allocation if available.
+    void uninitialized_resize(size_t n)
+    {
+        for (std::size_t i=0; i<parrays_.size(); ++i)
+            parrays_[i]->uninitialized_resize(n);
         size_ = n;
     }
 

@@ -67,7 +67,8 @@ namespace CGAL {
         /// as `size_type` is an unsigned type.
         constexpr
         SM_Index() : idx_((std::numeric_limits<size_type>::max)()) {}
-
+        // An uninitialized index constructor for special speed cases.
+        explicit SM_Index(Properties::Uninitialized_tag) {}
         explicit SM_Index(size_type _idx) : idx_(_idx) {}
 
         /// Get the underlying index of this index
@@ -131,6 +132,7 @@ namespace CGAL {
 
         SM_Vertex_index() = default;
 
+        explicit SM_Vertex_index(Properties::Uninitialized_tag) : SM_Index<SM_Vertex_index>(Properties::uninitialized_tag) {}
         explicit SM_Vertex_index(size_type _idx) : SM_Index<SM_Vertex_index>(_idx) {}
 
         template<class T> bool operator==(const T&) const = delete;
@@ -167,6 +169,8 @@ namespace CGAL {
 
         SM_Halfedge_index() = default;
 
+        explicit SM_Halfedge_index(Properties::Uninitialized_tag) : SM_Index<SM_Halfedge_index>(Properties::uninitialized_tag) {}
+
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
 
         template<class T> bool operator==(const T&) const = delete;
@@ -202,6 +206,8 @@ namespace CGAL {
 
         SM_Face_index() = default;
 
+        explicit SM_Face_index(Properties::Uninitialized_tag) : SM_Index<SM_Face_index>(Properties::uninitialized_tag) {}
+
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
 
         template<class T> bool operator==(const T&) const = delete;
@@ -236,6 +242,8 @@ namespace CGAL {
         typedef std::uint32_t size_type;
 
         SM_Edge_index() = default;
+
+        explicit SM_Edge_index(Properties::Uninitialized_tag) : halfedge_(Properties::uninitialized_tag) { }
 
         explicit SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
@@ -464,6 +472,8 @@ private: //-------------------------------------------------- connectivity types
     /// \sa `Halfedge_connectivity`, `Face_connectivity`
     struct Vertex_connectivity
     {
+        Vertex_connectivity() = default;
+        Vertex_connectivity(Properties::Uninitialized_tag): halfedge_(Properties::uninitialized_tag){}
         /// an incoming halfedge per vertex (it will be a border halfedge for border vertices)
         Halfedge_index  halfedge_;
     };
@@ -473,6 +483,11 @@ private: //-------------------------------------------------- connectivity types
     /// \sa `Vertex_connectivity`, `Face_connectivity`
     struct Halfedge_connectivity
     {
+        Halfedge_connectivity() = default;
+        Halfedge_connectivity(Properties::Uninitialized_tag): face_(Properties::uninitialized_tag),
+                                                              vertex_(Properties::uninitialized_tag),
+                                                              next_halfedge_(Properties::uninitialized_tag),
+                                                              prev_halfedge_(Properties::uninitialized_tag){}
         /// face incident to halfedge
         Face_index      face_;
         /// vertex the halfedge points to
@@ -488,6 +503,8 @@ private: //-------------------------------------------------- connectivity types
     /// \sa `Vertex_connectivity`, `Halfedge_connectivity`
     struct Face_connectivity
     {
+        Face_connectivity() = default;
+        Face_connectivity(Properties::Uninitialized_tag): halfedge_(Properties::uninitialized_tag){}
         /// a halfedge that is part of the face
         Halfedge_index  halfedge_;
     };
@@ -1190,14 +1207,24 @@ public:
         fprops_.reserve(nfaces);
     }
 
-      void resize(size_type nvertices,
-                 size_type nedges,
-                 size_type nfaces )
+    void resize(size_type nvertices,
+                size_type nedges,
+                size_type nfaces )
     {
         vprops_.resize(nvertices);
         hprops_.resize(2*nedges);
         eprops_.resize(nedges);
         fprops_.resize(nfaces);
+    }
+
+    void uninitialized_resize(size_type nvertices,
+                              size_type nedges,
+                              size_type nfaces )
+    {
+        vprops_.uninitialized_resize(nvertices);
+        hprops_.uninitialized_resize(2*nedges);
+        eprops_.uninitialized_resize(nedges);
+        fprops_.uninitialized_resize(nfaces);
     }
 
   /// copies the simplices from `other`, and copies values of
@@ -2055,7 +2082,6 @@ private: //--------------------------------------------------- property handling
     /// that is `true` if a new map was created. In case it already exists
     /// the existing map together with `false` is returned.
 
-
     template<class I, class T>
     std::pair<Property_map<I, T>, bool>
     add_property_map(std::string name=std::string(), const T t=T()) {
@@ -2065,6 +2091,18 @@ private: //--------------------------------------------------- property handling
         name = std::string(oss.str());
       }
       return Property_selector<I>(this)().template add<T>(name, t);
+    }
+
+    /// Like `add_property_map` but does not initialize the property array elements.
+    template<class I, class T>
+    std::pair<Property_map<I, T>, bool>
+    add_property_map(std::string name, Properties::Uninitialized_tag) {
+      if(name.empty()){
+        std::ostringstream oss;
+        oss << "anonymous-property-" << anonymous_property_++;
+        name = std::string(oss.str());
+      }
+      return Property_selector<I>(this)().template uninitialized_add<T>(name);
     }
 
     /// returns an optional property map named `name` with key type `I` and value type `T`.

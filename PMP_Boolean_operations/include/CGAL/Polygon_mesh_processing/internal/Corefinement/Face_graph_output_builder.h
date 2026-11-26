@@ -17,6 +17,7 @@
 
 
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/face_graph_utils.h>
+#include <CGAL/Polygon_mesh_processing/internal/soup_and_face_graph_tree_helper.h>
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
@@ -25,8 +26,13 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Default.h>
 
+#include <boost/property_map/property_map.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/mpl/has_xxx.hpp>
+
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/tbb.h>
+#endif
 
 // required to handle the multiple types of edge constrained maps
 // for the different output types. CGAL_COREF_FUNCTION_CALL_DEF
@@ -466,7 +472,8 @@ template <class TriangleMesh,
           class Kernel,
           class EdgeMarkMapIn,
           class EdgeMarkMapOut,
-          class UserVisitor>
+          class UserVisitor,
+          class ConcurrencyTag = Sequential_tag>
 class Face_graph_output_builder
 {
   typedef typename Has_extra_functions<UserVisitor>::type VUNDF; //shortcut
@@ -475,16 +482,17 @@ class Face_graph_output_builder
   static constexpr bool has_soup_visitor = HSV::value;
 
 // graph_traits typedefs
-  typedef TriangleMesh                                              TM;
-  typedef boost::graph_traits<TM>                                   GT;
-  typedef typename GT::edge_descriptor                 edge_descriptor;
-  typedef typename GT::face_descriptor                 face_descriptor;
-  typedef typename GT::halfedge_descriptor         halfedge_descriptor;
-  typedef typename GT::vertex_descriptor             vertex_descriptor;
+  using TM = TriangleMesh;
+  using GT = boost::graph_traits<TM>;
+  using edge_descriptor = typename GT::edge_descriptor;
+  using face_descriptor = typename GT::face_descriptor;
+  using halfedge_descriptor = typename GT::halfedge_descriptor;
+  using vertex_descriptor = typename GT::vertex_descriptor;
 // Internal typedefs
   typedef std::size_t                                          Node_id;
   typedef std::pair<Node_id,Node_id>                      Node_id_pair;
-  typedef std::unordered_set<edge_descriptor>  Intersection_edge_map;
+  using E2B_tag = CGAL::dynamic_edge_property_t<bool>;
+  using Intersection_edge_map = typename boost::property_map<TM, E2B_tag>::type;
   // to maintain a halfedge on each polyline per TriangleMesh + pair<bool,size_t>
   // with first = "is the key (pair<Node_id,Node_id>) was reversed?" and
   // second is the number of edges -1 in the polyline
@@ -495,8 +503,7 @@ class Face_graph_output_builder
                                               An_edge_per_polyline_map;
 
   typedef std::unordered_map<vertex_descriptor, Node_id>   Node_id_map;
-  typedef std::unordered_map<edge_descriptor,
-                             edge_descriptor>                 Edge_map;
+
 //Data members
   TriangleMesh &tm1, &tm2;
   // property maps of input meshes
@@ -537,7 +544,10 @@ class Face_graph_output_builder
     Intersection_edge_map tm_map;
     Intersection_edge_map other_map;
   public:
-    Mesh_to_intersection_edges(TriangleMesh& tm1, TriangleMesh) : m_tm(tm1) {}
+    Mesh_to_intersection_edges(TriangleMesh& tm1, TriangleMesh& tm2) :
+      m_tm(tm1),
+      tm_map(get(E2B_tag(), tm1, false)),
+      other_map(get(E2B_tag(), tm2, false)){}
     Intersection_edge_map& operator[](TriangleMesh* tm_ptr) {
       return &m_tm==tm_ptr?tm_map:other_map;
     }
@@ -810,7 +820,10 @@ public:
     //register an intersection halfedge
     // It is important here not to use operator[] since a two edges might be
     // equals while the indices are reversed
-    mesh_to_intersection_edges[&tm].insert(edge(hedge, tm));
+    put(mesh_to_intersection_edges[&tm], edge(hedge, tm), true);
+    // Set halfedge of a vertex shared if its halfedge is shared
+    set_halfedge(target(hedge, tm), hedge, tm);
+    set_halfedge(source(hedge, tm), opposite(hedge, tm), tm);
 
     if (indices.first>indices.second)
     {
@@ -846,6 +859,10 @@ public:
     const Mesh_to_map_node&,
     const std::vector<std::pair<halfedge_descriptor, halfedge_descriptor>>& identical_patches)
   {
+#ifdef CGAL_PMP_BENCH_FACE_GRAPH_OUTPUT_BUILDER
+    Real_timer t;
+    t.start();
+#endif
     const bool used_to_classify_patches =  requested_output[UNION]==std::nullopt &&
                                            requested_output[TM1_MINUS_TM2]==std::nullopt &&
                                            requested_output[TM2_MINUS_TM1]==std::nullopt &&
@@ -1049,41 +1066,68 @@ public:
     // boolop is actually unconstraining edges ...
     marks_on_input_edges.reset_on_intersection(tm1, inter_edges_to_remove1);
     for(edge_descriptor ed : inter_edges_to_remove1)
-      intersection_edges1.erase(ed);
+      put(intersection_edges1, ed, false);
     marks_on_input_edges.reset_on_intersection(tm2, inter_edges_to_remove2);
     for(edge_descriptor ed : inter_edges_to_remove2)
-      intersection_edges2.erase(ed);
+      put(intersection_edges2, ed, false);
 
+#ifdef CGAL_PMP_BENCH_FACE_GRAPH_OUTPUT_BUILDER
+    std::cout << "Initialization of output builder: " << t.time() << std::endl;
+#endif
     user_visitor.detect_patches();
 
     // (1) Assign a patch id to each facet indicating in which connected
     // component limited by intersection edges of the surface they are.
-    // ... for tm1
     std::vector<std::size_t> tm1_patch_ids( num_faces(tm1),NID );
-    Border_edge_map<TriangleMesh> is_marked_1(intersection_edges1, tm1);
-    std::size_t nb_patches_tm1 =
-      connected_components(tm1,
-                           make_compose_property_map(fids1,make_property_map(&tm1_patch_ids[0])),
-                           parameters::edge_is_constrained_map(is_marked_1)
-                                      .face_index_map(fids1));
-
-    std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
-    for(std::size_t i : tm1_patch_ids)
-      if(i!=NID)
-        ++tm1_patch_sizes[i];
-    // ... for tm2
     std::vector<std::size_t> tm2_patch_ids( num_faces(tm2),NID );
-    Border_edge_map<TriangleMesh> is_marked_2(intersection_edges2, tm2);
-    std::size_t nb_patches_tm2 =
-      connected_components(tm2,
-                           make_compose_property_map(fids2,make_property_map(&tm2_patch_ids[0])),
-                           parameters::edge_is_constrained_map(is_marked_2)
-                                      .face_index_map(fids2));
+    std::vector<std::size_t> tm1_patch_sizes, tm2_patch_sizes;
+    std::size_t nb_patches_tm1, nb_patches_tm2;
+    auto connected_components_1=[&]()
+    {
+      // ... for tm1
+      nb_patches_tm1 = connected_components(tm1,
+                                            make_compose_property_map(fids1,make_property_map(&tm1_patch_ids[0])),
+                                            parameters::edge_is_constrained_map(intersection_edges1)
+                                                      .face_index_map(fids1));
 
-    std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
-    for(Node_id i : tm2_patch_ids)
-      if(i!=NID)
-        ++tm2_patch_sizes[i];
+      tm1_patch_sizes.resize(nb_patches_tm1, 0);
+      for(std::size_t i : tm1_patch_ids)
+        if(i!=NID)
+          ++tm1_patch_sizes[i];
+    };
+
+    auto connected_components_2=[&]()
+    {
+      // ... for tm2
+      nb_patches_tm2 = connected_components(tm2,
+                                            make_compose_property_map(fids2,make_property_map(&tm2_patch_ids[0])),
+                                            parameters::edge_is_constrained_map(intersection_edges2)
+                                                      .face_index_map(fids2));
+
+      tm2_patch_sizes.resize(nb_patches_tm2, 0);
+      for(Node_id i : tm2_patch_ids)
+        if(i!=NID)
+          ++tm2_patch_sizes[i];
+    };
+
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
+    {
+      tbb::task_group tasks;
+      tasks.run(connected_components_1);
+      connected_components_2();
+      tasks.wait();
+    }
+    else
+#endif
+    {
+      connected_components_1();
+      connected_components_2();
+    }
+
+#ifdef CGAL_PMP_BENCH_FACE_GRAPH_OUTPUT_BUILDER
+    std::cout << "Detect patches time (connected components): " << t.time() << std::endl;
+#endif
 
 #ifdef CGAL_COREFINEMENT_DEBUG
     std::cout << "nb_patches_tm1 = " << nb_patches_tm1 << "\n";
@@ -2082,6 +2126,10 @@ public:
         return;
     }
 
+#ifdef CGAL_PMP_BENCH_FACE_GRAPH_OUTPUT_BUILDER
+    std::cout << "classify patches: " << t.time() << std::endl;
+#endif
+
     //to maintain a halfedge on each polyline + pair<bool,int>
     //with first = "is the key (pair<Node_id,Node_id>) was reversed?"
     // and second is the number of edges -1 in the polyline
@@ -2291,6 +2339,10 @@ public:
       }
     }
 
+#ifdef CGAL_PMP_BENCH_FACE_GRAPH_OUTPUT_BUILDER
+    std::cout << "extract coplanar patches: " << t.time() << std::endl;
+#endif
+
     #ifdef CGAL_COREFINEMENT_DEBUG
     std::cout << "patches_of_tm1_used[UNION] " << patches_of_tm1_used[UNION] << "\n";
     std::cout << "patches_of_tm2_used[UNION] " << patches_of_tm2_used[UNION] << "\n";
@@ -2346,7 +2398,7 @@ public:
       std::vector<edge_descriptor> shared_edges;
 
       #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
-        fill_new_triangle_mesh( \
+        fill_new_triangle_mesh<ConcurrencyTag>( \
           output, \
           patches_of_tm1_used[BO_type], patches_of_tm2_used[BO_type], \
           patches_of_tm1, patches_of_tm2, \
@@ -2368,15 +2420,28 @@ public:
       set_on_intersection(out_edge_mark_maps, shared_edges, operation);
     }
 
-    Edge_map disconnected_patches_edge_to_tm2_edge;
+    using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
+    using Vertex_to_vertex_map = typename boost::property_map<TriangleMesh, V2V_tag>::type;
+
+    using E2E_tag = typename CGAL::dynamic_edge_property_t<edge_descriptor>;
+    using Edge_to_edge_map = typename boost::property_map<TriangleMesh, E2E_tag>::type;
+
+    Vertex_to_vertex_map disconnected_patches_vertex_to_tm2_vertex = get(V2V_tag(), tm1, GT::null_vertex());
+    Edge_to_edge_map disconnected_patches_edge_to_tm2_edge = get(E2E_tag(), tm1, edge(GT::null_halfedge(), tm2));
 
     /// handle the operations updating tm1 and/or tm2
     if ( inplace_operation_tm1!=NONE )
     {
       // mark intersection edges in tm1 (using output constrained edge map)
-      set_on_intersection(out_edge_mark_maps,
-                 mesh_to_intersection_edges[&tm1],
-                 inplace_operation_tm1);
+      std::vector<edge_descriptor> shared_edges;
+      for (std::size_t i=0; i < polylines.lengths.size(); ++i)
+        if (!polylines.to_skip.test(i))
+          get_shared_edges(polylines.tm1[i],
+                           tm1,
+                           polylines.lengths[i],
+                           intersection_edges1,
+                           shared_edges);
+      set_on_intersection(out_edge_mark_maps, shared_edges, inplace_operation_tm1);
 
       CGAL_assertion( *requested_output[inplace_operation_tm1] == &tm1 );
 
@@ -2385,9 +2450,15 @@ public:
         user_visitor.in_place_operations(inplace_operation_tm1, inplace_operation_tm2);
 
         // mark intersection edges in tm2 (using output constrained edge map)
-        set_on_intersection(out_edge_mark_maps,
-                            mesh_to_intersection_edges[&tm2],
-                            inplace_operation_tm2);
+        std::vector<edge_descriptor> shared_edges;
+        for (std::size_t i=0; i < polylines.lengths.size(); ++i)
+          if (!polylines.to_skip.test(i))
+            get_shared_edges(polylines.tm2[i],
+                             tm2,
+                             polylines.lengths[i],
+                             intersection_edges2,
+                             shared_edges);
+        set_on_intersection(out_edge_mark_maps, shared_edges, inplace_operation_tm2);
 
         // operation in tm1 with removal (and optionally inside-out) delayed
         // First backup the border edges of patches to be used
@@ -2450,6 +2521,7 @@ public:
           std::get<BO_type>(out_edge_mark_maps.edge_cst_tuple), \
           std::get<BO_type>(out_edge_mark_maps.edge_mark_tuple), \
           disconnected_patches_edge_to_tm2_edge, \
+          disconnected_patches_vertex_to_tm2_vertex, \
           user_visitor)
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
         #undef CGAL_COREF_FUNCTION_CALL_DEF
@@ -2472,6 +2544,7 @@ public:
                                      std::get<BO_type>(out_edge_mark_maps.edge_cst_tuple), \
                                      std::get<BO_type>(out_edge_mark_maps.edge_mark_tuple), \
                                      disconnected_patches_edge_to_tm2_edge, \
+                                     disconnected_patches_vertex_to_tm2_vertex, \
                                      user_visitor)
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm2)
         #undef CGAL_COREF_FUNCTION_CALL_DEF
@@ -2542,29 +2615,63 @@ public:
             }
             if (!to_rm.empty())
             {
+              // We will suppress from the last to the first so that the erase of one does not invalidate another
               std::reverse(to_rm.begin(), to_rm.end());
+              // Move edges to rm from shared edges to interiors and borders
+              std::vector<halfedge_descriptor> new_borders;
+              new_borders.reserve(to_rm.size());
               for(Hedge_iterator it : to_rm)
               {
+                new_borders.push_back(opposite(*it, tm1));
                 patches_of_tm1[i].interior_edges.push_back(*it);
+                patches_of_tm1[i].border_edges.emplace(opposite(*it, tm1));
                 if (it!=std::prev(patches_of_tm1[i].shared_edges.end()))
                   std::swap(patches_of_tm1[i].shared_edges.back(), *it);
                 patches_of_tm1[i].shared_edges.pop_back();
               }
-              //now update interior vertices
-              std::set<vertex_descriptor> border_vertices;
+
+              // compute new shared vertices
+              std::set<vertex_descriptor> shared_vertices;
               for(halfedge_descriptor h : patches_of_tm1[i].shared_edges)
               {
-                border_vertices.insert( target(h,tm1) );
-                border_vertices.insert( source(h,tm1) );
+                shared_vertices.insert( target(h,tm1) );
+                shared_vertices.insert( source(h,tm1) );
               }
 
-              for(halfedge_descriptor h : patches_of_tm1[i].interior_edges)
+              // update interior_vertices and border with shared vertices
+              std::set<vertex_descriptor> new_vertices;
+              for(halfedge_descriptor h : new_borders)
               {
-                if ( !border_vertices.count( target(h,tm1) ) )
-                  patches_of_tm1[i].interior_vertices.insert( target(h,tm1) );
-                if ( !border_vertices.count( source(h,tm1) ) )
-                  patches_of_tm1[i].interior_vertices.insert( source(h,tm1) );
+                if ( shared_vertices.count( target(h, tm1) ) )
+                  patches_of_tm1[i].border_with_shared_target.emplace(h);
+                else
+                  patches_of_tm1[i].interior_vertices.push_back( target(h, tm1) );
+
+                if ( shared_vertices.count( source(h, tm1) ) )
+                  patches_of_tm1[i].border_with_shared_source.emplace(h);
+                else
+                  patches_of_tm1[i].interior_vertices.push_back( source(h, tm1) );
               }
+              patches_of_tm1[i].interior_vertices.insert(
+                patches_of_tm1[i].interior_vertices.end(),
+                new_vertices.begin(),
+                new_vertices.end()
+              );
+
+              // Remove elements from borders_with_shared_vertices if the vertices are no longer shared
+              std::vector<halfedge_descriptor> border_targets_to_erase;
+              for (halfedge_descriptor h : patches_of_tm1[i].border_with_shared_target)
+                if (!shared_vertices.count(target(h, tm1)))
+                  border_targets_to_erase.push_back(h);
+              for (halfedge_descriptor h : border_targets_to_erase)
+                patches_of_tm1[i].border_with_shared_target.erase(h);
+
+              std::vector<halfedge_descriptor> border_sources_to_erase;
+              for (halfedge_descriptor h : patches_of_tm1[i].border_with_shared_source)
+                if (!shared_vertices.count(source(h, tm1)))
+                  border_sources_to_erase.push_back(h);
+              for (halfedge_descriptor h : border_sources_to_erase)
+                patches_of_tm1[i].border_with_shared_source.erase(h);
             }
           }
 
@@ -2589,8 +2696,16 @@ public:
             if (all_removed)
               id_p_rm.erase(id_p_rm.begin());
             // remove the vertex from the interior vertices of patches to be removed
-            for(std::size_t pid : id_p_rm)
-              patches_of_tm1[pid].interior_vertices.erase(vd);
+            for(std::size_t pid : id_p_rm){
+              auto it = std::find( patches_of_tm1[pid].interior_vertices.begin(),
+                                   patches_of_tm1[pid].interior_vertices.end(),
+                                   vd); // Linear time, expensive
+              if (it==patches_of_tm1[pid].interior_vertices.end())
+                continue;
+              if (it!=std::prev(patches_of_tm1[pid].interior_vertices.end()))
+                std::swap(*it, patches_of_tm1[pid].interior_vertices.back());
+              patches_of_tm1[pid].interior_vertices.pop_back();
+            }
 
             // we now need to update the next/prev relationship induced by the future removal of patches
             // that will not be updated after patch removal
@@ -2683,9 +2798,15 @@ public:
         user_visitor.in_place_operation(inplace_operation_tm2);
 
         // mark intersection edges in tm2 (using output constrained edge map)
-        set_on_intersection(out_edge_mark_maps,
-                            mesh_to_intersection_edges[&tm2],
-                            inplace_operation_tm2);
+        std::vector<edge_descriptor> shared_edges;
+        for (std::size_t i=0; i < polylines.lengths.size(); ++i)
+          if (!polylines.to_skip.test(i))
+            get_shared_edges(polylines.tm2[i],
+                             tm2,
+                             polylines.lengths[i],
+                             intersection_edges2,
+                             shared_edges);
+        set_on_intersection(out_edge_mark_maps, shared_edges, inplace_operation_tm2);
 
         /// handle the operation updating only tm2
         CGAL_assertion( *requested_output[inplace_operation_tm2] == &tm2 );
@@ -2722,6 +2843,9 @@ public:
                                   ~patches_of_tm2_used[inplace_operation_tm2],
                                   patches_of_tm2);
       }
+#ifdef CGAL_PMP_BENCH_FACE_GRAPH_OUTPUT_BUILDER
+    std::cout << "copy patches in mesh: " << t.time() << std::endl;
+#endif
   }
 };
 
