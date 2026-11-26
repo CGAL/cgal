@@ -17,8 +17,9 @@
 #include <functional> // for std::less
 #include <algorithm>  // for std::min and max
 
-#ifdef CGAL_USE_SSE2_MAX
-#include <CGAL/sse2.h>
+#if defined(_MSC_VER) && (defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2))
+#include <emmintrin.h>
+#define CGAL_USE_SSE2_MINMAX
 #endif
 
 namespace CGAL {
@@ -79,120 +80,54 @@ protected:
  Less c;
 };
 
-#ifdef CGAL_USE_SSE2_MAX
-
-  inline double sse2max(double a, double b, double c, double d)
+// Both return exactly std::max(a, b) / std::min(a, b), NaN behaviour included.
+inline double dmax(double a, double b)
 {
-  __m128d A =_mm_load_sd(&a);
-  __m128d B =_mm_load_sd(&b);
-  __m128d C =_mm_load_sd(&c);
-  __m128d D =_mm_load_sd(&d);
-
-  __m128d AB = _mm_max_sd(A,B);
-  __m128d CD = _mm_max_sd(C,D);
-  A = _mm_max_sd(AB,CD);
-  _mm_store_sd(&a, A);
-  return a;
-}
-
-inline double sse2max(double a, double b, double c)
-{
-  __m128d A =_mm_load_sd(&a);
-  __m128d B =_mm_load_sd(&b);
-  __m128d C =_mm_load_sd(&c);
-
-  __m128d AB = _mm_max_sd(A,B);
-  A = _mm_max_sd(AB,C);
-  _mm_store_sd(&a, A);
-  return a;
-}
-
-inline double sse2max(double a, double b)
-{
-  __m128d A =_mm_load_sd(&a);
-  __m128d B =_mm_load_sd(&b);
-
-  __m128d C = _mm_max_sd(A,B);
-  _mm_store_sd(&a, C);
-  return a;
-}
-
-
-#if 0
-// Doing things in parallel seems the way to go
-// but copying to/from arrays has too much overhead
-//  a = max(a,a2) b = max(b,b2)
-inline void sse2mmax2(double& a, double a2, double& b, double b2)
-{
-   CGAL_ALIGN_16 double res[2];
-  res[0] = a;
-  res[1] = b;
-  __m128d F =_mm_load_pd(res);
-  res[0] = a2;
-  res[1] = b2;
-  __m128d S =_mm_load_pd(res);
-
-  __m128d C = _mm_max_pd(F,S);
-
-  _mm_store_pd(res, C);
-  a = res[0];
-  b = res[1];
-}
+#ifdef CGAL_USE_SSE2_MINMAX
+  return _mm_cvtsd_f64(_mm_max_sd(_mm_set_sd(b), _mm_set_sd(a)));   // (a < b) ? b : a
+#else
+  return (std::max)(a, b);
 #endif
-
-
-  inline double sse2min(double a, double b, double c, double d)
-{
-  __m128d A =_mm_load_sd(&a);
-  __m128d B =_mm_load_sd(&b);
-  __m128d C =_mm_load_sd(&c);
-  __m128d D =_mm_load_sd(&d);
-
-  __m128d AB = _mm_min_sd(A,B);
-  __m128d CD = _mm_min_sd(C,D);
-  A = _mm_min_sd(AB,CD);
-  _mm_store_sd(&a, A);
-  return a;
 }
 
-inline double sse2min(double a, double b, double c)
+inline double dmin(double a, double b)
 {
-  __m128d A =_mm_load_sd(&a);
-  __m128d B =_mm_load_sd(&b);
-  __m128d C =_mm_load_sd(&c);
-
-  __m128d AB = _mm_min_sd(A,B);
-  A = _mm_min_sd(AB,C);
-  _mm_store_sd(&a, A);
-  return a;
+#ifdef CGAL_USE_SSE2_MINMAX
+  return _mm_cvtsd_f64(_mm_min_sd(_mm_set_sd(b), _mm_set_sd(a)));   // (b < a) ? b : a
+#else
+  return (std::min)(a, b);
+#endif
 }
 
-inline double sse2min(double a, double b)
+inline double dmax(double a, double b, double c)
 {
-  __m128d A =_mm_load_sd(&a);
-  __m128d B =_mm_load_sd(&b);
-
-  __m128d C = _mm_min_sd(A,B);
-  _mm_store_sd(&a, C);
-  return a;
+  return dmax(dmax(a, b), c);
 }
 
-inline void sse2minmax(double& a, double b, double& c)
+inline double dmax(double a, double b, double c, double d)
 {
-  __m128d A =_mm_load_sd(&a);
-  __m128d B =_mm_load_sd(&b);
-  __m128d C =_mm_load_sd(&c);
-
-  __m128d AB = _mm_min_sd(A,B);
-  A = _mm_min_sd(AB,C);
-  _mm_store_sd(&a, A);
-
-  AB = _mm_max_pd(A,B);
-  C = _mm_max_sd(AB,C);
-  _mm_store_sd(&c, C);
+  return dmax(dmax(a, b), dmax(c, d));   // tree: depth 2 instead of 3
 }
 
-#endif // CGAL_USE_SSE2_MAX
+inline double dmax(double a, double b, double c, double d, double e)
+{
+  return dmax(dmax(a, b, c, d), e);   // depth 3, the minimum for 5 values
+}
+
+inline double dmin(double a, double b, double c)
+{
+  return dmin(dmin(a, b), c);
+}
+
+inline double dmin(double a, double b, double c, double d)
+{
+  return dmin(dmin(a, b), dmin(c, d));
+}
+
+inline double dmin(double a, double b, double c, double d, double e)
+{
+  return dmin(dmin(a, b, c, d), e);
+}
 
 template <>
 struct Max<double> :public CGAL::cpp98::binary_function< double, double, double > {
@@ -201,7 +136,7 @@ struct Max<double> :public CGAL::cpp98::binary_function< double, double, double 
  double operator()( const double& x, const double& y) const
     {
 #ifdef CGAL_USE_SSE2_MAX
-      return sse2max(x,y);
+      return dmax(x,y);
 #else
       return (std::max)( x, y);
 #endif
@@ -210,7 +145,7 @@ struct Max<double> :public CGAL::cpp98::binary_function< double, double, double 
   double operator()( double x, double y, double z) const
   {
 #ifdef CGAL_USE_SSE2_MAX
-    return sse2max(x,y,z);
+    return dmax(x,y,z);
 #else
     return (std::max)((std::max)( x, y), z);
 #endif
@@ -219,7 +154,7 @@ struct Max<double> :public CGAL::cpp98::binary_function< double, double, double 
   double operator()( double w,double x, double y, double z) const
   {
 #ifdef CGAL_USE_SSE2_MAX
-    return sse2max(w,x,y,z);
+    return dmax(w,x,y,z);
 #else
     return (std::max)((std::max)( x, y), (std::max)(w,z));
 #endif
@@ -233,7 +168,7 @@ struct Min<double> :public CGAL::cpp98::binary_function< double, double, double 
  double operator()( const double& x, const double& y) const
     {
 #ifdef CGAL_USE_SSE2_MAX
-      return sse2min(x,y);
+      return dmin(x,y);
 #else
       return (std::min)( x, y);
 #endif
@@ -242,7 +177,7 @@ struct Min<double> :public CGAL::cpp98::binary_function< double, double, double 
   double operator()( double x, double y, double z) const
   {
 #ifdef CGAL_USE_SSE2_MAX
-    return sse2min(x,y,z);
+    return dmin(x,y,z);
 #else
     return (std::min)((std::min)( x, y), z);
 #endif

@@ -17,6 +17,7 @@
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
+#include <CGAL/determinant.h>
 #include <cmath>
 
 
@@ -68,62 +69,13 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
           double RT_tmp_result;
           double eps;
           RT_tmp_result = CGAL::determinant( dpx, dpy, dpz, dqx, dqy, dqz, drx, dry, drz );
-          double max1;
-          double max3 = CGAL::abs(dpy);
-          if( (max3 < CGAL::abs(dqy)) )
-            {
-              max3 = CGAL::abs(dqy);
-            }
-          if( (max3 < CGAL::abs(dry)) )
-            {
-              max3 = CGAL::abs(dry);
-            }
-          max1 = max3;
-          double max2 = CGAL::abs(dpx);
-          if( (max2 < CGAL::abs(dqx)) )
-            {
-              max2 = CGAL::abs(dqx);
-            }
-          if( (max2 < CGAL::abs(drx)) )
-            {
-              max2 = CGAL::abs(drx);
-            }
-          if( (max1 < max2) )
-            {
-              max1 = max2;
-            }
-          double max4 = CGAL::abs(pwt);
-          if( (max4 < CGAL::abs(qwt)) )
-            {
-              max4 = CGAL::abs(qwt);
-            }
-          if( (max4 < CGAL::abs(rwt)) )
-            {
-              max4 = CGAL::abs(rwt);
-            }
-          if( (max4 < CGAL::abs(twt)) )
-            {
-              max4 = CGAL::abs(twt);
-            }
-          double lower_bound_1;
-          double upper_bound_1;
-          lower_bound_1 = max3;
-          upper_bound_1 = max3;
-          if( (max1 < lower_bound_1) )
-            {
-              lower_bound_1 = max1;
-            }
-          else
-            {
-              if( (max1 > upper_bound_1) )
-                {
-                  upper_bound_1 = max1;
-                }
-            }
-          if( (max2 < lower_bound_1) )
-            {
-              lower_bound_1 = max2;
-            }
+          double max3 = dmax(CGAL::abs(dpy), CGAL::abs(dqy), CGAL::abs(dry));
+          double max2 = dmax(CGAL::abs(dpx), CGAL::abs(dqx), CGAL::abs(drx));
+          double max1 = dmax(max3, max2);
+          double max4 = dmax(CGAL::abs(pwt), CGAL::abs(qwt), CGAL::abs(rwt), CGAL::abs(twt));
+
+          double lower_bound_1 = dmin(max3, max2);
+          double upper_bound_1 = max1;
           if( ((lower_bound_1 < 2.99168207048872973507e-74) || (max4 < 8.95016161088373414772e-148)) )
             {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
@@ -136,7 +88,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return  Base::operator()(p,q,r,t);
                 }
-              eps = (2.77768297369183927919e-14 * ((max2 * max3) * (CGAL::max)( max4, (max1 * max1) )));
+              eps = (2.77768297369183927919e-14 * ((max2 * max3) * dmax( max4, max1 * max1)));
               if( (RT_tmp_result > eps) )
                 {
                   int_tmp_result = POSITIVE;

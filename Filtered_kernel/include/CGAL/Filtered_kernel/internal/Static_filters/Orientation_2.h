@@ -58,27 +58,20 @@ public:
                                          prx, pry);
 
           // Then semi-static filter.
-          double maxx = CGAL::abs(pqx);
-          double maxy = CGAL::abs(pqy);
+          double maxx = dmax(CGAL::abs(pqx), CGAL::abs(prx));
+          double maxy = dmax(CGAL::abs(pqy), CGAL::abs(pry));
 
-          double aprx = CGAL::abs(prx);
-          double apry = CGAL::abs(pry);
-
-          if (maxx < aprx) maxx = aprx;
-
-          if (maxy < apry) maxy = apry;
-
-          // Sort them
-          if (maxx > maxy)  std::swap(maxx, maxy);
+          double lo = dmin(maxx, maxy);
+          double hi = dmax(maxx, maxy);
 
           // Protect against underflow in the computation of eps.
-          if (maxx < 1e-146) /* sqrt(min_double/eps) */ {
-            if (maxx == 0)
+          if (lo < 1e-146) /* sqrt(min_double/eps) */ {
+            if (lo == 0)
               return ZERO;
           }
           // Protect against overflow in the computation of det.
-          else if (maxy < 1e153) /* sqrt(max_double [hadamard]/2) */ {
-            double eps = 8.8872057372592798e-16 * maxx * maxy;
+          else if (hi < 1e153) /* sqrt(max_double [hadamard]/2) */ {
+            double eps = 8.8872057372592798e-16 * lo * hi;
             if (det > eps)  return POSITIVE;
             if (det < -eps) return NEGATIVE;
           }
