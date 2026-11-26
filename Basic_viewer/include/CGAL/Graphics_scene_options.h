@@ -125,12 +125,24 @@ struct Graphics_scene_options:
     draw_volume=[](const DS &, volume_descriptor)->bool { return true; };
     colored_volume=[](const DS &, volume_descriptor)->bool { return false; };
     volume_wireframe=[](const DS &, volume_descriptor)->bool { return false; };
+    is_volume_valued=[](const DS &, volume_descriptor)->bool { return false; };
   }
 
   std::function<bool(const DS &, volume_descriptor)>            draw_volume;
   std::function<bool(const DS &, volume_descriptor)>            colored_volume;
   std::function<bool(const DS &, volume_descriptor)>            volume_wireframe;
   std::function<CGAL::IO::Color(const DS &, volume_descriptor)> volume_color;
+
+  /// `std::function` that returns `true` if the given volume carries a scalar value
+  /// to color it by, `false` otherwise. `false` by default.
+  std::function<bool(const DS &, volume_descriptor)>  is_volume_valued;
+
+  /// `std::function` that returns the scalar value of the given volume (for example a
+  /// quality measure). Called only when `is_volume_valued()` returns `true`.
+  std::function<float(const DS &, volume_descriptor)> volume_value;
+
+  /// The name of the volume value, shown in the viewer's color legend. Empty by default.
+  std::string volume_value_name;
 
   void disable_volumes() { m_enabled_volumes=false; }
   void enable_volumes() { m_enabled_volumes=true; }

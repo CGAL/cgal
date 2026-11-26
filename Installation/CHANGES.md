@@ -140,6 +140,9 @@ Release date: December 2026
   to import a tetrahedron soup into a linear cell complex.
 - Added the function [`CGAL::import_face_graph_to_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gaa730fcb44abae9d4492355e1cdff9eee)
   (header `CGAL/import_face_graph_to_lcc.h`), which imports any model of `FaceListGraph` into a linear cell complex.
+- Added the function [`CGAL::scaled_jacobian_of_hexahedron()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexOperations.html)
+  (header `CGAL/Linear_cell_complex/lcc_scaled_jacobian.h`), which computes the scaled Jacobian of a hexahedron,
+  a quality measure between -1 and 1.
 - The following function and header have been deprecated for better naming clarity and consistency:
   - `CGAL::polyhedron_3_to_lcc()` → [`CGAL::import_face_graph_to_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gaa730fcb44abae9d4492355e1cdff9eee)
   - `CGAL/Polyhedron_3_to_lcc.h` → `CGAL/import_face_graph_to_lcc.h`
@@ -242,6 +245,10 @@ Release date: December 2026
   for the legend) of the concept [`GraphicsSceneOptions`](https://doc.cgal.org/6.3/Basic_viewer/classGraphicsSceneOptions.html),
   which are provided by the class [`CGAL::Graphics_scene_options`](https://doc.cgal.org/6.3/Basic_viewer/structCGAL_1_1Graphics__scene__options.html).
   As an example, the surface mesh drawer exposes the aspect ratio of each face.
+- In the same way, a drawer can attach a value to each volume through the new members
+  `is_volume_valued` and `volume_value` (with `volume_value_name` for the legend) of the concept
+  [`GraphicsSceneOptionsWithVolumes`](https://doc.cgal.org/6.3/Basic_viewer/classGraphicsSceneOptionsWithVolumes.html).
+  The linear cell complex drawer supports both face and volume values.
 
 ### [Stream Support](https://doc.cgal.org/6.3/Manual/packages.html#PkgStreamSupport)
 

@@ -92,6 +92,8 @@ void compute_face(const LCC& lcc,
   }
   while (cur!=dh);
 
+  if (gso.is_face_valued(lcc, dh))
+  { graphics_scene.set_face_value(gso.face_value(lcc, dh)); }
   graphics_scene.face_end();
 }
 
@@ -169,6 +171,12 @@ void compute_elements(const LCC& lcc,
 
   lcc.orient(oriented_mark);
 
+  // Names for the color legend.
+  if (!gso.face_value_name.empty())
+  { graphics_scene.set_value_name(gso.face_value_name); }
+  if (!gso.volume_value_name.empty())
+  { graphics_scene.set_volume_value_name(gso.volume_value_name); }
+
   for(typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
         itend=lcc.darts().end(); it!=itend; ++it)
   {
@@ -181,6 +189,8 @@ void compute_elements(const LCC& lcc,
       { graphics_scene.volume_begin(gso.volume_color(lcc, it)); }
       else
       { graphics_scene.volume_begin(); }
+      if (gso.is_volume_valued(lcc, it))
+      { graphics_scene.set_volume_value(gso.volume_value(lcc, it)); }
 
       // Faces of this volume (one dart per incident face, on the volume's side).
       for(auto fit=lcc.template one_dart_per_incident_cell<2,3>(it).begin(),

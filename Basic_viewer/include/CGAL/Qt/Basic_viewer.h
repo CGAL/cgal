@@ -126,7 +126,7 @@ public:
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
     setKeyDescription(::Qt::Key_W, "Toggles faces display");
     setKeyDescription(::Qt::Key_D, "Cycle coloring faces by value (distance to the plane)");
-    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Color by value: distance smooth, distance per cell, size per cell");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Color by value: distance smooth, distance per cell, size per cell, drawer values");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
     setKeyDescription(::Qt::ControlModifier, ::Qt::Key_Plus, "Increase size of vertices");
@@ -763,26 +763,40 @@ public:
                          static_cast<GLsizei>(r.second));
           }
         }
-        else if (m_color_map!=0 && (m_color_value==1 || m_color_value==2) && !vols.empty())
+        else if (m_color_map!=0 && !vols.empty() &&
+                 (m_color_value==1 || m_color_value==2 ||
+                  (m_color_value==4 && m_scene.has_volume_values())))
         {
           // Per cell: draw each volume with one flat value, so a whole cell takes
           // one color and neighboring cells do not melt into one. The value is the
-          // center's distance to the plane, or the cell size.
+          // center's distance to the plane, the cell size, or the drawer's value.
           rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
           const std::vector<CGAL::Bbox_3> &bb=m_scene.get_volume_bboxes();
           const bool size_mode=(m_color_value==2);
+          const bool user_mode=(m_color_value==4);
           if (size_mode)
           {
             if (!m_cell_sizes_valid) { compute_cell_sizes(); }
             rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_cell_size_min));
             rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_cell_size_max));
           }
+          if (user_mode)
+          {
+            rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_scene.volume_value_min()));
+            rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_scene.volume_value_max()));
+          }
           const QVector3D n=QVector3D(clipPlane).normalized();
           const QVector3D pt=plane_point.toVector3D();
           for (std::size_t v=0; v<vols.size(); ++v)
           {
             float value;
-            if (size_mode) { value=m_cell_sizes[v]; }
+            if (user_mode)
+            { // a volume with no value keeps its own color
+              value=m_scene.get_volume_values()[v];
+              rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(
+                m_scene.is_volume_valued(v) ? m_color_map : 0));
+            }
+            else if (size_mode) { value=m_cell_sizes[v]; }
             else
             {
               const CGAL::Bbox_3 &b=bb[v];
@@ -799,6 +813,7 @@ public:
                            static_cast<GLsizei>(r.second));
             }
           }
+          rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
         }
         else
         {
@@ -1022,11 +1037,17 @@ public:
           rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(dvmax)); }
         const bool per_cell=(m_color_map!=0 && m_color_value!=0 && num_volumes!=0);
         const bool size_mode=(m_color_value==2);
+        const bool user_mode=(m_color_value==4 && m_scene.has_volume_values());
         if (per_cell && size_mode)
         {
           if (!m_cell_sizes_valid) { compute_cell_sizes(); }
           rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_cell_size_min));
           rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_cell_size_max));
+        }
+        if (per_cell && user_mode)
+        {
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_scene.volume_value_min()));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_scene.volume_value_max()));
         }
         rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(per_cell?1:0));
         const QVector3D n=QVector3D(clipPlane).normalized();
@@ -1061,13 +1082,20 @@ public:
         else
         {
           const std::vector<CGAL::Bbox_3> &bb = m_scene.get_volume_bboxes();
+          bool flipped=false, recolored=false; // u_FlipNormal and u_UseDefaultColor set
           for (std::size_t v = 0; v < num_volumes; ++v)
           {
             if (!m_volumes_kept[v]) { continue; }
             if (per_cell)
             {
               float value;
-              if (size_mode) { value=m_cell_sizes[v]; }
+              if (user_mode)
+              { // a volume with no value keeps its own color
+                value=m_scene.get_volume_values()[v];
+                rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(
+                  m_scene.is_volume_valued(v) ? m_color_map : 0));
+              }
+              else if (size_mode) { value=m_cell_sizes[v]; }
               else
               {
                 const CGAL::Bbox_3 &b=bb[v];
@@ -1080,11 +1108,38 @@ public:
             }
             for (unsigned int fi : volumes[v])
             {
+              // A wall shared by two volumes is stored once, as the copy of its first
+              // volume. Drawn for the other volume (when the first one is removed), it
+              // takes the normal, and the color if it had the volume one, of this volume.
+              const bool other=(m_scene.face_volume(fi)!=static_cast<int>(v));
+              if (other!=flipped)
+              {
+                rendering_program_face.setUniformValue("u_FlipNormal", static_cast<GLint>(other?1:0));
+                flipped=other;
+              }
+              const bool recolor=(other && !m_use_default_color &&
+                                  m_scene.face_has_volume_color(fi));
+              if (recolor)
+              {
+                const CGAL::IO::Color &c=m_scene.get_volume_colors()[v];
+                rendering_program_face.setUniformValue("u_DefaultColor",
+                  QVector3D(c.red()/255.f, c.green()/255.f, c.blue()/255.f));
+              }
+              if (recolor!=recolored)
+              {
+                rendering_program_face.setUniformValue("u_UseDefaultColor", static_cast<GLint>(recolor?1:0));
+                recolored=recolor;
+              }
               const std::pair<unsigned int, unsigned int> &r = m_scene.face_range(fi);
               glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
                            static_cast<GLsizei>(r.second));
             }
           }
+          rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
+          if (flipped)
+          { rendering_program_face.setUniformValue("u_FlipNormal", static_cast<GLint>(0)); }
+          if (recolored)
+          { rendering_program_face.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); }
         }
         vao[VAO_FACES].release();
         glDisable(GL_POLYGON_OFFSET_FILL);
@@ -1936,7 +1991,15 @@ protected:
   {
     const std::vector<std::vector<unsigned int>> &vols=m_scene.get_volume_faces();
     double vmin, vmax, value;
-    if (m_color_value==3 && m_scene.has_face_values())
+    if (m_color_value==4 && m_scene.has_volume_values())
+    {
+      if (!m_scene.is_volume_valued(v))
+      { const CGAL::IO::Color &c=m_scene.get_volume_colors()[v];
+        return QColor(c.red(), c.green(), c.blue()); }
+      vmin=m_scene.volume_value_min(); vmax=m_scene.volume_value_max();
+      value=m_scene.get_volume_values()[v];
+    }
+    else if (m_color_value==3 && m_scene.has_face_values())
     { vmin=m_scene.face_value_min(); vmax=m_scene.face_value_max();
       const std::vector<float> &fv=m_scene.get_face_values();
       double sum=0.0; std::size_t n=0;
@@ -1963,14 +2026,19 @@ protected:
   {
     double vmin, vmax;
     QString label;
-    if (m_color_value==3 && m_scene.has_face_values())
+    if (m_color_value==4 && m_scene.has_volume_values())
+    { vmin=m_scene.volume_value_min(); vmax=m_scene.volume_value_max();
+      label=QString(m_scene.volume_value_name().c_str()); }
+    else if (m_color_value==3 && m_scene.has_face_values())
     { vmin=m_scene.face_value_min(); vmax=m_scene.face_value_max();
       label=QString(m_scene.value_name().c_str()); }
     else if (m_color_value==2 && !m_scene.get_volume_faces().empty())
     { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
       vmin=m_cell_size_min; vmax=m_cell_size_max; label=QString("size"); }
     else
-    { distance_value_range(clipPlane, plane_point, vmin, vmax); label=QString("distance to clipping plane"); }
+    { distance_value_range(clipPlane, plane_point, vmin, vmax);
+      label=QString((m_color_value==1 && !m_scene.get_volume_faces().empty())
+                    ? "distance to clipping plane (per cell)" : "distance to clipping plane"); }
 
     // No range to map (a uniform value, e.g. a flat mesh with a parallel plane):
     // skip the legend rather than show a misleading full gradient. The threshold is
@@ -2598,10 +2666,12 @@ protected:
         // message, the faces and the legend in agreement.
         const bool has_vols=!m_scene.get_volume_faces().empty();
         const bool has_vals=m_scene.has_face_values();
-        for (int step=1; step<=4; ++step)
+        const bool has_vol_vals=m_scene.has_volume_values();
+        for (int step=1; step<=5; ++step)
         {
-          const int m=(m_color_value+step)%4;
-          if (m==0 || ((m==1 || m==2) && has_vols) || (m==3 && has_vals))
+          const int m=(m_color_value+step)%5;
+          if (m==0 || ((m==1 || m==2) && has_vols) || (m==3 && has_vals) ||
+              (m==4 && has_vol_vals))
           { m_color_value=m; break; }
         }
         switch(m_color_value)
@@ -2610,6 +2680,7 @@ protected:
         case 1: displayMessage(QString("Color by value = distance (per cell)")); break;
         case 2: displayMessage(QString("Color by value = size (per cell)")); break;
         case 3: displayMessage(QString("Color by value = %1 (per face)").arg(m_scene.value_name().c_str())); break;
+        case 4: displayMessage(QString("Color by value = %1 (per cell)").arg(m_scene.volume_value_name().c_str())); break;
         default: break;
         }
         update();
@@ -2862,7 +2933,7 @@ protected:
   };
 
   int m_use_clipping_plane=CLIPPING_PLANE_OFF;
-  int m_clip_edges_vertices=CLIP_EV_ALL; // Shift+C: how edges/vertices are clipped
+  int m_clip_edges_vertices=CLIP_EV_PARTIAL; // Shift+C: how edges/vertices are clipped
   std::vector<char> m_volumes_kept; // whole-volume clip: per volume, 1 if kept
   QVector4D m_last_vol_clip_plane; // whole-volume clip: plane m_volumes_kept was computed for
   QVector4D m_last_vol_plane_point;
@@ -2871,7 +2942,8 @@ protected:
   bool m_clip_owners_valid = false; // whole-volume clip: are the owner lists up to date
   int m_color_map=0; // color by value: 0 off, 1 heat, 2 jet, 3 grey ramp
   int m_color_value=0; // color by value source (Shift+D): 0 distance smooth,
-                       // 1 distance per cell, 2 size per cell
+                       // 1 distance per cell, 2 size per cell, 3 face values,
+                       // 4 volume values
   std::vector<float> m_cell_sizes; // color by value: per-cell size (bbox volume)
   float m_cell_size_min=0.f; // color by value: size range for the palette
   float m_cell_size_max=1.f;
