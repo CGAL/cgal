@@ -37,7 +37,7 @@ struct No_mark
 {
   friend
   constexpr bool get(No_mark<G>,
-                  const typename boost::graph_traits<G>::edge_descriptor&)
+                  typename boost::graph_traits<G>::edge_descriptor)
   {
     return false;
   }
@@ -622,35 +622,6 @@ triangulate_a_face(
   user_visitor.after_subface_creations(tm);
 }
 
-template <class PolygonMesh>
-class Border_edge_map {
-  typedef boost::graph_traits<PolygonMesh> GT;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef typename GT::edge_descriptor edge_descriptor;
-  typedef std::unordered_set<edge_descriptor> Intersection_edge_map;
-  const Intersection_edge_map* intersection_edges;
-  const PolygonMesh* tm;
-public:
-  // required by the property forwarder of the filtered_graph in boost
-  Border_edge_map()
-   : intersection_edges(NULL)
-   , tm(NULL)
-  {}
-
-  Border_edge_map(const Intersection_edge_map& intersection_edges,
-                 const PolygonMesh& tm)
-   : intersection_edges(&intersection_edges)
-   , tm(&tm)
-  {}
-
-  friend
-  bool get(const Border_edge_map& map, edge_descriptor e)
-  {
-    if ( is_border(e,*map.tm) ) return false;
-    return map.intersection_edges->count(e)!=0;
-  }
-};
-
 template<class PolygonMesh>
 struct Patch_description{
   typedef boost::graph_traits<PolygonMesh> GT;
@@ -691,7 +662,7 @@ void extract_patch_simplices(
 
   for(face_descriptor f : patch.faces)  {
     for(halfedge_descriptor h : halfedges_around_face(halfedge(f, pm),pm))    {
-      if ( !is_intersection_edge.count(edge(h, pm)) )
+      if ( !get(is_intersection_edge, edge(h, pm) ) )
       {
         halfedge_descriptor h_opp = opposite(h, pm);
         if(is_border(h_opp,pm)){
@@ -706,31 +677,21 @@ void extract_patch_simplices(
     }
   }
 
-  std::set<vertex_descriptor> shared_vertices;
-  for(halfedge_descriptor h : patch.shared_edges){
-    shared_vertices.insert( target(h,pm) );
-    // if the model is not closed i.e. patch_shared_halfedge is not cycle-only
-    if(!patch.border_edges.empty())
-      shared_vertices.insert( source(h,pm) );
-  }
-
   // a patch is a disk v = 2 + e - f
   // v_in = v - v_shared, e = e_in + e_shared, v_shared = e_shared ( +1 if not closed)
   // v_in = 2 + e_in - f (-1 if not closed)
   patch.interior_vertices.reserve(2 + patch.interior_edges.size() - patch.faces.size() );
   for(halfedge_descriptor h : patch.interior_edges){
-    if ( !shared_vertices.count( target(h,pm) ) &&
-         halfedge(target(h,pm),pm) == h ) // only add the vertex once
+    if ( halfedge(target(h,pm),pm) == h ) // only add the vertex once
       patch.interior_vertices.push_back( target(h,pm) );
-    if ( !shared_vertices.count( source(h,pm) ) &&
-         halfedge(source(h,pm),pm) == opposite(h,pm) ) // only add the vertex once
+    if ( halfedge(source(h,pm),pm) == opposite(h,pm) ) // only add the vertex once
       patch.interior_vertices.push_back( source(h,pm) );
   }
 
   for(halfedge_descriptor h : patch.border_edges){
-    if ( shared_vertices.count( target(h,pm) ) )
+    if ( !get(is_intersection_edge, edge(halfedge(target(h, pm), pm), pm)) )
       patch.border_with_shared_target.emplace(h);
-    if ( shared_vertices.count( source(h,pm) ) )
+    if ( !get(is_intersection_edge, edge(halfedge(source(h, pm), pm), pm)) )
       patch.border_with_shared_source.emplace(h);
   }
 }
@@ -854,15 +815,33 @@ next_marked_halfedge_around_target_vertex(
    const PolygonMesh& pm,
    const MarkedEdgeSet& marked_edges)
 {
-  CGAL_assertion( marked_edges.count(edge(h,pm))!= 0 );
+  CGAL_assertion(get(marked_edges, edge(h,pm)));
   typename boost::graph_traits<PolygonMesh>::halfedge_descriptor nxt =
     next(h, pm);
-  while( !marked_edges.count(edge(nxt,pm)) )
+  while( !get(marked_edges, edge(nxt,pm)) )
   {
     nxt=next(opposite(nxt,pm),pm);
   }
   CGAL_assertion(nxt!=h);
   return nxt;
+}
+
+template <class PolygonMesh,
+          class VertexPointMap,
+          class IntersectionEdgeMap>
+void get_shared_edges(
+  typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+  const PolygonMesh& pm,
+  std::size_t nb_segments,
+  const IntersectionEdgeMap& intersection_edges,
+  std::vector<typename boost::graph_traits<PolygonMesh>::edge_descriptor>& shared_edges)
+{
+  shared_edges.push_back(edge(h, pm));
+  for (std::size_t i=1; i<nb_segments; ++i)
+  {
+    h = next_marked_halfedge_around_target_vertex(h, pm, intersection_edges);
+    shared_edges.push_back(edge(h, pm));
+  }
 }
 
 template <class PolygonMesh,
