@@ -76,6 +76,15 @@ Release date: December 2026
   [`CGAL::Hot_pixel_snap_rounding_traits_2`](https://doc.cgal.org/6.3/Snap_rounding_2/classCGAL_1_1Hot__pixel__snap__rounding__traits__2.html).
   Similarly, the concept `SnapRoundingTraits_2` has been renamed
   [`HotPixelSnapRoundingTraits_2`](https://doc.cgal.org/6.3/Snap_rounding_2/classHotPixelSnapRoundingTraits__2.html).
+- Hot-pixel snap rounding now locates the hot pixels a segment intersects with a single kd-tree and a query
+  that approximates the Minkowski sum of the segment and a pixel, rather than its bounding box. The running time
+  no longer depends on the orientation of the input, and the parameter `number_of_kd_trees` of the deprecated
+  function `CGAL::snap_rounding_2()` is ignored. The following types, which are no longer used, have been
+  removed from the concept `HotPixelSnapRoundingTraits_2` and from the traits class
+  `CGAL::Hot_pixel_snap_rounding_traits_2`: `Minkowski_sum_with_pixel_2`, `Iso_rectangle_2`,
+  `Construct_iso_rectangle_2`, `Cartesian_const_iterator_2`, `Construct_cartesian_const_iterator_2`, and
+  `To_double`. The traits class no longer defines `Vector_2`, `Line_2`, `Direction_2`, and
+  `Aff_transformation_2`. The number type `FT` of the concept must now be a model of `RealEmbeddable`.
   
 ### [Kinetic Space Partition](https://doc.cgal.org/6.3/Manual/packages.html#PkgKineticSpacePartition) (major changes)
 
