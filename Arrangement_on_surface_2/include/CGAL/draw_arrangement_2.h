@@ -669,7 +669,7 @@ void draw_impl_agas(const Arrangement& arr, const GSOptions& gso,
   derived_gso.colored_face = [&](const Arrangement&, const Face_const_handle& fh) {
     Face_const_handle original_fh = tracker.original_face(fh);
     if (face_map.find(original_fh) == face_map.end()) return false;
-    return gso.draw_face(arr, face_map.at(original_fh));
+    return gso.colored_face(arr, face_map.at(original_fh));
   };
   derived_gso.face_color = [&](const Arrangement&, const Face_const_handle& fh) -> CGAL::IO::Color {
     Face_const_handle original_fh = tracker.original_face(fh);
