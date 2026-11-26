@@ -79,8 +79,13 @@ int test(const std::string& filename, const bool perturb_vertices_positions = fa
     .remesh_boundaries(false));
 
   int neg2 = count_negative_cells(tr);
-  if(neg2 > 0)
+  if(neg > 0 || neg2 > 0)
+  {
+    std::cout << std::endl;
+    std::cout << neg << " finite cells were badly oriented before remeshing" << std::endl;
     std::cout << neg2 << " finite cells are badly oriented after remeshing" << std::endl;
+  }
+
   if(!perturb_vertices_positions)
     assert(neg2 == 0);
 

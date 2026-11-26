@@ -1378,15 +1378,20 @@ void collapse_short_edges(C3T3& c3t3,
   typedef typename C3T3::Triangulation       T3;
   typedef typename T3::Edge                  Edge;
   typedef typename T3::Vertex_handle         Vertex_handle;
+  typedef typename T3::Cell_handle           Cell_handle;
 
   typedef typename T3::Geom_traits::FT FT;
+  // Priority of a short edge = [is not incident to a negative cell, squared length]
+  // `false < true`, so the edges of negative cells are collapsed first,
+  // and then edges are collapsed from the shortest to the longest.
+  typedef std::pair<bool, FT> Edge_priority;
   // the element side is only ever searched, never walked in order, so it is
   // hashed : keeping it sorted meant comparing pairs of vertex handles
   // O(log n) times for every edge the last collapse touched. The priority
   // side keeps its order, which is what decides what runs next.
   typedef boost::bimap<
         boost::bimaps::unordered_set_of<Edge, Hash_edges<Edge>, Equal_edges<Edge> >,
-        boost::bimaps::multiset_of<FT, std::less<FT> > >  Boost_bimap;
+        boost::bimaps::multiset_of<Edge_priority> >  Boost_bimap;
   typedef typename Boost_bimap::value_type            short_edge;
 
   T3& tr = c3t3.triangulation();
@@ -1411,7 +1416,10 @@ void collapse_short_edges(C3T3& c3t3,
 
     const auto sqlen = is_too_short(e, boundary, sizing, c3t3, cell_selector);
     if(sqlen != std::nullopt)
-      short_edges.insert(short_edge(e, sqlen.value()));
+    {
+      Edge_priority priority{!is_incident_to_a_negative_cell(e, c3t3), sqlen.value()};
+      short_edges.insert(short_edge(e, priority));
+    }
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -1425,12 +1433,13 @@ void collapse_short_edges(C3T3& c3t3,
 
   while(!short_edges.empty())
   {
-    //the edge with shortest length
+    //the edge with highest priority :
+    // incident to a negative cell first, and then shortest length
     typename Boost_bimap::right_map::iterator eit = short_edges.right.begin();
     Edge e = eit->second;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
-    FT sqlen = eit->first;
+    FT sqlen = eit->first.second;
     std::cout << "\rCollapse... (" << short_edges.left.size() << " short edges, ";
     std::cout << std::sqrt(sqlen) << ", ";
     std::cout << nb_collapses << " collapses)";
@@ -1465,7 +1474,38 @@ void collapse_short_edges(C3T3& c3t3,
           continue;
 
         const auto sqlen = is_too_short(eshort, boundary, sizing, c3t3, cell_selector);
-        update_bimap(eshort, short_edges, sqlen);
+        std::optional<Edge_priority> priority;
+        if(sqlen != std::nullopt)
+          priority = Edge_priority{!is_incident_to_a_negative_cell(eshort, c3t3), sqlen.value()};
+        update_bimap(eshort, short_edges, priority);
+      }
+
+      // the collapse may have removed negative cells, or changed their orientation.
+      // The edges of the 1-ring of vh are the other edges of the modified cells :
+      // update their priority if they are already queued (their length is unchanged)
+      if (tr.may_have_badly_oriented_cells())
+      {
+        std::vector<Cell_handle> vh_cells;
+        tr.finite_incident_cells(vh, std::back_inserter(vh_cells));
+
+        for (const Cell_handle c : vh_cells)
+        {
+          for (const Edge& opp_e : facet_edges(c, c->index(vh), tr))
+          {
+            const auto short_eit = short_edges.left.find(opp_e);
+            if (short_eit == short_edges.left.end())
+              continue;
+
+            // the edge is already known to be too short
+            const auto& [old_inc_to_negative, sqlen] = short_eit->second;
+            std::optional<Edge_priority> new_priority;
+            if(is_incident_to_a_negative_cell(opp_e, c3t3) != old_inc_to_negative)
+            {
+              new_priority = Edge_priority{!old_inc_to_negative, sqlen};
+              update_bimap(opp_e, short_edges, new_priority);
+            }
+          }
+        }
       }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
