@@ -48,6 +48,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 #include <CGAL/IO/Arr_iostream.h>
+#include <CGAL/Named_function_parameters.h>
 
 namespace CGAL {
 
@@ -215,9 +216,10 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr, con
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits, typename InputIterator>
-void
+bool
 insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
-             InputIterator begin_xcurves, InputIterator end_xcurves) {
+             InputIterator begin_xcurves, InputIterator end_xcurves,
+             const std::function<bool()>& stop_pred = {}) {
   using Gt2 = GeometryTraits_2;
   using Tt = TopologyTraits;
 
@@ -252,7 +254,13 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
   // Define a surface-sweep instance and perform the sweep:
   Ss2::Surface_sweep_2<C_visitor> surface_sweep(&traits, &visitor);
+  if (stop_pred) surface_sweep.set_stop_predicate(stop_pred);
   surface_sweep.sweep(begin_xcurves, end_xcurves);
+  if (surface_sweep.is_stopped()) {
+    arr.clear();
+    return false;
+  }
+  return true;
 }
 
 /*! Insert a range of x-monotone curves and a range of isolated points into
@@ -262,11 +270,13 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  * \param end_xcurves past-the-end curve range
  * \param begin_points the beginning of the point range
  * \param end_points past-the-end point range
+ * \param stop_pred optional cancellation predicate
  */
 template <typename GeometryTraits_2, typename TopologyTraits, typename XcInputIterator, typename PInputIterator>
-void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+bool insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
                   XcInputIterator begin_xcurves, XcInputIterator end_xcurves,
-                  PInputIterator begin_points, PInputIterator end_points) {
+                  PInputIterator begin_points, PInputIterator end_points,
+                  const std::function<bool()>& stop_pred = {}) {
   using Gt2 = GeometryTraits_2;
   using Tt = TopologyTraits;
 
@@ -301,18 +311,26 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& ar
 
   // Define a surface-sweep instance and perform the sweep.
   Ss2::Surface_sweep_2<C_visitor> surface_sweep(&traits, &visitor);
+  if (stop_pred) surface_sweep.set_stop_predicate(stop_pred);
   surface_sweep.sweep(begin_xcurves, end_xcurves, begin_points, end_points);
+  if (surface_sweep.is_stopped()) {
+    arr.clear();
+    return false;
+  }
+  return true;
 }
 
 /*! Insert a range of x-monotone curves into a non-empty arrangement
  * \param arr the resulting arrangement
  * \param begin the beginning of the curve range
  * \param end past-the-end curve range
+ * \param stop_pred optional cancellation predicate
  */
 template <typename GeometryTraits_2, typename TopologyTraits, typename XcInputIterator, typename PInputIterator>
-void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+bool insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
                       XcInputIterator begin_xcurves, XcInputIterator end_xcurves,
-                      PInputIterator begin_points, PInputIterator end_points) {
+                      PInputIterator begin_points, PInputIterator end_points,
+                      const std::function<bool()>& stop_pred = {}) {
   using Gt2 = GeometryTraits_2;
   using Tt = TopologyTraits;
 
@@ -359,7 +377,13 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>
 
   // Define a basic surface-sweep instance and perform the sweep.
   Ss2::Surface_sweep_2<I_visitor> surface_sweep(&traits, &visitor);
+  if (stop_pred) surface_sweep.set_stop_predicate(stop_pred);
   surface_sweep.sweep(ex_cvs.begin(), ex_cvs.end(),ex_pts.begin(), ex_pts.end());
+  if (surface_sweep.is_stopped()) {
+    arr.clear();
+    return false;
+  }
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -407,6 +431,42 @@ void insert_cv(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   arr_access.notify_after_global_change();
 }
 
+template <typename GeometryTraits_2, typename TopologyTraits, typename InputIterator, typename NamedParameters>
+bool insert_cv(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+               InputIterator begin, InputIterator end,
+               const NamedParameters& np) {
+  using Gt2 = GeometryTraits_2;
+  using Tt = TopologyTraits;
+
+  using Arr = Arrangement_on_surface_2<Gt2, Tt>;
+  using Point_2 = typename Gt2::Point_2;
+  using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
+
+  Arr_accessor<Arr> arr_access(arr);
+  arr_access.notify_before_global_change();
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  std::function<bool()> stop_pred = choose_parameter(get_parameter(np, internal_np::stop_predicate), std::function<bool()>());
+
+  if (stop_pred && stop_pred()) {
+    arr.clear();
+    arr_access.notify_after_global_change();
+    return false;
+  }
+
+  const Gt2* geom_traits = arr.geometry_traits();
+  std::list<X_monotone_curve_2> xcurves;
+  std::list<Point_2> iso_points;
+  Ss2::make_x_monotone(begin, end, std::back_inserter(xcurves), std::back_inserter(iso_points), *geom_traits);
+  bool completed = true;
+  if (arr.is_empty()) completed = insert_empty(arr, xcurves.begin(), xcurves.end(), iso_points.begin(), iso_points.end(), stop_pred);
+  else completed = insert_non_empty(arr, xcurves.begin(), xcurves.end(), iso_points.begin(), iso_points.end(), stop_pred);
+
+  arr_access.notify_after_global_change();
+  return completed;
+}
+
 //-----------------------------------------------------------------------------
 // Insert a range of x-monotone curves into the arrangement (aggregated
 // insertion). The inserted x-monotone curves may intersect one another and
@@ -451,6 +511,33 @@ void insert_xcv(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   arr_access.notify_after_global_change();
 }
 
+template <typename GeometryTraits_2, typename TopologyTraits, typename InputIterator, typename NamedParameters>
+bool insert_xcv(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+                InputIterator begin, InputIterator end,
+                const NamedParameters& np) {
+  using Gt2 = GeometryTraits_2;
+  using Tt = TopologyTraits;
+
+  using Arr = Arrangement_on_surface_2<Gt2, Tt>;
+
+  Arr_accessor<Arr> arr_access(arr);
+  arr_access.notify_before_global_change();
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  std::function<bool()> stop_pred = choose_parameter(get_parameter(np, internal_np::stop_predicate), std::function<bool()>());
+
+  bool completed = true;
+  if (arr.is_empty()) completed = insert_empty(arr, begin, end, stop_pred);
+  else {
+    std::list<typename Gt2::Point_2> empty;
+    completed = insert_non_empty(arr, begin, end, empty.begin(), empty.end(), stop_pred);
+  }
+
+  arr_access.notify_after_global_change();
+  return completed;
+}
+
 //-----------------------------------------------------------------------------
 // Common interface for the inserts of the Curve_2 and X_monotone_curve_2
 template <typename GeometryTraits_2, typename TopologyTraits, typename InputIterator>
@@ -461,6 +548,21 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>& arr,
   using Curve = typename std::iterator_traits<InputIterator>::value_type;
   if constexpr (std::is_same_v<Curve, X_monotone_curve_2>) return insert_xcv(arr, begin, end);
   else return insert_cv(arr, begin, end);
+}
+
+/*! Insert a range of curves into the arrangement with named parameters (e.g. stop_predicate).
+ * \return true if completed, false if cancelled.
+ */
+template <typename GeometryTraits_2, typename TopologyTraits, typename InputIterator, typename NamedParameters>
+std::enable_if_t<CGAL::is_named_function_parameter<NamedParameters>, bool>
+insert(Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>& arr,
+       InputIterator begin, InputIterator end,
+       const NamedParameters& np) {
+  using Gt2 = GeometryTraits_2;
+  using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
+  using Curve = typename std::iterator_traits<InputIterator>::value_type;
+  if constexpr (std::is_same_v<Curve, X_monotone_curve_2>) return insert_xcv(arr, begin, end, np);
+  else return insert_cv(arr, begin, end, np);
 }
 
 //-----------------------------------------------------------------------------
@@ -722,8 +824,9 @@ insert_non_intersecting_curve(Arrangement_on_surface_2<GeometryTraits_2, Topolog
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits, typename InputIterator>
-void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
-                                   InputIterator begin_xcurves, InputIterator end_xcurves) {
+bool non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+                                   InputIterator begin_xcurves, InputIterator end_xcurves,
+                                   const std::function<bool()>& stop_pred = {}) {
   using Gt2 = GeometryTraits_2;
   using Tt = TopologyTraits;
 
@@ -750,18 +853,26 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2, To
   // Define a basic surface-sweep instance (which is not supposed to handle
   // insersections) and perform the sweep.
   Ss2::No_intersection_surface_sweep_2<Nxc_visitor> surface_sweep(traits, &visitor);
+  if (stop_pred) surface_sweep.set_stop_predicate(stop_pred);
   surface_sweep.sweep(begin_xcurves, end_xcurves);
+  if (surface_sweep.is_stopped()) {
+    arr.clear();
+    return false;
+  }
+  return true;
 }
 
 /*! Insert a range of x-monotone curves into an empty arrangement
  * \param arr the resulting arrangement
  * \param begin the beginning of the curve range
  * \param end past-the-end curve range
+ * \param stop_pred optional cancellation predicate
  */
 template <typename GeometryTraits_2, typename TopologyTraits, typename XcInputIterator, typename PInputIterator>
-void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+bool non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
                                    XcInputIterator begin_xcurves, XcInputIterator end_xcurves,
-                                   PInputIterator begin_points, PInputIterator end_points) {
+                                   PInputIterator begin_points, PInputIterator end_points,
+                                   const std::function<bool()>& stop_pred = {}) {
   using Gt2 = GeometryTraits_2;
   using Tt = TopologyTraits;
 
@@ -788,19 +899,27 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2, To
   // Define a basic surface-sweep instance (which is not supposed to handle
   // insersections) and perform the sweep.
   Ss2::No_intersection_surface_sweep_2<Nxc_visitor> surface_sweep(traits, &visitor);
+  if (stop_pred) surface_sweep.set_stop_predicate(stop_pred);
   surface_sweep.sweep(begin_xcurves, end_xcurves, begin_points, end_points);
+  if (surface_sweep.is_stopped()) {
+    arr.clear();
+    return false;
+  }
+  return true;
 }
 
 /*! Insert a range of x-monotone curves into a non-empty arrangement
  * \param arr the resulting arrangement
  * \param begin the beginning of the curve range
  * \param end past-the-end curve range
+ * \param stop_pred optional cancellation predicate
  */
 template <typename GeometryTraits_2, typename TopologyTraits, typename XcInputIterator, typename PInputIterator>
-void
+bool
 non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
                                   XcInputIterator begin_xcurves, XcInputIterator end_xcurves,
-                                  PInputIterator begin_points, PInputIterator end_points) {
+                                  PInputIterator begin_points, PInputIterator end_points,
+                                  const std::function<bool()>& stop_pred = {}) {
   using Gt2 = GeometryTraits_2;
   using Tt = TopologyTraits;
 
@@ -857,8 +976,48 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2, Top
   // Define a basic surface-sweep instance and perform the sweep.
   Ss2::No_intersection_surface_sweep_2<Nxi_visitor>
     surface_sweep(&traits, &visitor);
+  if (stop_pred) surface_sweep.set_stop_predicate(stop_pred);
   surface_sweep.sweep(ex_cvs.begin(), ex_cvs.end(),
                       ex_pts.begin(), ex_pts.end());
+  if (surface_sweep.is_stopped()) {
+    arr.clear();
+    return false;
+  }
+  return true;
+}
+
+/*! Insert a range of pairwise interior-disjoint x-monotone curves with named parameters.
+ * \param arr the arrangement
+ * \param begin start iterator of curve range
+ * \param end past-the-end iterator
+ * \param np named parameters (such as CGAL::parameters::stop_predicate)
+ * \return true if completed, false if cancelled
+ */
+template <typename GeometryTraits_2, typename TopologyTraits, typename InputIterator, typename NamedParameters>
+std::enable_if_t<CGAL::is_named_function_parameter<NamedParameters>, bool>
+insert_non_intersecting_curves(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+                               InputIterator begin, InputIterator end,
+                               const NamedParameters& np) {
+  using Gt2 = GeometryTraits_2;
+  using Tt = TopologyTraits;
+  using Arr = Arrangement_on_surface_2<Gt2, Tt>;
+
+  Arr_accessor<Arr> arr_access(arr);
+  arr_access.notify_before_global_change();
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  std::function<bool()> stop_pred = choose_parameter(get_parameter(np, internal_np::stop_predicate), std::function<bool()>());
+
+  bool completed = true;
+  if (arr.is_empty()) completed = non_intersecting_insert_empty(arr, begin, end, stop_pred);
+  else {
+    std::list<typename Gt2::Point_2> empty;
+    completed = non_intersecting_insert_non_empty(arr, begin, end, empty.begin(), empty.end(), stop_pred);
+  }
+
+  arr_access.notify_after_global_change();
+  return completed;
 }
 
 //-----------------------------------------------------------------------------

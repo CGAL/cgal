@@ -478,3 +478,7 @@ CGAL_add_named_parameter(use_trimming_t, use_trimming, use_trimming)
 
 //List of named parameters used in Mesh_smoothing_3
 CGAL_add_named_parameter(max_number_of_evaluations_t, max_number_of_evaluations, max_number_of_evaluations)
+
+// General cancellation / stop predicate
+CGAL_add_named_parameter(stop_predicate_t, stop_predicate, stop_predicate)
+

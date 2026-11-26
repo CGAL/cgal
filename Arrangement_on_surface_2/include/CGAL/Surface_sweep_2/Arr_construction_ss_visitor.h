@@ -298,6 +298,10 @@ void Arr_construction_ss_visitor<Hlpr, Vis>::before_sweep()
 template <typename Hlpr, typename Vis>
 void Arr_construction_ss_visitor<Hlpr, Vis>::after_sweep()
 {
+  if (this->is_stopped()) {
+    m_arr->set_sweep_mode(false);
+    return;
+  }
   m_arr->clean_inner_ccbs_after_sweep();
   m_arr->set_sweep_mode(false);
 }

@@ -24,6 +24,7 @@
 #include <CGAL/Surface_sweep_2/No_overlap_event.h>
 #include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
 #include <CGAL/Surface_sweep_2/Arr_batched_pl_ss_visitor.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <vector>
 #include <boost/type_traits.hpp>
@@ -46,11 +47,13 @@ namespace Ss2 = Surface_sweep_2;
  *      It represents the arrangement feature containing the point.
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
-          typename PointsIterator, typename OutputIterator>
+          typename PointsIterator, typename OutputIterator,
+          typename NamedParameters = parameters::Default_named_parameters>
 OutputIterator
 locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
        PointsIterator points_begin, PointsIterator points_end,
-       OutputIterator oi)
+       OutputIterator oi,
+       const NamedParameters& np = parameters::default_values())
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -126,6 +129,14 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   Bpl_visitor visitor(&arr, oi);
   Ss2::No_intersection_surface_sweep_2<Bpl_visitor>
     surface_sweep(&ex_traits, &visitor);
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  std::function<bool()> stop_pred = choose_parameter(get_parameter(np, internal_np::stop_predicate), std::function<bool()>());
+  if (stop_pred) {
+    surface_sweep.set_stop_predicate(stop_pred);
+  }
+
   surface_sweep.sweep(xcurves_vec.begin(), xcurves_vec.end(), // Curves.
                       iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.
                       points_begin, points_end);              // Query points.

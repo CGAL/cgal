@@ -36,6 +36,7 @@
 #include <CGAL/Surface_sweep_2/Arr_overlay_event.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_subcurve.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Named_function_parameters.h>
 
 namespace CGAL {
 
@@ -124,11 +125,13 @@ template <typename GeometryTraitsA_2,
           typename TopologyTraitsA,
           typename TopologyTraitsB,
           typename TopologyTraitsRes,
-          typename OverlayTraits>
-void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1,
+          typename OverlayTraits,
+          typename NamedParameters = parameters::Default_named_parameters>
+bool overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1,
              const Arrangement_on_surface_2<GeometryTraitsB_2, TopologyTraitsB>& arr2,
              Arrangement_on_surface_2<GeometryTraitsRes_2, TopologyTraitsRes>& arr,
-             OverlayTraits& ovl_tr) {
+             OverlayTraits& ovl_tr,
+             const NamedParameters& np = parameters::default_values()) {
   using Agt2 = GeometryTraitsA_2;
   using Bgt2 = GeometryTraitsB_2;
   using Rgt2 = GeometryTraitsRes_2;
@@ -216,6 +219,13 @@ void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>&
   Ovl_visitor visitor(&arr1, &arr2, &arr, &ovl_tr);
   Ss2::Surface_sweep_2<Ovl_visitor> surface_sweep(&ex_traits, &visitor);
 
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  std::function<bool()> stop_pred = choose_parameter(get_parameter(np, internal_np::stop_predicate), std::function<bool()>());
+  if (stop_pred) {
+    surface_sweep.set_stop_predicate(stop_pred);
+  }
+
   // In case both arrangement do not contain isolated vertices, go on and
   // overlay them.
   const std::size_t total_iso_verts = arr1.number_of_isolated_vertices() + arr2.number_of_isolated_vertices();
@@ -228,7 +238,11 @@ void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>&
     else
       surface_sweep.indexed_sweep(xcvs_vec, Indexed_sweep_accessor<Arr_a, Arr_b, Ovl_x_monotone_curve_2>(arr1, arr2));
     xcvs_vec.clear();
-    return;
+    if (surface_sweep.is_stopped()) {
+      arr.clear();
+      return false;
+    }
+    return true;
   }
 
   // Prepare a vector of extended points that represent all isolated vertices
@@ -261,6 +275,44 @@ void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>&
                                 pts_vec.begin(), pts_vec.end());
   xcvs_vec.clear();
   pts_vec.clear();
+  if (surface_sweep.is_stopped()) {
+    arr.clear();
+    return false;
+  }
+  return true;
+}
+
+/*! Compute the (simple) overlay of two input arrangements with named parameters.
+ * \param[in] arr1 the first arrangement.
+ * \param[in] arr2 the second arrangement.
+ * \param[out] arr the resulting arrangement.
+ * \param[in] np named parameters (such as CGAL::parameters::stop_predicate).
+ * \return true if completed, false if cancelled.
+ */
+template <typename GeometryTraitsA_2,
+          typename GeometryTraitsB_2,
+          typename GeometryTraitsRes_2,
+          typename TopologyTraitsA,
+          typename TopologyTraitsB,
+          typename TopologyTraitsRes,
+          typename NamedParameters>
+std::enable_if_t<CGAL::is_named_function_parameter<NamedParameters>, bool>
+overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1,
+        const Arrangement_on_surface_2<GeometryTraitsB_2, TopologyTraitsB>& arr2,
+        Arrangement_on_surface_2<GeometryTraitsRes_2, TopologyTraitsRes>& arr,
+        const NamedParameters& np) {
+  using Agt2 = GeometryTraitsA_2;
+  using Bgt2 = GeometryTraitsB_2;
+  using Rgt2 = GeometryTraitsRes_2;
+  using Att = TopologyTraitsA;
+  using Btt = TopologyTraitsB;
+  using Rtt = TopologyTraitsRes;
+  using Arr_a = Arrangement_on_surface_2<Agt2, Att>;
+  using Arr_b = Arrangement_on_surface_2<Bgt2, Btt>;
+  using Arr_res = Arrangement_on_surface_2<Rgt2, Rtt>;
+
+  _Arr_default_overlay_traits_base<Arr_a, Arr_b, Arr_res> ovl_traits;
+  return overlay(arr1, arr2, arr, ovl_traits, np);
 }
 
 /*! Compute the (simple) overlay of two input arrangements.

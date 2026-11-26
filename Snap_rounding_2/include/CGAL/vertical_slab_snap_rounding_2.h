@@ -203,7 +203,8 @@ scans the vertices from left to right while maintaining the status line ordering
 Segments that are too close to a vertex are subdivided.
 */
 template <class Traits, class PointsRange , class PolylinesRange>
-void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Traits &traits){
+void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Traits &traits,
+                        const std::function<bool()>& stop_pred = {}){
   auto round_bound = traits.compute_squared_round_bound_2_object();
   auto less_y_2 = traits.less_y_2_object();
 
@@ -244,7 +245,15 @@ void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Trait
   std::vector< Polyline > out;
   Visitor visitor(wrap_traits, pts, polylines, out, round_bounds);
   Surface_sweep surface_sweep(&wrap_traits, &visitor);
+  if (stop_pred) {
+    surface_sweep.set_stop_predicate(stop_pred);
+  }
   surface_sweep.sweep(curves.begin(), curves.end());
+
+  if (surface_sweep.is_stopped()) {
+    polylines.clear();
+    return;
+  }
 
   // We sort the point by y, evaluation by this operation ensure the y-order of the point is preserved after the rounding
   // Round value of y coordinates are modified in the case of a filter failure
@@ -343,7 +352,8 @@ void snap_post_process(PointsRange &pts, PolylinesRange &polylines, const Traits
 }
 
 template <class SegmentRange, class Traits, class PointsRange , class PolylinesRange>
-void vertical_slab_snap_rounding_2_impl(const SegmentRange &segments, PointsRange &pts, PolylinesRange &polylines, const Traits &traits){
+void vertical_slab_snap_rounding_2_impl(const SegmentRange &segments, PointsRange &pts, PolylinesRange &polylines, const Traits &traits,
+                                        const std::function<bool()>& stop_pred = {}){
   using Point_2 = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
 
@@ -377,7 +387,8 @@ void vertical_slab_snap_rounding_2_impl(const SegmentRange &segments, PointsRang
   std::cout << std::endl;
 #endif
 
-  snap_rounding_scan(pts, polylines, traits);
+  snap_rounding_scan(pts, polylines, traits, stop_pred);
+  if (polylines.empty() && !segments.empty()) return;
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Round" << std::endl;
 #endif
@@ -585,6 +596,7 @@ void vertical_slab_snap_rounding_2(const InputRange &inputs,
 
     Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), DefaultTraits());
     bool unique_segments = choose_parameter(get_parameter(np, internal_np::output_unique_segments), false);
+    auto stop_pred = choose_parameter(get_parameter(np, internal_np::stop_predicate), std::function<bool()>());
 
     // auto to_exact=   traits.converter_to_exact_object();
     auto from_exact= traits.converter_from_exact_object();
@@ -592,7 +604,12 @@ void vertical_slab_snap_rounding_2(const InputRange &inputs,
     // Main algorithm
     std::vector<Point_2> pts;
     std::vector< std::vector< std::size_t> > polylines;
-    internal::vertical_slab_snap_rounding_2_impl(inputs, pts, polylines, traits);
+    internal::vertical_slab_snap_rounding_2_impl(inputs, pts, polylines, traits, stop_pred);
+
+    if (stop_pred && stop_pred()) {
+      out.clear();
+      return;
+    }
 
   #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
     std::cout << "Build output" << std::endl;

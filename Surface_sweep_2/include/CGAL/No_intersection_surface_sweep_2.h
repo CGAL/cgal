@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <iterator>
 #include <tuple>
+#include <functional>
 
 #include <boost/mpl/assert.hpp>
 
@@ -199,6 +200,8 @@ protected:
   std::size_t m_num_allocated_subcurves;    // number of allocated subcurves.
   Visitor* m_visitor;                       // The sweep-line visitor that will be
                                             // notified during the sweep
+  bool m_is_stopped{false};                 // whether the sweep has been stopped
+  std::function<bool()> m_stop_predicate;   // optional predicate checked during sweep
 
 public:
   /*! constructs.
@@ -223,8 +226,18 @@ public:
    */
   template <typename CurveInputIterator>
   void sweep(CurveInputIterator curves_begin, CurveInputIterator curves_end) {
+    if (m_stop_predicate && m_stop_predicate()) {
+      m_is_stopped = true;
+      return;
+    }
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
+    if (m_stop_predicate && m_stop_predicate()) {
+      stop_sweep();
+      _complete_sweep();
+      m_visitor->after_sweep();
+      return;
+    }
     _sweep();
     _complete_sweep();
     m_visitor->after_sweep();
@@ -247,9 +260,19 @@ public:
              CurveInputIterator curves_end,
              PointInputIterator action_points_begin,
              PointInputIterator action_points_end) {
+    if (m_stop_predicate && m_stop_predicate()) {
+      m_is_stopped = true;
+      return;
+    }
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Event::ACTION);
+    if (m_stop_predicate && m_stop_predicate()) {
+      stop_sweep();
+      _complete_sweep();
+      m_visitor->after_sweep();
+      return;
+    }
     _sweep();
     _complete_sweep();
     m_visitor->after_sweep();
@@ -277,10 +300,20 @@ public:
              ActionPointIterator action_points_end,
              QueryPointIterator query_points_begin,
              QueryPointIterator query_points_end) {
+    if (m_stop_predicate && m_stop_predicate()) {
+      m_is_stopped = true;
+      return;
+    }
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Event::ACTION);
     _init_points(query_points_begin, query_points_end, Event::QUERY);
+    if (m_stop_predicate && m_stop_predicate()) {
+      stop_sweep();
+      _complete_sweep();
+      m_visitor->after_sweep();
+      return;
+    }
     _sweep();
     _complete_sweep();
     m_visitor->after_sweep();
@@ -304,10 +337,20 @@ public:
    */
   template <typename EdgeRange, typename Accessor>
   void indexed_sweep(const EdgeRange& edges, const Accessor& accessor) {
+    if (m_stop_predicate && m_stop_predicate()) {
+      m_is_stopped = true;
+      return;
+    }
     m_visitor->before_sweep();
     accessor.before_init();
     _init_indexed_sweep(edges, accessor);
     accessor.after_init();
+    if (m_stop_predicate && m_stop_predicate()) {
+      stop_sweep();
+      _complete_sweep();
+      m_visitor->after_sweep();
+      return;
+    }
     _sweep();
     _complete_sweep();
     m_visitor->after_sweep();
@@ -340,11 +383,21 @@ public:
                      const Accessor& accessor,
                      PointInputIterator action_points_begin,
                      PointInputIterator action_points_end) {
+    if (m_stop_predicate && m_stop_predicate()) {
+      m_is_stopped = true;
+      return;
+    }
     m_visitor->before_sweep();
     accessor.before_init();
     _init_indexed_sweep(edges, accessor);
     accessor.after_init();
     _init_points(action_points_begin, action_points_end, Event::ACTION);
+    if (m_stop_predicate && m_stop_predicate()) {
+      stop_sweep();
+      _complete_sweep();
+      m_visitor->after_sweep();
+      return;
+    }
     _sweep();
     _complete_sweep();
     m_visitor->after_sweep();
@@ -387,6 +440,24 @@ public:
    * order to stop the sweep-line process.
    */
   void stop_sweep();
+
+  /*! sets a cancellation / stop predicate to be checked periodically during the sweep.
+   * If the predicate returns true, the sweep will stop cleanly.
+   */
+  void set_stop_predicate(std::function<bool()> pred) {
+    m_stop_predicate = std::move(pred);
+  }
+
+  /*! obtains the stop predicate. */
+  const std::function<bool()>& stop_predicate() const {
+    return m_stop_predicate;
+  }
+
+  /*! checks whether the sweep process was stopped / cancelled. */
+  bool is_stopped() const { return m_is_stopped; }
+
+  /*! checks whether the sweep process completed normally. */
+  bool is_completed() const { return !m_is_stopped; }
 
   /*! deallocates event object.
    * This method is made public to allow the visitor to manage the events
