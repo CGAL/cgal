@@ -20,14 +20,6 @@
 
 namespace CGAL {
 
-  /*
-  Marc: Convert cosh_of_hyperbolic_distance to an object fct?
-  remove "static" and construct the traits each time it is used?
-  (may follow the kernel cgal style CGAL_DISTANCE_2_POINT_2_POINT_2_H that uses inline?? it may not be an object function but a global kernel function seems ok since there are no construction)
- it is used in CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2_H
-  */
-
-  //TODO DOC add cosh of hyperbolic distance
 template<class HyperbolicTraitsClass>
 class Hyperbolic_surface_traits_2
   : public HyperbolicTraitsClass

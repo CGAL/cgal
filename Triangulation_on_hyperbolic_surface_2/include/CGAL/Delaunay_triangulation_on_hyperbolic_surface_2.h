@@ -132,8 +132,8 @@ public:
     void update_infos(Dart_descriptor dart, const Point& r, const Point& s, const Point& t, const Point& query);
 
     //---------- location and insertion
-    Anchor locate_visibility_walk(const Point& query, Locate_type & lt, unsigned & li, unsigned & ld, const Anchor& hint); // const ?
-    Anchor locate_straight_walk(const Point& query, Locate_type & lt, unsigned & li, unsigned & ld, const Anchor& hint); // const ?
+    Anchor locate_visibility_walk(const Point& query, Locate_type & lt, unsigned & li, unsigned & ld, const Anchor& hint);
+    Anchor locate_straight_walk(const Point& query, Locate_type & lt, unsigned & li, unsigned & ld, const Anchor& hint);
     std::vector<Dart_descriptor> insert_in_face(const Point& query, Anchor & anch);  // return dart_descriptor
     std::vector<Dart_descriptor> insert_in_edge(const Point& query, unsigned & li, Anchor & anch);
     std::vector<Dart_descriptor> split_insert(const Point& query, Anchor & anch, Locate_walk walk = STRAIGHT);
@@ -147,7 +147,6 @@ public:
     //---------- eps-net methods
     Voronoi_point circumcenter(const Anchor& anch) const;
     Point approx_circumcenter_from_anchor(const Anchor& anch) const;
-    //  Point approx_circumcenter_from_c(const Voronoi_point & c) const;
     void push_triangle(const Dart_descriptor dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark);
 };
 
@@ -433,7 +432,6 @@ locate_visibility_walk(const Point& query, Locate_type & lt, unsigned & li, unsi
     Point d;
 
     // visibility walk
-    //Traits gt;
     typename Traits::Hyperbolic_orientation_2 ho2 = gt_.hyperbolic_orientation_2();
     while (!found) {
         Complex_number cross_ratio = Base::get_cross_ratio(dart);
@@ -471,7 +469,6 @@ locate_straight_walk(const Point& query, Locate_type & lt, unsigned & li, unsign
     Point r = hint.vertices[1];
     Point l = hint.vertices[2];
     ld = 0;
-    //Traits gt;
     typename Traits::Hyperbolic_orientation_2 ho2 = gt_.hyperbolic_orientation_2();
 
     if (ho2(p0, query, r) == RIGHT_TURN) {
@@ -803,20 +800,6 @@ approx_circumcenter_from_anchor(const Anchor& anch) const
   return  cahc(anch.vertices[0], anch.vertices[1], anch.vertices[2]);
 }
 
-/*  TO BE REMOVED
-template<class Traits>
-typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
-Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-approx_circumcenter_from_c(const Voronoi_point & c) const
-{
-  //TEST
-  typename Traits::Construct_approximate_hyperbolic_circumcenter_2_fct_style obj_approx_cc = gt_.construct_approximate_hyperbolic_circumcenter_2_object();
-  obj_approx_cc(c);
-  //END TEST
-  return gt_.Construct_approximate_hyperbolic_circumcenter_2_non_fct(c);
-}
-*/
-
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
@@ -853,8 +836,7 @@ construct_epsilon_net(const double epsilon)
           this->combinatorial_map_.unmark(current_dart, triangles_list_mark);
           Voronoi_point c = circumcenter(current_anchor);
           if (gt_.template cosh_of_hyperbolic_distance<Algebraic_number,Voronoi_point>(c, current_anchor.vertices[0]) > BOUND) {
-            // Point approx_c = approx_circumcenter_from_c(c); TO BE REMOVED
-            Point approx_c = approx_circumcenter_from_anchor(current_anchor);
+	    Point approx_c = approx_circumcenter_from_anchor(current_anchor);
             if(norm(Complex_number(approx_c.x(), approx_c.y())) >= Number(1)) {
               break;  // avoid undefined behavior in case of bad approx outside of Poincaré
             }
@@ -910,7 +892,6 @@ is_epsilon_net(const double epsilon) const
   return is_epsilon_covering(epsilon) && is_epsilon_packing(epsilon);
 }
 
-//TODO DOC
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_const_descriptor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
@@ -934,24 +915,13 @@ shortest_loop_edge() const
             if (length < min_length) {
               min_length = min(min_length,length);
               shortest_loop_dart = it;
-              /*
-                //TEST alternative loop test? May not be valid for a Cmap without vertices explicitly defined?
-        Dart_const_descriptor d =  it;
-        // Next dart in the face
-        Dart_const_descriptor d2 = this->combinatorial_map_.beta(d, 1);
-        // Check whether both darts belong to the same vertex
-        bool is_loop2 =
-          this->combinatorial_map_.template belong_to_same_cell<0>(d, d2);
-        std::cout<< "loop2 value, loop " <<is_loop2  << std::endl;
-              */
-            }
+	    }
           }
         }
     }
   return shortest_loop_dart;
 }
 
-//TODO DOC
 template<class Traits>
 double
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
@@ -1037,15 +1007,11 @@ packing_value() const
   }
 
   if constexpr(std::is_same_v<Number, CGAL::Gmpq>){
-    //   std::cout<< "GOOD: constexpr(std::is_same_v<Number, Gmpq>) is true" << std::endl; //TOBE REMOVED
-    //mpfr version
     int p = 53;
     mpfr_t res;
     mpfr_init2 (res, p);
     mpfr_set_q (res, min_length.mpq(), MPFR_RNDZ);
     mpfr_acosh (res, res, MPFR_RNDZ);
-    // Gmpfr version
-    // Gmpfr res = Gmpfr(min_length.numerator(), p, std::round_toward_zero) / Gmpfr( min_length.denominator(), p, std::round_toward_pos_infinity);
     res_double = mpfr_get_d (res, MPFR_RNDZ);
     mpfr_clear (res);
     } else {
@@ -1227,34 +1193,7 @@ to_json(std::ostream& s) const
     }
 
     s << "\n  ]\n";
-
-    /*
-    // Edges
-    s << "  \"edges\": [\n";
-
-    bool first_edge = true;
-
-    for (typename Edge_const_range::const_iterator it =
-             Base::edges_const_range().begin();
-         it != Base::edges_const_range().end();
-         ++it)
-    {
-        if (!first_edge) s << ",\n";
-        first_edge = false;
-
-        s << "    {\n";
-        s << "      \"dart\": " << darts_ids[it] << ",\n";
-        s << "      \"opposite\": "
-          << darts_ids[Base::const_opposite(it)] << ",\n";
-        s << "      \"cross_ratio\": \""
-          << Base::get_cross_ratio(it) << "\"\n";
-        s << "    }";
-    }
-
-    s << "\n  ]\n";
-    */
     s << "}";
-
 
     return s;
 }
