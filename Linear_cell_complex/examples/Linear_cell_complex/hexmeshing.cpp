@@ -37,7 +37,12 @@ int main(int argc, char** argv)
   { return float(CGAL::scaled_jacobian_of_hexahedron(alcc, d)); };
   gso.volume_value_name="scaled Jacobian";
 
-  CGAL::draw(lcc, gso);
+  // The faces of the hexahedra are oriented toward their inside: reverse the
+  // normals so that the mesh is lit (N in the viewer swaps them back).
+  CGAL::Graphics_scene scene;
+  CGAL::add_to_graphics_scene(lcc, scene, gso);
+  scene.reverse_all_normals();
+  CGAL::draw_graphics_scene(scene, "Hexahedral mesh");
   CGAL::IO::write_VTK("hexmesh.vtk", lcc);
 
   return EXIT_SUCCESS;

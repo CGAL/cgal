@@ -2036,7 +2036,9 @@ protected:
     { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
       vmin=m_cell_size_min; vmax=m_cell_size_max; label=QString("size"); }
     else
-    { distance_value_range(clipPlane, plane_point, vmin, vmax); label=QString("distance to clipping plane"); }
+    { distance_value_range(clipPlane, plane_point, vmin, vmax);
+      label=QString((m_color_value==1 && !m_scene.get_volume_faces().empty())
+                    ? "distance to clipping plane (per cell)" : "distance to clipping plane"); }
 
     // No range to map (a uniform value, e.g. a flat mesh with a parallel plane):
     // skip the legend rather than show a misleading full gradient. The threshold is
@@ -2931,7 +2933,7 @@ protected:
   };
 
   int m_use_clipping_plane=CLIPPING_PLANE_OFF;
-  int m_clip_edges_vertices=CLIP_EV_ALL; // Shift+C: how edges/vertices are clipped
+  int m_clip_edges_vertices=CLIP_EV_PARTIAL; // Shift+C: how edges/vertices are clipped
   std::vector<char> m_volumes_kept; // whole-volume clip: per volume, 1 if kept
   QVector4D m_last_vol_clip_plane; // whole-volume clip: plane m_volumes_kept was computed for
   QVector4D m_last_vol_plane_point;

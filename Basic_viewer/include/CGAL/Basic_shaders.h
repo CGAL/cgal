@@ -81,8 +81,8 @@ uniform mediump float u_RenderingTransparency;
 // value shown is the signed distance from the fragment to the clipping plane,
 // normalized to [u_ValueMin, u_ValueMax].
 uniform mediump float u_ColorMapMode;
-uniform mediump float u_ValueMin;
-uniform mediump float u_ValueMax;
+uniform highp   float u_ValueMin;
+uniform highp   float u_ValueMax;
 // Per cell: the viewer gives one value for the whole cell (its center distance or
 // its size), so a whole cell takes one flat color and neighboring cells do not melt.
 uniform int           u_ColorPerCell;
@@ -124,7 +124,9 @@ void main(void)
   {
     float value = (u_ColorPerCell != 0) ? u_CellValue
                 : dot(ls_fP.xyz-u_PointPlane.xyz, normalize(u_ClipPlane.xyz));
-    float t = clamp((value-u_ValueMin)/max(u_ValueMax-u_ValueMin, 1e-6), 0.0, 1.0);
+    // no absolute floor on the range: values can be very small (cell sizes)
+    float range = u_ValueMax-u_ValueMin;
+    float t = (range>0.0) ? clamp((value-u_ValueMin)/range, 0.0, 1.0) : 0.0;
     base = color_palette(t, u_ColorMapMode);
   }
 
