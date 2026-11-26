@@ -303,6 +303,7 @@ after_handle_event(Event* event,
 template <typename Hlpr, typename OutIt, typename Vis>
 void Arr_vert_decomp_ss_visitor<Hlpr, OutIt, Vis>::after_sweep()
 {
+  if (this->is_stopped()) return;
   // Create an entry for the last vertex (the xy-largest one).
   if (m_prev_vh != invalid_vh) {
     *(*m_out) = Vert_entry(m_prev_vh, Vert_pair(m_prev_obj_below,

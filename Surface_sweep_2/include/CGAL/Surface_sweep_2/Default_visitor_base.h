@@ -208,6 +208,12 @@ public:
   /*! Stop the sweep-line process. */
   void stop_sweep() { m_surface_sweep->stop_sweep(); }
 
+  /*! Check whether the sweep-line process was stopped / cancelled. */
+  bool is_stopped() const { return m_surface_sweep->is_stopped(); }
+
+  /*! Check whether the sweep-line process completed normally. */
+  bool is_completed() const { return m_surface_sweep->is_completed(); }
+
   /*! obtains the current event. */
   Event* current_event() { return m_surface_sweep->current_event(); }
 

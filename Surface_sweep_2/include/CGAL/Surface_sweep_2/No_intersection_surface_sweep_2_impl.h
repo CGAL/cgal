@@ -88,26 +88,38 @@ No_intersection_surface_sweep_2<Vis>::~No_intersection_surface_sweep_2() {
 //
 template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::stop_sweep() {
-  // Clear the event queue, deallocating all events but the current one
-  // (the first event in the queue).
+  m_is_stopped = true;
+
+  if (this->m_queue->empty()) return;
+
   Event_queue_iterator qiter = this->m_queue->begin();
 
-  for (++qiter; qiter != this->m_queue->end(); ++qiter)
-    this->deallocate_event(*qiter);
+  if (m_currentEvent != nullptr) {
+    // Clear the event queue, deallocating all events but the current one
+    // (the first event in the queue).
+    for (++qiter; qiter != this->m_queue->end(); ++qiter)
+      this->deallocate_event(*qiter);
 
-  // Clear the status line.
-  this-> m_statusLine.clear();
-  m_status_line_insert_hint = this->m_statusLine.begin();
+    // Clear the status line.
+    this->m_statusLine.clear();
+    m_status_line_insert_hint = this->m_statusLine.begin();
 
-  // Empty the event queue, and leave only the first event there.
-  CGAL_assertion(! m_queue->empty());
-  Event_queue_iterator second = m_queue->begin();
-  ++second;
-  while (second != m_queue->end()) {
-    Event_queue_iterator next = second;
-    ++next;
-    m_queue->erase(second);
-    second = next;
+    // Empty the event queue, and leave only the first event there.
+    Event_queue_iterator second = m_queue->begin();
+    ++second;
+    while (second != m_queue->end()) {
+      Event_queue_iterator next = second;
+      ++next;
+      m_queue->erase(second);
+      second = next;
+    }
+  } else {
+    for (; qiter != this->m_queue->end(); ++qiter)
+      this->deallocate_event(*qiter);
+
+    this->m_statusLine.clear();
+    m_status_line_insert_hint = this->m_statusLine.begin();
+    this->m_queue->clear();
   }
 }
 
@@ -140,6 +152,15 @@ void No_intersection_surface_sweep_2<Vis>::_sweep() {
   Event_queue_iterator eventIter = m_queue->begin();
 
   while (eventIter != m_queue->end()) {
+    if (m_is_stopped) break;
+
+    if (m_stop_predicate && m_stop_predicate()) {
+      stop_sweep();
+      deallocate_event(*eventIter);
+      m_queue->erase(eventIter);
+      break;
+    }
+
     // Get the next event from the queue.
     m_currentEvent = *eventIter;
 
@@ -197,14 +218,24 @@ void No_intersection_surface_sweep_2<Vis>::_clear() {
   m_num_allocated_subcurves = 0;
   if (m_num_subcurves > 0) m_subCurveAlloc.deallocate(m_subcurves, m_num_subcurves);
   m_num_subcurves = 0;
+  m_allocated_events.clear();
 }
 
 /*! completes the sweep (complete the data structures).
  */
 template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::_complete_sweep() {
-  CGAL_assertion(m_queue->empty());
-  CGAL_assertion((m_statusLine.size() == 0));
+  if (m_is_stopped) {
+    if (!this->m_queue->empty()) {
+      for (auto* ev : *this->m_queue) this->deallocate_event(ev);
+      this->m_queue->clear();
+    }
+    this->m_statusLine.clear();
+    m_status_line_insert_hint = this->m_statusLine.begin();
+  } else {
+    CGAL_assertion(m_queue->empty());
+    CGAL_assertion((m_statusLine.size() == 0));
+  }
   _clear();
 }
 

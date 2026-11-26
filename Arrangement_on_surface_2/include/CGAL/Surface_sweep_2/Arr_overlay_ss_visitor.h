@@ -532,6 +532,7 @@ Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
 void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::after_sweep() {
+  if (this->is_stopped()) return;
   Base::after_sweep();
 
   // Notify boundary vertices:
