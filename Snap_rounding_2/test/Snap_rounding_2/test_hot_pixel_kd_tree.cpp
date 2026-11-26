@@ -64,7 +64,7 @@ bool test(const std::string& name, const std::vector<Segment_2>& segments, const
     Segment_data sd(s.source(), s.target());
     const SEG_Direction dir = sd.direction(traits);
     candidates.clear();
-    tree.get_intersecting_points(candidates, s);
+    tree.get_intersecting_points(candidates, s, traits);
     std::sort(candidates.begin(), candidates.end());
     for (auto* hp : hot_pixels) {
       if (! hp->intersect(sd, dir, traits)) continue;

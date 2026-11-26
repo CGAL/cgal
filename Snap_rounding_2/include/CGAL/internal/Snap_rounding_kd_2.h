@@ -172,7 +172,6 @@ private:
     void operator()(const Kd_point& p) const { result->push_back(p.object); }
   };
 
-  Traits m_gt;
   Kd_tree m_tree;
   Interval m_pixel_size;
   double m_point_error = 0;     // the maximum width of the point intervals
@@ -201,9 +200,10 @@ public:
   /*! appends to `result` the objects of a superset of the hot pixels that `s` intersects.
    * \param result the output.
    * \param s the query segment.
+   * \param gt the traits.
    */
-  void get_intersecting_points(std::vector<SavedObject>& result, const Segment_2& s) const {
-    auto ctr_vertex = m_gt.construct_vertex_2_object();
+  void get_intersecting_points(std::vector<SavedObject>& result, const Segment_2& s, const Traits& gt) const {
+    auto ctr_vertex = gt.construct_vertex_2_object();
     const Point_2& src = ctr_vertex(s, 0);
     const Point_2& trg = ctr_vertex(s, 1);
     Protect_FPU_rounding<true> protection;

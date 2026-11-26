@@ -439,7 +439,7 @@ Hot_pixel_snap_rounding_2<Traits_, OutputContainer>::find_intersected_hot_pixels
   Hot_pixel_set hot_pixels(Hot_pixel_dir_cmp{seg_dir, m_gt});
 
   m_candidates.clear();
-  m_kd_tree->get_intersecting_points(m_candidates, seg.segment());
+  m_kd_tree->get_intersecting_points(m_candidates, seg.segment(), m_gt);
   for (Hot_pixel* hp : m_candidates) {
     if (hp->intersect(seg, seg_dir, m_gt)) hot_pixels.insert(hp);
 #ifdef CGAL_SR_DEBUG

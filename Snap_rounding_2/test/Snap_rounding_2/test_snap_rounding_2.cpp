@@ -118,7 +118,6 @@ void test_hot_pixel_polygons() {
 struct Counting_traits : public Hot_pixel_traits {
   int* m_calls = nullptr;
 
-  Counting_traits() = default;
   explicit Counting_traits(int* calls) : m_calls(calls) {}
 
   Snap_2 snap_2_object() const {
