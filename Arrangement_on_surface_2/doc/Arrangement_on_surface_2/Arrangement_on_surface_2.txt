@@ -6885,10 +6885,17 @@ A snapshot of the window created by the program
 of 14 vertices, 15 edges, and 3 faces. Notice that the colors are generated at random.
 \cgalFigureEnd
 
-Another pair of overloaded \link PkgArrangementOnSurface2Draw
-`CGAL::draw()` \endlink functions also accept a bounding box. Each
-of these two variants can be ised to draw arrangements induced by
-unbounded curves.
+Both variants also accept an optional bounding box in parameter space,
+which determines the part of the arrangement shown initially. It is
+useful when drawing arrangements induced by unbounded curves.
+
+The \link PkgArrangementOnSurface2Draw `CGAL::add_to_graphics_scene()`
+\endlink functions add an arrangement to a graphics scene without
+opening a window. They enable the drawing of several objects, at least
+one of which is an arrangement, in a single window, as demonstrated by
+the following example, which draws two arrangements.
+
+\cgalExample{Arrangement_on_surface_2/draw_several_arrs.cpp}
 
 <!-- ======================================================================= -->
 \section aos_sec-bgl Adapting to Boost Graphs
