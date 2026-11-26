@@ -58,7 +58,7 @@
 - \link float.h `float` \endlink
 - \link double.h `double` \endlink
 - \link long_double.h `long double` \endlink
-- `ComplexNumber` describes a complex number type.
+- `ComplexNumber`
 
 \cgalCRPSubsection{%CORE}
 

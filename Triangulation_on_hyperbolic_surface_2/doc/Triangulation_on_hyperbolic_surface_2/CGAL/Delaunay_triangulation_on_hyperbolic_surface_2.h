@@ -146,7 +146,7 @@ public:
   */
   bool is_valid() const;
 
-  /// \name Point location and insertion
+  /// \name Point Location and Insertion
   /// @{
   /*!
     Computes the locate type `lt` of `query` relative to the anchor that indicates whether `query` lies on a vertex, an edge, inside or outside the lifted triangle described by the given anchor.
@@ -195,7 +195,7 @@ public:
   void insert(const Point & p);
   /// @}
 
-  /// \name epsilon-net
+  /// \name Epsilon-Net
   /// @{
   /*!
     \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-net of the surface.
@@ -253,7 +253,7 @@ public:
 
     /// @}
 
-  /// \name Other functions
+  /// \name Other Functions
   /// @{
   /*!
     \return the hyperbolic cosine of the length of the edge associated to a dart.
