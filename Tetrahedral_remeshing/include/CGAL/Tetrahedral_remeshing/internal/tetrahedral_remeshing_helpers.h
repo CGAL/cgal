@@ -699,6 +699,30 @@ bool is_well_oriented(const Tr& tr, const typename Tr::Cell_handle ch)
                         ch->vertex(3));
 }
 
+// true if at least one finite cell incident to `e` is not positively oriented.
+// false when the triangulation is known not to have inverted cells
+template<typename C3T3>
+bool is_incident_to_a_negative_cell(const typename C3T3::Edge& e,
+                                    const C3T3& c3t3)
+{
+  using Cell_handle = typename C3T3::Cell_handle;
+  const auto& tr = c3t3.triangulation();
+  if (!tr.may_have_badly_oriented_cells())
+    return false;
+
+  auto circ = tr.incident_cells(e);
+  const auto done = circ;
+  do
+  {
+    const Cell_handle c = circ;
+    if (!is_well_oriented(tr, c))
+      return true;
+  }
+  while (++circ != done);
+
+  return false;
+}
+
 template<typename C3T3, typename CellSelector>
 bool is_boundary(const C3T3& c3t3,
                  const typename C3T3::Facet& f,
@@ -2011,21 +2035,25 @@ void remove_from_bimap(const typename EdgesBimap::left_map::key_type& e,
 }
 
 // if e is in 'edges'
-template<typename EdgesBimap, typename FT>
+// Priority describes how edges are sorted in the bimap
+// if (priority == nullopt), remove from bimap
+// else update value in bimap
+// Priority must be sortable with operator<
+template<typename EdgesBimap, typename Priority>
 void
 update_bimap(typename EdgesBimap::left_map::key_type& e, //Edge
              EdgesBimap& edges,
-             const std::optional<FT> sqlen)
+             const std::optional<Priority> priority)
 {
-  if(sqlen == std::nullopt)
+  if(priority == std::nullopt)
     remove_from_bimap(e, edges);
   else
   {
     typename EdgesBimap::left_map::iterator eit = edges.left.find(e);
     if(eit != edges.left.end())
-      edges.left.replace_data(eit, sqlen.value());
+      edges.left.replace_data(eit, priority.value());
     else
-      edges.left.insert(typename EdgesBimap::left_map::value_type(e, sqlen.value()));
+      edges.left.insert(typename EdgesBimap::left_map::value_type(e, priority.value()));
   }
 }
 
@@ -2219,7 +2247,21 @@ void count_far_points(const C3t3& c3t3)
 }
 
 template<typename Tr>
-bool are_cell_orientations_valid([[maybe_unused]] const Tr& tr)
+std::size_t nb_negative_cells(const Tr& tr)
+{
+  return std::count_if(tr.finite_cells_begin(), tr.finite_cells_end(),
+    [](const auto& c)
+    {
+      return CGAL::POSITIVE !=
+           CGAL::orientation(point(c.vertex(0)->point()),
+                             point(c.vertex(1)->point()),
+                             point(c.vertex(2)->point()),
+                             point(c.vertex(3)->point()));
+    });
+}
+
+template<typename Tr>
+bool are_cell_orientations_valid(const Tr& tr)
 {
   // skip the test if we know
   // that the input triangulation already has inverted cells
