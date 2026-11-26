@@ -258,6 +258,45 @@ private:
   const Traits& _gt;
 };
 
+template <typename Traits>
+class Hyperbolic_orientation_2
+{
+  typedef typename Traits::FT                                 FT;
+  typedef typename Traits::Hyperbolic_point_2                 Hyperbolic_point_2;
+  typedef typename Traits::Side_of_oriented_hyperbolic_segment_2 Side_of_oriented_hyperbolic_segment_2;
+
+public:
+  Hyperbolic_orientation_2(const Traits& gt = Traits()) : _gt(gt) {}
+
+  Orientation operator()(const Hyperbolic_point_2& p,
+                           const Hyperbolic_point_2& q,
+                           const Hyperbolic_point_2& query) const
+  {
+    Hyperbolic_point_2 origin = Hyperbolic_point_2(FT(0), FT(0));
+    Orientation orientation_to_origin = orientation(p, origin, q);
+    if (orientation_to_origin == COLLINEAR) {
+      return orientation(p, q, query);
+    }
+
+    Side_of_oriented_hyperbolic_segment_2 orientation_test = _gt.side_of_oriented_hyperbolic_segment_2_object();
+    Oriented_side orientation_to_disk = orientation_test(p, q, query);
+    if (orientation_to_disk == ON_POSITIVE_SIDE) {
+      return orientation_to_origin;
+    } else if (orientation_to_disk == ON_NEGATIVE_SIDE) {
+      if (orientation_to_origin == LEFT_TURN) {
+        return RIGHT_TURN;
+      } else {
+        return LEFT_TURN;
+      }
+    } else {
+      return COLLINEAR;
+    }
+  }
+
+private:
+  const Traits& _gt;
+};
+
 } // end namespace internal
 
 } // end namespace CGAL

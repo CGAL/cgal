@@ -6,11 +6,17 @@ project(Triangulation_on_hyperbolic_surface_2_Tests)
 
 find_package(CGAL REQUIRED)
 
-# create a target per cppfile
-file(
-  GLOB cppfiles
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-foreach(cppfile ${cppfiles})
-  create_single_source_cgal_program("${cppfile}")
-endforeach()
+create_single_source_cgal_program("hs_test_circular_kernel.cpp")
+create_single_source_cgal_program("hs_test_complex.cpp")
+create_single_source_cgal_program("hs_test_domain.cpp")
+create_single_source_cgal_program("hs_test_factory.cpp")
+create_single_source_cgal_program("hs_test_isometry.cpp")
+create_single_source_cgal_program("hs_test_lazy_exact_nt.cpp")
+create_single_source_cgal_program("hs_test_triangulation.cpp")
+
+if (GMP_FOUND AND MPFR_FOUND)
+  create_single_source_cgal_program("hs_test_Delaunay_triangulation.cpp")
+  create_single_source_cgal_program("hs_test_espilon_net.cpp")
+else()
+  message("NOTICE: Some tests require the GMP and MPFR libraries, and will not be compiled.")
+endif()
