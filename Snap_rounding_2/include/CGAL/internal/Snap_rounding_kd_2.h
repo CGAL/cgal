@@ -8,585 +8,212 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// author(s)     : Eli Packer <elip@post.tau.ac.il>,
-//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
+// author(s) : Eli Packer <elip@post.tau.ac.il>,
+//             Waqar Khan <wkhan@mpi-inf.mpg.de>
+//             Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_SNAP_ROUNDING_KD_2_H
 #define CGAL_SNAP_ROUNDING_KD_2_H
 
 #include <CGAL/license/Snap_rounding_2.h>
 
+#include <algorithm>
+#include <array>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
-#include <list>
-#include <CGAL/basic.h>
-#include <iostream>
-#include <CGAL/predicates_on_points_2.h>
-#include <CGAL/utility.h>
-#include <CGAL/assertions.h>
+#include <boost/iterator/function_output_iterator.hpp>
+
 #include <CGAL/Dimension.h>
-#include <CGAL/number_type_config.h>
-
+#include <CGAL/FPU.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Search_traits_2.h>
-#include <CGAL/Fuzzy_iso_box.h>
+#include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
-
 namespace Snap_Rounding_2::internal {
 
-//////////////////////
-//////////////////////
-//Point_with_hot_pixel_history
-//////////////////////
+/*! the interval number type; its operations require the rounding mode to be upward. */
+using Interval = Interval_nt<false>;
 
-template<class Traits, class SAVED_OBJECT>
-class Point_with_hot_pixel_history : public Traits::Point_2 {
+/*! a point of the kd-tree, which represents a hot-pixel center.
+ */
+template <typename SavedObject>
+struct Hot_pixel_kd_point {
+  std::array<double, 2> coords;         // the midpoints of `x` and `y`, used by the kd-tree
+  Interval x, y;                        // interval approximations of the center coordinates
+  SavedObject object;                   // the hot pixel
+};
 
-private:
+/*! the search traits of the kd-tree of the hot pixels, a model of `SearchTraits`.
+ */
+template <typename SavedObject>
+struct Hot_pixel_kd_search_traits {
+  using Dimension = Dimension_tag<2>;
+  using FT = double;
+  using Point_d = Hot_pixel_kd_point<SavedObject>;
+  using Cartesian_const_iterator_d = const double*;
 
-  typedef typename Traits::Point_2                                Base;
-  typedef typename Traits::Point_2                                Point_2;
-  typedef typename Traits::FT                                     NT;
+  struct Construct_cartesian_const_iterator_d {
+    Cartesian_const_iterator_d operator()(const Point_d& p) const { return p.coords.data(); }
+    Cartesian_const_iterator_d operator()(const Point_d& p, int) const { return p.coords.data() + 2; }
+  };
 
+  Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const { return {}; }
+};
+
+/*! a fuzzy query item, a model of `FuzzyQueryItem`, that contains the Minkowski sum of a segment
+ * and a pixel. The Minkowski sum is a hexagon; it is the intersection of the bounding box
+ * of the segment enlarged by the half pixel size \f$h\f$, and the slab
+ * \f$|a(x-s_x) + b(y-s_y)| \le h(|a|+|b|)\f$, where \f$(a,b)\f$ is the normal of the
+ * segment. The tests use interval arithmetic and reject only what is certainly
+ * outside, so the query reports a superset of the hot pixels the segment
+ * intersects. A point may lie outside the kd-tree cell that contains the
+ * midpoint of its intervals, but by at most `point_error`, so the cells are
+ * enlarged by `point_error`. The rounding mode must be upward during the query.
+ */
+template <typename SearchTraits>
+class Segment_pixel_corridor {
 public:
-
-  Point_2 orig;
-  SAVED_OBJECT object = nullptr;
-
-  Point_with_hot_pixel_history(const Base& p, const Point_2& inp_orig, SAVED_OBJECT obj) : Base(p), orig(inp_orig), object(obj) {}
-
-  Point_with_hot_pixel_history(const Base& p) : Base(p), orig(Point_2(0, 0)) {}
-
-  Point_with_hot_pixel_history() : Base(), orig() {}
-
-  Point_with_hot_pixel_history(NT x, NT y) : Base(x, y), orig(Point_2(0, 0)) {}
-
-}; // Point_with_hot_pixel_history
-
-
-//////////////////////
-//////////////////////
-//Search_traits_kd_tree_2
-//
-//(Search traits modified to be used by the Spatial Searching kd_trees for Snap rounding)
-//////////////////////
-
-template < class Traits_, class Point_ = typename Traits_::Point_2 >
-class Search_traits_kd_tree_2 {
-
-public:
-  typedef Traits_                                                Traits;
-  typedef Point_                                                 Point_d;
-
-  typedef Dimension_tag<2>                                       Dimension;
-  typedef typename Traits::Iso_rectangle_2                       Iso_box_d;
-  typedef typename Traits::Cartesian_const_iterator_2            Cartesian_const_iterator_d;
-  typedef typename Traits::Construct_cartesian_const_iterator_2  Construct_cartesian_const_iterator_d;
-
-  typedef typename Traits::Construct_min_vertex_2                Construct_min_vertex_d;
-  typedef typename Traits::Construct_max_vertex_2                Construct_max_vertex_d;
-
-  typedef typename Traits::Construct_iso_rectangle_2             Construct_iso_box_d;
-  typedef typename Traits::FT                                    FT;
-
-  Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const
-  {
-    return Construct_cartesian_const_iterator_d();
-  }
-
-}; // Search_traits_kd_tree_2
-
-/////////////////////
-/////////////////////
-//Multiple_kd_tree
-/////////////////////
-
-template<class Traits_, class SAVED_OBJECT>
-class Multiple_kd_tree {
-  static_assert(std::is_pointer<SAVED_OBJECT>::value, "SAVED_OBJECT is not a pointer.");
-private:
-  typedef Traits_                                       Traits;
-  typedef typename Traits::FT                           NT;
-  typedef typename Traits::Segment_2                    Segment_2;
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::Vector_2                     Vector_2;
-  typedef typename Traits::Iso_rectangle_2              Iso_rectangle_2;
-  typedef typename Traits::Direction_2                  Direction_2;
-  typedef typename Traits::Line_2                       Line_2;
-  typedef typename Traits::Aff_transformation_2         Transformation_2;
-
-  typedef CGAL::Snap_Rounding_2::internal::Point_with_hot_pixel_history<Traits, SAVED_OBJECT>     Point_with_hot_pixel_history_saved;
-  typedef CGAL::Snap_Rounding_2::internal::Search_traits_kd_tree_2<Traits, Point_with_hot_pixel_history_saved>
-                                                                                 Search_traits;
-  typedef CGAL::Kd_tree<Search_traits>                                           Kd_tree;
-  typedef CGAL::Fuzzy_iso_box<Search_traits>                                     Box;
-
-  typedef std::list<Point_with_hot_pixel_history_saved>   Points_List;
-  typedef std::pair<Direction_2, NT>                      Direction_nt_pair;
-  typedef std::pair<Kd_tree *,Direction_nt_pair>          Kd_triple;
-  typedef std::pair<Kd_tree *, Direction_nt_pair>         Kd_direction_nt_pair;
-  typedef std::list<Kd_direction_nt_pair>                 Kd_triple_list;
-
-  typedef std::pair<Point_2, SAVED_OBJECT>              Point_saved_pair;
-  typedef std::list<Point_saved_pair>                   Point_saved_pair_list;
-  typedef typename Point_saved_pair_list::iterator      Point_saved_pair_iter;
-
-  typedef typename std::list<Point_with_hot_pixel_history_saved>            Point_with_hot_pixel_history_saved_list;
-  typedef typename Point_with_hot_pixel_history_saved_list::iterator        Point_with_hot_pixel_history_saved_iter;
-
-  typedef std::list<Point_2>                            Point_list;
-  typedef typename Point_list::iterator                 Point_iter;
-
-  typedef std::list<Segment_2>                          Segment_list;
-  typedef typename Segment_list::const_iterator         Segment_const_iter;
-
-  typedef std::list<Direction_2>                        Direction_list;
-  typedef typename Direction_list::const_iterator       Direction_const_iter;
-
+  using Dimension = typename SearchTraits::Dimension;
+  using FT = double;
+  using Point_d = typename SearchTraits::Point_d;
+  using Rectangle = Kd_tree_rectangle<FT, Dimension>;
 
 private:
-  Traits m_gt;
-  const double pi, half_pi;
-  int number_of_trees;
+  Interval m_sx, m_sy;          // the source
+  Interval m_a, m_b;            // the normal of the segment
+  double m_w;                   // an upper bound on h*(|a|+|b|)
+  Interval m_point_error;
+  std::array<double, 2> m_min;  // the enlarged bounding box
+  std::array<double, 2> m_max;
 
-  Kd_triple_list    kd_trees_list;
-
-  Point_saved_pair_list input_points_list;
-  std::map<int, NT> angle_to_sines_appr; // was const int
-
-  /*! */
-  void rotate(Point_2& p, NT angle)
-  {
-    static const double rad_to_deg = 57.297;
-
-    typename Traits::To_double to_dbl;
-    int tranc_angle = int(to_dbl(angle) * rad_to_deg);
-
-    NT cosine_val = angle_to_sines_appr[90 - tranc_angle],
-       sine_val = angle_to_sines_appr[tranc_angle];
-
-    Transformation_2 rotate(ROTATION, sine_val, cosine_val);
-    p = rotate(p);
-  }
-
-
-  /*! */
-  Kd_triple create_kd_tree(NT angle)
-  {
-
-    Kd_tree *tree = new Kd_tree();
-
-    tree->reserve(input_points_list.size());
-
-    for (Point_saved_pair_iter iter = input_points_list.begin();  iter != input_points_list.end();  ++iter)
-    {
-      Point_2 p(iter->first);
-      rotate(p,angle);
-      Point_with_hot_pixel_history_saved rotated_point(p,iter->first,iter->second);
-
-      tree->insert(rotated_point);
-    }
-
-    tree->build();
-
-
-    typename Traits::To_double to_dbl;
-    double buffer_angle(to_dbl(angle) - half_pi / (2 * number_of_trees));
-
-    if (buffer_angle < 0)
-      buffer_angle = 0;
-
-    Line_2 li(std::tan(buffer_angle), -1, 0);
-    Direction_2 d(li);
-
-    // rotate_by 180 degrees
-    Transformation_2 t(ROTATION, 0, -1);
-    d = d.transform(t);
-    Direction_nt_pair kp(d, angle);
-
-    Kd_triple kt(tree, kp);
-
-    return(kt);
-  }
-
-  inline NT square(NT x) {return(x * x);}
-
-  inline NT min BOOST_PREVENT_MACRO_SUBSTITUTION (NT x, NT y) {return((x < y) ? x : y);}
-  inline NT max BOOST_PREVENT_MACRO_SUBSTITUTION (NT x, NT y) {return((x < y) ? y : x);}
-
-  inline NT min BOOST_PREVENT_MACRO_SUBSTITUTION  (NT x1, NT x2, NT x3, NT x4, NT x5,
-                NT x6)
-  {return(min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2),
-                                                min BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),min BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
-
-  inline NT max BOOST_PREVENT_MACRO_SUBSTITUTION (NT x1, NT x2, NT x3, NT x4, NT x5, NT x6)
-  {return(max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2),
-                                                max BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),max BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
-
-  /*! */
-  Direction_2 get_direction(Segment_2 seg)
-  {
-    typedef typename Traits_::Construct_vertex_2  Construct_vertex_2;
-    Construct_vertex_2 construct_vertex = m_gt.construct_vertex_2_object();
-
-    // force the segment slope to [0-180)
-    Point_2 s = construct_vertex(seg, 0);
-    Point_2 t = construct_vertex(seg, 1);
-    Comparison_result cx = m_gt.compare_x_2_object()(s, t);
-    Comparison_result cy = m_gt.compare_y_2_object()(s, t);
-    if (cy == LARGER || (cy == EQUAL && cx == LARGER)) {
-      typedef typename Traits::Construct_segment_2  Construct_segment_2;
-      Construct_segment_2 construct_seg = m_gt.construct_segment_2_object();
-      seg = construct_seg(t, s);
-    }
-
-    // force the vector to [0-90)
-    Vector_2 v(construct_vertex(seg, 0), construct_vertex(seg, 1));
-    if (cx == EQUAL || (cx == LARGER && cy == SMALLER) ||
-        (cx == SMALLER && cy == LARGER))
-      v = v.perpendicular(RIGHT_TURN);
-
-    Direction_2 d(v.direction());
-
-    return(d);
-  }
-
-  /*! */
-  int get_kd_num(Segment_2 seg, int n, Direction_list & directions)
-  {
-    Direction_2 d = get_direction(seg);
-    int i = 0;
-    bool found = false;
-    Direction_const_iter iter = directions.begin();
-
-    while (i < n && !found) {
-      if (*iter > d) found = true;
-      ++i;
-      ++iter;
-    }
-
-    if (found) --i;
-    else i = 0;
-
-    return(i);
-  }
-
-  /*! */
-  void check_kd(int *kd_counter,int number_of_trees,
-                const Segment_list & seg_list,
-                Direction_list & directions)
-  {
-    for (int i = 0;i < number_of_trees;++i)
-      kd_counter[i] = 0;
-
-    int kd_num;
-    for (Segment_const_iter iter = seg_list.begin(); iter != seg_list.end();
-         ++iter)
-    {
-      kd_num = get_kd_num(*iter, number_of_trees, directions);
-      kd_counter[kd_num]++;
-    }
-  }
-
-  /*! */
-  void init_angle_to_sines_table()
-  {
-    angle_to_sines_appr[0] = NT(0);
-    angle_to_sines_appr[1] = NT(115) / NT(6613);
-    angle_to_sines_appr[2] = NT(57) / NT(1625);
-    angle_to_sines_appr[3] = NT(39) / NT(761);
-    angle_to_sines_appr[4] = NT(29) / NT(421);
-    angle_to_sines_appr[5] = NT(23) / NT(265);
-    angle_to_sines_appr[6] = NT(19) / NT(181);
-    angle_to_sines_appr[7] = NT(32) / NT(257);
-    angle_to_sines_appr[8] = NT(129) / NT(929);
-    angle_to_sines_appr[9] = NT(100) / NT(629);
-    angle_to_sines_appr[10] = NT(92) / NT(533);
-    angle_to_sines_appr[11] = NT(93) / NT(485);
-    angle_to_sines_appr[12] = NT(76) / NT(365);
-    angle_to_sines_appr[13] = NT(156) / NT(685);
-    angle_to_sines_appr[14] = NT(205) / NT(853);
-    angle_to_sines_appr[15] = NT(69) / NT(269);
-    angle_to_sines_appr[16] = NT(7) / NT(25);
-    angle_to_sines_appr[17] = NT(120) / NT(409);
-    angle_to_sines_appr[18] = NT(57) / NT(185);
-    angle_to_sines_appr[19] = NT(12) / NT(37);
-    angle_to_sines_appr[20] = NT(51) / NT(149);
-    angle_to_sines_appr[21] = NT(135) / NT(377);
-    angle_to_sines_appr[22] = NT(372) / NT(997);
-    angle_to_sines_appr[23] = NT(348) / NT(877);
-    angle_to_sines_appr[24] = NT(231) / NT(569);
-    angle_to_sines_appr[25] = NT(36) / NT(85);
-    angle_to_sines_appr[26] = NT(39) / NT(89);
-    angle_to_sines_appr[27] = NT(300) / NT(661);
-    angle_to_sines_appr[28] = NT(8) / NT(17);
-    angle_to_sines_appr[29] = NT(189) / NT(389);
-    angle_to_sines_appr[30] = NT(451) / NT(901);
-    angle_to_sines_appr[31] = NT(180) / NT(349);
-    angle_to_sines_appr[32] = NT(28) / NT(53);
-    angle_to_sines_appr[33] = NT(432) / NT(793);
-    angle_to_sines_appr[34] = NT(161) / NT(289);
-    angle_to_sines_appr[35] = NT(228) / NT(397);
-    angle_to_sines_appr[36] = NT(504) / NT(865);
-    angle_to_sines_appr[37] = NT(3) / NT(5);
-    angle_to_sines_appr[38] = NT(580) / NT(941);
-    angle_to_sines_appr[39] = NT(341) / NT(541);
-    angle_to_sines_appr[40] = NT(88) / NT(137);
-    angle_to_sines_appr[41] = NT(48) / NT(73);
-    angle_to_sines_appr[42] = NT(65) / NT(97);
-    angle_to_sines_appr[43] = NT(429) / NT(629);
-    angle_to_sines_appr[44] = NT(555) / NT(797);
-    angle_to_sines_appr[45] = NT(697) / NT(985);
-    angle_to_sines_appr[46] = NT(572) / NT(797);
-    angle_to_sines_appr[47] = NT(460) / NT(629);
-    angle_to_sines_appr[48] = NT(72) / NT(97);
-    angle_to_sines_appr[49] = NT(55) / NT(73);
-    angle_to_sines_appr[50] = NT(105) / NT(137);
-    angle_to_sines_appr[51] = NT(420) / NT(541);
-    angle_to_sines_appr[52] = NT(741) / NT(941);
-    angle_to_sines_appr[53] = NT(4) / NT(5);
-    angle_to_sines_appr[54] = NT(703) / NT(865);
-    angle_to_sines_appr[55] = NT(325) / NT(397);
-    angle_to_sines_appr[56] = NT(240) / NT(289);
-    angle_to_sines_appr[57] = NT(665) / NT(793);
-    angle_to_sines_appr[58] = NT(45) / NT(53);
-    angle_to_sines_appr[59] = NT(299) / NT(349);
-    angle_to_sines_appr[60] = NT(780) / NT(901);
-    angle_to_sines_appr[61] = NT(340) / NT(389);
-    angle_to_sines_appr[62] = NT(15) / NT(17);
-    angle_to_sines_appr[63] = NT(589) / NT(661);
-    angle_to_sines_appr[64] = NT(80) / NT(89);
-    angle_to_sines_appr[65] = NT(77) / NT(85);
-    angle_to_sines_appr[66] = NT(520) / NT(569);
-    angle_to_sines_appr[67] = NT(805) / NT(877);
-    angle_to_sines_appr[68] = NT(925) / NT(997);
-    angle_to_sines_appr[69] = NT(352) / NT(377);
-    angle_to_sines_appr[70] = NT(140) / NT(149);
-    angle_to_sines_appr[71] = NT(35) / NT(37);
-    angle_to_sines_appr[72] = NT(176) / NT(185);
-    angle_to_sines_appr[73] = NT(391) / NT(409);
-    angle_to_sines_appr[74] = NT(24) / NT(25);
-    angle_to_sines_appr[75] = NT(260) / NT(269);
-    angle_to_sines_appr[76] = NT(828) / NT(853);
-    angle_to_sines_appr[77] = NT(667) / NT(685);
-    angle_to_sines_appr[78] = NT(357) / NT(365);
-    angle_to_sines_appr[79] = NT(476) / NT(485);
-    angle_to_sines_appr[80] = NT(525) / NT(533);
-    angle_to_sines_appr[81] = NT(621) / NT(629);
-    angle_to_sines_appr[82] = NT(920) / NT(929);
-    angle_to_sines_appr[83] = NT(255) / NT(257);
-    angle_to_sines_appr[84] = NT(180) / NT(181);
-    angle_to_sines_appr[85] = NT(264) / NT(265);
-    angle_to_sines_appr[86] = NT(420) / NT(421);
-    angle_to_sines_appr[87] = NT(760) / NT(761);
-    angle_to_sines_appr[88] = NT(1624) / NT(1625);
-    angle_to_sines_appr[89] = NT(6612) / NT(6613);
-    angle_to_sines_appr[90] = NT(1);
+  /*! determines whether all the points in \f$x \times y\f$ are outside the slab.
+   */
+  bool certainly_outside_slab(const Interval& x, const Interval& y) const {
+    Interval f = m_a * (x - m_sx) + m_b * (y - m_sy);
+    return (f.inf() > m_w) || (f.sup() < -m_w);
   }
 
 public:
-
-  /*! */
-  Multiple_kd_tree(const Point_saved_pair_list & inp_points_list,
-                   int inp_number_of_trees,
-                   const Segment_list & seg_list) :
-    pi(CGAL_PI), half_pi(0.5 * CGAL_PI),
-    number_of_trees(inp_number_of_trees), input_points_list(inp_points_list)
-  {
-
-    Kd_triple kd;
-
-    // check that there are at least two trees
-    CGAL_precondition_msg(number_of_trees >= 1, "There must be at least one kd-tree" );
-
-    init_angle_to_sines_table();
-
-    // find the kd trees that have enough candidates  (segments with a close
-    // slope)
-    int * kd_counter = new int[number_of_trees];
-    std::size_t number_of_segments = seg_list.size();
-
-    // auxiliary directions
-    Direction_list directions;
-    double buffer_angle;
-    Line_2 li;
-    Direction_2 d;
-
-    int i = 0;
-    for (double angle = 0; i < number_of_trees;
-         angle += half_pi / number_of_trees,++i)
-    {
-      buffer_angle = angle - half_pi / (2 * number_of_trees);
-
-      if (buffer_angle < 0)
-        buffer_angle = 0;
-
-      li = Line_2(std::tan(buffer_angle), -1, 0);
-      d = Direction_2(li);
-
-      // rotate_by 180 degrees
-      Transformation_2 t(ROTATION, 0, -1);
-      d = d.transform(t);
-
-      directions.push_back(d);
-    }
-
-    check_kd(kd_counter, number_of_trees, seg_list,directions);
-    int ind = 0;
-
-#ifdef CGAL_SR_DEBUG
-    int number_of_actual_kd_trees = 0;
-#endif
-
-    i = 0;
-
-    for (NT angle = 0; i < number_of_trees;
-         angle += NT(half_pi / number_of_trees),++i)
-    {
-      if (kd_counter[ind] >=
-          (double)number_of_segments / (double)number_of_trees / 2.0)
-      {
-        kd = create_kd_tree(angle);
-
-        kd_trees_list.push_back(kd);
-
-#ifdef CGAL_SR_DEBUG
-        ++number_of_actual_kd_trees;
-#endif
-
-      }
-
-      ++ind;
-    }
-
-    delete[] kd_counter;
-
-#ifdef CGAL_SR_DEBUG
-    std::cout << "Actual number of kd-trees created : " <<
-      number_of_actual_kd_trees << std::endl;
-#endif
-
+  /*! constructs the corridor of a segment.
+   * \param sx, sy the coordinates of the source.
+   * \param tx, ty the coordinates of the target.
+   * \param pixel_size the pixel size.
+   * \param point_error the maximum width of the intervals of the points in the kd-tree.
+   */
+  Segment_pixel_corridor(const Interval& sx, const Interval& sy, const Interval& tx, const Interval& ty,
+                         const Interval& pixel_size, double point_error) :
+    m_sx(sx), m_sy(sy), m_a(sy - ty), m_b(tx - sx), m_point_error(point_error) {
+    const Interval h = pixel_size / 2;
+    m_w = (h * (CGAL::abs(m_a) + CGAL::abs(m_b))).sup();
+    m_min = {(Interval((std::min)(sx.inf(), tx.inf())) - h).inf(),
+             (Interval((std::min)(sy.inf(), ty.inf())) - h).inf()};
+    m_max = {(Interval((std::max)(sx.sup(), tx.sup())) + h).sup(),
+             (Interval((std::max)(sy.sup(), ty.sup())) + h).sup()};
   }
 
-  ~Multiple_kd_tree()
-  {
-    //delete all the kd_trees.
-    for(typename Kd_triple_list::iterator it = kd_trees_list.begin();   it != kd_trees_list.end(); ++it)
-      delete (it->first);
-
-    //delete all the points.
-    for(typename Point_saved_pair_list::iterator it = input_points_list.begin();
-        it != input_points_list.end(); ++it) {
-      delete (it->second);
-    }
-
+  /*! determines whether a point may be in the corridor.
+   */
+  bool contains(const Point_d& p) const {
+    if ((p.x.sup() < m_min[0]) || (p.x.inf() > m_max[0]) || (p.y.sup() < m_min[1]) || (p.y.inf() > m_max[1]))
+      return false;
+    return ! certainly_outside_slab(p.x, p.y);
   }
 
-  /*! */
-  Point_2 small_x_point(const Point_2 & p1, const Point_2 & p2)
-  {
-    Comparison_result c = m_gt.compare_x_2_object()(p1, p2);
-    return (c == SMALLER) ? p1 : p2;
+  /*! determines whether a kd-tree cell may contain a point in the corridor.
+   */
+  bool inner_range_intersects(const Rectangle& rect) const {
+    const double xmin = (std::max)((rect.min_coord(0) - m_point_error).inf(), m_min[0]);
+    const double xmax = (std::min)((rect.max_coord(0) + m_point_error).sup(), m_max[0]);
+    const double ymin = (std::max)((rect.min_coord(1) - m_point_error).inf(), m_min[1]);
+    const double ymax = (std::min)((rect.max_coord(1) + m_point_error).sup(), m_max[1]);
+    if ((xmin > xmax) || (ymin > ymax)) return false;
+    return ! certainly_outside_slab(Interval(xmin, xmax), Interval(ymin, ymax));
   }
 
-  /*! */
-  Point_2 big_x_point(const Point_2 & p1, const Point_2 & p2)
-  {
-    Comparison_result c = m_gt.compare_x_2_object()(p1, p2);
-    return (c == SMALLER) ? p2 : p1;
-  }
-
-  /*! */
-  Point_2 small_y_point(const Point_2 & p1, const Point_2 & p2)
-  {
-    Comparison_result c = m_gt.compare_y_2_object()(p1, p2);
-    return (c == SMALLER) ? p1 : p2;
-  }
-
-  /*! */
-  Point_2 big_y_point(const Point_2 & p1, const Point_2 & p2)
-  {
-    Comparison_result c = m_gt.compare_y_2_object()(p1, p2);
-    return (c == SMALLER) ? p2 : p1;
-  }
-
-  /*! */
-  void get_intersecting_points(std::list<SAVED_OBJECT> & result_list,
-                               Segment_2 s, NT unit_square)
-  {
-    // determine right kd-tree to work on, depending on the segment's slope
-    Direction_2 d = get_direction(s);
-
-    std::size_t i = 0;
-    std::size_t n = kd_trees_list.size();
-    bool found = false;
-    typename Kd_triple_list::const_iterator iter = kd_trees_list.begin();
-
-    while(i < n && !found)
-    {
-      if (iter->second.first > d)
-        found = true;
-
-      ++i;
-      ++iter;
-    }
-
-    if (!found)
-      iter = kd_trees_list.begin();
-
-    else
-      --iter;
-
-    Point_list points_list;
-    m_gt.minkowski_sum_with_pixel_2_object()(points_list, s, unit_square);
-
-    Point_iter points_iter;
-
-    for (points_iter = points_list.begin();   points_iter != points_list.end();   ++points_iter)
-      rotate(*points_iter, iter->second.second);
-
-    // query
-    points_iter = points_list.begin();
-    Point_2 point_left, point_right, point_bot, point_top;
-    point_left = point_right = point_bot = point_top = *points_iter;
-
-    for (++points_iter; points_iter != points_list.end(); ++points_iter)
-    {
-      point_left = small_x_point(point_left,*points_iter);
-      point_right = big_x_point(point_right,*points_iter);
-      point_bot = small_y_point(point_bot,*points_iter);
-      point_top = big_y_point(point_top,*points_iter);
-    }
-
-    typedef typename Traits::Construct_iso_rectangle_2    Construct_iso_rectangle_2;
-
-    Construct_iso_rectangle_2 construct_rec = m_gt.construct_iso_rectangle_2_object();
-
-    Iso_rectangle_2 rec =  construct_rec(point_left, point_right, point_bot, point_top);
-
-    Point_2 p1 = rec.vertex(0);
-    Point_2 p2 = rec.vertex(2);
-
-    Point_with_hot_pixel_history_saved point1(p1);
-    Point_with_hot_pixel_history_saved point2(p2);
-
-    Box b(point1, point2);
-
-    // the kd-tree query
-    Point_with_hot_pixel_history_saved_list result;
-
-    iter->first->search(std::back_inserter(result), b);
-
-    // create result
-    CGAL_assertion(result_list.empty());
-
-    for( Point_with_hot_pixel_history_saved_iter my_point_iter = result.begin();    my_point_iter != result.end();   ++my_point_iter )
-      result_list.push_back(my_point_iter->object);
+  /*! determines whether a kd-tree cell is contained in the corridor. A wrong positive answer only
+   * reports extra candidates.
+   */
+  bool outer_range_contains(const Rectangle& rect) const {
+    if ((rect.min_coord(0) < m_min[0]) || (rect.max_coord(0) > m_max[0]) ||
+        (rect.min_coord(1) < m_min[1]) || (rect.max_coord(1) > m_max[1]))
+      return false;
+    Interval f = m_a * (Interval(rect.min_coord(0), rect.max_coord(0)) - m_sx) +
+      m_b * (Interval(rect.min_coord(1), rect.max_coord(1)) - m_sy);
+    return (f.inf() >= -m_w) && (f.sup() <= m_w);
   }
 };
 
-} // namespace internal
+/*! a kd-tree of the hot pixels. It does not own the saved objects.
+ * The tree stores double approximations of the hot-pixel centers; a query
+ * returns a superset of the hot pixels a segment intersects. The exact test
+ * is the responsibility of the caller.
+ */
+template <typename Traits_, typename SavedObject>
+class Hot_pixel_kd_tree {
+  static_assert(std::is_pointer<SavedObject>::value, "SavedObject is not a pointer.");
 
-} //namespace CGAL
+private:
+  using Traits = Traits_;
+  using NT = typename Traits::FT;
+  using Segment_2 = typename Traits::Segment_2;
+  using Point_2 = typename Traits::Point_2;
+
+  using Search_traits = Hot_pixel_kd_search_traits<SavedObject>;
+  using Kd_point = typename Search_traits::Point_d;
+  using Kd_tree = CGAL::Kd_tree<Search_traits>;
+  using Corridor = Segment_pixel_corridor<Search_traits>;
+
+  struct Object_inserter {
+    std::vector<SavedObject>* result;
+    void operator()(const Kd_point& p) const { result->push_back(p.object); }
+  };
+
+  Traits m_gt;
+  Kd_tree m_tree;
+  Interval m_pixel_size;
+  double m_point_error = 0;     // the maximum width of the point intervals
+
+public:
+  using Point_saved_pair_list = std::vector<std::pair<Point_2, SavedObject>>;
+
+  /*! constructs the kd-tree.
+   * \param points the hot-pixel centers and the corresponding objects.
+   * \param pixel_size the pixel size.
+   */
+  Hot_pixel_kd_tree(const Point_saved_pair_list& points, NT pixel_size) :
+    m_pixel_size(CGAL::to_interval(pixel_size)) {
+    m_tree.reserve(points.size());
+    for (const auto& [p, obj] : points) {
+      Interval x(CGAL::to_interval(p.x())), y(CGAL::to_interval(p.y()));
+      m_point_error = (std::max)({m_point_error, x.sup() - x.inf(), y.sup() - y.inf()});
+      m_tree.insert(Kd_point{{(x.inf() + x.sup()) / 2, (y.inf() + y.sup()) / 2}, x, y, obj});
+    }
+    m_tree.build();
+  }
+
+  Hot_pixel_kd_tree(const Hot_pixel_kd_tree&) = delete;
+  Hot_pixel_kd_tree& operator=(const Hot_pixel_kd_tree&) = delete;
+
+  /*! appends to `result` the objects of a superset of the hot pixels that `s` intersects.
+   * \param result the output.
+   * \param s the query segment.
+   */
+  void get_intersecting_points(std::vector<SavedObject>& result, const Segment_2& s) const {
+    auto ctr_vertex = m_gt.construct_vertex_2_object();
+    const Point_2& src = ctr_vertex(s, 0);
+    const Point_2& trg = ctr_vertex(s, 1);
+    Protect_FPU_rounding<true> protection;
+    Corridor corridor(CGAL::to_interval(src.x()), CGAL::to_interval(src.y()),
+                      CGAL::to_interval(trg.x()), CGAL::to_interval(trg.y()), m_pixel_size, m_point_error);
+    m_tree.search(boost::make_function_output_iterator(Object_inserter{&result}), corridor);
+  }
+};
+
+} // namespace Snap_Rounding_2::internal
+} // namespace CGAL
 
 #endif
