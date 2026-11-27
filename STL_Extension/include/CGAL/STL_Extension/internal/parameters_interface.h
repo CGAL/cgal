@@ -478,3 +478,11 @@ CGAL_add_named_parameter(use_trimming_t, use_trimming, use_trimming)
 
 //List of named parameters used in Mesh_smoothing_3
 CGAL_add_named_parameter(max_number_of_evaluations_t, max_number_of_evaluations, max_number_of_evaluations)
+
+// List of named parameters used in the package 'Feature_graph'
+CGAL_add_named_parameter(sharpness_estimator_t, sharpness_estimator, sharpness_estimator)
+CGAL_add_named_parameter(normal_estimator_t, normal_estimator, normal_estimator)
+CGAL_add_named_parameter(line_distance_threshold_t, line_distance_threshold, line_distance_threshold)
+CGAL_add_named_parameter(isthmus_line_distance_threshold_t, isthmus_line_distance_threshold, isthmus_line_distance_threshold)
+CGAL_add_named_parameter(simple_line_distance_threshold_t, simple_line_distance_threshold, simple_line_distance_threshold)
+CGAL_add_named_parameter(corner_line_distance_threshold_t, corner_line_distance_threshold, corner_line_distance_threshold)
