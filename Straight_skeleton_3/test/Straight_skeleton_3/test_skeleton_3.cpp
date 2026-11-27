@@ -111,6 +111,8 @@ void test_events(const std::vector<FT>& save_times = {})
   test("data/events/EdgeMergeEvent_proper.obj", save_times);
   test("data/events/EdgeMergeEvent_reflex.obj", save_times);
   test("data/events/EdgeSplitEvent.obj", save_times);
+  test("data/events/EdgeSplitEvent_outward.obj", save_times);
+  test("data/events/PierceEvent_outward.obj", save_times);
   test("data/events/FlipVertexEvent.obj", save_times);
   test("data/events/misc_0.obj", save_times);
   test("data/events/misc_1.obj", save_times);
@@ -250,6 +252,8 @@ int main(int argc, char** argv)
     }
 
     test(mesh_filename, save_times, save_path, config_path, false /*do not redirect stdout*/);
+    test(mesh_filename, {-1}, save_path, config_path, false /*do not redirect stdout*/);
+    test(mesh_filename, { 1}, save_path, config_path, false /*do not redirect stdout*/);
   }
 
   std::cout << "Done" << std::endl;

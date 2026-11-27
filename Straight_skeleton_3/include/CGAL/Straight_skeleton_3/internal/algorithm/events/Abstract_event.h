@@ -180,7 +180,8 @@ public:
       return (eventA->getType() > eventB->getType());
     }
 
-    return (cmp == CGAL::SMALLER);
+    // the top of the priority queue is the earliest event
+    return (cmp == CGAL::LARGER);
   }
 };
 

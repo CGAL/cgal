@@ -21,7 +21,6 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
-#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <filesystem>
 #include <iostream>
@@ -52,7 +51,6 @@ struct Output_processor
                           const std::vector<FT>& save_times,
                           const TriangleMeshIn& tmesh,
                           std::vector<PolygonMeshOut>& results,
-                          bool outwards,
                           const NamedParameters& np_out)
   {
     using parameters::is_default_parameter;
@@ -105,11 +103,6 @@ struct Output_processor
     CGAL_SS3_TRACE_V(2, "At time: " << save_time << ", Facegraph with " << num_vertices(result_t)
                       << " vertices and " << num_faces(result_t) << " faces");
 
-    if (outwards) {
-      CGAL_SS3_TRACE_V(2, "Reversing face orientations...");
-      CGAL::Polygon_mesh_processing::reverse_face_orientations(result_t);
-    }
-
     results.push_back(result_t);
 
     return true;
@@ -120,17 +113,16 @@ struct Output_processor
                       const std::vector<PolyhedronSPtr>& results_p,
                       const std::vector<FT>& save_times,
                       const TriangleMeshIn& tmesh,
-                      std::vector<PolygonMeshOut>& results,
-                      bool outwards)
+                      std::vector<PolygonMeshOut>& results)
   {
     if (result_index >= results_p.size())
       return true;
 
     // the variadic was shorter than the number of results, so we use default parameters for the remaining ones
-    if (!process_one(result_index, results_p, save_times, tmesh, results, outwards, parameters::default_values()))
+    if (!process_one(result_index, results_p, save_times, tmesh, results, parameters::default_values()))
       return false;
 
-    return process(result_index + 1, results_p, save_times, tmesh, results, outwards);
+    return process(result_index + 1, results_p, save_times, tmesh, results);
   }
 
   // Recursive case: process one result with the first named parameter, then recurse with remaining
@@ -140,18 +132,17 @@ struct Output_processor
                       const std::vector<FT>& save_times,
                       const TriangleMeshIn& tmesh,
                       std::vector<PolygonMeshOut>& results,
-                      bool outwards,
                       const FirstNP& first_np,
                       const RestNPs&... rest_nps)
   {
     if (result_index >= results_p.size())
       return true;  // All results processed successfully
 
-    if (!process_one(result_index, results_p, save_times, tmesh, results, outwards, first_np))
+    if (!process_one(result_index, results_p, save_times, tmesh, results, first_np))
       return false;
 
     // the variadic was shorter than the number of results, so we use default parameters for the remaining ones
-    return process(result_index + 1, results_p, save_times, tmesh, results, outwards, rest_nps...);
+    return process(result_index + 1, results_p, save_times, tmesh, results, rest_nps...);
   }
 };
 
@@ -168,9 +159,10 @@ struct Output_processor
  * equivalent to the construction of a straight skeleton, and the offset polyhedra correspond
  * to the intermediate states of the input mesh during the straight skeleton construction.
  *
- * Positive time values correspond to outward offsetting, while negative values or an empty times
- * range correspond to inward offsetting. Face weights represent absolute speeds and as such
- * must always be positive.
+ * The weight of a face is its signed speed along its oriented normal
+ * (see Section \ref Straight_skeleton_3WeightedStraightSkeletonDef): faces move inward if weights
+ * are negative, and outward if weights are positive. In both cases, times are positive and time `0`
+ * corresponds to the input mesh.
  *
  * The offset polyhedra are always triangle meshes. If the polyhedron has entirely vanished
  * at a requested time, the corresponding offset polyhedron is an empty mesh.
@@ -187,7 +179,7 @@ struct Output_processor
  * \param tmesh the input triangle mesh whose faces are to be offset
  * \param input_save_times the times at which the offset polyhedra are to be constructed
  * \param results a vector to which the offset polyhedra are appended, one per save time,
- *                in increasing order of the absolute values of the save times
+ *                in increasing order of the save times
  *                (independently of the order of `input_save_times`).
  * \param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters"
  *              among the ones listed below
@@ -208,11 +200,12 @@ struct Output_processor
  *                      and must provide exact predicates and exact constructions.}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{face_weight_map}
- *      \cgalParamDescription{a property map associating to each face the weight (speed) of the face.}
+ *      \cgalParamDescription{a property map associating to each face its weight (speed), that is the signed speed
+ *                            of the face along its outward normal.}
  *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%face_descriptor`
  *                     as key type and `FT` as value type}
- *      \cgalParamDefault{A constant property map with uniform weight `1` for all faces.}
- *      \cgalParamExtra{Precondition: all face weights must be positive.}
+ *      \cgalParamDefault{A constant property map with uniform weight `-1` for all faces.}
+ *      \cgalParamExtra{Precondition: face weights must be non-zero, and must all have the same sign.}
  *      \cgalParamExtra{Adjacent coplanar faces must have the same weight.}
  *    \cgalParamNEnd
  * \cond SKIP_IN_MANUAL
@@ -229,7 +222,7 @@ struct Output_processor
  *
  * \param nps_out a variadic sequence of optional \ref bgl_namedparameters "Named Parameters" to specify output options
  *                for each of the constructed offset polyhedra: the `i`-th sequence applies to the `i`-th
- *                offset polyhedron appended to `results`, that is in increasing order of the absolute values of the save times.
+ *                offset polyhedron appended to `results`, that is in increasing order of the save times.
  *  \cgalNamedParamsBegin
  *   \cgalParamNBegin{do_not_triangulate_faces}
  *     \cgalParamDescription{a Boolean used to specify whether the faces of the offset meshes
@@ -251,7 +244,7 @@ struct Output_processor
  *
  * \return `true` if offset meshes were successfully constructed; `false` otherwise.
  *
- * \pre Target times must be either all positive, or all negative.
+ * \pre Target times must be positive, and there must be at least one if face weights are positive.
  * \pre The input mesh is a closed, outward-oriented, triangle mesh without self-intersections.
  */
 template <typename TriangleMeshIn, typename PolygonMeshOut,
@@ -279,7 +272,6 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
   const std::vector<FT> save_times(input_save_times.begin(), input_save_times.end());
-  const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
 
   // visitor to collect the results at save times
   struct Mesh_collector_visitor
@@ -312,7 +304,7 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
 
   // Start recursive processing with all named parameters
   using OutputProcessor = Output_processor<TriangleMeshIn, PolygonMeshOut, Geom_traits>;
-  if (!OutputProcessor::process(0, results_p, save_times, tmesh, results, outwards, nps_out...)) {
+  if (!OutputProcessor::process(0, results_p, save_times, tmesh, results, nps_out...)) {
     return false;
   }
 

@@ -85,10 +85,10 @@ public:
       FacetSPtr facet_src = edge->get_facet_src();
       FacetSPtr facet_tgt = edge->get_facet_tgt();
 
-      Plane_3 offset_plane_l = Transformation::shift_plane(facet_l, -1);
-      Plane_3 offset_plane_r = Transformation::shift_plane(facet_r, -1);
-      Plane_3 offset_plane_src = Transformation::shift_plane(facet_src, -1);
-      Plane_3 offset_plane_tgt = Transformation::shift_plane(facet_tgt, -1);
+      Plane_3 offset_plane_l = Transformation::shift_plane(facet_l, 1);
+      Plane_3 offset_plane_r = Transformation::shift_plane(facet_r, 1);
+      Plane_3 offset_plane_src = Transformation::shift_plane(facet_src, 1);
+      Plane_3 offset_plane_tgt = Transformation::shift_plane(facet_tgt, 1);
 
       std::optional<Point_3> p_src = Kernel_wrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
       std::optional<Point_3> p_tgt = Kernel_wrapper::intersection(offset_plane_tgt, offset_plane_l, offset_plane_r);
@@ -458,7 +458,7 @@ public:
         FacetSPtr facet_src = edge->get_facet_src();
         FacetSPtr facet_tgt = edge->get_facet_tgt();
 
-        FT od = future_facing ? -1 : 1;
+        FT od = future_facing ? 1 : -1;
         const Plane_3 offset_plane_l = Transformation::shift_plane(facet_l, od);
         const Plane_3 offset_plane_r = Transformation::shift_plane(facet_r, od);
         const Plane_3 offset_plane_src = Transformation::shift_plane(facet_src, od);

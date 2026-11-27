@@ -306,8 +306,7 @@ public:
       save_path_(save_path),
       skeleton_(Straight_skeleton_3::create())
   {
-    std::sort(save_times_.begin(), save_times_.end(),
-              [](const FT& a, const FT& b) { return CGAL::abs(a) < CGAL::abs(b); });
+    std::sort(save_times_.begin(), save_times_.end());
 
     init_vertex_splitter();
     init_edge_event();
@@ -345,11 +344,6 @@ public:
   void set_visitor(Base_mesh_offset_visitor<GeomTraits>* visitor)
   {
     visitor_ = visitor;
-  }
-
-  void set_outward(const bool outwards)
-  {
-    outwards_ = outwards;
   }
 
   void init_vertex_splitter()
@@ -526,8 +520,8 @@ public:
       }
 
       auto save_at_time = [&](const FT& save_time) {
-        CGAL_assertion(current_time > save_time);
-        CGAL_assertion(!event || save_time >= event->time());
+        CGAL_assertion(current_time < save_time);
+        CGAL_assertion(!event || save_time <= event->time());
         Transformation::shift_facets_from_base(polyhedron, save_time);
         current_time = save_time;
         if (visitor_) {
@@ -542,7 +536,7 @@ public:
       bool did_save = false;
       if (!save_at_stable_times) {
         while (!save_times_.empty() &&
-               (!event || save_times_.front() >= event->time())) {
+               (!event || save_times_.front() <= event->time())) {
           const FT& save_time = save_times_.front();
           save_at_time(save_time);
           save_times_.erase(save_times_.begin());
@@ -550,31 +544,31 @@ public:
         }
       } else {
         // If the upcoming event is at more than delta, save and move on.
-        // Otherwise, delay the save time till event - delta (i.e., further in the future)
+        // Otherwise, delay the save time till event + delta (i.e., further in the future)
 
         // do not C++11 this loop: there is an erase()
         auto save_time_it = std::begin(save_times_);
         while (save_time_it != std::end(save_times_)) {
           FT& save_time = *save_time_it;
-          CGAL_assertion(current_time > save_time);
-          if (!event || save_time > event->time() + min_event_time_delta) {
+          CGAL_assertion(current_time < save_time);
+          if (!event || save_time < event->time() - min_event_time_delta) {
             save_at_time(save_time);
             did_save = true;
             save_time_it = save_times_.erase(save_time_it);
             continue;
           }
 
-          // Here, we know there is an event, and we know the save is later than upcoming + delta.
+          // Here, we know there is an event, and we know the save is later than upcoming - delta.
           // We need to know if we need to nudge the save time, i.e. distinguish between
           // "before but close to the event" and "after the event (and close or not)"
-          if (save_time > event->time()) {
+          if (save_time < event->time()) {
             // before but close ==> kick the save down the road hoping to find a stable point
             CGAL_SS3_CORE_TRACE_V(1, "Save time at " << save_time << " is too close to event time at " << event->time());
-            CGAL_SS3_CORE_TRACE_V(1, "Delay save from " << save_time << " to " << event->time() - min_event_time_delta);
-            save_time = event->time() - min_event_time_delta;
+            CGAL_SS3_CORE_TRACE_V(1, "Delay save from " << save_time << " to " << event->time() + min_event_time_delta);
+            save_time = event->time() + min_event_time_delta;
             // we should never move farther in the future than the time_future_bound because
             // we do not know events taking place after that time
-            if (time_future_bound.has_value() && save_time < time_future_bound.value()) {
+            if (time_future_bound.has_value() && save_time > time_future_bound.value()) {
               CGAL_SS3_CORE_TRACE_V(1, "Warning: save time at " << save_time << " was clamped by future bound at " << time_future_bound.value());
               save_time = time_future_bound.value();
             }
@@ -600,8 +594,8 @@ public:
 
       upcoming_event_time = event->time();
 
-      CGAL_assertion((did_save && current_time >= upcoming_event_time) ||
-                      current_time > upcoming_event_time);
+      CGAL_assertion((did_save && current_time <= upcoming_event_time) ||
+                      current_time < upcoming_event_time);
 
 #ifdef CGAL_SS3_RUN_TIMERS
       CGAL_SS3_CORE_TRACE_V(2, "current elapsed time: " << timer.time());
@@ -641,11 +635,9 @@ public:
         visitor_->after_event(polyhedron, current_time);
       }
 
-      if (!outwards_) {
-        CGAL_assertion(Transformation::is_inside_bbox(polyhedron, p_box_min, p_box_max));
-      } else {
-        // @todo cache the previous polyhedron; no point should be within.
-      }
+      // @todo if the polyhedron grows, cache the previous polyhedron; no point should be within.
+      CGAL_assertion_code(const bool is_shrinking = !Hds_utils::moves_along_normal(polyhedron->facets().front());)
+      CGAL_assertion(!is_shrinking || Transformation::is_inside_bbox(polyhedron, p_box_min, p_box_max));
 
       // Update the event priority queue
       collect_local_events(polyhedron, current_time, time_future_bound, queue);
@@ -667,14 +659,14 @@ public:
         // of events) with the idea of making the embedding into floating point more likely
         // to not create any issues.
         for (FT& upcoming_save_time : save_times_) {
-          CGAL_assertion(current_time > upcoming_save_time);
-          if (current_time - upcoming_save_time < min_event_time_delta) {
+          CGAL_assertion(current_time < upcoming_save_time);
+          if (upcoming_save_time - current_time < min_event_time_delta) {
             CGAL_SS3_CORE_TRACE_V(1, "Next save time at " << upcoming_save_time << " is too close to current time at " << event->time());
-            CGAL_SS3_CORE_TRACE_V(1, "Delay save from " << upcoming_save_time << " to " << current_time - min_event_time_delta);
-            upcoming_save_time = current_time - min_event_time_delta;
+            CGAL_SS3_CORE_TRACE_V(1, "Delay save from " << upcoming_save_time << " to " << current_time + min_event_time_delta);
+            upcoming_save_time = current_time + min_event_time_delta;
             // we should never move farther in the future than the time_future_bound because
             // we do not know events after that time
-            if (time_future_bound.has_value() && upcoming_save_time < time_future_bound.value()) {
+            if (time_future_bound.has_value() && upcoming_save_time > time_future_bound.value()) {
               CGAL_SS3_CORE_TRACE_V(1, "Warning: save time at " << upcoming_save_time << " was clamped by future bound at " << time_future_bound.value());
               upcoming_save_time = time_future_bound.value();
             }
@@ -763,8 +755,8 @@ public:
                  - pl0.b() * (pl1.a() * w2 - w1 * pl2.a())
                  + w0 * (pl1.a() * pl2.b() - pl1.b() * pl2.a());
 
-    // above is the result of solving the system at t=0 and t=1, but we shift inwards
-    Vector_3 direction { - dir_x / det, - dir_y / det, - dir_z / det };
+    // above is the result of solving the system at t=0 and t=1, i.e., the velocity of the vertex
+    Vector_3 direction { dir_x / det, dir_y / det, dir_z / det };
 
     // approximate square root, but it doesn't matter for robustness
     direction /= CGAL::approximate_sqrt(direction.squared_length());
@@ -808,8 +800,8 @@ public:
       }
     } else {
       std::optional<Line_3> line = Kernel_wrapper::intersection(plane_l, plane_r);
-      Plane_3 offset_l = Geom_utils::offset_plane(plane_l, -speed_l);
-      Plane_3 offset_r = Geom_utils::offset_plane(plane_r, -speed_r);
+      Plane_3 offset_l = Geom_utils::offset_plane(plane_l, speed_l);
+      Plane_3 offset_r = Geom_utils::offset_plane(plane_r, speed_r);
       std::optional<Line_3> line_offset = Kernel_wrapper::intersection(offset_l, offset_r);
       Point_3 point_1 = line->point();
       Vector_3 direction = line->to_vector();
@@ -1113,13 +1105,13 @@ public:
 
     CGAL_SS3_TRAITS_TRACE("Vanish time: " << vanish_time.value());
 
-    if (time_past_bound && *vanish_time >= *time_past_bound) {
+    if (time_past_bound && *vanish_time <= *time_past_bound) {
       CGAL_SS3_TRAITS_TRACE("Vanish event is strictly in the past");
       Hds_utils::set_vanish_time(edge, std::nullopt);
       return { };
     }
 
-    if (time_future_bound && *vanish_time < *time_future_bound) {
+    if (time_future_bound && *vanish_time > *time_future_bound) {
       CGAL_SS3_TRAITS_TRACE("Vanish event is too far in the future");
       Hds_utils::set_vanish_time(edge, std::nullopt);
       return { };
@@ -1150,12 +1142,12 @@ public:
       return { };
     }
 
-    if (time_past_bound && *event_time >= *time_past_bound) {
+    if (time_past_bound && *event_time <= *time_past_bound) {
       CGAL_SS3_TRAITS_TRACE("Contact event is strictly in the past");
       return { };
     }
 
-    if (time_future_bound && *event_time < *time_future_bound) {
+    if (time_future_bound && *event_time > *time_future_bound) {
       CGAL_SS3_TRAITS_TRACE("Contact event is too far in the future");
       return { };
     }
@@ -1192,10 +1184,10 @@ public:
       const std::optional<FT>& vanish_time = Hds_utils::get_vanish_time(edge);
       // In the current context, the future time bound is the last save event,
       // and vanish event times are only stored if they are earlier.
-      CGAL_assertion(!vanish_time.has_value() || !time_future_bound.has_value() || *vanish_time > *time_future_bound);
+      CGAL_assertion(!vanish_time.has_value() || !time_future_bound.has_value() || *vanish_time < *time_future_bound);
       if (vanish_time.has_value()) {
         if (tight_future_bound.has_value()) {
-          if (*vanish_time > *tight_future_bound) {
+          if (*vanish_time < *tight_future_bound) {
             tight_future_bound = vanish_time;
           }
         } else {
@@ -1211,12 +1203,12 @@ public:
       return { };
     }
 
-    if (time_past_bound && *event_time >= *time_past_bound) {
+    if (time_past_bound && *event_time <= *time_past_bound) {
       CGAL_SS3_TRAITS_TRACE("Contact event is strictly in the past");
       return { };
     }
 
-    if (tight_future_bound && *event_time < *tight_future_bound) {
+    if (tight_future_bound && *event_time > *tight_future_bound) {
       CGAL_SS3_TRAITS_TRACE("Contact event is too far in the future");
       return { };
     }
@@ -1233,7 +1225,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(event);
     CGAL_precondition(event->is_valid());
-    return event->time() >= current_time;
+    return event->time() <= current_time;
   }
 
   /**
@@ -1370,7 +1362,7 @@ public:
         CGAL_assertion_code(FT rt2 = (r2a * point.x() + r2b * point.y() + r2c * point.z() + r2d) / speed_r2);
 
         CGAL_assertion(lt2 == rt2);
-        CGAL_assertion(!is_positive(lt2));
+        CGAL_assertion(!is_negative(lt2));
 
         if (!check_bisectors(edge_2, point, event_time)) {
           continue;
@@ -2247,8 +2239,8 @@ public:
         continue;
       }
 
-      CGAL_assertion(*event_time < current_time);
-      CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
+      CGAL_assertion(*event_time > current_time);
+      CGAL_assertion(!time_future_bound.has_value() || *event_time <= *time_future_bound);
 
       Vanish_event_sptr event = Vanish_event::create();
       event->set_time(*event_time);
@@ -2415,8 +2407,8 @@ public:
           continue;
         }
 
-        CGAL_assertion(*event_time < current_time);
-        CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
+        CGAL_assertion(*event_time > current_time);
+        CGAL_assertion(!time_future_bound.has_value() || *event_time <= *time_future_bound);
 
         Generic_vertex_event_sptr event = Generic_vertex_event::create();
         event->set_time(*event_time);
@@ -2609,8 +2601,8 @@ public:
           continue;
         }
 
-        CGAL_assertion(*event_time < current_time);
-        CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
+        CGAL_assertion(*event_time > current_time);
+        CGAL_assertion(!time_future_bound.has_value() || *event_time <= *time_future_bound);
 
         Vertex_event_sptr event = Vertex_event::create();
         event->set_time(*event_time);
@@ -2783,8 +2775,8 @@ public:
           continue;
         }
 
-        CGAL_assertion(*event_time < current_time);
-        CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
+        CGAL_assertion(*event_time > current_time);
+        CGAL_assertion(!time_future_bound.has_value() || *event_time <= *time_future_bound);
 
         Flip_vertex_event_sptr event = Flip_vertex_event::create();
         event->set_time(*event_time);
@@ -2921,8 +2913,8 @@ public:
       return;
     }
 
-    CGAL_assertion(*event_time < current_time);
-    CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
+    CGAL_assertion(*event_time > current_time);
+    CGAL_assertion(!time_future_bound.has_value() || *event_time <= *time_future_bound);
 
     Surface_event_sptr event = Surface_event::create();
     event->set_time(*event_time);
@@ -3064,8 +3056,8 @@ public:
           continue;
         }
 
-        CGAL_assertion(*event_time < current_time);
-        CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
+        CGAL_assertion(*event_time > current_time);
+        CGAL_assertion(!time_future_bound.has_value() || *event_time <= *time_future_bound);
 
         Surface_event_sptr event = Surface_event::create();
         event->set_time(*event_time);
@@ -3136,8 +3128,8 @@ public:
       return;
     }
 
-    CGAL_assertion(*event_time < current_time);
-    CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
+    CGAL_assertion(*event_time > current_time);
+    CGAL_assertion(!time_future_bound.has_value() || *event_time <= *time_future_bound);
 
     // degeneracy check is performed at pop time - see is_actual_polyhedron_split_event()
 
@@ -3328,8 +3320,8 @@ public:
           continue;
         }
 
-        CGAL_assertion(*event_time < current_time);
-        CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
+        CGAL_assertion(*event_time > current_time);
+        CGAL_assertion(!time_future_bound.has_value() || *event_time <= *time_future_bound);
 
         Split_merge_event_sptr event = Split_merge_event::create();
         event->set_time(*event_time);
@@ -3860,8 +3852,8 @@ public:
             continue;
           }
 
-          CGAL_assertion(*event_time < current_time);
-          CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
+          CGAL_assertion(*event_time > current_time);
+          CGAL_assertion(!time_future_bound.has_value() || *event_time <= *time_future_bound);
 
           // actual intersection checks are performed at pop time - see is_actual_pierce_event()
 
@@ -4403,13 +4395,13 @@ public:
         Abstract_event_sptr event_duplicate = duplicate_queue.top();
         duplicate_queue.pop();
 
-        if (event_duplicate->time() > event_scratch->time()) {
+        if (event_duplicate->time() < event_scratch->time()) {
           CGAL_SS3_CORE_TRACE_V(64, "Ignoring past event @ " << event_duplicate->time());
           continue;
         }
 
-        if (event_duplicate->time() < event_scratch->time()) {
-          // events are sorted by decreasing (negative) time, so it means we missed the 'from scratch' event...
+        if (event_duplicate->time() > event_scratch->time()) {
+          // events are sorted by increasing time, so it means we missed the 'from scratch' event...
           CGAL_SS3_CORE_TRACE_V(64, "Next event is E" << event_duplicate->id() << " @ " << event_duplicate->time() << "; Breaking.");
           break;
         }
@@ -4546,7 +4538,7 @@ public:
     FT pulse = config->get_double("Algorithm", "const_offset");
     if (pulse != 0) {
       FT next_const_time = floor(CGAL::to_double(current_time / pulse) + 1.0) * pulse;
-      if (current_time > next_const_time && next_const_time > time) {
+      if (current_time < next_const_time && next_const_time < time) {
         Const_time_event_sptr const_event = Const_time_event::create();
         const_event->set_time(next_const_time);
         return const_event;
@@ -4752,7 +4744,7 @@ public:
 
       PolyhedronSPtr polyhedron_no_flip = Polyhedron::create(facets_clone);
       not_flipped_valid =
-          (Transformation::shift_facets_deg1(polyhedron_no_flip, -1.0) &&
+          (Transformation::shift_facets_deg1(polyhedron_no_flip, 1.0) &&
            !Self_intersection::has_self_intersecting_surface(polyhedron_no_flip));
     }
 
@@ -4814,7 +4806,7 @@ public:
 
       PolyhedronSPtr polyhedron_flipped = Polyhedron::create(facets_clone);
       flipped_valid =
-          (Transformation::shift_facets_deg1(polyhedron_flipped, -1.0) &&
+          (Transformation::shift_facets_deg1(polyhedron_flipped, 1.0) &&
            !Self_intersection::has_self_intersecting_surface(polyhedron_flipped));
     }
 
@@ -6474,8 +6466,8 @@ public:
 
     CGAL_SS3_CORE_TRACE_V(4, event->to_string());
 
-    // this must be done **BEFORE** the shift because after the shift there is
-    // an intersection between the two edges, and so the orientation becomes coplanar
+    // this check must be performed **BEFORE** the shift because after the shift there is
+    // an intersection between the two edges, and so the points becomes coplanar
     int orientation = Kernel_wrapper::orientation(Hds_utils::supporting_line(event->get_edge_1()),
                                                   Hds_utils::supporting_line(event->get_edge_2()));
     CGAL_assertion(orientation != 0);
@@ -6905,7 +6897,6 @@ private:
   Base_mesh_offset_visitor<GeomTraits>* visitor_ = nullptr;
 
   std::vector<FT> save_times_;
-  bool outwards_;
   std::filesystem::path save_path_;
 
   std::list<Abstract_event_sptr> events_;

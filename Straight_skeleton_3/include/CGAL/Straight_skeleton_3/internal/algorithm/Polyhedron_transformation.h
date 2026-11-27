@@ -1112,7 +1112,6 @@ public:
 
   /**
     * Offsets the polyhedron `polyhedron`
-    * Negative offset points to the interior of the polyhedron.
     */
   static void shift_facets(const PolyhedronSPtr& polyhedron,
                            const FT& time,
@@ -1145,7 +1144,6 @@ public:
 
   /**
     * Offsets the polyhedron `polyhedron`
-    * Negative offset points to the interior of the polyhedron.
     * The shift time is applied on the base planes (t=0)
     */
   static void shift_facets_from_base(const PolyhedronSPtr& polyhedron,
@@ -1179,7 +1177,6 @@ public:
 
   /**
   * Offsets the polyhedron `polyhedron`, which may have degree 1 vertices.
-  * Negative offset points to the interior of the polyhedron.
   */
   static bool shift_facets_deg1(const PolyhedronSPtr& polyhedron,
                                 const FT& time)

@@ -308,7 +308,7 @@ bool write_OBJ(const std::filesystem::path& filename,
  *
  * \return `true` if the writing was successful, `false` otherwise.
  *
- * \pre `time <= 0`
+ * \pre `time >= 0`
  */
 template <typename GeomTraits,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -350,7 +350,7 @@ bool write_OBJ(const std::filesystem::path& filename,
   CGAL_SS3_IO_TRACE_V(8, skeleton->nodes().size() << " NN, " << skeleton->sheets().size() << " NS");
   CGAL_SS3_IO_TRACE_V(8, "Time = " << time);
 
-  CGAL_precondition(time <= 0);
+  CGAL_precondition(time >= 0);
 
   std::stringstream oss;
   set_stream_precision_from_NP(oss, np);
@@ -361,7 +361,7 @@ bool write_OBJ(const std::filesystem::path& filename,
 
   // Write vertices
   for (const NodeSPtr& node : skeleton->nodes()) {
-    if (node->time() < time) {
+    if (node->time() > time) {
       continue;
     }
 
@@ -387,7 +387,7 @@ bool write_OBJ(const std::filesystem::path& filename,
     const auto& nodes = sheet->nodes();
 
     const auto first_visible_node = std::find_if(nodes.begin(), nodes.end(),
-                                                 [&](const NodeSPtr& node) { return node->time() >= time; });
+                                                 [&](const NodeSPtr& node) { return node->time() <= time; });
     if (first_visible_node == nodes.end()) {
       continue;
     }
@@ -395,7 +395,7 @@ bool write_OBJ(const std::filesystem::path& filename,
     // Grab all the 3D positions to insert in the CDT
     std::set<Point_3> unique_points;
     for (const NodeSPtr& node : nodes) {
-      if (node->time() < time) {
+      if (node->time() > time) {
         continue;
       }
 
@@ -429,11 +429,11 @@ bool write_OBJ(const std::filesystem::path& filename,
     for (const SpokeSPtr& spoke : sheet->spokes()) {
       Point_3 ap0, ap1;
       NodeSPtr node_src = spoke->source();
-      if (node_src->time() <= time) {
+      if (node_src->time() >= time) {
         continue;
       }
 
-      if (spoke->has_target() && spoke->target()->time() >= time) {
+      if (spoke->has_target() && spoke->target()->time() <= time) {
         NodeSPtr node_tgt = spoke->target();
         ap0 = node_src->point();
         ap1 = node_tgt->point();

@@ -464,7 +464,6 @@ CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
 
 // List of named parameters used in Straight_skeleton_3
 CGAL_add_named_parameter(face_weight_t, face_weight, face_weight_map)
-CGAL_add_named_parameter(outward_offsetting_t, outward_offsetting, outward_offsetting)
 
 //List of named parameters used in Snap_rounding_2
 CGAL_add_named_parameter(pixel_size_t, pixel_size, pixel_size)

@@ -97,7 +97,7 @@ int main(int argc, char** argv)
 
   std::vector<FT> save_times = { 0.03, 0.06, 0.09 };
 
-  // arbitrary weight: every face has weight 3.0 (faces move at thrice the default speed)
+  // arbitrary weight: every face is given a weight of 3.0 (faces move outward, at thrice the unit speed)
   CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(3);
 
   std::vector<Mesh> results;

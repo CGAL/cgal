@@ -120,7 +120,7 @@ public:
       Base::split_vertex(vertex_c, combination);
 
       PolyhedronSPtr poly_c_offset = Base::copy_vertex(vertex);
-      bool okShift = Transformation::shift_facets_deg1(poly_c_offset, -1.0);
+      bool okShift = Transformation::shift_facets_deg1(poly_c_offset, 1.0);
       if (!okShift) {
         CGAL_SS3_SPLITTER_TRACE("Warning: failed to create offset of corner");
         continue;

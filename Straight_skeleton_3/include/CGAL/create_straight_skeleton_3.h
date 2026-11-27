@@ -94,32 +94,44 @@ construct_skeleton(const TriangleMesh& tmesh,
   CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || !PMP::does_self_intersect(tmesh, pmp_np));
   CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || PMP::is_outward_oriented(tmesh, pmp_np));
 
-  std::vector<FT> save_times(input_save_times.begin(), input_save_times.end());
+  const std::vector<FT> save_times(input_save_times.begin(), input_save_times.end());
 
-  const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
-
-  // check that all times are of the same sign
   for (const FT& time : save_times) {
-    if (CGAL::is_zero(time)) {
-      CGAL_SS3_TRACE_V(1, "Error: save time should be non-zero");
-      return { };
-    } else if (CGAL::is_positive(time) != outwards) {
-      CGAL_SS3_TRACE_V(1, "Error: save times must be all positive or all negative.");
+    if (!CGAL::is_positive(time)) {
+      CGAL_SS3_TRACE_V(1, "Error: save times must be positive");
       return { };
     }
   }
 
-  // The underlying implementation always shrinks the mesh, so for outwards offsetting,
-  // we reverse the face orientations (whether the mesh was outward oriented or not).
-  if (outwards) {
-    for (FT& t : save_times) {
-      t = -t;
+  // The sign of the weights is the direction of the propagation: faces move along their normal
+  // (outward) if their weight is positive, and against it (inward) if their weight is negative.
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  auto weight_pmap = choose_parameter(get_parameter(np, internal_np::face_weight),
+                                      CGAL::Constant_property_map<face_descriptor, FT>(-1));
+
+  CGAL::Sign weight_sign = CGAL::ZERO;
+  for (const face_descriptor f : faces(tmesh)) {
+    const FT weight = get(weight_pmap, f);
+    const CGAL::Sign s = CGAL::sign(weight);
+    if (s == CGAL::ZERO) {
+      CGAL_SS3_TRACE_V(1, "Error: face weights must be non-zero");
+      return { };
+    } else if (weight_sign != CGAL::ZERO && s != weight_sign) {
+      CGAL_SS3_TRACE_V(1, "Error: face weights must be all positive or all negative");
+      return { };
     }
+    weight_sign = s;
+  }
+
+  // an exterior straight skeleton is unbounded, and is only constructed up to a given time
+  if (weight_sign == CGAL::POSITIVE && save_times.empty()) {
+    CGAL_SS3_TRACE_V(1, "Error: a maximum time is required when face weights are positive");
+    return { };
   }
 
   // Convert the suface mesh into the SPS3-specific data structure that allows faces with multiple
   // borders and disconnected facet connected components
-  PolyhedronSPtr p = FaceGraphIO::convert(tmesh, np.outward_offsetting(outwards));
+  PolyhedronSPtr p = FaceGraphIO::convert(tmesh, np);
   CGAL_SS3_DEBUG_SPTR(p);
   CGAL_SS3_TRACE_V(2, "Post conversion: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
@@ -136,7 +148,6 @@ construct_skeleton(const TriangleMesh& tmesh,
 
   auto skel_builder = Straight_skeleton_builder_3::create(p, save_times, save_path);
   skel_builder->set_visitor(&visitor);
-  skel_builder->set_outward(outwards);
 
   bool success = skel_builder->run();
   if (!success) {
@@ -155,14 +166,14 @@ construct_skeleton(const TriangleMesh& tmesh,
  *
  * constructs the interior or exterior straight skeleton of a 3D polyhedron.
  *
- * A positive time value signifies outward construction (exterior skeleton), while a negative value
- * corresponds to inward construction (interior skeleton).
- *
- * Face weights may be passed to represent different front speeds. These values must always be positive
- * since they represent absolute speeds.
+ * The weight of a face is its signed speed along its oriented normal
+ * (see Section \ref Straight_skeleton_3WeightedStraightSkeletonDef): faces move inward if weights
+ * are negative, which constructs the interior skeleton, and outward if weights are positive,
+ * which constructs the exterior skeleton. In both cases, times are positive: time `0` corresponds
+ * to the input polyhedron.
  *
  * The bound `max_time` defines how far the straight skeleton is constructed,
- * i.e. nodes at a time greater than `|max_time|` in absolute value are not computed. This may result
+ * i.e. nodes at a time greater than `max_time` are not computed. This may result
  * in the presence of unbounded spokes and sheets in the straight skeleton.
  *
  * \warning An epsilon geometric perturbation is always applied to the input mesh so as to avoid
@@ -193,11 +204,12 @@ construct_skeleton(const TriangleMesh& tmesh,
  *                      and must provide exact predicates and exact constructions.}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{face_weight_map}
- *      \cgalParamDescription{a property map associating to each face the weight (speed) of the face.}
+ *      \cgalParamDescription{a property map associating to each face its weight (speed), that is the signed speed
+ *                            of the face along its outward normal.}
  *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
  *                     as key type and `FT` as value type}
- *      \cgalParamDefault{A constant property map with uniform weight `1` for all faces.}
- *      \cgalParamExtra{Precondition: all face weights must be positive.}
+ *      \cgalParamDefault{A constant property map with uniform weight `-1` for all faces.}
+ *      \cgalParamExtra{Precondition: face weights must be non-zero, and must all have the same sign.}
  *      \cgalParamExtra{Adjacent coplanar faces must have the same weight.}
  *    \cgalParamNEnd
  * \cond SKIP_IN_MANUAL
@@ -214,8 +226,8 @@ construct_skeleton(const TriangleMesh& tmesh,
  *
  * \returns a pointer to the straight skeleton, or a null pointer if the construction failed.
  *
- * \pre The value `max_time` must be either positive or negative (non-zero).
- * \pre The input `tmesh` must be a non-empty, closed, and self-intersection-free triangle mesh.
+ * \pre The value `max_time` must be positive.
+ * \pre The input `tmesh` must be a non-empty, closed, outward-oriented, and self-intersection-free triangle mesh.
  */
 template <typename TriangleMesh,
           typename FT,
@@ -244,9 +256,10 @@ create_straight_skeleton_3(const TriangleMesh& tmesh,
  *
  * See the other overload for a comprehensive documentation of the parameters.
  *
- * \returns a pointer to the straight skeleton, or a null pointer if the construction failed.
+ * \returns a pointer to the interior straight skeleton, or a null pointer if the construction failed.
  *
- * \pre The input `tmesh` must be a non-empty, closed, and self-intersection-free triangle mesh.
+ * \pre All face weights must be negative.
+ * \pre The input `tmesh` must be a non-empty, closed, outward-oriented, and self-intersection-free triangle mesh.
  */
 template <typename TriangleMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>

@@ -170,6 +170,8 @@ public:
 
     /*!
     * returns the time at which the node was created.
+    * The nodes corresponding to the vertices of the input polyhedron have time `0`,
+    * and skeleton nodes have positive time.
     */
     const FT& time() const
     {
@@ -1630,7 +1632,7 @@ public:
     std::ofstream nodes_out(filename);
     nodes_out.precision(17);
     for (NodeSPtr node : nodes_) {
-      if (node->time() >= time) {
+      if (node->time() <= time) {
         nodes_out << node->point() << "\n";
       }
     }
@@ -1648,13 +1650,13 @@ public:
     spokes_out.precision(17);
     for (const SpokeSPtr& spoke : spokes_) {
       CGAL_assertion(spoke->has_source());
-      if (spoke->source()->time() <= time) {
+      if (spoke->source()->time() >= time) {
         continue;
       }
 
       spokes_out << "2 ";
       spokes_out << spoke->source()->point() << " ";
-      if (spoke->has_target() && spoke->target()->time() >= time) {
+      if (spoke->has_target() && spoke->target()->time() <= time) {
         spokes_out << spoke->target()->point() << "\n";
       } else {
         CGAL::unordered_flat_set<FacetSPtr> incident_faces;

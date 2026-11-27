@@ -3,7 +3,7 @@
 /// \defgroup PkgStraightSkeleton3SkeletonFunctions Straight Skeleton Construction Functions
 /// \ingroup PkgStraightSkeleton3Ref
 ///
-/// The following functions are used to construct the inward or outward straight skeleton of a polyhedron.
+/// The following functions are used to construct the interior and exterior straight skeletons of a polyhedron.
 
 /// \defgroup PkgStraightSkeleton3OffsettingFunctions Offset Polyhedra Construction Functions
 /// \ingroup PkgStraightSkeleton3Ref

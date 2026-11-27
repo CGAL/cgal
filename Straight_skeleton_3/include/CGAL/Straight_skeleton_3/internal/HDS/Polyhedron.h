@@ -1537,7 +1537,8 @@ public:
 
       const FT& get_speed() const
       {
-        CGAL_assertion(speed_ > 0);
+        // signed speed: positive if the facet moves in the direction of its normal.
+        CGAL_assertion(speed_ != 0);
         return speed_;
       }
 

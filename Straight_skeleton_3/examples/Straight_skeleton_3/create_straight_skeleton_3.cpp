@@ -51,8 +51,12 @@ int main(int argc, char** argv)
   CGAL::Real_timer timer;
   timer.start();
 
+  // weights are positive: faces move outward (at unit speed), and the skeleton is thus exterior
+  CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(1);
+
   // Main call
-  auto straight_skeleton = CGAL::create_straight_skeleton_3(sm, time_bound);
+  auto straight_skeleton = CGAL::create_straight_skeleton_3(sm, time_bound,
+                                                            CGAL::parameters::face_weight_map(face_weight_map));
 
   timer.stop();
   std::cout << "Elapsed: " << timer.time() << std::endl;
@@ -135,8 +139,7 @@ int main(int argc, char** argv)
     spoke = next_spoke;
   }
 
-  const FT skel_time_bound = - CGAL::abs(time_bound);
-  CGAL::Straight_skeletons_3::IO::write_OBJ("skeleton.obj", straight_skeleton, skel_time_bound);
+  CGAL::Straight_skeletons_3::IO::write_OBJ("skeleton.obj", straight_skeleton, time_bound);
 
   std::cout << "Done" << std::endl;
   return EXIT_SUCCESS;

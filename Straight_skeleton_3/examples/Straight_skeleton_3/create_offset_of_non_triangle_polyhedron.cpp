@@ -88,6 +88,7 @@ int main(int argc, char** argv)
 
   std::vector<FT> save_times = { 0.1, 0.2, 0.3 };
 
+  // weights are positive: faces move outward
   CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(1);
 
   std::vector<Mesh> results;

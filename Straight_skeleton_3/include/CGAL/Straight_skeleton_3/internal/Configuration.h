@@ -98,8 +98,7 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  *                                    %Default is `max`.
  * - **`edge_event`:** String to choose how a degenerate edge event is handled. Available options: `convex`, `reflex`, `flip`.
  *                     %Default is `convex`.
- * - **`const_offset`:** Negative floating-point value used to insert periodic events at fixed time intervals
- *                      (time is negative during the propagation).
+ * - **`const_offset`:** Positive floating-point value used to insert periodic events at fixed time intervals.
  *                      %Default is `0` (disabled).
  * - **`save_at_stable_times`:** Non-negative time delta used to avoid saving too close to an event.
  *                               A value of `0` disables this behavior.

@@ -91,15 +91,19 @@ naturally induces a division of space into 3D cells. As the term <em>facet</em> 
 used for the two-dimensional elements of a three-dimensional structure, we shall refer to polyhedron faces
 as contour <em>facets</em>, for consistency.
 
-Given a contour facet called the <em>source facet</em>, its <em>offset facet</em> at time `t` is a facet
-parallel and with the same orientation and such that the Euclidean distance between the (normalized) planes
-supporting both facets is exactly `t`. In mathematical terms, if the supporting plane of the source facet
-is described through the equation `ax+by+cz+d=0`, then the supporting plane of the offset facet
-at a time `t` is `ax+by+cz+d-t=0`. In our setting, an offset facet shall always be located on the bounded
-side of the polyhedron.
+Given a contour facet called the <em>source facet</em>, its <em>offset facet</em> at time `t >= 0` is a facet
+with the same orientation, whose supporting plane is the supporting plane of the source facet translated
+by a distance `t` along the supporting line of the normal of the source facet.
+As the face is oriented, two directions are possible: either in the direction of the outward normal
+(<em>outward</em> offset) or in the opposite direction (<em>inward</em> offset). In mathematical terms,
+if the supporting plane of the source facet is described through the equation `ax+by+cz+d=0`, where `(a,b,c)`
+is the unit normal vector of the facet, then the supporting plane of the offset facet
+at time `t` is `ax+by+cz+d-t=0` for an outward offset, and `ax+by+cz+d+t=0` for an inward offset.
 
-The straight skeleton is constructed by applying a continuous, <I>inward offsetting</I> to the contour facets.
-We also call this process <em>polyhedron facet offsetting</em>, or simply <em>polyhedron offsetting</em>.
+The straight skeleton is constructed by applying a continuous offsetting to the contour facets, either inward
+or outward, in the same direction for all facets. We also call this process <em>polyhedron facet offsetting</em>,
+or simply <em>polyhedron offsetting</em>. Inward offsetting constructs the <em>interior</em> straight skeleton,
+and outward offsetting constructs the <em>exterior</em> straight skeleton.
 Under this transformation, contour vertices (edges) move along the angular trisector (bisector)
 of the planes subtending their incident facets, at a speed that depends on the angle between
 the three (two) incident contour facets. As elements shift, topological change may happen,
@@ -129,7 +133,7 @@ They describe the geometry traced by the moving elements of the input polyhedron
   It is the trace of a moving polyhedron edge during offsetting. A sheet lives on the bisector plane
   of the two planes supporting the incident contour facets.
 
-The straight skeleton forms a partition of the interior of the polyhedron into <I>straight skeleton regions</I>,
+The interior straight skeleton forms a partition of the interior of the polyhedron into <I>straight skeleton regions</I>,
 corresponding to the monotone volumes traced by the continuous inward offsetting of the contour facets.
 Each region corresponds uniquely to one contour facet, which is a facet of that region.
 Regions are bounded by the angular bisectors of the supporting planes of the contour facets,
@@ -145,13 +149,11 @@ Note that, contrary to the 2D setting, this partition is in general not unique
 Illustration of contour elements and skeleton elements.
 \cgalFigureCaptionEnd
 
-Constructing the <em>exterior</em> skeleton of a polyhedron is achieved by reversing the orientation
-of the contour facets: inwards shifting becomes outwards with respect to the original polyhedron.
-In an exterior skeleton, some spokes and sheets are unbounded. Nonetheless, since the number of possible
-events is bounded, there exists a time after which there are no events and the complete skeleton
-structure is known and stable. In practice, the exterior skeleton is computed at a user-defined maximum
-time, meaning that nodes (events) that would be created after that time are not computed, and spokes
-and sheets may be fully present, absent, or truncated.
+Contrary to the interior straight skeleton, the exterior straight skeleton has unbounded spokes and sheets.
+Nonetheless, since the number of possible events is bounded, there exists a time after which there are
+no events and the complete skeleton structure is known and stable. In practice, the exterior skeleton
+is computed up to a user-defined maximum time, meaning that nodes (events) that would be created after
+that time are not computed, and spokes and sheets may be fully present, absent, or truncated.
 
 \cgalFigureAnchor{SPS3Exterior}
 <center>
@@ -170,10 +172,15 @@ contour facet. The weight may be understood as the propagation speed of the corr
 In weighted straight skeletons, vertices (edges) no longer move along the angular trisectors (bisectors)
 between three (two) contour facets, but along the <em>weighted</em> trisector (bisector).
 
-This \cgal package supports positive multiplicative weights: if the supporting plane of a contour facet
-is described through the equation `ax+by+cz+d=0`, and the supporting plane of the offset facet
-at distance `t` is `ax+by+cz+d-t=0` then with a multiplicative weight `w`, the equation becomes
-`ax+by+cz+d-wt=0`. Therefore, a larger weight encodes a faster moving front.
+This \cgal package supports multiplicative weights: if the supporting plane of a contour facet
+is described through the equation `ax+by+cz+d=0`, where `(a,b,c)` is its outward unit normal vector,
+then with a multiplicative weight `w`, the supporting plane of the offset facet at time `t` is `ax+by+cz+d-wt=0`.
+The weight is thus the signed speed of the facet along its outward normal: the facet moves outward
+if its weight is positive and inward if it is negative, and a larger absolute value encodes
+a faster moving front. The unweighted straight skeletons defined above are the special cases of uniform
+weights: the interior straight skeleton corresponds to `w=-1`, and the exterior straight skeleton to `w=1`.
+In the current implementation, weights must be non-zero, and all weights must have the same sign:
+all contour facets move inward, or all move outward.
 Face offsetting of polygon meshes with variable offset rates is also discussed in \cgalCite{cgal:rha-fopmv-16}.
 
 \cgalFigureAnchor{SPS3Weight}
@@ -195,6 +202,8 @@ topology of a ball with a void.
 The straight skeleton is defined by the trace of moving polyhedral elements, but the polyhedron
 surface itself during translation (and modification) of its faces is itself of interest.
 We call the surface modified by events up till time `t` the <I>offset polyhedron</I> at time `t`.
+It is an <em>inward</em> or an <em>outward</em> offset polyhedron, depending on the direction
+in which the contour facets move, i.e., on the sign of their weights.
 
 An offset polyhedron can have fewer, the same number of, or more faces than its source polyhedron;
 it can even consist of multiple connected components. Its topology can also change in other ways:
@@ -203,15 +212,12 @@ and voids of the source polyhedron may grow and eventually open to the outside, 
 Conversely, an outward offset can enclose new voids, for example when the narrow neck of
 a bottle-shaped polyhedron closes, while existing voids shrink and eventually vanish.
 
-Outward offsetting, similarly to exterior straight skeletons, is achieved by reversing
-the orientation of the faces of the input polyhedron.
-
 \cgalFigureAnchor{SPS3Offsets}
 <center>
 <img src="sps_offsets.png" style="max-width:100%;"/>
 </center>
 \cgalFigureCaptionBegin{SPS3Offsets}
-Inward and outward offsets of the Thingi10k shape [#61418](https://ten-thousand-models.appspot.com/detail.html?file_id=61418). Offset values from left to right: `-3`, `-2`, `-1`, `0` (input), `1`, `2`, and `3`.
+Inward and outward offsets of the Thingi10k shape [#61418](https://ten-thousand-models.appspot.com/detail.html?file_id=61418). From left to right: inward offsets at times `3`, `2`, and `1`, the input, and outward offsets at times `1`, `2`, and `3`.
 \cgalFigureCaptionEnd
 
 \section Straight_skeleton_32D3DComparison Comparison with Two-Dimensional Straight Skeleton Construction
@@ -353,6 +359,16 @@ If offset polyhedra are not of interest, one may simply call `CGAL::create_strai
 which merely builds and returns the straight skeleton structure, using the class `CGAL::Straight_skeleton_3`.
 A straight skeleton can be written to a file using `CGAL::Straight_skeletons_3::IO::write_OBJ()`.
 
+Both functions take the weights of the faces through the named parameter `face_weight_map`.
+The sign of the weights gives the direction of the offsetting, as described
+in Section \ref Straight_skeleton_3WeightedStraightSkeletonDef.
+By default, all weights are equal to `-1`, which corresponds to the interior straight skeleton
+and to inward offsetting.
+Regardless of the direction, times are always positive and time `0` corresponds to the input polyhedron.
+As the exterior straight skeleton is unbounded, a maximum time must also be provided when weights are positive:
+it is the argument `max_time` of `CGAL::create_straight_skeleton_3()`, and the largest offset time
+for `CGAL::create_straight_skeleton_and_offset_polyhedra_3()`.
+
 \subsection Straight_skeleton_3InputOutput Input
 
 The input must be a non-empty, closed, outward-oriented, and self-intersection-free triangle mesh.
@@ -401,7 +417,7 @@ slower without benefit.
 \subsection Straight_skeleton_3CreateStraightSkeleton Construction and Drawing of a Straight Skeleton
 
 The following example illustrates how to construct a 3D straight skeleton and inspect it.
-With the default time bound (a positive value), it computes an exterior skeleton.
+As face weights are positive, it computes an exterior skeleton, up to a maximum time.
 
 \cgalExample{Straight_skeleton_3/create_straight_skeleton_3.cpp}
 

@@ -151,8 +151,6 @@ public:
     using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
     GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-    const bool outward_offsetting = choose_parameter(get_parameter(np, internal_np::outward_offsetting), false);
-
     CGAL_warning(CGAL::is_triangle_mesh(tmesh));
 
     PolyhedronSPtr result = Polyhedron::create();
@@ -171,7 +169,7 @@ public:
     std::vector<VertexSPtr> vertices(result->vertices().begin(), result->vertices().end());
 
     auto weight_pmap = choose_parameter(get_parameter(np, CGAL::internal_np::face_weight),
-                                        CGAL::Constant_property_map<face_descriptor, FT>(1));
+                                        CGAL::Constant_property_map<face_descriptor, FT>(-1));
 
     int facet_id_new = -1;
     for (face_descriptor fd : faces(tmesh)) {
@@ -186,9 +184,6 @@ public:
       for (halfedge_descriptor h : halfedges_around_face(halfedge(fd, tmesh), tmesh)) {
         poly_vertices.push_back(v2v.at(source(h, tmesh)));
       }
-
-      if (outward_offsetting)
-        std::reverse(poly_vertices.begin(), poly_vertices.end());
 
       FacetSPtr facet = Facet::create(poly_vertices);
       facet->set_id(facet_id_new);
@@ -211,15 +206,12 @@ public:
 
       Vector_3 n = Polygon_mesh_processing::compute_face_normal(fd, tmesh, parameters::vertex_point_map(vpm)
                                                                                       .geom_traits(gt));
-      if (outward_offsetting)
-        n = -n;
-
       Plane_3 pl (poly_vertices[0]->point(), n);
       facet->set_plane(pl);
       result->add_facet(facet);
 
       const FT weight = get(weight_pmap, fd);
-      CGAL_assertion(weight > 0);
+      CGAL_assertion(weight != 0);
 
       SkelFacetDataSPtr data = Skeleton_facet_data::create(facet);
       data->set_speed(weight);
@@ -268,8 +260,6 @@ public:
     using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
     using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
     using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-
-    const bool outward_offsetting = choose_parameter(get_parameter(np, internal_np::outward_offsetting), false);
 
     using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -375,7 +365,7 @@ public:
     // merge facet pairs arbitrarily keeps one of the two facets, so we need the correct plane
     for (FacetSPtr f : polyhedron->facets()) {
       const Plane_3& pl = get(plane_map, region_of_facet_id[f->id()]);
-      f->set_plane(outward_offsetting ? pl.opposite() : pl);
+      f->set_plane(pl);
     }
 
     Transformation::sanitize(polyhedron); // remove degenerate vertices and facets
