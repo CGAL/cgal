@@ -49,6 +49,7 @@ private:
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
 
 private:
+  using Hds_utils = algorithm::Hds_utils<GeomTraits>;
   using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
   using Self_intersection = algorithm::Self_intersection<GeomTraits>;
 
@@ -81,7 +82,8 @@ public:
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     int result = 0;
     for (EdgeSPtr edge : polyhedron->edges()) {
-      if (!edge->is_reflex()) {
+      // wavefront-convex edges, with 'Edge::is_reflex()' relative to the outward normals
+      if (edge->is_reflex() == Hds_utils::moves_outward(edge->get_facet_L())) {
         result++;
       }
     }

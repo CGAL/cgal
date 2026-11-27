@@ -1852,7 +1852,10 @@ public:
           CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << f->supporting_plane().a() << " " << f->supporting_plane().b() << " "
                                                               << f->supporting_plane().c() << " " << f->supporting_plane().d() << "]");
 
-          Plane_3 nudged_plane { base_plane.a(), base_plane.b(), base_plane.c(), base_plane.d() + nudge_coeff };
+          // the plane is translated in the direction in which the facet moves
+          const FT nudged_d = Hds_utils::moves_outward(f) ? base_plane.d() - nudge_coeff // @todo invert
+                                                          : base_plane.d() + nudge_coeff;
+          Plane_3 nudged_plane { base_plane.a(), base_plane.b(), base_plane.c(), nudged_d };
           f->set_plane(nudged_plane);
 
           CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << f->supporting_plane().a() << " " << f->supporting_plane().b() << " "
@@ -2925,12 +2928,17 @@ public:
 
       CpModelBuilder model;
 
+      // The solution depends on the polarity of the variables: a variable is 'true' if its cell
+      // is on the side that the facets move into, which is INSIDE if they move against their normal,
+      // and OUTSIDE otherwise. In both cases, x[c] is 'true' if the cell 'c' is INSIDE.
+      const bool is_front_outside = Hds_utils::moves_outward(vertex->first_facet());
+
       const std::size_t C = volume_CCs.size();
 
       std::vector<BoolVar> x;
       x.reserve(C);
       for (int c = 0; c < C; ++c)
-        x.push_back(model.NewBoolVar());
+        x.push_back(is_front_outside ? model.NewBoolVar().Not() : model.NewBoolVar());
 
       // =====================================================================
       //  CONSTRAINT — Fixed cells

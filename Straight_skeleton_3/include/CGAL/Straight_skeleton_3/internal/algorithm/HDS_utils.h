@@ -323,6 +323,11 @@ public:
     data->set_speed(speed);
   }
 
+  static bool moves_outward(const FacetSPtr& facet)
+  {
+    return CGAL::is_positive(get_speed(facet));
+  }
+
   static FacetSPtr get_facet_origin(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
@@ -439,6 +444,9 @@ public:
   }
 
 public:
+  // An edge is reflex if its incident facets form an angle larger than pi inside the polyhedron,
+  // that is on their negative side. A degenerate edge is considered as it will become
+  // slightly in the future (or as it was slightly in the past, if `future_facing` is `false`).
   static bool is_reflex(const EdgeSPtr& edge,
                         const bool future_facing = true)
   {
@@ -503,7 +511,19 @@ public:
     return compute_reflex();
   }
 
-  static bool is_reflex(const VertexSPtr& vertex)
+  // An edge is wavefront-reflex if its incident facets form an angle larger than pi on the side
+  // that they move into (the propagation side): inside the polyhedron if they move inward,
+  // and outside if they move outward.
+  static bool is_wavefront_reflex(const EdgeSPtr& edge,
+                                  const bool future_facing = true)
+  {
+    const bool outward = moves_outward(edge->get_facet_L());
+    CGAL_assertion(outward == moves_outward(edge->get_facet_R()));
+    return (is_reflex(edge, future_facing) != outward);
+  }
+
+  // A vertex is wavefront-reflex if all its incident edges are wavefront-reflex.
+  static bool is_wavefront_reflex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     if (vertex->degree() == 0) {
@@ -512,7 +532,7 @@ public:
     bool result = true;
     for (EdgeWPtr edge_wptr : vertex->edges()) {
       if (EdgeSPtr edge = edge_wptr.lock()) {
-        if (!is_reflex(edge)) {
+        if (!is_wavefront_reflex(edge)) {
           result = false;
           break;
         }
@@ -521,7 +541,8 @@ public:
     return result;
   }
 
-  static bool is_convex(const VertexSPtr& vertex)
+  // A vertex is wavefront-convex if none of its incident edges is wavefront-reflex.
+  static bool is_wavefront_convex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     if (vertex->degree() == 0) {
@@ -530,7 +551,7 @@ public:
     bool result = true;
     for (EdgeWPtr edge_wptr : vertex->edges()) {
       if (EdgeSPtr edge = edge_wptr.lock()) {
-        if (is_reflex(edge)) {
+        if (is_wavefront_reflex(edge)) {
           result = false;
           break;
         }

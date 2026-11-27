@@ -609,6 +609,7 @@ public:
 
       CGAL_assertion_code(const Point_3 p_box_min = Transformation::bounding_box_min(polyhedron);)
       CGAL_assertion_code(const Point_3 p_box_max = Transformation::bounding_box_max(polyhedron);)
+      CGAL_assertion_code(const bool is_shrinking = !Hds_utils::moves_outward(polyhedron->facets().front());)
 
       // Event treatment
       Event_status es = handle_event(event, time_future_bound, polyhedron);
@@ -636,7 +637,6 @@ public:
       }
 
       // @todo if the polyhedron grows, cache the previous polyhedron; no point should be within.
-      CGAL_assertion_code(const bool is_shrinking = !Hds_utils::moves_along_normal(polyhedron->facets().front());)
       CGAL_assertion(!is_shrinking || Transformation::is_inside_bbox(polyhedron, p_box_min, p_box_max));
 
       // Update the event priority queue
@@ -807,7 +807,8 @@ public:
       Vector_3 direction = line->to_vector();
       Point_3 point_2 = point_1 + direction;
       Point_3 point_3 = line_offset->point();
-      if (Hds_utils::is_reflex(edge)) {
+      // offset_plane() above already took the side into account
+      if (Hds_utils::is_wavefront_reflex(edge)) {
         plane_sheet = Plane_3 { point_3, point_2, point_1 };
       } else {
         plane_sheet = Plane_3 { point_1, point_2, point_3 };
@@ -1553,10 +1554,12 @@ public:
     // Dbl_edge_merge_event
     for (;;)
     {
-      // At pop time, the edge is degenerate, but by default is_reflex() does a symbolic
-      // shift into the future. However, here we want to know if the edge was reflex
+      // At pop time, the edge is degenerate, but by default is_wavefront_reflex() does a symbolic
+      // shift into the future. However, here we want to know if the edge *was* wavefront-reflex
       // **BEFORE** it became degenerate.
-      if (!Hds_utils::is_reflex(edge, false /*shift into the past*/)) {
+      // @todo we haven't shifted here, so the edge shouldn't be degenerate and it's pointless to
+      // nudge in the past.
+      if (!Hds_utils::is_wavefront_reflex(edge, false /*shift into the past*/)) {
         CGAL_SS3_CORE_TRACE_V(8, "Not a DblEdgeMerge Event (not reflex)");
         break;
       }
@@ -2086,7 +2089,7 @@ public:
     //
     // Only done here because pierce events are asymetrical (vertex <-> facet)
     // and if it were done at collect time, we would have to seek pierce events
-    // when facets get modified - and not only when reflex vertices are modified -,
+    // when facets get modified - and not only when wavefront-reflex vertices are modified -,
     // and that seems more costly (and complicated).
     if (time_future_bound.has_value()) {
       CGAL::Bbox_3 b1;
@@ -2288,7 +2291,7 @@ public:
     for (const VertexSPtr& vertex_1 : vertices) {
       CGAL_SS3_DEBUG_SPTR(vertex_1);
 
-      if (Hds_utils::is_convex(vertex_1)) {
+      if (Hds_utils::is_wavefront_convex(vertex_1)) {
         continue;
       }
 
@@ -2319,7 +2322,7 @@ public:
           // edge event
           continue;
         }
-        if (Hds_utils::is_convex(vertex_2)) {
+        if (Hds_utils::is_wavefront_convex(vertex_2)) {
           continue;
         }
 
@@ -2455,7 +2458,7 @@ public:
     for (const VertexSPtr& vertex_1 : vertices) {
       CGAL_SS3_DEBUG_SPTR(vertex_1);
 
-      if (Hds_utils::is_convex(vertex_1)) {
+      if (Hds_utils::is_wavefront_convex(vertex_1)) {
         continue;
       }
 
@@ -2486,7 +2489,7 @@ public:
           // edge event
           continue;
         }
-        if (Hds_utils::is_convex(vertex_2)) {
+        if (Hds_utils::is_wavefront_convex(vertex_2)) {
           continue;
         }
 
@@ -2649,7 +2652,7 @@ public:
     for (const VertexSPtr& vertex_1 : vertices) {
       CGAL_SS3_DEBUG_SPTR(vertex_1);
 
-      if (Hds_utils::is_convex(vertex_1)) {
+      if (Hds_utils::is_wavefront_convex(vertex_1)) {
         continue;
       }
 
@@ -2680,7 +2683,7 @@ public:
           // edge event
           continue;
         }
-        if (Hds_utils::is_convex(vertex_2)) {
+        if (Hds_utils::is_wavefront_convex(vertex_2)) {
           continue;
         }
 
@@ -3156,7 +3159,7 @@ public:
     for (const EdgeSPtr& edge_1 : edges) {
       CGAL_SS3_DEBUG_SPTR(edge_1);
 
-      if (!Hds_utils::is_reflex(edge_1)) {
+      if (!Hds_utils::is_wavefront_reflex(edge_1)) {
         continue;
       }
 
@@ -3204,7 +3207,7 @@ public:
     for (const VertexSPtr& vertex_1 : vertices) {
       CGAL_SS3_DEBUG_SPTR(vertex_1);
 
-      if (Hds_utils::is_convex(vertex_1)) {
+      if (Hds_utils::is_wavefront_convex(vertex_1)) {
         continue;
       }
 
@@ -3235,7 +3238,7 @@ public:
           // edge event
           continue;
         }
-        if (Hds_utils::is_convex(vertex_2)) {
+        if (Hds_utils::is_wavefront_convex(vertex_2)) {
           continue;
         }
 
@@ -3376,7 +3379,7 @@ public:
     auto fill_reflex_edges = [&](const std::list<EdgeSPtr>& edges,
                                  std::list<EdgeSPtr>& edges_reflex) {
       for (const EdgeSPtr& edge : edges) {
-        if (Hds_utils::is_reflex(edge)) {
+        if (Hds_utils::is_wavefront_reflex(edge)) {
           edges_reflex.push_back(edge);
         }
       }
@@ -3670,7 +3673,7 @@ public:
     auto fill_boxes = [&](const std::list<EdgeSPtr>& edges, std::vector<Box>& boxes)
     {
       for (const EdgeSPtr& edge : edges) {
-        if (!Hds_utils::is_reflex(edge)) {
+        if (!Hds_utils::is_wavefront_reflex(edge)) {
           continue;
         }
 
@@ -3729,7 +3732,7 @@ public:
     std::vector<Box> boxes;
 
     for (const EdgeSPtr& edge : polyhedron->edges()) {
-      if (!Hds_utils::is_reflex(edge)) {
+      if (!Hds_utils::is_wavefront_reflex(edge)) {
         continue;
       }
 
@@ -3792,7 +3795,7 @@ public:
     for (const VertexSPtr& vertex : vertices) {
       CGAL_assertion(vertex->id() != -1);
 
-      if (Hds_utils::is_reflex(vertex)) {
+      if (Hds_utils::is_wavefront_reflex(vertex)) {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
         ++pierce_vertex_counter;
 #endif
@@ -3815,9 +3818,10 @@ public:
 #endif
           // # `has_edge_to_facet` check is done at pop time - see is_actual_pierce_event()
 
-          // # Shrinking, so the vertex must be on the backside of the plane
-          if (Kernel_wrapper::side(facet->supporting_plane(), vertex->point()) > 0) {
-            continue;
+          // # The vertex must be in front of the facet, i.e., on the side that the facet moves into
+          const int propagation_side = Hds_utils::moves_outward(facet) ? 1 : -1;
+          if (Kernel_wrapper::side(facet->supporting_plane(), vertex->point()) == - propagation_side) {
+            continue; // behind the facet
           }
 
           // # If the facet is so far that even when shifting point and plane by the maximal
@@ -3826,8 +3830,8 @@ public:
             Point_3 shifted_pt = Hds_utils::get_final_point(vertex, *time_future_bound);
             Plane_3 shifted_plane = Hds_utils::get_final_plane(facet, *time_future_bound);
 
-            if (Kernel_wrapper::side(shifted_plane, shifted_pt) < 0) {
-              continue;
+            if (Kernel_wrapper::side(shifted_plane, shifted_pt) == propagation_side) {
+              continue; // still in front of the facet at the time bound
             }
 
             // # It would be tempting here to use a bbox around the vertex and facet's trajectories,
@@ -3838,8 +3842,8 @@ public:
             // # If both move in the same direction, we cannot pierce
             const Vector_3 d (vertex->point(), shifted_pt);
             const Vector_3 n = facet->supporting_plane().orthogonal_vector();
-            if (n * d < 0) { // negative because the facet moves in a direction opposite of the normal
-              continue;
+            if (CGAL::sign(n * d) == propagation_side) {
+              continue; // the vertex moves in the same direction as the facet
             }
           }
 
@@ -5069,7 +5073,7 @@ public:
     // faces are smaller so nothing from unmodified vertices
     post_op_vertices_VV_ = {{ vertex }};
 
-    CGAL_assertion(!Hds_utils::is_reflex(vertex)); // just to see the configurations where this could not be the case
+    CGAL_assertion(!Hds_utils::is_wavefront_reflex(vertex)); // just to see the configurations where this could not be the case
     post_op_vertices_pierce_.clear();
 
     // since all faces are getting smaller, we don't need to check unmodified edges
@@ -5184,15 +5188,15 @@ public:
     // faces are smaller so nothing from unmodified vertices
     post_op_vertices_VV_ = {{ new_vertex }};
 
-    // Assume a triangle event with a facet whose incident edges are all reflex.
-    // At a reflex edge, an epsilon shift is a growth of the facet.
-    // If all edges are reflex, the facet will grow and there could not have been
-    // a triangle event. So at least one edge is convex and the resulting vertex
-    // is not reflex. Since it is not reflex, we don't need to look at its pierce events.
+    // Assume a triangle event with a facet whose incident edges are all wavefront-reflex.
+    // At a wavefront-reflex edge, an epsilon shift is a growth of the facet.
+    // If all edges are wavefront-reflex, the facet will grow and there could not have been
+    // a triangle event. So at least one edge is wavefront-convex and the resulting vertex
+    // is not wavefront-reflex. Thus, we don't need to look at its pierce events.
     //
-    // @todo checking for reflexness is (relatively) so cheap that we should insert it
+    // @todo checking for wavefront-reflexness is (relatively) so cheap that we should insert it
     // anyway, in case the reasoning above is wrong!
-    CGAL_assertion(!Hds_utils::is_reflex(new_vertex));
+    CGAL_assertion(!Hds_utils::is_wavefront_reflex(new_vertex));
     post_op_vertices_pierce_.clear();
 
     // faces are getting smaller so no need to check unmodified edges
@@ -5314,8 +5318,8 @@ public:
     // no new vertices & only reducing the size of facets so no edge disconnection
     post_op_vertices_pierce_.clear();
 
-    CGAL_assertion(!Hds_utils::is_reflex(edge_11));
-    CGAL_assertion(!Hds_utils::is_reflex(edge_21));
+    CGAL_assertion(!Hds_utils::is_wavefront_reflex(edge_11));
+    CGAL_assertion(!Hds_utils::is_wavefront_reflex(edge_21));
     post_op_edges_edgesplit_.clear();
 
     add_event(event);
@@ -6083,7 +6087,7 @@ public:
                        post_op_edges_.size() == 7 &&
                        post_op_facets_.size() == 4);
 
-    // @speed the vertex at the top of the reflex edge is not a modified vertex, so the only
+    // @speed the vertex at the top of the wavefront-reflex edge is not a modified vertex, so the only
     // event that could appear is with the facet it just go disconnected from (i.e.,
     // edge_2->other_face)?
     post_op_vertices_pierce_ = {{ edge_1->source(), edge_1->target(), vertex_21, vertex_22 }};
@@ -6445,8 +6449,8 @@ public:
 
     // and all faces are getting smaller so shouldn't there be a need to check disconnections
     // @todo actually assert that all faces involved get smaller
-    CGAL_assertion(!Hds_utils::is_reflex(vertex_1));
-    CGAL_assertion(!Hds_utils::is_reflex(vertex_2));
+    CGAL_assertion(!Hds_utils::is_wavefront_reflex(vertex_1));
+    CGAL_assertion(!Hds_utils::is_wavefront_reflex(vertex_2));
     post_op_vertices_pierce_.clear();
 
     add_event(event);
@@ -6471,6 +6475,10 @@ public:
     int orientation = Kernel_wrapper::orientation(Hds_utils::supporting_line(event->get_edge_1()),
                                                   Hds_utils::supporting_line(event->get_edge_2()));
     CGAL_assertion(orientation != 0);
+
+    if (Hds_utils::moves_outward(event->get_edge_1()->get_facet_L())) {
+      orientation = - orientation;
+    }
 
     const FT& event_time = event->time();
     const Point_3& point = event->point();
@@ -6646,7 +6654,7 @@ public:
     }
 #endif
 
-    // the 3 new vertices cannot be reflex, but since we grow faces,
+    // the 3 new vertices cannot be wavefront-reflex, but since we grow faces,
     // we need to check the other extremities of the edges
     for (EdgeWPtr ew : vertex->edges()) {
       EdgeSPtr edge = ew.lock();
@@ -6743,10 +6751,10 @@ public:
       }
     }
 
-    // the edge with 'facet offset' is convex so these vertices are not interesting
-    CGAL_postcondition(!Hds_utils::is_reflex(vertices[0]));
-    CGAL_postcondition(!Hds_utils::is_reflex(vertices[1]));
-    CGAL_postcondition(!Hds_utils::is_reflex(vertices[2]));
+    // the edge with 'facet offset' is wavefront-convex so these vertices are not interesting
+    CGAL_postcondition(!Hds_utils::is_wavefront_reflex(vertices[0]));
+    CGAL_postcondition(!Hds_utils::is_wavefront_reflex(vertices[1]));
+    CGAL_postcondition(!Hds_utils::is_wavefront_reflex(vertices[2]));
 
     add_event(event);
 

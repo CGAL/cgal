@@ -94,9 +94,11 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  *                                       %Default is `0`.
  * - **`convex_split_optimization`:** String (`min` or `max`) used to specify optimization strategy, when
  *                                    `Convex_vertex_splitter` is selected. The measure being optimized
- *                                    is the number of convex edges in the resulting split configuration.
+ *                                    is the number of convex edges in the resulting split configuration,
+ *                                    where convexity is relative to the side that the facets move into.
  *                                    %Default is `max`.
- * - **`edge_event`:** String to choose how a degenerate edge event is handled. Available options: `convex`, `reflex`, `flip`.
+ * - **`edge_event`:** String to choose how a degenerate edge event is handled. Available options: `convex`, `reflex`, `flip`,
+ *                     where convexity is relative to the side that the facets move into.
  *                     %Default is `convex`.
  * - **`const_offset`:** Positive floating-point value used to insert periodic events at fixed time intervals.
  *                      %Default is `0` (disabled).

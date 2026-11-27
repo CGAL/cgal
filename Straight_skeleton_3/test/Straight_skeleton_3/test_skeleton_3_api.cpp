@@ -261,8 +261,8 @@ int main(int argc, char** argv)
   ok &= test_API(cube);
   ok &= test_polyhedron_3(pyramid_filename);
   ok &= test_time_and_weights(cube);
-  ok &= test_outward_collision("data/events/EdgeSplitEvent_outward.off");
-  ok &= test_outward_collision("data/events/PierceEvent_outward.off");
+  ok &= test_outward_collision("data/events/EdgeSplitEvent_outward.obj");
+  ok &= test_outward_collision("data/events/PierceEvent_outward.obj");
 
   std::cout << (ok ? "Done" : "FAILED") << std::endl;
   return ok ? EXIT_SUCCESS : EXIT_FAILURE;
