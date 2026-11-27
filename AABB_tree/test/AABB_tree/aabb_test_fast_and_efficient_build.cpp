@@ -88,7 +88,7 @@ static std::vector<Segment_3> make_queries(const int nx, const int ny)
   return queries;
 }
 
-static bool same_query_results(const Tree& reference,
+static void same_query_results(const Tree& reference,
                                const Tree& candidate,
                                const std::vector<Segment_3>& queries,
                                const char* candidate_name)
@@ -98,25 +98,15 @@ static bool same_query_results(const Tree& reference,
     std::vector<Primitive_iterator> reference_ids;
     std::vector<Primitive_iterator> candidate_ids;
 
-    reference.all_intersected_primitives(
-      queries[i], std::back_inserter(reference_ids));
-    candidate.all_intersected_primitives(
-      queries[i], std::back_inserter(candidate_ids));
+    reference.all_intersected_primitives( queries[i], std::back_inserter(reference_ids));
+    candidate.all_intersected_primitives( queries[i], std::back_inserter(candidate_ids));
 
     // Query traversal order is not part of the result: compare sorted IDs.
     std::sort(reference_ids.begin(), reference_ids.end());
     std::sort(candidate_ids.begin(), candidate_ids.end());
 
-    if(reference_ids != candidate_ids)
-    {
-      std::cerr << candidate_name << " differs for query " << i
-                << " (reference: " << reference_ids.size()
-                << ", candidate: " << candidate_ids.size() << ")\n";
-      return false;
-    }
+    assert(reference_ids == candidate_ids);
   }
-
-  return true;
 }
 
 int main()
@@ -140,15 +130,8 @@ int main()
   fast_tree.fast_build();
   efficient_tree.efficient_build();
 
-  if(!same_query_results(default_tree, fast_tree, queries, "fast_build"))
-    return EXIT_FAILURE;
-
-  if(!same_query_results(default_tree, efficient_tree, queries,
-                         "efficient_build"))
-    return EXIT_FAILURE;
-
-  std::cout << "All " << queries.size()
-            << " queries return identical primitive IDs for all build methods.\n";
+  same_query_results(default_tree, fast_tree, queries, "fast_build");
+  same_query_results(default_tree, efficient_tree, queries, "efficient_build");
 
   return EXIT_SUCCESS;
 }

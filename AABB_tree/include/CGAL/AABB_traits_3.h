@@ -636,6 +636,28 @@ public:
     typedef AABB_traits_3<GeomTraits,AABBPrimitive,BboxMap> Traits;
     const Traits& m_traits;
     const unsigned int seed;
+
+    template <typename PrimitiveIterator>
+    PrimitiveIterator median_split(PrimitiveIterator first,
+                                   PrimitiveIterator beyond,
+                                   const int crd) const
+    {
+      PrimitiveIterator middle = first + (beyond - first)/2;
+      switch(crd)
+      {
+        case 0:
+          std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_x(p1, p2, this->m_traits); });
+          break;
+        case 1:
+          std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_y(p1, p2, this->m_traits); });
+          break;
+        default: // case 2
+          std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_z(p1, p2, this->m_traits); });
+          break;
+      }
+      return middle;
+    }
+
   public:
     Fast_split_primitives(const AABB_traits_3<GeomTraits,AABBPrimitive,BboxMap>& traits, unsigned int s)
       : m_traits(traits), seed(s) {}
@@ -652,22 +674,7 @@ public:
       const int crd = bbox.largest_span_index();
       const std::size_t n = beyond - first;
       if(n <= cutoff)
-      {
-        PrimitiveIterator middle = first + n / 2;
-        switch(crd)
-        {
-          case 0:
-            std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_x(p1, p2, this->m_traits); });
-            break;
-          case 1:
-            std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_y(p1, p2, this->m_traits); });
-            break;
-          default: // case 2
-            std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_z(p1, p2, this->m_traits); });
-            break;
-        }
-        return middle;
-      }
+        return median_split(first, beyond, crd);
 
       std::array<double, sample_size> samples;
       // TODO do only one initialization of the random generator per thread instead at each call
@@ -676,12 +683,17 @@ public:
       for(std::size_t i = 0; i < samples.size(); ++i)
       {
         const std::size_t index = random.get_int(0, static_cast<int>(n));
-        samples[i] = to_double(internal::Primitive_helper<Traits>::get_reference_point((first + index)->id(), m_traits)[crd]);
+        samples[i] = to_double(internal::Primitive_helper<Traits>::get_reference_point(*(first + index), m_traits)[crd]);
       }
       std::nth_element(samples.begin(), samples.begin() + sample_size/2, samples.end());
       const double pivot = samples[sample_size/2];
 
-      return std::partition(first, beyond, [this, crd, pivot](const Primitive& p){ return to_double(internal::Primitive_helper<Traits>::get_reference_point(p.id(), m_traits)[crd]) < pivot; });
+      PrimitiveIterator middle = std::partition(first, beyond, [this, crd, pivot](const Primitive& p){ return to_double(internal::Primitive_helper<Traits>::get_reference_point(p, m_traits)[crd]) < pivot; });
+
+      // Degenerate partition (e.g. many primitives sharing the same reference coordinate):
+      if(middle - first < 2 || beyond - middle < 2)
+         middle = median_split(first, beyond, crd);
+      return middle;
     }
   };
 
@@ -714,12 +726,12 @@ public:
                                 PrimitiveIterator beyond,
                                 const CGAL::Bbox_3& bbox) const
     {
-      auto surface_area = [](const Bbox_3& b)
+      auto half_surface_area = [](const Bbox_3& b)
       {
         const double dx = b.x_span();
         const double dy = b.y_span();
         const double dz = b.z_span();
-        return /*2 * */(dx * dy + dx * dz + dy * dz);
+        return dx * dy + dx * dz + dy * dz;
       };
       // The number of bins used for evaluating potential splits.
       constexpr int NBINS = 16;
@@ -738,6 +750,7 @@ public:
         // Cut the bbox into NBINS along the current axis and compute the bounding boxes and the number of primitives in each bin.
         std::array<Bbox_3, NBINS> bin_boxes;
         std::array<std::size_t, NBINS> bin_count;
+        bin_count.fill(0);
         for(auto it = first; it != beyond; ++it)
         {
           const double x = to_double(internal::Primitive_helper<Traits>::get_reference_point(*it, m_traits)[axis]);
@@ -748,19 +761,26 @@ public:
           ++bin_count[index];
         }
 
+        // Suffix bounding boxes, so that the right box of each candidate is O(1)
+        std::array<Bbox_3, NBINS> right_boxes;
+        right_boxes[NBINS-1] = bin_boxes[NBINS-1];
+        for(int i = NBINS-2; i >= 0; --i)
+          right_boxes[i] = bin_boxes[i] + right_boxes[i+1];
+
         // Evaluate the cost of splitting at each bin boundary along the current axis.
-        Bbox_3 left_bbox, right_bbox;
+        Bbox_3 left_bbox;
         std::size_t left_count = 0, right_count = n;
         for(int i = 0; i < NBINS-1; ++i){
           left_bbox += bin_boxes[i];
           left_count += bin_count[i];
           right_count -= bin_count[i];
-          right_bbox = Bbox_3();
-          for(int j = i + 1; j < NBINS; ++j)
-            right_bbox += bin_boxes[j];
 
-          const double cost = surface_area(left_bbox) * left_count +
-                              surface_area(right_bbox) * right_count;
+          // The tree requires at least two primitives per child
+          if(left_count < 2 || right_count < 2)
+            continue;
+
+          const double cost = half_surface_area(left_bbox) * left_count +
+                              half_surface_area(right_boxes[i+1]) * right_count;
 
           if(cost < best_cost) {
             best_cost = cost;
@@ -779,10 +799,19 @@ public:
       }
 
       // Perform the best splitting found
-      return std::partition(first, beyond, [this, best_axis, best_pivot](const Primitive& p)
+      PrimitiveIterator middle = std::partition(first, beyond, [this, best_axis, best_pivot](const Primitive& p)
                 {
-                  return to_double(internal::Primitive_helper<Traits>::get_reference_point(p.id(), m_traits)[best_axis]) < best_pivot;
+                  return to_double(internal::Primitive_helper<Traits>::get_reference_point(p, m_traits)[best_axis]) < best_pivot;
                 });
+
+      // Rounding in the bin index computation may make the partition disagree with the bins:
+      // make sure each child still gets at least two primitives.
+      if(middle - first < 2 || beyond - middle < 2)
+      {
+        middle = first + n / 2;
+        std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_x(p1, p2, this->m_traits); });
+      }
+      return middle;
     }
   };
 
@@ -828,7 +857,6 @@ public:
           return bbox + m_traits.compute_bbox(pr, m_traits.bbm);
         });
     }
-
   };
 
   Compute_bbox compute_bbox_object() const {return Compute_bbox(*this);}
