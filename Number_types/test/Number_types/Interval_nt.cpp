@@ -104,14 +104,29 @@ bool square_root_test()
   std::cout << "sup        : " << a.sup() << std::endl;
   std::cout << "inf        : " << a.inf() << std::endl;
   ) // DEBUG
+  const double u = 1/(double(1<<30)*(1<<22)); // 2^-52
+#ifdef CGAL_FPU_HAS_EXCESS_PRECISION
+  // With x87 excess precision (e.g. -m32 without SSE2), std::sqrt suffers
+  // from double rounding: sqrt(1+3u) is computed as 1+1.5u in 80 bits,
+  // which then rounds (ties-to-even) to 1+2u instead of 1+u.
+  // The result is still a valid enclosure, but the iteration reaches the
+  // slightly wider fixed point [1-1.5u, 1+3u] one step earlier, and after
+  // `a -= 1.0` (which rounds outward) a.sup() is just above 3u.
+  if (i != 54 && i != 53) {
+    return false;
+  }
+  const double max_width = 4 * u;
+#else
   if (i != 54) {
     return false;
   }
+  const double max_width = 3 * u;
+#endif
   // When we round to nearest it doesn't quite converge.
-  if (a.sup() > 3/(double(1<<30)*(1<<22))) {
+  if (a.sup() > max_width) {
     return false;
   }
-  if (-3/(double(1<<30)*(1<<22)) > a.inf()) {
+  if (-max_width > a.inf()) {
     return false;
   }
   return true;

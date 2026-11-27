@@ -19,6 +19,8 @@
 #include <limits>
 #include <type_traits>
 
+#include <boost/utility/base_from_member.hpp>
+
 #include <QMatrix4x4>
 #include <QVector4D>
 #include <QWidget>
@@ -104,7 +106,11 @@ struct Arr_camera_helpers<GeomTraits, std::enable_if_t<is_or_derived_from_agas_v
  * \tparam GSOptions
  */
 template <typename Arrangement, typename GSOptions>
-class Arr_viewer : public Qt::Basic_viewer {
+class Arr_viewer :
+    // The scene must be constructed before the base viewer, which is given a reference to it.
+    private boost::base_from_member<Graphics_scene>,
+    public Qt::Basic_viewer {
+  using Base_from_member = boost::base_from_member<Graphics_scene>;
   using Basic_viewer = Qt::Basic_viewer;
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   using Camera_helpers = Arr_camera_helpers<Geom_traits>;
@@ -144,7 +150,9 @@ public:
    *        bounding box that contains the arrangement is used.
    */
   Arr_viewer(QWidget* parent, const Arrangement& arr, const GSOptions& gso, const char* title, Bbox_2 initial_bbox) :
-    Basic_viewer(parent, m_gs, title),
+    Base_from_member(),
+    Basic_viewer(parent, Base_from_member::member, title),
+    m_gs(Base_from_member::member),
     m_builder(arr, gso) {
     if ((initial_bbox.x_span() <= 0) || (initial_bbox.y_span() <= 0) || (Is_on_curved_surface))
       m_initial_bbox = m_builder.bbox();
@@ -178,7 +186,7 @@ public:
   }
 
 private:
-  Graphics_scene m_gs;
+  Graphics_scene& m_gs;
   Scene_builder m_builder;
   bool m_initialized{false};
   Bbox_2 m_initial_bbox;

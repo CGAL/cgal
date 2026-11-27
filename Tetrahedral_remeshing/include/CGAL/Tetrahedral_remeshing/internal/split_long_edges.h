@@ -103,6 +103,7 @@ construct_steiner_point(const typename C3t3::Edge& e,
     do
     {
       Cell_handle c = circ;
+      if (c3t3.triangulation().is_infinite(c)) continue;
       if(!positive_orientation_after_edge_split(e, c, steiner, c3t3))
       {
         steiner_successful = false;
@@ -254,13 +255,13 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     const Facet_info v_and_opp_patch = facets_info.at(mfi);
 
     // facet opposite to new_v (status wrt c3t3 is unchanged)
-    new_cell->set_surface_patch_index(new_cell->index(new_v),
-                                      mfi.first->surface_patch_index(mfi.second));
+    c3t3.set_surface_patch_index(new_cell, new_cell->index(new_v),
+                                 c3t3.surface_patch_index(mfi));
 
     // new half-facet (added or not to c3t3 depending on the stored surface patch index)
     if (Surface_patch_index() == v_and_opp_patch.patch_index_)
-      new_cell->set_surface_patch_index(new_cell->index(v_and_opp_patch.opp_vertex_),
-                                        Surface_patch_index());
+      c3t3.set_surface_patch_index(new_cell, new_cell->index(v_and_opp_patch.opp_vertex_),
+                                   Surface_patch_index());
     else
       c3t3.add_to_complex(new_cell,
                           new_cell->index(v_and_opp_patch.opp_vertex_),
@@ -272,7 +273,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
       const Vertex_handle vi = new_cell->vertex(i);
       if (vi == v1 || vi == v2)
       {
-        new_cell->set_surface_patch_index(i, Surface_patch_index());
+        c3t3.set_surface_patch_index(new_cell, i, Surface_patch_index());
         break;
       }
     }

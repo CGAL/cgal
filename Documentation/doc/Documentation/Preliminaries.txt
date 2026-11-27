@@ -70,9 +70,9 @@ of `FaceGraph` but add new ones for operations that modify the graph structure, 
 removing faces. Any type that models `MutableFaceGraph` also models `FaceGraph`.
 
 It is important to note that these concepts from the concept-model design pattern should not be
-confused with the <a href="https://en.cppreference.com/w/cpp/language/constraints.html">first-class concepts</a> language feature introduced in C++20.
+confused with the <a href="https://en.cppreference.com/cpp/language/constraints">first-class concepts</a> language feature introduced in C++20.
 The requirements described by the concept-model pattern are more akin to the pre-existing
-<a href="https://en.cppreference.com/w/cpp/named_req.html">C++ Named Requirements</a>
+<a href="https://en.cppreference.com/cpp/named_req">C++ Named Requirements</a>
 found in the C++ standard, which serve as a formal description of the interface and behavior
 required of template arguments. The concept-model pattern provides the philosophical framework
 for designing generic libraries like \cgal.

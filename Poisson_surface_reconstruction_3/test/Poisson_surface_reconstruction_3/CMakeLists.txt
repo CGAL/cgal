@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Poisson_surface_reconstruction_3_Tests)
 
 # Find CGAL
@@ -39,6 +39,7 @@ if(TARGET CGAL::Eigen3_support)
 
     create_single_source_cgal_program("poisson_reconstruction_test_mesh_3.cpp")
     target_link_libraries(poisson_reconstruction_test_mesh_3 PRIVATE CGAL::Eigen3_support)
+    target_compile_definitions(poisson_reconstruction_test_mesh_3 PUBLIC CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE)
 
     create_single_source_cgal_program("compare_mesh_3_vs_Poisson_implicit_surface_3.cpp")
     target_link_libraries(compare_mesh_3_vs_Poisson_implicit_surface_3  PRIVATE CGAL::Eigen3_support)

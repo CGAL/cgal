@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project( Isosurfacing_3_Examples )
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO)

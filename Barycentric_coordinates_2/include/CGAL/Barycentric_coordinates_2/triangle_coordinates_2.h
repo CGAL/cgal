@@ -295,8 +295,8 @@ namespace Barycentric_coordinates {
     /// @}
 
     // Computes triangle barycentric coordinates for a chosen query point with respect to all three vertices of the triangle.
-    // This function accepts a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
-    // and returns an iterator of the type <a href="https://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
+    // This function accepts a container of the type <a href="https://en.cppreference.com/cpp/container/vector">`std::vector`</a>
+    // and returns an iterator of the type <a href="https://en.cppreference.com/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
     // that is placed past-the-end of the resulting sequence of coordinate values.
     inline std::optional<std::back_insert_iterator<std::vector<FT> > > operator()(
       const Point_2 &query_point, std::vector<FT> &output_vector)

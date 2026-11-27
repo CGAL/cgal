@@ -6,7 +6,7 @@
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 
-#include "test_three_sites.h"
+#include <CGAL/ag_2_test_three_sites.h>
 
 typedef CGAL::Exact_rational exact_nt;
 

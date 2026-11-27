@@ -28,7 +28,7 @@ typedef CGAL::Triangulation_3<Tr::Geom_traits,
                               Tr::Triangulation_data_structure> T3_remeshing;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr>     Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3>   Mesh_criteria;
 typedef Mesh_criteria::Facet_criteria Facet_criteria;
 typedef Mesh_criteria::Cell_criteria  Cell_criteria;
 
@@ -51,7 +51,7 @@ FT sphere_function(const Point& p)
   return CGAL::squared_distance(p, Point(CGAL::ORIGIN)) - 1;
 }
 
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main()
 {
@@ -63,11 +63,11 @@ int main()
 
   // Mesh criteria
   Spherical_sizing_field size;
-  Mesh_criteria criteria(facet_angle(30).facet_size(0.1).facet_distance(0.025).
+  Mesh_criteria criteria(params::facet_angle(30).facet_size(0.1).facet_distance(0.025).
                          cell_radius_edge_ratio(2).cell_size(size));
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude().no_perturb());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude().no_perturb());
 
   timer.stop();
   std::cout << "Meshing done (" << timer.time()
@@ -85,7 +85,7 @@ int main()
   //Remeshing : coarsen
   //double target_edge_length = 0.15;//for uniform
   CGAL::tetrahedral_isotropic_remeshing(t3, size,
-      number_of_iterations(3));
+      params::number_of_iterations(3));
 
   timer.stop();
   std::cout << "Remeshing done (" << timer.time()

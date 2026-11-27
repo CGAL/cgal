@@ -29,7 +29,7 @@ _test_cls_plane_3(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
- typename R::Plane_3  ip;
+ typename R::Plane_3  ip(RT(1), RT(0), RT(0), RT(0));
  CGAL::Plane_3<R> pl0(ip); CGAL_USE(pl0);
 
  RT  x1 = -1;

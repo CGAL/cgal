@@ -25,6 +25,7 @@
 
 #include <algorithm>
 #include <string>
+#include <filesystem>
 
 namespace CGAL {
 namespace IO {
@@ -57,7 +58,7 @@ void fill_point(const double x, const double y, const double z, const double w,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static inline std::string get_file_extension(const std::string fname)
+inline std::string get_file_extension(const std::string fname)
 {
   std::string::size_type dot(fname.rfind("."));
   if(dot == std::string::npos)
@@ -65,9 +66,16 @@ static inline std::string get_file_extension(const std::string fname)
 
   std::string ext = fname.substr(dot+1, fname.length() - dot - 1);
   std::transform(ext.begin(), ext.end(), ext.begin(),
-                 [](char c) {
-                   return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-                 });
+                 [](char c) { return static_cast<char>(std::tolower(static_cast<unsigned char>(c))); } );
+
+  return "."+ext;
+}
+
+inline std::string get_file_extension(const std::filesystem::path& fname)
+{
+  std::string ext = fname.extension().string();
+  std::transform(ext.begin(), ext.end(), ext.begin(),
+                 [](char c) { return static_cast<char>(std::tolower(static_cast<unsigned char>(c))); });
 
   return ext;
 }

@@ -72,11 +72,15 @@ CGAL_add_named_parameter(read_only_one_object_t, read_only_one_object, read_only
 
 // List of named parameters that we use in the package 'Stream_support'
 CGAL_add_named_parameter(tetrahedra_t, tetrahedra, tetrahedra)
+CGAL_add_named_parameter(hexahedra_t, hexahedra, hexahedra)
+CGAL_add_named_parameter(quadrilaterals_t, quadrilaterals, quadrilaterals)
 CGAL_add_named_parameter(edges_t, edges, edges)
 CGAL_add_named_parameter(ridges_t, ridges, ridges)
 CGAL_add_named_parameter(corners_t, corners, corners)
 CGAL_add_named_parameter(tetrahedron_refs_t, tetrahedron_refs, tetrahedron_refs)
+CGAL_add_named_parameter(hexahedron_refs_t, hexahedron_refs, hexahedron_refs)
 CGAL_add_named_parameter(triangle_refs_t, triangle_refs, triangle_refs)
+CGAL_add_named_parameter(quadrilateral_refs_t, quadrilateral_refs, quadrilateral_refs)
 CGAL_add_named_parameter(edge_refs_t, edge_refs, edge_refs)
 CGAL_add_named_parameter(point_refs_t, point_refs, point_refs)
 
@@ -183,6 +187,7 @@ CGAL_add_named_parameter(mesh_facet_topology_t, mesh_facet_topology, mesh_facet_
 CGAL_add_named_parameter(polyline_constraints_t, polyline_constraints, polyline_constraints)
 CGAL_add_named_parameter(do_scale_t, do_scale, do_scale)
 CGAL_add_named_parameter(vertex_corner_map_t, vertex_corner_map, vertex_corner_map)
+CGAL_add_named_parameter(number_of_corners_t, number_of_corners, number_of_corners)
 CGAL_add_named_parameter(patch_normal_map_t, patch_normal_map, patch_normal_map)
 CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_primitive_map)
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)

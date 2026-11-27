@@ -63,10 +63,10 @@ void test(const std::string& p_filename, const std::string& q_filename)
   std::array<Points, 4> soup_points;
   std::array<Polygons, 4> soup_polygons;
 
-  PMP::compute_union(p_points, p_polygons, q_points, q_polygons, soup_points[CFR::UNION], soup_polygons[CFR::UNION]);
-  PMP::compute_intersection(p_points, p_polygons, q_points, q_polygons, soup_points[CFR::INTERSECTION], soup_polygons[CFR::INTERSECTION]);
-  PMP::compute_difference(p_points, p_polygons, q_points, q_polygons, soup_points[CFR::TM1_MINUS_TM2], soup_polygons[CFR::TM1_MINUS_TM2]);
-  PMP::compute_difference(q_points, q_polygons, p_points, p_polygons, soup_points[CFR::TM2_MINUS_TM1], soup_polygons[CFR::TM2_MINUS_TM1]);
+  PMP::compute_union_of_triangle_soups(p_points, p_polygons, q_points, q_polygons, soup_points[CFR::UNION], soup_polygons[CFR::UNION]);
+  PMP::compute_intersection_of_triangle_soups(p_points, p_polygons, q_points, q_polygons, soup_points[CFR::INTERSECTION], soup_polygons[CFR::INTERSECTION]);
+  PMP::compute_difference_of_triangle_soups(p_points, p_polygons, q_points, q_polygons, soup_points[CFR::TM1_MINUS_TM2], soup_polygons[CFR::TM1_MINUS_TM2]);
+  PMP::compute_difference_of_triangle_soups(q_points, q_polygons, p_points, p_polygons, soup_points[CFR::TM2_MINUS_TM1], soup_polygons[CFR::TM2_MINUS_TM1]);
 
   // Results computed by the existing mesh API.
   Mesh union_mesh, intersection_mesh, p_minus_q_mesh, q_minus_p_mesh;

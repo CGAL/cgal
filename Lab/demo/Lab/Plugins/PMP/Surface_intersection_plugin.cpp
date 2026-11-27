@@ -208,7 +208,7 @@ void CGAL_Lab_intersection_plugin::intersectionPolylines()
       }
 
       std::vector<Poly_intersection> poly_intersections;
-      PMP::internal::compute_polylines_polylines_intersection(polyA, polyB,std::back_inserter(poly_intersections) , Kernel());
+      PMP::intersections(polyA, polyB, std::back_inserter(poly_intersections));
 
       for(const Poly_intersection& inter : poly_intersections)
       {
@@ -309,11 +309,10 @@ void CGAL_Lab_intersection_plugin::intersectionSurfacePolyline()
     polylines.push_back(pol);
   }
   std::vector<Poly_intersection> poly_intersections;
-  PMP::internal::compute_face_polylines_intersection(faces(*itemA->face_graph()),
-                                                     polylines,
-                                                     *itemA->face_graph(),
-                                                     std::back_inserter(poly_intersections),
-                                                     CGAL::parameters::default_values());
+  PMP::intersections(*itemA->face_graph(),
+                     polylines,
+                     std::back_inserter(poly_intersections),
+                     CGAL::parameters::default_values());
 
   for(const Poly_intersection& inter : poly_intersections)
   {

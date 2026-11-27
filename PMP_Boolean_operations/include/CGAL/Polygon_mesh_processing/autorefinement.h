@@ -28,6 +28,8 @@
 #include <boost/timer/progress_display.hpp>
 #endif
 
+#include <CGAL/box_intersection_d.h>
+
 // output
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -1018,11 +1020,11 @@ void compute_intersecting_pairs(const PointRange& points, const PolygonRange& tr
 #ifdef CGAL_LINKED_WITH_TBB
   constexpr bool need_copy = std::is_same_v<Concurrency_tag, Parallel_tag>;
   using TBB_vector = tbb::concurrent_vector<Pair_of_triangle_ids>;
-  std::conditional_t<need_copy, TBB_vector, std::vector<Pair_of_triangle_ids> > collecter;
+  std::conditional_t<need_copy, TBB_vector, std::vector<Pair_of_triangle_ids> > collector;
 #else
-  std::vector<Pair_of_triangle_ids>& collecter=si_pairs;
+  std::vector<Pair_of_triangle_ids>& collector=si_pairs;
 #endif
-  auto callback = [&points, &triangles, &collecter, &pm]
+  auto callback = [&points, &triangles, &collector, &pm]
   (const Box* b1, const Box* b2)
   {
     std::size_t i1=b1->info(), i2=b2->info();
@@ -1030,7 +1032,7 @@ void compute_intersecting_pairs(const PointRange& points, const PolygonRange& tr
     if (do_intersect(typename Kernel::Triangle_3(get(pm, points[triangles[i1][0]]),get(pm, points[triangles[i1][1]]),get(pm, points[triangles[i1][2]])),
                      typename Kernel::Triangle_3(get(pm, points[triangles[i2][0]]),get(pm, points[triangles[i2][1]]),get(pm, points[triangles[i2][2]]))))
     {
-      collecter.emplace_back(i1,i2);
+      collector.emplace_back(i1,i2);
     }
   };
 
@@ -1042,11 +1044,11 @@ void compute_intersecting_pairs(const PointRange& points, const PolygonRange& tr
 #ifdef CGAL_LINKED_WITH_TBB
   if constexpr (need_copy)
   {
-    si_pairs.reserve(collecter.size());
-    std::copy(collecter.begin(), collecter.end(), std::back_inserter(si_pairs));
+    si_pairs.reserve(collector.size());
+    std::copy(collector.begin(), collector.end(), std::back_inserter(si_pairs));
   }
   else
-    si_pairs.swap(collecter);
+    si_pairs.swap(collector);
 #endif
 }
 
@@ -1836,7 +1838,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{concurrency_tag}
- *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
  *     \cgalParamDefault{`CGAL::Sequential_tag`}
  *   \cgalParamNEnd

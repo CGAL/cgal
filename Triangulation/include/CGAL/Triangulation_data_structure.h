@@ -1094,6 +1094,7 @@ void Triangulation_data_structure<Dim, Vb, Fcb>
     Full_cell_handle start = full_cells_begin();
     Full_cell_handle swap_me;
     const int cur_dim = current_dimension();
+    CGAL_assume(1 <= cur_dim && cur_dim <= maximal_dimension());
     for( Full_cell_iterator S = full_cells_begin(); S != full_cells_end(); ++S )
     {
         if( Vertex_handle() != S->vertex(cur_dim) )

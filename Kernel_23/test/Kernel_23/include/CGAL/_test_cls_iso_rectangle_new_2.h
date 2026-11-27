@@ -31,7 +31,8 @@ _test_cls_iso_rectangle_new_2(const R& )
  typedef typename  R::Iso_rectangle_2 Iso_rectangle_2;
 
  typename R::Construct_point_2 construct_point;
- typename R::Iso_rectangle_2 ir;
+ Point_2 o(CGAL::ORIGIN);
+ typename R::Iso_rectangle_2 ir(o, o);
  Iso_rectangle_2 r0(ir); // CGAL::Iso_rectangle_2<R>  r0(ir);
 
  RT n1 =  1;

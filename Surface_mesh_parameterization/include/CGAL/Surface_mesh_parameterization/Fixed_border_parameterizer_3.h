@@ -27,8 +27,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Default.h>
 
-
-
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
 #endif
@@ -39,11 +37,6 @@
 #include <type_traits>
 
 /// \file Fixed_border_parameterizer_3.h
-
-#if defined (__GNUC__) && ! defined(__clang__)
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wdangling-reference"
-#endif
 
 namespace CGAL {
 
@@ -347,7 +340,8 @@ protected:
       A.set_coef(index, index, 1, true /*new*/);
       // get the halfedge uv
       // Write constant in Bu and Bv
-      const typename boost::property_traits<VertexUVmap>::reference uv = get(uvmap, target(hd, mesh));
+      vertex_descriptor vt = target(hd, mesh);
+      const Point_2& uv = get(uvmap, vt);
       Bu[index] = uv.x();
       Bv[index] = uv.y();
     }
@@ -429,10 +423,6 @@ private:
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
-
-#if defined (__GNUC__) && ! defined(__clang__)
-#  pragma GCC diagnostic pop
-#endif
 
 #include <CGAL/enable_warnings.h>
 

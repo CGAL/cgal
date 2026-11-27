@@ -339,8 +339,15 @@ void test_offset_square()
   square.push_back(Point(1, 1));
   square.push_back(Point(0, 1));
 
+  std::vector<double> weights;
+  weights.push_back(1);
+  weights.push_back(1);
+  weights.push_back(1);
+  weights.push_back(1);
+
   Skeleton_builder ssb;
   ssb.enter_contour(square.begin(), square.end());
+  ssb.enter_contour_weights(weights.begin(), weights.end());
 
   std::shared_ptr<Ss> ss = ssb.construct_skeleton();
   assert(is_valid<K>(ss));

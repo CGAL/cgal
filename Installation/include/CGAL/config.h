@@ -296,7 +296,7 @@ using std::max;
 // See https://clang.llvm.org/docs/LanguageExtensions.html
 //
 // Some of those macro have been standardized. See C++20 feature testing:
-//   https://en.cppreference.com/w/cpp/feature_test
+//   https://en.cppreference.com/cpp/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
@@ -586,7 +586,7 @@ inline std::filesystem::path data_file_path(const std::filesystem::path& filenam
 {
   std::optional<std::filesystem::path> cgal_dir;
 
-#ifdef _WIN32
+#if defined(_MSC_VER)
   wchar_t* value = nullptr;
   _wdupenv_s(&value, nullptr, L"CGAL_DATA_DIR");
 
@@ -595,6 +595,9 @@ inline std::filesystem::path data_file_path(const std::filesystem::path& filenam
     cgal_dir = std::filesystem::path(value);
     free(value);
   }
+#elif defined(_WIN32)
+  if (const wchar_t* value = _wgetenv(L"CGAL_DATA_DIR"))
+    cgal_dir = std::filesystem::path(value);
 #else
   if (const char* value = std::getenv("CGAL_DATA_DIR"))
     cgal_dir = std::filesystem::path(value);
@@ -615,8 +618,11 @@ inline std::filesystem::path data_file_path(const std::filesystem::path& filenam
   // Test if the file exists, write a warning otherwise
   if (! std::filesystem::exists(res) )
   {
-    std::cerr<<"[WARNING] file " << path_to_utf8(res) << " does not exist or cannot be read\n "
-             <<"(CGAL_DATA_DIR='" << cgal_dir.value() <<"')."<<std::endl;
+    std::cerr<<"[WARNING] file " << path_to_utf8(res) << " does not exist or cannot be read\n ";
+    if (cgal_dir.has_value())
+      std::cerr << "(CGAL_DATA_DIR='" << path_to_utf8(cgal_dir.value()) <<"')."<<std::endl;
+    else
+      std::cerr << "(CGAL_DATA_DIR has not been set)."<<std::endl;
   }
  res.make_preferred();
  return res.lexically_normal();

@@ -74,7 +74,7 @@ ensure_clean_worktree()
 
 test_merge()
 {
-  trap 'echo "(aborting the merge now)" && git merge --abort' EXIT
+  trap 'echo "(aborting the merge now)" && git merge --abort' RETURN
 
   heading "Test merging of the branch \"$branch\""
   if ! git merge --no-ff --no-commit "$branch"; then
@@ -83,6 +83,7 @@ test_merge()
 
   git status
   git diff --staged --summary
+  trap - RETURN
 }
 
 test_permissions()
@@ -316,14 +317,14 @@ check_documented_named_parameters()
     echo "  CGAL::parameters::${i}(a).${i}(a);" >> main.cpp
   done
   echo '}' >> main.cpp
-  printf 'Generated main.cpp:\n```c++\n'
+  printf '\n<details>\n<summary>Generated main.cpp</summary>\n\n```c++\n'
   cat main.cpp
-  printf '```\n'
+  printf '```\n</details>\n'
   if ! g++ -DCGAL_NO_STATIC_ASSERTION_TESTS -I"$git_dir"/STL_Extension/include -I"$git_dir"/Stream_support/include -I"$git_dir"/Installation/include main.cpp; then
-    echo 'ERROR: At least one documented named parameter does not exist'
-    cd - > /dev/null || exit 1
-    rm -r "$tmp_dir"
+    echo 'ERROR: At least one documented named parameter does not exist!'
     exit_code=1
+  else
+    echo 'All documented named parameters exist.'
   fi
   cd - > /dev/null || exit 1
   rm -r "$tmp_dir"
@@ -335,7 +336,7 @@ create_dummy_merge_commit()
   local conflicts
 
   current_rev=$(git rev-parse HEAD)
-  trap 'echo "(aborting the merge now)" && git reset --quiet --hard "$current_rev"' EXIT
+  trap 'echo "(aborting the merge now)" && git reset --quiet --hard "$current_rev"' RETURN
 
   heading 'Dummy merge commit'
   mapfile -t conflicts < <(git status --porcelain | awk '/^[^ ][^ ]/ {print $2}')
@@ -343,6 +344,7 @@ create_dummy_merge_commit()
     git add -- "${conflicts[@]}" || exit 1
   fi
   git commit --allow-empty -m 'dummy merge commit' || exit 1
+  trap - RETURN
 }
 
 report_bundle_size()
@@ -350,10 +352,11 @@ report_bundle_size()
   local size
 
   heading 'Size of the gzipped bundle'
-  trap 'echo "(aborting the merge now)" && rm -f bundle.gz && git reset --quiet --hard "$current_rev"' EXIT
+  trap 'echo "(aborting the merge now)" && rm -f bundle.gz && git reset --quiet --hard "$current_rev"' RETURN
   git bundle create bundle "${current_rev}..HEAD" > /dev/null 2>&1 && gzip bundle || exit 1
   size=$(stat -c '%s' bundle.gz)
   echo "=> $size"
+  trap - RETURN
 }
 
 display_result()

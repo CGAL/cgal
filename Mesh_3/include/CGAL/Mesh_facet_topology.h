@@ -28,8 +28,8 @@ namespace CGAL {
 The enum `Mesh_facet_topology` is designed to tell which constraints have to
 be checked on each surface facet during the mesh refinement process.
 
-\sa `CGAL::Mesh_criteria_3<Tr>`,
-\sa `CGAL::Mesh_facet_criteria_3<Tr>`.
+\sa `CGAL::Mesh_criteria_3`,
+\sa `CGAL::Mesh_facet_criteria_3`.
 */
 enum Mesh_facet_topology
 {

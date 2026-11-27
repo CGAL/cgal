@@ -144,7 +144,7 @@ int main() {
   const std::size_t nb_pts = 5000;
 
   Efficient_RANSAC::Parameters op;
-  op.probability = 0.05;
+  op.probability = 0.005;
   op.min_points = nb_pts / 2;
   op.epsilon = 0.02;
   op.cluster_epsilon = 0.2;

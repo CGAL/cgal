@@ -64,12 +64,12 @@ namespace CGAL {
    * missing if the default is fine.
    *
    * \tparam Graph must be a model of a `FaceListGraph`, `HalfedgeListGraph`,
-   *         and <A href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/concepts/VertexListGraph.htmlVertexListGraph">`VertexListGraph`</A>.
+   *         and <A href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/concepts/VertexListGraph.html">`VertexListGraph`</A>.
    * \tparam FIMap a model of `ReadablePropertyMap` with `graph_traits<Graph>::%face_descriptor` as key and `graph_traits<Graph>::%faces_size_type` as value
    * \tparam VIMap a model of `ReadablePropertyMap` with `graph_traits<Graph>::%vertex_descriptor` as key and `graph_traits<Graph>::%vertices_size_type` as value
    * \tparam HIMap a model of `ReadablePropertyMap` with `graph_traits<Graph>::%halfedge_descriptor` as key and `graph_traits<Graph>::%halfedges_size_type` as value
    *
-   * \cgalModels{FaceListGraph,HalfedgeListGraph,<A href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/concepts/VertexListGraph.htmlVertexListGraph">`VertexListGraph`</A>}
+   * \cgalModels{FaceListGraph,HalfedgeListGraph,<A href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/concepts/VertexListGraph.html">`VertexListGraph`</A>}
    */
 template<typename Graph,
          typename FIMap = Default,

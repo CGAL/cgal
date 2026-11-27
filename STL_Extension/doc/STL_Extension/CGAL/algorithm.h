@@ -10,8 +10,8 @@ namespace CGAL {
 
 Computes the minimal and the
 maximal element of a range. It is modeled after the \stl functions
-<a href="https://en.cppreference.com/w/cpp/algorithm/min_element">`std::min_element`</a>
-and <a href="https://en.cppreference.com/w/cpp/algorithm/max_element">`std::max_element`</a>.
+<a href="https://en.cppreference.com/cpp/algorithm/min_element">`std::min_element`</a>
+and <a href="https://en.cppreference.com/cpp/algorithm/max_element">`std::max_element`</a>.
 The advantage of `min_max_element()` compared to calling both \stl functions is that
 one only iterates once over the sequence. This is more efficient
 especially for large and/or complex sequences.
@@ -40,9 +40,9 @@ first, ForwardIterator last);
 
 Computes the minimal and the
 maximal element of a range. It is modeled after the \stl functions
-<a href="https://en.cppreference.com/w/cpp/algorithm/min_element">`std::min_element`</a>
+<a href="https://en.cppreference.com/cpp/algorithm/min_element">`std::min_element`</a>
 and <a
-href="https://en.cppreference.com/w/cpp/algorithm/max_element">`std::max_element`</a>.
+href="https://en.cppreference.com/cpp/algorithm/max_element">`std::max_element`</a>.
 The advantage of `min_max_element()` compared to calling both \stl functions is that
 one only iterates once over the sequence. This is more efficient
 especially for large and/or complex sequences.
@@ -76,7 +76,7 @@ namespace cpp98 {
 /*!
 \ingroup STLAlgos
 
-Replacement for <a href="https://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle`</a>
+Replacement for <a href="https://en.cppreference.com/cpp/algorithm/random_shuffle">`std::random_shuffle`</a>
 which was deprecated in C++14, and removed by C++17.
 In the \stl it was replaced by `std::shuffle`.
 
@@ -90,7 +90,7 @@ random_shuffle(RandomAccessIterator begin, RandomAccessIterator end,
 /*!
 \ingroup STLAlgos
 
-Replacement for <a href="https://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle`</a>
+Replacement for <a href="https://en.cppreference.com/cpp/algorithm/random_shuffle">`std::random_shuffle`</a>
 which was deprecated in C++14, and removed by C++17.
 In the \stl it was replaced by `std::shuffle`.
 

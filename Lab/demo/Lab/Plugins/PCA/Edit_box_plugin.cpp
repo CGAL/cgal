@@ -104,15 +104,19 @@ public Q_SLOTS:
     if ((clipping || ortho_clipping_active) && CGAL::QGLViewer::QGLViewerPool().size() > 1)
     {
       // get the clipbox from another viewer to clip in the new viewer
-      CGAL::Three::Viewer_interface* other_viewer;
+      CGAL::Three::Viewer_interface* other_viewer = nullptr;
       for (CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
       {
-        other_viewer = qobject_cast<CGAL::Three::Viewer_interface*>(v);
-        if (other_viewer != vi)
+        auto* candidate = qobject_cast<CGAL::Three::Viewer_interface*>(v);
+        if (candidate != nullptr && candidate != vi)
+        {
+          other_viewer = candidate;
           break;
+        }
       }
 
-      vi->enableClippingBox(other_viewer->clipBox());
+      if (other_viewer != nullptr)
+        vi->enableClippingBox(other_viewer->clipBox());
     }
   }
 

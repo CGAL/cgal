@@ -45,6 +45,8 @@ public:
 
   QMenu* contextMenu() override ;
 
+  LCC* lcc();
+
 public Q_SLOTS:
     void invalidateOpenGLBuffers() override;
     void randomFaceColors();

@@ -88,7 +88,7 @@ bool read_points(const std::filesystem::path& fname,
                  PointOutputIterator output,
                  const NamedParameters& np = parameters::default_values())
 {
-  const std::string ext = fname.extension().string();
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == ".xyz" || ext == ".pwn")
     return read_XYZ<OutputIteratorValueType>(fname, output, np);

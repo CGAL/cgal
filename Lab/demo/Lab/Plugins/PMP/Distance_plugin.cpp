@@ -23,7 +23,6 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/property_map.h>
-#include <boost/container/flat_map.hpp>
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef Viewer_interface Vi;
@@ -170,26 +169,16 @@ private:
     colors.resize(0);
 
     typedef Kernel::Vector_3            Vector;
-    typedef boost::graph_traits<Face_graph>::face_descriptor   face_descriptor;
-    typedef boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
 
     typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::type VPmap;
     VPmap vpmap = get(CGAL::vertex_point,*poly);
 
     //facets
     {
-      boost::container::flat_map<face_descriptor, Vector> face_normals_map;
-      boost::associative_property_map< boost::container::flat_map<face_descriptor, Vector> >
-          nf_pmap(face_normals_map);
-      boost::container::flat_map<vertex_descriptor, Vector> vertex_normals_map;
-      boost::associative_property_map< boost::container::flat_map<vertex_descriptor, Vector> >
-          nv_pmap(vertex_normals_map);
-
-      PMP::compute_normals(*poly, nv_pmap, nf_pmap);
       std::vector<Kernel::Point_3> total_points(0);
 
       for(boost::graph_traits<Face_graph>::face_descriptor f : faces(*poly)) {
-        Vector nf = get(nf_pmap, f);
+        const Vector nf = PMP::compute_face_normal(f, *poly);
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
@@ -282,11 +271,14 @@ private:
     {
       //Lines
       typedef Kernel::Point_3                Point;
+      typedef boost::graph_traits<Face_graph>::vertex_descriptor      vertex_descriptor;
       typedef boost::graph_traits<Face_graph>::edge_descriptor        edge_descriptor;
 
       for(edge_descriptor he : edges(*poly)){
-        const Point& a = get(vpmap,target(he,*poly));
-        const Point& b = get(vpmap,source(he,*poly));
+        vertex_descriptor va = target(he,*poly);
+        vertex_descriptor vb = source(he,*poly);
+        const Point& a = get(vpmap,va);
+        const Point& b = get(vpmap,vb);
         {
 
           edge_vertices.push_back(a.x());

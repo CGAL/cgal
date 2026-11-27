@@ -7,7 +7,7 @@ namespace cpp11 {
   supported by \cgal have a Standard compliant implementation of the `std::invoke_result`
   mechanism, it will become an alias to the <code>std::invoke_result</code>.
 
-  \sa <a href=https://en.cppreference.com/w/cpp/types/result_of><code>std::result_of</code></a>
+  \sa <a href=https://en.cppreference.com/cpp/types/result_of><code>std::result_of</code></a>
   */
   template <typename F>
   struct result_of {

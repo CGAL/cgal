@@ -473,6 +473,18 @@ protected:
   //! Has isolation already taken place
   mutable bool is_isolated_;
 
+  // The two members below are only used by M_k_descartes_rep. They are
+  // stored here so that every representation has room for them: GCC 16
+  // speculatively inlines M_k_descartes_rep::degree_of_gcd() and
+  // is_certainly_simple_root() on other representations, and warns
+  // (-Warray-bounds) about the never-taken branch otherwise.
+
+  //! The "k" of M_k_descartes_rep
+  int gcd_degree = -1;
+
+  //! The candidate's index in M_k_descartes_rep
+  int index_of_multiple = -1;
+
 };
 
 /*
@@ -614,18 +626,16 @@ public:
   M_k_descartes_rep(Polynomial f,int m, int k,
                     Bitstream_descartes_rndl_tree_traits traits) :
     Base(M_K_DESCARTES, f,traits),
-    number_of_roots(m),
-    gcd_degree(k),
-    index_of_multiple(-1) {
+    number_of_roots(m) {
+    this->gcd_degree = k;
   }
 
   M_k_descartes_rep(Polynomial f,int m, int k,
                     Bitstream_tree tree,
                     Bitstream_descartes_rndl_tree_traits traits) :
     Base(M_K_DESCARTES, f, tree, traits),
-    number_of_roots(m),
-    gcd_degree(k),
-    index_of_multiple(-1) {
+    number_of_roots(m) {
+    this->gcd_degree = k;
   }
 
   //! Default constructor
@@ -707,11 +717,9 @@ protected:
   //! The "m"
   int number_of_roots;
 
-  //! The "k"
-  int gcd_degree;
-
-  //! The candidate's index
-  int index_of_multiple;
+  //! The "k" and the candidate's index (stored in the base class)
+  using Base::gcd_degree;
+  using Base::index_of_multiple;
 
 };
 

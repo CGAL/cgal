@@ -155,7 +155,7 @@ std::size_t cluster_point_set (PointRange& points,
   typename Kernel::FT factor = choose_parameter(get_parameter(np, internal_np::attraction_factor),
                                                 typename Kernel::FT(2));
 
-  const std::function<bool(double)>& callback = choose_parameter<std::function<bool(double)>>(get_parameter(np, internal_np::callback));
+  const std::function<bool(double)> callback = choose_parameter<std::function<bool(double)>>(get_parameter(np, internal_np::callback));
 
   double callback_factor = 1.;
   if (!std::is_same<Adjacencies,
@@ -207,7 +207,7 @@ std::size_t cluster_point_set (PointRange& points,
       put (cluster_map, *current, Cluster_index_t(nb_clusters));
       ++ done;
 
-      if (callback && !callback (callback_factor * (done + 1) / double(size)))
+      if (callback && !callback (callback_factor * done / double(size)))
         return (nb_clusters + 1);
 
       neighbor_query.get_iterators (get (point_map, *current), 0, neighbor_radius,
@@ -248,7 +248,7 @@ std::size_t cluster_point_set (PointRange& points,
       }
 
       ++ done;
-      if (callback && !callback (callback_factor + callback_factor * (done + 1) / double(size)))
+      if (callback && !callback (callback_factor + callback_factor * done / double(size)))
         return nb_clusters;
     }
     std::sort (adj.begin(), adj.end());

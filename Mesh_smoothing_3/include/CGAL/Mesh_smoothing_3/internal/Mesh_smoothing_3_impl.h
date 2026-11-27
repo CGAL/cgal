@@ -266,7 +266,7 @@ template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, 
 void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::create_compress_sorted_data() {
     clear_internal_data();
     if (_verbose) std::cout << "Mesh_smoother: copying and compressing data " << std::endl;
-    std::size_t nb_points = 0;
+    unsigned nb_points = 0;
     _vertex_original_to_compressed.reserve(_mesh.nb_vertices());
     std::vector<unsigned> nb_tet_on_verts;
     std::vector<double> temp_coordinates_storage;
@@ -373,7 +373,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
     _bnd_faces.reserve(_boundary.nb_faces());
     _face_surface_id.reserve(_boundary.nb_faces());
     std::unordered_map<unsigned, std::vector<std::array<unsigned, 2>>> vert2faces; // todo: maybe use a map from boost
-    for (auto face : _boundary.face_range()) {
+    for (auto face_index : _boundary.face_range()) {
+        const auto face = static_cast<typename BoundaryMesh::Face_descriptor>(face_index);
         bool hasUnlocked = false;
         for (auto vertex_descriptor : _boundary.face_vertices(face)) {
             if (!is_vert_locked(vertex_descriptor)) {
@@ -436,7 +437,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
     _bnd_faces.reserve(_boundary.nb_faces());
     _face_surface_id.reserve(_boundary.nb_faces());
     std::unordered_map<unsigned, std::vector<std::array<unsigned, 2>>> vert2faces; // todo: maybe use a map from boost
-    for (auto face : _boundary.face_range()) {
+    for (auto face_index : _boundary.face_range()) {
+        const auto face = static_cast<typename BoundaryMesh::Face_descriptor>(face_index);
         currFace.clear();
         for (auto vertex_descriptor : _boundary.face_vertices(face)) {
             auto iterator = _vertex_original_to_compressed.find(static_cast<Vertex_descriptor>(vertex_descriptor));

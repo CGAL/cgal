@@ -4,7 +4,6 @@ from pyquery import PyQuery as pq
 from collections import defaultdict
 from sys import argv
 import os.path as op
-import codecs
 
 # if _in is part of args, return true.
 def check_type(_in, args):

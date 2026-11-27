@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(PMP_Boolean_operations_Examples)
 
 # CGAL and its components
@@ -23,8 +23,8 @@ create_single_source_cgal_program("surface_mesh_intersection.cpp")
 create_single_source_cgal_program("triangle_mesh_autorefinement.cpp")
 create_single_source_cgal_program("snap_polygon_soup.cpp")
 create_single_source_cgal_program("mesh_slicer_example.cpp")
-create_single_source_cgal_program("mesh_kernel_example.cpp")
-create_single_source_cgal_program("mesh_orthogonal_clip_example.cpp")
+create_single_source_cgal_program("mesh_kernel.cpp")
+create_single_source_cgal_program("mesh_orthogonal_clip.cpp")
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
@@ -52,6 +52,7 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(soup_autorefinement PRIVATE CGAL::TBB_support)
   target_link_libraries(soup_union PRIVATE CGAL::TBB_support)
   target_link_libraries(snap_polygon_soup PRIVATE CGAL::TBB_support)
+  target_link_libraries(corefinement_mesh_union_progress PRIVATE CGAL::TBB_support)
 
   create_single_source_cgal_program("corefinement_parallel_union_meshes.cpp")
   target_link_libraries(corefinement_parallel_union_meshes PRIVATE CGAL::TBB_support)

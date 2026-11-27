@@ -65,12 +65,12 @@ typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Labeled_mesh_domain_3<Kernel> LMesh_domain;
 typedef typename CGAL::Mesh_triangulation_3<LMesh_domain>::type LTr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<LTr> LC3t3;
-typedef CGAL::Mesh_criteria_3<LTr> LMesh_criteria;
+typedef CGAL::Mesh_criteria_3<LC3t3> LMesh_criteria;
 
 typedef CGAL::Poisson_mesh_domain_3<Kernel> Mesh_domain;
 typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 
 struct Counter {

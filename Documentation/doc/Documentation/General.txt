@@ -1,16 +1,16 @@
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/DefaultConstructible
+/// See https://en.cppreference.com/cpp/named_req/DefaultConstructible
 class DefaultConstructible {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/CopyConstructible
+/// See https://en.cppreference.com/cpp/named_req/CopyConstructible
 class CopyConstructible {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/CopyAssignable
+/// See https://en.cppreference.com/cpp/named_req/CopyAssignable
 class CopyAssignable {};
 
 ///This concept refines both `CopyAssignable` and `CopyConstructible`.
@@ -18,17 +18,17 @@ class Assignable {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/Callable
+/// See https://en.cppreference.com/cpp/named_req/Callable
 class Callable {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/EqualityComparable
+/// See https://en.cppreference.com/cpp/named_req/EqualityComparable
 class EqualityComparable {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/LessThanComparable
+/// See https://en.cppreference.com/cpp/named_req/LessThanComparable
 class LessThanComparable {};
 
 /// \cgalConcept
@@ -129,74 +129,74 @@ public:
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/Iterator
+/// See https://en.cppreference.com/cpp/named_req/Iterator
 class Iterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/OutputIterator
+/// See https://en.cppreference.com/cpp/named_req/OutputIterator
 class OutputIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/InputIterator
+/// See https://en.cppreference.com/cpp/named_req/InputIterator
 class InputIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/ForwardIterator
+/// See https://en.cppreference.com/cpp/named_req/ForwardIterator
 class ForwardIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator
+/// See https://en.cppreference.com/cpp/named_req/RandomAccessIterator
 class RandomAccessIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator
+/// See https://en.cppreference.com/cpp/named_req/BidirectionalIterator
 class BidirectionalIterator {};
 
 /// \cgalConcept
 /// A regular type is a type similar to `int`: it is copyable, assignable, and equality comparable.
 /// \cgalRefines{DefaultConstructible, CopyConstructible, CopyAssignable, EqualityComparable}
-/// See also the C++ concept `std::regular` at https://en.cppreference.com/w/cpp/concepts/regular
+/// See also the C++ concept `std::regular` at https://en.cppreference.com/cpp/concepts/regular
 class Regular {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/Swappable
+/// See https://en.cppreference.com/cpp/named_req/Swappable
 class Swappable {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/Container
+/// See https://en.cppreference.com/cpp/named_req/Container
 class Container {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/ReversibleContainer
+/// See https://en.cppreference.com/cpp/named_req/ReversibleContainer
 class ReversibleContainer {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/AssociativeContainer
+/// See https://en.cppreference.com/cpp/named_req/AssociativeContainer
 class AssociativeContainer {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See https://en.cppreference.com/w/cpp/named_req/SequenceContainer
+/// See https://en.cppreference.com/cpp/named_req/SequenceContainer
 class SequenceContainer {};
 
 /// \cgalConcept
 /// This container concept refines
-/// <a href="https://en.cppreference.com/w/cpp/named_req/ReversibleContainer"><tt>ReversibleContainer</tt></a> and its iterator type is a model of
-/// <a href="https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
+/// <a href="https://en.cppreference.com/cpp/named_req/ReversibleContainer"><tt>ReversibleContainer</tt></a> and its iterator type is a model of
+/// <a href="https://en.cppreference.com/cpp/named_req/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
 class RandomAccessContainer {};
 
 /// \cgalConcept
 /// This container concepts refines
-/// <a href="https://en.cppreference.com/w/cpp/named_req/SequenceContainer"><tt>SequenceContainer</tt></a> and
+/// <a href="https://en.cppreference.com/cpp/named_req/SequenceContainer"><tt>SequenceContainer</tt></a> and
 /// has the ability to append elements at the end of the sequence and to access the last element, both in amortized constant time.
 class BackInsertionSequence
 {

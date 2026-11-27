@@ -27,14 +27,6 @@
 
 namespace CGAL {
 
-
-std::string to_lower_case(const std::string& str)
-{
-  std::string r = str;
-  std::transform(r.begin(), r.end(), r.begin(), ::tolower);
-  return r;
-}
-
 bool line_starts_with(const std::string& line, const char* cstr)
 {
   const std::size_t fnws = line.find_first_not_of(" \t");

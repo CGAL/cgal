@@ -1,19 +1,25 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/Polygon_mesh_processing/curvature.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <boost/graph/graph_traits.hpp>
 
+#include <array>
+#include <cmath>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #define ABS_ERROR 1e-6
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_predicates_exact_constructions_kernel EPECK;
 typedef K::FT FT;
 typedef CGAL::Surface_mesh<K::Point_3> SMesh;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
@@ -111,8 +117,148 @@ void test_angle_sums(const std::string mesh_path,
   }
 }
 
+// Builds a triangle fan made of `n` triangles around a central vertex (the first vertex)
+// located at the origin. The i-th vertex of the ring is at angle 2*i*pi/n, at distance `radius(i)`
+// from the z axis, and at height `height(theta)`.
+template <typename PolygonMesh, typename Kernel, typename RadiusFunctor, typename HeightFunctor>
+void make_fan(PolygonMesh& pmesh, const std::size_t n,
+              const RadiusFunctor& radius, const HeightFunctor& height)
+{
+  std::vector<typename Kernel::Point_3> points;
+  std::vector<std::array<std::size_t, 3> > faces;
+
+  points.emplace_back(0, 0, 0);
+  for(std::size_t i=0; i<n; ++i)
+  {
+    const double theta = 2 * CGAL_PI * double(i) / double(n);
+    const double r = radius(i);
+    points.emplace_back(r * std::cos(theta), r * std::sin(theta), height(theta));
+    faces.push_back({0, i+1, (i+1)%n + 1});
+  }
+
+  PMP::polygon_soup_to_polygon_mesh(points, faces, pmesh);
+  assert(is_valid_polygon_mesh(pmesh));
+}
+
+template <typename PolygonMesh, typename Kernel = K>
+void test_saddle_fans()
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+
+  auto unit_radius = [](std::size_t) { return 1.; };
+  auto irregular_radius = [](std::size_t i) { return 1. + 0.37 * double((7*i) % 5); };
+
+  const std::size_t n = 12;
+
+  // flat
+  {
+    PolygonMesh pmesh;
+    make_fan<PolygonMesh, Kernel>(pmesh, n, unit_radius, [](double) { return 0.; });
+    assert(PMP::is_saddle_vertex(*vertices(pmesh).begin(), pmesh));
+  }
+  {
+    PolygonMesh pmesh;
+    make_fan<PolygonMesh, Kernel>(pmesh, n, irregular_radius, [](double) { return 0.; });
+    assert(PMP::is_saddle_vertex(*vertices(pmesh).begin(), pmesh));
+  }
+
+  // convex (cone)
+  {
+    PolygonMesh pmesh;
+    make_fan<PolygonMesh, Kernel>(pmesh, n, unit_radius, [](double) { return -0.5; });
+    assert(!PMP::is_saddle_vertex(*vertices(pmesh).begin(), pmesh));
+  }
+  {
+    PolygonMesh pmesh; // almost flat cone
+    make_fan<PolygonMesh, Kernel>(pmesh, n, unit_radius, [](double) { return 1e-3; });
+    assert(!PMP::is_saddle_vertex(*vertices(pmesh).begin(), pmesh));
+  }
+
+  // saddle and monkey saddle
+  {
+    PolygonMesh pmesh;
+    make_fan<PolygonMesh, Kernel>(pmesh, n, unit_radius, [](double t) { return 0.5 * std::cos(2*t); });
+    assert(PMP::is_saddle_vertex(*vertices(pmesh).begin(), pmesh));
+  }
+  {
+    PolygonMesh pmesh;
+    make_fan<PolygonMesh, Kernel>(pmesh, n, irregular_radius, [](double t) { return 0.5 * std::cos(3*t); });
+    const vertex_descriptor v = *vertices(pmesh).begin();
+    assert(PMP::is_saddle_vertex(v, pmesh));
+    assert(PMP::is_saddle_vertex(v, pmesh, CGAL::parameters::geom_traits(Kernel())
+                                                            .vertex_point_map(get(CGAL::vertex_point, pmesh))));
+  }
+}
+
+template <typename PolygonMesh>
+void test_saddle_vertices_of_closed_mesh(const std::string mesh_path)
+{
+  std::cout << "test saddle vertices of " << mesh_path << std::endl;
+
+  PolygonMesh pmesh;
+  const std::filesystem::path filename = CGAL::data_file_path(mesh_path);
+
+  if(!CGAL::IO::read_polygon_mesh(filename, pmesh) || faces(pmesh).size() == 0)
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    std::exit(1);
+  }
+
+  // all vertices of these convex polyhedra are strictly convex
+  for(auto v : vertices(pmesh))
+    assert(!PMP::is_saddle_vertex(v, pmesh));
+}
+
+template <typename PolygonMesh>
+void test_saddle_vertices_of_quad_grid()
+{
+  // 3x3 grid of planar quads: the 4 interior vertices are flat, the others are on the border
+  std::vector<K::Point_3> points;
+  std::vector<std::array<std::size_t, 4> > faces;
+  for(std::size_t j=0; j<4; ++j)
+    for(std::size_t i=0; i<4; ++i)
+      points.emplace_back(double(i), double(j), 0);
+  for(std::size_t j=0; j<3; ++j)
+    for(std::size_t i=0; i<3; ++i)
+      faces.push_back({4*j+i, 4*j+i+1, 4*(j+1)+i+1, 4*(j+1)+i});
+
+  PolygonMesh pmesh;
+  PMP::polygon_soup_to_polygon_mesh(points, faces, pmesh);
+
+  std::size_t nb_saddles = 0;
+  for(auto v : vertices(pmesh))
+  {
+    if(PMP::is_saddle_vertex(v, pmesh))
+    {
+      assert(!is_border(v, pmesh));
+      ++nb_saddles;
+    }
+  }
+  assert(nb_saddles == 4);
+}
+
+void test_saddle_vertices()
+{
+  std::cout << "test saddle vertices" << std::endl;
+
+  test_saddle_fans<SMesh>();
+  test_saddle_fans<Polyhedron>();
+  test_saddle_fans<CGAL::Surface_mesh<EPECK::Point_3>, EPECK>();
+
+  test_saddle_vertices_of_closed_mesh<SMesh>("meshes/regular_tetrahedron.off");
+  test_saddle_vertices_of_closed_mesh<Polyhedron>("meshes/regular_tetrahedron.off");
+  test_saddle_vertices_of_closed_mesh<SMesh>("meshes/cube_quad.off");
+  test_saddle_vertices_of_closed_mesh<Polyhedron>("meshes/cube_quad.off");
+  test_saddle_vertices_of_closed_mesh<SMesh>("meshes/sphere.off");
+
+  test_saddle_vertices_of_quad_grid<SMesh>();
+  test_saddle_vertices_of_quad_grid<Polyhedron>();
+}
+
 int main(int, char**)
 {
+  test_saddle_vertices();
+
   // testing on a simple sphere(r = 0.5), on both Polyhedron & SurfaceMesh:
   // Expected: Mean Curvature = 2, Gaussian Curvature = 4
   test_curvatures<Polyhedron>("meshes/sphere.off", Average_test_info(2, 4));

@@ -51,8 +51,11 @@ void test_io(const NT& x){
 
 int main() {
     static_assert(CGAL::Output_rep<int>::is_specialized == false);
+#ifndef CGAL_DISABLE_FROM_CHARS
+    static_assert(CGAL::Input_rep<int>::is_specialized == true);
+ #else
     static_assert(CGAL::Input_rep<int>::is_specialized == false);
-
+#endif
     std::cout << "test_io: short "<< std::endl;
     test_io<short>(12);
     test_io<short>(0);

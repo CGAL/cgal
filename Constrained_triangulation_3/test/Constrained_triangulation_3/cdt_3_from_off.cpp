@@ -386,7 +386,7 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
         cells_map[ch] = 0;
         for (int i = 0; i < 4; ++i)
         {
-          if(ch->ccdt_3_data().is_facet_constrained(i))
+          if(cdt.is_facet_constrained(ch, i))
             continue;
           auto n = ch->neighbor(i);
           if (cells_map[n] == 1)
