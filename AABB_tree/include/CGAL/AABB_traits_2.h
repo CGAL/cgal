@@ -18,6 +18,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/Random.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
@@ -31,6 +32,10 @@
 #include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 #include <CGAL/Search_traits_2.h>
+
+#include <algorithm>
+#include <array>
+#include <limits>
 #include <optional>
 
 /// \file AABB_traits_2.h
@@ -534,6 +539,198 @@ public:
 
   Split_primitives split_primitives_object() const {return Split_primitives(*this);}
 
+  /**
+   * Split the range [first,beyond[ using a fast median estimation strategy for large ranges
+   */
+  class Fast_split_primitives
+  {
+    typedef AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap> Traits;
+    const Traits& m_traits;
+    const unsigned int seed;
+
+    template <typename PrimitiveIterator>
+    PrimitiveIterator median_split(PrimitiveIterator first,
+                                   PrimitiveIterator beyond,
+                                   const int crd) const
+    {
+      PrimitiveIterator middle = first + (beyond - first) / 2;
+      if(crd == 0)
+        std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_x(p1, p2, this->m_traits); });
+      else
+        std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_y(p1, p2, this->m_traits); });
+      return middle;
+    }
+
+  public:
+    Fast_split_primitives(const AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap>& traits, unsigned int s)
+      : m_traits(traits), seed(s) {}
+
+    template <typename PrimitiveIterator>
+    PrimitiveIterator operator()(PrimitiveIterator first,
+                                 PrimitiveIterator beyond,
+                                 const CGAL::Bbox_2& bbox) const
+    {
+      // TODO provides option to define these constants externally or via template parameters
+      constexpr std::size_t cutoff = 64;
+      constexpr std::size_t sample_size = 21;
+
+      const int crd = bbox.largest_span_index();
+      const std::size_t n = beyond - first;
+      if(n <= cutoff)
+        return median_split(first, beyond, crd);
+
+      std::array<double, sample_size> samples;
+      // TODO do only one initialization of the random generator per thread instead at each call
+      Random random(seed);
+
+      for(std::size_t i = 0; i < samples.size(); ++i)
+      {
+        const std::size_t index = random.get_int(0, static_cast<int>(n));
+        samples[i] = to_double(internal::Primitive_helper<Traits>::get_reference_point(*(first + index), m_traits)[crd]);
+      }
+      std::nth_element(samples.begin(), samples.begin() + sample_size/2, samples.end());
+      const double pivot = samples[sample_size/2];
+
+      PrimitiveIterator middle = std::partition(first, beyond, [this, crd, pivot](const Primitive& p){ return to_double(internal::Primitive_helper<Traits>::get_reference_point(p, m_traits)[crd]) < pivot; });
+
+      // Degenerate partition (e.g. many primitives sharing the same reference coordinate):
+      if(middle - first < 2 || beyond - middle < 2)
+        return median_split(first, beyond, crd);
+
+      return middle;
+    }
+  };
+
+  Fast_split_primitives fast_split_primitives_object(unsigned int s = 0) const {return Fast_split_primitives(*this, s);}
+
+  /**
+   * Split the primitives using the Surface Area Heuristic (SAH).
+   *
+   * In 2D, the "surface area" of a box is its perimeter. For each of the two
+   * coordinate axes, we evaluate candidate splits into two sets A and B,
+   * minimizing the cost:
+   *
+   *   perimeter(A) * |A| + perimeter(B) * |B|
+   *
+   * Candidate splits are evaluated using a fixed number of bins along each
+   * axis, avoiding the need to evaluate every possible partition.
+   *
+   * This heuristic, commonly used in Bounding Volume Hierarchies (BVHs),
+   * aims to improve query performance by reducing the expected traversal cost.
+   */
+  struct Efficient_split_primitives
+  {
+    typedef AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap> Traits;
+    const Traits& m_traits;
+
+    template <typename PrimitiveIterator>
+    PrimitiveIterator median_split(PrimitiveIterator first,
+                                   PrimitiveIterator beyond,
+                                   const int crd) const
+    {
+      PrimitiveIterator middle = first + (beyond - first) / 2;
+      if(crd == 0)
+        std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_x(p1, p2, this->m_traits); });
+      else
+        std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_y(p1, p2, this->m_traits); });
+      return middle;
+    }
+
+  public:
+    Efficient_split_primitives(const AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap>& traits)
+      : m_traits(traits) {}
+
+    template <typename PrimitiveIterator>
+    PrimitiveIterator operator()(PrimitiveIterator first,
+                                 PrimitiveIterator beyond,
+                                 const CGAL::Bbox_2& bbox) const
+    {
+      auto half_perimeter = [](const Bbox_2& b)
+      {
+        return b.x_span() + b.y_span();
+      };
+      // The number of bins used for evaluating potential splits.
+      constexpr int NBINS = 16;
+
+      const std::size_t n = beyond - first;
+      double best_cost = (std::numeric_limits<double>::max)();
+      int best_axis = -1;
+      double best_pivot;
+
+      // Iterate over each axis (X, Y)
+      for(int axis = 0; axis < 2; ++axis)
+      {
+        const double extent = (bbox.max)(axis) - (bbox.min)(axis);
+        if(extent == 0) continue;
+
+        // Cut the bbox into NBINS along the current axis and compute the bounding boxes and the number of primitives in each bin.
+        std::array<Bbox_2, NBINS> bin_boxes;
+        std::array<std::size_t, NBINS> bin_count;
+        bin_count.fill(0);
+        for(auto it = first; it != beyond; ++it)
+        {
+          const double x = to_double(internal::Primitive_helper<Traits>::get_reference_point(*it, m_traits)[axis]);
+          int index = static_cast<int>(NBINS * (x - (bbox.min)(axis)) / extent);
+          index = (std::max)(0, (std::min)(NBINS - 1, index));
+
+          bin_boxes[index] += m_traits.compute_bbox(*it, m_traits.bbm);
+          ++bin_count[index];
+        }
+
+        // Suffix bounding boxes, so that the right box of each candidate is O(1)
+        std::array<Bbox_2, NBINS> right_boxes;
+        right_boxes[NBINS-1] = bin_boxes[NBINS-1];
+        for(int i = NBINS-2; i >= 0; --i)
+          right_boxes[i] = bin_boxes[i] + right_boxes[i+1];
+
+        // Evaluate the cost of splitting at each bin boundary along the current axis.
+        Bbox_2 left_bbox;
+        std::size_t left_count = 0, right_count = n;
+        for(int i = 0; i < NBINS-1; ++i)
+        {
+          left_bbox += bin_boxes[i];
+          left_count += bin_count[i];
+          right_count -= bin_count[i];
+
+          // The tree requires at least two primitives per child
+          if(left_count < 2 || right_count < 2)
+            continue;
+
+          const double cost = half_perimeter(left_bbox) * left_count +
+                              half_perimeter(right_boxes[i+1]) * right_count;
+
+          if(cost < best_cost)
+          {
+            best_cost = cost;
+            best_axis = axis;
+            best_pivot = (bbox.min)(axis) + extent * (i + 1) / NBINS;
+          }
+        }
+      }
+
+      if(best_axis == -1)
+      {
+        // No good splitting found, do classic median split instead.
+        return median_split(first, beyond, bbox.largest_span_index());
+      }
+
+      // Perform the best splitting found
+      PrimitiveIterator middle = std::partition(first, beyond, [this, best_axis, best_pivot](const Primitive& p)
+                                 {
+                                   return to_double(internal::Primitive_helper<Traits>::get_reference_point(p, m_traits)[best_axis]) < best_pivot;
+                                 });
+
+      // Rounding in the bin index computation may make the partition disagree with the bins:
+      // make sure each child still gets at least two primitives.
+      if(middle - first < 2 || beyond - middle < 2)
+        return median_split(first, beyond, best_axis);
+
+      return middle;
+    }
+  };
+
+  Efficient_split_primitives efficient_split_primitives_object() const {return Efficient_split_primitives(*this);}
+
 
   /*
    * Computes the bounding box of a set of primitives
@@ -546,6 +743,23 @@ public:
   public:
     Compute_bbox(const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
       :m_traits (traits) {}
+
+    template<typename ConstPrimitiveIterator>
+    typename AT::Bounding_box approx(ConstPrimitiveIterator first,
+                                     ConstPrimitiveIterator beyond) const
+    {
+      constexpr std::size_t nb_samples = 8; // Number of samples for approximation
+      Random random;
+
+      typename AT::Bounding_box bbox;
+      const std::size_t n = beyond - first;
+      for(std::size_t i = 0; i < nb_samples; ++i)
+      {
+        const std::size_t index = random.get_int(0, static_cast<int>(n));
+        bbox += m_traits.compute_bbox(*(first + index), m_traits.bbm);
+      }
+      return bbox;
+    }
 
     template<typename ConstPrimitiveIterator>
     typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
