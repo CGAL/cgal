@@ -397,6 +397,9 @@ std::istream& from_chars_input(std::istream& is, T& t)
   auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(first, p, t);
 
   if (ec != std::errc{} || ptr != p) {
+    while(--p >= buffer) {
+      is.putback(*p);
+    }
     is.setstate(std::ios_base::failbit);
   }
 
