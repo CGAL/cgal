@@ -190,7 +190,7 @@ protected:
 template <typename Di>
 class Bbox_d;
 
-// A fixed D-dimensional axis aligned box
+// A fixed N-dimensional axis aligned box
 template<int N>
 class Bbox_d<Dimension_tag<N>> : public Impl::Bbox<std::array<double, N>, Bbox_d<Dimension_tag<N>>>
 {
@@ -219,7 +219,7 @@ public:
     }
 };
 
-// A dynamic D-dimensional axis aligned box
+// A dynamic d-dimensional axis aligned box
 template<>
 class Bbox_d<Dynamic_dimension_tag> : public Impl::Bbox<std::vector<double>, Bbox_d<Dynamic_dimension_tag>>
 {

@@ -136,6 +136,7 @@ R = RU Groningen
  Spatial_sorting                         I
  STL_Extension                           ETIMU
  Straight_skeleton_2                     G
+ Straight_skeleton_3                     G
  Straight_skeleton_extrusion_2           G
  Stream_lines_2                          I
  Stream_support                          ETIMU

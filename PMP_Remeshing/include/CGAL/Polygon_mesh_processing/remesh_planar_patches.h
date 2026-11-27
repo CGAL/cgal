@@ -758,8 +758,8 @@ bool decimate_impl(const TriangleMesh& tm,
         if (csts.size() > 3 && do_not_triangulate_faces)
         {
           // TODO this is not optimal at all since we already have the set of constraints,
-          //      we could work on the graph on constraint and recover only the orientation
-          //      of the edge. To be done if someone find it too slow.
+          //      we could work on the graph of constraints and recover only the orientation
+          //      of the edge. To be done if someone finds it too slow.
           //      In particular, in the loop to compute face normals, corners contains all the CCBs of each face
           //      and we could separate them and have them cleanly
           std::vector<halfedge_descriptor> hborders;

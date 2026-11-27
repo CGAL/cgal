@@ -149,8 +149,8 @@ public:
 
     \pre `faces(pmesh).size() > 0`
     \pre `maximum_distance >= 0`
-    \pre `maximum_angle >= 0 && maximum_angle <= 90`
-    \pre `cosine_of_maximum_angle >= 0 && cosine_of_maximum_angle <= 1`
+    \pre `maximum_angle >= 0 && maximum_angle <= 180`
+    \pre `cosine_of_maximum_angle >= -1 && cosine_of_maximum_angle <= 1`
     \pre `minimum_region_size > 0`
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -174,7 +174,7 @@ public:
 
     const FT max_angle = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::maximum_angle), FT(25));
-    CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
+    CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(180));
 
     m_min_region_size = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::minimum_region_size), 1);
@@ -184,7 +184,7 @@ public:
       (max_angle * static_cast<FT>(CGAL_PI)) / FT(180))));
     const FT cos_value = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::cosine_of_maximum_angle), default_cos_value);
-    CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
+    CGAL_precondition(cos_value >= FT(-1) && cos_value <= FT(1));
     m_cos_value_threshold = cos_value;
   }
 

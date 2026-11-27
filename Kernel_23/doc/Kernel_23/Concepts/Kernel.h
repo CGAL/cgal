@@ -106,7 +106,7 @@ public:
 
   /// @}
 
-  /// \name Two-dimensional Coordinate Access
+  /// \name Two-Dimensional Coordinate Access
   /// @{
 
   /*!
@@ -116,7 +116,7 @@ public:
 
   /// @}
 
-  /// \name Two-dimensional Geometric Objects
+  /// \name Two-Dimensional Geometric Objects
   /// @{
 
   /*!
@@ -176,7 +176,7 @@ public:
 
   /// @}
 
-  /// \name Two-dimensional Constructions
+  /// \name Two-Dimensional Constructions
   /// @{
 
   /*!
@@ -553,7 +553,7 @@ public:
 
   /// @}
 
-  /// \name Two-dimensional Generalized Predicates
+  /// \name Two-Dimensional Generalized Predicates
   /// @{
 
   /*!
@@ -803,7 +803,7 @@ public:
 
   /// @}
 
-  /// \name Three-dimensional Coordinate Access
+  /// \name Three-Dimensional Coordinate Access
   /// @{
 
   /*!
@@ -813,7 +813,7 @@ public:
 
   /// @}
 
-  /// \name Three-dimensional Geometric Objects
+  /// \name Three-Dimensional Geometric Objects
   /// @{
 
   /*!
@@ -888,7 +888,7 @@ public:
 
   /// @}
 
-  /// \name Three-dimensional Constructions
+  /// \name Three-Dimensional Constructions
   /// @{
 
   /*!
@@ -1359,7 +1359,7 @@ public:
 
   /// @}
 
-  /// \name Three-dimensional Generalized Predicates
+  /// \name Three-Dimensional Generalized Predicates
   /// @{
 
   /*!
