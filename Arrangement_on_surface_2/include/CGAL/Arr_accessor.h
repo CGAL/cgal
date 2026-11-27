@@ -78,7 +78,7 @@ public:
   /*! obtains the arrangement (const version). */
   const Arrangement_2& arrangement() const { return (*p_arr); }
 
-  /// \name Accessing the notification functions (for the global functions).
+  /// \name Accessing the notification functions (for the global functions)
   //@{
 
   /*! notifies that a global operation is about to take place. */
@@ -88,7 +88,7 @@ public:
   void notify_after_global_change() { p_arr->_notify_after_global_change(); }
   //@}
 
-  /// \name Local operations and predicates for the arrangement.
+  /// \name Local operations and predicates for the arrangement
   //@{
 
   /*! locates the arrangement feature that contains the given curve-end.
@@ -702,7 +702,7 @@ public:
   }
   //@}
 
-  /// \name Traversal methods for the BOOST graph traits.
+  /// \name Traversal methods for the BOOST graph traits
   //@{
 
   /*! \class
@@ -737,7 +737,7 @@ public:
   }
   //@}
 
-  /// \name Functions used by the arrangement reader and writer.
+  /// \name Functions used by the arrangement reader and writer
   //@{
   typedef typename Arrangement_2::Dcel                Dcel;
   typedef typename Arrangement_2::DVertex_const_iter  Dcel_vertex_iterator;

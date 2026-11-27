@@ -152,7 +152,7 @@ public:
 
   virtual void before_detach() override { clear_triangulation(); }
 
-  /// \name Overloaded observer functions on global changes.
+  /// \name Overloaded observer functions on global changes
   //@{
 
   /*! Notification after the arrangement has been assigned with another
@@ -185,7 +185,7 @@ public:
   }
   //@}
 
-  /// \name Overloaded observer functions on local changes.
+  /// \name Overloaded observer functions on local changes
   //@{
 
   /*! Notification before the removal of an edge.

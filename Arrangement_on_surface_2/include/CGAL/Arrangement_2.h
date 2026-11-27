@@ -119,7 +119,7 @@ private:
   friend class Arr_accessor<Self>;
 
 public:
-  /// \name Constructors.
+  /// \name Constructors
   //@{
 
   /*! constructs default. */
@@ -138,7 +138,7 @@ public:
   {}
   //@}
 
-  /// \name Assignment functions.
+  /// \name Assignment functions
   //@{
 
   /*! assigns (from a base arrangement). */
@@ -156,7 +156,7 @@ public:
   }
   //@}
 
-  ///! \name Specialized access methods.
+  ///! \name Specialized access methods
   //@{
 
   /*! obtains the geometry-traits class. */

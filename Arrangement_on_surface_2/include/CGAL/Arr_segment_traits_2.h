@@ -234,7 +234,7 @@ public:
   /*! constructs default. */
   Arr_segment_traits_2() {}
 
-  /// \name Basic functor definitions.
+  /// \name Basic functor definitions
   //@{
 
   class Compare_x_2 {
@@ -813,7 +813,7 @@ public:
   Merge_2 merge_2_object() const { return Merge_2(*this); }
   //@}
 
-  /// \name Functor definitions for the landmarks point-location strategy.
+  /// \name Functor definitions for the landmarks point-location strategy
   //@{
   class Approximate_2 {
   protected:
@@ -950,7 +950,7 @@ public:
   { return Construct_x_monotone_curve_2(*this); }
   //@}
 
-  /// \name Functor definitions for polylines.
+  /// \name Functor definitions for polylines
   //@{
 
   //! Functor
@@ -960,7 +960,7 @@ public:
   Construct_curve_2 construct_curve_2_object() const { return Construct_x_monotone_curve_2(*this); }
   //@}
 
-  /// \name Functor definitions for the Boolean set-operation traits.
+  /// \name Functor definitions for the Boolean set-operation traits
   //@{
 
   class Trim_2 {
@@ -1039,7 +1039,7 @@ public:
   Construct_opposite_2 construct_opposite_2_object() const { return Construct_opposite_2(); }
   //@}
 
-  /// \name Utilities.
+  /// \name Utilities
   //@{
 
   class Is_in_x_range_2 {

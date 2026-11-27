@@ -85,7 +85,7 @@ public:
     FACING_MASK = (0x1 << FACING_UP) | (0x1 << FACING_DOWN)
   };
 
-  /// \name Deprecated Constructions.
+  /// \name Deprecated Constructions
   //@{
 
   // /*! constructs an x-monotone arc from a conic arc.
@@ -301,7 +301,7 @@ private:
   }
 
 public:
-  /// \name Public constructors, assignment operators, and destructors.
+  /// \name Public constructors, assignment operators, and destructors
   //@{
 
   /*! constructs default.
@@ -350,7 +350,7 @@ public:
 private:
   template <typename, typename, typename> friend class Arr_conic_traits_2;
 
-  /// \name private constructors to be used only by the traits class template.
+  /// \name private constructors to be used only by the traits class template
   //@{
 
   /*! constructs an x-monotone arc from a conic arc.
@@ -370,7 +370,7 @@ private:
   //@}
 
 public:
-  /// \name Accessing the arc properties.
+  /// \name Accessing the arc properties
   //@{
 
   /*! obtains the facing mask.
@@ -587,7 +587,7 @@ public:
     return Point_2(p.x(), y);
   }
 
-  /// \name Constructing points on the arc.
+  /// \name Constructing points on the arc
   //@{
 
   /*! obtains a polyline approximating the conic arc.
@@ -656,7 +656,7 @@ public:
 
   //@}
 
-  /// \name Constructing x-monotone arcs.
+  /// \name Constructing x-monotone arcs
   //@{
 
   /*! flips the arc.
@@ -1057,7 +1057,7 @@ public:
   }
 
 private:
-  /// \name Auxiliary (private) functions.
+  /// \name Auxiliary (private) functions
   //@{
 
   /*! checks whether the given point lies on the supporting conic of the arc.

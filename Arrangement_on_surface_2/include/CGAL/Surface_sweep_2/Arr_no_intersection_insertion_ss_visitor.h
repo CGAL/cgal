@@ -74,7 +74,7 @@ public:
   /*! Constructor. */
   Arr_no_intersection_insertion_ss_visitor(Arrangement_2* arr) : Base(arr) {}
 
-  /// \name Sweep-line notifications.
+  /// \name Sweep-line notifications
   //@{
 
   /* A notification issued before the sweep process starts. */
@@ -163,7 +163,7 @@ public:
   virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
                                                Status_line_iterator iter);
 
-  /// \name Edge-split functions (to be overridden by the child visitor).
+  /// \name Edge-split functions (to be overridden by the child visitor)
   //@{
 
   /*! Check if the halfedge associated with the given subcurve will be split
@@ -189,7 +189,7 @@ public:
   //@}
 
 protected:
-  /// \name Auxiliary functions.
+  /// \name Auxiliary functions
   //@{
 
   /*! Perform the actual insertion.*/

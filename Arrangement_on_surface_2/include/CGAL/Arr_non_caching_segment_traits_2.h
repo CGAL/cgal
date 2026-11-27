@@ -368,7 +368,7 @@ public:
   Merge_2 merge_2_object() const { return Merge_2(this); }
   //@}
 
-  //! \name Functor definitions for the Boolean set-operations.
+  //! \name Functor definitions for the Boolean set-operations
   //@{
   typedef typename Kernel::Construct_opposite_segment_2  Construct_opposite_2;
 
@@ -400,7 +400,7 @@ public:
   { return Compare_endpoints_xy_2(); }
   //@}
 
-  //! \name Functor definitions for constructions.
+  //! \name Functor definitions for constructions
   //@{
 
   //! Functor

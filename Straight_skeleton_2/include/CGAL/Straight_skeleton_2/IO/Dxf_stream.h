@@ -94,7 +94,7 @@ private:
 
 public:
 
-  /// \name Constructors and destructor.
+  /// \name Constructors and destructor
   //@{
 
   /*!
@@ -118,7 +118,7 @@ public:
   virtual ~Dxf_stream () {}
   //@}
 
-  /// \name Accessing drawing properties.
+  /// \name Accessing drawing properties
   //@{
 
   /*!
@@ -143,7 +143,7 @@ public:
 
   // @}
 
-  /// \name Set the drawing properties.
+  /// \name Set the drawing properties
   //@{
 
   /*!
@@ -187,7 +187,7 @@ public:
 
   //@}
 
-  /// \name Writing objects.
+  /// \name Writing objects
   //@{
 
   /*!
@@ -253,7 +253,7 @@ public:
 
   //@}
 
-  /// \name Setting the draw properties via the << operator.
+  /// \name Setting the draw properties via the << operator
   //@{
 
   /*!
@@ -276,7 +276,7 @@ public:
 
   //@}
 
-  /// \name Drawing objects via the << operator.
+  /// \name Drawing objects via the << operator
   //@{
 
   /*!

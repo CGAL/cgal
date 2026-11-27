@@ -34,7 +34,7 @@
 
 namespace CGAL {
 
-/// \name join() functions.
+/// \name join() functions
 //@{
 
 // Polygon_2, Polygon_2 ========================================================
@@ -237,7 +237,7 @@ inline bool join(const General_polygon_with_holes_2<Polygon_>& pgn1,
 
 //@}
 
-/// \name Aggregated join() functions.
+/// \name Aggregated join() functions
 //@{
 
 // With Traits

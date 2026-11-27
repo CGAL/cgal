@@ -482,7 +482,7 @@ public:
    */
   Arr_linear_traits_2() {}
 
-  /// \name Basic functor definitions.
+  /// \name Basic functor definitions
   //@{
 
   /*! A functor that compares the \f$x\f$-coordinates of two points */
@@ -1312,7 +1312,7 @@ public:
 
   //@}
 
-  /// \name Functor definitions for supporting intersections.
+  /// \name Functor definitions for supporting intersections
   //@{
 
   class Make_x_monotone_2 {
@@ -1576,7 +1576,7 @@ public:
   Merge_2 merge_2_object() const { return Merge_2(*this); }
   //@}
 
-  /// \name Functor definitions for the landmarks point-location strategy.
+  /// \name Functor definitions for the landmarks point-location strategy
   //@{
   class Approximate_2 {
   protected:
@@ -1721,7 +1721,7 @@ public:
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const { return Construct_x_monotone_curve_2(); }
   //@}
 
-  /// \name Functor definitions for polylines.
+  /// \name Functor definitions for polylines
   //@{
 
   //! Functor

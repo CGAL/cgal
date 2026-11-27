@@ -57,7 +57,7 @@ public:
     _Curve_data_ex<Base_xy_monotone_surface_3, Xy_monotone_surface_data>;
 
 public:
-  /// \name Construction.
+  /// \name Construction
   //@{
 
   /*! Default constructor. */
@@ -69,7 +69,7 @@ public:
   {}
   //@}
 
-  /// \name Overridden functors.
+  /// \name Overridden functors
   //@{
 
   class Make_xy_monotone_3 {

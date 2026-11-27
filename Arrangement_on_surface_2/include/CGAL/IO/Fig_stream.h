@@ -228,7 +228,7 @@ private:
 
 public:
 
-  /// \name Constructors and destructor.
+  /// \name Constructors and destructor
   //@{
 
   /*!
@@ -310,7 +310,7 @@ public:
   }
   //@}
 
-  /// \name Opening and closing the file.
+  /// \name Opening and closing the file
   //@{
 
   /*!
@@ -397,7 +397,7 @@ public:
   }
   //@}
 
-  /// \name Accessing drawing properties.
+  /// \name Accessing drawing properties
   //@{
 
   /*!
@@ -555,7 +555,7 @@ public:
   }
   //@}
 
-  /// \name Set the drawing properties.
+  /// \name Set the drawing properties
   //@{
 
   /*!
@@ -713,7 +713,7 @@ public:
   }
   //@}
 
-  /// \name Defining colors.
+  /// \name Defining colors
   //@{
 
   /*!
@@ -771,7 +771,7 @@ public:
 
   //@}
 
-  /// \name Writing objects.
+  /// \name Writing objects
   //@{
 
   /*!
@@ -1134,7 +1134,7 @@ public:
   }
   //@}
 
-  /// \name Setting the draw properties via the << operator.
+  /// \name Setting the draw properties via the << operator
   //@{
 
   /*!
@@ -1211,7 +1211,7 @@ public:
   }
   //@}
 
-  /// \name Drawing objects via the << operator.
+  /// \name Drawing objects via the << operator
   //@{
 
   /*!

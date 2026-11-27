@@ -63,7 +63,7 @@ public:
     m_top_traits(arr->topology_traits())
   {}
 
-  /// \name Notification functions.
+  /// \name Notification functions
   //@{
 
   /* A notification issued before the sweep process starts. */

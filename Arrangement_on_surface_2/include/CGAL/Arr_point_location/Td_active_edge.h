@@ -186,7 +186,7 @@ public:
   inline void set_next( const Td_map_item& next) { ptr()->next = next; }
  public:
 
-  /// \name Constructors.
+  /// \name Constructors
   //@{
 
   Td_active_edge ()
@@ -215,7 +215,7 @@ public:
 
   //@}
 
-  /// \name Operator overloading.
+  /// \name Operator overloading
   //@{
 
   /*! Assignment operator.
@@ -243,7 +243,7 @@ public:
   //@}
 
 
-  /// \name Access methods.
+  /// \name Access methods
   //@{
 
   CGAL_TD_INLINE Self& self()

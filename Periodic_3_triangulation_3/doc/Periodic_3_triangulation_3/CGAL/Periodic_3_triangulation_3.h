@@ -238,7 +238,7 @@ typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
 /// @}
 
-/// \name Geometric Iterators:
+/// \name Geometric Iterators
 /// The following iterators have value type `Periodic_segment`, `Periodic_triangle`,
 /// and `Periodic_tetrahedron`, which have inner type `Point`.
 /// @{

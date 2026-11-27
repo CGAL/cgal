@@ -149,7 +149,7 @@ public:
 
  public:
 
-  /// \name Constructors.
+  /// \name Constructors
   //@{
 
   /*! Constructor given Vertex & Halfedge handles. */
@@ -165,7 +165,7 @@ public:
 
   //@}
 
-  /// \name Operator overloading.
+  /// \name Operator overloading
   //@{
 
   /*! Assignment operator.
@@ -193,7 +193,7 @@ public:
   //@}
 
 
-  /// \name Access methods.
+  /// \name Access methods
   //@{
 
   inline Self& self()

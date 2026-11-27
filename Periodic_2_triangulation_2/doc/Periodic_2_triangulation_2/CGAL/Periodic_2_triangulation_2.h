@@ -302,7 +302,7 @@ public:
 
 /// @}
 
-/// \name Geometric iterators:
+/// \name Geometric iterators
 /// @{
 
   /*!

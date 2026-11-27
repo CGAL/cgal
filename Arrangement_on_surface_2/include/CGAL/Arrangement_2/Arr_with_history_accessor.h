@@ -58,7 +58,7 @@ public:
     p_arr (&arr)
   {}
 
-  /// \name Accessing the private insertion and removal functions.
+  /// \name Accessing the private insertion and removal functions
   //@{
 
   /*!
@@ -108,7 +108,7 @@ public:
   }
   //@}
 
-  /// \name Assigning input curves.
+  /// \name Assigning input curves
   //@{
 
   /*!

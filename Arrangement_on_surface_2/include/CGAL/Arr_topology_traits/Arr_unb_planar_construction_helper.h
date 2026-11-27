@@ -115,7 +115,7 @@ public:
   /*! destructs. */
   virtual ~Arr_unb_planar_construction_helper(){}
 
-  /// \name Notification functions.
+  /// \name Notification functions
   //@{
 
   /* A notification issued before the sweep process starts. */

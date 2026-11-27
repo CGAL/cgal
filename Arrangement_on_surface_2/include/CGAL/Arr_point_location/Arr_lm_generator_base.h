@@ -155,7 +155,7 @@ public:
     return (nn.find_nearest_neighbor(p, obj));
   }
 
-  /// \name Overloaded observer functions on global changes.
+  /// \name Overloaded observer functions on global changes
   //@{
 
   /*! Notification before the arrangement is assigned with the content of
@@ -221,7 +221,7 @@ public:
   }
   //@}
 
-  /// \name Overloaded observer functions on local changes.
+  /// \name Overloaded observer functions on local changes
   //@{
 
   /*! Notification before the removal of an edge.

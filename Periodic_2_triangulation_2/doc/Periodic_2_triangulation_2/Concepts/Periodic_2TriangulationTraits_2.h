@@ -168,7 +168,7 @@ public:
 
 /// @}
 
-/// \name Constructor types:
+/// \name Constructor types
 /// Note that the traits must provide exact constructions in order to
 /// guarantee exactness of the following construction functors.
 /// @{

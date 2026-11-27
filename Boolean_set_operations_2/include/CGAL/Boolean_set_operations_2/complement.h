@@ -36,7 +36,7 @@
 namespace CGAL
 {
 
-/// \name complement() functions.
+/// \name complement() functions
 //@{
 
 // Polygon_2 ===================================================================

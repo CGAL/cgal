@@ -67,7 +67,7 @@ public:
 
   Test_observer(Base_aos& arr) : Observer(arr) {}
 
-  /// \name Notification functions on global arrangement operations.
+  /// \name Notification functions on global arrangement operations
   //@{
 
   /*! Notification before the arrangement is assigned with the content of
@@ -102,7 +102,7 @@ public:
   { compare_results("after_global_change"); }
   //@}
 
-  /// \name Notification functions on observer attachment or detachment.
+  /// \name Notification functions on observer attachment or detachment
   //@{
 
   /*! Notification before the observer is attached to an arrangement.
@@ -124,7 +124,7 @@ public:
   virtual void after_detach() override { compare_results("after_detach"); }
   //@}
 
-  /// \name Notification functions on local changes in the arrangement.
+  /// \name Notification functions on local changes in the arrangement
   //@{
 
   /*! Notification before the creation of a new vertex.

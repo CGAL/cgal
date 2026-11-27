@@ -81,7 +81,7 @@ public:
   using Multiplicity = typename Base_traits_2::Multiplicity;
 
 public:
-  /// \name Construction.
+  /// \name Construction
   //@{
 
   /*! constructs default. */

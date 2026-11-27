@@ -173,7 +173,7 @@ public:
   inline void reset_cw_he() { ptr()->cw_he = Traits::empty_he_handle(); }
 
 public:
-  /// \name Constructors.
+  /// \name Constructors
   //@{
 
   Td_active_vertex()
@@ -193,7 +193,7 @@ public:
 
   //@}
 
-  /// \name Operator overloading.
+  /// \name Operator overloading
   //@{
 
   /*! Assignment operator.
@@ -214,7 +214,7 @@ public:
 
   //@}
 
-  /// \name Access methods.
+  /// \name Access methods
   //@{
 
   inline Self& self() { return *this; }

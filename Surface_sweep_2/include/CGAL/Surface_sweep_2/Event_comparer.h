@@ -197,7 +197,7 @@ public:
 
   //!@}
 
-  /// \name Set the boundary conditions of a curve end we are about to compare.
+  /// \name Set the boundary conditions of a curve end we are about to compare
   //@{
   void set_parameter_space_in_x(Arr_parameter_space bx) { m_ps_x = bx; }
 

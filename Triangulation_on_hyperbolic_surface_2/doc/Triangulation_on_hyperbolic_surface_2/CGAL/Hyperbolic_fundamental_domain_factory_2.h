@@ -24,7 +24,7 @@ public:
   Hyperbolic_fundamental_domain_factory_2();
   /// @}
 
-  /// \name Generation of a domain in genus two.
+  /// \name Generation of a domain in genus two
   /// @{
 
   /*!

@@ -89,7 +89,7 @@ public:
     m_blue_top_traits(blue_arr->topology_traits())
   {}
 
-  /// \name Notification functions.
+  /// \name Notification functions
   //@{
 
   /* A notification issued before the sweep process starts. */

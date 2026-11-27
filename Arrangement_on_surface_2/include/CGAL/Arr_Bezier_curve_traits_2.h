@@ -104,7 +104,7 @@ private:
                                            */
 
 public:
-  /// \name Construction.
+  /// \name Construction
   //@{
 
   /*! constructs default. */
@@ -660,7 +660,7 @@ public:
   Merge_2 merge_2_object() const { return Merge_2(this); }
   //@}
 
-  /// \name Functor definitions for the Boolean set-operation traits.
+  /// \name Functor definitions for the Boolean set-operation traits
   //@{
 
   /*! \class Compare_endpoints_xy_2

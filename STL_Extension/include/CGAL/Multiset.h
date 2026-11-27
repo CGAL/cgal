@@ -540,7 +540,7 @@ protected:
 
 public:
 
-  /// \name Construction and destruction functions.
+  /// \name Construction and destruction functions
   //@{
 
   /*!
@@ -604,7 +604,7 @@ public:
   void swap (Self& tree);
   //@}
 
-  /// \name Comparison operations.
+  /// \name Comparison operations
   //@{
 
   /*!
@@ -620,7 +620,7 @@ public:
   bool operator< (const Self& tree) const;
   //@}
 
-  /// \name Access functions.
+  /// \name Access functions
   //@{
 
   /*!
@@ -722,7 +722,7 @@ public:
   }
   //@}
 
-  /// \name Insertion functions.
+  /// \name Insertion functions
 
   /*!
    * Insert an object into the tree. [takes \cgalBigO{log n} operations]
@@ -785,7 +785,7 @@ public:
   iterator insert_before (iterator position,
                           const Type& object);
 
-  /// \name Erasing functions.
+  /// \name Erasing functions
   //@{
 
   /*!
@@ -812,7 +812,7 @@ public:
 
   //@}
 
-  /// \name Search functions.
+  /// \name Search functions
   //@{
 
   /*!
@@ -1158,7 +1158,7 @@ public:
   }
   //@}
 
-  /// \name Special functions.
+  /// \name Special functions
   //@{
 
   /*!
@@ -1229,7 +1229,7 @@ public:
 
   //@}
 
-  /// \name Debugging utilities.
+  /// \name Debugging utilities
   //@{
 
   /*!
@@ -1257,7 +1257,7 @@ public:
 
 protected:
 
-  /// \name Auxiliary predicates.
+  /// \name Auxiliary predicates
   //@{
 
   /*! Check whether a node is valid. */
@@ -1280,7 +1280,7 @@ protected:
   }
   //@}
 
-  /// \name Auxiliary operations.
+  /// \name Auxiliary operations
   //@{
 
   /*!

@@ -55,7 +55,7 @@ private:
   Self& operator=(const Self&);
 
 public:
-  /// \name Construction and destruction functions.
+  /// \name Construction and destruction functions
   //@{
 
   /*! constructs defaults. */
@@ -77,7 +77,7 @@ public:
   }
   //@}
 
-  /// \name Modifying the associated arrangement.
+  /// \name Modifying the associated arrangement
   //@{
 
   /*! obtains the associated arrangement (const version). */
@@ -128,7 +128,7 @@ public:
   }
   //@}
 
-  /// \name Notification functions on global arrangement operations.
+  /// \name Notification functions on global arrangement operations
   //@{
 
   /*! Notification before the arrangement is assigned with another
@@ -155,7 +155,7 @@ public:
   virtual void after_global_change() {}
   //@}
 
-  /// \name Notification functions on observer attachment or detachment.
+  /// \name Notification functions on observer attachment or detachment
   //@{
 
   /*! Notification before the observer is attached to an arrangement.
@@ -173,7 +173,7 @@ public:
   virtual void after_detach() {}
   //@}
 
-  /// \name Notification functions on local changes in the arrangement.
+  /// \name Notification functions on local changes in the arrangement
   //@{
 
   /*! Notification before the creation of a new vertex.

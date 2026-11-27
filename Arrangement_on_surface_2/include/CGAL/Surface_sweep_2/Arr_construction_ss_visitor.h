@@ -148,7 +148,7 @@ public:
   /*! destructs. */
   virtual ~Arr_construction_ss_visitor() {}
 
-  /// \name Sweep-line notifications.
+  /// \name Sweep-line notifications
   //@{
 
   /* A notification issued before the sweep process starts. */
@@ -171,7 +171,7 @@ public:
   void add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc);
   //@}
 
-  /// \name Insertion functions.
+  /// \name Insertion functions
   //@{
 
   /*! inserts the given subcurve in the interior of a face.
@@ -237,7 +237,7 @@ public:
   Event* last_event_on_subcurve(Subcurve* sc) { return sc->last_event(); }
 
 private:
-  /// \name Auxiliary functions.
+  /// \name Auxiliary functions
   //@{
 
   /*! casts a Traits::Point_2 object into an Arrangement_2::Point_2 object.

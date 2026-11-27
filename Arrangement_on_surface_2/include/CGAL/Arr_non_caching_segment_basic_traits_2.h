@@ -237,7 +237,7 @@ public:
 
   //@}
 
-  /// \name Functor definitions for the landmarks point-location strategy.
+  /// \name Functor definitions for the landmarks point-location strategy
   //@{
   class Approximate_2 {
   protected:

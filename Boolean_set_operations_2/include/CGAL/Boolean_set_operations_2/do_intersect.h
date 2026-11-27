@@ -35,7 +35,7 @@
 
 namespace CGAL {
 
-/// \name do_intersect() functions.
+/// \name do_intersect() functions
 //@{
 
 /*! We do not use polyline for do_intersect), as we rely on the overlay traits
@@ -270,7 +270,7 @@ inline bool do_intersect(const General_polygon_with_holes_2<Polygon_>& pgn1,
 
 //@}
 
-/// \name Aggregated do_intersect() functions.
+/// \name Aggregated do_intersect() functions
 //@{
 
 // With Traits
