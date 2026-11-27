@@ -614,6 +614,8 @@ public:
   }
 };
 
+//@}
+
 /// `Construct_point_2`
 //@{
 
@@ -1519,6 +1521,8 @@ public:
     return Compare_y_near_boundary_2(derived->traits(), derived->compare_y_near_boundary_op());
   }
 };
+
+//@}
 
 } // namespace internal
 } // namespace aos2

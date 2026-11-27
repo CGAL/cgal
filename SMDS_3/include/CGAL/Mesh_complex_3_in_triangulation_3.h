@@ -1378,6 +1378,8 @@ public:
 
 #endif
 
+/// @}
+
 /// \name Iterators
 /// @{
 
