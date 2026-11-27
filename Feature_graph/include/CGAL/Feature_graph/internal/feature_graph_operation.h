@@ -13,12 +13,12 @@
 #ifndef CGAL_FEATURE_GRAPH_INTERNAL_FEATURE_GRAPH_OPERATION_H
 #define CGAL_FEATURE_GRAPH_INTERNAL_FEATURE_GRAPH_OPERATION_H
 
+#include <CGAL/license/Feature_graph.h>
+
 #include <cstddef>
 #include <map>
 #include <variant>
 #include <vector>
-
-#include <CGAL/license/Feature_graph.h>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -34,24 +34,17 @@ namespace Feature_graph
 namespace internal
 {
 
-// The feature graph returned by detect_sharp_features. Optimized for fast iterations.
+// feature graph type returned by detect_sharp_features. Optimized for fast iterations.
 template <typename K>
-class Feature_graph : public boost::adjacency_list<boost::listS,boost::vecS,boost::undirectedS,typename K::Point_3>
-{
-  typedef typename boost::adjacency_list<boost::listS,boost::vecS,boost::undirectedS,typename K::Point_3> Base;
-  using Base::adjacency_list;
-};
+using Feature_graph =
+  boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS, typename K::Point_3>;
 
-// The feature graph used for at the creation. Optimized for fast addition and removal of elements, but do not store points.
-class Construction_feature_graph : public boost::adjacency_list<
-      boost::listS, boost::listS, boost::undirectedS,
-      boost::property<boost::vertex_index_t, std::size_t>>
-{
-  typedef typename boost::adjacency_list<
-      boost::listS, boost::listS, boost::undirectedS,
-      boost::property<boost::vertex_index_t, std::size_t>> Base;
-  using Base::adjacency_list;
-};
+// feature graph type used for at the creation.
+// Optimized for fast addition and removal of elements, but do not store points.
+// Preserve vertex and edge iterators on addition and removal
+using Construction_feature_graph =
+  boost::adjacency_list<boost::listS, boost::listS, boost::undirectedS,
+    boost::property<boost::vertex_index_t, std::size_t>>;
 
 template <typename FaceListGraph>
 class Face_list_graph_descriptor_holder : public std::variant<
@@ -81,26 +74,24 @@ class Face_list_graph_descriptor_holder : public std::variant<
 // ElementAndDomainTranslator is used to:
 //   - translate an element descriptor of the mesh to an element descriptor of the sharpness estimator
 //   - translate the mesh to the domain of the sharpness estimator
-// VertexPointMap assigns a point to each element of the feature graph.
-//      It must define `put(VertexPointMap map, Feature_graph::vertex_descriptor element, K::Point_3 point)`
-// VertexDimensionPropertyMap assigns a dimension of either 0, 1 or 2 to each element of the feature graph.
-//      It must define `put(VertexDimensionPropertyMap map, Feature_graph::vertex_descriptor element, DimensionTag dimension)`
-// VertexToMeshElementPropertyMap assigns a `Face_list_graph_descriptor_holder` to the polygon mesh for each element of the feature graph.
-//      It must define `put(VertexToMeshElementPropertyMap map, Feature_graph::vertex_descriptor element, Face_list_graph_descriptor_holder descriptor)`
-// VertexSharpnessPropertyMap assigns a `SharpnessEstimator::Sharpness_value_type` for each element of the feature graph.
-//      It must define `put(VertexSharpnessPropertyMap map, Feature_graph::vertex_descriptor element, SharpnessEstimator::Sharpness_value_type sharpness)`
-// VertexNextToHolePropertyMap assigns true for each element of the feature graph that are next to a hole (i.e. a face that is not sharp).
-//      It must define `put(VertexNextToHolePropertyMap map, Feature_graph::vertex_descriptor element, bool is_next_to_hole)`
-// VertexBorderPropertyMap assigns true for each border element of the surface.
-//      It must define `put(VertexBorderPropertyMap map, Feature_graph::vertex_descriptor element, bool is_border)`
+// VertexPointMap assigns a `K::Point_3` point to each feature graph element.
+// VertexDimensionPropertyMap assigns a `DimensionTag` of either 0, 1 or 2 to each feature graph element.
+// VertexToMeshElementPropertyMap assigns a `Face_list_graph_descriptor_holder<PolygonMesh>`
+//   to each feature graph element.
+// VertexSharpnessPropertyMap assigns a `SharpnessEstimator::Sharpness_value_type` to each feature graph element
+// VertexNextToHolePropertyMap assigns true to each feature graph element that is next to a hole
+//   (i.e. a face that is not sharp).
+// VertexBorderPropertyMap assigns true to each feature graph element that is border element of the surface.
 template <typename K,
   typename PolygonMesh, typename MeshPointPropertyMap,
   typename SharpnessEstimator, typename ElementAndDomainTranslator,
-  typename VertexPointMap, typename VertexDimensionPropertyMap, typename VertexToMeshElementPropertyMap,
-  typename VertexSharpnessPropertyMap, typename VertexNextToHolePropertyMap, typename VertexBorderPropertyMap>
+  typename VertexPointMap, typename VertexDimensionPropertyMap,
+  typename VertexToMeshElementPropertyMap, typename VertexSharpnessPropertyMap,
+  typename VertexNextToHolePropertyMap, typename VertexBorderPropertyMap>
 void make_initial_feature_graph(
   const PolygonMesh& pmesh, const MeshPointPropertyMap& points,
-  const SharpnessEstimator& sharpness_estimator, const ElementAndDomainTranslator& element_and_domain_translator,
+  const SharpnessEstimator& sharpness_estimator,
+  const ElementAndDomainTranslator& element_and_domain_translator,
   internal::Construction_feature_graph& feature_graph,
   VertexPointMap& vertex_point_map,
   VertexDimensionPropertyMap& vertex_dimension_map,
@@ -118,7 +109,7 @@ void make_initial_feature_graph(
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename internal::Face_list_graph_descriptor_holder<PolygonMesh> Face_list_graph_descriptor_holder;
 
-  typedef typename Feature_graph::vertex_descriptor Feature_graph_element;
+  typedef typename boost::graph_traits<Feature_graph>::vertex_descriptor Feature_graph_element;
 
   auto sharpness_estimator_domain = element_and_domain_translator.translate_domain(pmesh);
 
@@ -137,7 +128,10 @@ void make_initial_feature_graph(
     */
     halfedge_descriptor face_edge = halfedge(face, pmesh);
     // filter non sharp faces
-    auto face_element_sharpness = sharpness_estimator.template operator()<Dimension_tag<2>>(element_and_domain_translator.translate_face_element(face, pmesh, points), sharpness_estimator_domain);
+    auto face_element_sharpness =
+      sharpness_estimator.template operator()<Dimension_tag<2>>(
+        element_and_domain_translator.translate_face_element(face, pmesh, points),
+        sharpness_estimator_domain);
     if (face_element_sharpness < 0)
     {
       smooth_faces.push_back(face);
@@ -170,8 +164,12 @@ void make_initial_feature_graph(
         vertex_to_element[source_vertex] = feature_graph_source_vertex;
         put(vertex_point_map, feature_graph_source_vertex, get(points, source_vertex));
         put(vertex_dimension_map, feature_graph_source_vertex, 0);
-        put(vertex_to_mesh_element_map, feature_graph_source_vertex, Face_list_graph_descriptor_holder(source_vertex));
-        auto source_vertex_sharpness = sharpness_estimator.template operator()<Dimension_tag<0>>(element_and_domain_translator.translate_vertex_element(source_vertex, pmesh, points), sharpness_estimator_domain);
+        put(vertex_to_mesh_element_map, feature_graph_source_vertex,
+          Face_list_graph_descriptor_holder(source_vertex));
+        auto source_vertex_sharpness =
+          sharpness_estimator.template operator()<Dimension_tag<0>>(
+            element_and_domain_translator.translate_vertex_element(source_vertex, pmesh, points),
+            sharpness_estimator_domain);
         put(vertex_sharpness_map, feature_graph_source_vertex, source_vertex_sharpness);
         put(vertex_is_next_to_hole_map, feature_graph_source_vertex, false);
         put(vertex_is_border_map, feature_graph_source_vertex, false);
@@ -192,11 +190,16 @@ void make_initial_feature_graph(
       {
         feature_graph_edge = add_vertex(num_vertices(feature_graph), feature_graph);
         edge_to_element[current_as_edge] = feature_graph_edge;
-        Point_3 edge_point = CGAL::midpoint(get(points, source_vertex), get(points, target(current_face_edge, pmesh)));
+        Point_3 edge_point =
+          CGAL::midpoint(get(points, source_vertex), get(points, target(current_face_edge, pmesh)));
         put(vertex_point_map, feature_graph_edge, edge_point);
         put(vertex_dimension_map, feature_graph_edge, 1);
-        put(vertex_to_mesh_element_map, feature_graph_edge, Face_list_graph_descriptor_holder(current_face_edge));
-        auto edge_sharpness = sharpness_estimator.template operator()<Dimension_tag<1>>(element_and_domain_translator.translate_halfedge_element(current_face_edge, pmesh, points), sharpness_estimator_domain);
+        put(vertex_to_mesh_element_map, feature_graph_edge,
+          Face_list_graph_descriptor_holder(current_face_edge));
+        auto edge_sharpness =
+          sharpness_estimator.template operator()<Dimension_tag<1>>(
+            element_and_domain_translator.translate_halfedge_element(current_face_edge, pmesh, points),
+            sharpness_estimator_domain);
         put(vertex_sharpness_map, feature_graph_edge, edge_sharpness);
         put(vertex_is_next_to_hole_map, feature_graph_edge, false);
         put(vertex_is_border_map, feature_graph_edge, false);
@@ -213,7 +216,8 @@ void make_initial_feature_graph(
       add_edge(face_element, feature_graph_source_vertex, feature_graph);
       if (!is_source_vertex_already_created || !is_edge_already_created)
         add_edge(feature_graph_source_vertex, feature_graph_edge, feature_graph);
-      if (number_of_edges > 0 && (!is_source_vertex_already_created || !previous_graph_edge_already_created))
+      if (number_of_edges > 0 &&
+        (!is_source_vertex_already_created || !previous_graph_edge_already_created))
         add_edge(feature_graph_source_vertex, previous_graph_edge, feature_graph);
       // iterate
       barycenter += Vector_3(CGAL::ORIGIN, get(points, source_vertex));
@@ -225,7 +229,8 @@ void make_initial_feature_graph(
     if (number_of_edges != 0)
       barycenter /= number_of_edges;
     put(vertex_point_map, face_element, CGAL::ORIGIN + barycenter);
-    if (number_of_edges > 0 && (!first_source_vertex_already_created || !previous_graph_edge_already_created))
+    if (number_of_edges > 0 &&
+      (!first_source_vertex_already_created || !previous_graph_edge_already_created))
       add_edge(first_feature_graph_source_vertex, previous_graph_edge, feature_graph);
   }
   // update "next_to_hole" property of elements for all feature graph element adjacent to smooth faces

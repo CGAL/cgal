@@ -81,7 +81,10 @@ struct Detect_sharp_features_on_labeled_image
   *         <LI> The parameter `element_descriptor` indicates the element of the image :
   *         from the centroid `(x,y,z)` of the point, line or surface element in the image space,
   *         and given the dimension of the image `(xdim, ydim, zdim)`, the descriptor is
-  *         `2(z*xdim*ydim+y*xdim+x)`}
+  *         `2(z*xdim*ydim+y*xdim+x)`.
+  *         The field is evaluated at every vertex of a candidate line. Each vertex-to-line
+  *         distance is compared with the field value at that vertex; the line-length test
+  *         uses the minimum field value along the line.}
   *     \cgalParamDefault{`FT(4.0)`}
   *     \cgalParamExtra{This parameter sets a baseline distance and is overridden
   *                     by the parameters `parameters::isthmus_line_distance_threshold`, `parameters::simple_line_distance_threshold` and `parameters::corner_line_distance_threshold`
@@ -100,7 +103,8 @@ struct Detect_sharp_features_on_labeled_image
   *         </UL>
   *         See the description of `parameters::line_distance_threshold` for more details on this scalar field.}
   *     \cgalParamDefault{`FT(-1.0)`}
-  *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
+  *     \cgalParamExtra{A negative value at a sampled point falls back to the baseline
+  *                     `parameters::line_distance_threshold` value at that point.}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{simple_line_distance_threshold}
   *     \cgalParamDescription{the threshold on the distance between a simple line and any line.
@@ -115,7 +119,8 @@ struct Detect_sharp_features_on_labeled_image
   *         </UL>
   *         See the description of `parameters::line_distance_threshold` for more details on this scalar field.}
   *     \cgalParamDefault{`FT(-1.0)`}
-  *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
+  *     \cgalParamExtra{A negative value at a sampled point falls back to the baseline
+  *                     `parameters::line_distance_threshold` value at that point.}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{corner_line_distance_threshold}
   *     \cgalParamDescription{the threshold on the distance between a corner line and any line.
@@ -125,12 +130,13 @@ struct Detect_sharp_features_on_labeled_image
   *         It can be a constant or a scalar field that return the threshold at a point on the surface.
   *         If it is a scalar field, it must implement
   *         <UL>
-  *           <LI> `template <typename DimensionTag, typename Descriptor>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const CGAL::Image_3& image) const`
+  *           <LI> `template <typename DimensionTag>`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const std::size_t& element_descriptor, const CGAL::Image_3& image) const`
   *         </UL>
   *         See the description of `parameters::line_distance_threshold` for more details on this scalar field.}
   *     \cgalParamDefault{`FT(-1.0)`}
-  *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
+  *     \cgalParamExtra{A negative value at a sampled point falls back to the baseline
+  *                     `parameters::line_distance_threshold` value at that point.}
   *   \cgalParamSectionEnd
   *
   *   \cgalParamSectionBegin{do_optimize}
@@ -272,7 +278,10 @@ struct Detect_sharp_features_on_surface
   *         <LI> The type `DimensionTag` represents the element type, it can either be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`,
   *         which represent either a vertex element, an edge element, or a face element respectively.
   *         <LI> The type `Descriptor` is either a `vertex_descriptor`, `halfedge_descriptor` or `face_descriptor` and
-  *         is set respectivelly to the DimensionTag.}
+  *         is set respectively to the DimensionTag.
+  *         The field is evaluated at every vertex of a candidate line. Each vertex-to-line
+  *         distance is compared with the field value at that vertex; the line-length test
+  *         uses the minimum field value along the line.}
   *     \cgalParamDefault{`FT(0.0)`}
   *     \cgalParamExtra{This parameter sets a baseline distance and is overridden
   *                     by the parameters `parameters::isthmus_line_distance_threshold`, `parameters::simple_line_distance_threshold` and `parameters::corner_line_distance_threshold`
@@ -291,7 +300,8 @@ struct Detect_sharp_features_on_surface
   *         </UL>
   *         See the description of `parameters::line_distance_threshold` for more details on this scalar field.}
   *     \cgalParamDefault{`FT(-1.0)`}
-  *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
+  *     \cgalParamExtra{A negative value at a sampled point falls back to the baseline
+  *                     `parameters::line_distance_threshold` value at that point.}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{simple_line_distance_threshold}
   *     \cgalParamDescription{the threshold on the distance between a simple line and any line.
@@ -306,7 +316,8 @@ struct Detect_sharp_features_on_surface
   *         </UL>
   *         See the description of `parameters::line_distance_threshold` for more details on this scalar field.}
   *     \cgalParamDefault{`FT(-1.0)`}
-  *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
+  *     \cgalParamExtra{A negative value at a sampled point falls back to the baseline
+  *                     `parameters::line_distance_threshold` value at that point.}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{corner_line_distance_threshold}
   *     \cgalParamDescription{the threshold on the distance between a corner line and any line.
@@ -321,7 +332,8 @@ struct Detect_sharp_features_on_surface
   *         </UL>
   *         See the description of `parameters::line_distance_threshold` for more details on this scalar field.}
   *     \cgalParamDefault{`FT(-1.0)`}
-  *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
+  *     \cgalParamExtra{A negative value at a sampled point falls back to the baseline
+  *                     `parameters::line_distance_threshold` value at that point.}
   *   \cgalParamSectionEnd
   *
   *   \cgalParamSectionBegin{do_optimize}

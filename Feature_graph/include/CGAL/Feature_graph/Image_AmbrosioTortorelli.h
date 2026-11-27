@@ -13,10 +13,11 @@
 #ifndef CGAL_FEATURE_GRAPH_IMAGE_AMBROSIOTORTORELLI_H
 #define CGAL_FEATURE_GRAPH_IMAGE_AMBROSIOTORTORELLI_H
 
+#include <CGAL/license/Feature_graph.h>
+
 #include <cstddef>
 #include <unordered_map>
 
-#include <CGAL/license/Feature_graph.h>
 #include <CGAL/Feature_graph/internal/DGtal_interface.h>
 
 #include <boost/property_map/property_map.hpp>

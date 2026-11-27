@@ -13,14 +13,14 @@
 #ifndef CGAL_FEATURE_GRAPH_INTERNAL_DEBUGGING_METHODS_H
 #define CGAL_FEATURE_GRAPH_INTERNAL_DEBUGGING_METHODS_H
 
+#include <CGAL/license/Feature_graph.h>
+
 #include <cstddef>
 #include <fstream>
 #include <set>
 #include <string>
 #include <vector>
 #include <algorithm>
-
-#include <CGAL/license/Feature_graph.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/range/iterator_range.hpp>
@@ -46,7 +46,8 @@ template <typename K,
 void output_sharpness_on_surface_elements(
   const std::string& filename,
   const PolygonMesh& pmesh, const MeshPointPropertyMap& points,
-  const SharpnessEstimator& sharpness_estimator, const ElementAndDomainTranslator& element_and_domain_translator,
+  const SharpnessEstimator& sharpness_estimator,
+  const ElementAndDomainTranslator& element_and_domain_translator,
   const NormalEstimator& normal_estimator)
 {
   typedef typename K::Point_3 Point_3;
@@ -65,7 +66,10 @@ void output_sharpness_on_surface_elements(
   for (const face_descriptor& face : faces(pmesh))
   {
     halfedge_descriptor face_edge = halfedge(face, pmesh);
-    auto face_element_sharpness = sharpness_estimator.template operator()<Dimension_tag<2>>(element_and_domain_translator.translate_face_element(face, pmesh, points), sharpness_estimator_domain);
+    auto face_element_sharpness =
+      sharpness_estimator.template operator()<Dimension_tag<2>>(
+        element_and_domain_translator.translate_face_element(face, pmesh, points),
+        sharpness_estimator_domain);
     if (face_element_sharpness < min_sharpness)
       min_sharpness = face_element_sharpness;
     if (face_element_sharpness > max_sharpness)
@@ -79,7 +83,10 @@ void output_sharpness_on_surface_elements(
       bool is_source_vertex_inserted = inserted_vertices.insert(source_vertex).second;
       if (is_source_vertex_inserted)
       {
-        auto source_vertex_sharpness = sharpness_estimator.template operator()<Dimension_tag<0>>(element_and_domain_translator.translate_vertex_element(source_vertex, pmesh, points), sharpness_estimator_domain);
+        auto source_vertex_sharpness =
+          sharpness_estimator.template operator()<Dimension_tag<0>>(
+            element_and_domain_translator.translate_vertex_element(source_vertex, pmesh, points),
+            sharpness_estimator_domain);
         out_points.push_back(get(points, source_vertex));
         out_sharpness.push_back(source_vertex_sharpness);
         if (source_vertex_sharpness < min_sharpness)
@@ -91,8 +98,12 @@ void output_sharpness_on_surface_elements(
       bool is_edge_inserted = inserted_edges.insert(current_as_edge).second;
       if (is_edge_inserted)
       {
-        Point_3 edge_point = CGAL::midpoint(get(points, source_vertex), get(points, target(current_face_edge, pmesh)));
-        auto edge_sharpness = sharpness_estimator.template operator()<Dimension_tag<1>>(element_and_domain_translator.translate_halfedge_element(current_face_edge, pmesh, points), sharpness_estimator_domain);
+        Point_3 edge_point =
+          CGAL::midpoint(get(points, source_vertex), get(points, target(current_face_edge, pmesh)));
+        auto edge_sharpness =
+          sharpness_estimator.template operator()<Dimension_tag<1>>(
+            element_and_domain_translator.translate_halfedge_element(current_face_edge, pmesh, points),
+            sharpness_estimator_domain);
         out_points.push_back(edge_point);
         out_sharpness.push_back(edge_sharpness);
         if (edge_sharpness < min_sharpness)
@@ -166,10 +177,12 @@ void output_feature_graph_properties(
     int dim = static_cast<float>(get(vertex_dimension_map, vertex)) * 255.0 / 3.0;
     int sharpness = static_cast<float>(get(vertex_sharpness_map, vertex)) * 255.0;
     int is_next_to_hole = static_cast<float>(get(vertex_is_next_to_hole_map, vertex)) * 255.0;
-    points_output << get(vertex_point_map, vertex) << " " << dim << " " << sharpness << " " << is_next_to_hole << std::endl;
+    points_output << get(vertex_point_map, vertex) << " " <<
+      dim << " " << sharpness << " " << is_next_to_hole << std::endl;
   }
   for (auto edge : boost::make_iterator_range(edges(graph)))
-    edges_output << "2 " << get(vertex_point_map, source(edge, graph)) << " " << get(vertex_point_map, target(edge, graph)) << std::endl;
+    edges_output << "2 " << get(vertex_point_map, source(edge, graph)) << " " <<
+      get(vertex_point_map, target(edge, graph)) << std::endl;
   points_output.close();
   edges_output.close();
 }

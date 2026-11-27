@@ -13,13 +13,13 @@
 #ifndef CGAL_FEATURE_GRAPH_INTERNAL_CONVERT_IMAGE_TO_SURFACE_MESH_H
 #define CGAL_FEATURE_GRAPH_INTERNAL_CONVERT_IMAGE_TO_SURFACE_MESH_H
 
+#include <CGAL/license/Feature_graph.h>
+
 #include <array>
 #include <cstddef>
 #include <iterator>
 #include <map>
 #include <vector>
-
-#include <CGAL/license/Feature_graph.h>
 
 #include <boost/graph/graph_traits.hpp>
 
@@ -37,7 +37,8 @@ namespace internal
 {
 
 template <typename Image>
-float image_value_with_check(const Image& image, const int& i, const int&  j, const int&  k, const float& value_outside = 0)
+float image_value_with_check(
+  const Image& image, const int& i, const int&  j, const int&  k, const float& value_outside = 0)
 {
   if ( i >= 0 && static_cast<std::size_t>(i) < image.xdim() &&
         j >= 0 && static_cast<std::size_t>(j) < image.ydim() &&
@@ -52,7 +53,8 @@ struct Get_points_property_from_surface_mesh
 {
   typedef Surface_mesh<Point_3> Mesh;
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-  typename Mesh::Property_map<vertex_descriptor, Point_3>& operator()(const std::size_t mesh_index, Mesh& mesh) const
+  typename Mesh::Property_map<vertex_descriptor, Point_3>&
+  operator()(const std::size_t mesh_index, Mesh& mesh) const
   {
     return mesh.points();
   }
@@ -61,7 +63,9 @@ struct Get_points_property_from_surface_mesh
 struct Get_surface_mesh_domains_and_orientations
 {
   template <typename DomainOutputIterator, typename OrientationOutputIterator>
-  void operator()(const int& axis, const int& i, const int& j, const int& k, const float& base_value, const float& neighbor_value,
+  void operator()(
+    const int& axis, const int& i, const int& j, const int& k,
+    const float& base_value, const float& neighbor_value,
     DomainOutputIterator domain_out, OrientationOutputIterator orientation_out) const
   {
     const bool orientation = (base_value < neighbor_value);
@@ -79,7 +83,9 @@ struct Get_volume_mesh_domains_and_orientations
   // outputs domain around a surfel with their orientation
   // `domain_out[i]` and `orientation_out[i]` refer to the same size.
   template <typename DomainOutputIterator, typename OrientationOutputIterator>
-  void operator()(const int& axis, const int& i, const int& j, const int& k, const float& base_value, const float& neighbor_value,
+  void operator()(
+    const int& axis, const int& i, const int& j, const int& k,
+    const float& base_value, const float& neighbor_value,
     DomainOutputIterator domain_out, OrientationOutputIterator orientation_out) const
   {
     *domain_out++ = base_value;
@@ -90,14 +96,19 @@ struct Get_volume_mesh_domains_and_orientations
 };
 
 // constructs one or more surface mesh from the labelled image.
-//   The parameters enable the user to create a mesh per surface, a mesh per domain, or a more complex scenario
+//   The parameters enable the user to create a mesh per surface,
+//   a mesh per domain, or a more complex scenario
 // PolygonMesh is model of MutableFaceGraph
 // GetPointsProperty returns a property (by adress) that holds the points of a mesh
 // PointsPropertyBuilder constructs the PointsPropertyMap from a mesh
-// PointelToMeshVertexMap will hold the mesh vertex_descriptor from a pointel. Note: this is a map, it should define `find(...)`, `end()`, `emplace(...)`.
-// MeshDomain is an identifier representing the domain of the mesh. it is constructed from a surfel (see GetMeshDomainsAndOrientationsFromSurfel)
-// GetMeshDomainsAndOrientationsFromSurfel constructs one or more mesh domains from a surfel. The surfel will be added to all the meshes with the same domain.
-// the output meshes, domain and maps are constructed in `meshes`, `mesh_domains` and `image_point_to_mesh_vertex`.
+// PointelToMeshVertexMap will hold the mesh vertex_descriptor from a pointel.
+//   Note: this is a map, it should define `find`, `end`, `emplace`.
+// MeshDomain is an identifier representing the domain of the mesh.
+//   It is constructed from a surfel (see GetMeshDomainsAndOrientationsFromSurfel)
+// GetMeshDomainsAndOrientationsFromSurfel constructs one or more mesh domains from a surfel.
+//   The surfel will be added to all the meshes with the same domain.
+// The output meshes, domain and maps are constructed in `meshes`, `mesh_domains`
+// and `image_point_to_mesh_vertex`.
 template <typename K, typename Image, typename PolygonMesh,
       typename GetPointsProperty, typename PointelToMeshVertexMap,
       typename MeshDomain, typename GetMeshDomainsAndOrientationsFromSurfel>
@@ -110,7 +121,8 @@ void convert_labelled_image_to_face_graphs(
   std::vector<PointelToMeshVertexMap>& image_point_to_mesh_vertex,
   /*Operators*/
   GetPointsProperty get_points_property = GetPointsProperty(),
-  GetMeshDomainsAndOrientationsFromSurfel get_mesh_domains_and_orientation_from_surfel = GetMeshDomainsAndOrientationsFromSurfel(),
+  GetMeshDomainsAndOrientationsFromSurfel get_mesh_domains_and_orientation_from_surfel =
+    GetMeshDomainsAndOrientationsFromSurfel(),
   /*Optional input*/
   const float& value_outside = 0)
 {
@@ -146,16 +158,22 @@ void convert_labelled_image_to_face_graphs(
   std::vector<std::size_t> current_surfel_mesh_indices;
   std::vector<std::array<vertex_descriptor, 4>> current_surfel_vertices;
 
-  auto add_surfel_to_mesh = [&](const int& axis, const int& i, const int& j, const int& k, const float& base_value, const float& neighbor_value)
+  auto add_surfel_to_mesh = [&](
+    const int& axis, const int& i, const int& j, const int& k,
+    const float& base_value, const float& neighbor_value)
   {
     // get or create mesh
     current_surfel_mesh_domains.clear();
     current_surfel_mesh_orientations.clear();
     current_surfel_mesh_indices.clear();
-    get_mesh_domains_and_orientation_from_surfel(axis, i, j, k, base_value, neighbor_value, std::back_inserter(current_surfel_mesh_domains), std::back_inserter(current_surfel_mesh_orientations));
+    get_mesh_domains_and_orientation_from_surfel(
+      axis, i, j, k, base_value, neighbor_value,
+      std::back_inserter(current_surfel_mesh_domains),
+      std::back_inserter(current_surfel_mesh_orientations));
     for (const MeshDomain& mesh_domain : current_surfel_mesh_domains)
     {
-      const auto& [mesh_domain_and_mesh_iterator, inserted_surface] = mesh_domain_to_mesh_index.try_emplace(mesh_domain, meshes.size());
+      const auto& [mesh_domain_and_mesh_iterator, inserted_surface] =
+        mesh_domain_to_mesh_index.try_emplace(mesh_domain, meshes.size());
       if (inserted_surface)
       {
         const std::size_t new_size = meshes.size()+1;
@@ -175,7 +193,9 @@ void convert_labelled_image_to_face_graphs(
     v_axis[(axis+2)%3] = 1;
     current_surfel_vertices.clear();
     current_surfel_vertices.resize(current_surfel_mesh_indices.size());
-    CGAL_assertion(i + base_image_point[0] > 0 && j + base_image_point[1] > 0 && k + base_image_point[2] > 0);
+    CGAL_assertion(i + base_image_point[0] > 0);
+    CGAL_assertion(j + base_image_point[1] > 0);
+    CGAL_assertion(k + base_image_point[2] > 0);
     const std::size_t i_base = i + base_image_point[0];
     const std::size_t j_base = j + base_image_point[1];
     const std::size_t k_base = k + base_image_point[2];
@@ -187,13 +207,18 @@ void convert_labelled_image_to_face_graphs(
         const std::size_t j_vertex = j_base + u * u_axis[1] + v * v_axis[1];
         const std::size_t k_vertex = k_base + u * u_axis[2] + v * v_axis[2];
         const std::size_t vertex_index = k_vertex*xydim_p + j_vertex *xdim_p + i_vertex;
-        const Point_3 world_pointel = Point_3(i_vertex * vx + tx, j_vertex * vy + ty, k_vertex * vz + tz);
-        for (std::size_t current_surfel_mesh_index = 0, number_of_meshes = current_surfel_mesh_indices.size(); current_surfel_mesh_index < number_of_meshes; current_surfel_mesh_index++)
+        const Point_3 world_pointel =
+          Point_3(i_vertex * vx + tx, j_vertex * vy + ty, k_vertex * vz + tz);
+        for (std::size_t current_surfel_mesh_index = 0,
+            number_of_meshes = current_surfel_mesh_indices.size();
+            current_surfel_mesh_index < number_of_meshes; current_surfel_mesh_index++)
         {
           const std::size_t& mesh_index = current_surfel_mesh_indices[current_surfel_mesh_index];
           Mesh& mesh = meshes[mesh_index];
-          PointelToMeshVertexMap& image_point_to_current_mesh_vertex = image_point_to_mesh_vertex[mesh_index];
-          const auto& point_and_vertex_iterator = image_point_to_current_mesh_vertex.find(vertex_index);
+          PointelToMeshVertexMap& image_point_to_current_mesh_vertex =
+            image_point_to_mesh_vertex[mesh_index];
+          const auto& point_and_vertex_iterator =
+            image_point_to_current_mesh_vertex.find(vertex_index);
           vertex_descriptor surfel_vertex;
           if (point_and_vertex_iterator == image_point_to_current_mesh_vertex.end())
           {
@@ -207,11 +232,14 @@ void convert_labelled_image_to_face_graphs(
         }
       }
     // add surfel to each mesh
-    for (std::size_t current_surfel_mesh_index = 0, number_of_meshes = current_surfel_mesh_indices.size(); current_surfel_mesh_index < number_of_meshes; current_surfel_mesh_index++)
+    for (std::size_t current_surfel_mesh_index = 0,
+      number_of_meshes = current_surfel_mesh_indices.size();
+      current_surfel_mesh_index < number_of_meshes; current_surfel_mesh_index++)
     {
       const std::size_t& mesh_index = current_surfel_mesh_indices[current_surfel_mesh_index];
       const bool& orientation = current_surfel_mesh_orientations[current_surfel_mesh_index];
-      std::array<vertex_descriptor, 4>& surfel_vertices = current_surfel_vertices[current_surfel_mesh_index];
+      std::array<vertex_descriptor, 4>& surfel_vertices =
+        current_surfel_vertices[current_surfel_mesh_index];
       if (orientation)
         std::swap(surfel_vertices[0], surfel_vertices[1]); // 0 1 2 3 --> 1 0 2 3
       else
