@@ -148,7 +148,7 @@ public:
   /*! Destructor */
   virtual ~Arr_overlay_ss_visitor() {}
 
-  /// \name Sweep-line notifications.
+  /// \name Sweep-Line Notifications
   //@{
 
   /* A notification issued before the sweep process starts. */
@@ -197,7 +197,7 @@ public:
   void after_sweep();
   //@}
 
-  /// \name Insertion functions.
+  /// \name Insertion Functions
   //@{
 
   /*!
@@ -257,7 +257,7 @@ public:
   //@}
 
 protected:
-  /// \name Auxiliary functions.
+  /// \name Auxiliary Functions
   //@{
 
   /*!

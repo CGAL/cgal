@@ -61,7 +61,7 @@ private:
   typedef Arr_polycurve_traits_2<Segment_traits_2>    Base;
 
 public:
-  /// \name Types inherited from the polycurve traits class.
+  /// \name Types Inherited from the Polycurve Traits Class
   //@{
 
   // Tag definitions:
@@ -127,7 +127,7 @@ public:
     Base(geom_traits)
   {}
 
-  /// \name Types and functors defined here.
+  /// \name Types and Functors Defined Here
 
   /* Functor to augment a polyline by either adding a vertex or a segment
    * at the back.

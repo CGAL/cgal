@@ -71,7 +71,7 @@ public:
     Base (is)
   {}
 
-  /// \name Functions for writing curves.
+  /// \name Functions for Writing Curves
   //@{
 
   /*! Write a begin-curves comment. */
@@ -110,7 +110,7 @@ public:
   }
   //@}
 
-  /// \name Functions for reading curves.
+  /// \name Functions for Reading Curves
   //@{
 
   /*! Start reading the curves. */

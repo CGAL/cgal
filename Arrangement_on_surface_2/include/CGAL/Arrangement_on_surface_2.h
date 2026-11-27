@@ -818,7 +818,7 @@ public:
     Isolated_vertex_const_iterator isolated_vertices_end() const
     { return (DIso_vertex_const_iter(Base::isolated_vertices_end())); }
 
-    /// \name These functions are kept for Arrangement_2 compatibility:
+    /// \name These functions are kept for Arrangement_2 compatibility
     //@{
 
     /*! checks whether the face has an outer CCB.
@@ -911,7 +911,7 @@ protected:
                                            // afterwards
 
 public:
-  /// \name Constructors.
+  /// \name Constructors
   //@{
 
   /*! constructs default. */
@@ -924,7 +924,7 @@ public:
   Arrangement_on_surface_2(const Geometry_traits_2* geom_traits);
   //@}
 
-  /// \name Assignment functions.
+  /// \name Assignment functions
   //@{
 
   /*! assigns. */
@@ -934,7 +934,7 @@ public:
   void assign(const Self& arr);
   //@}
 
-  /// \name Destruction functions.
+  /// \name Destruction functions
   //@{
 
   /*! destructs. */
@@ -947,7 +947,7 @@ public:
   virtual void clear();
   //@}
 
-  /// \name Access the traits-class objects.
+  /// \name Access the traits-class objects
   //@{
 
   /*! accesses the geometry-traits object (const version). */
@@ -967,7 +967,7 @@ public:
   { return (&m_topol_traits); }
   //@}
 
-  /// \name Access the arrangement dimensions.
+  /// \name Access the arrangement dimensions
   //@{
 
   /*! checks whether the arrangement is empty. */
@@ -1016,7 +1016,7 @@ public:
   }
   //@}
 
-  /// \name Traversal functions for the arrangement vertices.
+  /// \name Traversal functions for the arrangement vertices
   //@{
 
   /*! obtains an iterator for the first vertex in the arrangement. */
@@ -1067,7 +1067,7 @@ public:
 
   //@}
 
-  /// \name Traversal functions for the arrangement halfedges.
+  /// \name Traversal functions for the arrangement halfedges
   //@{
 
   /*! obtains an iterator for the first halfedge in the arrangement. */
@@ -1118,7 +1118,7 @@ public:
   }
   //@}
 
-  /// \name Traversal functions for the arrangement edges.
+  /// \name Traversal functions for the arrangement edges
   //@{
 
   /*! obtains an iterator for the first edge in the arrangement. */
@@ -1166,7 +1166,7 @@ public:
   }
   //@}
 
-  /// \name Traversal functions for the arrangement faces.
+  /// \name Traversal functions for the arrangement faces
   //@{
 
   /*! obtains an iterator for the first face in the arrangement. */
@@ -1235,7 +1235,7 @@ public:
 
   //@}
 
-  /// \name Traversal functions for the unbounded faces of the arrangement.
+  /// \name Traversal functions for the unbounded faces of the arrangement
   //@{
 
   /*! obtains an iterator for the first unbounded face in the arrangement. */
@@ -1283,7 +1283,7 @@ public:
   { return DFace_const_iter(this->topology_traits()->initial_face()); }
   //@}
 
-  /// \name Casting away constness for handle types.
+  /// \name Casting away constness for handle types
   //@{
   Vertex_handle non_const_handle(Vertex_const_handle vh)
   {
@@ -1304,7 +1304,7 @@ public:
   }
   //@}
 
-  /// \name Specilaized insertion functions.
+  /// \name Specilaized insertion functions
   //@{
 
   /*! inserts a point that forms an isolated vertex in the interior of a given
@@ -1424,7 +1424,7 @@ public:
 
   //@}
 
-  /// \name Vertex manipulation functions.
+  /// \name Vertex manipulation functions
   //@{
 
   /*! replaces the point associated with the given vertex.
@@ -1445,7 +1445,7 @@ public:
 
   ///@}
 
-  /// \name Halfedge manipulation functions.
+  /// \name Halfedge manipulation functions
   //@{
 
   /*! replaces the x-monotone curve associated with the given edge.
@@ -1530,7 +1530,7 @@ public:
   }
 
 protected:
-  /// \name Determining the boundary-side conditions.
+  /// \name Determining the boundary-side conditions
   //@{
 
   /*! determines whether a boundary-side category indicates an open side.
@@ -1565,7 +1565,7 @@ protected:
   inline bool is_identified(Arr_identified_side_tag) const { return true; }
   //@}
 
-  /// \name Allocating and de-allocating points and curves.
+  /// \name Allocating and de-allocating points and curves
   //@{
 
   /*! allocates a new point. */
@@ -1601,7 +1601,7 @@ protected:
   }
   //@}
 
-  /// \name Converting handles to pointers (for the arrangement accessor).
+  /// \name Converting handles to pointers (for the arrangement accessor)
   //@{
   /*! accesses the DCEL (non-const version). */
   inline Dcel& _dcel() { return (m_topol_traits.dcel()); }
@@ -1635,7 +1635,7 @@ protected:
   { return (&(*fh)); }
   //@}
 
-  /// \name Converting pointers to handles (for the arrangement accessor).
+  /// \name Converting pointers to handles (for the arrangement accessor)
   //@{
 
   /*! converts a pointer to a DCEL vertex to a vertex handle. */
@@ -1663,7 +1663,7 @@ protected:
   { return (Face_const_handle(f)); }
   //@}
 
-  /// \name Auxiliary (protected) functions.
+  /// \name Auxiliary (protected) functions
   //@{
 
   /*! Is the vertex incident to a given halfedge lexicographically smaller than
@@ -2216,7 +2216,7 @@ protected:
   void _remove_isolated_vertex(DVertex* v);
   //@}
 
-  /// \name Auxiliary (protected) functions for validity checking.
+  /// \name Auxiliary (protected) functions for validity checking
   //@{
 
   /*! checks the validity of a given vertex. */
@@ -2245,7 +2245,7 @@ protected:
   //@}
 
 protected:
-  /// \name Managing and notifying the arrangement observers.
+  /// \name Managing and notifying the arrangement observers
   //@{
 
   /*! registers a new observer (so it starts receiving notifications).

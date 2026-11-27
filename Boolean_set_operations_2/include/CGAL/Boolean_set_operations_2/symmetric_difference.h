@@ -34,7 +34,7 @@
 
 namespace CGAL {
 
-/// \name symmetric_difference() functions.
+/// \name symmetric_difference() Functions
 //@{
 
 // Polygon_2, Polygon_2 ========================================================
@@ -246,7 +246,7 @@ symmetric_difference(const General_polygon_with_holes_2<Polygon_>& pgn1,
 
 //@}
 
-/// \name Aggregated symmetric_difference() functions.
+/// \name Aggregated symmetric_difference() Functions
 //@{
 
 // With Traits

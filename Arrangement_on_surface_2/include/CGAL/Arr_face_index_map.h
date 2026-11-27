@@ -104,7 +104,7 @@ public:
     return (rev_map[i]);
   }
 
-  /// \name Notification functions, to keep the mapping up-to-date.
+  /// \name Notification Functions, to Keep the Mapping Up-to-Date
   //@{
 
   /*! updates the mapping after the arrangement has been assigned with another

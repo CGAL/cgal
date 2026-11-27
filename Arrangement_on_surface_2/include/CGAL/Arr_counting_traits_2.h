@@ -1774,6 +1774,7 @@ public:
 
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(traits(), m_counters[COMPARE_Y_AT_X_RIGHT_2_OP]); }
+  //@}
 
   /*! increments the construction counter.
    * \param doit indicates whether to actually increment the counter or not.

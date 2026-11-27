@@ -385,7 +385,7 @@ public:
   //Functor definitions.
   //------------------------
 
-  /// \name Basic functor definitions.
+  /// \name Basic Functor Definitions
   //@{
 
   //---------------------------------------------------------------
@@ -1029,7 +1029,7 @@ public:
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const { return Compare_x_on_boundary_2(); }
   //@}
 
-  /// \name Functor definitions for the Boolean set-operation traits.
+  /// \name Functor Definitions for the Boolean Set-Operation Traits
   //@{
 
   //new functor

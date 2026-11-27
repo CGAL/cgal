@@ -389,8 +389,6 @@ public:
 
 }; // class BigFloat
 
-//@} // For compatibility with BigInt
-
 /// \name File I/O Functions
 //@{
 /// read from file

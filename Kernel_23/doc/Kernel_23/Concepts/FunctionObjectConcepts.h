@@ -743,6 +743,8 @@ public:
                                const K::Vector_3& v1,
                                const K::Vector_3& u2,
                                const K::Vector_3& v2);
+
+  /// @}
 };
 
 /*!

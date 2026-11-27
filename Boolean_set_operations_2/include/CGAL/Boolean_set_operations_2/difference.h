@@ -36,7 +36,7 @@
 namespace CGAL
 {
 
-/// \name difference() functions.
+/// \name difference() Functions
 //@{
 
 // Polygon_2, Polygon_2 ========================================================

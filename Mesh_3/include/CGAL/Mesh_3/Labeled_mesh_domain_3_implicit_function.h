@@ -334,7 +334,6 @@ public:
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   static auto
   create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& np = parameters::default_values());
-/// @}
 
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
   static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL_NP_CLASS& np);
@@ -398,7 +397,6 @@ public:
              p::construct_surface_patch_index =
                      create_construct_surface_patch_index(construct_surface_patch_index_));
   }
-/// @}
 
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS &np)

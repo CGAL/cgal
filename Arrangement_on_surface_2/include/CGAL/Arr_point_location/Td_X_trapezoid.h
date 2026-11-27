@@ -315,7 +315,7 @@ public:
 
  public:
 
-  /// \name Constructors.
+  /// \name Constructors
   //@{
 
   /*! Default constructor. */
@@ -392,7 +392,7 @@ public:
 
   //@}
 
-  /// \name Operator overloading.
+  /// \name Operator Overloading
   //@{
 
   /*! Assignment operator.
@@ -420,7 +420,7 @@ public:
   //@}
 
 
-  /// \name Access methods.
+  /// \name Access Methods
   //@{
 
   CGAL_TD_INLINE Self& self()

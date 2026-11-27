@@ -102,7 +102,7 @@ protected:
                                 // (may be nullptr).
 
 public:
-  /// \name Deprecated Constructions.
+  /// \name Deprecated Constructions
   //@{
 
   /*! constructs a conic arc which is the full conic:
@@ -1451,7 +1451,7 @@ protected:
   }
 
 public:
-  /// \name Construction and destruction functions.
+  /// \name Construction and Destruction Functions
   //@{
 
   /*! constructs default.
@@ -1512,7 +1512,7 @@ public:
   }
   //@}
 
-  /// \name Get the arc properties.
+  /// \name Get the Arc Properties
   //@{
 
   /*! determines whether the arc is valid.
@@ -1577,7 +1577,7 @@ public:
 protected:
   template <typename, typename, typename> friend class Arr_conic_traits_2;
 
-  /// \name Flag manipulation functions.
+  /// \name Flag Manipulation Functions
   //@{
   template <typename T>
   static constexpr auto flag_mask(const T flag) { return 0x1 << flag; }
@@ -1672,7 +1672,7 @@ public:
   //@}
 
 public:
-  /// \name Auxiliary functions.
+  /// \name Auxiliary Functions
   //@{
 
   /*! evaluates the sign of (a*x + b*y + c) stored with the extra data field

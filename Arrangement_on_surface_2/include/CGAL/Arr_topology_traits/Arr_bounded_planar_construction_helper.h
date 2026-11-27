@@ -94,7 +94,7 @@ public:
   virtual ~Arr_bounded_planar_construction_helper()
   {}
 
-  /// \name Notification functions.
+  /// \name Notification Functions
   //@{
 
   /* A notification issued before the sweep process starts. */

@@ -1852,7 +1852,7 @@ public:
   //typedef std::pair<Algebraic_point_2, unsigned int>  Intersection_point;
 
 
-  /// \name Construction methods.
+  /// \name Construction Methods
   //@{
 
   /*!
@@ -2026,7 +2026,7 @@ public:
 
   //@}
 
-  /// \name Constructions of points and curves.
+  /// \name Constructions of Points and Curves
   //@{
 
   /*! Compute the intersections with the given arc.
@@ -2419,7 +2419,7 @@ public:
 
   typedef typename Base::Cache                          Cache;
 
-  /// \name Construction methods.
+  /// \name Construction Methods
   //@{
 
   /*!

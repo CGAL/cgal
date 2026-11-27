@@ -1040,7 +1040,7 @@ private:
   Self& operator=(const Self&);
 
 public:
-  /// \name Construction and destruction.
+  /// \name Construction and Destruction
   //@{
   /*! constructs default. */
   Arr_dcel_base() {}
@@ -1049,7 +1049,7 @@ public:
   ~Arr_dcel_base() { delete_all(); }
   //@}
 
-  /// \name The DCEL size.
+  /// \name The DCEL Size
   //@{
   /*! obtains the number of DCEL vertices. */
   Size size_of_vertices() const { return (vertices.size()); }
@@ -1070,7 +1070,7 @@ public:
   Size size_of_isolated_vertices() const { return (iso_verts.size()); }
   //@}
 
-  /// \name Obtaining iterators.
+  /// \name Obtaining Iterators
   //@{
   Vertex_iterator   vertices_begin()  { return vertices.begin(); }
   Vertex_iterator   vertices_end()    { return vertices.end(); }
@@ -1105,7 +1105,7 @@ public:
   Inner_ccb_iterator inner_ccbs_end()   { return in_ccbs.end(); }
   //@}
 
-  /// \name Obtaining constant iterators.
+  /// \name Obtaining Constant Iterators
   //@{
   Vertex_const_iterator   vertices_begin() const { return vertices.begin(); }
   Vertex_const_iterator   vertices_end() const { return vertices.end(); }
@@ -1137,7 +1137,7 @@ public:
   }
   //@}
 
-  // \name Creation of new DCEL features.
+  /// \name Creation of New DCEL Features
   //@{
   /*! creates a new vertex. */
   Vertex* new_vertex()
@@ -1199,7 +1199,7 @@ public:
   }
   //@}
 
-  /// \name Deletion of DCEL features.
+  /// \name Deletion of DCEL Features
   //@{
   /*! Delete an existing vertex. */
   void delete_vertex(Vertex* v)

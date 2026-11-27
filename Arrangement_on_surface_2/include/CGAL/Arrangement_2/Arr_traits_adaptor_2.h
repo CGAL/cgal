@@ -92,7 +92,7 @@ protected:
   using Bottom_or_top_sides_category = typename Arr_two_sides_category<Bottom_side_category, Top_side_category>::result;
 
 public:
-  /// \name Construction.
+  /// \name Construction
   //@{
   /*! constructs default. */
   Arr_traits_basic_adaptor_2() : Base() {}
@@ -101,7 +101,7 @@ public:
   Arr_traits_basic_adaptor_2(const Base& traits) : Base(traits) {}
   //@}
 
-  /// \name Overridden functors for bounded boundaries.
+  /// \name Overridden Functors for Bounded Boundaries
   //@{
 
   /*! A functor that compares the y-coordinates of (i) a given point and (ii)
@@ -618,7 +618,7 @@ public:
    Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(this); }
   //@}
 
-  /// \name Overridden functors for boundaries.
+  /// \name Overridden Functors for Boundaries
   //@{
 
   // left-right
@@ -1590,7 +1590,7 @@ public:
 
   //@}
 
-  /// \name Additional auxiliary functors.
+  /// \name Additional Auxiliary Functors
   //@{
   class Is_in_x_range_2 {
   public:
@@ -1628,7 +1628,7 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
 
-    /// \name point - curve-end.
+    /// \name Point vs. Curve-End
     //@{
     /*! Implementation in the case of oblivious boundaries. */
     bool is_in_x_range(const X_monotone_curve_2& xcv, const Point_2& p,
@@ -1716,7 +1716,7 @@ public:
     }
     //@}
 
-    /// \name curve-end - curve-end.
+    /// \name Curve-End vs. Curve-End
     //@{
     /*! Implementation in the case of all oblivious boundaries. */
     bool is_in_x_range(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
@@ -3001,7 +3001,7 @@ public:
 
   using Are_all_sides_oblivious_category = typename Base::Are_all_sides_oblivious_category;
 
-  /// \name Construction.
+  /// \name Construction
   //@{
   /*! constructs default. */
   Arr_traits_adaptor_2() : Base() {}
@@ -3010,7 +3010,7 @@ public:
   Arr_traits_adaptor_2(const Base_traits_2& traits) : Base(traits) {}
   //@}
 
-  /// \name Overridden functors.
+  /// \name Overridden Functors
   //@{
 
   /*! A functor that compares two points or two x-monotone curves

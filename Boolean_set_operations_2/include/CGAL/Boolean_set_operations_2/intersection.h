@@ -34,7 +34,7 @@
 
 namespace CGAL {
 
-/// \name intersection() functions.
+/// \name intersection() Functions
 //@{
 
 // Polygon_2, Polygon_2 ========================================================
@@ -239,7 +239,7 @@ intersection(const General_polygon_with_holes_2<Polygon_>& pgn1,
 
 //@}
 
-/// \name Aggregated intersection() functions.
+/// \name Aggregated intersection() Functions
 //@{
 
 // With Traits

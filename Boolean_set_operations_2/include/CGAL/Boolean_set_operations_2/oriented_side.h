@@ -36,7 +36,7 @@
 namespace CGAL
 {
 
-/// \name oriented_side() functions.
+/// \name oriented_side() Functions
 //@{
 
 // Polygon_2, Polygon_2 ========================================================

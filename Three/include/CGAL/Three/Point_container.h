@@ -75,7 +75,7 @@ struct DEMO_FRAMEWORK_EXPORT Point_container :public Primitive_container
   void draw(CGAL::Three::Viewer_interface* viewer,
             bool is_color_uniform)  override;
 
-  /// \name Getters and Setters for the shaders parameters.
+  /// \name Getters and Setters for the Shader Parameters
   ///
   /// Each of those depends of the `OpenGL_program_IDs` this container is using.
   /// If the shaders of this program doesn't need one, you can ignore it.

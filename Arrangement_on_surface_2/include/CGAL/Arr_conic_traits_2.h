@@ -161,7 +161,7 @@ public:
     return (++index);
   }
 
-  /// \name Basic functor definitions.
+  /// \name Basic Functor Definitions
   //@{
 
   class Compare_x_2 {
@@ -2758,7 +2758,7 @@ public:
   { return Construct_curve_2(*this); }
   //@}
 
-  /// \name Functor definitions for the Boolean set-operation traits.
+  /// \name Functor Definitions for the Boolean Set-Operation Traits
   //@{
 
   class Compare_endpoints_xy_2 {
@@ -2884,7 +2884,7 @@ public:
   Trim_2 trim_2_object() const { return Trim_2(*this); }
   //@}
 
-  /// \name Extra functor definitions.
+  /// \name Extra Functor Definitions
   //@{
 
   class Construct_bbox_2 {

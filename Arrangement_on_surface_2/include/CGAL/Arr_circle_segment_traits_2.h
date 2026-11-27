@@ -86,7 +86,7 @@ public:
     return (++index);
   }
 
-  /// \name Basic functor definitions.
+  /// \name Basic Functor Definitions
   //@{
 
   class Compare_x_2 {

@@ -150,7 +150,7 @@ public:
   //!
   void allocate(std::size_t vbo_id, void* data, int datasize);
   //!
-  //! \name Setters for the shaders parameters.
+  //! \name Setters for the Shader Parameters
   //!@{
 
   //! Setter for the "selected" uniform parameter.
@@ -239,7 +239,7 @@ public:
   //! the item in this container.
   std::size_t getCenterSize()const;
 
-  //! \name Getters for the shaders parameters.
+  //! \name Getters for the Shader Parameters
   //!@{
 
   //! getter for the "selected" parameter

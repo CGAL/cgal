@@ -47,7 +47,7 @@ private:
   using Base = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
 public:
-  /// \name Types inherited from the polycurve basic traits class.
+  /// \name Types Inherited from the Polycurve Basic Traits Class
   //@{
   using Has_left_category = typename Base::Has_left_category;
 
@@ -91,7 +91,7 @@ public:
 
   //@}
 
-  /// \name Types and functors inherited from the subcurve geometry traits.
+  /// \name Types and Functors Inherited from the Subcurve Geometry Traits
   //@{
 
   using Has_merge_category = typename Subcurve_traits_2::Has_merge_category;
@@ -121,7 +121,7 @@ public:
    */
   using Curve_2 = internal::Polycurve_2<Subcurve_2, Point_2>;
 
-  /// \name Basic predicate functors(based on the subcurve traits).
+  /// \name Basic Predicate Functors (Based on the Subcurve Traits)
   //@{
 
   /*! \class
@@ -141,7 +141,7 @@ public:
 
   ///@}
 
-  /// \name Construction functors(based on the subcurve traits).
+  /// \name Construction Functors (Based on the Subcurve Traits)
   //@{
 
 #ifndef DOXYGEN_RUNNING

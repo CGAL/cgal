@@ -849,6 +849,7 @@ public:
 
 
   /// \name Point location
+  //\{
 
   /// Do a remembering heuristic walk to locate point (p,o)
   Face_handle
@@ -1180,6 +1181,7 @@ protected:
   /// \pre The point has been located in the triangulation
   Vertex_handle insert(const Point& p, const Offset& o, Locate_type lt,
                        Face_handle loc, int li, Vertex_handle vh);
+  // \}
 
   /// \name Helper functions for queries
   // \{

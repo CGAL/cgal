@@ -1094,7 +1094,7 @@ protected:
   /*! obtains the curve index. */
   inline unsigned int _index() const { return (m_info >> INDEX_SHIFT_BITS); }
 
-  /// \name Accessors for circular arcs.
+  /// \name Accessors for Circular Arcs
   //@{
 
   /*! obtains the x-coordinate of the center of the supporting circle. */
@@ -1118,7 +1118,7 @@ protected:
   }
   //@}
 
-  /// \name Accessors for line segments.
+  /// \name Accessors for Line Segments
   //@{
 
   /*! obtains the coefficient of x in the equation of the supporting line. */
@@ -1131,7 +1131,7 @@ protected:
   inline const NT& c() const { return (m_third); }
   //@}
 
-  /// \name Auxiliary functions for the point_position predicate.
+  /// \name Auxiliary Functions for the point_position Predicate
   //@{
 
   /*! checks the position of a given point with respect to a line segment.
@@ -1200,7 +1200,7 @@ protected:
   }
   //@}
 
-  /// \name Auxiliary functions for the compare_to_right predicate.
+  /// \name Auxiliary Functions for the compare_to_right Predicate
   //@{
 
   /*! compares two line segments to the right of their intersection point.
@@ -1388,7 +1388,7 @@ protected:
   }
   //@}
 
-  /// \name Auxiliary functions for the compare_to_left predicate.
+  /// \name Auxiliary Functions for the compare_to_left Predicate
   //@{
 
   /*! compares two line segments to the left of their intersection point.
@@ -1584,7 +1584,7 @@ protected:
   }
   //@}
 
-  /// \name Auxiliary functions for computing intersections.
+  /// \name Auxiliary Functions for Computing Intersections
   //@{
 
   /*! computes the intersections between two line segments.

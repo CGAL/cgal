@@ -81,7 +81,7 @@ public:
   using Multiplicity = typename Base_traits_2::Multiplicity;
 
 public:
-  /// \name Construction.
+  /// \name Construction
   //@{
 
   /*! constructs default. */
@@ -91,10 +91,7 @@ public:
   Arr_curve_data_traits_2(const Base_traits_2& traits) : Base_traits_2(traits) {}
   //@}
 
-  /// \name Overridden functors.
-  //@{
-
-  //! \name Intersections & subdivisions
+  /// \name Overridden functors: Intersections & Subdivisions
   //@{
 
   /*! \class Make_x_monotone_2
@@ -341,6 +338,9 @@ public:
   Merge_2 merge_2_object() const { return Merge_2(*this); }
 
   //@}
+
+  /// \name Overridden functors: Constructions
+  //@{
 
   class Construct_x_monotone_curve_2 {
   private:

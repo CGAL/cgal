@@ -351,7 +351,7 @@ public:
   typedef Curve_iterator                                 Curve_handle;
   typedef Curve_const_iterator                           Curve_const_handle;
 
-  /// \name Constructors.
+  /// \name Constructors
   //@{
 
   /*! constructs default. */
@@ -364,7 +364,7 @@ public:
   Arrangement_on_surface_with_history_2 (const Geometry_traits_2 *tr);
   //@}
 
-  /// \name Assignment functions.
+  /// \name Assignment Functions
   //@{
 
   /*! assigns. */
@@ -374,7 +374,7 @@ public:
   void assign (const Self& arr);
   //@}
 
-  /// \name Destruction functions.
+  /// \name Destruction Functions
   //@{
 
   /*! destructs. */
@@ -402,7 +402,7 @@ public:
     return (&(this->m_topol_traits));
   }
 
-  /// \name Traversal of the arrangement curves.
+  /// \name Traversal of the Arrangement Curves
   //@{
   Size number_of_curves () const { return (m_curves.size()); }
 
@@ -450,7 +450,7 @@ public:
     }
   };
 
-  /// \name Traversal of the origin curves of an edge.
+  /// \name Traversal of the Origin Curves of an Edge
   //@{
   Size number_of_originating_curves (Halfedge_const_handle e) const
   {
@@ -472,7 +472,7 @@ public:
 
   typedef typename Curve_halfedges::const_iterator   Induced_edge_iterator;
 
-  /// \name Traversal of the edges induced by a curve.
+  /// \name Traversal of the Edges Induced by a Curve
   //@{
   Size number_of_induced_edges (Curve_const_handle c) const { return c->size(); }
 
@@ -483,7 +483,7 @@ public:
   induced_edges_end (Curve_const_handle c) const { return (c->end()); }
   //@}
 
-  /// \name Manipulating edges.
+  /// \name Manipulating Edges
   //@{
 
   /*! splits a given edge into two at the given split point.
@@ -513,7 +513,7 @@ public:
   //@}
 
 protected:
-  /// \name Curve insertion and deletion.
+  /// \name Curve Insertion and Deletion
   //@{
 
   /*! inserts a curve into the arrangement.

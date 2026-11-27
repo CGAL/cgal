@@ -276,7 +276,7 @@ public:
     f_intersect = m_kernel.intersect_2_object();
   }
 
-  /// \name Handling intersection points.
+  /// \name Handling Intersection Points
   //@{
 
   /*!
@@ -493,7 +493,7 @@ public:
   }
   //@}
 
-  /// \name Handling vertcial tangency points.
+  /// \name Handling Vertical Tangency Points
   //@{
 
   /*!
@@ -642,7 +642,7 @@ public:
   }
   //@}
 
-  /// \name Predicates.
+  /// \name Predicates
   //@{
 
   /*!

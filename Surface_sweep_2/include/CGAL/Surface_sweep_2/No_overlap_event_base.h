@@ -420,7 +420,7 @@ public:
   /*! Set the event point. */
   void set_point(const Point_2& pt) { m_point = pt; }
 
-  /// \name Get the event attributes.
+  /// \name Get the Event Attributes
   //@{
   bool is_left_end() const { return ((m_type & LEFT_END) != 0); }
 
@@ -438,7 +438,7 @@ public:
   bool is_overlap() const { return ((m_type & OVERLAP) != 0); }
   //@}
 
-  /// \name Set the event attributes.
+  /// \name Set the Event Attributes
   //@{
   void set_left_end() { m_type |= LEFT_END; }
 
@@ -457,7 +457,7 @@ public:
   void set_attribute(Attribute type) { m_type |= type; }
   //@}
 
-  /// \name Get the boundary conditions of the event.
+  /// \name Get the Boundary Conditions of the Event
   //@{
   inline bool is_closed() const { return (m_closed != 0); }
 

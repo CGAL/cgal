@@ -668,7 +668,7 @@ public:
   }
 /// @}
 
-/// \name Queries on the identifier of the face complex including triangulation cells, facets, and vertices.
+/// \name Queries on the Identifier of the Face Complex Including Triangulation Cells, Facets, and Vertices
 /// @{
   /** returns the index of vertex \p v
   */
@@ -1377,6 +1377,8 @@ public:
   typedef Iterator_range<Prevent_deref<Cells_in_complex_iterator, const Cell_handle&>> Cells_in_complex;
 
 #endif
+
+/// @}
 
 /// \name Iterators
 /// @{

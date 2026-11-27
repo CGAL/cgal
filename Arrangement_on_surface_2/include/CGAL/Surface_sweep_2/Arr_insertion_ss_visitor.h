@@ -89,7 +89,7 @@ public:
   /*! Constructor. */
   Arr_insertion_ss_visitor(Arrangement_2* arr) : Base(arr) {}
 
-  /// \name Edge-split functions (to be overridden by the child visitor).
+  /// \name Edge-Split Functions (to Be Overridden by the Child Visitor)
   //@{
 
   /*! Check if the halfedge associated with the given subcurve will be split

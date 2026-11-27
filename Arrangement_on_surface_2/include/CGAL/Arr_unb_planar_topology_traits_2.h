@@ -58,13 +58,13 @@ private:
   typedef Arr_planar_topology_traits_base_2<Gt2, Dcel_> Base;
 
 public:
-  ///! \name The geometry-traits types.
+  /// \name The Geometry-Traits Types
   //@{
   typedef typename Base::Point_2                         Point_2;
   typedef typename Base::X_monotone_curve_2              X_monotone_curve_2;
   //@}
 
-  ///! \name The DCEL types.
+  /// \name The DCEL Types
   //@{
   typedef typename Base::Size                            Size;
   typedef typename Base::Vertex                          Vertex;
@@ -81,7 +81,7 @@ public:
   typedef Arr_traits_basic_adaptor_2<Gt2>               Gt_adaptor_2;
   //!@}
 
-  ///! \name The side tags
+  /// \name The Side Tags
   //@{
   typedef typename Gt_adaptor_2::Left_side_category   Left_side_category;
   typedef typename Gt_adaptor_2::Bottom_side_category Bottom_side_category;
@@ -121,7 +121,7 @@ protected:
   Self& operator=(const Self&);
 
 public:
-  ///! \name Construction methods.
+  /// \name Construction Methods
   //@{
 
   /*! constructs Default. */
@@ -134,7 +134,7 @@ public:
   void assign(const Self& other);
   //@}
 
-  ///! \name Accessing the DCEL and constructing iterators.
+  /// \name Accessing the DCEL and Constructing Iterators
   //@{
 
   /*! determines whether the DCEL reprsenets an empty structure. */
@@ -191,7 +191,7 @@ public:
   //@}
 
 private:
-  /// \name Auxiliary type definitions.
+  /// \name Auxiliary Type Definitions
   //@{
   typedef Arrangement_on_surface_2<Gt2, Self>                   Arr;
 
@@ -243,7 +243,7 @@ public:
   //@}
 
 public:
-  ///! \name Visitor types.
+  /// \name Visitor Types
   //@{
 
   typedef Arr_inc_insertion_zone_visitor<Arr>
@@ -256,7 +256,7 @@ public:
     Default_vertical_ray_shooting_strategy;
   //@}
 
-  ///! \name Topology-traits methods.
+  /// \name Topology-Traits Methods
   //@{
 
   /*! initializes an empty DCEL structure.
@@ -392,7 +392,7 @@ public:
 
   //@}
 
-  /// \name Additional accessors, specialized for this topology-traits class.
+  /// \name Additional Accessors, Specialized for This Topology-Traits Class
   //@{
 
   /*! This function is used by the "walk" point-location strategy. */
@@ -429,7 +429,7 @@ public:
   Vertex* top_right_vertex() { return (v_tr); }
   //@}
 
-  /// \name Additional predicates, specialized for this topology-traits class.
+  /// \name Additional Predicates, Specialized for This Topology-Traits Class
   //@{
 
   /*! compares the given vertex (which may lie at infinity) and the given point.
@@ -461,7 +461,7 @@ public:
 
 protected:
 
-  /// \name Auxiliary functions.
+  /// \name Auxiliary Functions
   //@{
 
   /*! obtains the curve associated with a boundary vertex.
