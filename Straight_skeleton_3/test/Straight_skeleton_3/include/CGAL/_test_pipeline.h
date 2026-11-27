@@ -33,27 +33,45 @@ namespace CGAL {
 namespace Straight_skeletons_3 {
 namespace utils {
 
+// Weights are signed: faces with a positive weight move outward, and faces with a negative weight
+// move inward. Weights of mixed signs are not supported. Zero weights are not supported either,
+// and are replaced by a tiny weight, with the same sign as the other weights.
 template <typename PolygonMesh, typename FaceWeightMap>
 bool clamp_weights(const PolygonMesh& pmesh, FaceWeightMap fwm)
 {
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
   using FT = typename boost::property_traits<FaceWeightMap>::value_type;
 
+  bool has_positive_weights = false, has_negative_weights = false;
   FT eps_weight = std::numeric_limits<double>::max(); // 'double' on purpose
   for (face_descriptor f : faces(pmesh)) {
     const FT& weight = get(fwm, f);
     if (weight > 0) {
+      has_positive_weights = true;
       eps_weight = (std::min)(eps_weight, weight);
+    } else if (weight < 0) {
+      has_negative_weights = true;
+      eps_weight = (std::min)(eps_weight, FT(- weight));
     }
   }
 
-  if(eps_weight == std::numeric_limits<double>::max())
+  if (!has_positive_weights && !has_negative_weights) {
+    std::cerr << "Error: all weights are zero" << std::endl;
     return false;
+  }
+
+  if (has_positive_weights && has_negative_weights) {
+    std::cerr << "Error: weights must be all non-negative or all non-positive" << std::endl;
+    return false;
+  }
 
   CGAL_SS3_TRACE_V(8, "min_weight = " << eps_weight);
 
   // @todo handle true zero
   eps_weight = 1e-10 * eps_weight;
+  if (has_negative_weights) {
+    eps_weight = - eps_weight;
+  }
 
   // std::cerr << "WARNING: ZERO SPEED ENABLED" << std::endl;
   // eps_weight = 0;
@@ -66,10 +84,21 @@ bool clamp_weights(const PolygonMesh& pmesh, FaceWeightMap fwm)
   }
 
   for(face_descriptor f : faces(pmesh)) {
-    CGAL_postcondition(get(fwm, f) > 0);
+    CGAL_postcondition(has_positive_weights ? get(fwm, f) > 0 : get(fwm, f) < 0);
   }
 
   return true;
+}
+
+// Flips the signs of the weights, that is the direction (inward or outward) in which faces move.
+template <typename PolygonMesh, typename FaceWeightMap>
+void invert_weights(const PolygonMesh& pmesh, FaceWeightMap fwm)
+{
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+
+  for (face_descriptor f : faces(pmesh)) {
+    put(fwm, f, - get(fwm, f));
+  }
 }
 
 template <typename FT>
@@ -78,13 +107,15 @@ bool parse_args(int argc, char** argv,
                 std::filesystem::path& weights_filename,
                 std::filesystem::path& save_path,
                 std::filesystem::path& config_path,
-                std::vector<FT>& save_times)
+                std::vector<FT>& save_times,
+                bool& invert)
 {
   if (argc == 1) {
-    std::cout << "Usage: " << argv[0] << " <input filename> [--weight-path <weights filename>] [--save-times <time_0> <time_1> ...] [--save-path <output directory>] [--config-path <config filename>]" << std::endl;
+    std::cout << "Usage: " << argv[0] << " <input filename> [--weight-path <weights filename>] [--save-times <time_0> <time_1> ...] [--invert] [--save-path <output directory>] [--config-path <config filename>]" << std::endl;
     std::cout << "  <input filename>                   Path to input mesh file (required)" << std::endl;
     std::cout << "  --weight-path <weights filename>   Path to weights file (optional)" << std::endl;
-    std::cout << "  --save-times <times>               List of times (optional, all must be non-zero and same sign)" << std::endl;
+    std::cout << "  --save-times <times>               List of times (optional, all must be positive)" << std::endl;
+    std::cout << "  --invert                           Flip the signs of the weights (optional)" << std::endl;
     std::cout << "  --save-path <output directory>     Directory to save results (optional, defaults to current directory)" << std::endl;
     std::cout << "  --config-path <config filename>    Path to configuration file (optional)" << std::endl;
     return false;
@@ -99,6 +130,7 @@ bool parse_args(int argc, char** argv,
   }
 
   std::vector<std::string> time_strings;
+  invert = false;
 
   for (int i = 2; i < argc; ++i) {
     std::string arg = argv[i];
@@ -107,7 +139,7 @@ bool parse_args(int argc, char** argv,
       if (std::filesystem::exists(candidate) && std::filesystem::is_regular_file(candidate)) {
         weights_filename = argv[i + 1];
       } else {
-        weights_filename = nullptr;
+        weights_filename.clear();
         std::cerr << "Warning: '" << argv[i + 1] << "' is not a valid file. Using default weights." << std::endl;
       }
       ++i;
@@ -137,6 +169,8 @@ bool parse_args(int argc, char** argv,
         ++j;
       }
       i = j - 1;
+    } else if (arg == "--invert") {
+      invert = true;
     }
   }
 
@@ -152,29 +186,15 @@ bool parse_args(int argc, char** argv,
     }
   }
 
-  // Check that all times are of the same sign (ignoring zeros)
+  // sorted, since they come from a set
   save_times = std::vector<FT>(std::cbegin(unique_save_times), std::cend(unique_save_times));
 
-  bool has_positive_times = false, has_negative_times = false;
-  for (auto v : save_times) {
-    if (v == 0) {
-      std::cerr << "Error: time should be non-zero" << std::endl;
+  for (const FT& t : save_times) {
+    if (t <= 0) {
+      std::cerr << "Error: times must be positive" << std::endl;
       return false;
-    } else if (v > 0) {
-      has_positive_times = true;
-    } else if (v < 0) {
-      has_negative_times = true;
     }
   }
-
-  if (has_positive_times && has_negative_times) {
-    std::cerr << "Error: times must all be positive or all negative." << std::endl;
-    return false;
-  }
-
-  std::sort(save_times.begin(), save_times.end(), [](const FT& a, const FT& b) {
-    return CGAL::abs(a) < CGAL::abs(b);
-  });
 
   return true;
 }

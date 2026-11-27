@@ -94,6 +94,8 @@ function process_file_single_function {
     RES_CODE_FILE="${OUTPUT_DIRECTORY}/res_code.txt"
     TIMING_FILE="${OUTPUT_DIRECTORY}/timing.txt"
 
+    # Weights are signed (positive: outward, negative: inward), and the weights of the offset files are positive.
+    # Without offset file, unit weights are used, which are '-1' (inward) by default: '--invert' makes them outward.
     if [ ! -f "$WEIGHT_FILE" ]; then
       echo "====== [INFO]: missing offset file; using test_skeleton_3 ======"
       CMD="./test_skeleton_3 ${FILE} --save-times 1 --save-path ${OUTPUT_DIRECTORY} --config-path ${SEED_CONFIG}"
@@ -134,7 +136,7 @@ function process_file_single_function {
     echo "OC_OUTPUT: ${OC_OUTPUT}"
 
     if [ ! -f "$OC_OUTPUT" ]; then
-      echo "[ERROR]: missing output file?!"
+      echo "[WARNING]: missing comparison output file?!"
       echo "$CMD" > $RESULT_FILE
       echo "PREPROCESS FAILURE" >> $RESULT_FILE
       return
@@ -186,7 +188,7 @@ function process_file_single_function {
                -e "Error: open input" \
                -e "Error: broken input" \
                -e "Error: failed to read weights" \
-               -e "Error: negative weights" \
+               -e "Error: weights must be all non-negative or all non-positive" \
                -e "Error: all weights are zero" \
                -e "Error: input has self intersections" \
                -e "Error: input has nested connected components" \

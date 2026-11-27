@@ -35,8 +35,9 @@ int main(int argc, char** argv)
   std::filesystem::path save_path = std::filesystem::current_path();
   std::filesystem::path config_path;
   std::vector<FT> save_times;
+  bool invert = false;
 
-  if (!SS3::utils::parse_args(argc, argv, mesh_filename, weights_filename, save_path, config_path, save_times)) {
+  if (!SS3::utils::parse_args(argc, argv, mesh_filename, weights_filename, save_path, config_path, save_times, invert)) {
     return EXIT_FAILURE;
   }
 
@@ -57,6 +58,10 @@ int main(int argc, char** argv)
   if (!SS3::utils::assign_cardinal_weights(weights_filename, sm, fwm)) {
     std::cerr << "Error: failed to assign weights" << std::endl;
     return EXIT_FAILURE;
+  }
+
+  if (invert) {
+    SS3::utils::invert_weights(sm, fwm);
   }
 
 #if 0

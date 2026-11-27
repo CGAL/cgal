@@ -23,8 +23,12 @@ using Point_3 = K::Point_3;
 using Mesh = CGAL::Surface_mesh<Point_3>;
 using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
 
+// Faces move with the weights stored in the input (if any), and with unit weights otherwise.
+// Unit weights are '-1' (inward), as by default in the package.
+// If `invert` is `true`, the signs of the weights are flipped (e.g., unit weights become '1', outward).
 void test(const std::string& mesh_filename,
           const std::vector<FT>& save_times,
+          const bool invert = false,
           const std::filesystem::path& save_path = std::filesystem::current_path(),
           const std::filesystem::path& config_path = {},
           bool redict_stdout = true)
@@ -34,7 +38,7 @@ void test(const std::string& mesh_filename,
   for (const auto& t : save_times) {
     std::cout << t << " ";
   }
-  std::cout << std::endl;
+  std::cout << (invert ? "(inverted weights)" : "") << std::endl;
 
   // do nothing if filename is commented (used in scripts)
   if (std::string_view(mesh_filename) == "#" || std::string_view(mesh_filename) == "//") {
@@ -83,12 +87,20 @@ void test(const std::string& mesh_filename,
       put(fwm, f, get(inner_fwm.first, f));
     }
 
-    SS3::utils::clamp_weights(sm, fwm);
-  } else {
-    // constant property map
-    for (face_descriptor f : faces(sm)) {
-      put(fwm, f, 1);
+    if (!SS3::utils::clamp_weights(sm, fwm)) {
+      std::cerr << mesh_filename << " has invalid weights" << std::endl;
+      failed = true;
+      return;
     }
+  } else {
+    // unit weights, inward
+    for (face_descriptor f : faces(sm)) {
+      put(fwm, f, -1);
+    }
+  }
+
+  if (invert) {
+    SS3::utils::invert_weights(sm, fwm);
   }
 
   bool result = SS3::utils::run(sm, fwm, save_times, save_path, config_path);
@@ -98,138 +110,142 @@ void test(const std::string& mesh_filename,
   assert(result);
 }
 
-void test_events(const std::vector<FT>& save_times = {})
+void test_events(const std::vector<FT>& save_times = {},
+                 const bool invert = false)
 {
-  test("data/events/DblEdgeMergeEvent.obj", save_times);
-  test("data/events/DblEdgeMergeEvent_proper.obj", save_times);
-  test("data/events/DblTriangleEvent.obj", save_times);
-  test("data/events/DblTriangleEvent_reflex.obj", save_times);
-  test("data/events/EdgeEvent_noflip.obj", save_times);
-  test("data/events/EdgeEvent.obj", save_times);
-  test("data/events/EdgeMergeEvent_inverted.obj", save_times);
-  test("data/events/EdgeMergeEvent.obj", save_times);
-  test("data/events/EdgeMergeEvent_proper.obj", save_times);
-  test("data/events/EdgeMergeEvent_reflex.obj", save_times);
-  test("data/events/EdgeSplitEvent.obj", save_times);
-  test("data/events/EdgeSplitEvent_outward.obj", save_times);
-  test("data/events/PierceEvent_outward.obj", save_times);
-  test("data/events/FlipVertexEvent.obj", save_times);
-  test("data/events/misc_0.obj", save_times);
-  test("data/events/misc_1.obj", save_times);
-  test("data/events/PierceEvent2.obj", save_times);
-  test("data/events/PierceEvent3bis.obj", save_times);
-  test("data/events/PierceEvent3.obj", save_times);
-  test("data/events/PierceEvent3quater.obj", save_times);
-  test("data/events/PierceEvent3ter.obj", save_times);
-  test("data/events/PierceEvent4.obj", save_times);
-  test("data/events/PierceEvent.obj", save_times);
-  test("data/events/PolyhedronSplitEvent-deg3.obj", save_times);
-  test("data/events/PolyhedronSplitEvent.obj", save_times);
-  test("data/events/SplitMergeEvent.obj", save_times);
-  test("data/events/SplitMergeEvent_reflex.obj", save_times);
-  test("data/events/SplitMergeEvent_reflex_proper.obj", save_times);
-  test("data/events/SurfaceEvent2.obj", save_times);
-  test("data/events/SurfaceEvent.obj", save_times);
-  test("data/events/SurfaceEvent_reflex.obj", save_times);
-  test("data/events/SurfaceEvent_topol.obj", save_times);
-  test("data/events/TetrahedronEvent.obj", save_times);
-  test("data/events/TriangleEvent2.obj", save_times);
-  test("data/events/TriangleEvent.obj", save_times);
-  test("data/events/VertexEvent_EdgeSplit.obj", save_times);
-  test("data/events/VertexEvent.obj", save_times);
-  test("data/events/VertexEvent_topol.obj", save_times);
+  test("data/events/DblEdgeMergeEvent.obj", save_times, invert);
+  test("data/events/DblEdgeMergeEvent_proper.obj", save_times, invert);
+  test("data/events/DblTriangleEvent.obj", save_times, invert);
+  test("data/events/DblTriangleEvent_reflex.obj", save_times, invert);
+  test("data/events/EdgeEvent_noflip.obj", save_times, invert);
+  test("data/events/EdgeEvent.obj", save_times, invert);
+  test("data/events/EdgeMergeEvent_inverted.obj", save_times, invert);
+  test("data/events/EdgeMergeEvent.obj", save_times, invert);
+  test("data/events/EdgeMergeEvent_proper.obj", save_times, invert);
+  test("data/events/EdgeMergeEvent_reflex.obj", save_times, invert);
+  test("data/events/EdgeSplitEvent.obj", save_times, invert);
+  test("data/events/EdgeSplitEvent_outward.obj", save_times, invert);
+  test("data/events/PierceEvent_outward.obj", save_times, invert);
+  test("data/events/FlipVertexEvent.obj", save_times, invert);
+  test("data/events/misc_0.obj", save_times, invert);
+  test("data/events/misc_1.obj", save_times, invert);
+  test("data/events/PierceEvent2.obj", save_times, invert);
+  test("data/events/PierceEvent3bis.obj", save_times, invert);
+  test("data/events/PierceEvent3.obj", save_times, invert);
+  test("data/events/PierceEvent3quater.obj", save_times, invert);
+  test("data/events/PierceEvent3ter.obj", save_times, invert);
+  test("data/events/PierceEvent4.obj", save_times, invert);
+  test("data/events/PierceEvent.obj", save_times, invert);
+  test("data/events/PolyhedronSplitEvent-deg3.obj", save_times, invert);
+  test("data/events/PolyhedronSplitEvent.obj", save_times, invert);
+  test("data/events/SplitMergeEvent.obj", save_times, invert);
+  test("data/events/SplitMergeEvent_reflex.obj", save_times, invert);
+  test("data/events/SplitMergeEvent_reflex_proper.obj", save_times, invert);
+  test("data/events/SurfaceEvent2.obj", save_times, invert);
+  test("data/events/SurfaceEvent.obj", save_times, invert);
+  test("data/events/SurfaceEvent_reflex.obj", save_times, invert);
+  test("data/events/SurfaceEvent_topol.obj", save_times, invert);
+  test("data/events/TetrahedronEvent.obj", save_times, invert);
+  test("data/events/TriangleEvent2.obj", save_times, invert);
+  test("data/events/TriangleEvent.obj", save_times, invert);
+  test("data/events/VertexEvent_EdgeSplit.obj", save_times, invert);
+  test("data/events/VertexEvent.obj", save_times, invert);
+  test("data/events/VertexEvent_topol.obj", save_times, invert);
 }
 
-void test_custom_models(const std::vector<FT>& save_times = {})
+void test_custom_models(const std::vector<FT>& save_times = {},
+                        const bool invert = false)
 {
-  test("data/4xtreme.obj", save_times);
-  test("data/724_star-Butterfly.obj", save_times);
-  test("data/726_star-PNSplit.obj", save_times);
-  test("data/aoi_asteroid.obj", save_times);
-  test("data/Armadillo_000096.obj", save_times);
-  test("data/Armadillo_000194.obj", save_times);
-  test("data/arrangement.obj", save_times);
-  test("data/auren_8.obj", save_times);
-  test("data/box_2.obj", save_times);
-  test("data/box_3.obj", save_times);
-  test("data/box.obj", save_times);
-  test("data/bunny_small.obj", save_times);
-  test("data/chess_bauer.obj", save_times);
-  test("data/chinese_lion_174.obj", save_times);
-  test("data/connected_tunnel.obj", save_times);
-  test("data/convex_piece_2.obj", save_times);
-  test("data/cubet.obj", save_times);
-  test("data/cube_with_hole.off", save_times);
-  test("data/culver_iron_maiden.obj", save_times);
-  test("data/discontinuous.obj", save_times);
-  test("data/disproof_spherical.obj", save_times);
-  test("data/doublebox_n.obj", save_times);
-  test("data/doublebox_n-tmp.obj", save_times);
-  test("data/double_hole_n.obj", save_times);
-  test("data/EdgeEvent_old.obj", save_times);
-  test("data/golem_tunnel_n.obj", save_times);
-  test("data/graph_test_2.obj", save_times);
-  test("data/graph_test_auren.obj", save_times);
-  test("data/hand_small.obj", save_times);
-  test("data/held_convex.obj", save_times);
-  test("data/idea_lower_bound.obj", save_times);
-  test("data/iron_maiden.obj", save_times);
-  test("data/journal_armadillo.obj", save_times);
-  test("data/journal_asteroid.obj", save_times);
-  test("data/journal_bunny.obj", save_times);
-  test("data/journal_lion.obj", save_times);
-  test("data/journal_venus.obj", save_times);
-  test("data/journal_verworrtakelt.obj", save_times);
-  test("data/kiev.obj", save_times);
-  test("data/krampus_tunnel_n.obj", save_times);
-  test("data/mini_maiden.obj", save_times);
-  test("data/mpi.off", save_times);
-  test("data/prisms5_n.obj", save_times);
-  test("data/prisms5.obj", save_times);
-  test("data/pyramid_3c2r.obj", save_times);
-  test("data/pyramid_5c1r.obj", save_times);
-  test("data/pyramid.off", save_times);
-  test("data/pyramids_hole_n.obj", save_times);
-  test("data/pyramids_hole.obj", save_times);
-  test("data/saddle_2.obj", save_times);
-  test("data/saddle_3.obj", save_times);
-  test("data/saddle6.obj", save_times);
-  test("data/saddle.obj", save_times);
-  test("data/Schoenhardt.obj", save_times);
-  test("data/seastar.obj", save_times);
-  test("data/small_sphere_shake.obj", save_times);
-  test("data/splitConvexVertex5.obj", save_times);
-  test("data/splitConvexVertex.obj", save_times);
-  test("data/splitEdgeEvent_noflip.obj", save_times);
-  test("data/splitReflexVertex.obj", save_times);
-  test("data/splitTermination.obj", save_times);
-  test("data/split_wedge_tabletop.obj", save_times);
-  test("data/Star.obj", save_times);
-  test("data/StarVertex.obj", save_times);
-  test("data/sticking.obj", save_times);
-  test("data/ted_mit_loch.obj", save_times);
-  test("data/testWeightVertexSplitter.obj", save_times);
-  test("data/torus.obj", save_times);
-  test("data/torus_void_n.obj", save_times);
-  test("data/torus_void.obj", save_times);
-  test("data/transformer_clean_n.obj", save_times);
-  test("data/transformer_last_n.obj", save_times);
-  test("data/transformer_n.obj", save_times);
-  test("data/tunnel.obj", save_times);
-  test("data/venus_115.obj", save_times);
-  test("data/venus_267.obj", save_times);
-  test("data/verworrtakelt_fixed.obj", save_times);
-  test("data/verworrtakelt_n.obj", save_times);
-  test("data/verworrtakelt.obj", save_times);
-  test("data/wedge_tabletop.obj", save_times);
+  test("data/4xtreme.obj", save_times, invert);
+  test("data/724_star-Butterfly.obj", save_times, invert);
+  test("data/726_star-PNSplit.obj", save_times, invert);
+  test("data/aoi_asteroid.obj", save_times, invert);
+  test("data/Armadillo_000096.obj", save_times, invert);
+  test("data/Armadillo_000194.obj", save_times, invert);
+  test("data/arrangement.obj", save_times, invert);
+  test("data/auren_8.obj", save_times, invert);
+  test("data/box_2.obj", save_times, invert);
+  test("data/box_3.obj", save_times, invert);
+  test("data/box.obj", save_times, invert);
+  test("data/bunny_small.obj", save_times, invert);
+  test("data/chess_bauer.obj", save_times, invert);
+  test("data/chinese_lion_174.obj", save_times, invert);
+  test("data/connected_tunnel.obj", save_times, invert);
+  test("data/convex_piece_2.obj", save_times, invert);
+  test("data/cubet.obj", save_times, invert);
+  test("data/cube_with_hole.off", save_times, invert);
+  test("data/culver_iron_maiden.obj", save_times, invert);
+  test("data/discontinuous.obj", save_times, invert);
+  test("data/disproof_spherical.obj", save_times, invert);
+  test("data/doublebox_n.obj", save_times, invert);
+  test("data/doublebox_n-tmp.obj", save_times, invert);
+  test("data/double_hole_n.obj", save_times, invert);
+  test("data/EdgeEvent_old.obj", save_times, invert);
+  test("data/golem_tunnel_n.obj", save_times, invert);
+  test("data/graph_test_2.obj", save_times, invert);
+  test("data/graph_test_auren.obj", save_times, invert);
+  test("data/hand_small.obj", save_times, invert);
+  test("data/held_convex.obj", save_times, invert);
+  test("data/idea_lower_bound.obj", save_times, invert);
+  test("data/iron_maiden.obj", save_times, invert);
+  test("data/journal_armadillo.obj", save_times, invert);
+  test("data/journal_asteroid.obj", save_times, invert);
+  test("data/journal_bunny.obj", save_times, invert);
+  test("data/journal_lion.obj", save_times, invert);
+  test("data/journal_venus.obj", save_times, invert);
+  test("data/journal_verworrtakelt.obj", save_times, invert);
+  test("data/kiev.obj", save_times, invert);
+  test("data/krampus_tunnel_n.obj", save_times, invert);
+  test("data/mini_maiden.obj", save_times, invert);
+  test("data/mpi.off", save_times, invert);
+  test("data/prisms5_n.obj", save_times, invert);
+  test("data/prisms5.obj", save_times, invert);
+  test("data/pyramid_3c2r.obj", save_times, invert);
+  test("data/pyramid_5c1r.obj", save_times, invert);
+  test("data/pyramid.off", save_times, invert);
+  test("data/pyramids_hole_n.obj", save_times, invert);
+  test("data/pyramids_hole.obj", save_times, invert);
+  test("data/saddle_2.obj", save_times, invert);
+  test("data/saddle_3.obj", save_times, invert);
+  test("data/saddle6.obj", save_times, invert);
+  test("data/saddle.obj", save_times, invert);
+  test("data/Schoenhardt.obj", save_times, invert);
+  test("data/seastar.obj", save_times, invert);
+  test("data/small_sphere_shake.obj", save_times, invert);
+  test("data/events/splitConvexVertex5.obj", save_times, invert);
+  test("data/events/splitConvexVertex.obj", save_times, invert);
+  test("data/events/splitEdgeEvent_noflip.obj", save_times, invert);
+  test("data/events/splitReflexVertex.obj", save_times, invert);
+  test("data/events/splitTermination.obj", save_times, invert);
+  test("data/events/split_wedge_tabletop.obj", save_times, invert);
+  test("data/Star.obj", save_times, invert);
+  test("data/StarVertex.obj", save_times, invert);
+  test("data/sticking.obj", save_times, invert);
+  test("data/ted_mit_loch.obj", save_times, invert);
+  test("data/testWeightVertexSplitter.obj", save_times, invert);
+  test("data/torus.obj", save_times, invert);
+  test("data/torus_void_n.obj", save_times, invert);
+  test("data/torus_void.obj", save_times, invert);
+  test("data/transformer_clean_n.obj", save_times, invert);
+  test("data/transformer_last_n.obj", save_times, invert);
+  test("data/transformer_n.obj", save_times, invert);
+  test("data/tunnel.obj", save_times, invert);
+  test("data/venus_115.obj", save_times, invert);
+  test("data/venus_267.obj", save_times, invert);
+  test("data/verworrtakelt_fixed.obj", save_times, invert);
+  test("data/verworrtakelt_n.obj", save_times, invert);
+  test("data/verworrtakelt.obj", save_times, invert);
+  test("data/wedge_tabletop.obj", save_times, invert);
 }
 
 void test_defaults()
 {
-  test_events();
-  test_events({1, 2, 3});
-  test_custom_models();
-  test_custom_models({1, 2, 3});
+  test_events(); // complete interior skeletons
+  test_events({1, 2, 3}, false /*inward offsets*/);
+  test_events({1, 2, 3}, true /*invert: outward offsets*/);
+  test_custom_models(); // complete interior skeletons
+  test_custom_models({1, 2, 3}, false /*inward offsets*/);
+  test_custom_models({1, 2, 3}, true /*invert: outward offsets*/);
 }
 
 int main(int argc, char** argv)
@@ -246,14 +262,13 @@ int main(int argc, char** argv)
     std::filesystem::path save_path = std::filesystem::current_path();
     std::filesystem::path config_path;
     std::vector<FT> save_times;
+    bool invert = false;
 
-    if (!SS3::utils::parse_args(argc, argv, mesh_filename, weights_filename, save_path, config_path, save_times)) {
+    if (!SS3::utils::parse_args(argc, argv, mesh_filename, weights_filename, save_path, config_path, save_times, invert)) {
       return EXIT_FAILURE;
     }
 
-    test(mesh_filename, save_times, save_path, config_path, false /*do not redirect stdout*/);
-    test(mesh_filename, {-1}, save_path, config_path, false /*do not redirect stdout*/);
-    test(mesh_filename, { 1}, save_path, config_path, false /*do not redirect stdout*/);
+    test(mesh_filename, save_times, invert, save_path, config_path, false /*do not redirect stdout*/);
   }
 
   std::cout << "Done" << std::endl;

@@ -30,6 +30,12 @@ namespace utils {
 // based on the face's normal and the user-provided weights in the canonical x, y and z directions.
 // Weights are written in the property map `fwm`.
 //
+// Weights are signed: positive weights move faces outward, and negative weights move faces inward.
+// The user-provided weights must be all non-negative or all non-positive. Zero weights are replaced
+// by a tiny weight with the same sign as the other weights (see `clamp_weights()`).
+// Without weights file, all weights are set to `-1` (faces move inward at unit speed), which is the default
+// of the package.
+//
 // \tparam PolygonMesh must be a model of `FaceListGraph`
 // \tparam FaceWeightMap must be a model of `ReadWritePropertyMap`
 //
@@ -60,9 +66,9 @@ bool assign_cardinal_weights(const std::filesystem::path& weights_filename,
   std::ifstream weights_in(weights_filename);
 
   if (!weights_in) {
-    CGAL_SS3_TRACE_V(1, "Warning: no input weights provided; all weights are set to '1'.");
+    CGAL_SS3_TRACE_V(1, "Warning: no input weights provided; all weights are set to '-1'.");
     for (face_descriptor f : faces(pmesh)) {
-      put(fwm, f, 1);
+      put(fwm, f, -1);
     }
 
     return true;
@@ -97,8 +103,11 @@ bool assign_cardinal_weights(const std::filesystem::path& weights_filename,
     }
   }
 
-  if(x1_val < 0 || x2_val < 0 || y1_val < 0 || y2_val < 0 || bot_val < 0 || top_val < 0) {
-    std::cerr << "Error: negative weights are not allowed" << std::endl;
+  // The weight of a face is a convex combination of these weights (see below),
+  // so faces have weights of a single sign if these weights do
+  if((x1_val > 0 || x2_val > 0 || y1_val > 0 || y2_val > 0 || bot_val > 0 || top_val > 0) &&
+     (x1_val < 0 || x2_val < 0 || y1_val < 0 || y2_val < 0 || bot_val < 0 || top_val < 0)) {
+    std::cerr << "Error: weights must be all non-negative or all non-positive" << std::endl;
     return false;
   }
 
@@ -175,7 +184,6 @@ bool assign_cardinal_weights(const std::filesystem::path& weights_filename,
   }
 
   if (!clamp_weights(pmesh, fwm)) {
-    std::cerr << "Error: all face weights are zero" << std::endl;
     return false;
   }
 
