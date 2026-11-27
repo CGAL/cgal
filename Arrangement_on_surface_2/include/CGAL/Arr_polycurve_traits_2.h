@@ -669,6 +669,13 @@ public:
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, OutputIterator oi) const {
+      // The comparisons below are not applicable to curves that lie on the
+      // identification curve.
+      if constexpr (Polycurve_traits_2::has_identified_x_sides) {
+        if (m_poly_traits.is_on_identification(cv1) || m_poly_traits.is_on_identification(cv2))
+          return m_poly_traits.intersect_on_identification(cv1, cv2, oi);
+      }
+
       // std::cout << "intersect(" << cv1 << ", " << cv2 << ")\n";
       using Intersection_point = std::pair<Point_2, Multiplicity>;
       using Intersection_base_result = std::variant<Intersection_point, X_monotone_subcurve_2>;

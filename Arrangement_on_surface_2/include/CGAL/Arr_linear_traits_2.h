@@ -25,6 +25,9 @@
  */
 
 #include <fstream>
+#include <algorithm>
+#include <limits>
+#include <vector>
 
 #include <variant>
 
@@ -1629,70 +1632,97 @@ public:
       return oi;
     }
 
-    /*! obtains an approximation of an \f$x\f$-monotone curve.
+    /*! obtains an approximation of an \f$x\f$-monotone curve clipped to a
+     * bounding box, with one exception: a maximal portion of the curve that
+     * lies in the vertical strip bounded by the left and right sides of the
+     * box, but below the bottom side (resp. above the top side) of the box,
+     * is not removed. Instead, it is represented by points that lie strictly
+     * below the bottom side (resp. above the top side). These points are the
+     * projections of the extreme points of the portion onto the line parallel
+     * to the bottom side (resp. top side) at distance \f$h\f$ below (resp.
+     * above) it, where \f$h\f$ is the height of the box. Thus, the points of
+     * the approximation that lie inside the box form the approximation of the
+     * curve clipped to the box, and clamping the \f$y\f$-coordinates of all
+     * points to the \f$y\f$-range of the box yields an approximation of the
+     * curve portion in the strip clamped to the box.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */, OutputIterator oi, const Bbox_2& bbox,
                               bool l2r = true) const {
       using Approx_pnt = Approximate_point_2;
-      using Approx_seg = Approximate_kernel::Segment_2;
-      using Approx_ray = Approximate_kernel::Ray_2;
-      using Approx_lin = Approximate_kernel::Line_2;
-      auto xmin = bbox.xmin();
-      auto ymin = bbox.ymin();
-      auto xmax = bbox.xmax();
-      auto ymax = bbox.ymax();
-      Approximate_kernel::Iso_rectangle_2 rect(xmin, ymin, xmax, ymax);
-      if (xcv.is_ray()) {
-        auto ray = xcv.ray();
-        Kernel kernel;
-        auto construct_vertex = kernel.construct_point_on_2_object();
-        Approx_pnt s = this->operator()(construct_vertex(ray, 0));
-        Approx_pnt t = this->operator()(construct_vertex(ray, 1));
-        const auto result = CGAL::intersection(rect, Approx_ray(s, t));
-        if (! result) return oi;
+      const double xmin = bbox.xmin();
+      const double xmax = bbox.xmax();
+      const double ymin = bbox.ymin();
+      const double ymax = bbox.ymax();
+      // The lines that represent portions below and above the box.
+      const double h = (ymax > ymin) ? (ymax - ymin) : 1.0;
+      const double ylo = ymin - h;
+      const double yhi = ymax + h;
+      const double inf = std::numeric_limits<double>::infinity();
+      // Project a point that lies below or above the box onto the corresponding line.
+      auto project = [&](double x, double y) {
+        if (y < ymin) return Approx_pnt(x, ylo);
+        if (y > ymax) return Approx_pnt(x, yhi);
+        return Approx_pnt(x, y);
+      };
 
-        if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-          *oi++ = l2r ? (res_seg->min)() : (res_seg->max)();
-          *oi++ = l2r ? (res_seg->max)() : (res_seg->min)();
-          return oi;
+      Kernel kernel;
+      auto point_on = kernel.construct_point_on_2_object();
+      const auto& line = xcv.supp_line();
+
+      // Obtain two distinct approximate points s and t on the supporting line.
+      // Use the curve endpoints when they exist to improve precision.
+      Approx_pnt s = xcv.has_left() ? this->operator()(xcv.left()) : this->operator()(point_on(line, 0));
+      Approx_pnt t = xcv.has_right() ? this->operator()(xcv.right()) : this->operator()(point_on(line, 1));
+      if (s == t) t = this->operator()(point_on(line, 2));
+
+      std::vector<Approx_pnt> pts;
+      if (xcv.is_vertical()) {
+        const double x = s.x();
+        if ((x < xmin) || (x > xmax)) return oi;
+        double y_lo = xcv.has_left() ? s.y() : -inf;
+        double y_hi = xcv.has_right() ? t.y() : inf;
+        if (y_hi < y_lo) std::swap(y_lo, y_hi);
+        pts.push_back(project(x, y_lo));
+        // Insert the points where the curve crosses the bottom and top sides.
+        // A crossing is inserted whenever exactly one end is projected, so that
+        // every projected point is adjacent to a point on the curve.
+        if ((y_lo < ymin) != (y_hi < ymin)) pts.emplace_back(x, ymin);
+        if ((y_lo > ymax) != (y_hi > ymax)) pts.emplace_back(x, ymax);
+        pts.push_back(project(x, y_hi));
+      }
+      else {
+        if (t.x() < s.x()) std::swap(s, t);
+        // The x-range of the curve intersected with the strip [xmin, xmax].
+        const double a = xcv.has_left() ? std::max(xmin, this->operator()(xcv.left(), 0)) : xmin;
+        const double b = xcv.has_right() ? std::min(xmax, this->operator()(xcv.right(), 0)) : xmax;
+        if (a > b) return oi;
+        const double dx = t.x() - s.x();
+        const double dy = t.y() - s.y();
+        auto y_at = [&](double x) { return (x == s.x()) ? s.y() : ((x == t.x()) ? t.y() : s.y() + (x - s.x()) * dy / dx); };
+        auto x_at = [&](double y) { return s.x() + (y - s.y()) * dx / dy; };
+        const double ya = y_at(a);
+        const double yb = y_at(b);
+        pts.push_back(project(a, ya));
+        // Insert the points where the curve crosses the bottom and top sides.
+        // A crossing is inserted whenever exactly one end is projected, so that
+        // every projected point is adjacent to a point on the curve. The
+        // crossing is clamped to [a, b] to compensate for rounding errors.
+        const bool below = (ya < ymin) != (yb < ymin);
+        const bool above = (ya > ymax) != (yb > ymax);
+        auto insert_crossing = [&](double yv) { pts.emplace_back(std::clamp(x_at(yv), a, b), yv); };
+        if (ya < yb) {
+          if (below) insert_crossing(ymin);
+          if (above) insert_crossing(ymax);
         }
-        const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
-        CGAL_assertion(res_pnt != nullptr);
-        *oi++ = *res_pnt;
-        return oi;
-      }
-      if (xcv.is_line()) {
-        const Line_2 & supp_line = xcv.supp_line();
-        Approx_lin approx_supp_line(
-          CGAL::to_double(supp_line.a()),
-          CGAL::to_double(supp_line.b()),
-          CGAL::to_double(supp_line.c()));
-        const auto result = CGAL::intersection(rect, approx_supp_line);
-        if (! result) return oi;
-
-        if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-          *oi++ = l2r ? (res_seg->min)() : (res_seg->max)();
-          *oi++ = l2r ? (res_seg->max)() : (res_seg->min)();
-          return oi;
+        else {
+          if (above) insert_crossing(ymax);
+          if (below) insert_crossing(ymin);
         }
-        const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
-        CGAL_assertion(res_pnt != nullptr);
-        *oi++ = *res_pnt;
-        return oi;
+        pts.push_back(project(b, yb));
       }
-      Approx_seg seg(this->operator()(xcv.source()), this->operator()(xcv.target()));
-      const auto result = CGAL::intersection(rect, seg);
-      if (! result) return oi;
-
-      if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-        *oi++ = l2r ? (res_seg->min)() : (res_seg->max)();
-        *oi++ = l2r ? (res_seg->max)() : (res_seg->min)();
-        return oi;
-      }
-      const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
-      CGAL_assertion(res_pnt != nullptr);
-      *oi++ = *res_pnt;
+      if (! l2r) std::reverse(pts.begin(), pts.end());
+      for (const auto& pt : pts) *oi++ = pt;
       return oi;
     }
   };

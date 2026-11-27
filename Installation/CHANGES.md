@@ -150,6 +150,13 @@ Release date: December 2026
   and [`CGAL::Arr_tracing_traits_2`](https://doc.cgal.org/6.3/Arrangement_on_surface_2/classCGAL_1_1Arr__tracing__traits__2.html).
   Each is (still) parameterized with another traits class being decorated, but it does not inherit from it.
   In addition, one can get and set a smart pointer to the class being decorated.
+- **Breaking change**: Changed the semantics of the operator of the functor `Approximate_2` that approximates an x-monotone curve
+  constrained to a bounding box, required by the concept [`AosTraits::ApproximateUnbounded_2`](https://doc.cgal.org/6.3/Arrangement_on_surface_2/classAosTraits_1_1ApproximateUnbounded__2.html).
+  The operator now inserts a single sequence of approximate points that represents the curve clipped to the bounding box,
+  where every portion of the curve that lies below or above the box (within the vertical strip of the box) is represented
+  by points strictly below or above the box, respectively, rather than removed. The model `Arr_linear_traits_2` has been
+  adapted accordingly. This enables the drawing of arrangements induced by unbounded curves without constructing exact points
+  from approximate points.
 
 ### [3D Triangulations](https://doc.cgal.org/6.3/Manual/packages.html#PkgTriangulation3)
 

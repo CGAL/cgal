@@ -1484,9 +1484,13 @@ compile_and_run(test_io)
 compile_and_run(test_sgm)
 
 compile_and_run(test_polycurve_intersection)
+compile_and_run(test_polycurve_approximation)
+compile_and_run(test_polyline_construction)
+compile_and_run(test_polycurve_on_sphere)
 
 compile_and_run(test_tracing_traits)
 compile_and_run(test_counting_traits)
+compile_and_run(test_draw_traits_detection)
 
 if(CGAL_DISABLE_GMP)
   get_directory_property(LIST_OF_TESTS TESTS)
