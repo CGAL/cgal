@@ -4,6 +4,7 @@
 
 #include <CGAL/Quotient.h>
 #include <CGAL/use.h>
+#include <limits>
 #include <cassert>
 #include <CGAL/MP_Float.h>
 #ifdef CGAL_USE_GMP
@@ -43,6 +44,24 @@ void test_double_ctor()
   assert( (q1-0.3) == (q1-Qt(0.3)));
   assert( (q1*0.3) == (q1*Qt(0.3)));
   assert( (q1/0.3) == (q1/Qt(0.3)));
+
+  // Construction from a subnormal double used to fail with a postcondition
+  // violation: no finite double can hold the denominator of denorm_min.
+  if ((std::numeric_limits<double>::has_denorm)() != std::denorm_absent)
+  {
+    const double d = (std::numeric_limits<double>::denorm_min)();
+    Qt q = d;
+    assert(q.numerator() != T(0));
+    T num = q.numerator();
+    T den = q.denominator();
+    // denorm_min == 2^-1074, hence den == num * 2^1074.
+    for (int i = 0; i < 1074; ++i) num *= 2;
+    assert(num == den);
+
+    Qt qneg = -d;
+    assert(qneg.numerator() == -q.numerator());
+    assert(qneg.denominator() == q.denominator());
+  }
 }
 
 void test_comparison_operators()

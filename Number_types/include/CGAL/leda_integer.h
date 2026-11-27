@@ -216,9 +216,7 @@ struct Split_double<leda_integer>
 {
   void operator()(double d, leda_integer &num, leda_integer &den) const
   {
-    std::pair<double, double> p = split_numerator_denominator(d);
-    num = leda_integer(p.first);
-    den = leda_integer(p.second);
+    split_numerator_denominator(d, num, den);
   }
 };
 

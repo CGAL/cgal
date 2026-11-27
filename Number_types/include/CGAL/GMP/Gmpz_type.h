@@ -411,9 +411,7 @@ struct Split_double<Gmpz>
 {
   void operator()(double d, Gmpz &num, Gmpz &den) const
   {
-    std::pair<double, double> p = split_numerator_denominator(d);
-    num = Gmpz(p.first);
-    den = Gmpz(p.second);
+    split_numerator_denominator(d, num, den);
   }
 };
 

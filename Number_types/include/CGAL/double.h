@@ -207,6 +207,42 @@ split_numerator_denominator(double d)
   return std::make_pair(num, den);
 }
 
+// The overload above cannot handle subnormal doubles: making the numerator
+// integral would require a denominator larger than the largest finite double.
+// This version keeps the denominator in an exact integer type, and scales
+// subnormal values into the normal range first.
+template <typename NT>
+inline
+void
+split_numerator_denominator(double d, NT& num, NT& den)
+{
+  CGAL_precondition_msg(std::isfinite(d),
+                        "split_numerator_denominator() requires a finite double");
+
+  num = 0;
+  den = 1;
+  if (d == 0) return;
+
+  const bool negative = d < 0;
+  if (negative) d = -d;
+
+  // 2^52. A subnormal multiplied by this value is normal, and small enough
+  // that doubling the numerator cannot overflow the double denominator
+  // computed by the overload above.
+  const double two_52 = 4503599627370496.0;
+  NT scale(1);
+  while (d < (std::numeric_limits<double>::min)())
+  {
+    d *= two_52;
+    scale *= NT(two_52);
+  }
+
+  const std::pair<double, double> p = split_numerator_denominator(d);
+  num = NT(p.first);
+  den = NT(p.second) * scale;
+  if (negative) num = -num;
+}
+
 } //namespace CGAL
 
 #endif // CGAL_DOUBLE_H

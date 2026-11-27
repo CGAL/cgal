@@ -346,9 +346,7 @@ struct Split_double<mpz_class>
 {
   void operator()(double d, mpz_class &num, mpz_class &den) const
   {
-    std::pair<double, double> p = split_numerator_denominator(d);
-    num = mpz_class(p.first);
-    den = mpz_class(p.second);
+    split_numerator_denominator(d, num, den);
   }
 };
 
