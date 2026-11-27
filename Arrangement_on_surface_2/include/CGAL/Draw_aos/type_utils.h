@@ -47,8 +47,7 @@ template <typename, typename, typename = std::void_t<>>
 struct has_approximate_point : std::false_type {};
 
 template <typename Gt, typename A>
-struct has_approximate_point<Gt,
-                             A,
+struct has_approximate_point<Gt, A,
                              std::void_t<decltype(std::declval<A>()(std::declval<const typename Gt::Point_2&>()))>> :
     std::true_type
 {};
@@ -61,14 +60,12 @@ template <typename, typename, typename, typename = std::void_t<>>
 struct has_approximate_xcv : std::false_type {};
 
 template <typename Gt, typename A, typename O>
-struct has_approximate_xcv
-<Gt,
- A,
- O,
- std::void_t<decltype(std::declval<A&>()(std::declval<const typename Gt::X_monotone_curve_2&>(),
-                                         std::declval<double>(),
-                                         std::declval<O>(),
-                                         std::declval<bool>()))>> : std::true_type
+struct has_approximate_xcv<Gt, A, O,
+                           std::void_t<decltype(std::declval<A&>()
+                                                (std::declval<const typename Gt::X_monotone_curve_2&>(),
+                                                 std::declval<double>(),
+                                                 std::declval<O>(),
+                                                 std::declval<bool>()))>> : std::true_type
 {};
 
 // Detect whether A has operator()(const Gt::X_monotone_curve_2&, double, OutputIterator, bool)?
@@ -76,31 +73,38 @@ template <typename Gt, typename A>
 constexpr bool has_approximate_xcv_v = has_approximate_xcv<Gt, A, void*>::value;
 
 template <typename, typename, typename, typename = std::void_t<>>
-struct has_approximate_xcv_with_bounds : std::false_type
-{};
+struct has_approximate_xcv_with_bounds : std::false_type {};
 
 template <typename Gt, typename A, typename O>
-struct has_approximate_xcv_with_bounds
-<Gt,
- A,
- O,
- std::void_t<decltype(std::declval<A&>()(std::declval<const typename Gt::X_monotone_curve_2&>(),
-                                         std::declval<double>(),
-                                         std::declval<O>(),
-                                         std::declval<Bbox_2>(),
-                                         std::declval<bool>()))>> : std::true_type
+struct has_approximate_xcv_with_bounds<Gt, A, O,
+                                       std::void_t<decltype(std::declval<A&>()
+                                                            (std::declval<const typename Gt::X_monotone_curve_2&>(),
+                                                             std::declval<double>(),
+                                                             std::declval<O>(),
+                                                             std::declval<Bbox_2>(),
+                                                             std::declval<bool>()))>> : std::true_type
 {};
 
 // Detect whether A has operator()(const X_monotone_curve&, double, OutputIterator, Bbox_2, bool)
 template <typename Gt, typename A>
 inline constexpr bool has_approximate_xcv_with_bounds_v = has_approximate_xcv_with_bounds<Gt, A, void*>::value;
 
-// Detect whether a geometry traits has all the necessary types and functions for approximation
+// Detect whether a geometry traits has all the necessary types and functions for approximation.
+// The nested type `Gt::Approximate_2` is used only in the partial specialization, which is a SFINAE context; thus, a
+// traits that lacks this type selects the primary template (and yields `false`) rather than causing a hard error.
+template <typename Gt, typename = std::void_t<>>
+struct has_approximate_traits : std::false_type {};
+
 template <typename Gt>
-constexpr bool has_approximate_traits_v =
-  has_approximate_2_object_v<Gt> && has_approximate_point_v<Gt, typename Gt::Approximate_2> &&
-  (has_approximate_xcv_v<Gt, typename Gt::Approximate_2> ||
-   has_approximate_xcv_with_bounds_v<Gt, typename Gt::Approximate_2>);
+struct has_approximate_traits<Gt, std::void_t<typename Gt::Approximate_2>> :
+  std::bool_constant<has_approximate_2_object_v<Gt> &&
+                     has_approximate_point_v<Gt, typename Gt::Approximate_2> &&
+                     (has_approximate_xcv_v<Gt, typename Gt::Approximate_2> ||
+                      has_approximate_xcv_with_bounds_v<Gt, typename Gt::Approximate_2>)>
+{};
+
+template <typename Gt>
+inline constexpr bool has_approximate_traits_v = has_approximate_traits<Gt>::value;
 
 // Obtain the traits that a traits class is built upon, if any:
 // - A traits decorator, e.g., `Arr_tracing_traits_2` or `Arr_counting_traits_2`,
