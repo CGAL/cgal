@@ -189,7 +189,7 @@ public:
 
   //@}
 
-  /// \name Operator overloading
+  /// \name Operator Overloading
   //@{
 
   /*! Assignment operator.
@@ -210,7 +210,7 @@ public:
 
   //@}
 
-  /// \name Access methods
+  /// \name Access Methods
   //@{
 
   inline Self& self() { return *this; }

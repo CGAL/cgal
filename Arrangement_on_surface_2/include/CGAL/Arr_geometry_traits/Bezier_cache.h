@@ -41,7 +41,7 @@ public:
 
   typedef _Bezier_cache<Nt_traits>                Self;
 
-  /// \name Type definitions for the vertical tangency-point mapping
+  /// \name Type Definitions for the Vertical Tangency-Point Mapping
   //@{
   typedef size_t                                     Curve_id;
   typedef std::list<Algebraic>                       Vertical_tangency_list;
@@ -49,7 +49,7 @@ public:
     typename Vertical_tangency_list::const_iterator  Vertical_tangency_iter;
   //@}
 
-  /// \name Type definitions for the intersection-point mapping
+  /// \name Type Definitions for the Intersection-Point Mapping
   //@{
 
   /*! \struct Intersection_point

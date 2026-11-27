@@ -43,7 +43,7 @@ class Arr_polycurve_basic_traits_2 {
 public:
   using Subcurve_traits_2 = SubcurveTraits_2;
 
-  /// \name Types and functors inherited from the subcurve geometry traits
+  /// \name Types and Functors Inherited from the Subcurve Geometry Traits
   //@{
 
   using Has_left_category = typename Subcurve_traits_2::Has_left_category;
@@ -1933,7 +1933,7 @@ public:
 
   //@}
 
-  /// \name Types and functors defined here not required by any concept
+  /// \name Types and Functors Defined Here Not Required by Any Concept
   //@{
 
   /*! \class

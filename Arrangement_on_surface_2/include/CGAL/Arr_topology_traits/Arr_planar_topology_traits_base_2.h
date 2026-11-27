@@ -42,14 +42,14 @@ template <typename GeomTraits_,
 class Arr_planar_topology_traits_base_2
 {
 public:
-  ///! \name The geometry-traits types
+  ///! \name The Geometry-Traits Types
   //@{
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
   //@}
 
-  ///! \name The DCEL types
+  ///! \name The DCEL Types
   //@{
   typedef Dcel_                                           Dcel;
   typedef typename Dcel::Size                             Size;
@@ -79,7 +79,7 @@ protected:
   Self& operator=(const Self&);
 
 public:
-  ///! \name Construction methods
+  ///! \name Construction Methods
   //@{
 
   /*! constructs defaults. */
@@ -109,7 +109,7 @@ public:
 
   //@}
 
-  ///! \name Common topology-traits methods
+  ///! \name Common Topology-Traits Methods
   //@{
 
   /*! obtains the DCEL (const version). */
@@ -201,14 +201,14 @@ public:
 
   //@}
 
-  /// \name Additional accessors, specialized for this topology-traits class
+  /// \name Additional Accessors, Specialized for This Topology-Traits Class
   //@{
 
   /*! This function is used by the "walk" point-location strategy. */
   virtual const Face* initial_face () const = 0;
   //@}
 
-  /// \name Additional predicates, specialized for this topology-traits class
+  /// \name Additional Predicates, Specialized for This Topology-Traits Class
   //@{
 
   /*! compares the given vertex (which may lie at infinity) and the given point.

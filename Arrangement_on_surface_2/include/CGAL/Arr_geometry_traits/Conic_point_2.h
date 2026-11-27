@@ -94,7 +94,7 @@ public:
   Conic_point_2(const Algebraic& x, const Algebraic& y) : Base(x, y) {}
   //@}
 
-  /// \name Maintaining the generating conic IDs
+  /// \name Maintaining the Generating Conic IDs
   //@{
 
   /*! Add a generating conic ID. */

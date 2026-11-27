@@ -113,7 +113,7 @@ public:
     return (*m_in);
   }
 
-  /// \name Global write functions
+  /// \name Global Write Functions
   //@{
 
   /*! writes a begin-arrangement comment. */
@@ -176,7 +176,7 @@ public:
   }
   //@}
 
-  /// \name Write a vertex
+  /// \name Write a Vertex
   //@{
   void write_vertex_begin()
   {}
@@ -195,7 +195,7 @@ public:
   {}
   //@}
 
-  /// \name Write an edge
+  /// \name Write an Edge
   //@{
   void write_edge_begin()
   {}
@@ -219,7 +219,7 @@ public:
   {}
   //@}
 
-  /// \name Write a face
+  /// \name Write a Face
   //@{
   void write_face_begin()
   {
@@ -270,7 +270,7 @@ public:
   }
   //@}
 
-  /// \name Global read functions
+  /// \name Global Read Functions
   //@{
 
   /*! starts reading an arrangement. */
@@ -335,7 +335,7 @@ public:
   }
   //@}
 
-  /// \name Reading a vertex
+  /// \name Reading a Vertex
   //@{
   void read_vertex_begin()
   {}
@@ -353,7 +353,7 @@ public:
   {}
   //@}
 
-  /// \name Reading an edge
+  /// \name Reading an Edge
   //@{
   void read_edge_begin()
   {}
@@ -378,7 +378,7 @@ public:
   {}
 
   //@}
-  /// \name Reading a face
+  /// \name Reading a Face
   //@{
   void read_face_begin()
   {

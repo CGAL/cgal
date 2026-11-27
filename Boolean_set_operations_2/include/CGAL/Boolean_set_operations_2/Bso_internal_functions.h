@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-/// \name s_do_intersect() and r_do_intersect() functions
+/// \name s_do_intersect() and r_do_intersect() Functions
 //@{
 
 // Single
@@ -96,7 +96,7 @@ inline bool r_do_intersect (InputIterator1 begin1, InputIterator1 end1,
 
 //@}
 
-/// \name _oriented_side() functions
+/// \name _oriented_side() Functions
 //@{
 
 // With Traits
@@ -129,7 +129,7 @@ inline Oriented_side _oriented_side(const Pgn1& pgn1, const Pgn2& pgn2) {
 
 //@}
 
-/// \name s_intersection() functions
+/// \name s_intersection() Functions
 //@{
 
 // Single
@@ -221,7 +221,7 @@ r_intersection(InputIterator1 begin1, InputIterator1 end1,
 
 //@}
 
-/// \name is_empty() functions
+/// \name is_empty() Functions
 //@{
 
 // Polygon_2
@@ -240,7 +240,7 @@ inline bool _is_empty(const typename Traits::Polygon_with_holes_2&, Traits&)
 
 //@}
 
-/// \name s_join() and r_join() functions
+/// \name s_join() and r_join() Functions
 //@{
 
 // Single operands
@@ -346,7 +346,7 @@ inline OutputIterator r_join(InputIterator1 begin1, InputIterator1 end1,
 
 //@}
 
-/// \name _difference() functions
+/// \name _difference() Functions
 //@{
 
 template <typename Pgn1, typename Pgn2, typename OutputIterator, typename Traits>
@@ -372,7 +372,7 @@ inline OutputIterator _difference(const Pgn1& pgn1, const Pgn2& pgn2,
 }
 
 //@}
-/// \name s_symmetric_difference() and r_symmetric_difference() functions
+/// \name s_symmetric_difference() and r_symmetric_difference() Functions
 //@{
 
 // Single
@@ -472,7 +472,7 @@ inline OutputIterator r_symmetric_difference(InputIterator1 begin1,
 
 //@}
 
-/// \name _complement() functions
+/// \name _complement() Functions
 //@{
 
 // Compute the complemenet of a polygon

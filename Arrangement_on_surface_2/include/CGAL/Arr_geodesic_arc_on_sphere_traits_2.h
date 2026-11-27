@@ -2133,7 +2133,7 @@ public:
   Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const { return Compare_y_on_boundary_2(*this); }
   //@}
 
-  /// \name Functor definitions for supporting intersections
+  /// \name Functor Definitions for Supporting Intersections
   //@{
 
   /*! \class Make_x_monotone_2
@@ -2903,7 +2903,7 @@ public:
   Merge_2 merge_2_object() const { return Merge_2(*this); }
   //@}
 
-  /// \name Functor definitions for the landmarks point-location strategy
+  /// \name Functor Definitions for the Landmarks Point-Location Strategy
   //@{
   class Approximate_2 {
   public:
@@ -3034,7 +3034,7 @@ public:
 
   //@}
 
-  /// \name Functor definitions for the Boolean set-operation traits
+  /// \name Functor Definitions for the Boolean Set-Operation Traits
   //@{
 
   class Compare_endpoints_xy_2 {

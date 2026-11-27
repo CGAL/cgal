@@ -287,7 +287,7 @@ private:
 
   //@}
 
-  /// \name Operator overloading
+  /// \name Operator Overloading
   //@{
 
   /*! Assignment operator.
@@ -315,7 +315,7 @@ private:
   //@}
 
 
-  /// \name Access methods
+  /// \name Access Methods
   //@{
 
   inline Self& self()

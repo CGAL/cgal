@@ -91,7 +91,7 @@ private:
   bool                _no_self_inter; /*!< Whether the curve surely has  no
                                            self intersections. */
 
-  /// \name Lazily-evaluated values of the polynomials B(t) = (X(t), Y(t))
+  /// \name Lazily-Evaluated Values of the Polynomials B(t) = (X(t), Y(t))
   //@{
 
   // X(t) is given by *p_polyX(t) / _normX:
@@ -218,7 +218,7 @@ public:
       delete p_normY;
   }
 
-  /// \name Access the polynomials (lazily evaluated)
+  /// \name Access the Polynomials (Lazily Evaluated)
   //@{
 
   /*! checks if the polynomials are already constructed. */

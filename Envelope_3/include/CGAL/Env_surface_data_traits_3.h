@@ -69,7 +69,7 @@ public:
   {}
   //@}
 
-  /// \name Overridden functors
+  /// \name Overridden Functors
   //@{
 
   class Make_xy_monotone_3 {

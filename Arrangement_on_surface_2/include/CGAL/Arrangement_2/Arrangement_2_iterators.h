@@ -64,7 +64,7 @@ public:
   {}
   //@}
 
-  /// \name Basic operations
+  /// \name Basic Operations
   //@{
   bool operator== (const Self& it) const
   {
@@ -97,7 +97,7 @@ public:
   }
   //@}
 
-  /// \name Incremernt operations (forward category)
+  /// \name Incremernt Operations (Forward Category)
   //@{
   Self& operator++()
   {
@@ -113,7 +113,7 @@ public:
   }
   //@}
 
-  /// \name Decremernt operations (bidirectional category)
+  /// \name Decremernt Operations (Bidirectional Category)
   //@{
   Self& operator-- ()
   {
@@ -178,7 +178,7 @@ public:
 
   //@}
 
-  /// \name Basic operations
+  /// \name Basic Operations
   //@{
   bool operator== (const Self& it) const
   {
@@ -211,7 +211,7 @@ public:
   }
   //@}
 
-  /// \name Incremernt operations (forward category)
+  /// \name Incremernt Operations (Forward Category)
   //@{
   Self& operator++()
   {
@@ -227,7 +227,7 @@ public:
   }
   //@}
 
-  /// \name Decremernt operations (bidirectional category)
+  /// \name Decremernt Operations (Bidirectional Category)
   //@{
   Self& operator-- ()
   {

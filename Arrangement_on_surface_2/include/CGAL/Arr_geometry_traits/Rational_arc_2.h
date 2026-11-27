@@ -95,7 +95,7 @@ protected:
 
 public:
 
-  /// \name Construction methods
+  /// \name Construction Methods
   //@{
 
   /*! constructs default.
@@ -540,7 +540,7 @@ public:
   }
   //@}
 
-  /// \name Accessing the arc properties
+  /// \name Accessing the Arc Properties
   //@{
 
   /*! obtains the numerator polynomial of the underlying rational function. */
@@ -1292,7 +1292,7 @@ public:
   }
   //@}
 
-  /// \name Constructions of points and curves
+  /// \name Constructions of Points and Curves
   //@{
 
   /*! flips the arc (swap its source and target).
@@ -1365,7 +1365,7 @@ public:
 
 protected:
 
-  /// \name Auxiliary (protected) functions
+  /// \name Auxiliary (Protected) Functions
   //@{
 
   /*! checks if the given x-value is in the x-range of the arc.
@@ -1804,7 +1804,7 @@ public:
   typedef std::pair<Point_2,Multiplicity>        Intersection_point;
 
 
-  /// \name Construction methods
+  /// \name Construction Methods
   //@{
 
   /*! constructs default.
@@ -1914,7 +1914,7 @@ public:
   }
   //@}
 
-  /// \name Constructions of points and curves
+  /// \name Constructions of Points and Curves
   //@{
 
   /*! computes the intersections with the given arc.
@@ -2306,7 +2306,7 @@ public:
   typedef typename Base::Rat_vector                     Rat_vector;
   typedef typename Base::Polynomial                     Polynomial;
 
-  /// \name Construction methods
+  /// \name Construction Methods
   //@{
 
   /*! constructs default.

@@ -138,7 +138,7 @@ public:
   {}
   //@}
 
-  /// \name Assignment functions
+  /// \name Assignment Functions
   //@{
 
   /*! assigns (from a base arrangement). */
@@ -156,7 +156,7 @@ public:
   }
   //@}
 
-  ///! \name Specialized access methods
+  ///! \name Specialized Access Methods
   //@{
 
   /*! obtains the geometry-traits class. */

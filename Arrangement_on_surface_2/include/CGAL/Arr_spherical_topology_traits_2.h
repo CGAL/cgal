@@ -61,13 +61,13 @@ private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
-  ///! \name The geometry-traits types
+  ///! \name The Geometry-Traits Types
   //@{
   typedef typename Gt2::Point_2                         Point_2;
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   //@}
 
-  ///! \name The DCEL types
+  ///! \name The DCEL Types
   //@{
   typedef typename Dcel::Size                           Size;
   typedef typename Dcel::Vertex                         Vertex;
@@ -162,7 +162,7 @@ protected:
   Self& operator=(const Self&);
 
 public:
-  ///! \name Construction methods
+  ///! \name Construction Methods
   //@{
 
   /*! constructs default. */
@@ -182,7 +182,7 @@ public:
   void assign(const Self& other);
   //@}
 
-  ///! \name Topology-traits methods
+  ///! \name Topology-Traits Methods
   //@{
 
   /*! obtains the DCEL (const version). */
@@ -304,7 +304,7 @@ public:
   //@}
 
 private:
-  /// \name Auxiliary type definitions
+  /// \name Auxiliary Type Definitions
   //@{
   typedef Arrangement_on_surface_2<Gt2, Self>                   Arr;
 
@@ -392,7 +392,7 @@ public:
   //@}
 
 public:
-  ///! \name Visitor types
+  ///! \name Visitor Types
   //@{
 
   typedef Arr_inc_insertion_zone_visitor<Arr> Zone_insertion_visitor;
@@ -401,7 +401,7 @@ public:
   typedef Arr_naive_point_location<Arr> Default_vertical_ray_shooting_strategy;
   //@}
 
-  ///! \name Topology-traits methods
+  ///! \name Topology-Traits Methods
   //@{
 
   /*! receives a notification on the creation of a new boundary vertex that
@@ -596,7 +596,7 @@ public:
   //@}
 
 protected:
-  /// \name Auxiliary functions
+  /// \name Auxiliary Functions
   //@{
 
   /*! obtains the curve associated with a boundary vertex.

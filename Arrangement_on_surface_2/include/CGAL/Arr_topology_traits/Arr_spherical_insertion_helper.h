@@ -84,7 +84,7 @@ public:
   /*! destructs. */
   virtual ~Arr_spherical_insertion_helper() {}
 
-  /// \name Notification functions
+  /// \name Notification Functions
   //@{
 
   /* A notification issued before the sweep process starts. */

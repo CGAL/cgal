@@ -275,7 +275,7 @@ bool is_in_complex(Cell_handle c, int i);
 
 /// @}
 
-/// \name Queries on the identifier of the face complex including triangulation cells, facets and vertices
+/// \name Queries on the Identifier of the Face Complex Including Triangulation Cells, Facets and Vertices
 /// @{
 
 /*!
