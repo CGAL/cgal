@@ -97,7 +97,7 @@ public:
   }
   //@}
 
-  /// \name Incremernt Operations (Forward Category)
+  /// \name Increment Operations (Forward Category)
   //@{
   Self& operator++()
   {
@@ -113,7 +113,7 @@ public:
   }
   //@}
 
-  /// \name Decremernt Operations (Bidirectional Category)
+  /// \name Decrement Operations (Bidirectional Category)
   //@{
   Self& operator-- ()
   {
@@ -211,7 +211,7 @@ public:
   }
   //@}
 
-  /// \name Incremernt Operations (Forward Category)
+  /// \name Increment Operations (Forward Category)
   //@{
   Self& operator++()
   {
@@ -227,7 +227,7 @@ public:
   }
   //@}
 
-  /// \name Decremernt Operations (Bidirectional Category)
+  /// \name Decrement Operations (Bidirectional Category)
   //@{
   Self& operator-- ()
   {

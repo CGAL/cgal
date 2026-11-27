@@ -61,13 +61,13 @@ private:
   typedef Arr_planar_topology_traits_base_2<Gt2, Dcel_> Base;
 
 public:
-  ///! \name The Geometry-Traits Types
+  /// \name The Geometry-Traits Types
   //@{
   typedef typename Base::Point_2                        Point_2;
   typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
   //@}
 
-  ///! \name The DCEL Types
+  /// \name The DCEL Types
   //@{
   typedef typename Base::Size                            Size;
   typedef typename Base::Vertex                          Vertex;
@@ -84,7 +84,7 @@ public:
   typedef Arr_traits_basic_adaptor_2<Gt2>                 Gt_adaptor_2;
   //!@}
 
-  ///! \name The side tags
+  /// \name The Side Tags
   //@{
   typedef typename Gt_adaptor_2::Left_side_category   Left_side_category;
   typedef typename Gt_adaptor_2::Bottom_side_category Bottom_side_category;
@@ -115,7 +115,7 @@ protected:
   Self& operator=(const Self&);
 
 public:
-  ///! \name Construction Methods
+  /// \name Construction Methods
   //@{
 
   /*! constructs default. */
@@ -134,7 +134,7 @@ public:
   void assign(const Self& other);
   //@}
 
-  ///! \name Accessing the DCEL and Constructing Iterators
+  /// \name Accessing the DCEL and Constructing Iterators
   //@{
 
   /*! determines whether the DCEL reprsenets an empty structure. */
@@ -239,7 +239,7 @@ public:
   //@}
 
 public:
-  ///! \name Visitor Types
+  /// \name Visitor Types
   //@{
 
   typedef Arr_inc_insertion_zone_visitor<Arr>
@@ -252,7 +252,7 @@ public:
     Default_vertical_ray_shooting_strategy;
   //@}
 
-  ///! \name Topology-Traits Methods
+  /// \name Topology-Traits Methods
   //@{
 
   /*! initializes an empty DCEL structure.

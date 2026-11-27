@@ -61,13 +61,13 @@ private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
-  ///! \name The Geometry-Traits Types
+  /// \name The Geometry-Traits Types
   //@{
   typedef typename Gt2::Point_2                         Point_2;
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   //@}
 
-  ///! \name The DCEL Types
+  /// \name The DCEL Types
   //@{
   typedef typename Dcel::Size                           Size;
   typedef typename Dcel::Vertex                         Vertex;
@@ -84,7 +84,7 @@ public:
   typedef Arr_traits_basic_adaptor_2<Gt2>               Gt_adaptor_2;
   //!@}
 
-  ///! \name The side tags
+  /// \name The Side Tags
   //@{
   typedef typename Gt_adaptor_2::Left_side_category   Left_side_category;
   typedef typename Gt_adaptor_2::Bottom_side_category Bottom_side_category;
@@ -162,7 +162,7 @@ protected:
   Self& operator=(const Self&);
 
 public:
-  ///! \name Construction Methods
+  /// \name Construction Methods
   //@{
 
   /*! constructs default. */
@@ -182,7 +182,7 @@ public:
   void assign(const Self& other);
   //@}
 
-  ///! \name Topology-Traits Methods
+  /// \name Topology-Traits Methods
   //@{
 
   /*! obtains the DCEL (const version). */
@@ -392,7 +392,7 @@ public:
   //@}
 
 public:
-  ///! \name Visitor Types
+  /// \name Visitor Types
   //@{
 
   typedef Arr_inc_insertion_zone_visitor<Arr> Zone_insertion_visitor;
@@ -401,7 +401,7 @@ public:
   typedef Arr_naive_point_location<Arr> Default_vertical_ray_shooting_strategy;
   //@}
 
-  ///! \name Topology-Traits Methods
+  /// \name Topology-Traits Methods
   //@{
 
   /*! receives a notification on the creation of a new boundary vertex that

@@ -62,7 +62,7 @@ public:
 
   /// @}
 
-  /// \name Types Inherited from the Base Arrangement_on_surface_2_with_history_2
+  /// \name Types Inherited from the Base Arrangement_on_surface_with_history_2
   /// @{
 
   typedef typename Base::Point_2                    Point_2;

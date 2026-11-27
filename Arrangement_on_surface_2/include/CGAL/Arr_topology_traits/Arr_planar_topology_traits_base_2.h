@@ -42,14 +42,14 @@ template <typename GeomTraits_,
 class Arr_planar_topology_traits_base_2
 {
 public:
-  ///! \name The Geometry-Traits Types
+  /// \name The Geometry-Traits Types
   //@{
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
   //@}
 
-  ///! \name The DCEL Types
+  /// \name The DCEL Types
   //@{
   typedef Dcel_                                           Dcel;
   typedef typename Dcel::Size                             Size;
@@ -79,7 +79,7 @@ protected:
   Self& operator=(const Self&);
 
 public:
-  ///! \name Construction Methods
+  /// \name Construction Methods
   //@{
 
   /*! constructs defaults. */
@@ -109,7 +109,7 @@ public:
 
   //@}
 
-  ///! \name Common Topology-Traits Methods
+  /// \name Common Topology-Traits Methods
   //@{
 
   /*! obtains the DCEL (const version). */

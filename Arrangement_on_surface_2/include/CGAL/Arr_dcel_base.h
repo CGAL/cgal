@@ -1137,7 +1137,7 @@ public:
   }
   //@}
 
-  // \name Creation of New DCEL Features
+  /// \name Creation of New DCEL Features
   //@{
   /*! creates a new vertex. */
   Vertex* new_vertex()

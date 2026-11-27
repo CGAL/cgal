@@ -1933,7 +1933,7 @@ public:
 
   //@}
 
-  /// \name Types and Functors Defined Here Not Required by Any Concept
+  /// \name Types and Functors Defined Here, Not Required by Any Concept
   //@{
 
   /*! \class

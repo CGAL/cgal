@@ -79,7 +79,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
             bool is_color_uniform)  override;
 
   void initializeBuffers(Viewer_interface *viewer) override;
-  /// \name Getters and Setters for the Shaders Parameters
+  /// \name Getters and Setters for the Shader Parameters
   ///
   /// Each of those depends of the `OpenGL_program_IDs` this container is using.
   /// If the shaders of this program doesn't need one, you can ignore it.

@@ -493,7 +493,7 @@ public:
   }
   //@}
 
-  /// \name Handling Vertcial Tangency Points
+  /// \name Handling Vertical Tangency Points
   //@{
 
   /*!

@@ -162,7 +162,7 @@ public:
   }
   //@}
 
-  ///! \name Specialized Access Methods
+  /// \name Specialized Access Methods
   //@{
 
   /*! obtains the geometry-traits class (for backward compatibility). */

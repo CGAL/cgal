@@ -1628,7 +1628,7 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
 
-    /// \name Point - Curve-End
+    /// \name Point vs. Curve-End
     //@{
     /*! Implementation in the case of oblivious boundaries. */
     bool is_in_x_range(const X_monotone_curve_2& xcv, const Point_2& p,
@@ -1716,7 +1716,7 @@ public:
     }
     //@}
 
-    /// \name Curve-End - Curve-End
+    /// \name Curve-End vs. Curve-End
     //@{
     /*! Implementation in the case of all oblivious boundaries. */
     bool is_in_x_range(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,

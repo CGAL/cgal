@@ -176,7 +176,7 @@ public:
   }
   //@}
 
-  /// \name Write a Vertex
+  /// \name Writing a Vertex
   //@{
   void write_vertex_begin()
   {}
@@ -195,7 +195,7 @@ public:
   {}
   //@}
 
-  /// \name Write an Edge
+  /// \name Writing an Edge
   //@{
   void write_edge_begin()
   {}
@@ -219,7 +219,7 @@ public:
   {}
   //@}
 
-  /// \name Write a Face
+  /// \name Writing a Face
   //@{
   void write_face_begin()
   {
