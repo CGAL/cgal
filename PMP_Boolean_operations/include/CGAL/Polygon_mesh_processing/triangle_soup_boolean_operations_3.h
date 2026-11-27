@@ -33,17 +33,32 @@
 namespace CGAL {
 namespace boolops_3 {
 
+// Dummy input ids used when all triangles come from the same input (self-union)
+struct Single_input_ids
+{
+  unsigned int operator[](std::size_t) const { return 0; }
+};
+
 //TODO: update nm_edges for identical coplanar status (less test below then)
-template <class EdgeConnectivity, class FaceConnectivity>
+// Connected components are bounded by non-manifold edges and by edges shared
+// by two triangles coming from different inputs. The latter guarantees that a
+// connected component never contains triangles from two inputs, which in turn
+// guarantees that explorations seeded from different inputs never overlap
+// (and can therefore safely run concurrently).
+// If `considered_id` is not -1, only triangles from that input are used as seeds.
+template <class EdgeConnectivity, class FaceConnectivity, class InputIds>
 std::vector<std::size_t>
 connected_components(std::size_t begin,
                      std::size_t end,
-                     int offset,
-                     int increment,
+                     std::size_t offset,
+                     std::size_t increment,
                      const EdgeConnectivity& adjacent_edges,
                      const FaceConnectivity& adjacent_faces,
+                     const InputIds& input_ids,
+                     unsigned int considered_id,
                      std::vector<std::size_t>& ccids)
 {
+  constexpr unsigned int all_id = static_cast<unsigned int>(-1);
   auto is_handled = [&](std::size_t tid){ return ccids[tid]!=std::size_t(-1); };
   std::vector<std::size_t> one_triangle_per_cc;
 
@@ -52,7 +67,7 @@ connected_components(std::size_t begin,
   std::vector<std::size_t> queue;
   for (std::size_t tid=begin; tid<end; ++tid)
   {
-    if (is_handled(tid)) continue;
+    if (is_handled(tid) || (considered_id!=all_id && input_ids[tid]!=considered_id)) continue;
     queue.push_back(tid);
     ccids[tid]=i;
     while(!queue.empty())
@@ -73,7 +88,7 @@ connected_components(std::size_t begin,
           case 2:
           {
             std::size_t n_tid = tids[0]!=q_tid ? tids[0] : tids[1];
-            if (!is_handled(n_tid)){
+            if(!is_handled(n_tid) && (input_ids[n_tid]==input_ids[q_tid])){
               ccids[n_tid]=i;
               queue.push_back(n_tid);
             }
@@ -91,41 +106,42 @@ connected_components(std::size_t begin,
   return one_triangle_per_cc;
 }
 
-template <class EdgeConnectivity, class FaceConnectivity>
+template <class EdgeConnectivity, class FaceConnectivity, class InputIds>
 std::vector<std::size_t>
 connected_components(const EdgeConnectivity& adjacent_edges,
                      const FaceConnectivity& adjacent_faces,
+                     const InputIds& input_ids,
                      std::vector<std::size_t>& ccids)
 {
   std::size_t nb_poly = adjacent_edges.size();
   ccids.resize(nb_poly, std::size_t(-1));
-  return connected_components(0, nb_poly, 0, 1, adjacent_edges, adjacent_faces, ccids);
+  return connected_components(0, nb_poly, 0, 1, adjacent_edges, adjacent_faces, input_ids, -1, ccids);
 }
 
 #ifdef CGAL_LINKED_WITH_TBB
-// we actually only parallelize the exploraton in the triangles of the two (for now)
-// input soups. Since autorefine only creates new triangles, we can seed the exploration
-// with the range of input triangles. Everything not reached will be seeded in a last sequential step.
+// One exploration per input soup. Note that after autorefinement, triangles are NOT
+// sorted by input (untouched triangles are compacted first, new sub-triangles are
+// appended), so seeds are selected using `input_ids` and not using index ranges.
+// Since a connected component never contains triangles from two inputs (see above),
+// the two explorations write to disjoint sets of entries of `ccids`.
 template <class EdgeConnectivity, class FaceConnectivity>
 std::vector<std::size_t>
-parallel_connected_components(const size_t polyids_end1,
-                              const size_t polyids_end2,
-                              const EdgeConnectivity& adjacent_edges,
+parallel_connected_components(const EdgeConnectivity& adjacent_edges,
                               const FaceConnectivity& adjacent_faces,
+                              const std::vector<unsigned int>& input_ids,
                               std::vector<std::size_t>& ccids)
 {
   std::size_t NIN(-1);
   std::size_t nb_poly = adjacent_edges.size();
   ccids.resize(nb_poly, NIN);
-  std::vector<std::size_t> trs_per_cc_1, trs_per_cc_2, trs_per_cc_end;
+  std::vector<std::size_t> trs_per_cc_1, trs_per_cc_2;
 
   tbb::task_group task_group;
   task_group.run([&](){
-    trs_per_cc_1 = connected_components(0, polyids_end1, 0, 2, adjacent_edges, adjacent_faces, ccids);
+    trs_per_cc_1 = connected_components(0, nb_poly, 0, 2, adjacent_edges, adjacent_faces, input_ids, 0, ccids);
   });
-  trs_per_cc_2 = connected_components(polyids_end1, polyids_end2, 1, 2, adjacent_edges, adjacent_faces, ccids);
+  trs_per_cc_2 = connected_components(0, nb_poly, 1, 2, adjacent_edges, adjacent_faces, input_ids, 1, ccids);
   task_group.wait();
-
 
   // re-index cc ids
   std::vector<std::size_t> cc_map(2*(std::max)(trs_per_cc_1.size(), trs_per_cc_2.size()));
@@ -133,15 +149,11 @@ parallel_connected_components(const size_t polyids_end1,
   for(std::size_t i=0; i<trs_per_cc_1.size(); ++i) cc_map[2*i] = ccid++;
   for(std::size_t i=0; i<trs_per_cc_2.size(); ++i) cc_map[2*i+1] = ccid++;
   tbb::parallel_for(std::size_t(0), nb_poly,
-    [&](std::size_t id){ if (ccids[id]!=NIN) ccids[id] = cc_map[ccids[id]]; });
-
-  // now tag cc not reach with the previous seeds
-  trs_per_cc_end = connected_components(polyids_end2, nb_poly, ccid, 1, adjacent_edges, adjacent_faces, ccids);
+    [&](std::size_t id){ CGAL_assertion(ccids[id]!=NIN); ccids[id] = cc_map[ccids[id]]; });
 
   // update one triangle per cc
-  trs_per_cc_1.reserve(trs_per_cc_1.size()+ trs_per_cc_2.size()+trs_per_cc_end.size());
+  trs_per_cc_1.reserve(trs_per_cc_1.size()+ trs_per_cc_2.size());
   std::copy(trs_per_cc_2.begin(), trs_per_cc_2.end(), std::back_inserter(trs_per_cc_1));
-  std::copy(trs_per_cc_end.begin(), trs_per_cc_end.end(), std::back_inserter(trs_per_cc_1));
   return trs_per_cc_1;
 }
 #endif
@@ -160,13 +172,6 @@ Selection_data
 select(const std::vector<Exact_point>& points,
        const std::vector<Triangle>& triangles,
              std::vector<unsigned int>& input_ids,
-#ifdef CGAL_LINKED_WITH_TBB
-             std::size_t polyids_end1,
-             std::size_t polyids_end2,
-#else
-             std::size_t /* polyids_end1 */,
-             std::size_t /* polyids_end2 */,
-#endif
        const unsigned int nb_meshes)
 {
 #ifdef CGAL_BO3_SELECT_TIMERS
@@ -281,7 +286,8 @@ select(const std::vector<Exact_point>& points,
 
         // Skip a group that started in the previous block.
         if(begin != 0)
-          while(std::get<0>(all_triangle_edges[begin-1]) == std::get<0>(all_triangle_edges[begin]) &&
+          while(begin < end &&
+                std::get<0>(all_triangle_edges[begin-1]) == std::get<0>(all_triangle_edges[begin]) &&
                 std::get<1>(all_triangle_edges[begin-1]) == std::get<1>(all_triangle_edges[begin]))
             ++begin;
 
@@ -349,12 +355,12 @@ select(const std::vector<Exact_point>& points,
 #ifdef CGAL_LINKED_WITH_TBB
   if constexpr(Concurrency_tag::is_parallel)
   {
-    one_triangle_per_cc = boolops_3::parallel_connected_components(polyids_end1, polyids_end2, adjacent_edges, adjacent_faces, ccids);
+    one_triangle_per_cc = boolops_3::parallel_connected_components(adjacent_edges, adjacent_faces, input_ids, ccids);
   }
   else
 #endif
   {
-    one_triangle_per_cc = boolops_3::connected_components(adjacent_edges, adjacent_faces, ccids);
+    one_triangle_per_cc = boolops_3::connected_components(adjacent_edges, adjacent_faces, input_ids, ccids);
   }
   std::size_t nb_cc = one_triangle_per_cc.size();
 
@@ -802,7 +808,7 @@ prepare_data(const PointRange& points_1, const TriangleRange& triangles_1,
 #ifdef CGAL_BO_AUTOREF_DEBUG
   CGAL::IO::write_OFF("autorefined.off", out_points, out_triangles, CGAL::parameters::stream_precision(17));
 #endif
-  auto res =select<Concurrency_tag>(out_points, out_triangles, input_ids, nbt_1, nbt_1+nbt_2, 2);
+  auto res =select<Concurrency_tag>(out_points, out_triangles, input_ids, 2);
 #ifdef CGAL_BO3_TIMERS
   timer.stop();
   std::cout << "select done in " << timer.time() << "\n";
@@ -943,7 +949,7 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   // extract connected_components bounded by non-manifold edges
   std::vector<std::size_t> ccids;
   std::vector<std::size_t> one_triangle_per_cc =
-    boolops_3::connected_components(adjacent_edges, adjacent_faces, ccids);
+    boolops_3::connected_components(adjacent_edges, adjacent_faces, boolops_3::Single_input_ids(), ccids);
   std::size_t nb_cc = one_triangle_per_cc.size();
 
   std::vector<EID> nm_edges;
