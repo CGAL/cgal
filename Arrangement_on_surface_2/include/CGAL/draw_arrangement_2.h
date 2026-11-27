@@ -52,8 +52,8 @@ using enable_if_aos_t = std::enable_if_t<is_or_derived_from_aos_v<T>, int>;
 
 //!
 inline void draw_unimplemented() {
-  CGAL_error_msg("Geometry traits type of arrangement is required to support approximation of Point_2 and "
-                 "X_monotone_curve_2. Traits on curved surfaces needs additional support for parameterization.");
+  CGAL_warning("Geometry traits type of arrangement is required to support approximation of Point_2 and "
+               "X_monotone_curve_2. Traits on curved surfaces needs additional support for parameterization.");
 }
 
 //! determines whether a parameter space bounding box is degenerate.
