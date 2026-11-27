@@ -1,10 +1,10 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Polygon_Demo)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6 Core)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)

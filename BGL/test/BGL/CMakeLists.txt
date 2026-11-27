@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(BGL_Tests)
 
 # CGAL and its components
@@ -38,6 +38,7 @@ create_single_source_cgal_program("test_graph_traits.cpp")
 create_single_source_cgal_program("test_Properties.cpp")
 create_single_source_cgal_program("bench_read_from_stream_vs_add_face_and_add_faces.cpp")
 create_single_source_cgal_program("graph_traits_inheritance.cpp" )
+create_single_source_cgal_program("test_property_maps.cpp")
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
@@ -50,6 +51,7 @@ if(OpenMesh_FOUND)
   target_link_libraries(test_graph_traits PRIVATE CGAL::OpenMesh_support )
   target_link_libraries(test_Properties PRIVATE CGAL::OpenMesh_support)
   target_link_libraries(test_bgl_read_write PRIVATE CGAL::OpenMesh_support)
+  target_link_libraries(test_property_maps PRIVATE CGAL::OpenMesh_support)
 
   create_single_source_cgal_program("graph_concept_OpenMesh.cpp")
   target_link_libraries(graph_concept_OpenMesh PRIVATE CGAL::OpenMesh_support)

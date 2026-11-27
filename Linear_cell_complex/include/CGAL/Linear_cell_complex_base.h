@@ -214,21 +214,21 @@ namespace CGAL {
     }
 
     /** Creates a vertex attribute.
-     * @return a handle on the new attribute.
+     * @return a descriptor on the new attribute.
      */
     template<typename ...Args>
     Vertex_attribute_descriptor create_vertex_attribute(const Args&... args)
     { return Base::template create_attribute<0>(args...); }
 
     /**
-     * Creates a new dart associated with a handle through an attribute.
-     * @param ahandle the point handle to associated with the dart.
+     * Creates a new dart associated with a descriptor through an attribute.
+     * @param adescriptor the point descriptor to associated with the dart.
      * @return a Dart_descriptor on the new dart.
      */
-    Dart_descriptor create_dart(Vertex_attribute_descriptor ahandle)
+    Dart_descriptor create_dart(Vertex_attribute_descriptor adescriptor)
     {
       Dart_descriptor res = create_dart();
-      set_vertex_attribute_of_dart(res,ahandle);
+      set_vertex_attribute_of_dart(res,adescriptor);
       return res;
     }
 
@@ -240,10 +240,10 @@ namespace CGAL {
     { return create_dart(create_vertex_attribute(apoint)); }
 
     /** Erase a given vertex attribute.
-     * @param ahandle the handle to the vertex attribute to erase.
+     * @param adescriptor the descriptor to the vertex attribute to erase.
      */
-    void erase_vertex_attribute(Vertex_attribute_descriptor ahandle)
-    { Base::template erase_attribute<0>(ahandle); }
+    void erase_vertex_attribute(Vertex_attribute_descriptor adescriptor)
+    { Base::template erase_attribute<0>(adescriptor); }
 
     /** Set the vertex attribute of the given dart.
      * @param adart a dart.
@@ -599,10 +599,10 @@ namespace CGAL {
 
 
     /** Creates a tetrahedron given 4 Vertex_attribute_descriptor.
-     * @param h0 the first vertex handle.
-     * @param h1 the second vertex handle.
-     * @param h2 the third vertex handle.
-     * @param h3 the fourth vertex handle.
+     * @param h0 the first vertex descriptor.
+     * @param h1 the second vertex descriptor.
+     * @param h2 the third vertex descriptor.
+     * @param h3 the fourth vertex descriptor.
      * @return the dart of the new tetrahedron incident to h0, to edge
      *         h0,h1 and to facet h0,h1,h2.
      */
@@ -648,14 +648,14 @@ namespace CGAL {
      *     |/   |/
      *     0----1
      * \endverbatim
-     * @param h0 the first vertex handle.
-     * @param h1 the second vertex handle.
-     * @param h2 the third vertex handle.
-     * @param h3 the fourth vertex handle.
-     * @param h4 the fifth vertex handle.
-     * @param h5 the sixth vertex handle.
-     * @param h6 the seventh vertex handle.
-     * @param h7 the height vertex handle.
+     * @param h0 the first vertex descriptor.
+     * @param h1 the second vertex descriptor.
+     * @param h2 the third vertex descriptor.
+     * @param h3 the fourth vertex descriptor.
+     * @param h4 the fifth vertex descriptor.
+     * @param h5 the sixth vertex descriptor.
+     * @param h6 the seventh vertex descriptor.
+     * @param h7 the height vertex descriptor.
      * @return the dart of the new hexahedron incident to h0, to edge
      *         h0,h5 and to the facet (h0,h5,h6,h1).
      */
@@ -726,12 +726,12 @@ namespace CGAL {
      *       \|/
      *        2
      * \endverbatim
-     * @param h0 the first vertex handle.
-     * @param h1 the second vertex handle.
-     * @param h2 the third vertex handle.
-     * @param h3 the fourth vertex handle.
-     * @param h4 the fifth vertex handle.
-     * @param h5 the sixth vertex handle.
+     * @param h0 the first vertex descriptor.
+     * @param h1 the second vertex descriptor.
+     * @param h2 the third vertex descriptor.
+     * @param h3 the fourth vertex descriptor.
+     * @param h4 the fifth vertex descriptor.
+     * @param h5 the sixth vertex descriptor.
      * @return the dart of the new prism incident to h0 and to
      *         the facet (h0,h1,h2).
      */
@@ -792,11 +792,11 @@ namespace CGAL {
      *     | | |
      *     3---2
      * \endverbatim
-     * @param h0 the first vertex handle.
-     * @param h1 the second vertex handle.
-     * @param h2 the third vertex handle.
-     * @param h3 the fourth vertex handle.
-     * @param h4 the fifth vertex handle.
+     * @param h0 the first vertex descriptor.
+     * @param h1 the second vertex descriptor.
+     * @param h2 the third vertex descriptor.
+     * @param h3 the fourth vertex descriptor.
+     * @param h4 the fifth vertex descriptor.
      * @return the dart of the new pyramid incident to h0 and to
      *         the facet (h0,h1,h2,h3).
      */
@@ -856,10 +856,10 @@ namespace CGAL {
     }
 
     /** Insert a point in a given 1-cell.
-     * @param dh a dart handle to the 1-cell
+     * @param dh a dart descriptor to the 1-cell
      * @param p the point to insert
      * @param update_attributes a boolean to update the enabled attributes
-     * @return a dart handle to the new vertex containing p.
+     * @return a dart descriptor to the new vertex containing p.
      */
     Dart_descriptor insert_point_in_cell_1(Dart_descriptor dh, const Point& p,
                                        bool update_attributes=true)
@@ -870,10 +870,10 @@ namespace CGAL {
     }
 
     /** Insert a point in a given 2-cell.
-     * @param dh a dart handle to the 2-cell
+     * @param dh a dart descriptor to the 2-cell
      * @param p the point to insert
      * @param update_attributes a boolean to update the enabled attributes
-     * @return a dart handle to the new vertex containing p.
+     * @return a dart descriptor to the new vertex containing p.
      */
     Dart_descriptor insert_point_in_cell_2(Dart_descriptor dh, const Point& p,
                                        bool update_attributes=true)
@@ -893,10 +893,10 @@ namespace CGAL {
     }
 
     /** Insert a point in a given i-cell.
-     * @param dh a dart handle to the i-cell
+     * @param dh a dart descriptor to the i-cell
      * @param p the point to insert
      * @param update_attributes a boolean to update the enabled attributes
-     * @return a dart handle to the new vertex containing p.
+     * @return a dart descriptor to the new vertex containing p.
      */
     template <unsigned int i>
     Dart_descriptor insert_point_in_cell(Dart_descriptor dh, const Point& p,
@@ -922,10 +922,10 @@ namespace CGAL {
     }
 
     /** Insert a point in a given i-cell.
-     * @param dh a dart handle to the i-cell
+     * @param dh a dart descriptor to the i-cell
      * @param p the point to insert
      * @param update_attributes a boolean to update the enabled attributes
-     * @return a dart handle to the new vertex containing p.
+     * @return a dart descriptor to the new vertex containing p.
      */
     template <unsigned int i>
     Dart_descriptor insert_barycenter_in_cell(Dart_descriptor dh, bool update_attributes=true)

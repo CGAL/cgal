@@ -1,8 +1,10 @@
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/CGAL_Lab_io_plugin_interface.h>
 #include <CGAL/Combinatorial_map_save_load.h>
-#include <CGAL/Polyhedron_3_to_lcc.h>
+#include <CGAL/import_face_graph_to_lcc.h>
+#include <CGAL/Linear_cell_complex/IO/VTK.h>
 
+#include "Scene_surface_mesh_item.h"
 #include "Scene_lcc_item.h"
 
 #include <iostream>
@@ -26,6 +28,7 @@ public:
   QString name() const override{ return "lcc_plugin"; }
   QString nameFilters() const override{ return
         "OFF files (*.off);;"
+        "VTK files (*.vtk);;"
         "3-map files (*.3map)"; }
 
   QString saveNameFilters() const override{
@@ -47,7 +50,15 @@ public:
     QString ext = fileinfo.suffix();
     bool res = true;
     if(ext == "off")
-      CGAL::polyhedron_3_flux_to_lcc < Scene_lcc_item::LCC > (lcc, ifs);
+    {
+      SMesh sm;
+      ifs >> sm;
+      CGAL::import_face_graph_to_lcc (lcc, sm);
+    }
+    else if (ext =="vtk" || ext =="VTK")
+    {
+      CGAL::IO::read_VTK(fileinfo.filePath().toUtf8(), lcc);
+    }
     else
     {
       res = CGAL::load_combinatorial_map(ifs, lcc);

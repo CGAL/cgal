@@ -18,6 +18,8 @@
 #ifndef CGAL__TEST_FCT_POINT_VECTOR_3_H
 #define CGAL__TEST_FCT_POINT_VECTOR_3_H
 
+#include <CGAL/Origin.h>
+
 template <class R>
 bool
 _test_fct_point_vector_3(const R& )

@@ -133,10 +133,10 @@ namespace Mesh_2 {
                     const Vertex_handle& vb) const
     {
       Face_handle fh;
-      int i;
-      CGAL_assume_code( bool should_be_true = )
+      int i = 0;
+      CGAL_assertion_code(bool is_edge =)
       tr.is_edge(va, vb, fh, i);
-      CGAL_assume( should_be_true == true );
+      CGAL_assertion(is_edge);
 
       return this->operator()(tr, fh, i);
     }
@@ -229,10 +229,10 @@ namespace Mesh_2 {
                     const Vertex_handle& vb) const
     {
       Face_handle fh;
-      int i;
-      CGAL_assume_code( bool test = )
+      int i = 0;
+      CGAL_assertion_code(bool is_edge =)
         tr.is_edge(va, vb, fh, i);
-      CGAL_assume( test == true );
+      CGAL_assertion(is_edge);
 
       Vertex_handle vi;
       Vertex_handle mvi;
@@ -775,16 +775,16 @@ protected:
                    // We know that is_edge must return true, and is_edge will assign something to index
                    // but the compiler does not so it will issue a maybe-uninitialized warning
 
-    CGAL_assume_code(bool is_edge = )
+    CGAL_assertion_code(bool is_edge =)
     tr.is_edge(va, v, fh, index);
-    CGAL_assume(is_edge == true);
+    CGAL_assertion(is_edge);
 
     fh->set_constraint(index, true);
     fh->neighbor(index)->set_constraint(triangulation_ref_impl().tds().mirror_index(fh, index), true);
 
-    CGAL_assume_code( is_edge = )
+    CGAL_assertion_code(is_edge =)
     tr.is_edge(vb, v, fh, index);
-    CGAL_assume(is_edge == true);
+    CGAL_assertion(is_edge);
 
     fh->set_constraint(index, true);
     fh->neighbor(index)->set_constraint(triangulation_ref_impl().tds().mirror_index(fh, index), true);
@@ -841,10 +841,10 @@ private: /** \name DEBUGGING TYPES AND DATA */
     const Edge operator()(const Constrained_edge edge) const
     {
       Face_handle fh;
-      int index;
-      CGAL_assume_code(bool sure =)
+      int index = 0;
+      CGAL_assertion_code(bool is_edge =)
         tr.is_edge(edge.first, edge.second, fh, index);
-      CGAL_assume(sure == true);
+      CGAL_assertion(is_edge);
       return Edge(fh, index);
     }
   }; // end From_pair_of_vertex_to_edge

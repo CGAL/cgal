@@ -30,13 +30,13 @@ typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::t
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 namespace params = CGAL::parameters;
 
 int main()
 {
-  const std::string fname = CGAL::data_file_path("images/420.inr");
+  const std::filesystem::path fname = CGAL::data_file_path("images/420.inr");
   // Loads image
   CGAL::Image_3 image;
   if(!image.read(fname)){

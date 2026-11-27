@@ -36,6 +36,7 @@
 #include <CGAL/poisson_refine_triangulation.h>
 #include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 #include <CGAL/compute_average_spacing.h>
+#include <CGAL/IO/File_medit.h>
 #include <CGAL/Timer.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -58,7 +59,7 @@
 
 namespace CGAL {
 
-  namespace internal {
+namespace internal {
 template <class RT>
 bool
 invert(
@@ -149,8 +150,6 @@ algorithm which solves for a piecewise linear function on a 3D
 Delaunay triangulation instead of an adaptive octree.
 
 \tparam Gt Geometric traits class.
-
-\cgalModels{ImplicitFunction}
 
 */
 template <class Gt>
@@ -312,8 +311,10 @@ private:
     NormalPMap normal_pmap,
     Visitor visitor)
   {
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     CGAL::Timer task_timer; task_timer.start();
     CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
+#endif
 
     // Inserts points in triangulation
     m_tr->insert(
@@ -321,10 +322,11 @@ private:
       point_pmap,
       normal_pmap,
       visitor);
-
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     // Prints status
     CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
                                                            << std::endl;
+#endif
   }
 
 
@@ -432,25 +434,27 @@ public:
                                  double approximation_ratio = 0,
                                  double average_spacing_ratio = 5)
   {
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     CGAL::Timer task_timer; task_timer.start();
     CGAL_TRACE_STREAM << "Delaunay refinement...\n";
+#endif
 
     // Delaunay refinement
     const FT radius_edge_ratio_bound = 2.5;
     const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
     const FT enlarge_ratio = 1.5;
-    const FT radius = sqrt(bounding_sphere().squared_radius()); // get triangulation's radius
-    const FT cell_radius_bound = radius/5.; // large
+    const FT sqradius = bounding_sphere().squared_radius(); // get triangulation's radius
+    const FT cell_sqradius_bound = sqradius/25.; // large
 
-    internal::Poisson::Constant_sizing_field<Triangulation> sizing_field(CGAL::square(cell_radius_bound));
+    internal::Poisson::Constant_sizing_field<Triangulation> sq_sizing_field(cell_sqradius_bound);
 
     std::vector<int> NB;
 
-    NB.push_back( delaunay_refinement(radius_edge_ratio_bound,sizing_field,max_vertices,enlarge_ratio));
+    NB.push_back( delaunay_refinement(radius_edge_ratio_bound,sq_sizing_field,max_vertices,enlarge_ratio));
 
     while(m_tr->insert_fraction(visitor)){
 
-      NB.push_back( delaunay_refinement(radius_edge_ratio_bound,sizing_field,max_vertices,enlarge_ratio));
+      NB.push_back( delaunay_refinement(radius_edge_ratio_bound,sq_sizing_field,max_vertices,enlarge_ratio));
     }
 
     if(approximation_ratio > 0. &&
@@ -486,12 +490,14 @@ public:
              it = m_tr->input_points_begin(); it != m_tr->input_points_end(); ++ it)
         if (random.get_double() >= ratio)
           some_points.push_back (it);
-
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
       CGAL_TRACE_STREAM << "SPECIAL PASS that uses an approximation of the result (approximation ratio: "
                 << approximation_ratio << ")" << std::endl;
       CGAL::Timer approximation_timer; approximation_timer.start();
 
       CGAL::Timer sizing_field_timer; sizing_field_timer.start();
+#endif
+
       Poisson_reconstruction_function<Geom_traits>
         coarse_poisson_function(boost::make_indirect_iterator (some_points.begin()),
                                 boost::make_indirect_iterator (some_points.end()),
@@ -508,20 +514,24 @@ public:
         Poisson_reconstruction_function<Geom_traits> > sizing_field2(&min_sizing_field,
                                                                      &coarse_poisson_function);
 
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
       sizing_field_timer.stop();
       std::cerr << "Construction time of the sizing field: " << sizing_field_timer.time()
                 << " seconds" << std::endl;
+#endif
 
       NB.push_back( delaunay_refinement(radius_edge_ratio_bound,
                                         sizing_field2,
                                         max_vertices,
                                         enlarge_ratio,
                                         sizing_field_ok) );
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
       approximation_timer.stop();
       CGAL_TRACE_STREAM << "SPECIAL PASS END (" << approximation_timer.time() <<  " seconds)" << std::endl;
+#endif
     }
 
-
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     // Prints status
     CGAL_TRACE_STREAM << "Delaunay refinement: " << "added ";
     for(std::size_t i = 0; i < NB.size()-1; i++){
@@ -532,10 +542,21 @@ public:
                       << std::endl;
     task_timer.reset();
 
+    std::ofstream os("poisson_refine_triangulation.mesh");
+    std::vector<Cell_handle> cells;
+    std::vector<Facet> facets;
+    m_tr->incident_cells(m_tr->infinite_vertex(), std::back_inserter(cells));
+    for(const Cell_handle& c : cells) {
+      facets.push_back(Facet(c, c->index(m_tr->infinite_vertex())));
+    }
+    CGAL::SMDS_3::output_T3_to_medit(os, *m_tr, m_tr->finite_vertex_handles(), facets, m_tr->finite_cell_handles());
+    os.close();
+
 #ifdef CGAL_DIV_NON_NORMALIZED
     CGAL_TRACE_STREAM << "Solve Poisson equation with non-normalized divergence...\n";
 #else
     CGAL_TRACE_STREAM << "Solve Poisson equation with normalized divergence...\n";
+#endif
 #endif
 
     // Computes the Poisson indicator function operator()
@@ -552,10 +573,12 @@ public:
     // - operator() < 0 inside the surface.
     set_contouring_value(median_value_at_input_vertices());
 
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     // Prints status
     CGAL_TRACE_STREAM << "Solve Poisson equation: " << task_timer.time() << " seconds, "
                                                     << std::endl;
     task_timer.reset();
+#endif
 
     return true;
   }
@@ -620,7 +643,7 @@ public:
   /// \endcond
 
   /*!
-    `ImplicitFunction` interface: evaluates the implicit function at a
+    evaluates the implicit function at a
     given 3D query point. The function `compute_implicit_function()` must be
     called before the first call to `operator()`.
   */
@@ -646,9 +669,8 @@ public:
   void initialize_cell_indices()
   {
     int i=0;
-    for(Finite_cells_iterator fcit = m_tr->finite_cells_begin();
-        fcit != m_tr->finite_cells_end();
-        ++fcit){
+    for(Cell_handle fcit : m_tr->finite_cell_handles())
+    {
       fcit->info()= i++;
     }
   }
@@ -664,9 +686,8 @@ public:
     Normal.resize(m_tr->number_of_cells());
     int i = 0;
     int N = 0;
-    for(Finite_cells_iterator fcit = m_tr->finite_cells_begin();
-        fcit != m_tr->finite_cells_end();
-        ++fcit){
+    for(Cell_handle fcit : m_tr->finite_cell_handles())
+    {
       Normal[i] = cell_normal(fcit);
       if(Normal[i] == NULL_VECTOR){
         N++;
@@ -680,9 +701,8 @@ public:
   {
     Dual.resize(m_tr->number_of_cells());
     int i = 0;
-    for(Finite_cells_iterator fcit = m_tr->finite_cells_begin();
-        fcit != m_tr->finite_cells_end();
-        ++fcit){
+    for(Cell_handle fcit : m_tr->finite_cell_handles())
+    {
       Dual[i++] = m_tr->dual(fcit);
     }
   }
@@ -745,7 +765,7 @@ private:
 
   template <typename Sizing_field>
   unsigned int delaunay_refinement(FT radius_edge_ratio_bound, ///< radius edge ratio bound (ignored if zero)
-                                   Sizing_field sizing_field, ///< cell radius bound (ignored if zero)
+                                   Sizing_field sizing_field, ///< cell radius bound (ignored if zero), squared
                                    unsigned int max_vertices, ///< number of vertices bound
                                    FT enlarge_ratio) ///< bounding box enlarge ratio
   {
@@ -759,10 +779,10 @@ private:
   template <typename Sizing_field,
             typename Second_sizing_field>
   unsigned int delaunay_refinement(FT radius_edge_ratio_bound, ///< radius edge ratio bound (ignored if zero)
-                                   Sizing_field sizing_field, ///< cell radius bound (ignored if zero)
+                                   Sizing_field sizing_field, ///< cell radius bound (ignored if zero), squared
                                    unsigned int max_vertices, ///< number of vertices bound
                                    FT enlarge_ratio, ///< bounding box enlarge ratio
-                                   Second_sizing_field second_sizing_field)
+                                   Second_sizing_field second_sizing_field)//squared
   {
     Sphere elarged_bsphere = enlarged_bounding_sphere(enlarge_ratio);
     unsigned int nb_vertices_added = poisson_refine_triangulation(*m_tr,radius_edge_ratio_bound,sizing_field,second_sizing_field,max_vertices,elarged_bsphere);
@@ -779,13 +799,14 @@ private:
     SparseLinearAlgebraTraits_d solver, ///< sparse linear solver
     double lambda)
   {
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     CGAL_TRACE_STREAM << "Calls solve_poisson()\n";
 
     double time_init = clock();
 
     double duration_assembly = 0.0;
     double duration_solve = 0.0;
-
+#endif
 
     initialize_cell_indices();
     initialize_barycenters();
@@ -795,7 +816,9 @@ private:
     m_tr->index_unconstrained_vertices();
     unsigned int nb_variables = static_cast<unsigned int>(m_tr->number_of_vertices()-1);
 
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     CGAL_TRACE_STREAM  << "  Number of variables: " <<  nb_variables << std::endl;
+#endif
 
     // Assemble linear system A*X=B
     typename SparseLinearAlgebraTraits_d::Matrix A(nb_variables); // matrix is symmetric definite positive
@@ -805,11 +828,8 @@ private:
 #ifndef CGAL_DIV_NON_NORMALIZED
     initialize_cell_normals();
 #endif
-    Finite_vertices_iterator v, e;
-    for(v = m_tr->finite_vertices_begin(),
-        e = m_tr->finite_vertices_end();
-        v != e;
-        ++v)
+
+    for(Vertex_handle v : m_tr->finite_vertex_handles())
     {
       if(!m_tr->is_constrained(v)) {
 #ifdef CGAL_DIV_NON_NORMALIZED
@@ -823,28 +843,33 @@ private:
 
     clear_duals();
     clear_normals();
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
     CGAL_TRACE_STREAM << "  Creates matrix: done (" << duration_assembly << "sec.)\n";
 
     CGAL_TRACE_STREAM << "  Solve sparse linear system...\n";
 
-    // Solve "A*X = B". On success, solution is (1/D) * X.
     time_init = clock();
+#endif
+    // Solve "A*X = B". On success, solution is (1/D) * X.
     double D;
     if(!solver.linear_solver(A, B, X, D))
       return false;
     CGAL_assertion(D == 1.0);
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
 
     CGAL_TRACE_STREAM << "  Solve sparse linear system: done (" << duration_solve << "sec.)\n";
-
+#endif
     // copy function's values to vertices
     unsigned int index = 0;
-    for (v = m_tr->finite_vertices_begin(), e = m_tr->finite_vertices_end(); v!= e; ++v)
+    for (Vertex_handle v : m_tr->finite_vertex_handles())
       if(!m_tr->is_constrained(v))
         v->f() = X[index++];
 
+#ifdef CGAL_POISSON_SURFACE_RECONSTRUCTION_VERBOSE
     CGAL_TRACE_STREAM << "End of solve_poisson()\n";
+#endif
 
     return true;
   }
@@ -885,10 +910,7 @@ private:
   {
     std::deque<FT> values;
     Finite_vertices_iterator v, e;
-    for(v = m_tr->finite_vertices_begin(),
-        e= m_tr->finite_vertices_end();
-        v != e;
-        v++)
+    for(Vertex_handle v : m_tr->finite_vertex_handles())
       if(v->type() == Triangulation::INPUT)
         values.push_back(v->f());
 
@@ -1014,10 +1036,8 @@ private:
     m_tr->incident_cells(v,std::back_inserter(cells));
 
     FT div = 0;
-    typename std::vector<Cell_handle>::iterator it;
-    for(it = cells.begin(); it != cells.end(); it++)
+    for(Cell_handle cell : cells)
     {
-      Cell_handle cell = *it;
       if(m_tr->is_infinite(cell))
         continue;
 
@@ -1060,10 +1080,8 @@ private:
     m_tr->incident_cells(v,std::back_inserter(cells));
 
     FT div = 0.0;
-    typename std::vector<Cell_handle>::iterator it;
-    for(it = cells.begin(); it != cells.end(); it++)
+    for(Cell_handle cell : cells)
     {
-      Cell_handle cell = *it;
       if(m_tr->is_infinite(cell))
         continue;
 

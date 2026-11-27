@@ -37,7 +37,7 @@ _test_cls_point_3(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
- typename R::Point_3       ip;
+ typename R::Point_3       ip(CGAL::ORIGIN);
  typedef typename R::Point_3::Cartesian_const_iterator CCI;
 
  CGAL::Point_3<R>  p1;

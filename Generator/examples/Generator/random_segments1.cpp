@@ -9,11 +9,10 @@
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/algorithm.h>
 
-using namespace CGAL;
 
-typedef Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                       Point;
-typedef Creator_uniform_2<double,Point>  Pt_creator;
+typedef CGAL::Creator_uniform_2<double,Point>  Pt_creator;
 typedef K::Segment_2                     Segment;
 typedef std::vector<Segment>             Vector;
 
@@ -24,16 +23,16 @@ int main() {
     segs.reserve(200);
 
     // Prepare point generator for the horizontal segment, length 200.
-    typedef  Random_points_on_segment_2<Point,Pt_creator>  P1;
+    typedef  CGAL::Random_points_on_segment_2<Point,Pt_creator>  P1;
     P1 p1( Point(-100,0), Point(100,0));
 
     // Prepare point generator for random points on circle, radius 250.
-    typedef  Random_points_on_circle_2<Point,Pt_creator>  P2;
+    typedef  CGAL::Random_points_on_circle_2<Point,Pt_creator>  P2;
     P2 p2( 250);
 
     // Create 200 segments.
-    typedef Creator_uniform_2< Point, Segment> Seg_creator;
-    typedef Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
+    typedef CGAL::Creator_uniform_2< Point, Segment> Seg_creator;
+    typedef CGAL::Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
     Seg_iterator g( p1, p2);
     std::copy_n( g, 200, std::back_inserter(segs));
 

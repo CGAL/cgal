@@ -156,7 +156,8 @@ class Arr_bounded_render_context :
     public Arr_render_context<Arrangement>,
     public Arr_bounds_context_mixin<typename Arrangement::Geometry_traits_2> {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
-  using Approx_point = typename Geom_traits::Approximate_point_2;
+  using Base_approximate_2 = typename Geom_traits::Approximate_2;
+  using Approx_point = typename Base_approximate_2::Approximate_point_2;
   using Render_context = Arr_render_context<Arrangement>;
   using Bounds_context_mixin = Arr_bounds_context_mixin<Geom_traits>;
   using Approx_cache = Arr_approximation_cache<Arrangement>;

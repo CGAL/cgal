@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 {
   typedef boost::graph_traits<Triangle_mesh>::face_descriptor face_descriptor;
 
-  std::ifstream in((argc>1) ? std::string(argv[1]) : CGAL::data_file_path("meshes/elephant.off"));
+  std::ifstream in((argc>1) ? std::filesystem::path(argv[1]) : CGAL::data_file_path("meshes/elephant.off"));
   double edge_length = (argc>2) ? std::atof(argv[2]) : 0.02;
   int number_of_parts = (argc>3) ? std::atoi(argv[3]) : 8;
 
@@ -151,7 +151,7 @@ int main(int argc, char** argv)
           << " #E = " << num_edges(final_mesh)
           << " #F = " << num_faces(final_mesh) << std::endl;
 
-  std::ofstream("simplified_mesh.off") << std::setprecision(17) << final_mesh;
+  std::ofstream("simplified_mesh_parallel.off") << std::setprecision(17) << final_mesh;
 
   return EXIT_SUCCESS;
 }

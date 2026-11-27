@@ -22,6 +22,27 @@
 
 namespace CGAL {
 
+namespace internal {
+
+template <class FT>
+unsigned int hilbert_sphere_face(const FT& x, const FT& y,
+                                 const FT& z, const FT& cut)
+{
+  if(x >= cut) return 0;
+  if(y >= cut) return 1;
+  if(x <= -cut) return 2;
+  if(z >= cut) return 3;
+  if(y <= -cut) return 4;
+  if(z <= -cut) return 5;
+
+  const FT ax = CGAL::abs(x), ay = CGAL::abs(y), az = CGAL::abs(z);
+  if(ax >= ay && ax >= az) return x >= 0 ? 0 : 2;
+  if(ay >= az) return y >= 0 ? 1 : 4;
+  return z >= 0 ? 3 : 5;
+}
+
+} // namespace internal
+
 template <class K,
           class Hilbert_policy,
           class P = typename K::Point_3>
@@ -30,12 +51,12 @@ class Hilbert_sort_on_sphere_3
         typedef P Point_3;
         typedef typename K::FT FT;
 
-        // Face 1, x > sqrt(1/3)
-        // Face 2, y > sqrt(1/3)
-        // Face 3, x < -sqrt(1/3)
-        // Face 4, z > sqrt(1/3)
-        // Face 5, y < -sqrt(1/3)
-        // Face 6, z < -sqrt(1/3)
+        // Face 1, x >= sqrt(1/3)
+        // Face 2, y >= sqrt(1/3)
+        // Face 3, x <= -sqrt(1/3)
+        // Face 4, z >= sqrt(1/3)
+        // Face 5, y <= -sqrt(1/3)
+        // Face 6, z <= -sqrt(1/3)
 
         typedef internal::Transform_coordinates_traits_3<K,0,1,1,0> Face_1_traits_3;  // +y +z
         typedef internal::Transform_coordinates_traits_3<K,-1,0,1,0> Face_2_traits_3; // -x +z
@@ -82,21 +103,13 @@ public:
                 std::vector< Point > vec[6];
 
                 const FT mulcte = _sqrt_of_one_over_three * CGAL_NTS sqrt(_sq_r);
-                const FT lxi = _p.x() - mulcte, lxs = _p.x() + mulcte;
-                const FT lyi = _p.y() - mulcte, lys = _p.y() + mulcte;
-                const FT lzs = _p.z() + mulcte;
 
                 for(RandomAccessIterator i = begin; i != end; ++i) {
                         const Point &p = *i;
-                        const typename K::FT x = _k.compute_x_3_object()(p);
-                        const typename K::FT y = _k.compute_y_3_object()(p);
-                        const typename K::FT z = _k.compute_z_3_object()(p); // for unit sphere
-                        if(x > lxs) vec[0].push_back(p);             // Face 1, x > sqrt(1/3)
-                        else if(y > lys) vec[1].push_back(p);        // Face 2, y > sqrt(1/3)
-                        else if(x < lxi) vec[2].push_back(p);        // Face 3, x < -sqrt(1/3)
-                        else if(z > lzs) vec[3].push_back(p);        // Face 4, z > sqrt(1/3)
-                        else if(y < lyi) vec[4].push_back(p);        // Face 5, y < -sqrt(1/3)
-                        else vec[5].push_back(p);                    // Face 6, z < -sqrt(1/3)
+                        const FT x = _k.compute_x_3_object()(p) - _p.x();
+                        const FT y = _k.compute_y_3_object()(p) - _p.y();
+                        const FT z = _k.compute_z_3_object()(p) - _p.z();
+                        vec[internal::hilbert_sphere_face(x, y, z, mulcte)].push_back(p);
                 }
                 if(vec[0].size()) _hs_1_object(vec[0].begin(), vec[0].end());
                 if(vec[1].size()) _hs_2_object(vec[1].begin(), vec[1].end());

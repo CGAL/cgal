@@ -103,18 +103,21 @@ public:
     Vertex_handle vertex(const int i) const /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
+        CGAL_assume(0<=i && i<=maximal_dimension());
         return vertices()[i];
     }
 
     Full_cell_handle neighbor(const int i) const /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
+        CGAL_assume(0<=i && i<=maximal_dimension());
         return neighbors()[i];
     }
 
     int mirror_index(const int i) const /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
+        CGAL_assume(0<=i && i<=maximal_dimension());
         return combinatorics_.mirror_index(i);
     }
 
@@ -122,6 +125,7 @@ public:
     Vertex_handle mirror_vertex(const int i, const int cur_dim) const /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
+        CGAL_assume(0<=i && i<=maximal_dimension());
         return combinatorics_.mirror_vertex(i, cur_dim);
     }
 
@@ -148,18 +152,21 @@ public:
     void set_vertex(const int i, Vertex_handle v) /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
+        CGAL_assume(0<=i && i<=maximal_dimension());
         vertices()[i] = v;
     }
 
     void set_neighbor(const int i, Full_cell_handle s) /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
+        CGAL_assume(0<=i && i<=maximal_dimension());
         neighbors()[i] = s;
     }
 
     void set_mirror_index(const int i, const int index) /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
+        CGAL_assume(0<=i && i<=maximal_dimension());
         combinatorics_.set_mirror_index(i, index);
     }
 
@@ -197,6 +204,8 @@ public:
     {
         CGAL_precondition(0 <= d1 && d1<=maximal_dimension());
         CGAL_precondition(0 <= d2 && d2<=maximal_dimension());
+        CGAL_assume(0 <= d1 && d1<=maximal_dimension());
+        CGAL_assume(0 <= d2 && d2<=maximal_dimension());
         combinatorics_.swap_vertices(d1, d2);
     }
 

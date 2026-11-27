@@ -36,13 +36,7 @@ squared_distance_parallel(const typename K::Segment_3& seg,
   const Vector_3 dir1 = seg.direction().vector();
   const Vector_3 dir2 = ray.direction().vector();
 
-  bool same_direction;
-  if(CGAL_NTS abs(dir1.hx()) > CGAL_NTS abs(dir1.hy()))
-    same_direction = (CGAL_NTS sign(dir1.hx()) == CGAL_NTS sign(dir2.hx()));
-  else
-    same_direction = (CGAL_NTS sign(dir1.hy()) == CGAL_NTS sign(dir2.hy()));
-
-  if(same_direction)
+  if(same_direction(dir1, dir2, k))
   {
     if(!is_acute_angle(seg.source(), seg.target(), ray.source(), k))
       return squared_distance(seg.target(), ray.source(), k);

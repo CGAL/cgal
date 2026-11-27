@@ -487,12 +487,6 @@ find_conflicts(const Point& p, Cell_handle c,
                OutputIteratorInternalFacets ifit,
                bool *could_lock_zone = nullptr);
 
-/*!
-\deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8.
-*/
-template <class OutputIterator>
-OutputIterator
-vertices_in_conflict(const Point& p, Cell_handle c, OutputIterator res);
 
 /*!
 Similar to `find_conflicts()`, but reports the vertices which are on the

@@ -23,6 +23,8 @@
 
 #include <CGAL/Surface_sweep_2/Arr_basic_insertion_traits_2.h>
 
+#include <boost/iterator/function_output_iterator.hpp>
+
 namespace CGAL {
 
 /*! \class Arr_insertion_traits_2
@@ -113,16 +115,14 @@ public:
         return oi;
       }
 
-      std::vector<Intersection_base_result> xections;
-      m_base_intersect(cv1.base(), cv2.base(), std::back_inserter(xections));
       // convert objects that are associated with Base_x_monotone_curve_2 to
-      // X_monotone_curve_2
-      for (const auto& xection : xections) {
+      // X_monotone_curve_2 on the fly
+      auto convert = [&](const Intersection_base_result& xection) {
         const Intersection_point*
           p_p = std::get_if<Intersection_point>(&xection);
         if (p_p != nullptr) {
           *oi++ = Intersection_result(*p_p);
-          continue;
+          return;
         }
         const Base_x_monotone_curve_2* base_cv_p =
           std::get_if<Base_x_monotone_curve_2>(&xection);
@@ -136,8 +136,9 @@ public:
         X_monotone_curve_2 cv(*base_cv_p, he);
         cv.set_overlapping();
         *oi++ = Intersection_result(cv);
-      }
-      xections.clear();
+      };
+      m_base_intersect(cv1.base(), cv2.base(),
+                       boost::make_function_output_iterator(convert));
       return oi;
     }
   };

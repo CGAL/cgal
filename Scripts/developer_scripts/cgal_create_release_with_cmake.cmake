@@ -10,7 +10,7 @@
 # GPL_PACKAGE_LIST=path to a file containing the list of GPL packages to include in the release. If not provided all of them are.
 # GENERATE_TARBALLS=[ON/OFF] indicates if release tarballs should be created as DESTINATION
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 find_program(BASH NAMES bash sh)
 function(process_package pkg)
   if(VERBOSE)
@@ -262,6 +262,8 @@ file(REMOVE ${release_dir}/include/CGAL/license/generate_files.cmake)
 file(REMOVE ${release_dir}/include/CGAL/license/README.md)
 file(REMOVE ${release_dir}/include/CGAL/license/gpl.h.in)
 file(REMOVE ${release_dir}/include/CGAL/license/package_list.txt)
+file(REMOVE ${release_dir}/AGENTS.md)
+file(REMOVE ${release_dir}/AI-GUIDELINES.md)
 
 if(PUBLIC AND NOT TESTSUITE) # we are not creating an internal release.
   # Taken from create_new_release.

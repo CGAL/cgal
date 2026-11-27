@@ -46,8 +46,10 @@ output_c3t3_to_vtk_unstructured_grid(const C3T3& c3t3,
   vtkCellArray* const vtk_cells = vtkCellArray::New();
 
   vtk_points->Allocate(c3t3.triangulation().number_of_vertices()- c3t3.number_of_far_points());
-  vtk_facets->Allocate(c3t3.number_of_facets_in_complex());
-  vtk_cells->Allocate(export_complex ? c3t3.number_of_cells_in_complex() : tr.number_of_finite_cells());
+  const vtkIdType nb_facets = static_cast<vtkIdType>(c3t3.number_of_facets_in_complex());
+  const vtkIdType nb_cells = static_cast<vtkIdType>(export_complex ? c3t3.number_of_cells_in_complex() : tr.number_of_finite_cells());
+  vtk_facets->AllocateExact(nb_facets, 3 * nb_facets);
+  vtk_cells->AllocateExact(nb_cells, 4 * nb_cells);
 
   boost::unordered_map<Vertex_handle, vtkIdType, Hash_fct> V;
   vtkIdType inum = 0;

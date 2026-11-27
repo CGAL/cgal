@@ -332,7 +332,7 @@ public:
   }
 
   ~Is_on_positive_side_of_plane_3(){
-    if (ek_plane_ptr!=nullptr) delete ek_plane_ptr;
+    delete ek_plane_ptr;
   }
 
   bool operator() (const Point_3& s) const

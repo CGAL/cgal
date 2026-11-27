@@ -1,0 +1,13 @@
+OFF
+# Single partition. Quadrilateral with two vertices on the line x=0.5 that move off the line (side decided at t=0+).
+8 2 0
+0.5 0.25 0.5
+0.75 0.5 0.5
+0.5 0.75 0.5
+0.125 0.5 0.5
+0.5 0.0 0.015625
+0.5 1.0 0.0
+0.5 0.96875 1.0
+0.5 0.0625 0.9921875
+4 0 1 2 3
+4 4 5 6 7

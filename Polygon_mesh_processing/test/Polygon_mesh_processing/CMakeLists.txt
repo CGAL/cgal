@@ -1,11 +1,11 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Polygon_mesh_processing_Tests)
 
 # CGAL and its components
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("connected_component_polyhedron.cpp")
 create_single_source_cgal_program("connected_component_surface_mesh.cpp")
@@ -57,6 +57,7 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(test_hausdorff_bounded_error_distance PRIVATE CGAL::TBB_support)
   target_link_libraries(test_pmp_distance PRIVATE CGAL::TBB_support)
   target_link_libraries(self_intersection_surface_mesh_test PRIVATE CGAL::TBB_support)
+  target_link_libraries(pmp_do_intersect_test PRIVATE CGAL::TBB_support)
 else()
   message(STATUS "NOTICE: Intel TBB was not found. Tests will use sequential code.")
 endif()

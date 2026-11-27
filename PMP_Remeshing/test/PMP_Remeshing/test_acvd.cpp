@@ -20,7 +20,7 @@ using Polyhedron = CGAL::Polyhedron_3<K>;
 namespace params = CGAL::parameters;
 
 template <class Mesh>
-void run_test(std::string fname, std::size_t genus, bool subdiv)
+void run_test(std::filesystem::path fname, std::size_t genus, bool subdiv)
 {
   Mesh mesh;
   CGAL::IO::read_polygon_mesh(fname, mesh);
@@ -51,8 +51,27 @@ void run_test(std::string fname, std::size_t genus, bool subdiv)
   assert(-(vertices(mesh).size()-edges(mesh).size()+faces(mesh).size()-2)/2==genus);
 }
 
+// issue #9097: some clusters were annuli around a handle, leading to an output with a different genus
+void test_issue_9097()
+{
+  Surface_mesh ref;
+  CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/double-torus-example.off"), ref);
+  PMP::triangulate_faces(ref);
+
+  for (unsigned int seed : {1283u, 1497u})
+  {
+    Surface_mesh mesh = ref;
+    PMP::approximated_centroidal_Voronoi_diagram_remeshing(mesh, 1000, params::random_seed(seed));
+    PMP::approximated_centroidal_Voronoi_diagram_remeshing(mesh, 4, params::random_seed(seed));
+    assert(CGAL::is_closed(mesh));
+    assert(vertices(mesh).size()-edges(mesh).size()+faces(mesh).size()+2 == 0); // genus 2
+  }
+}
+
 int main()
 {
+  test_issue_9097();
+
   run_test<Surface_mesh>(CGAL::data_file_path("meshes/tetrahedron.off"), 0, true);
   run_test<Surface_mesh>(CGAL::data_file_path("meshes/tetrahedron.off"), 0, false);
   run_test<Polyhedron>(CGAL::data_file_path("meshes/torus_quad.off"), 1, true);

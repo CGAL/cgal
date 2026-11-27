@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 
 project( Triangulation_on_hyperbolic_surface_2_Demo )
 
@@ -10,7 +10,7 @@ include_directories(${CMAKE_BINARY_DIR})
 set(CMAKE_AUTOMOC ON)
 
 # CGAL and its components
-find_package(CGAL REQUIRED COMPONENTS Core Qt6)
+find_package(CGAL REQUIRED COMPONENTS Qt6)
 find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if (NOT CGAL_Qt6_FOUND  OR NOT Qt6_FOUND)

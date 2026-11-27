@@ -19,7 +19,7 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 int main(int argc, char** argv)
 {
   // Read the input
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/oni.pwn");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/oni.pwn");
   std::cout << "Reading " << filename << "..." << std::endl;
 
   Point_container points;

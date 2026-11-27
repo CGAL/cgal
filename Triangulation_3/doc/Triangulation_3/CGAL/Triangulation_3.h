@@ -694,10 +694,12 @@ facet, an edge or on a vertex, one of the cells having `query` on
 its boundary is returned.
 
 If the point `query` lies outside the convex hull of the points,
-an infinite cell with vertices \f$ \{ p, q, r, \infty\}\f$ is returned such that
+an infinite cell with vertices \f$ \{ p, q, r, \infty\}\f$
+(or any even permutation of this sequence) is returned such that
 the tetrahedron \f$ ( p, q, r, query )\f$ is positively oriented
 (the rest of the triangulation lies on the other side of facet
 \f$ ( p, q, r )\f$).
+
 
 Note that locate works even in degenerate dimensions: in dimension 2
 (resp. 1, 0) the `Cell_handle` returned is the one that represents

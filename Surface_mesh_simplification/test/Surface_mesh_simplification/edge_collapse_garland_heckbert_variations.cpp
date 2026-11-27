@@ -1,5 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
+#ifdef USE_POLYHEDRON
+#include <CGAL/Polyhedron_3.h>
+#else
 #include <CGAL/Surface_mesh.h>
+#endif
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
@@ -20,7 +24,11 @@
 typedef CGAL::Simple_cartesian<double>                                             Kernel;
 typedef Kernel::FT                                                                 FT;
 typedef Kernel::Point_3                                                            Point_3;
+#ifdef USE_POLYHEDRON
+typedef CGAL::Polyhedron_3<Kernel>                                                 Surface_mesh;
+#else
 typedef CGAL::Surface_mesh<Point_3>                                                Surface_mesh;
+#endif
 
 typedef typename boost::graph_traits<Surface_mesh>::edge_descriptor                edge_descriptor;
 typedef typename boost::graph_traits<Surface_mesh>::face_descriptor                face_descriptor;

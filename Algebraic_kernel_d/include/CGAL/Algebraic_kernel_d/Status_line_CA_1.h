@@ -83,7 +83,10 @@ public:
     // constructors
 
     // default constructor ()
-    Status_line_CA_1_rep()
+    Status_line_CA_1_rep() :
+            _m_kernel(nullptr), _m_x(), _m_index(0), _m_ca(),
+            _m_total_arcs(0), _m_vertical_line(false), _m_event(false),
+            _m_num_arcs_minus_inf(0, 0), _m_num_arcs_plus_inf(0, 0)
     {   }
 
     // constructs status line over interval

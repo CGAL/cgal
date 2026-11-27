@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16...3.31)
+cmake_minimum_required(VERSION 3.16...4.4)
 project(Lab_Demo)
 include(FeatureSummary)
 
@@ -86,7 +86,7 @@ set_package_properties(
   LibSSH PROPERTIES
   DESCRIPTION "A library implementing the SSH protocol on client and server side. "
   PURPOSE "Required for loading (saving) a scene to (from) a distant server.")
-if(NOT LIBSSH_FOUND)
+if(NOT LIBSSH_FOUND AND NOT LibSSH_FOUND)
   message(STATUS "NOTICE: The SSH features will be disabled.")
 endif()
 

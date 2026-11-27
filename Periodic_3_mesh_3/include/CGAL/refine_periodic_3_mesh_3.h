@@ -98,7 +98,7 @@ bool project_points(C3T3& c3t3,
     CGAL_assertion(weighted_old_position.weight() == FT(0)); // point projection happens before optimizers
 
     const Bare_point& old_position = cp(weighted_old_position);
-    const Bare_point new_position = helper.project_on_surface(old_vertex, old_position);
+    const auto [new_position, new_index] = helper.project_on_surface(old_vertex, old_position);
     const FT sq_d = csd(new_position, old_position);
 
 #ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
@@ -140,15 +140,7 @@ bool project_points(C3T3& c3t3,
     {
       new_vertex->info().is_dummy_vertex = false;
       c3t3.set_dimension(new_vertex, 2); // on the surface
-
-      // @fixme
-      // This actually should be the index from the surface patch index...
-      // It can be obtained either by modifying project_on_surface to return the surface_patch index
-      auto opt_si = domain.is_in_domain_object()(cp(c3t3.triangulation().point(new_vertex)));
-      if(opt_si.has_value())
-        c3t3.set_index(new_vertex, domain.index_from_subdomain_index(*opt_si));
-      else
-        c3t3.set_index(new_vertex, 0);
+      c3t3.set_index(new_vertex, new_index);
     }
     else
     {
@@ -234,9 +226,7 @@ void project_dummy_points_of_surface(C3T3& c3t3,
  * will always satisfy this condition.
  *
  *
- * \tparam  C3T3 is required to be a model of
- * the concept
- * `MeshComplex_3InTriangulation_3`.
+ * \tparam  C3T3 is required to be a model of the concept `MeshComplex_3InTriangulation_3`.
  * The argument `c3t3` is passed by
  * reference as this object is modified by the refinement process. As the
  * refinement process only adds points to the triangulation, all
@@ -245,11 +235,10 @@ void project_dummy_points_of_surface(C3T3& c3t3,
  * specific points in the domain to ensure that they will be contained in the
  * final triangulation.
  * The type `C3T3` is in particular required to provide a nested type
- * `C3T3::Triangulation` for the 3D triangulation
- * embedding the mesh. The vertex and cell base classes of the
- * triangulation `C3T3::Triangulation` are required to be models of the
- * concepts `MeshVertexBase_3` and `MeshCellBase_3`
- * respectively.
+ * `C3T3::Triangulation` for the 3D triangulation embedding the mesh.
+ * This type must be a `CGAL::Periodic_3_mesh_triangulation_3` whose
+ * vertex and cell base classes are be models of the
+ * concepts `MeshVertexBase_3` and `MeshCellBase_3`, respectively.
  *
  * \tparam MD is required to be a model of
  * the concept `Periodic_3MeshDomain_3` or of the refined concept

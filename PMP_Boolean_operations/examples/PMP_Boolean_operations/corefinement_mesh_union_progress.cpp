@@ -3,6 +3,7 @@
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/Real_timer.h>
 
 #include <fstream>
 
@@ -97,7 +98,7 @@ struct Visitor_rep{
   std::size_t bound_intersection = 0;
   std::size_t tintersection = 0;
   std::size_t count_intersection = 0;
-  CGAL::Timer t;
+  CGAL::Real_timer t;
 };
 
 
@@ -186,8 +187,8 @@ struct Visitor :
 
 int main(int argc, char* argv[])
 {
-  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
-  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
+  const std::filesystem::path filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::filesystem::path filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh1, mesh2;
   if(!CGAL::IO::read_polygon_mesh(filename1, mesh1) || !CGAL::IO::read_polygon_mesh(filename2, mesh2))
@@ -196,12 +197,12 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  CGAL::Timer t;
+  CGAL::Real_timer t;
   t.start();
   Mesh out;
   Visitor visitor;
 
-  bool valid_union = PMP::corefine_and_compute_union (mesh1,mesh2, out, CGAL::parameters::visitor(visitor));
+  bool valid_union = PMP::corefine_and_compute_union (mesh1,mesh2, out, CGAL::parameters::visitor(visitor).concurrency_tag(CGAL::Parallel_if_available_tag()));
 
   std::cout << "Global timer = " << t.time() << " sec." << std::endl;
 

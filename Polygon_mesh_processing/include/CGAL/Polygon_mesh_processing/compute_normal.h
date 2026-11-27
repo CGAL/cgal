@@ -564,7 +564,6 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 
   typedef typename GT::FT                                                     FT;
   typedef typename GT::Vector_3                                               Vector_3;
-  typedef typename boost::property_traits<FaceNormalVector>::reference        Vector_ref;
 
   typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
   typename GT::Compute_squared_length_3 csl_3 = traits.compute_squared_length_3_object();
@@ -586,8 +585,7 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
     {
       if(vn_type == NO_WEIGHT)
       {
-        const Vector_ref n = get(face_normals, face(h, pmesh));
-        normal = traits.construct_sum_of_vectors_3_object()(normal, n);
+        normal = traits.construct_sum_of_vectors_3_object()(normal, get(face_normals, face(h, pmesh)));
       }
       else if(vn_type == SIN_WEIGHT)
       {
@@ -701,9 +699,17 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                  get_const_property_map(vertex_point, pmesh));
-  typedef CGAL::dynamic_face_property_t<Vector_3>                             Face_normal_tag;
+  typedef std::unordered_map<face_descriptor, Vector_3>                       Face_vector_map;
+  typedef boost::associative_property_map<Face_vector_map>                    Default_map;
 
-  auto face_normals = choose_parameter(get_parameter(np, internal_np::face_normal), Face_normal_tag(), pmesh);
+  typedef typename internal_np::Lookup_named_param_def<internal_np::face_normal_t,
+                                                       NamedParameters,
+                                                       Default_map>::type     Face_normal_map;
+  Face_vector_map default_fvmap;
+  Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
+                                                  Default_map(default_fvmap));
+
+
   const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>::value;
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP

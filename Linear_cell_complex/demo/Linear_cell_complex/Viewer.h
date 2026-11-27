@@ -18,11 +18,22 @@
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Qt/Basic_viewer.h>
 
-class Viewer : public CGAL::Basic_viewer
-{
-  Q_OBJECT
+#include <boost/utility/base_from_member.hpp>
 
-  typedef CGAL::Basic_viewer Base;
+class Viewer_base : private boost::base_from_member<CGAL::Graphics_scene>,
+                    public CGAL::Basic_viewer
+{
+protected:
+  using Scene_holder = boost::base_from_member<CGAL::Graphics_scene>;
+  explicit Viewer_base(QWidget* parent)
+    : Scene_holder(), CGAL::Basic_viewer(parent, Scene_holder::member, "") {}
+  CGAL::Graphics_scene& graphic_buffer() { return Scene_holder::member; }
+};
+
+class Viewer : public Viewer_base
+{
+  typedef boost::base_from_member<CGAL::Graphics_scene>  Base_from_member;
+  typedef Viewer_base Base;
 
 public:
   Viewer(QWidget* parent);
@@ -39,7 +50,6 @@ private:
                                Dart_const_descriptor,
                                Dart_const_descriptor,
                                Dart_const_descriptor> m_gs_options;
-  CGAL::Graphics_scene m_graphic_buffer;
   Scene* scene;
   bool m_previous_scene_empty;
 };

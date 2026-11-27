@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(PMP_Remeshing_Examples)
 
 # CGAL and its components
@@ -11,6 +11,7 @@ create_single_source_cgal_program("extrude.cpp" )
 create_single_source_cgal_program("hausdorff_distance_remeshing_example.cpp")
 create_single_source_cgal_program("isotropic_remeshing_example.cpp")
 create_single_source_cgal_program("isotropic_remeshing_of_patch_example.cpp")
+create_single_source_cgal_program("isotropic_remeshing_with_constrained_edges.cpp")
 create_single_source_cgal_program("isotropic_remeshing_with_custom_sizing_example.cpp")
 create_single_source_cgal_program("isotropic_remeshing_with_allow_move.cpp")
 create_single_source_cgal_program("random_perturbation_SM_example.cpp")

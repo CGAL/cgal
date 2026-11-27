@@ -55,7 +55,7 @@ public:
   typedef Tree_node_base<Segment_tree_node<C_Data, C_Window, C_Interface> >  Base;
 
   Segment_tree_node()
-    : sublayer(nullptr)
+    : left_key(), right_key(), sublayer(nullptr)
   {}
 
   Segment_tree_node(const Key& p_left_key,
@@ -189,25 +189,22 @@ protected:
 
   link_type  new_Segment_tree_node_t(link_type l, link_type r, const Key& kl, const Key& kr)
   {
-    Segment_tree_node_t node(l,r,kl,kr);
     Segment_tree_node_t* node_ptr = alloc.allocate(1);
-    std::allocator_traits<allocator_type>::construct(alloc, node_ptr, node);
+    std::allocator_traits<allocator_type>::construct(alloc, node_ptr, l, r, kl, kr);
     return node_ptr;
   }
 
   link_type  new_Segment_tree_node_t(const Key& kl, const Key& kr)
   {
-    Segment_tree_node_t node(kl,kr);
     Segment_tree_node_t* node_ptr = alloc.allocate(1);
-    std::allocator_traits<allocator_type>::construct(alloc, node_ptr, node);
+    std::allocator_traits<allocator_type>::construct(alloc, node_ptr, kl, kr);
     return node_ptr;
   }
 
   link_type  new_Segment_tree_node_t()
   {
-    Segment_tree_node_t node;
     Segment_tree_node_t* node_ptr = alloc.allocate(1);
-    std::allocator_traits<allocator_type>::construct(alloc, node_ptr, node);
+    std::allocator_traits<allocator_type>::construct(alloc, node_ptr);
     return node_ptr;
   }
 

@@ -57,7 +57,7 @@ public:
    *   - domain : over value distances
    * @param mesh `CGAL Polyhedron` on which @a values are defined
    * @param window_size range of effective neighbors
-   * @param[in, out] values `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `double` as value type
+   * @param[in, out] values `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::face_descriptor` as key and `double` as value type
    */
   template<class ValuePropertyMap>
   void operator()(const Polyhedron& mesh,
@@ -150,7 +150,7 @@ public:
    *
    * @param mesh `CGAL Polyhedron` on which @a values are defined
    * @param window_size range of effective neighbors
-   * @param[in, out] values `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `double` as value type
+   * @param[in, out] values `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::face_descriptor` as key and `double` as value type
    */
   template<class ValuePropertyMap>
   void operator()(const Polyhedron& mesh,

@@ -1526,7 +1526,7 @@ Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
     for(const std::filesystem::directory_entry& x : std::filesystem::directory_iterator(p))
     {
       std::string s = x.path().string();
-      if(CGAL::IO::internal::get_file_extension(s) != "bmp")
+      if(CGAL::IO::internal::get_file_extension(s) != ".bmp")
         continue;
 
       paths.push_back(x.path());

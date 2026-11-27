@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 namespace CGAL {
 
@@ -149,8 +150,7 @@ public:
 
   std::pair<FT,FT> alpha() const
   {
-    const Matrix& _m = gmap(_wrd.to_string());
-    ECplx _a = _m.alpha();
+    ECplx _a = gmap(to_string()).alpha();
     FT ax = _a.real();
     FT ay = _a.imag();
 
@@ -159,8 +159,7 @@ public:
 
   std::pair<FT,FT> beta() const
   {
-    const Matrix& _m = gmap(_wrd.to_string());
-    ECplx _b = _m.beta();
+    ECplx _b = gmap(to_string()).beta();
     FT bx = _b.real();
     FT by = _b.imag();
     return std::pair<FT,FT>(bx,by);

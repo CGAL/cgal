@@ -1,6 +1,7 @@
 Alpha_shapes_3
 Arrangement_on_surface_2
 BGL
+Circulator
 Constrained_triangulation_3
 Kernel_23
 Linear_cell_complex
@@ -8,6 +9,7 @@ Manual
 Mesh_2
 Mesh_3
 Nef_3
+Number_types
 Point_set_3
 Point_set_processing_3
 Polygon

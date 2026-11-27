@@ -1,19 +1,3 @@
-// Copyright (c) 2010 INRIA Sophia-Antipolis (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
-//
-// Author(s)     : Stephane Tayeb
-//
-//******************************************************************************
-// File Description :
-//******************************************************************************
-
 #include "test_meshing_utilities.h"
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
@@ -91,7 +75,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
       typename Mesh_domain::Corner_index,
       typename Mesh_domain::Curve_index > C3t3;
 
-    typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+    typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
     typedef typename Mesh_criteria::Edge_criteria Edge_criteria;
     typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
     typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
@@ -99,11 +83,12 @@ struct Polyhedron_with_features_tester : public Tester<K>
     //-------------------------------------------------------
     // Data generation
     //-------------------------------------------------------
-    std::cout << "\tSeed is\t"
-      << CGAL::get_default_random().get_seed() << std::endl;
+    std::cout << "\tSeed is\t" << CGAL::get_default_random().get_seed() << std::endl;
+
     std::ifstream input(CGAL::data_file_path("meshes/cube.off"));
     Polyhedron polyhedron;
     input >> polyhedron;
+
     Mesh_domain domain(polyhedron, &CGAL::get_default_random());
     domain.detect_features();
 
@@ -123,7 +108,12 @@ struct Polyhedron_with_features_tester : public Tester<K>
 #endif
     Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
+    namespace params = CGAL::parameters;
+
     // Mesh generation
+    std::cout << "sizeof(Vertex) " << sizeof(typename C3t3::Triangulation::Vertex) << std::endl;
+    std::cout << "sizeof(Cell) " << sizeof(typename C3t3::Triangulation::Cell) << std::endl;
+
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                         CGAL::parameters::manifold(),
                                         CGAL::parameters::no_exude(),
@@ -138,6 +128,10 @@ struct Polyhedron_with_features_tester : public Tester<K>
     std::ofstream out_medit("test-medit.mesh");
     CGAL::IO::write_MEDIT(out_medit, c3t3);
     CGAL::IO::output_to_tetgen("test-tetgen", c3t3);
+    std::ofstream out_ascii("test-ascii.mesh.cgal",
+                             std::ios_base::out|std::ios_base::binary);
+    CGAL::IO::save_binary_file(out_ascii, c3t3, false);
+    out_ascii.close();
     std::ofstream out_binary("test-binary.mesh.cgal",
                              std::ios_base::out|std::ios_base::binary);
     CGAL::IO::save_binary_file(out_binary, c3t3);
@@ -160,11 +154,13 @@ int main()
   }
 #ifdef CGAL_LINKED_WITH_TBB
   {
-    std::cerr << "Parallel mesh generation from a polyhedron with edges:\n";
+    std::cerr << "\n\nParallel mesh generation from a polyhedron with edges:\n";
     Polyhedron_with_features_tester<K_e_i, CGAL::Parallel_tag> test_epic_p("parallel");
     test_epic_p();
   }
 #endif
+
+  std::cout << "Done" << std::endl;
 
   return EXIT_SUCCESS;
 }

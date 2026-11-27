@@ -2,7 +2,7 @@
 # This file is the CGALConfig.cmake for a header-only CGAL installation
 #
 
-cmake_minimum_required(VERSION 3.22...3.31)
+cmake_minimum_required(VERSION 3.22...4.4)
 
 # For CGAL_CreateSingleSourceCGALProgram.cmake
 set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
@@ -36,6 +36,7 @@ if(BRANCH_BUILD)
   set(CGAL_MODULES_DIR ${CGAL_ROOT}/Installation/cmake/modules)
   file(GLOB packages_dirs ${CGAL_ROOT}/*)
 #  message("packages_dirs: ${packages_dirs}")
+  set(CGAL_INCLUDE_DIRS)
   foreach(package_dir ${packages_dirs})
     set(inc_dir ${package_dir}/include)
     if(IS_DIRECTORY ${inc_dir}
@@ -224,3 +225,16 @@ if ( NOT "${CGAL_CMAKE_EXACT_NT_BACKEND}" STREQUAL "Default" )
   ) # do not use set_target_properties to avoid overwriting
 endif()
 
+set(CGAL_WITH_FASTFLOAT OFF CACHE INTERNAL "Make FastFloat library part of the dependencies of the CGAL::CGAL target")
+if ($ENV{CGAL_WITH_FASTFLOAT})
+  set(CGAL_WITH_FASTFLOAT ON)
+endif()
+if (CGAL_WITH_FASTFLOAT)
+  find_package(FastFloat QUIET)
+  include(CGAL_FastFloat_support)
+  if (TARGET CGAL::FastFloat_support)
+    target_link_libraries(CGAL INTERFACE CGAL::FastFloat_support)
+  else()
+    message(FATAL_ERROR "Could not find a suitable version of FastFloat (v6.0.0+)")
+  endif()
+endif()

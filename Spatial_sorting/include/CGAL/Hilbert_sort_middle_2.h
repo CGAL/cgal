@@ -122,6 +122,8 @@ public:
   template <class RandomAccessIterator>
   void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
   {
+    if (begin == end) return;
+
     //Bbox_2 box=bbox_2(begin, end); BUG: WE NEED TO FIX THIS
     double xmin=to_double(_k.compute_x_2_object()(*begin)),
            ymin=to_double(_k.compute_y_2_object()(*begin)),

@@ -468,6 +468,33 @@ private:
     // Note : the values are not verified by hand
     std::cout << "Segment - Ray" << std::endl;
     check_squared_distance_with_bound(S{p( 0, 0, 30), p(  0, 30, 30)}, R{p(100, -100, 0), p( 200,  1, 0)}, 20899.504975002);
+
+    // parallel segment and ray, along each axis, for both orientations of the segment and of the ray
+    for(int i=0; i<3; ++i)
+    {
+      // d is the direction, u and v are orthogonal to it
+      int d[3] = {0, 0, 0}, u[3] = {0, 0, 0}, v[3] = {0, 0, 0};
+      d[i] = 1; u[(i+1)%3] = 1; v[(i+2)%3] = 1;
+
+      // the point 2u + v + t*d
+      auto q = [&](const int t) { return p(2*u[0] + v[0] + t*d[0], 2*u[1] + v[1] + t*d[1], 2*u[2] + v[2] + t*d[2]); };
+      // the point t*d
+      auto o = [&](const int t) { return p(t*d[0], t*d[1], t*d[2]); };
+
+      for(const S& s : { S{q(1), q(2)}, S{q(2), q(1)} })
+      {
+        // the ray passes next to the segment
+        check_squared_distance(s, R{o( 0), o( 1)}, 5);
+        check_squared_distance(s, R{o( 3), o( 2)}, 5);
+        check_squared_distance(s, R{o( 1), o( 2)}, 5);
+        check_squared_distance(s, R{o( 2), o( 1)}, 5);
+        // the ray points away from the segment
+        check_squared_distance(s, R{o( 0), o(-1)}, 6);
+        check_squared_distance(s, R{o( 3), o( 4)}, 6);
+        check_squared_distance(s, R{o(-1), o(-2)}, 9);
+        check_squared_distance(s, R{o( 4), o( 5)}, 9);
+      }
+    }
   }
 
   void R_L()

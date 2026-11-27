@@ -15,7 +15,7 @@ using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 
 int main(int argc, char* argv[])
 {
-  std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross.off");
+  std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross.off");
 
   Mesh input;
   if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, input)) {

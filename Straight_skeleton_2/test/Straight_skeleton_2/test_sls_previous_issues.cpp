@@ -94,10 +94,11 @@ void test(const Polygon_2& poly)
     assert(false);
   }
 
-  CGAL::Straight_skeletons_2::IO::print_straight_skeleton(*iss);
+
+  // CGAL::Straight_skeletons_2::IO::print_straight_skeleton(*iss);
   CGAL::draw(*iss);
 
-  CGAL::Straight_skeletons_2::IO::print_straight_skeleton(*oss);
+  // CGAL::Straight_skeletons_2::IO::print_straight_skeleton(*oss);
   CGAL::draw(*oss);
 }
 

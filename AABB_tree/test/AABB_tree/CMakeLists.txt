@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(AABB_tree_Tests)
 
 find_package(CGAL REQUIRED)
@@ -14,3 +14,11 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
+
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(aabb_test_two_trees_intersection PRIVATE CGAL::TBB_support)
+else()
+  message(STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")
+endif()

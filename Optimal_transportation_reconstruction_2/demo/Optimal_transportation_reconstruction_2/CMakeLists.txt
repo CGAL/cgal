@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the Optimal_transportation_reconstruction_2 demo.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Optimal_transportation_reconstruction_2_Demo)
 
 # Find CGAL and CGAL Qt6

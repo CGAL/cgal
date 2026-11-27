@@ -156,6 +156,9 @@ namespace internal {
                   if(last_intersected.back()!=j)
                     last_intersected.push_back(j);
                   status_intersected[j]++;
+                  // the edge leaves the rectangle only once; at a corner the
+                  // same point would also be found on the adjacent side
+                  break;
                 }
               }
           }
@@ -213,10 +216,14 @@ namespace internal {
                         if(last_intersected.back()!=j)
                           last_intersected.push_back(j);
                         status_intersected[j]++;
+                        break;
                       }
                     }
                       }
                 }//end if the second point is not inside
+                // the edge enters the rectangle only once; at a corner the
+                // same point would also be found on the adjacent side
+                break;
               }
               } // end v
             }

@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 
 project( Triangulation_on_sphere_2_Tests )
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 find_package(LEDA QUIET)
 
 create_single_source_cgal_program( "test_dtos.cpp" )

@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.19...3.31)
+cmake_minimum_required(VERSION 3.19...4.4)
 project(Kernel_23_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
 include_directories(BEFORE "include")
 
@@ -24,6 +24,9 @@ create_single_source_cgal_program("Simple_cartesian.cpp")
 create_single_source_cgal_program("Simple_homogeneous.cpp")
 create_single_source_cgal_program("test_all_linear_intersections.cpp")
 create_single_source_cgal_program("test_approximate_dihedral_angle_3.cpp")
+create_single_source_cgal_program("test_aff_transformation_variants.cpp")
+find_package(Threads REQUIRED)
+target_link_libraries(test_aff_transformation_variants PRIVATE Threads::Threads)
 create_single_source_cgal_program("test_bbox.cpp")
 create_single_source_cgal_program("test_converter.cpp")
 create_single_source_cgal_program("test_Has_conversion.cpp")
@@ -46,7 +49,7 @@ if(CGAL_ENABLE_TESTING)
   else()
     message(VERBOSE "GDB executable found: ${GDB_EXECUTABLE}")
     file(GENERATE
-           OUTPUT "$<CONFIG>/test_gdb_pretty_printers.gdb"
+           OUTPUT "$<TARGET_FILE_DIR:test_gdb_pretty_printers>/test_gdb_pretty_printers.gdb"
            CONTENT "
              set auto-load safe-path /
              set debuginfod enabled off
@@ -61,7 +64,7 @@ if(CGAL_ENABLE_TESTING)
           TARGET "test_gdb_pretty_printers")
     add_test(NAME "execution   of  test_gdb_pretty_printers"
       COMMAND "${GDB_EXECUTABLE}" --batch --quiet --nx
-        -x "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_gdb_pretty_printers.gdb"
+        -x "$<TARGET_FILE_DIR:test_gdb_pretty_printers>/test_gdb_pretty_printers.gdb"
         )
 
     set_tests_properties("execution   of  test_gdb_pretty_printers"

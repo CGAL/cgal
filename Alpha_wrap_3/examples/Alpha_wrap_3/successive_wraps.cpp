@@ -44,7 +44,7 @@ int main(int argc, char** argv)
   std::cerr.precision(17);
 
   // Read the input
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
   std::cout << "Reading " << filename << "..." << std::endl;
 
   Mesh mesh;

@@ -38,7 +38,7 @@ struct Allow_no_surface_crossing
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? std::string(argv[1]) : CGAL::data_file_path("meshes/triceratops.off");
+  const std::filesystem::path filename = (argc > 1) ? std::filesystem::path(argv[1]) : CGAL::data_file_path("meshes/triceratops.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))

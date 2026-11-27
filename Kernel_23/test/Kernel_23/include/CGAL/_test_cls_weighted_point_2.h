@@ -43,7 +43,7 @@ bool _test_cls_weighted_point_2(const R& )
   CGAL::Point_2<R> p0(n1, n2, n4);
 
   // constructions
-  typename R::Weighted_point_2       iwp;
+  typename R::Weighted_point_2       iwp(CGAL::ORIGIN);
   CGAL::Weighted_point_2<R> wp0; // default
   CGAL::Weighted_point_2<R> wp1(CGAL::ORIGIN); // with origin
   CGAL::Weighted_point_2<R> wp2(p0); // with Point_2

@@ -150,16 +150,41 @@ struct Orthogonal_cut_plane_traits
   Construct_direction_3 construct_direction_3_object() const { return Construct_direction_3(); }
   Compare_projection_along_direction_3 compare_projection_along_direction_3_object() const { return Compare_projection_along_direction_3(); }
 
-#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
-// for does self-intersect
+#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_AABB_TREE
   using Segment_3 = typename Kernel::Segment_3;
   using Triangle_3 = typename Kernel::Triangle_3;
   using Construct_segment_3 = typename Kernel::Construct_segment_3;
   using Construct_triangle_3 =typename  Kernel::Construct_triangle_3;
   using Do_intersect_3 = typename Kernel::Do_intersect_3;
+  using Construct_sphere_3 = typename Kernel::Construct_sphere_3;
+  using Sphere_3 = typename Kernel::Sphere_3;
+  using Iso_cuboid_3 = typename Kernel::Iso_cuboid_3;
+  using Cartesian_const_iterator_3 = typename Kernel::Cartesian_const_iterator_3;
+  using Construct_cartesian_const_iterator_3 = typename Kernel::Construct_cartesian_const_iterator_3;
+  using Construct_min_vertex_3 = typename Kernel::Construct_min_vertex_3;
+  using Construct_max_vertex_3 = typename Kernel::Construct_max_vertex_3;
+  using Construct_center_3 = typename Kernel::Construct_center_3;
+  using Compute_squared_radius_3 = typename Kernel::Compute_squared_radius_3;
+  using Construct_iso_cuboid_3 = typename Kernel::Construct_iso_cuboid_3;
+  using Equal_3 = typename Kernel::Equal_3;
+  using Less_x_3 = typename Kernel::Less_x_3;
+  using Less_y_3 = typename Kernel::Less_y_3;
+  using Less_z_3 = typename Kernel::Less_z_3;
+
+  Construct_sphere_3 construct_sphere_3_object() const { return Construct_sphere_3(); }
   Construct_segment_3 construct_segment_3_object() const { return Construct_segment_3(); }
   Construct_triangle_3 construct_triangle_3_object() const { return Construct_triangle_3(); }
   Do_intersect_3 do_intersect_3_object() const { return Do_intersect_3(); }
+  Construct_cartesian_const_iterator_3 construct_cartesian_const_iterator_3_object() const { return Construct_cartesian_const_iterator_3(); }
+  Construct_min_vertex_3 construct_min_vertex_3_object() const { return Construct_min_vertex_3(); }
+  Construct_max_vertex_3 construct_max_vertex_3_object() const { return Construct_max_vertex_3(); }
+  Construct_center_3 construct_center_3_object() const { return Construct_center_3(); }
+  Compute_squared_radius_3 compute_squared_radius_3_object() const { return Compute_squared_radius_3(); }
+  Construct_iso_cuboid_3 construct_iso_cuboid_3_object() const { return Construct_iso_cuboid_3(); }
+  Equal_3 equal_3_object() const { return Equal_3(); }
+  Less_x_3 less_x_3_object() const { return Less_x_3(); }
+  Less_y_3 less_y_3_object() const { return Less_y_3(); }
+  Less_z_3 less_z_3_object() const { return Less_z_3(); }
 #endif
 };
 #endif
@@ -211,7 +236,7 @@ struct Orthogonal_cut_plane_traits
  *    \cgalParamNEnd
  *
  *    \cgalParamNBegin{use_convex_specialization}
- *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex to guarantee a correct execution and results.}
+ *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex and have no flat vertices to guarantee a correct execution and results.}
  *      \cgalParamType{Boolean}
  *      \cgalParamDefault{`false`}
  *      \cgalParamExtra{convex specialization is only used if `edge_is_constrained_map`, `edge_is_marked_map` and `vertex_oriented_side_map` are unused.}
@@ -339,24 +364,25 @@ void refine_with_plane(PolygonMesh& pm,
                        typename internal_np::Get_param<typename NamedParameters::base,
                                                        internal_np::vertex_oriented_side_map_t>::type>;
 
-
-  Vertex_oriented_side_map vertex_os;
-  if constexpr (use_default_vosm)
-    vertex_os = get(V_os_tag(), pm);
-  else
-    vertex_os = get_parameter(np, internal_np::vertex_oriented_side_map);
+  Vertex_oriented_side_map vertex_os =
+    choose_parameter(get_parameter(np, internal_np::vertex_oriented_side_map), V_os_tag(), pm);
 
   std::vector<edge_descriptor> inters;
+
+  bool read_vos = choose_parameter(get_parameter(np, internal_np::read_vertex_oriented_side_map),false);
 
   bool all_in = true;
   bool all_out = true;
   bool at_least_one_on = false;
+
   std::vector<vertex_descriptor> on_obnd;
   //TODO: parallel for
   for (vertex_descriptor v : vertices(pm))
   {
-    Oriented_side os = oriented_side(plane,  get(vpm, v));
-    put(vertex_os,v,os);
+    Oriented_side os = read_vos ? get(vertex_os,v) : oriented_side(plane,  get(vpm, v));
+    CGAL_assertion(os == oriented_side(plane,  get(vpm, v)));
+    if (!read_vos)
+      put(vertex_os,v,os);
     switch(os)
     {
       case ON_POSITIVE_SIDE:
@@ -373,6 +399,8 @@ void refine_with_plane(PolygonMesh& pm,
     }
   }
 
+  bool ignore_1d_tangencies = choose_parameter(get_parameter(np, internal_np::do_not_mark_intersection_polylines), false);
+
   if (at_least_one_on || (!all_in && !all_out))
   {
     //TODO: parallel for
@@ -383,29 +411,36 @@ void refine_with_plane(PolygonMesh& pm,
       {
         if (get(vertex_os, tgt)==CGAL::ON_ORIENTED_BOUNDARY)
         {
-          bool pure_coplanar=true;
-          if (!is_border(e, pm))
-          {
-            halfedge_descriptor he=halfedge(e, pm);
+          bool on_boundary=false;
+          halfedge_descriptor he=halfedge(e, pm);
+          Oriented_side os1=ON_ORIENTED_BOUNDARY;
+          if (!is_border(he, pm))
             for (halfedge_descriptor h : halfedges_around_face(he,pm))
-              if (get(vertex_os,target(h, pm))!=CGAL::ON_ORIENTED_BOUNDARY)
-              {
-                pure_coplanar=false;
-                break;
-              }
-            if (pure_coplanar)
             {
-              he=opposite(he, pm);
-              for (halfedge_descriptor h : halfedges_around_face(he,pm))
-                if (get(vertex_os, target(h, pm))!=CGAL::ON_ORIENTED_BOUNDARY)
-                {
-                  pure_coplanar=false;
-                  break;
-                }
+              os1 = get(vertex_os,target(h, pm));
+              if (os1!=CGAL::ON_ORIENTED_BOUNDARY) break;
             }
+          else
+            on_boundary=true;
+          he=opposite(he, pm);
+          Oriented_side os2=ON_ORIENTED_BOUNDARY;
+          if (!is_border(he, pm))
+            for (halfedge_descriptor h : halfedges_around_face(he,pm))
+            {
+              os2 = get(vertex_os,target(h, pm));
+              if (os2!=CGAL::ON_ORIENTED_BOUNDARY) break;
+            }
+          else
+            on_boundary=true;
+
+          if (os1==os2)
+          {
+            if (!ignore_1d_tangencies && os1!=ON_ORIENTED_BOUNDARY)
+              put(edge_is_marked, e, true);
           }
-          if (!pure_coplanar)
-            put(edge_is_marked, e, true);
+          else
+            if (!on_boundary || !ignore_1d_tangencies)
+              put(edge_is_marked, e, true);
         }
       }
       else

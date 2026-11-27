@@ -1,10 +1,10 @@
 # Created by the script cgal_create_cmake_script.
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Shape_detection_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("test_efficient_RANSAC_cone_connected_component.cpp")
 create_single_source_cgal_program("test_efficient_RANSAC_cone_parameters.cpp")

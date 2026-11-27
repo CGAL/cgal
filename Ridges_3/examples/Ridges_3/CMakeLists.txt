@@ -1,5 +1,5 @@
 # This is the CMake script for compiling a CGAL application.
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.4)
 project(Ridges_3_Examples)
 
 find_package(CGAL REQUIRED)

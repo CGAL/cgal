@@ -44,7 +44,8 @@ public:
   /*!
   initializes the Garland-Heckbert "Probabilistic Triangle" policies.
   */
-  GarlandHeckbert_probabilistic_triangle_policies(TriangleMesh& tmesh);
+  template <class VertexPointMap = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type>
+  GarlandHeckbert_probabilistic_triangle_policies(TriangleMesh& tmesh, VertexPointMap vpm=get(CGAL::vertex_point, tmesh));
 
   /// @}
 

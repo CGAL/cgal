@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 {
   std::cout.precision(17);
 
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/poste_france.xyz");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/poste_france.xyz");
 
   Traits traits(Point_3(0, 0, 0), 100);
 
@@ -45,7 +45,6 @@ int main(int argc, char** argv)
   {
     Point_3 cp(x, y, z);
     Point ps = cps2(cp);
-    std::cout << "Cartesian point: " << cp << " Coordinates on the sphere: " << ps << std::endl;
     points.push_back(ps);
   }
 

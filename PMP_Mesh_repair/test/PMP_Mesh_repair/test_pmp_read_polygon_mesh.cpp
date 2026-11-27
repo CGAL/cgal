@@ -36,7 +36,7 @@ struct Custom_VPM
 };
 
 template< class Mesh>
-void test(const std::string& filename, const bool is_pm)
+void test(const std::filesystem::path& filename, const bool is_pm)
 {
   std::cout << "Test " << filename << " with Mesh = " << typeid(Mesh).name() << " is PM? " << is_pm << std::endl;
 

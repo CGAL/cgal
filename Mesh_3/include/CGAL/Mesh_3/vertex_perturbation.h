@@ -119,7 +119,7 @@ edge_sq_length(const typename Tr::Edge& e,
   typedef typename Tr::Bare_point      Bare_point;
   typedef typename Tr::Weighted_point  Weighted_point;
 
-  // There is no need to use tr.min_squared_distance() here because we are computing
+  // There is no need to use Th::min_squared_distance() here because we are computing
   // distances between vertices within a common cell, which means that even
   // if we are using a periodic triangulation, the distance is correctly computed.
   typename GT::Compute_squared_distance_3 sq_distance =
@@ -474,10 +474,16 @@ protected:
     const Weighted_point& weighted_initial_loc = c3t3.triangulation().point(v);
     Bare_point initial_loc = cp(weighted_initial_loc);
     Bare_point new_loc = translate(initial_loc, step_vector);
-    Bare_point final_loc = new_loc;
 
-    if ( c3t3.in_dimension(v) < 3 )
-      final_loc = helper.project_on_surface(v, new_loc);
+    auto project_on_surface_if_in_dimension_is_2 = [&](Vertex_handle vh, const Bare_point& p) {
+      if ( c3t3.in_dimension(vh) == 2 ) {
+        return helper.project_on_surface(vh, p).first;
+      }
+      else
+        return p;
+    };
+
+    Bare_point final_loc = project_on_surface_if_in_dimension_is_2(v, new_loc);
 
     Vector_3 move_vector = vector(initial_loc, final_loc);
 
@@ -491,11 +497,7 @@ protected:
            ++i <= max_step_nb_ )
       {
         new_loc = translate(new_loc, step_vector);
-
-        if ( c3t3.in_dimension(v) == 3 )
-          final_loc = new_loc;
-        else
-          final_loc = helper.project_on_surface(v, new_loc);
+        final_loc = project_on_surface_if_in_dimension_is_2(v, new_loc);
       }
     }
     else
@@ -505,12 +507,7 @@ protected:
              ++i <= max_step_nb_ )
       {
         new_loc = translate(new_loc, step_vector);
-
-        if ( c3t3.in_dimension(v) == 3 )
-          final_loc = new_loc;
-        else
-          final_loc = helper.project_on_surface(v, new_loc);
-
+        final_loc = project_on_surface_if_in_dimension_is_2(v, new_loc);
         move_vector = vector(initial_loc, final_loc);
       }
     }
@@ -982,7 +979,7 @@ private:
     CGAL_assertion(cell->has_vertex(v));
     const typename C3T3::Triangulation& tr = c3t3.triangulation();
 
-    // There is no need to use tr.min_squared_distance() here because we are computing
+    // There is no need to use Th::min_squared_distance() here because we are computing
     // distances between vertices within a common cell, which means that even
     // if we are using a periodic triangulation, the distance is correctly computed.
     typename GT::Compute_squared_distance_3 sq_distance =
@@ -1354,7 +1351,7 @@ private:
       Bare_point new_location = translate(initial_location, delta);
 
       if ( c3t3.in_dimension(moving_vertex) < 3 )
-        new_location = helper.project_on_surface(moving_vertex, new_location);
+        new_location = helper.project_on_surface(moving_vertex, new_location).first;
 
       // check that we don't insert a vertex inside a protecting ball
       if(Th().inside_protecting_balls(c3t3.triangulation(),
@@ -1383,14 +1380,7 @@ private:
 
         mod_vertices.insert(tmp_mod_vertices.begin(), tmp_mod_vertices.end());
 
-        std::size_t nois;
-#ifdef CGAL_NEW_INCIDENT_SLIVERS
-        nois  = helper.number_of_incident_slivers(moving_vertex, criterion, sliver_bound);
-#else
-        std::vector<Cell_handle> new_slivers =
-          helper.incident_slivers(moving_vertex, criterion, sliver_bound);
-        nois = new_slivers.size();
-#endif
+        std::size_t nois = helper.number_of_incident_slivers(moving_vertex, criterion, sliver_bound);
 
         // If sliver number has decreased, we won
         if(nois < slivers.size() )

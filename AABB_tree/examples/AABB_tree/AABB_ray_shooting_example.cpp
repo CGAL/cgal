@@ -44,7 +44,7 @@ struct Skip
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/tetrahedron.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/tetrahedron.off");
 
   Mesh mesh;
   if(!CGAL::IO::read_polygon_mesh(filename, mesh))

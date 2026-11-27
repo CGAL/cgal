@@ -1,5 +1,3 @@
-#define CGAL_GENERIC_EXTRACT 1
-
 #include <cstdio>
 #include <stdlib.h>
 #include <iostream>

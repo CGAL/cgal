@@ -370,8 +370,17 @@ namespace CGAL {
     }
 
     typename Tr::Cell::Subdomain_index default_si(1);
-    CGAL::SMDS_3::build_triangulation_one_subdomain(tr, points, finite_cells, default_si, border_facets,
-      /*verbose = */false, /*replace_domain_0 = */false, /*allow_non_manifold =*/false);
+    std::vector<std::array<int, 3> > edge_indices;
+    std::vector<std::array<int, 2> > corner_indices;
+    CGAL::SMDS_3::build_triangulation_one_subdomain(tr, points,
+      finite_cells, default_si,
+      border_facets,
+      edge_indices, corner_indices,
+      CGAL::Emptyset_iterator(),
+      /*verbose = */false,
+      /*replace_domain_0 = */false,
+      /*allow_non_manifold =*/false,
+      /*allow_negative_orientation = */false);
 
     CGAL_assertion(CGAL::SMDS_3::internal::is_convex(tr));
 
@@ -485,13 +494,20 @@ namespace CGAL {
     const bool allow_non_manifold = choose_parameter(
           get_parameter(np, internal_np::allow_non_manifold),
           false);
+    const bool allow_negative_orientation = choose_parameter(
+          get_parameter(np, internal_np::allow_negative_orientation),
+          false);
     const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
     CGAL_precondition_code(if (!allow_non_manifold))
     CGAL_precondition(is_tetrahedron_soup_a_triangulation(tets, CGAL::parameters::verbose(verbose)));
 
+    std::vector<std::array<int, 3>> edge_indices;
+    std::vector<std::array<int, 2>> corner_indices;
     SMDS_3::build_triangulation_with_subdomains_range(tr, points, tets, subdomains, facets,
-      verbose, /*replace_domain_0 = */false, allow_non_manifold);
+      edge_indices, corner_indices, CGAL::Emptyset_iterator(),
+      verbose, /*replace_domain_0 = */false, allow_non_manifold,
+      allow_negative_orientation);
 
     CGAL_postcondition_code(if (!allow_non_manifold))
     CGAL_postcondition(CGAL::SMDS_3::internal::is_convex(tr));

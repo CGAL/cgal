@@ -68,7 +68,7 @@ public:
 
   ~SEP_to_ImageIO()
   {
-    if(_cgal_image != 0) delete _cgal_image;
+    delete _cgal_image;
   }
 
   CGAL::Image_3* cgal_image() { return _cgal_image; }

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.24...3.31)
+cmake_minimum_required(VERSION 3.24...4.4)
 project(Triangulation_3_Tests)
 
 find_package(CGAL REQUIRED)
@@ -18,7 +18,6 @@ create_single_source_cgal_program("test_regular_3.cpp")
 create_single_source_cgal_program("test_regular_as_delaunay_3.cpp")
 create_single_source_cgal_program("test_regular_insert_range_with_info.cpp")
 create_single_source_cgal_program("test_regular_remove_3.cpp")
-create_single_source_cgal_program("test_regular_traits_3.cpp")
 create_single_source_cgal_program("test_RT_cell_base_with_weighted_circumcenter_3.cpp")
 create_single_source_cgal_program("test_robust_weighted_circumcenter.cpp")
 create_single_source_cgal_program("test_simplex_3.cpp")
