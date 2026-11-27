@@ -27,6 +27,9 @@ void state(const char* label, std::istream& is, bool expected)
 
 int main()
 {
+#ifdef CGAL_DISABLE_FROM_CHARS
+  return 0;
+#endif
   {
     std::istringstream is("+1.5 2 3");
     K::Point_3 p;
