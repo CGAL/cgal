@@ -47,7 +47,7 @@ void test_double_ctor()
 
   // Construction from a subnormal double used to fail with a postcondition
   // violation: no finite double can hold the denominator of denorm_min.
-  if ((std::numeric_limits<double>::has_denorm)() != std::denorm_absent)
+  if (std::numeric_limits<double>::has_denorm != std::denorm_absent)
   {
     const double d = (std::numeric_limits<double>::denorm_min)();
     Qt q = d;
@@ -55,7 +55,7 @@ void test_double_ctor()
     T num = q.numerator();
     T den = q.denominator();
     // denorm_min == 2^-1074, hence den == num * 2^1074.
-    for (int i = 0; i < 1074; ++i) num *= 2;
+    for (int i = 0; i < 1074; ++i) num *= T(2);
     assert(num == den);
 
     Qt qneg = -d;
